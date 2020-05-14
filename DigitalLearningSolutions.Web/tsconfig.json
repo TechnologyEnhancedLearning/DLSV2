@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "CommonJS",
+    "outDir": "./wwwroot",
+    "rootDir": "./Scripts",
+    "strict": true,
+    "esModuleInterop": true
+  }
+}

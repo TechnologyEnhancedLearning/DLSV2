@@ -3,19 +3,30 @@
   "name": "digital-learning-solutions",
   "private": true,
   "scripts": {
+    "prebuild": "npm run clean",
     "build": "run-p build:*",
     "build:sass": "npm run sass -- --output-style compressed",
+    "build:webpack": "webpack",
     "dev": "run-p dev:*",
     "dev:sass": "npm run sass && npm run sass -- --watch",
+    "dev:webpack": "webpack --config webpack.config.dev.js",
+    "clean": "rimraf wwwroot/css/ && rimraf wwwroot/js/",
     "sass": "node-sass Styles/ --importer node_modules/node-sass-package-importer/dist/cli.js --output wwwroot/css/"
   },
   "dependencies": {
     "nhsuk-frontend": "3.1.0"
   },
   "devDependencies": {
+    "glob": "7.0.4",
     "node-sass": "4.14.1",
     "node-sass-package-importer": "5.3.2",
-    "npm-run-all": "4.1.5"
+    "npm-run-all": "4.1.5",
+    "rimraf": "3.0.2",
+    "source-map-loader": "0.2.4",
+    "ts-loader": "7.0.4",
+    "typescript": "3.9.2",
+    "webpack": "4.43.0",
+    "webpack-cli": "3.3.11"
   },
   "-vs-binding": {
     "ProjectOpened": [
