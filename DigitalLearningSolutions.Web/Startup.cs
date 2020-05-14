@@ -2,13 +2,16 @@ namespace DigitalLearningSolutions.Web
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
     public class Startup
     {
-        public void ConfigureServices(IServiceCollection services) { }
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -16,10 +19,14 @@ namespace DigitalLearningSolutions.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseStaticFiles();
             app.UseRouting();
+            app.UseEndpoints(ConfigureEndPoints);
+        }
 
-            app.UseEndpoints(endpoints => { endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); }); });
+        private void ConfigureEndPoints(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
         }
     }
 }
