@@ -7,10 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.We
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FD8D695-2541-4748-AF48-AF2666C9323F}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalLearningSolutions.Web.Tests", "DigitalLearningSolutions.Web.Tests\DigitalLearningSolutions.Web.Tests.csproj", "{BE482B71-E96B-43E5-9294-D00AD86065BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Web.Tests", "DigitalLearningSolutions.Web.Tests\DigitalLearningSolutions.Web.Tests.csproj", "{BE482B71-E96B-43E5-9294-D00AD86065BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

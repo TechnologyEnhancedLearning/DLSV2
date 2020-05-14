@@ -1,3 +1,8 @@
+# CSS and JS are generated from source Sass and TypeScript
+DigitalLearningSolutions.Web/wwwroot/css/
+DigitalLearningSolutions.Web/wwwroot/js/
+
+
 # Created by https://www.gitignore.io/api/aspnetcore,visualstudio
 # Edit at https://www.gitignore.io/?templates=aspnetcore,visualstudio
 

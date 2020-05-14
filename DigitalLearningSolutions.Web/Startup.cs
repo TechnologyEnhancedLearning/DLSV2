@@ -29,6 +29,7 @@ namespace DigitalLearningSolutions.Web
             if (isDevelopment)
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             app.UseStaticFiles();
             app.UseRouting();

@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "name": "digital-learning-solutions",
+  "private": true,
+  "scripts": {
+    "build": "run-p build:*",
+    "build:sass": "npm run sass -- --output-style compressed",
+    "dev": "run-p dev:*",
+    "dev:sass": "npm run sass && npm run sass -- --watch",
+    "sass": "node-sass Styles/ --importer node_modules/node-sass-package-importer/dist/cli.js --output wwwroot/css/"
+  },
+  "dependencies": {
+    "nhsuk-frontend": "3.1.0"
+  },
+  "devDependencies": {
+    "node-sass": "4.14.1",
+    "node-sass-package-importer": "5.3.2",
+    "npm-run-all": "4.1.5"
+  },
+  "-vs-binding": {
+    "ProjectOpened": [
+      "dev"
+    ]
+  }
+}
