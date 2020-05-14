@@ -8,14 +8,25 @@ namespace DigitalLearningSolutions.Web
 
     public class Startup
     {
-        public void ConfigureServices(IServiceCollection services)
+        private readonly bool isDevelopment;
+
+        public Startup(IWebHostEnvironment env)
         {
-            services.AddControllersWithViews();
+            isDevelopment = env.IsDevelopment();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
-            if (env.IsDevelopment())
+            var mvcBuilder = services.AddControllersWithViews();
+            if (isDevelopment)
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
+        }
+
+        public void Configure(IApplicationBuilder app)
+        {
+            if (isDevelopment)
             {
                 app.UseDeveloperExceptionPage();
             }
