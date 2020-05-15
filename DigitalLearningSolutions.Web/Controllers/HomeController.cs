@@ -1,12 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Home;
     using Microsoft.AspNetCore.Mvc;
 
     public class HomeController : Controller
     {
+        private readonly IHeadlineFiguresService headlineFiguresService;
+
+        public HomeController(IHeadlineFiguresService headlineFiguresService)
+        {
+            this.headlineFiguresService = headlineFiguresService;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            var headlineFigures = headlineFiguresService.GetHeadlineFigures();
+            var model = new IndexViewModel
+            {
+                HeadlineFigures = headlineFigures
+            };
+            return View(model);
         }
     }
 }
