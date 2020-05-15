@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigitalLearningSolutions.Data", "DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj", "{2949A4E3-E076-4606-903D-6250F73F64E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalLearningSolutions.Data.Migrations", "DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj", "{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{2949A4E3-E076-4606-903D-6250F73F64E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2949A4E3-E076-4606-903D-6250F73F64E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2949A4E3-E076-4606-903D-6250F73F64E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA133FD-943A-4E2D-9D3F-698C5E307ED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,9 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Data;
-    using System.Reflection;
+    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Data.Services;
+    using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Routing;
@@ -30,22 +31,38 @@ namespace DigitalLearningSolutions.Web
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
 
-            services.AddScoped<IDbConnection>(_ => new SqlConnection(config["ConnectionStrings:DefaultConnection"]));
+            var defaultConnectionString = config["ConnectionStrings:DefaultConnection"];
 
-            // Register data services
+            // Register database migration runner.
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(rb => rb
+                    .AddSqlServer2016()
+                    .WithGlobalConnectionString(defaultConnectionString)
+                    .ScanIn(typeof(AddExampleTable).Assembly).For.Migrations()
+                ).AddLogging(lb => lb
+                    .AddFluentMigratorConsole()
+                );
+
+            // Register database connection for Dapper.
+            services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
+
+            // Register data services.
             services.AddScoped<IHeadlineFiguresService, HeadlineFiguresService>();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
             if (isDevelopment)
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
             }
+
             app.UseStaticFiles();
             app.UseRouting();
             app.UseEndpoints(ConfigureEndPoints);
+
+            migrationRunner.MigrateUp();
         }
 
         private void ConfigureEndPoints(IEndpointRouteBuilder endpoints)
