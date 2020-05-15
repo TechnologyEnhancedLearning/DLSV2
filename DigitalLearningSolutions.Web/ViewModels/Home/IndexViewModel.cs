@@ -20,6 +20,7 @@
                 {
                     yield break;
                 }
+
                 yield return new HeadlineFigureViewModel
                 {
                     Label = "Centres",

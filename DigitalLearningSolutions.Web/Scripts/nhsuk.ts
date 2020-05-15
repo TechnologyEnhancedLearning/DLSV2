@@ -9,10 +9,12 @@ import Checkboxes from "nhsuk-frontend/packages/components/checkboxes/checkboxes
 import "nhsuk-frontend/packages/polyfills";
 
 // Initialize components
-document.addEventListener("DOMContentLoaded", () => {
-  Details();
-  Header();
-  SkipLink();
-  Radios();
-  Checkboxes();
-});
+document.addEventListener("DOMContentLoaded",
+  () => {
+    Details();
+    Header();
+    SkipLink();
+    Radios();
+    Checkboxes();
+  }
+);

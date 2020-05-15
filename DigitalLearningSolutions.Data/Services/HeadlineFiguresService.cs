@@ -48,7 +48,7 @@
                             FROM Sessions AS se
                             INNER JOIN Customisations
                             AS cu ON se.CustomisationID = cu.CustomisationID
-                            WHERE (cu.CentreID = ce.CentreID)
+                            WHERE cu.CentreID = ce.CentreID
                         )) > GETDATE()
                     )
                 )

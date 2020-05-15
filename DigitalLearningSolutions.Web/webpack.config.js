@@ -2,12 +2,14 @@ const glob = require("glob");
 const path = require("path");
 
 const entry = {};
-glob.sync("./Scripts/**/*.ts", {
-  ignore: [
-    "./Scripts/**/*.d.ts",
-    "./Scripts/helpers/**/*.ts"
-  ]
-}).forEach(file => {
+glob.sync("./Scripts/**/*.ts",
+  {
+    ignore: [
+      "./Scripts/**/*.d.ts",
+      "./Scripts/helpers/**/*.ts"
+    ]
+  }
+).forEach(file => {
   const name = file.replace("./Scripts/", "").replace(".ts", "");
   entry[name] = file;
 });
@@ -34,6 +36,6 @@ const config = {
   resolve: {
     extensions: [".ts", ".js"]
   }
-}
+};
 
 module.exports = config;
