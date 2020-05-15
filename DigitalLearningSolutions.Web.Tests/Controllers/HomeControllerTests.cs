@@ -39,10 +39,7 @@
             var result = controller.Index();
 
             // Then
-            var expectedModel = new IndexViewModel
-            {
-                HeadlineFigures = headlineFigures
-            };
+            var expectedModel = new IndexViewModel(headlineFigures);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

@@ -1,0 +1,22 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.centres {
+  background-color: $color_nhsuk-dark-pink;
+}
+
+.learners {
+  background-color: $color_nhsuk-grey-1;
+}
+
+.learning-hours {
+  background-color: $color_nhsuk-red;
+}
+
+.courses-completed {
+  background-color: $color_nhsuk-green;
+}
+
+.headline-figures {
+  text-align: center;
+  color: white;
+}

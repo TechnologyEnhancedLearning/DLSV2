@@ -16,10 +16,7 @@
         public IActionResult Index()
         {
             var headlineFigures = headlineFiguresService.GetHeadlineFigures();
-            var model = new IndexViewModel
-            {
-                HeadlineFigures = headlineFigures
-            };
+            var model = new IndexViewModel(headlineFigures);
             return View(model);
         }
     }

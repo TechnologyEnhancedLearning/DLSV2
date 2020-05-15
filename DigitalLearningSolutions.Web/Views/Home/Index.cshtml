@@ -5,42 +5,28 @@
   ViewData["Title"] = "Home";
 }
 
+@section styles {
+  <link rel="stylesheet" href="@Url.Content("~/css/home/index.css")">
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1>Digital Learning Solutions</h1>
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter">
-        <div class="nhsuk-panel">
-          <p class="headline-figures">
-            <span class="nhsuk-u-font-size-32">@Model.HeadlineFigures.ActiveCentres</span>
-            <span class="nhsuk-body-s">Centres</span>
-          </p>
+      @foreach (var headlineFigure in Model.HeadlineFigures) {
+        <div class="nhsuk-grid-column-one-quarter">
+          <div class="nhsuk-panel @headlineFigure.CssClassname">
+            <p class="headline-figures">
+              <span class="nhsuk-u-font-size-32">@headlineFigure.Value.ToString("N0")</span>
+              <span class="nhsuk-body-s">@headlineFigure.Label</span>
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="nhsuk-grid-column-one-quarter">
-        <div class="nhsuk-panel">
-          <p class="headline-figures">
-            <span class="nhsuk-u-font-size-32">@Model.HeadlineFigures.Delegates</span>
-            <span class="nhsuk-body-s">Learners</span>
-          </p>
-        </div>
-      </div>
-      <div class="nhsuk-grid-column-one-quarter">
-        <div class="nhsuk-panel">
-          <p class="headline-figures">
-            <span class="nhsuk-u-font-size-32">@Model.HeadlineFigures.LearningTime</span>
-            <span class="nhsuk-body-s">Learning Hours</span>
-          </p>
-        </div>
-      </div>
-      <div class="nhsuk-grid-column-one-quarter">
-        <div class="nhsuk-panel">
-          <p class="headline-figures">
-            <span class="nhsuk-u-font-size-32">@Model.HeadlineFigures.Completions</span>
-            <span class="nhsuk-body-s">Courses Completed</span>
-          </p>
-        </div>
-      </div>
+      }
     </div>
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/home/index.js")"></script>
+}

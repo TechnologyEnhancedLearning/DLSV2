@@ -15,6 +15,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")">
+  @await RenderSectionAsync("styles", false)
 
   <!-- Scripts -->
   <script src="@Url.Content("~/js/nhsuk.js")" defer></script>
@@ -70,6 +71,8 @@
       </div>
     </div>
   </footer>
+
+  @await RenderSectionAsync("scripts", false)
 
 </body>
 </html>

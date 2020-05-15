@@ -5,7 +5,7 @@ const entry = {};
 glob.sync("./Scripts/**/*.ts", {
   ignore: [
     "./Scripts/**/*.d.ts",
-    "./Scripts/Helpers/**/*.ts"
+    "./Scripts/helpers/**/*.ts"
   ]
 }).forEach(file => {
   const name = file.replace("./Scripts/", "").replace(".ts", "");

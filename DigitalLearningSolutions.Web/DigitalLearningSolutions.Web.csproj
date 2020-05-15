@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\README.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\helpers\constants.ts" />
+    <None Remove="Scripts\home\index.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\nhsuk.ts" />
   </ItemGroup>
@@ -22,11 +28,11 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\favicon.ico" />
+    <None Include="wwwroot\README.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\helpers\constants.ts" />
+    <TypeScriptCompile Include="Scripts\home\index.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
   </ItemGroup>
