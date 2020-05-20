@@ -5,3 +5,6 @@
 Compiled files preserve their path, e.g. Styles/home/index.scss compiles to wwwroot/css/home/index.css
 
 The build:sass and dev:sass NPM tasks are responsible for the compilation.
+
+In order for the NPM tasks to be run automatically when the project is opened, you need to have the NPMTaskRunner extension installed in Visual Studio:
+https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner
