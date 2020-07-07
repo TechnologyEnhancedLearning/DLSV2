@@ -39,8 +39,6 @@ You can now run the app by clicking the play button (▶), which should say *II
 
 This should launch the website at: [https://localhost:44363/](https://localhost:44363/)
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8cee770e-b21b-4071-b7c4-7075551c2c52/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8cee770e-b21b-4071-b7c4-7075551c2c52/Untitled.png)
-
 # Troubleshooting
 
 ## Undeclared variable warning in `index.scss` (DigitalLearningSolutions.Web)
