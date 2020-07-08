@@ -10,7 +10,7 @@ pipeline {
 		}
 		stage('Build') {
 			steps {
-				bat "dotnet msbuild DigitalLearningSolutions.sln"
+				bat "dotnet build DigitalLearningSolutions.sln"
 			}
 		}
 	}
