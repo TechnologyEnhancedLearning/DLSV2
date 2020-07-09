@@ -3,15 +3,15 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
-    using DigitalLearningSolutions.Web.ViewModels.Home;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
-    public class HomeControllerTests
+    public class LearningPortalControllerTests
     {
-        private HomeController controller;
+        private LearningPortalController controller;
 
         private IHeadlineFiguresService headlineFiguresService;
 
@@ -19,7 +19,7 @@
         public void SetUp()
         {
             headlineFiguresService = A.Fake<IHeadlineFiguresService>();
-            controller = new HomeController(headlineFiguresService);
+            controller = new LearningPortalController(headlineFiguresService);
         }
 
         [Test]

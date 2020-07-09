@@ -1,14 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.ViewModels.Home;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
 
-    public class HomeController : Controller
+    public class LearningPortalController : Controller
     {
         private readonly IHeadlineFiguresService headlineFiguresService;
 
-        public HomeController(IHeadlineFiguresService headlineFiguresService)
+        public LearningPortalController(IHeadlineFiguresService headlineFiguresService)
         {
             this.headlineFiguresService = headlineFiguresService;
         }

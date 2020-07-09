@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <None Remove="Scripts\helpers\constants.ts" />
-    <None Remove="Scripts\home\index.ts" />
+    <None Remove="Scripts\learningPortal\index.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\nhsuk.ts" />
   </ItemGroup>
@@ -45,7 +45,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\helpers\constants.ts" />
-    <TypeScriptCompile Include="Scripts\home\index.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\index.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Home
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;

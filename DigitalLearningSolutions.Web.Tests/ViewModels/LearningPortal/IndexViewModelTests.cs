@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Home
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.ViewModels.Home;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using FluentAssertions;
     using NUnit.Framework;
 
