@@ -13,6 +13,11 @@ pipeline {
 				bat "dotnet build DigitalLearningSolutions.sln"
 			}
 		}
+		stage('Test') {
+			steps {
+				bat "dotnet test DigitalLearningSolutions.Web.Tests"
+			}
+		}
 	}
 
 	post {
