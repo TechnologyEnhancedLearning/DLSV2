@@ -1,18 +1,22 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
 
-    public class CurrentViewModel
+    public class CompletedViewModel
     {
         private readonly HeadlineFigures headlineFigures;
 
-        public CurrentViewModel(HeadlineFigures headlineFigures)
+        public CompletedViewModel(HeadlineFigures headlineFigures)
         {
             this.headlineFigures = headlineFigures;
         }
 
-        public IEnumerable<CurrentCourseViewModel> CurrentCourses
+        public IEnumerable<CompletedCourseViewModel> CompletedCourses
         {
             get
             {
@@ -21,22 +25,22 @@
                     yield break;
                 }
 
-                yield return new CurrentCourseViewModel
+                yield return new CompletedCourseViewModel
                 {
                     Label = "Centres",
                     Value = headlineFigures.ActiveCentres
                 };
-                yield return new CurrentCourseViewModel
+                yield return new CompletedCourseViewModel
                 {
                     Label = "Learners",
                     Value = headlineFigures.Delegates
                 };
-                yield return new CurrentCourseViewModel
+                yield return new CompletedCourseViewModel
                 {
                     Label = "Learning Hours",
                     Value = headlineFigures.LearningTime
                 };
-                yield return new CurrentCourseViewModel
+                yield return new CompletedCourseViewModel
                 {
                     Label = "Courses Completed",
                     Value = headlineFigures.Completions
@@ -44,7 +48,7 @@
             }
         }
 
-        public class CurrentCourseViewModel
+        public class CompletedCourseViewModel
         {
             public string Label { get; set; }
             public string CssClassname => Label.ToLower().Replace(' ', '-');

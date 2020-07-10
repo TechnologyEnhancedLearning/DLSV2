@@ -1,4 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -6,9 +10,9 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class CurrentViewModelTests
+    public class CompletedViewModelTests
     {
-        private CurrentViewModel model;
+        private CompletedViewModel model;
 
         [SetUp]
         public void SetUp()
@@ -21,20 +25,20 @@
                 Completions = 162263
             };
 
-            model = new CurrentViewModel(headlineFigures);
+            model = new CompletedViewModel(headlineFigures);
         }
 
         [TestCase(0, "Centres", "centres", 339)]
         [TestCase(1, "Learners", "learners", 329025)]
         [TestCase(2, "Learning Hours", "learning-hours", 649911)]
         [TestCase(3, "Courses Completed", "courses-completed", 162263)]
-        public void Current_courses_should_map_to_view_models_in_the_correct_order(
+        public void Completed_courses_should_map_to_view_models_in_the_correct_order(
             int index,
             string expectedLabel,
             string expectedCssClassname,
             int expectedValue)
         {
-            var course = model.CurrentCourses.ElementAt(index);
+            var course = model.CompletedCourses.ElementAt(index);
             course.Label.Should().Be(expectedLabel);
             course.CssClassname.Should().Be(expectedCssClassname);
             course.Value.Should().Be(expectedValue);
