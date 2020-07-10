@@ -16,6 +16,22 @@
   background-color: $color_nhsuk-green;
 }
 
+.completed {
+  background-color: $color_nhsuk-dark-pink;
+}
+
+.current {
+  background-color: $color_nhsuk-grey-1;
+}
+
+.available {
+  background-color: $color_nhsuk-green;
+}
+
+.course-type {
+  text-align: center;
+}
+
 .headline-figures {
   text-align: center;
   color: white;
