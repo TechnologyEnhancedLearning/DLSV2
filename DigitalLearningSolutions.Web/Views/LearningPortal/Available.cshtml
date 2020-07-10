@@ -1,0 +1,33 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model AvailableViewModel
+
+@{
+  ViewData["Title"] = "Learning Portal - Available";
+}
+
+@section styles {
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/index.css")">
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1>Digital Learning Solutions</h1>
+    <div class="nhsuk-grid-row">
+      @foreach (var availableCourse in Model.AvailableCourses)
+      {
+        <div class="nhsuk-grid-column-one-quarter">
+          <div class="nhsuk-panel @availableCourse.CssClassname">
+            <p class="headline-figures">
+              <span class="nhsuk-u-font-size-32">@availableCourse.Value.ToString("N0")</span>
+              <span class="nhsuk-body-s">@availableCourse.Label</span>
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/index.js")"></script>
+}

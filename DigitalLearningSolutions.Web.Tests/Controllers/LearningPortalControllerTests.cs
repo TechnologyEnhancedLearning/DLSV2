@@ -65,5 +65,27 @@
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
+
+        [Test]
+        public void Available_action_should_return_view_result()
+        {
+            // Given
+            var headlineFigures = new HeadlineFigures
+            {
+                ActiveCentres = 339,
+                Delegates = 329025,
+                LearningTime = 649911,
+                Completions = 162263
+            };
+            A.CallTo(() => headlineFiguresService.GetHeadlineFigures()).Returns(headlineFigures);
+
+            // When
+            var result = controller.Available();
+
+            // Then
+            var expectedModel = new AvailableViewModel(headlineFigures);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
     }
 }
