@@ -39,6 +39,17 @@ You can now run the app by clicking the play button (▶), which should say *II
 
 This should launch the website at: [https://localhost:44363/](https://localhost:44363/)
 
+# Running the tests
+
+## Run one test
+Open the test file, find the test you want to run, click the icon to the left of the test name.
+
+## Run all tests in a file
+Open the file and click the icon to the left of the class name.
+
+## Run all the tests
+Open the solution explorer. Right click DigitalLearningSolutions.Web.Tests and select "Run tests". 
+
 # Troubleshooting
 
 ## Undeclared variable warning in `index.scss` (DigitalLearningSolutions.Web)
