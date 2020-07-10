@@ -26,5 +26,12 @@
             var model = new CompletedViewModel(headlineFigures);
             return View(model);
         }
+
+        public IActionResult Available()
+        {
+            var headlineFigures = headlineFiguresService.GetHeadlineFigures();
+            var model = new AvailableViewModel(headlineFigures);
+            return View(model);
+        }
     }
 }
