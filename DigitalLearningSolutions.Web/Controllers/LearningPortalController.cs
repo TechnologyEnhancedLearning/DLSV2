@@ -13,10 +13,10 @@
             this.headlineFiguresService = headlineFiguresService;
         }
 
-        public IActionResult Index()
+        public IActionResult Current()
         {
             var headlineFigures = headlineFiguresService.GetHeadlineFigures();
-            var model = new IndexViewModel(headlineFigures);
+            var model = new CurrentViewModel(headlineFigures);
             return View(model);
         }
     }
