@@ -9,9 +9,11 @@
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/index.css")">
 }
 
+<partial name="_CourseTypeSwitcher" />
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1>Digital Learning Solutions</h1>
+    <h1>Available Courses</h1>
     <div class="nhsuk-grid-row">
       @foreach (var availableCourse in Model.AvailableCourses)
       {
