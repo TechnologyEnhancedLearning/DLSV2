@@ -3,11 +3,11 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
 
-    public class IndexViewModel
+    public class CurrentViewModel
     {
         private readonly HeadlineFigures headlineFigures;
 
-        public IndexViewModel(HeadlineFigures headlineFigures)
+        public CurrentViewModel(HeadlineFigures headlineFigures)
         {
             this.headlineFigures = headlineFigures;
         }

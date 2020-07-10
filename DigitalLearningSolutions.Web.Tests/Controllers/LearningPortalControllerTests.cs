@@ -23,7 +23,7 @@
         }
 
         [Test]
-        public void Index_action_should_return_view_result()
+        public void Current_action_should_return_view_result()
         {
             // Given
             var headlineFigures = new HeadlineFigures
@@ -36,10 +36,10 @@
             A.CallTo(() => headlineFiguresService.GetHeadlineFigures()).Returns(headlineFigures);
 
             // When
-            var result = controller.Index();
+            var result = controller.Current();
 
             // Then
-            var expectedModel = new IndexViewModel(headlineFigures);
+            var expectedModel = new CurrentViewModel(headlineFigures);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

@@ -6,9 +6,9 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class IndexViewModelTests
+    public class CurrentViewModelTests
     {
-        private IndexViewModel model;
+        private CurrentViewModel model;
 
         [SetUp]
         public void SetUp()
@@ -21,7 +21,7 @@
                 Completions = 162263
             };
 
-            model = new IndexViewModel(headlineFigures);
+            model = new CurrentViewModel(headlineFigures);
         }
 
         [TestCase(0, "Centres", "centres", 339)]

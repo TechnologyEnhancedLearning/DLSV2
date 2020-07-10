@@ -67,7 +67,7 @@ namespace DigitalLearningSolutions.Web
 
         private void ConfigureEndPoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Index}/{id?}");
+            endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}/{id?}");
         }
     }
 }
