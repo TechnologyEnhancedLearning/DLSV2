@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register data services.
-            services.AddScoped<IHeadlineFiguresService, HeadlineFiguresService>();
+            services.AddScoped<ICourseService, CourseService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

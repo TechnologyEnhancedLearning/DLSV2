@@ -1,54 +1,34 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
 
     public class CurrentViewModel
     {
-        private readonly HeadlineFigures headlineFigures;
+        private readonly IEnumerable<Course> currentCourses;
 
-        public CurrentViewModel(HeadlineFigures headlineFigures)
+        public CurrentViewModel(IEnumerable<Course> currentCourses)
         {
-            this.headlineFigures = headlineFigures;
+            this.currentCourses = currentCourses;
         }
 
         public IEnumerable<CurrentCourseViewModel> CurrentCourses
         {
             get
             {
-                if (headlineFigures == null)
+                return currentCourses.Select(c => new CurrentCourseViewModel
                 {
-                    yield break;
-                }
-
-                yield return new CurrentCourseViewModel
-                {
-                    Label = "Centres",
-                    Value = headlineFigures.ActiveCentres
-                };
-                yield return new CurrentCourseViewModel
-                {
-                    Label = "Learners",
-                    Value = headlineFigures.Delegates
-                };
-                yield return new CurrentCourseViewModel
-                {
-                    Label = "Learning Hours",
-                    Value = headlineFigures.LearningTime
-                };
-                yield return new CurrentCourseViewModel
-                {
-                    Label = "Courses Completed",
-                    Value = headlineFigures.Completions
-                };
+                    Name = c.Name,
+                    Id = c.Id
+                });
             }
         }
 
         public class CurrentCourseViewModel
         {
-            public string Label { get; set; }
-            public string CssClassname => Label.ToLower().Replace(' ', '-');
-            public int Value { get; set; }
+            public string Name { get; set; }
+            public int Id { get; set; }
         }
     }
 }

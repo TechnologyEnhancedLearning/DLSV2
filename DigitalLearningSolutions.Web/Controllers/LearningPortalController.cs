@@ -6,30 +6,30 @@
 
     public class LearningPortalController : Controller
     {
-        private readonly IHeadlineFiguresService headlineFiguresService;
+        private readonly ICourseService courseService;
 
-        public LearningPortalController(IHeadlineFiguresService headlineFiguresService)
+        public LearningPortalController(ICourseService courseService)
         {
-            this.headlineFiguresService = headlineFiguresService;
+            this.courseService = courseService;
         }
 
         public IActionResult Current()
         {
-            var headlineFigures = headlineFiguresService.GetHeadlineFigures();
-            var model = new CurrentViewModel(headlineFigures);
+            var currentCourses = courseService.GetCurrentCourses();
+            var model = new CurrentViewModel(currentCourses);
             return View(model);
         }
 
         public IActionResult Completed()
         {
-            var headlineFigures = headlineFiguresService.GetHeadlineFigures();
+            var headlineFigures = courseService.GetHeadlineFigures();
             var model = new CompletedViewModel(headlineFigures);
             return View(model);
         }
 
         public IActionResult Available()
         {
-            var headlineFigures = headlineFiguresService.GetHeadlineFigures();
+            var headlineFigures = courseService.GetHeadlineFigures();
             var model = new AvailableViewModel(headlineFigures);
             return View(model);
         }
