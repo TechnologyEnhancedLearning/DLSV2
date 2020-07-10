@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
-@model CurrentViewModel
+@model CompletedViewModel
 
 @{
-  ViewData["Title"] = "Learning Portal - Current";
+  ViewData["Title"] = "Learning Portal - Completed";
 }
 
 @section styles {
@@ -13,12 +13,13 @@
   <div class="nhsuk-grid-column-full">
     <h1>Digital Learning Solutions</h1>
     <div class="nhsuk-grid-row">
-      @foreach (var currentCourse in Model.CurrentCourses) {
+      @foreach (var completedCourse in Model.CompletedCourses)
+      {
         <div class="nhsuk-grid-column-one-quarter">
-          <div class="nhsuk-panel @currentCourse.CssClassname">
+          <div class="nhsuk-panel @completedCourse.CssClassname">
             <p class="headline-figures">
-              <span class="nhsuk-u-font-size-32">@currentCourse.Value.ToString("N0")</span>
-              <span class="nhsuk-body-s">@currentCourse.Label</span>
+              <span class="nhsuk-u-font-size-32">@completedCourse.Value.ToString("N0")</span>
+              <span class="nhsuk-body-s">@completedCourse.Label</span>
             </p>
           </div>
         </div>
