@@ -1,19 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
 
-    public interface IHeadlineFiguresService
+    public interface ICourseService
     {
         HeadlineFigures GetHeadlineFigures();
+        IEnumerable<Course> GetCurrentCourses();
     }
 
-    public class HeadlineFiguresService : IHeadlineFiguresService
+    public class CourseService : ICourseService
     {
         private readonly IDbConnection connection;
 
-        public HeadlineFiguresService(IDbConnection connection)
+        public CourseService(IDbConnection connection)
         {
             this.connection = connection;
         }
@@ -53,6 +55,13 @@
                     )
                 )
                 AS ActiveCentres
+            ");
+        }
+
+        public IEnumerable<Course> GetCurrentCourses()
+        {
+            return connection.Query<Course>(@"
+                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications 
             ");
         }
     }

@@ -13,33 +13,30 @@
     {
         private LearningPortalController controller;
 
-        private IHeadlineFiguresService headlineFiguresService;
+        private ICourseService courseService;
 
         [SetUp]
         public void SetUp()
         {
-            headlineFiguresService = A.Fake<IHeadlineFiguresService>();
-            controller = new LearningPortalController(headlineFiguresService);
+            courseService = A.Fake<ICourseService>();
+            controller = new LearningPortalController(courseService);
         }
 
         [Test]
         public void Current_action_should_return_view_result()
         {
             // Given
-            var headlineFigures = new HeadlineFigures
-            {
-                ActiveCentres = 339,
-                Delegates = 329025,
-                LearningTime = 649911,
-                Completions = 162263
+            var currentCourses = new[] {
+                new Course { Id = 1, Name = "Course 1" },
+                new Course { Id = 2, Name = "Course 2" }
             };
-            A.CallTo(() => headlineFiguresService.GetHeadlineFigures()).Returns(headlineFigures);
+            A.CallTo(() => courseService.GetCurrentCourses()).Returns(currentCourses);
 
             // When
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(headlineFigures);
+            var expectedModel = new CurrentViewModel(currentCourses);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
@@ -55,7 +52,7 @@
                 LearningTime = 649911,
                 Completions = 162263
             };
-            A.CallTo(() => headlineFiguresService.GetHeadlineFigures()).Returns(headlineFigures);
+            A.CallTo(() => courseService.GetHeadlineFigures()).Returns(headlineFigures);
 
             // When
             var result = controller.Completed();
@@ -77,7 +74,7 @@
                 LearningTime = 649911,
                 Completions = 162263
             };
-            A.CallTo(() => headlineFiguresService.GetHeadlineFigures()).Returns(headlineFigures);
+            A.CallTo(() => courseService.GetHeadlineFigures()).Returns(headlineFigures);
 
             // When
             var result = controller.Available();
