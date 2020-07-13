@@ -22,15 +22,15 @@
 
         public IActionResult Completed()
         {
-            var headlineFigures = courseService.GetHeadlineFigures();
-            var model = new CompletedViewModel(headlineFigures);
+            var completedCourses = courseService.GetCompletedCourses();
+            var model = new CompletedViewModel(completedCourses);
             return View(model);
         }
 
         public IActionResult Available()
         {
-            var headlineFigures = courseService.GetHeadlineFigures();
-            var model = new AvailableViewModel(headlineFigures);
+            var availableCourses = courseService.GetAvailableCourses();
+            var model = new AvailableViewModel(availableCourses);
             return View(model);
         }
     }
