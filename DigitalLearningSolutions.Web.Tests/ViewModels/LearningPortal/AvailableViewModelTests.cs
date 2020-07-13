@@ -13,31 +13,24 @@
         [SetUp]
         public void SetUp()
         {
-            var headlineFigures = new HeadlineFigures
-            {
-                ActiveCentres = 339,
-                Delegates = 329025,
-                LearningTime = 649911,
-                Completions = 162263
+            var availableCourses = new[] {
+                new Course { Id = 1, Name = "Course 1" },
+                new Course { Id = 2, Name = "Course 2" }
             };
 
-            model = new AvailableViewModel(headlineFigures);
+            model = new AvailableViewModel(availableCourses);
         }
 
-        [TestCase(0, "Centres", "centres", 339)]
-        [TestCase(1, "Learners", "learners", 329025)]
-        [TestCase(2, "Learning Hours", "learning-hours", 649911)]
-        [TestCase(3, "Courses Completed", "courses-completed", 162263)]
+        [TestCase(0, "Course 1", 1)]
+        [TestCase(1, "Course 2", 2)]
         public void Available_courses_should_map_to_view_models_in_the_correct_order(
             int index,
-            string expectedLabel,
-            string expectedCssClassname,
-            int expectedValue)
+            string expectedName,
+            int expectedId)
         {
             var course = model.AvailableCourses.ElementAt(index);
-            course.Label.Should().Be(expectedLabel);
-            course.CssClassname.Should().Be(expectedCssClassname);
-            course.Value.Should().Be(expectedValue);
+            course.Name.Should().Be(expectedName);
+            course.Id.Should().Be(expectedId);
         }
     }
 }

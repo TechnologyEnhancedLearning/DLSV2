@@ -1,54 +1,34 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
 
     public class CompletedViewModel
     {
-        private readonly HeadlineFigures headlineFigures;
+        private readonly IEnumerable<Course> completedCourses;
 
-        public CompletedViewModel(HeadlineFigures headlineFigures)
+        public CompletedViewModel(IEnumerable<Course> completedCourses)
         {
-            this.headlineFigures = headlineFigures;
+            this.completedCourses = completedCourses;
         }
 
         public IEnumerable<CompletedCourseViewModel> CompletedCourses
         {
             get
             {
-                if (headlineFigures == null)
+                return completedCourses.Select(c => new CompletedCourseViewModel
                 {
-                    yield break;
-                }
-
-                yield return new CompletedCourseViewModel
-                {
-                    Label = "Centres",
-                    Value = headlineFigures.ActiveCentres
-                };
-                yield return new CompletedCourseViewModel
-                {
-                    Label = "Learners",
-                    Value = headlineFigures.Delegates
-                };
-                yield return new CompletedCourseViewModel
-                {
-                    Label = "Learning Hours",
-                    Value = headlineFigures.LearningTime
-                };
-                yield return new CompletedCourseViewModel
-                {
-                    Label = "Courses Completed",
-                    Value = headlineFigures.Completions
-                };
+                    Name = c.Name,
+                    Id = c.Id
+                });
             }
         }
 
         public class CompletedCourseViewModel
         {
-            public string Label { get; set; }
-            public string CssClassname => Label.ToLower().Replace(' ', '-');
-            public int Value { get; set; }
+            public string Name { get; set; }
+            public int Id { get; set; }
         }
     }
 }

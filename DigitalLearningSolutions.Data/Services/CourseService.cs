@@ -9,6 +9,8 @@
     {
         HeadlineFigures GetHeadlineFigures();
         IEnumerable<Course> GetCurrentCourses();
+        IEnumerable<Course> GetCompletedCourses();
+        IEnumerable<Course> GetAvailableCourses();
     }
 
     public class CourseService : ICourseService
@@ -61,7 +63,21 @@
         public IEnumerable<Course> GetCurrentCourses()
         {
             return connection.Query<Course>(@"
-                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications 
+                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 1
+            ");
+        }
+
+        public IEnumerable<Course> GetCompletedCourses()
+        {
+            return connection.Query<Course>(@"
+                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 466
+            ");
+        }
+
+        public IEnumerable<Course> GetAvailableCourses()
+        {
+            return connection.Query<Course>(@"
+                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 2223
             ");
         }
     }
