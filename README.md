@@ -40,6 +40,19 @@ You can now run the app by clicking the play button (▶), which should say *II
 This should launch the website at: [https://localhost:44363/](https://localhost:44363/)
 
 # Running the tests
+These tests will also be run by the Jenkins job whenever you push.
+
+## Running the web tests
+These tests are in the DigitalLearningSolutions.Web.Tests project. No setup is required to run them and they'll also be run by the jenkins job whenever you push. See the sections below for how to run one test, all tests in a file or all the tests in the project.
+
+## Running the data tests
+These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
+
+You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details.
+
+See the sections below for how to run one test, all tests in a file or all the tests in the project.
+
+*NB these tests will not currently be run by the Jenkins job so you need to run them locally!*
 
 ## Run one test
 Open the test file, find the test you want to run, click the icon to the left of the test name.
@@ -48,7 +61,7 @@ Open the test file, find the test you want to run, click the icon to the left of
 Open the file and click the icon to the left of the class name.
 
 ## Run all the tests
-Open the solution explorer. Right click DigitalLearningSolutions.Web.Tests and select "Run tests". 
+Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests". 
 
 # Troubleshooting
 
