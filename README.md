@@ -23,13 +23,23 @@ Get a database backup `.bak` file from the current system.
 
 Restore the database from the backup:
 
-- Open SQL Server Managerment Studio and connect to your `localhost` instance
+- Open SQL Server Management Studio and connect to your `localhost` instance
 - Right-click *Databases* → *Restore Database…*
 - On the *General* tab, select *Device* under source and click the *…* button to the right
 - In the backup media window, click *Add* and navigate to and select the `.bak` file
 - Click *OK* on the various windows until the restore starts to run
 
 You should now see the `mbdbx101` database in your *Databases* folder on the `localhost` server.
+
+## Inspecting the database
+
+It can be useful to have a look at what's in the database, to test out and plan SQL queries. The easiest way to do this is:
+
+1. Open SQL Server Management Studio
+2. Connect to `localhost`
+3. Expand databases -> `mbdbx101` in the menu on the left.
+4. Expand tables. You can now see all the tables in the database.
+5. Right click a table and click "Select top 1000 rows". This should open an editor with an SQL query to get the first 1000 rows in the DB. You should also be able to see the result of running that query below. You can change this SQL query to anything you like and click the "execute" button to run it and update the results.
 
 # Running the app
 
