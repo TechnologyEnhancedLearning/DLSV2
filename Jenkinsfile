@@ -4,7 +4,8 @@ pipeline {
 	}
 	stages {
 		stage('Checkout'){
-			steps{
+			steps {
+				updateGitlabCommitStatus name: 'build', state: 'pending'
 				checkout scm
 			}
 		}
@@ -23,9 +24,11 @@ pipeline {
 	post {
 		failure {
 			slack(":red_circle: Build failed", "danger")
+			updateGitlabCommitStatus name: 'build', state: 'failure'
 		}
 		success {
 			slack(":excellent: Build succeeded", "good")
+			updateGitlabCommitStatus name: 'build', state: 'success'
 		}
 	}
 }
