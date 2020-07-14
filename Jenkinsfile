@@ -1,22 +1,29 @@
+properties([[$class: 'GitLabConnectionProperty', gitLabConnection: 'Softwire Gitlab']])
+
 pipeline {
 	agent {
 		label 'windows'
 	}
 	stages {
-		stage('Checkout'){
+		stage('Checkout') {
 			steps {
-				updateGitlabCommitStatus name: 'build', state: 'running'
-				checkout scm
+				gitlabCommitStatus(name: 'Checkout') {
+					checkout scm
+				}
 			}
 		}
 		stage('Build') {
 			steps {
-				bat "dotnet build DigitalLearningSolutions.sln"
+				gitlabCommitStatus(name: 'Build') {
+					bat "dotnet build DigitalLearningSolutions.sln"
+				}
 			}
 		}
 		stage('Test') {
 			steps {
-				bat "dotnet test DigitalLearningSolutions.Web.Tests"
+				gitlabCommitStatus(name: 'Test') {
+					bat "dotnet test DigitalLearningSolutions.Web.Tests"
+				}
 			}
 		}
 	}
@@ -24,11 +31,9 @@ pipeline {
 	post {
 		failure {
 			slack(":red_circle: Build failed", "danger")
-			updateGitlabCommitStatus name: 'build', state: 'failed'
 		}
 		success {
 			slack(":excellent: Build succeeded", "good")
-			updateGitlabCommitStatus name: 'build', state: 'success'
 		}
 	}
 }
