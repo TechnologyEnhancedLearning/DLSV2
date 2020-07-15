@@ -4,6 +4,9 @@ pipeline {
 	agent {
 		label 'windows'
 	}
+	environment {
+		SqlTestCredentials = credentials('sql-test-credentials')
+	}
 	stages {
 		stage('Checkout') {
 			steps {
@@ -19,10 +22,17 @@ pipeline {
 				}
 			}
 		}
-		stage('Test') {
+		stage('Web Tests') {
 			steps {
-				gitlabCommitStatus(name: 'Test') {
+				gitlabCommitStatus(name: 'Web Tests') {
 					bat "dotnet test DigitalLearningSolutions.Web.Tests"
+				}
+			}
+		}
+		stage('Data Tests') {
+			steps {
+				gitlabCommitStatus(name: 'Data Tests') {
+					bat "dotnet test DigitalLearningSolutions.Data.Tests"
 				}
 			}
 		}
