@@ -41,6 +41,26 @@ It can be useful to have a look at what's in the database, to test out and plan 
 4. Expand tables. You can now see all the tables in the database.
 5. Right click a table and click "Select top 1000 rows". This should open an editor with an SQL query to get the first 1000 rows in the DB. You should also be able to see the result of running that query below. You can change this SQL query to anything you like and click the "execute" button to run it and update the results.
 
+## Making changes to the database
+If you just want to make temporary changes to the database for testing (e.g. adding in some specific data to a table to test something) then you can do that in SQL Management Studio with the SQL scripts as described in the previous section. However if you want to make a permanent change to the database, for example to add a new table, then you need to use a migration.
+
+We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. The migrations we currently have are in DigitalLearningSolutions.Data.Migrations, and we apply them in Startup.cs.
+
+### Add a new migration
+Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. Look at the existing migrations or the fluent migrator documentation for an example of what the contents of the migration file should be.
+
+Once you've added your migration file you need to make sure it's applied in Startup.cs. Do this by adding a new statement to the ConfigureRunner line, something like:
+```
+.ScanIn(typeof(AddCustomerTable).Assembly).For.Migrations()
+```
+there should be other migrations there that you can copy. The migration should now be applied when you next run the app.
+
+### Reversing a migration
+If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
+* Remove it from the `ScanIn` statements in Startup.cs
+* In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
+* Delete the migration file.
+
 # Running the app
 
 The project should now build. Confirm this via *Build* → *Build Solution* (or `CTRL+SHIFT+B`).
