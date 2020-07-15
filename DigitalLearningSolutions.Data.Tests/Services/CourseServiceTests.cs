@@ -1,6 +1,8 @@
 namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Linq;
+    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using NUnit.Framework;
@@ -14,7 +16,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [SetUp]
         public void Setup()
         {
-            var connection = new SqlConnection("Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;");
+            const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
+            var jenkinsConnectionString = GetJenkinsSqlConnectionString();
+            var connectionString = jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
+            var connection = new SqlConnection(connectionString);
             courseService = new CourseService(connection);
         }
 
@@ -64,6 +69,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             };
             result.Should().HaveCount(45);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        private static string GetJenkinsSqlConnectionString()
+        {
+            var jenkinsSqlServerPassword = Environment.GetEnvironmentVariable("SqlTestCredentials_PSW");
+            var jenkinsSqlServerUsername = Environment.GetEnvironmentVariable("SqlTestCredentials_USR");
+            return jenkinsSqlServerUsername.IsNullOrEmpty() || jenkinsSqlServerPassword.IsNullOrEmpty()
+                ? ""
+                : $"Server=HEE-DLS-SQL\\HEETEST; Database=mbdbx101; User Id={jenkinsSqlServerUsername}; Password={jenkinsSqlServerPassword};";
         }
     }
 }
