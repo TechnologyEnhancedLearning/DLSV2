@@ -62,8 +62,6 @@ You need to copy the local db you've setup so that you can use the copy for test
 
 See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
-*NB these tests will not currently be run by the Jenkins job so you need to run them locally!*
-
 ## Run one test
 Open the test file, find the test you want to run, click the icon to the left of the test name.
 
