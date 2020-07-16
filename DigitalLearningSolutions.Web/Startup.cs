@@ -34,14 +34,7 @@ namespace DigitalLearningSolutions.Web
             var defaultConnectionString = config["ConnectionStrings:DefaultConnection"];
 
             // Register database migration runner.
-            services.AddFluentMigratorCore()
-                .ConfigureRunner(rb => rb
-                    .AddSqlServer2016()
-                    .WithGlobalConnectionString(defaultConnectionString)
-                    .ScanIn(typeof(AddExampleTable).Assembly).For.Migrations()
-                ).AddLogging(lb => lb
-                    .AddFluentMigratorConsole()
-                );
+            services.RegisterMigrationRunner(defaultConnectionString);
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
