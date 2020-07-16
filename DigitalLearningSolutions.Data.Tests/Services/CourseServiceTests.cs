@@ -5,9 +5,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web;
     using NUnit.Framework;
     using FluentAssertions;
+    using FluentMigrator.Runner;
     using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.DependencyInjection;
 
     public class Tests
     {
@@ -19,6 +22,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
             var jenkinsConnectionString = GetJenkinsSqlConnectionString();
             var connectionString = jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
+
+            var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
+            serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
+
             var connection = new SqlConnection(connectionString);
             courseService = new CourseService(connection);
         }
