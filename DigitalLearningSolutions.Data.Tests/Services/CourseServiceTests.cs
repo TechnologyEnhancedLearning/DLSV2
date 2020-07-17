@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var jenkinsSqlServerUsername = Environment.GetEnvironmentVariable("SqlTestCredentials_USR");
             return jenkinsSqlServerUsername.IsNullOrEmpty() || jenkinsSqlServerPassword.IsNullOrEmpty()
                 ? ""
-                : $"Server=HEE-DLS-SQL\\HEETEST; Database=mbdbx101; User Id={jenkinsSqlServerUsername}; Password={jenkinsSqlServerPassword};";
+                : $"Server=HEE-DLS-SQL\\HEETEST; Database=mbdbx101_test; User Id={jenkinsSqlServerUsername}; Password={jenkinsSqlServerPassword};";
         }
     }
 }
