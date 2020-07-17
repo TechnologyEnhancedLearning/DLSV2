@@ -44,20 +44,24 @@ It can be useful to have a look at what's in the database, to test out and plan 
 ## Making changes to the database
 If you just want to make temporary changes to the database for testing (e.g. adding in some specific data to a table to test something) then you can do that in SQL Management Studio with the SQL scripts as described in the previous section. However if you want to make a permanent change to the database, for example to add a new table, then you need to use a migration.
 
-We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. The migrations we currently have are in DigitalLearningSolutions.Data.Migrations, and we apply them in Startup.cs.
+We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. Our migrations will live in DigitalLearningSolutions.Data.Migrations but we don't currently have any. The migrations will be applied by the RegisterMigrationRunner method in MigrationHelperMethods.cs. They should get applied when you run the app and when you run the data unit tests.
 
 ### Add a new migration
-Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. Look at the existing migrations or the fluent migrator documentation for an example of what the contents of the migration file should be.
+Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. The fluent migrator docs have a good example of what a migration should look like: https://fluentmigrator.github.io/.
 
-Once you've added your migration file you need to make sure it's applied when running the app and when running the data unit tests. Do this by adding a new ScanIn call to RegisterMigrationRunner in MigrationHelperMethods.cs, something like:
+Once you've added your migration file you need to make sure it's applied when running the app and when running the data unit tests. Do this by adding the migration to the ScanIn call in RegisterMigrationRunner in MigrationHelperMethods.cs, something like:
 ```
-.ScanIn(typeof(AddCustomerTable).Assembly).For.Migrations()
+.ConfigureRunner(rb => rb
+  .AddSqlServer2016()
+  .WithGlobalConnectionString(connectionString)
+  .ScanIn(typeof(AddCustomerTable).Assembly, typeof(AddConnectionsTable).Assembly).For.Migrations()
+)
 ```
-there should be other migrations there that you can copy. The migration should now get applied the next time you run the app or when you run the data unit tests.
+The migration should now get applied the next time you run the app or when you run the data unit tests.
 
 ### Reversing a migration
 If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
-* Remove it from the `ScanIn` statements in Startup.cs
+* Remove it from the `ScanIn` statement in Startup.cs
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
