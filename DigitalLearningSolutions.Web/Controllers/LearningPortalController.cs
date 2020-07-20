@@ -13,6 +13,11 @@
             this.courseService = courseService;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction("Current");
+        }
+
         public IActionResult Current()
         {
             var currentCourses = courseService.GetCurrentCourses();
