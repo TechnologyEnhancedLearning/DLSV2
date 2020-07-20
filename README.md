@@ -115,3 +115,14 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 2. Search for 'External Web Tools'.
 3. In the list select `$(PATH)` and use the up arrow button to move it to the top of the list.
 4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the npm build.
+
+# Logging
+We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
+* Any ASP.NET Core logs with level warning or above
+* Any requests (excluding requests to static files)
+
+We can add any additional logs using the `.Log` method.
+
+The log output will go to the console and to a file in DigitalLearningSolutions.Web/logs. The files are named using the date, e.g. hee-dls-log20200720.
+
+To view the console in Visual Studio select View -> Output and set "Show output from:" to "DigitalLearningSolutions.Web - ASP.NET Core Web Server".

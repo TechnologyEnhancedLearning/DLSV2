@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Data;
-    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Data.Services;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Builder;
@@ -11,6 +10,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Serilog;
 
     public class Startup
     {
@@ -52,6 +52,7 @@ namespace DigitalLearningSolutions.Web
             }
 
             app.UseStaticFiles();
+            app.UseSerilogRequestLogging();
             app.UseRouting();
             app.UseEndpoints(ConfigureEndPoints);
 

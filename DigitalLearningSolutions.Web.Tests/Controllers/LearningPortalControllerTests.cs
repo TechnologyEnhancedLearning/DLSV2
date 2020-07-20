@@ -7,6 +7,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningPortalControllerTests
@@ -19,7 +20,8 @@
         public void SetUp()
         {
             courseService = A.Fake<ICourseService>();
-            controller = new LearningPortalController(courseService);
+            var logger = A.Fake<ILogger<LearningPortalController>>();
+            controller = new LearningPortalController(courseService, logger);
         }
 
         [Test]
