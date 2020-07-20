@@ -39,5 +39,15 @@
             var model = new AvailableViewModel(availableCourses);
             return View(model);
         }
+
+        public IActionResult AccessibilityHelp()
+        {
+            return View();
+        }
+
+        public IActionResult Terms()
+        {
+            return View();
+        }
     }
 }
