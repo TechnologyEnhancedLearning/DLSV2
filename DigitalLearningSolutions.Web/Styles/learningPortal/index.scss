@@ -1,21 +1,5 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-.completed {
-  background-color: $color_nhsuk-dark-pink;
-}
-
-.current {
-  background-color: $color_nhsuk-grey-1;
-}
-
-.available {
-  background-color: $color_nhsuk-green;
-}
-
-.course-type {
-  text-align: center;
-}
-
 ul > li > ul > li {
     list-style-type:circle
 }
