@@ -7,7 +7,7 @@
 
     public interface ICourseService
     {
-        IEnumerable<Course> GetCurrentCourses();
+        IEnumerable<CurrentCourse> GetCurrentCourses();
         IEnumerable<Course> GetCompletedCourses();
         IEnumerable<Course> GetAvailableCourses();
     }
@@ -21,9 +21,9 @@
             this.connection = connection;
         }
 
-        public IEnumerable<Course> GetCurrentCourses()
+        public IEnumerable<CurrentCourse> GetCurrentCourses()
         {
-            return connection.Query<Course>(@"
+            return connection.Query<CurrentCourse>(@"
                 EXEC GetCurrentCoursesForCandidate_V2 @CandidateId = '1'
             ");
         }
