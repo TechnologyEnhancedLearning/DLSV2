@@ -24,7 +24,7 @@
         public IEnumerable<Course> GetCurrentCourses()
         {
             return connection.Query<Course>(@"
-                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 1
+                EXEC GetCurrentCoursesForCandidate_V2 @CandidateId = '1'
             ");
         }
 
