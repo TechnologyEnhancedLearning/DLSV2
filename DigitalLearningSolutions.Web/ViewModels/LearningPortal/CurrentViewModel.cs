@@ -22,7 +22,7 @@
             {
                 return currentCourses.Select(c => new CurrentCourseViewModel
                 {
-                    Name= c.CourseName,
+                    Name = c.CourseName,
                     Id = c.CustomisationID,
                     HasDiagnostic = c.HasDiagnostic,
                     HasLearning = c.HasLearning,

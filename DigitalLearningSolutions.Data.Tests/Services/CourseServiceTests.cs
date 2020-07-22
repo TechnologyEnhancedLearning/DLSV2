@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Get_current_courses_should_return_applications()
+        public void Get_current_courses_should_return_courses_for_candidate()
         {
             // When
             const int candidateId = 1;

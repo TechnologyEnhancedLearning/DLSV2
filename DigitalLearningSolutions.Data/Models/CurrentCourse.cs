@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models
 {
+    using System;
+
     public class CurrentCourse
     {
         public string CourseName { get; set; }
