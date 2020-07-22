@@ -49,5 +49,18 @@
         {
             return View();
         }
+
+        [Route("/LearningPortal/Error/{code:int}")]
+        public IActionResult Error(int code)
+        {
+            if (code == 404)
+            {
+                return View("Error/PageNotFound");
+            }
+            else
+            {
+                return View("Error/UnknownError");
+            }
+        }
     }
 }
