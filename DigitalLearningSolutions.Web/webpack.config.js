@@ -1,5 +1,6 @@
 const glob = require("glob");
 const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const entry = {};
 glob.sync("./Scripts/**/*.ts",
@@ -35,7 +36,15 @@ const config = {
   },
   resolve: {
     extensions: [".ts", ".js"]
-  }
+  },
+    plugins: [
+      new CopyPlugin({
+        patterns: [{
+              from: "./node_modules/@fortawesome/fontawesome-free/webfonts",
+              to: "../webfonts"
+        }]
+      })
+  ]
 };
 
 module.exports = config;
