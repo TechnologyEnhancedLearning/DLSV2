@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
+      <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <None Include="wwwroot\favicon.ico" />
     <None Include="wwwroot\README.txt" />
   </ItemGroup>
@@ -50,5 +50,19 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
   </ItemGroup>
+
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+        <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+        <Exec Command="npm install" />
+        <Exec Command="npm run build" />
+        <!-- Include the newly-built files in the publish output -->
+        <ItemGroup>
+            <DistFiles Include="wwwroot\**" />
+            <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+                <RelativePath>%(DistFiles.Identity)</RelativePath>
+                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            </ResolvedFileToPublish>
+        </ItemGroup>
+    </Target>
 
 </Project>
