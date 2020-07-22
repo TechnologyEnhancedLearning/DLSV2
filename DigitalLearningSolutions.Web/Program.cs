@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File("logs/hee-dls-log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File(@"c:\logs\hee-dls-log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             try
             {
