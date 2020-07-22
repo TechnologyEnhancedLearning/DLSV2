@@ -24,14 +24,14 @@
                 {
                     Name = c.CourseName,
                     Id = c.CustomisationID,
-                    HasDiagnostic = c.HasDiagnostic,
-                    HasLearning = c.HasLearning,
-                    IsAssessed = c.IsAssessed,
+                    HasDiagnosticAssessment = c.HasDiagnostic,
+                    HasLearningContent = c.HasLearning,
+                    HasLearningAssessmentAndCertification = c.IsAssessed,
                     StartedDate = c.StartedDate,
-                    LastAccessed = c.LastAccessed,
+                    LastAccessedDate = c.LastAccessed,
                     CompleteByDate = c.CompleteByDate,
                     DiagnosticScore = c.DiagnosticScore,
-                    Passes = c.Passes,
+                    PassedSections = c.Passes,
                     Sections = c.Sections,
                     UserIsSupervisor = c.SupervisorAdminId == candidateId,
                     IsEnrolledWithGroup = c.GroupCustomisationId != 0,
@@ -43,14 +43,14 @@
         {
             public string Name { get; set; }
             public int Id { get; set; }
-            public bool HasDiagnostic { get; set; }
-            public bool HasLearning { get; set; }
-            public bool IsAssessed { get; set; }
+            public bool HasDiagnosticAssessment { get; set; }
+            public bool HasLearningContent { get; set; }
+            public bool HasLearningAssessmentAndCertification { get; set; }
             public DateTime StartedDate { get; set; }
-            public DateTime LastAccessed { get; set; }
+            public DateTime LastAccessedDate { get; set; }
             public DateTime CompleteByDate { get; set; }
             public int? DiagnosticScore { get; set; }
-            public int Passes { get; set; }
+            public int PassedSections { get; set; }
             public int Sections { get; set; }
             public bool UserIsSupervisor { get; set; }
             public bool IsEnrolledWithGroup { get; set; }
