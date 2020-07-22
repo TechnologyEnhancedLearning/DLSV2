@@ -1,7 +1,10 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+﻿@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+$fa-font-path: '/webfonts';
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~nhsuk-frontend/packages/core/all";
 
 ul > li > ul > li {
-    list-style-type:circle
+    list-style-type:circle;
 }
 
 .list-heading {
@@ -10,4 +13,38 @@ ul > li > ul > li {
   li {
     @extend .nhsuk-u-font-weight-normal;
   }
+}
+
+#content-header {
+    display: flex;
+    float: right;
+}
+
+.application-switcher-container {
+    padding-right: 24px; 
+}
+
+.application-switcher {
+  font-size: 32px;
+  text-decoration: none;
+  width: auto;
+
+  &:link, &:visited {
+    color: white;
+  }
+
+  &:hover {
+      border-bottom: 2px solid white;
+  }
+
+  &:focus, &:focus:visited {
+      box-shadow: none;
+      color: $nhsuk-focus-text-color;
+      border-bottom: 2px solid $nhsuk-focus-text-color;
+      background-color: $nhsuk-focus-color;
+  }
+}
+
+.nhsuk-header__navigation-item.selected {
+  box-shadow: inset 0 -4px 0 #d8dde0;
 }
