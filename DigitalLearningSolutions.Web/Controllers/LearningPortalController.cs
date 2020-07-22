@@ -7,6 +7,8 @@
 
     public class LearningPortalController : Controller
     {
+        //TODO placeholder candidateId, replace once HEEDLS-4 is implemented
+        private readonly int candidateId = 1;
         private readonly ICourseService courseService;
         private readonly ILogger<LearningPortalController> logger;
 
@@ -19,7 +21,6 @@
         public IActionResult Current()
         {
             logger.LogInformation("Getting current courses");
-            const int candidateId = 1;
             var currentCourses = courseService.GetCurrentCourses(candidateId);
             var model = new CurrentViewModel(currentCourses);
             return View(model);

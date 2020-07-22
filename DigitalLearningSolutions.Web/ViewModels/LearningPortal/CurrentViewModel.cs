@@ -33,7 +33,7 @@
                     Sections = c.Sections,
                     UserIsSupervisor = c.SupervisorAdminId != 0,
                     IsEnrolledWithGroup = c.GroupCustomisationId != 0,
-    });
+                });
             }
         }
 
