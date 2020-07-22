@@ -46,7 +46,7 @@
             public bool HasLearningAssessmentAndCertification { get; set; }
             public DateTime StartedDate { get; set; }
             public DateTime LastAccessedDate { get; set; }
-            public DateTime CompleteByDate { get; set; }
+            public DateTime? CompleteByDate { get; set; }
             public int? DiagnosticScore { get; set; }
             public int PassedSections { get; set; }
             public int Sections { get; set; }

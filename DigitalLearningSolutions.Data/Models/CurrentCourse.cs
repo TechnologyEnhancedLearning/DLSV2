@@ -11,7 +11,7 @@
         public bool IsAssessed { get; set; }
         public DateTime StartedDate { get; set; }
         public DateTime LastAccessed { get; set; }
-        public DateTime CompleteByDate { get; set; }
+        public DateTime? CompleteByDate { get; set; }
         public int? DiagnosticScore { get; set; }
         public int Passes { get; set; }
         public int Sections { get; set; }
