@@ -34,6 +34,7 @@
                     Passes = c.Passes,
                     Sections = c.Sections,
                     UserIsSupervisor = c.SupervisorAdminId == candidateId,
+                    IsEnrolledWithGroup = c.GroupCustomisationId != 0,
     });
             }
         }
@@ -52,6 +53,7 @@
             public int Passes { get; set; }
             public int Sections { get; set; }
             public bool UserIsSupervisor { get; set; }
+            public bool IsEnrolledWithGroup { get; set; }
         }
     }
 }
