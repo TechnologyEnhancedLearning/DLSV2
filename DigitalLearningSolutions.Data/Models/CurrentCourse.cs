@@ -15,5 +15,6 @@ namespace DigitalLearningSolutions.Data.Models
         public int? DiagnosticScore { get; set; }
         public int Passes { get; set; }
         public int Sections { get; set; }
+        public int SupervisorAdminId { get; set; }
     }
 }

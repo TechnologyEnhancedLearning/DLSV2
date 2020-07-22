@@ -19,8 +19,9 @@
         public IActionResult Current()
         {
             logger.LogInformation("Getting current courses");
-            var currentCourses = courseService.GetCurrentCourses();
-            var model = new CurrentViewModel(currentCourses);
+            const int candidateId = 1;
+            var currentCourses = courseService.GetCurrentCourses(candidateId);
+            var model = new CurrentViewModel(currentCourses, candidateId);
             return View(model);
         }
 

@@ -8,10 +8,12 @@
     public class CurrentViewModel
     {
         private readonly IEnumerable<CurrentCourse> currentCourses;
+        private readonly int candidateId;
 
-        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses)
+        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, int candidateId)
         {
             this.currentCourses = currentCourses;
+            this.candidateId = candidateId;
         }
 
         public IEnumerable<CurrentCourseViewModel> CurrentCourses
@@ -31,6 +33,7 @@
                     DiagnosticScore = c.DiagnosticScore,
                     Passes = c.Passes,
                     Sections = c.Sections,
+                    UserIsSupervisor = c.SupervisorAdminId == candidateId,
     });
             }
         }
@@ -48,6 +51,7 @@
             public int? DiagnosticScore { get; set; }
             public int Passes { get; set; }
             public int Sections { get; set; }
+            public bool UserIsSupervisor { get; set; }
         }
     }
 }
