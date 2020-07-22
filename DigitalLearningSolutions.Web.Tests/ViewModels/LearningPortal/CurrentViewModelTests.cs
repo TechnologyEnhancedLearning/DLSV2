@@ -18,7 +18,7 @@
                 new CurrentCourse { CustomisationID = 2, CourseName = "Course 2" }
             };
 
-            model = new CurrentViewModel(currentCourses, 1);
+            model = new CurrentViewModel(currentCourses);
         }
 
         [TestCase(0, "Course 1", 1)]

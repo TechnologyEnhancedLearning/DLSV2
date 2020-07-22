@@ -8,12 +8,10 @@
     public class CurrentViewModel
     {
         private readonly IEnumerable<CurrentCourse> currentCourses;
-        private readonly int candidateId;
 
-        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, int candidateId)
+        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses)
         {
             this.currentCourses = currentCourses;
-            this.candidateId = candidateId;
         }
 
         public IEnumerable<CurrentCourseViewModel> CurrentCourses
@@ -33,7 +31,7 @@
                     DiagnosticScore = c.DiagnosticScore,
                     PassedSections = c.Passes,
                     Sections = c.Sections,
-                    UserIsSupervisor = c.SupervisorAdminId == candidateId,
+                    UserIsSupervisor = c.SupervisorAdminId != 0,
                     IsEnrolledWithGroup = c.GroupCustomisationId != 0,
     });
             }

@@ -61,7 +61,7 @@
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses, candidateID);
+            var expectedModel = new CurrentViewModel(currentCourses);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

@@ -21,7 +21,7 @@
             logger.LogInformation("Getting current courses");
             const int candidateId = 1;
             var currentCourses = courseService.GetCurrentCourses(candidateId);
-            var model = new CurrentViewModel(currentCourses, candidateId);
+            var model = new CurrentViewModel(currentCourses);
             return View(model);
         }
 
