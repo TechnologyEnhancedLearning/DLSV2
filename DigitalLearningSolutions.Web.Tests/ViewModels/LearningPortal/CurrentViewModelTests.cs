@@ -14,11 +14,11 @@
         public void SetUp()
         {
             var currentCourses = new[] {
-                new Course { Id = 1, Name = "Course 1" },
-                new Course { Id = 2, Name = "Course 2" }
+                new CurrentCourse { CustomisationID = 1, CourseName = "Course 1" },
+                new CurrentCourse { CustomisationID = 2, CourseName = "Course 2" }
             };
 
-            model = new CurrentViewModel(currentCourses);
+            model = new CurrentViewModel(currentCourses, 1);
         }
 
         [TestCase(0, "Course 1", 1)]

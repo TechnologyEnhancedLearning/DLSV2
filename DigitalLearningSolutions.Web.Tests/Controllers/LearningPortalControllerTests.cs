@@ -28,17 +28,20 @@
         public void Current_action_should_return_view_result()
         {
             // Given
+            const int candidateID = 1;
             var currentCourses = new[] {
-                new Course { Id = 1, Name = "Course 1" },
-                new Course { Id = 2, Name = "Course 2" }
+                new CurrentCourse { CustomisationID = 4, CourseName = "Course 1", HasDiagnostic = true, HasLearning = true,
+                    IsAssessed = true, DiagnosticScore = 1, Passes = 1, Sections = 1, SupervisorAdminId = 1, GroupCustomisationId = 0 },
+                new CurrentCourse { CustomisationID = 2, CourseName = "Course 2", HasDiagnostic = false, HasLearning = false,
+                    IsAssessed = true, DiagnosticScore = 2, Passes = 2, Sections = 2, SupervisorAdminId = 5, GroupCustomisationId = 7 },
             };
-            A.CallTo(() => courseService.GetCurrentCourses()).Returns(currentCourses);
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses);
+            var expectedModel = new CurrentViewModel(currentCourses, candidateID);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
