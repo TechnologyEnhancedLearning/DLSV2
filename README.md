@@ -123,6 +123,6 @@ We're using [serilog](https://serilog.net/), specifically [serilog for .net core
 
 We can add any additional logs using the `.Log` method.
 
-The log output will go to the console and to a file in DigitalLearningSolutions.Web/logs. The files are named using the date, e.g. hee-dls-log20200720.
+The log output will go to the console and to a file in C:/logs. The files are named using the date, e.g. hee-dls-log20200720.
 
 To view the console in Visual Studio select View -> Output and set "Show output from:" to "DigitalLearningSolutions.Web - ASP.NET Core Web Server".
