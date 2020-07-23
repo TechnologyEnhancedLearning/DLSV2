@@ -52,6 +52,26 @@
             public int Sections { get; set; }
             public bool UserIsSupervisor { get; set; }
             public bool IsEnrolledWithGroup { get; set; }
+
+            public bool Overdue()
+            {
+                return CompleteByDate <= DateTime.Today;
+            }
+
+            public bool HasDiagnosticScore()
+            {
+                return HasDiagnosticAssessment && DiagnosticScore != null;
+            }
+
+            public bool HasPassedSections()
+            {
+                return HasLearningAssessmentAndCertification;
+            }
+
+            public string DisplayPassedSections()
+            {
+                return $"{PassedSections}/{Sections}";
+            }
         }
     }
 }
