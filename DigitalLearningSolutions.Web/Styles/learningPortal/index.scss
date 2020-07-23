@@ -23,3 +23,13 @@ ul > li > ul > li {
     }
   }
 }
+
+body:not(.js-enabled) {
+  .nhsuk-header__menu {
+    display: none;
+  }
+
+  .nhsuk-header__navigation {
+    display: block;
+  }
+}
