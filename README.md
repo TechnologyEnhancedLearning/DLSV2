@@ -3,7 +3,7 @@
 
 - [Visual Studio Professional 2019](https://visualstudio.microsoft.com/downloads/)
     - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
-- [SQL Server 2019](https://www.notion.so/SQL-Server-2019-setup-e6ee124735c445d79010afed3ace3cc0)
+- SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
 

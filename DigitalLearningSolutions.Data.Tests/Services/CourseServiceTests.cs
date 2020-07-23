@@ -31,18 +31,30 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Get_current_courses_should_return_applications()
+        public void Get_current_courses_should_return_courses_for_candidate()
         {
             // When
-            var result = courseService.GetCurrentCourses().ToList();
+            const int candidateId = 1;
+            var result = courseService.GetCurrentCourses(candidateId).ToList();
 
             // Then
-            var expectedFirstCourse = new Course
+            var expectedFirstCourse = new CurrentCourse
             {
-                Name = "Entry Level - Win XP, Office 2003/07 OLD",
-                Id = 1
+                CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",
+                CustomisationID = 15853,
+                LastAccessed = new DateTime(2019, 1, 22, 8, 20 , 39, 133),
+                StartedDate = new DateTime(2016, 7, 6, 11, 12, 15, 393),
+                DiagnosticScore = 0,
+                IsAssessed = true,
+                HasDiagnostic = true,
+                HasLearning = true,
+                Passes = 2,
+                Sections = 6,
+                CompleteByDate = new DateTime(2018, 12, 31, 0, 0, 0, 0),
+                GroupCustomisationId = 0,
+                SupervisorAdminId = 0,
             };
-            result.Should().HaveCount(57);
+            result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 
