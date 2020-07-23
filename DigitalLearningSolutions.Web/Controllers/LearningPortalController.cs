@@ -50,8 +50,13 @@
             return View();
         }
 
-        [Route("/LearningPortal/Error/{code:int}")]
-        public IActionResult Error(int code)
+        public IActionResult Error()
+        {
+            return View("Error/UnknownError");
+        }
+
+        [Route("/LearningPortal/StatusCode/{code:int}")]
+        public IActionResult StatusCode(int code)
         {
             if (code == 404)
             {
