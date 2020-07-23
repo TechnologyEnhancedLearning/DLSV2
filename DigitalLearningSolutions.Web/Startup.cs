@@ -51,7 +51,8 @@ namespace DigitalLearningSolutions.Web
                 app.UseBrowserLink();
             }
 
-            app.UseStatusCodePagesWithReExecute("/LearningPortal/Error/{0}");
+            app.UseExceptionHandler("/LearningPortal/Error");
+            app.UseStatusCodePagesWithReExecute("/LearningPortal/StatusCode/{0}");
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseRouting();
@@ -62,7 +63,7 @@ namespace DigitalLearningSolutions.Web
 
         private void ConfigureEndPoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}/{id?}");
+            endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}");
         }
     }
 }
