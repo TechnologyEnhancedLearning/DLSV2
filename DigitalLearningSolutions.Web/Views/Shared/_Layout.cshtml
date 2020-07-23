@@ -38,6 +38,7 @@
 </head>
 
 <body>
+<div id="pagewrapper">
 <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
 <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
@@ -120,7 +121,7 @@
 
 </header>
 
-<div class="nhsuk-width-container">
+<div class="nhsuk-width-container" id="maincontentwrapper">
   <main class="nhsuk-main-wrapper" id="maincontent">
     @RenderBody()
   </main>
@@ -147,6 +148,6 @@
 </footer>
 
 @await RenderSectionAsync("scripts", false)
-
+</div>
 </body>
 </html>

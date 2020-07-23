@@ -1,13 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
+    using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.VisualBasic;
     using NUnit.Framework;
 
     public class LearningPortalControllerTests
@@ -30,30 +35,8 @@
             // Given
             const int candidateID = 1;
             var currentCourses = new[] {
-                new CurrentCourse {
-                    CustomisationID = 4,
-                    CourseName = "Course 1",
-                    HasDiagnostic = true,
-                    HasLearning = true,
-                    IsAssessed = true,
-                    DiagnosticScore = 1,
-                    Passes = 1,
-                    Sections = 1,
-                    SupervisorAdminId = 1,
-                    GroupCustomisationId = 0
-                },
-                new CurrentCourse {
-                    CustomisationID = 2,
-                    CourseName = "Course 2",
-                    HasDiagnostic = false,
-                    HasLearning = false,
-                    IsAssessed = true,
-                    DiagnosticScore = 2,
-                    Passes = 2,
-                    Sections = 2,
-                    SupervisorAdminId = 5,
-                    GroupCustomisationId = 7
-                },
+                Helper.CreateDefaultCurrentCourse(),
+                Helper.CreateDefaultCurrentCourse()
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
@@ -64,6 +47,143 @@
             var expectedModel = new CurrentViewModel(currentCourses);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Current_course_should_be_overdue_when_complete_by_date_is_in_the_past()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            currentCourse.CompleteByDate -= TimeSpan.FromDays(1);
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+            // Then
+            course.Overdue().Should().BeTrue();
+        }
+
+        [Test]
+        public void Current_course_should_not_be_overdue_when_complete_by_date_is_in_the_future()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            currentCourse.CompleteByDate += TimeSpan.FromDays(1);
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.Overdue().Should().BeFalse();
+        }
+
+        [Test]
+        public void Current_course_should_not_have_diagnostic_score_without_diagnostic_assessment()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            currentCourse.HasDiagnostic = false;
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.HasDiagnosticScore().Should().BeFalse();
+        }
+
+        [Test]
+        public void Current_course_should_not_have_diagnostic_score_without_diagnostic_score_value()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            currentCourse.DiagnosticScore = null;
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.HasDiagnosticScore().Should().BeFalse();
+        }
+
+        [Test]
+        public void Current_course_should_have_diagnostic_score_with_diagnostic_score_value_and_diagnostic_assessment()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.HasDiagnosticScore().Should().BeTrue();
+        }
+
+        [Test]
+        public void Current_course_should_not_have_passed_sections_without_learning_assessment()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            currentCourse.IsAssessed = false;
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.HasPassedSections().Should().BeFalse();
+        }
+
+        [Test]
+        public void Current_course_should_have_passed_sections_with_learning_assessment()
+        {
+            // Given
+            const int candidateID = 1;
+            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
+
+            // When
+            var course = Helper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.HasPassedSections().Should().BeTrue();
         }
 
         [Test]
