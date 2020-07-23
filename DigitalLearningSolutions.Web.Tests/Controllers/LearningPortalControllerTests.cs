@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
@@ -10,9 +9,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Microsoft.VisualBasic;
     using NUnit.Framework;
 
     public class LearningPortalControllerTests
@@ -35,8 +32,8 @@
             // Given
             const int candidateID = 1;
             var currentCourses = new[] {
-                Helper.CreateDefaultCurrentCourse(),
-                Helper.CreateDefaultCurrentCourse()
+                CurrentCourseHelper.CreateDefaultCurrentCourse(),
+                CurrentCourseHelper.CreateDefaultCurrentCourse()
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
@@ -54,15 +51,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
-            currentCourse.CompleteByDate -= TimeSpan.FromDays(1);
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
             // Then
             course.Overdue().Should().BeTrue();
@@ -73,15 +69,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
-            currentCourse.CompleteByDate += TimeSpan.FromDays(1);
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
@@ -93,15 +88,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
-            currentCourse.HasDiagnostic = false;
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
@@ -113,15 +107,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
-            currentCourse.DiagnosticScore = null;
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
@@ -133,14 +126,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
@@ -152,15 +145,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
-            currentCourse.IsAssessed = false;
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
@@ -172,14 +164,14 @@
         {
             // Given
             const int candidateID = 1;
-            var currentCourse = Helper.CreateDefaultCurrentCourse();
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
             var currentCourses = new[] {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(candidateID)).Returns(currentCourses);
 
             // When
-            var course = Helper.CurrentCourseViewModelFromController(controller);
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
 
             // Then
