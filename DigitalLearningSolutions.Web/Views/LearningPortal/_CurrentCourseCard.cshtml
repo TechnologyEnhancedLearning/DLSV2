@@ -41,22 +41,29 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter">
       <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Enrolled</h5>
+      <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+
       <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title">@Model.StartedDate.ToShortDateString()</p>
     </div>
     <div class="nhsuk-grid-column-one-quarter">
       <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
+      <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+
       <p aria-describedby="@Model.Id-name @Model.Id-last-access-title">@Model.LastAccessedDate.ToShortDateString()</p>
     </div>
     <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
-      <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <div class="nhsuk-grid-column-three-quarters">
         <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>
+        <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+      </div>
+      <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         @{ var overdue = Model.Overdue() ? "overdue" : ""; }
         <p class="@overdue" aria-describedby="@Model.Id-name @Model.Id-complete-by-title">@(Model.CompleteByDate?.ToShortDateString() ?? "-")</p>
       </div>
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-        <button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" aria-describedby="@Model.Id-name" type="submit">
-          Edit completion date
-        </button>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCompleteByDate" asp-route-id="@Model.Id">
+          Edit
+        </a>
       </div>
     </div>
   </div>
@@ -67,6 +74,7 @@
       {
         <div class="nhsuk-grid-column-one-quarter">
           <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-diagnostic-score-title" aria-describedby="@Model.Id-name">Diagnostic Score</h5>
+          <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
           <p aria-describedby="@Model.Id-name @Model.Id-diagnostic-score-title">@Model.DiagnosticScore</p>
         </div>
       }
@@ -74,6 +82,7 @@
       {
         <div class="nhsuk-grid-column-one-quarter">
           <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-passed-sections-title" aria-describedby="@Model.Id-name">Passed Sections</h5>
+          <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
           <p aria-describedby="@Model.Id-name @Model.Id-passed-sections-title">@Model.DisplayPassedSections()</p>
         </div>
       }
