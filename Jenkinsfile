@@ -22,6 +22,16 @@ pipeline {
                 }
             }
         }
+        stage('Build TypeScript') {
+            steps {
+                gitlabCommitStatus(name: 'Build TypeScript') {
+                    dir("DigitalLearningSolutions.Web/") {
+                        bat "npm install"
+                        bat "npm run build"
+                    }
+                }
+            }
+        }
         stage('Web Tests') {
             steps {
                 gitlabCommitStatus(name: 'Web Tests') {
