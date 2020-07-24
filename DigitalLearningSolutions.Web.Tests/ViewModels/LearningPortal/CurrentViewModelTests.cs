@@ -4,7 +4,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CurrentViewModelTests
@@ -14,6 +16,8 @@
         [SetUp]
         public void SetUp()
         {
+            var config = A.Fake<IConfiguration>();
+            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns("http://www.dls.nhs.uk");
             var currentCourses = new[] {
                 new CurrentCourse {
                     CustomisationID = 1,
@@ -47,7 +51,7 @@
                 },
             };
 
-            model = new CurrentViewModel(currentCourses);
+            model = new CurrentViewModel(currentCourses, config);
         }
 
         [TestCase(
@@ -64,7 +68,8 @@
             4,
             6,
             false,
-            false
+            false,
+            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=1&lp=1"
            )]
         [TestCase(
             1,
@@ -80,7 +85,8 @@
             14,
             16,
             true,
-            true
+            true,
+            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=2&lp=1"
            )]
         public void Current_courses_should_map_to_view_models_in_the_correct_order(
             int index,
@@ -96,7 +102,8 @@
             int expectedPasses,
             int expectedSections,
             bool expectedIsSupervisor,
-            bool expectedIsGroup )
+            bool expectedIsGroup,
+            string expectedLaunchUrl)
         {
             var course = model.CurrentCourses.ElementAt(index);
             course.Id.Should().Be(expectedId);
@@ -112,6 +119,7 @@
             course.Sections.Should().Be(expectedSections);
             course.UserIsSupervisor.Should().Be(expectedIsSupervisor);
             course.IsEnrolledWithGroup.Should().Be(expectedIsGroup);
+            course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
     }
 }
