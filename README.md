@@ -65,6 +65,10 @@ If the migration has already been deployed and therefore has run on any other da
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
+# Setting up the old code
+
+For testing the integration with the old system (for example launching a course will redirect to the old system) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+
 # Running the app
 
 The project should now build. Confirm this via *Build* → *Build Solution* (or `CTRL+SHIFT+B`).
@@ -123,6 +127,41 @@ We're using [serilog](https://serilog.net/), specifically [serilog for .net core
 
 We can add any additional logs using the `.Log` method.
 
-The log output will go to the console and to a file in C:/logs. The files are named using the date, e.g. hee-dls-log20200720.
+The log output will go to the console and to a table in the database.
 
 To view the console in Visual Studio select View -> Output and set "Show output from:" to "DigitalLearningSolutions.Web - ASP.NET Core Web Server".
+
+To view the logs in the database connect to the local db in SQL Server Management Studio. The table with the logs is V2LogEvents (the Logs table stores logs for the old system).
+
+## Useful queries
+
+### Get all the logs for today
+```
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE DAY([TimeStamp]) = DAY(GETDATE())
+```
+
+### Get all the logs for a session
+Look for the entry with message "starting up", they indicate the start of a session. Once you know the id for the line indicating the start of your session you can do, e.g.
+```
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Id] > 10
+```
+if the id for the start of your session was 11. If there's a session after the one you want to look at you can include:
+```
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Id] > 10 AND [Id] < 16
+```
+if the id for the start of the next session was 16.
+
+### Get the logs for all requests
+```
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [MessageTemplate] LIKE '%RequestMethod%'
+```
+
+### Get all exceptions
+```
+SELECT [Exception] FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Exception] IS NOT NULL
+```
+or
+```
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Exception] IS NOT NULL
+```
+to get the full log. The stack trace for the exception will be logged but isn't very easy to view in the table. I'd recommend copying it and pasting it to a text editor or similar.

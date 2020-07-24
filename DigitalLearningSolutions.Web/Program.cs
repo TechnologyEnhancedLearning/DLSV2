@@ -1,21 +1,19 @@
 namespace DigitalLearningSolutions.Web
 {
     using System;
+    using System.IO;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
     using Serilog;
     using Serilog.Events;
+    using Serilog.Sinks.MSSqlServer.Sinks.MSSqlServer.Options;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.File(@"c:\logs\hee-dls-log.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            SetUpLogger();
             try
             {
                 Log.Information("Starting up");
@@ -36,6 +34,25 @@ namespace DigitalLearningSolutions.Web
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+        }
+
+        public static void SetUpLogger()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var appSettingsFileName = environmentName == Environments.Development ? "appsettings.Development.json" : "appsettings.json";
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(appSettingsFileName)
+                .Build();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.MSSqlServer(
+                    connectionString: config["ConnectionStrings:DefaultConnection"],
+                    sinkOptions: new SinkOptions { TableName = "V2LogEvents", AutoCreateSqlTable = true },
+                    appConfiguration: config)
+                .CreateLogger();
         }
     }
 }
