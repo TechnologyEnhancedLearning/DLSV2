@@ -65,6 +65,10 @@ If the migration has already been deployed and therefore has run on any other da
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
+# Setting up the old code
+
+For testing the integration with the old system (for example launching a course will redirect to the old system) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+
 # Running the app
 
 The project should now build. Confirm this via *Build* → *Build Solution* (or `CTRL+SHIFT+B`).

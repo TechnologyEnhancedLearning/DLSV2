@@ -3,26 +3,32 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     public class LearningPortalController : Controller
     {
         //TODO placeholder candidateId, replace once HEEDLS-4 is implemented
-        private readonly int candidateId = 1;
+        private readonly int candidateId = 254480;
         private readonly ICourseService courseService;
         private readonly ILogger<LearningPortalController> logger;
+        private readonly IConfiguration config;
 
-        public LearningPortalController(ICourseService courseService, ILogger<LearningPortalController> logger)
+        public LearningPortalController(
+            ICourseService courseService,
+            ILogger<LearningPortalController> logger,
+            IConfiguration config)
         {
             this.courseService = courseService;
             this.logger = logger;
+            this.config = config;
         }
 
         public IActionResult Current()
         {
             logger.LogInformation("Getting current courses");
             var currentCourses = courseService.GetCurrentCourses(candidateId);
-            var model = new CurrentViewModel(currentCourses);
+            var model = new CurrentViewModel(currentCourses, config);
             return View(model);
         }
 
@@ -58,16 +64,9 @@
         }
 
         [Route("/LearningPortal/StatusCode/{code:int}")]
-        public IActionResult StatusCode(int code)
+        public new IActionResult StatusCode(int code)
         {
-            if (code == 404)
-            {
-                return View("Error/PageNotFound");
-            }
-            else
-            {
-                return View("Error/UnknownError");
-            }
+            return View(code == 404 ? "Error/PageNotFound" : "Error/UnknownError");
         }
     }
 }

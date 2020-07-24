@@ -4,14 +4,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.Extensions.Configuration;
 
     public class CurrentViewModel
     {
         private readonly IEnumerable<CurrentCourse> currentCourses;
+        private readonly IConfiguration config;
 
-        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses)
+        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, IConfiguration config)
         {
             this.currentCourses = currentCourses;
+            this.config = config;
         }
 
         public IEnumerable<CurrentCourseViewModel> CurrentCourses
@@ -33,6 +36,7 @@
                     Sections = c.Sections,
                     UserIsSupervisor = c.SupervisorAdminId != 0,
                     IsEnrolledWithGroup = c.GroupCustomisationId != 0,
+                    LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={c.CustomisationID}&lp=1"
                 });
             }
         }
@@ -52,6 +56,7 @@
             public int Sections { get; set; }
             public bool UserIsSupervisor { get; set; }
             public bool IsEnrolledWithGroup { get; set; }
+            public string LaunchUrl { get; set; }
 
             public bool Overdue()
             {
