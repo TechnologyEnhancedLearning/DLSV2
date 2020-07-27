@@ -30,11 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Chutzpah" Version="4.4.10" />
     <PackageReference Include="FluentMigrator" Version="3.2.6" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.6" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.6" />
-    <PackageReference Include="jasmine" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
     <PackageReference Include="Microsoft.JavaScript.UnitTest" Version="1.5.10610.1">
