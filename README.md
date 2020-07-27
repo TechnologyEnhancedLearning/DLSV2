@@ -97,7 +97,17 @@ Open the test file, find the test you want to run, click the icon to the left of
 Open the file and click the icon to the left of the class name.
 
 ## Run all the tests
-Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests". 
+Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests".
+
+## Typescript tests
+The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. They should run in the same way as all the other tests, in the Test Explorer. If you have any issues, make sure the scripts are built by running `npm run build` inside `DigitalLearningSolutions.Web`.
+
+The tests can also be run using `npm t`.
+
+## Typescript linting
+The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This will highlight any lint errors in the editor.
+
+Linting can be run with `npm lint` inside `DigitalLearningSolutions.Web`. `npm lint-fix` may autofix some errors.
 
 # Troubleshooting
 
