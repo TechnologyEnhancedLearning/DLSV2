@@ -1,6 +1,5 @@
-﻿describe("An example", () => {
-  it("does nothing", () => {
+describe('An example', () => {
+  it('does nothing', () => {
     expect(true).toBe(true);
-  })
-})
-
+  });
+});
