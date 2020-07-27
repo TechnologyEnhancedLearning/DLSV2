@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.6" />
+    <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.2.8" />
   </ItemGroup>
 
 </Project>

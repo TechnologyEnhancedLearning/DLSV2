@@ -12,7 +12,7 @@
                 .ConfigureRunner(rb => rb
                     .AddSqlServer2016()
                     .WithGlobalConnectionString(connectionString)
-                    .ScanIn(typeof(ExampleMigration).Assembly).For.Migrations() // TODO: remove example migration once we have a real migration
+                    .ScanIn(typeof(AddSelfAssessmentTables).Assembly).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
                 );

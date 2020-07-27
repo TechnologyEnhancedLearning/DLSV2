@@ -21,7 +21,7 @@ You should now be able to open the solution in Visual Studio 2019 by finding and
 
 Get a database backup `.bak` file from the current system.
 
-Restore the database from the backup:
+## Restore the database from the backup
 
 - Open SQL Server Management Studio and connect to your `localhost` instance
 - Right-click *Databases* → *Restore Database…*
@@ -30,6 +30,13 @@ Restore the database from the backup:
 - Click *OK* on the various windows until the restore starts to run
 
 You should now see the `mbdbx101` database in your *Databases* folder on the `localhost` server.
+
+## Add the self assessment data
+
+We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored database:
+1. Open SQL Server Management Studio
+2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the root of this repo.
+3. Press the Execute button to run the script. 
 
 ## Inspecting the database
 
