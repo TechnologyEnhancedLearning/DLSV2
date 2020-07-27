@@ -57,7 +57,7 @@ pipeline {
         }
         stage('TS Lint') {
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                gitlabCommitStatus(name: 'TS Lint') {
                     dir ("DigitalLearningSolutions.Web/") {
                         bat "npm run lint"
                     }

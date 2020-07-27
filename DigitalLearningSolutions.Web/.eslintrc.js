@@ -13,7 +13,7 @@ module.exports = {
         sourceType: 'module',
     },
     settings: {
-      'import/resolver': 'webpack'
+        'import/resolver': 'webpack'
     },
     plugins: [
         '@typescript-eslint',
@@ -21,15 +21,16 @@ module.exports = {
     ],
 
     rules: {
-      "import/extensions": [
-        'error',
-        'ignorePackages',
-        {
-          "js": 'never',
-          "jsx": 'never',
-          "ts": 'never',
-          "tsx": 'never'
-        }
-      ]
+        "import/extensions": [
+            'error',
+            'ignorePackages',
+            {
+                "js": 'never',
+                "jsx": 'never',
+                "ts": 'never',
+                "tsx": 'never'
+            }
+        ],
+        "linebreak-style": 0
     }
 };
