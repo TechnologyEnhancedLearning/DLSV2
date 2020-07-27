@@ -1,1 +1,3 @@
-﻿export const WELCOME_MESSAGE = "Hello, World!";
+const WELCOME_MESSAGE = 'Hello, World!';
+
+export default WELCOME_MESSAGE;
