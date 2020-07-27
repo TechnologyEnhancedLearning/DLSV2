@@ -105,7 +105,7 @@ The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningS
 The tests can also be run using `npm t`.
 
 ## Typescript linting
-The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This will highlight any lint errors in the editor.
+The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This should highlight any lint errors in the editor. It's not the most reliable, and if in doubt, run the lint manually.
 
 Linting can be run with `npm lint` inside `DigitalLearningSolutions.Web`. `npm lint-fix` may autofix some errors.
 
