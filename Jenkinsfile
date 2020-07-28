@@ -26,7 +26,7 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Build TypeScript') {
                     dir("DigitalLearningSolutions.Web/") {
-                        bat "npm install"
+                        bat "npm ci"
                         bat "npm run build"
                     }
                 }
@@ -43,6 +43,24 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Data Tests') {
                     bat "dotnet test DigitalLearningSolutions.Data.Tests"
+                }
+            }
+        }
+        stage('TS Tests') {
+            steps {
+                gitlabCommitStatus(name: 'TS Tests') {
+                    dir ("DigitalLearningSolutions.Web/") {
+                        bat "npm test"
+                    }
+                }
+            }
+        }
+        stage('TS Lint') {
+            steps {
+                gitlabCommitStatus(name: 'TS Lint') {
+                    dir ("DigitalLearningSolutions.Web/") {
+                        bat "npm run lint"
+                    }
                 }
             }
         }

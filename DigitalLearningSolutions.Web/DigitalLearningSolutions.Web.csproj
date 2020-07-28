@@ -8,6 +8,15 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <JavaScriptTestRoot>wwwroot\js\spec</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="wwwroot\README.txt" />
   </ItemGroup>
@@ -17,6 +26,7 @@
     <None Remove="Scripts\learningPortal\index.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\nhsuk.ts" />
+    <None Remove="Scripts\spec\exampleSpec.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +35,10 @@
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
+    <PackageReference Include="Microsoft.JavaScript.UnitTest" Version="1.5.10610.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
@@ -32,10 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
-      <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <None Include="wwwroot\favicon.ico" />
     <None Include="wwwroot\README.txt" />
   </ItemGroup>
@@ -50,20 +64,21 @@
     <TypeScriptCompile Include="Scripts\learningPortal\index.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+    <TypeScriptCompile Include="Scripts\spec\exampleSpec.ts" />
   </ItemGroup>
 
-    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-        <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-        <Exec Command="npm install" />
-        <Exec Command="npm run build" />
-        <!-- Include the newly-built files in the publish output -->
-        <ItemGroup>
-            <DistFiles Include="wwwroot\**" />
-            <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-                <RelativePath>%(DistFiles.Identity)</RelativePath>
-                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-            </ResolvedFileToPublish>
-        </ItemGroup>
-    </Target>
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec Command="npm install" />
+    <Exec Command="npm run build" />
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="wwwroot\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>
