@@ -41,7 +41,7 @@ INSERT INTO Competencies (Id, Description, CompetencyGroupId) VALUES
     (14, 'I post to my own or a professional/shared blog', 3),
     (15, 'I’m always careful and encourage others to be careful in communicating in ways that are respectful of different needs, expectations, cultures and experiences', 3),
 
-    (16, '"I am able to learn, use and update a wide range of devices and applications (e.g. smartphones, PCs, tablets and a range of software like Word, Microsoft 365, Excel, Trello, Evernote)', 4),
+    (16, 'I am able to learn, use and update a wide range of devices and applications (e.g. smartphones, PCs, tablets and a range of software like Word, Microsoft 365, Excel, Trello, Evernote)', 4),
     (17, 'I can usually resolve a range of day-to-day technical challenges and issues with my devices, software and applications on my own without help', 4),
     (18, 'I have a wide range of technical skills and I like to keep up to date with digital technology and innovation', 4),
     (19, 'I can carry out regular technical tasks like changing passwords, updating or installing applications (apps) etc', 4),

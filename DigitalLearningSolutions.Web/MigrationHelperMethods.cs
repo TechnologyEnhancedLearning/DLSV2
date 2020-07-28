@@ -12,7 +12,7 @@
                 .ConfigureRunner(rb => rb
                     .AddSqlServer2016()
                     .WithGlobalConnectionString(connectionString)
-                    .ScanIn(typeof(AddSelfAssessmentTables).Assembly).For.Migrations()
+                    .ScanIn(typeof(AddSelfAssessmentTables).Assembly, typeof(AddSelfAssessmentResultTimestamp).Assembly).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
                 );
