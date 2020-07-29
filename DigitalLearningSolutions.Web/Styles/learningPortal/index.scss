@@ -99,7 +99,7 @@ body:not(.js-enabled) {
   }
 }
 
-.small-edit-button {
+.small-edit-button, a.small-edit-button {
     margin-bottom: nhsuk-spacing(2);
     margin-top: nhsuk-spacing(0);
     padding-bottom: 0;
@@ -110,4 +110,8 @@ body:not(.js-enabled) {
     @include mq($until: tablet) {
         margin-top: nhsuk-spacing(3);
     }
+}
+
+input:invalid {
+  border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
 }

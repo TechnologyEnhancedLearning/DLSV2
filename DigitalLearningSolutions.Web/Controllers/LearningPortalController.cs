@@ -1,5 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
@@ -29,6 +31,32 @@
             logger.LogInformation("Getting current courses");
             var currentCourses = courseService.GetCurrentCourses(candidateId);
             var model = new CurrentViewModel(currentCourses, config);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
+        public IActionResult SetCompleteByDate(int id, int day, int month, int year)
+        {
+            // TODO HEEDLS-46: Save new complete by date
+            Console.WriteLine(id);
+            Console.WriteLine(day);
+            Console.WriteLine(month);
+            Console.WriteLine(year);
+
+
+            return RedirectToAction("Current");
+        }
+
+        [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
+        public IActionResult SetCompleteByDate(int id)
+        {
+            var currentCourses = courseService.GetCurrentCourses(candidateId);
+            var model = currentCourses
+                .Where(c => c.CustomisationID == id)
+                .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
+                .First();
             return View(model);
         }
 

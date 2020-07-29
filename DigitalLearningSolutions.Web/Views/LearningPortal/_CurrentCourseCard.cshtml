@@ -58,7 +58,7 @@
       </div>
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         @{ var overdue = Model.Overdue() ? "overdue" : ""; }
-        <p class="@overdue" aria-describedby="@Model.Id-name @Model.Id-complete-by-title">@(Model.CompleteByDate?.ToShortDateString() ?? "-")</p>
+        <p class="@overdue" aria-describedby="@Model.Id-name @Model.Id-complete-by-title">@(@Html.Raw(Model.CompleteByDate?.ToShortDateString() ??  "<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-"))</p>
       </div>
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCompleteByDate" asp-route-id="@Model.Id">

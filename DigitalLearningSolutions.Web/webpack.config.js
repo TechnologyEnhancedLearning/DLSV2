@@ -7,6 +7,7 @@ glob.sync("./Scripts/**/*.ts",
         ignore: [
             "./Scripts/**/*.d.ts",
             "./Scripts/helpers/**/*.ts",
+            "./Scripts/spec/**/*.*"
         ]
     }
 ).forEach(file => {

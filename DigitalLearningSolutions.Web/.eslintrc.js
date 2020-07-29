@@ -31,6 +31,8 @@ module.exports = {
                 "tsx": 'never'
             }
         ],
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "import/no-extraneous-dependencies": ['error', { "devDependencies": ['Scripts/spec/**/*.ts'] }],
+        "no-use-before-define": ["error", { "functions": false }]
     }
 };
