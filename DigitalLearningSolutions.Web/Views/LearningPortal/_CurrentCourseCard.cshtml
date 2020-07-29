@@ -93,9 +93,9 @@
       <a class="nhsuk-button nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name" href="@Model.LaunchUrl">
         Launch course
       </a>
-      <button class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name">
+      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
         Remove course
-      </button>
+      </a>
     </div>
   </div>
 </div>

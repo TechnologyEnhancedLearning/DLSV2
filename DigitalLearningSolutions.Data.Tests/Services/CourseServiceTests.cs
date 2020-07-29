@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.DependencyInjection;
 
+    [Parallelizable(ParallelScope.Fixtures)]
     public class Tests
     {
         private CourseService courseService;
@@ -108,6 +109,24 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
                 // Then
                 modifiedCourse.CompleteByDate.Should().Be(newCompleteByDate);
+            }
+        }
+
+        [Test]
+        public void Remove_current_course_should_prevent_a_course_from_being_returned()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int progressId = 94323;
+                const int candidateId = 1;
+
+                // When
+                courseService.RemoveCurrentCourse(progressId, candidateId);
+                var courseReturned = courseService.GetCurrentCourses(candidateId).ToList().Any(c => c.ProgressID == progressId);
+
+                // Then
+                courseReturned.Should().BeFalse();
             }
         }
 
