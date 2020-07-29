@@ -1,0 +1,66 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model CurrentViewModel.CurrentCourseViewModel
+@{
+  ViewData["Title"] = $"Learning Portal - {Model.Name} - Set completion date";
+}
+
+<div>
+  <div class="nhsuk-form-group" id="form-group">
+    <form asp-action="SetCompleteByDate">
+      <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
+          <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+            Enter a completion date for @Model.Name
+          </h1>
+        <span class="nhsuk-hint" id="example-hint">
+          @{
+            var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
+            var prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
+            var prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
+            var prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
+          }
+          For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year
+        </span>
+        <span hidden id="validation-message"></span>
+        <div class="nhsuk-date-input" id="date">
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="day">
+                Day
+              </label>
+              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="day" name="day" type="number" value="@prefillDay" min="1" max="31">
+            </div>
+          </div>
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="month">
+                Month
+              </label>
+              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2" id="month" name="month" type="number" value="@prefillMonth" min="1" max="12">
+            </div>
+          </div>
+          <div class="nhsuk-date-input__item">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label nhsuk-date-input__label" for="year">
+                Year
+              </label>
+              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4" id="year" name="year" type="number" value="@prefillYear" min="2000" max="3000">
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <button class="nhsuk-button nhsuk-u-margin-top-5" id="save-button" type="submit">Save changes</button>
+    </form>
+  </div>
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="Current">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Go back
+    </a>
+  </div>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/setCompleteByDate.js")"></script>
+}

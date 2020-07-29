@@ -1,9 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
+namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
 
     public class CurrentViewModel
@@ -21,23 +22,7 @@
         {
             get
             {
-                return currentCourses.Select(c => new CurrentCourseViewModel
-                {
-                    Name = c.CourseName,
-                    Id = c.CustomisationID,
-                    HasDiagnosticAssessment = c.HasDiagnostic,
-                    HasLearningContent = c.HasLearning,
-                    HasLearningAssessmentAndCertification = c.IsAssessed,
-                    StartedDate = c.StartedDate,
-                    LastAccessedDate = c.LastAccessed,
-                    CompleteByDate = c.CompleteByDate,
-                    DiagnosticScore = c.DiagnosticScore,
-                    PassedSections = c.Passes,
-                    Sections = c.Sections,
-                    UserIsSupervisor = c.SupervisorAdminId != 0,
-                    IsEnrolledWithGroup = c.GroupCustomisationId != 0,
-                    LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={c.CustomisationID}&lp=1"
-                });
+                return currentCourses.Select(c => new CurrentCourseViewModel(c, config));
             }
         }
 
@@ -57,6 +42,24 @@
             public bool UserIsSupervisor { get; set; }
             public bool IsEnrolledWithGroup { get; set; }
             public string LaunchUrl { get; set; }
+
+            public CurrentCourseViewModel(CurrentCourse course, IConfiguration config)
+            {
+                Name = course.CourseName;
+                Id = course.CustomisationID;
+                HasDiagnosticAssessment = course.HasDiagnostic;
+                HasLearningContent = course.HasLearning;
+                HasLearningAssessmentAndCertification = course.IsAssessed;
+                StartedDate = course.StartedDate;
+                LastAccessedDate = course.LastAccessed;
+                CompleteByDate = course.CompleteByDate;
+                DiagnosticScore = course.DiagnosticScore;
+                PassedSections = course.Passes;
+                Sections = course.Sections;
+                UserIsSupervisor = course.SupervisorAdminId != 0;
+                IsEnrolledWithGroup = course.GroupCustomisationId != 0;
+                LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
+            }
 
             public bool Overdue()
             {
