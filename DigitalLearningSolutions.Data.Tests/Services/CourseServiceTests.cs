@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Linq;
+    using System.Transactions;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
@@ -42,7 +43,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             {
                 CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",
                 CustomisationID = 15853,
-                LastAccessed = new DateTime(2019, 1, 22, 8, 20 , 39, 133),
+                LastAccessed = new DateTime(2019, 1, 22, 8, 20, 39, 133),
                 StartedDate = new DateTime(2016, 7, 6, 11, 12, 15, 393),
                 DiagnosticScore = 0,
                 IsAssessed = true,
@@ -53,6 +54,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 CompleteByDate = new DateTime(2018, 12, 31, 0, 0, 0, 0),
                 GroupCustomisationId = 0,
                 SupervisorAdminId = 0,
+                ProgressID = 173218
             };
             result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -88,6 +90,25 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             };
             result.Should().HaveCount(45);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void Set_complete_by_date_should_update_db()
+        {
+            // Given
+            const int candidateId = 1;
+            const int progressId = 94323;
+            var newCompleteByDate = new DateTime(2020, 7, 29);
+
+            using (new TransactionScope())
+            {
+                // When
+                courseService.SetCompleteByDate(progressId, candidateId, newCompleteByDate);
+                var modifiedCourse = courseService.GetCurrentCourses(candidateId).ToList().First(c => c.ProgressID == progressId);
+
+                // Then
+                modifiedCourse.CompleteByDate.Should().Be(newCompleteByDate);
+            }
         }
 
         private static string GetJenkinsSqlConnectionString()
