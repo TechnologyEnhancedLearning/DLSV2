@@ -9,12 +9,7 @@
     <TypeScriptToolsVersion>3.9</TypeScriptToolsVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <JavaScriptTestRoot>wwwroot\js\spec</JavaScriptTestRoot>
-    <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
+    <PropertyGroup>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
@@ -37,10 +32,6 @@
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
-    <PackageReference Include="Microsoft.JavaScript.UnitTest" Version="1.5.10610.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />

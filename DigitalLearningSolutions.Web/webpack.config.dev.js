@@ -6,10 +6,4 @@ config.module.rules.find(rule => rule.loader === "ts-loader").options.configFile
 config.devtool = "source-map";
 config.watch = true;
 
-glob.sync("./Scripts/spec/**/*.ts", {})
-    .forEach(file => {
-        const name = file.replace("./Scripts/", "").replace(".ts", "");
-        config.entry[name] = file;
-    });
-
 module.exports = config;

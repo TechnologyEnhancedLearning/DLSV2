@@ -10,10 +10,6 @@
     <PackageReference Include="FakeItEasy" Version="6.0.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentAssertions.AspNetCore.Mvc" Version="2.4.0" />
-    <PackageReference Include="Microsoft.JavaScript.UnitTest" Version="1.5.10610.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0-beta.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0-preview-20200428-01" />

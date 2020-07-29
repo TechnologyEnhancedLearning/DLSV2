@@ -6,6 +6,7 @@
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
+- [NPM](https://www.npmjs.com/get-npm)
 
 ## Getting the code
 
@@ -107,9 +108,7 @@ Open the file and click the icon to the left of the class name.
 Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests".
 
 ## Typescript tests
-The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. They should run in the same way as all the other tests, in the Test Explorer. If you have any issues, make sure the scripts are built by running `npm run build` inside `DigitalLearningSolutions.Web`.
-
-The tests can also be run using `npm t`.
+The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `npm t` inside DigitalLearningSolutions.Web.
 
 ## Typescript linting
 The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This should highlight any lint errors in the editor. It's not the most reliable, and if in doubt, run the lint manually.
