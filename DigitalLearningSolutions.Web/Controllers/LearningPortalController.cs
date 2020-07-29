@@ -73,6 +73,26 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(model);
         }
 
+        [Route("/LearningPortal/Current/Remove/{id:int}")]
+        public IActionResult RemoveCurrentCourseConfirmation(int id)
+        {
+            var currentCourses = courseService.GetCurrentCourses(candidateId);
+            var model = currentCourses
+                .Where(c => c.CustomisationID == id)
+                .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
+                .First();
+
+            return View(model);
+        }
+
+        [Route("/LearningPortal/Current/Remove/{progressId:int}")]
+        [HttpPost]
+        public IActionResult RemoveCurrentCourse(int progressId)
+        {
+            courseService.RemoveCurrentCourse(progressId, candidateId);
+            return RedirectToAction("Current");
+        }
+
         public IActionResult Completed()
         {
             logger.LogInformation("Getting completed courses");

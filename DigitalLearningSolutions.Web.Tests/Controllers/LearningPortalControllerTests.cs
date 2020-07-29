@@ -239,6 +239,17 @@
         }
 
         [Test]
+        public void Removing_a_current_course_should_call_the_course_service()
+        {
+            // When
+            controller.RemoveCurrentCourse(1);
+
+            // Then
+            A.CallTo(() => courseService.RemoveCurrentCourse(1, CandidateId)).MustHaveHappened();
+
+        }
+
+        [Test]
         public void Completed_action_should_return_view_result()
         {
             // Given

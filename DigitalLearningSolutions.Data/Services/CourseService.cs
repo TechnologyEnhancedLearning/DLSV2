@@ -12,6 +12,7 @@
         IEnumerable<Course> GetCompletedCourses();
         IEnumerable<Course> GetAvailableCourses();
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
+        void RemoveCurrentCourse(int progressId, int candidateId);
     }
 
     public class CourseService : ICourseService
@@ -51,6 +52,19 @@
                           AND CandidateID = @candidateId",
                 new { date = completeByDate, progressId, candidateId }
                 );
+        }
+
+        public void RemoveCurrentCourse(int progressId, int candidateId)
+        {
+            connection.Execute(
+            @"UPDATE Progress
+                    SET RemovedDate = getUTCDate(),
+                        RemovalMethodID = 1
+                    WHERE ProgressID = @progressId
+                      AND CandidateID = @candidateId
+                ",
+            new { progressId, candidateId }
+            );
         }
     }
 }
