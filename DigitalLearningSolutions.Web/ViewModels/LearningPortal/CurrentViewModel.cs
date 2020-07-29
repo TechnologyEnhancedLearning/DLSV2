@@ -4,7 +4,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
 
     public class CurrentViewModel
@@ -41,6 +40,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             public int Sections { get; set; }
             public bool UserIsSupervisor { get; set; }
             public bool IsEnrolledWithGroup { get; set; }
+            public int ProgressId { get; set; }
             public string LaunchUrl { get; set; }
 
             public CurrentCourseViewModel(CurrentCourse course, IConfiguration config)
@@ -58,6 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                 Sections = course.Sections;
                 UserIsSupervisor = course.SupervisorAdminId != 0;
                 IsEnrolledWithGroup = course.GroupCustomisationId != 0;
+                ProgressId = course.ProgressID;
                 LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
             }
 

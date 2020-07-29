@@ -9,6 +9,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
@@ -173,6 +174,68 @@
 
             // Then
             course.HasPassedSections().Should().BeTrue();
+        }
+
+        [Test]
+        public void Setting_a_valid_complete_by_date_should_call_the_course_service()
+        {
+            // Given
+            const int newDay = 29;
+            const int newMonth = 7;
+            const int newYear = 2020;
+            var newDate = new DateTime(newYear, newMonth, newDay);
+            const int progressId = 1;
+
+            // When
+            controller.SetCompleteByDate(1, newDay,  newMonth, newYear, 1);
+
+            // Then
+            A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Setting_an_empty_complete_by_date_should_call_the_course_service_with_null()
+        {
+            // Given
+            const int progressId = 1;
+
+            // When
+            controller.SetCompleteByDate(1, 0, 0, 0, 1);
+
+            // Then
+            A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, null)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Setting_a_valid_complete_by_date_should_redirect_to_current_courses()
+        {
+            // When
+            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 29, 7, 2020, 1);
+
+            // Then
+            result.ActionName.Should().Be("Current");
+        }
+
+        [Test]
+        public void Setting_an_invalid_complete_by_date_should_not_call_the_course_service()
+        {
+            // When
+            controller.SetCompleteByDate(1, 31, 2, 2020, 1);
+
+            // Then
+            A.CallTo(() => courseService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Setting_an_invalid_complete_by_date_should_redirect_with_an_error_message()
+        {
+            // When
+            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 31, 2, 2020, 1);
+
+            // Then
+            result.ActionName.Should().Be("SetCompleteByDate");
+            result.RouteValues["id"].Should().Be(1);
+            result.RouteValues["errorMessage"].Should().Be("Please enter a valid date");
         }
 
         [Test]

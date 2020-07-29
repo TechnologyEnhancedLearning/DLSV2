@@ -1,3 +1,4 @@
+#nullable enable
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
@@ -37,26 +38,38 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCompleteByDate(int id, int day, int month, int year)
+        public IActionResult SetCompleteByDate(int id, int day, int month, int year, int progressId)
         {
-            // TODO HEEDLS-46: Save new complete by date
-            Console.WriteLine(id);
-            Console.WriteLine(day);
-            Console.WriteLine(month);
-            Console.WriteLine(year);
+            if (day == 0 && month == 0 && year == 0)
+            {
 
+                courseService.SetCompleteByDate(progressId, candidateId, null);
+                return RedirectToAction("Current");
+            }
+
+            try
+            {
+                var completeByDate = new DateTime(year, month, day);
+                courseService.SetCompleteByDate(progressId, candidateId, completeByDate);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return RedirectToAction("SetCompleteByDate", new {id = id, errorMessage = "Please enter a valid date"});
+            }
 
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCompleteByDate(int id)
+        public IActionResult SetCompleteByDate(int id, string? errorMessage)
         {
             var currentCourses = courseService.GetCurrentCourses(candidateId);
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
                 .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
                 .First();
+
+            ViewData["errorMessage"] = errorMessage;
             return View(model);
         }
 
