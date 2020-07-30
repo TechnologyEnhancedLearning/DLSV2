@@ -3,7 +3,9 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -14,15 +16,21 @@ namespace DigitalLearningSolutions.Web.Controllers
         //TODO placeholder candidateId, replace once HEEDLS-4 is implemented
         private readonly int candidateId = 254480;
         private readonly ICourseService courseService;
+        private readonly IUnlockDataService unlockDataService;
+        private readonly IConfigService configService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
 
         public LearningPortalController(
             ICourseService courseService,
+            IUnlockDataService unlockDataService,
+            IConfigService configService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
         {
             this.courseService = courseService;
+            this.unlockDataService = unlockDataService;
+            this.configService = configService;
             this.logger = logger;
             this.config = config;
         }
@@ -42,7 +50,6 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             if (day == 0 && month == 0 && year == 0)
             {
-
                 courseService.SetCompleteByDate(progressId, candidateId, null);
                 return RedirectToAction("Current");
             }
@@ -54,7 +61,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
             catch (ArgumentOutOfRangeException)
             {
-                return RedirectToAction("SetCompleteByDate", new {id = id, errorMessage = "Please enter a valid date"});
+                return RedirectToAction("SetCompleteByDate", new { id, errorMessage = "Please enter a valid date" });
             }
 
             return RedirectToAction("Current");
@@ -91,6 +98,26 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             courseService.RemoveCurrentCourse(progressId, candidateId);
             return RedirectToAction("Current");
+        }
+
+        public IActionResult RequestUnlock(int id)
+        {
+            try
+            {
+                UnlockRequestMailHelper.SendUnlockRequest(id, unlockDataService, configService);
+            }
+            catch (UnlockDataMissingException)
+            {
+                logger.LogError("Encountered error while sending email. Unlock data was null");
+                return StatusCode(500);
+            }
+            catch (ConfigValueMissingException)
+            {
+                logger.LogError("Encountered error while sending email. A config parameter could not be found");
+                return StatusCode(500);
+            }
+
+            return View("UnlockCurrentCourse");
         }
 
         public IActionResult Completed()

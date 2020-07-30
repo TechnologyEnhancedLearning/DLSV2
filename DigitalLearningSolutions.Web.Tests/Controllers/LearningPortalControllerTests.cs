@@ -18,6 +18,8 @@
     {
         private LearningPortalController controller;
         private ICourseService courseService;
+        private IUnlockDataService unlockDataService;
+        private IConfigService configService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 254480;
@@ -26,10 +28,12 @@
         public void SetUp()
         {
             courseService = A.Fake<ICourseService>();
+            unlockDataService = A.Fake<IUnlockDataService>();
+            configService = A.Fake<IConfigService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
-            controller = new LearningPortalController(courseService, logger, config);
+            controller = new LearningPortalController(courseService, unlockDataService, configService, logger, config);
         }
 
         [Test]
@@ -187,7 +191,7 @@
             const int progressId = 1;
 
             // When
-            controller.SetCompleteByDate(1, newDay,  newMonth, newYear, 1);
+            controller.SetCompleteByDate(1, newDay, newMonth, newYear, 1);
 
             // Then
             A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();

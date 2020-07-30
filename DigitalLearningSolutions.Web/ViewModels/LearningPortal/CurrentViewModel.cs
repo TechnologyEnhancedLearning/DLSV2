@@ -27,21 +27,22 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 
         public class CurrentCourseViewModel
         {
-            public string Name { get; set; }
-            public int Id { get; set; }
-            public bool HasDiagnosticAssessment { get; set; }
-            public bool HasLearningContent { get; set; }
-            public bool HasLearningAssessmentAndCertification { get; set; }
-            public DateTime StartedDate { get; set; }
-            public DateTime LastAccessedDate { get; set; }
-            public DateTime? CompleteByDate { get; set; }
-            public int? DiagnosticScore { get; set; }
-            public int PassedSections { get; set; }
-            public int Sections { get; set; }
-            public bool UserIsSupervisor { get; set; }
-            public bool IsEnrolledWithGroup { get; set; }
-            public int ProgressId { get; set; }
-            public string LaunchUrl { get; set; }
+            public string Name { get; }
+            public int Id { get; }
+            public bool HasDiagnosticAssessment { get; }
+            public bool HasLearningContent { get; }
+            public bool HasLearningAssessmentAndCertification { get; }
+            public DateTime StartedDate { get; }
+            public DateTime LastAccessedDate { get; }
+            public DateTime? CompleteByDate { get; }
+            public int? DiagnosticScore { get; }
+            public int PassedSections { get; }
+            public int Sections { get; }
+            public bool UserIsSupervisor { get; }
+            public bool IsEnrolledWithGroup { get; }
+            public int ProgressId { get; }
+            public bool IsLocked { get; }
+            public string LaunchUrl { get; }
 
             public CurrentCourseViewModel(CurrentCourse course, IConfiguration config)
             {
@@ -59,6 +60,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                 UserIsSupervisor = course.SupervisorAdminId != 0;
                 IsEnrolledWithGroup = course.GroupCustomisationId != 0;
                 ProgressId = course.ProgressID;
+                IsLocked = course.PLLocked;
                 LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
             }
 

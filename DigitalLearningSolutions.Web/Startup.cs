@@ -41,6 +41,8 @@ namespace DigitalLearningSolutions.Web
 
             // Register data services.
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IUnlockDataService, UnlockDataService>();
+            services.AddScoped<IConfigService, ConfigService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

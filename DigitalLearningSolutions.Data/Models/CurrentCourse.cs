@@ -18,5 +18,6 @@
         public int SupervisorAdminId { get; set; }
         public int GroupCustomisationId { get; set; }
         public int ProgressID { get; set; }
+        public bool PLLocked { get; set; }
     }
 }
