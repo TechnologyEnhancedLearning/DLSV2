@@ -46,7 +46,7 @@
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses, config);
+            var expectedModel = new CurrentViewModel(currentCourses, config, "Course Name", "Ascending");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

@@ -27,11 +27,11 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.config = config;
         }
 
-        public IActionResult Current()
+        public IActionResult Current(string sortBy = "Course Name", string sortDirection = "Ascending")
         {
             logger.LogInformation("Getting current courses");
             var currentCourses = courseService.GetCurrentCourses(candidateId);
-            var model = new CurrentViewModel(currentCourses, config);
+            var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection);
             return View(model);
         }
 
