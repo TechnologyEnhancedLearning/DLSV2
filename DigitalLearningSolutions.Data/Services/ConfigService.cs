@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Data;
@@ -13,19 +12,19 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class ConfigService : IConfigService
     {
-        private readonly IDbConnection connection;
-
-        public ConfigService(IDbConnection connection)
-        {
-            this.connection = connection;
-        }
-
         public const string MailServer = "MailServer";
         public const string MailFromAddress = "MailFromAddress";
         public const string MailUsername = "MailUsername";
         public const string MailPassword = "MailPW";
         public const string MailPort = "MailPort";
         public const string TrackingSystemBaseUrl = "TrackingSystemBaseURL";
+
+        private readonly IDbConnection connection;
+
+        public ConfigService(IDbConnection connection)
+        {
+            this.connection = connection;
+        }
 
         public string? GetConfigValue(string key)
         {
@@ -38,5 +37,9 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class ConfigValueMissingException : Exception
     {
+        public ConfigValueMissingException(string message)
+            : base(message)
+        {
+        }
     }
 }

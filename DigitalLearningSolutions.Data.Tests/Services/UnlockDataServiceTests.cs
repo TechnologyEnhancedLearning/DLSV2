@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using DigitalLearningSolutions.Data.Services;
-    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web;
@@ -19,10 +18,7 @@
         [SetUp]
         public void Setup()
         {
-            const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
-            var jenkinsConnectionString = ServiceTestHelper.GetJenkinsSqlConnectionString();
-            var connectionString = jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
-
+            var connectionString = ServiceTestHelper.GetSqlConnectionString();
             var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
             serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
 
@@ -46,7 +42,6 @@
                 ContactEmail = "e@1htrnkisv.wa",
                 CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",
                 CustomisationId = 15853
-
             };
             result.Should().BeEquivalentTo(expectedUnlockData);
         }

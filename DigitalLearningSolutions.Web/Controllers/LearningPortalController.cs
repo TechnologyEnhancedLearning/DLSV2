@@ -1,11 +1,9 @@
-#nullable enable
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -16,21 +14,18 @@ namespace DigitalLearningSolutions.Web.Controllers
         //TODO placeholder candidateId, replace once HEEDLS-4 is implemented
         private readonly int candidateId = 254480;
         private readonly ICourseService courseService;
-        private readonly IUnlockDataService unlockDataService;
-        private readonly IConfigService configService;
+        private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
 
         public LearningPortalController(
             ICourseService courseService,
-            IUnlockDataService unlockDataService,
-            IConfigService configService,
+            IUnlockService unlockService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
         {
             this.courseService = courseService;
-            this.unlockDataService = unlockDataService;
-            this.configService = configService;
+            this.unlockService = unlockService;
             this.logger = logger;
             this.config = config;
         }
@@ -100,20 +95,16 @@ namespace DigitalLearningSolutions.Web.Controllers
             return RedirectToAction("Current");
         }
 
-        public IActionResult RequestUnlock(int id)
+        [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
+        public IActionResult RequestUnlock(int progressId)
         {
             try
             {
-                UnlockRequestMailHelper.SendUnlockRequest(id, unlockDataService, configService);
+                unlockService.SendUnlockRequest(progressId);
             }
             catch (UnlockDataMissingException)
             {
                 logger.LogError("Encountered error while sending email. Unlock data was null");
-                return StatusCode(500);
-            }
-            catch (ConfigValueMissingException)
-            {
-                logger.LogError("Encountered error while sending email. A config parameter could not be found");
                 return StatusCode(500);
             }
 

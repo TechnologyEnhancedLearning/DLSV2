@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System;
     using System.Linq;
     using System.Transactions;
-    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -22,10 +21,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [SetUp]
         public void Setup()
         {
-            const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
-            var jenkinsConnectionString = ServiceTestHelper.GetJenkinsSqlConnectionString();
-            var connectionString = jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
-
+            var connectionString = ServiceTestHelper.GetSqlConnectionString();
             var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
             serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
 

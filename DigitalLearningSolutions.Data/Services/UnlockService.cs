@@ -1,16 +1,28 @@
-﻿namespace DigitalLearningSolutions.Web.ControllerHelpers
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Services;
     using MailKit.Net.Smtp;
     using MimeKit;
 
-    public static class UnlockRequestMailHelper
+    public interface IUnlockService
     {
-        public static void SendUnlockRequest(int id, IUnlockDataService unlockDataService, IConfigService configService)
+        public void SendUnlockRequest(int progressId);
+    }
+
+    public class UnlockService : IUnlockService
+    {
+        private readonly IUnlockDataService unlockDataService;
+        private readonly IConfigService configService;
+        public UnlockService(IUnlockDataService unlockDataService, IConfigService configService)
         {
-            var unlockData = unlockDataService.GetUnlockData(id);
+            this.unlockDataService = unlockDataService;
+            this.configService = configService;
+        }
+
+        public void SendUnlockRequest(int progressId)
+        {
+            var unlockData = unlockDataService.GetUnlockData(progressId);
             if (unlockData == null)
             {
                 throw new UnlockDataMissingException();
@@ -33,13 +45,13 @@
                 || trackingSystemBaseUrl == null
             )
             {
-                throw new ConfigValueMissingException();
+                throw GenerateConfigValueMissingException(mailServerUsername, mailServerPassword, mailServerAddress, mailServerPortString, mailSenderAddress, trackingSystemBaseUrl);
             }
 
             var mailServerPort = int.Parse(mailServerPortString);
             var unlockUrl = new UriBuilder(trackingSystemBaseUrl);
-            unlockUrl.Path += "centrecandidate.aspx";
-            unlockUrl.Query = $"tab=course&CustomisationID={unlockData.CustomisationId}";
+            unlockUrl.Path += "coursedelegates";
+            unlockUrl.Query = $"CustomisationID={unlockData.CustomisationId}";
 
             var message = new MimeMessage();
             message.From.Add(MailboxAddress.Parse(mailSenderAddress));
@@ -73,6 +85,43 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
                 client.Send(message);
                 client.Disconnect(true);
             }
+        }
+
+        private static ConfigValueMissingException GenerateConfigValueMissingException(
+            string? mailServerUsername,
+            string? mailServerPassword,
+            string? mailServerAddress,
+            string? mailServerPortString,
+            string? mailSenderAddress,
+            string? trackingSystemBaseUrl
+            )
+        {
+            if (mailServerUsername == null)
+            {
+                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailserverUsername is null");
+            }
+
+            if (mailServerPassword == null)
+            {
+                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailserverPassword is null");
+            }
+
+            if (mailServerAddress == null)
+            {
+                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailServerAddress is null");
+            }
+
+            if (mailServerPortString == null)
+            {
+                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailServerPortString is null");
+            }
+
+            if (mailSenderAddress == null)
+            {
+                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailSenderAddress is null");
+            }
+
+            return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of trackingSystemBaseUrl is null");
         }
     }
 }

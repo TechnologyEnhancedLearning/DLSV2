@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Data;
     using System.Linq;
