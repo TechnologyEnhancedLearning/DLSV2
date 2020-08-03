@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System;
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
@@ -9,6 +10,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -29,7 +31,15 @@
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
-            controller = new LearningPortalController(courseService, logger, config);
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("learnCandidateID", CandidateId.ToString()),
+            }, "mock"));
+            controller = new LearningPortalController(courseService, logger, config)
+            {
+                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+            };
         }
 
         [Test]
