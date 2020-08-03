@@ -15,7 +15,6 @@
         private UnlockService unlockService;
         private IUnlockDataService unlockDataService;
         private IConfigService configService;
-        private ISmtpClientFactory smtpClientFactory;
         private ISmtpClient smtpClient;
 
         [SetUp]
@@ -23,7 +22,7 @@
         {
             unlockDataService = A.Fake<IUnlockDataService>();
             configService = A.Fake<IConfigService>();
-            smtpClientFactory = A.Fake<ISmtpClientFactory>();
+            var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
             A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
 
