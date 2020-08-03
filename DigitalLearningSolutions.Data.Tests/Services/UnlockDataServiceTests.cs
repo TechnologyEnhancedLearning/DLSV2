@@ -3,7 +3,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web;
+    using DigitalLearningSolutions.Web.Helpers;
     using NUnit.Framework;
     using FluentAssertions;
     using FluentMigrator.Runner;

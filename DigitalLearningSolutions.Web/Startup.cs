@@ -1,16 +1,20 @@
 namespace DigitalLearningSolutions.Web
 {
     using System.Data;
+    using System.IO;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Helpers;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.FeatureManagement;
     using Serilog;
 
     public class Startup
@@ -18,7 +22,7 @@ namespace DigitalLearningSolutions.Web
         private readonly IConfiguration config;
         private readonly bool isDevelopment;
 
-        public Startup(IConfiguration config, IWebHostEnvironment env)
+        public Startup(IConfiguration config, IHostEnvironment env)
         {
             this.config = config;
             isDevelopment = env.IsDevelopment();
@@ -26,6 +30,26 @@ namespace DigitalLearningSolutions.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("C:\\keys"))
+                .SetApplicationName("DLSSharedCookieApp");
+
+            services.AddAuthentication("Identity.Application")
+                .AddCookie("Identity.Application", options =>
+                {
+                    options.Cookie.Name = ".AspNet.SharedCookie";
+                    options.Events.OnRedirectToLogin = (context) =>
+                    {
+                        context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+                        return Task.CompletedTask;
+                    };
+                });
+
+            services.ConfigureApplicationCookie(options => {
+                options.Cookie.Name = ".AspNet.SharedCookie";
+            });
+
+            services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
             if (isDevelopment)
             {
@@ -48,7 +72,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 
-        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
+        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
             if (isDevelopment)
             {
@@ -61,14 +85,23 @@ namespace DigitalLearningSolutions.Web
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseRouting();
-            app.UseEndpoints(ConfigureEndPoints);
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(async (endpoints) => await ConfigureEndPointsAsync(endpoints, featureManager));
 
             migrationRunner.MigrateUp();
         }
 
-        private void ConfigureEndPoints(IEndpointRouteBuilder endpoints)
+        private async System.Threading.Tasks.Task ConfigureEndPointsAsync(IEndpointRouteBuilder endpoints, IFeatureManager featureManager)
         {
-            endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}");
+            if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.Login)))
+            {
+                endpoints.MapControllerRoute("default", "{controller=Login}/{action=Index}");
+            }
+            else
+            {
+                endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}");
+            }
         }
     }
 }

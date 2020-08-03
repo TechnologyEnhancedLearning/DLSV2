@@ -5,16 +5,57 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CurrentViewModel
     {
         private readonly IEnumerable<CurrentCourse> currentCourses;
         private readonly IConfiguration config;
 
-        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, IConfiguration config)
+        [BindProperty]
+        public string SortDirection { get; set; }
+
+        [BindProperty]
+        public string SortBy { get; set; }
+        public readonly SelectList SortByOptions = new SelectList(new[] {
+            SortByOptionTexts.CourseName,
+            SortByOptionTexts.StartedDate,
+            SortByOptionTexts.LastAccessed,
+            SortByOptionTexts.CompleteByDate,
+            SortByOptionTexts.HasDiagnostic,
+            SortByOptionTexts.HasLearning
+        });
+        public readonly string AscendingText = "Ascending";
+        public readonly string DescendingText = "Descending";
+
+        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, IConfiguration config, string sortBy, string sortDirection)
         {
-            this.currentCourses = currentCourses;
             this.config = config;
+            SortBy = sortBy;
+            SortDirection = sortDirection;
+            this.currentCourses = SortBy switch
+            {
+                LearningPortal.SortByOptionTexts.StartedDate => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.StartedDate)
+                    : currentCourses.OrderBy((course) => course.StartedDate),
+                LearningPortal.SortByOptionTexts.LastAccessed => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.LastAccessed)
+                    : currentCourses.OrderBy((course) => course.LastAccessed),
+                LearningPortal.SortByOptionTexts.CompleteByDate => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.CompleteByDate)
+                    : currentCourses.OrderBy((course) => course.CompleteByDate),
+                LearningPortal.SortByOptionTexts.HasDiagnostic => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.HasDiagnostic)
+                    : currentCourses.OrderBy((course) => course.HasDiagnostic),
+                LearningPortal.SortByOptionTexts.HasLearning => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.HasLearning)
+                    : currentCourses.OrderBy((course) => course.HasLearning),
+                LearningPortal.SortByOptionTexts.CourseName => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.CourseName)
+                    : currentCourses.OrderBy((course) => course.CourseName),
+                _ =>  currentCourses
+            };
         }
 
         public IEnumerable<CurrentCourseViewModel> CurrentCourses
@@ -85,4 +126,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             }
         }
     }
+
+    public class SortByOptionTexts
+    {
+        public const string
+            CourseName = "Course Name",
+            StartedDate = "Enrolled Date",
+            LastAccessed = "Last Accessed Date",
+            CompleteByDate = "Complete By Date",
+            HasDiagnostic = "Has Diagnostic Assessment",
+            HasLearning = "Has Learning Assessment";
+    }
+
 }

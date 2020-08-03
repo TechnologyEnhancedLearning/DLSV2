@@ -3,8 +3,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using NUnit.Framework;
-    using Castle.Core.Internal;
-    using DigitalLearningSolutions.Web;
+    using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using FluentMigrator.Runner;
     using Microsoft.Data.SqlClient;

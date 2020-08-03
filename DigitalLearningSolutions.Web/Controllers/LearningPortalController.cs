@@ -2,17 +2,17 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
+    [Authorize]
     public class LearningPortalController : Controller
     {
-        //TODO placeholder candidateId, replace once HEEDLS-4 is implemented
-        private readonly int candidateId = 254480;
         private readonly ICourseService courseService;
         private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
@@ -30,11 +30,11 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.config = config;
         }
 
-        public IActionResult Current()
+        public IActionResult Current(string sortBy = "Course Name", string sortDirection = "Ascending")
         {
             logger.LogInformation("Getting current courses");
-            var currentCourses = courseService.GetCurrentCourses(candidateId);
-            var model = new CurrentViewModel(currentCourses, config);
+            var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
+            var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection);
             return View(model);
         }
 
@@ -45,14 +45,14 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             if (day == 0 && month == 0 && year == 0)
             {
-                courseService.SetCompleteByDate(progressId, candidateId, null);
+                courseService.SetCompleteByDate(progressId, GetCandidateId(), null);
                 return RedirectToAction("Current");
             }
 
             try
             {
                 var completeByDate = new DateTime(year, month, day);
-                courseService.SetCompleteByDate(progressId, candidateId, completeByDate);
+                courseService.SetCompleteByDate(progressId, GetCandidateId(), completeByDate);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -65,7 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCompleteByDate(int id, string? errorMessage)
         {
-            var currentCourses = courseService.GetCurrentCourses(candidateId);
+            var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
                 .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
@@ -78,7 +78,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/Current/Remove/{id:int}")]
         public IActionResult RemoveCurrentCourseConfirmation(int id)
         {
-            var currentCourses = courseService.GetCurrentCourses(candidateId);
+            var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
                 .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
@@ -91,7 +91,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseService.RemoveCurrentCourse(progressId, candidateId);
+            courseService.RemoveCurrentCourse(progressId, GetCandidateId());
             return RedirectToAction("Current");
         }
 
@@ -138,6 +138,12 @@ namespace DigitalLearningSolutions.Web.Controllers
         public new IActionResult StatusCode(int code)
         {
             return View(code == 404 ? "Error/PageNotFound" : "Error/UnknownError");
+        }
+
+        private int GetCandidateId()
+        {
+            var id = User.Claims.First(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
+            return Convert.ToInt32(id.Value);
         }
     }
 }

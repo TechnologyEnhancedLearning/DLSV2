@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model CurrentViewModel
 
 @{
@@ -11,9 +11,13 @@
     @if (!Model.CurrentCourses.Any())
     {
       <p>No data to display</p>
-    } else {
-      @foreach (var currentCourse in Model.CurrentCourses) {
-        <partial name="_CurrentCourseCard" model="currentCourse"/>
+    }
+    else
+    {
+      <partial name="_CurrentCourseSort" model="Model" />
+      @foreach (var currentCourse in Model.CurrentCourses)
+      {
+        <partial name="_CurrentCourseCard" model="currentCourse" />
       }
     }
   </div>
