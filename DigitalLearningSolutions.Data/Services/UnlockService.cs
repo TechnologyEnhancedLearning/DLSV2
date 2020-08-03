@@ -52,7 +52,15 @@
                 || trackingSystemBaseUrl == null
             )
             {
-                throw GenerateConfigValueMissingException(mailServerUsername, mailServerPassword, mailServerAddress, mailServerPortString, mailSenderAddress, trackingSystemBaseUrl);
+                var errorMessage = GenerateConfigValueMissingMessage(
+                    mailServerUsername,
+                    mailServerPassword,
+                    mailServerAddress,
+                    mailServerPortString,
+                    mailSenderAddress,
+                    trackingSystemBaseUrl
+                );
+                throw new ConfigValueMissingException(errorMessage);
             }
 
             var mailServerPort = int.Parse(mailServerPortString);
@@ -92,7 +100,7 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
             client.Disconnect(true);
         }
 
-        private static ConfigValueMissingException GenerateConfigValueMissingException(
+        private static string GenerateConfigValueMissingMessage(
             string? mailServerUsername,
             string? mailServerPassword,
             string? mailServerAddress,
@@ -103,30 +111,30 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
         {
             if (mailServerUsername == null)
             {
-                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailserverUsername is null");
+                return "Encountered an error while trying to send an unlock request email: The value of mailserverUsername is null";
             }
 
             if (mailServerPassword == null)
             {
-                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailserverPassword is null");
+                return "Encountered an error while trying to send an unlock request email: The value of mailserverPassword is null";
             }
 
             if (mailServerAddress == null)
             {
-                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailServerAddress is null");
+                return "Encountered an error while trying to send an unlock request email: The value of mailServerAddress is null";
             }
 
             if (mailServerPortString == null)
             {
-                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailServerPortString is null");
+                return "Encountered an error while trying to send an unlock request email: The value of mailServerPortString is null";
             }
 
             if (mailSenderAddress == null)
             {
-                return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of mailSenderAddress is null");
+                return "Encountered an error while trying to send an unlock request email: The value of mailSenderAddress is null";
             }
 
-            return new ConfigValueMissingException("Encountered an error while trying to send an unlock request email: The value of trackingSystemBaseUrl is null");
+            return "Encountered an error while trying to send an unlock request email: The value of trackingSystemBaseUrl is null";
         }
     }
 }
