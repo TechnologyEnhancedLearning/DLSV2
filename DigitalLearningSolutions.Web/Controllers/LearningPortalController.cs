@@ -98,15 +98,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
         public IActionResult RequestUnlock(int progressId)
         {
-            try
-            {
-                unlockService.SendUnlockRequest(progressId);
-            }
-            catch (UnlockDataMissingException)
-            {
-                logger.LogError("Encountered error while sending email. Unlock data was null");
-                return StatusCode(500);
-            }
+            unlockService.SendUnlockRequest(progressId);
 
             return View("UnlockCurrentCourse");
         }
