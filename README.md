@@ -204,4 +204,4 @@ In order to set up your dev environment to send emails, make the following chang
 
 The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress, and a course can be locked using Progress.PLLocked
 
-On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting (mailinator.com)[https://www.mailinator.com/] and entering the email address at the top of the page.
+On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting [mailinator.com](https://www.mailinator.com/) and entering the email address at the top of the page.
