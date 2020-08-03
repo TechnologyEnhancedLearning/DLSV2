@@ -53,6 +53,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 GroupCustomisationId = 0,
                 SupervisorAdminId = 0,
                 ProgressID = 173218,
+                EnrollmentMethodID = 1,
                 PLLocked = false
             };
             result.Should().HaveCount(4);

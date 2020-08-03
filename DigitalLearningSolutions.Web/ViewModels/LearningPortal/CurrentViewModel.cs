@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -83,7 +84,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             public bool IsEnrolledWithGroup { get; }
             public int ProgressId { get; }
             public bool IsLocked { get; }
+            public bool SelfEnrolled { get; }
             public string LaunchUrl { get; }
+            public DateValidator.ValidationResult? CompleteByValidationResult { get; set; }
 
             public CurrentCourseViewModel(CurrentCourse course, IConfiguration config)
             {
@@ -101,6 +104,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                 UserIsSupervisor = course.SupervisorAdminId != 0;
                 IsEnrolledWithGroup = course.GroupCustomisationId != 0;
                 ProgressId = course.ProgressID;
+                SelfEnrolled = course.EnrollmentMethodID == 1;
                 IsLocked = course.PLLocked;
                 LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
             }
