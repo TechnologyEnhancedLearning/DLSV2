@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models;
     using MailKit.Net.Smtp;
     using MimeKit;
@@ -14,10 +15,16 @@
     {
         private readonly IUnlockDataService unlockDataService;
         private readonly IConfigService configService;
-        public UnlockService(IUnlockDataService unlockDataService, IConfigService configService)
+        private readonly ISmtpClientFactory smtpClientFactory;
+        public UnlockService(
+            IUnlockDataService unlockDataService,
+            IConfigService configService,
+            ISmtpClientFactory smtpClientFactory
+            )
         {
             this.unlockDataService = unlockDataService;
             this.configService = configService;
+            this.smtpClientFactory = smtpClientFactory;
         }
 
         public void SendUnlockRequest(int progressId)
@@ -75,16 +82,14 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
 
             message.Body = builder.ToMessageBody();
 
-            using (var client = new SmtpClient())
-            {
-                client.Timeout = 10000;
-                client.Connect(mailServerAddress, mailServerPort);
+            using var client = smtpClientFactory.GetSmtpClient();
+            client.Timeout = 10000;
+            client.Connect(mailServerAddress, mailServerPort);
 
-                client.Authenticate(mailServerUsername, mailServerPassword);
+            client.Authenticate(mailServerUsername, mailServerPassword);
 
-                client.Send(message);
-                client.Disconnect(true);
-            }
+            client.Send(message);
+            client.Disconnect(true);
         }
 
         private static ConfigValueMissingException GenerateConfigValueMissingException(
