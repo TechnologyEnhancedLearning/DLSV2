@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.Migrations;
     using FluentMigrator.Runner;
