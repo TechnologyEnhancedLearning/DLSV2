@@ -92,7 +92,7 @@ When running our app on its own we have our own dummy login. This is controlled 
 However when our system is deployed to live it will run alongside the old system and the old system will handle login. You can test this locally by:
 1. Changing the login feature flag to false
 2. Running the old code and logging in
-3. Running our app 
+3. Running our app
 
 The app should now get the login from the old system. Whenever you login it sets a cookie which will persist. So whenever you change login (e.g. swapping between using our dummy login and the old system login) you need to clear your cookies.
 
@@ -202,4 +202,6 @@ In order to set up your dev environment to send emails, make the following chang
 - MailPW = <Secret value, found in Zoho>
 - MailPort = 587
 
-The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress
+The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress, and a course can be locked using Progress.PLLocked
+
+On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting (mailinator.com)[https://www.mailinator.com/] and entering the email address at the top of the page.
