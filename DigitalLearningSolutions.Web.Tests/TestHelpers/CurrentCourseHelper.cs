@@ -21,7 +21,9 @@
             int sections = 1,
             int supervisorAdminId = 1,
             int groupCustomisationId = 0,
-            DateTime? completeByDate = null
+            DateTime? completeByDate = null,
+            int progressId = 1,
+            int enrollmentMethodId = 1
             )
         {
             return new CurrentCourse {
@@ -35,7 +37,9 @@
                 Sections = sections,
                 SupervisorAdminId = supervisorAdminId,
                 GroupCustomisationId = groupCustomisationId,
-                CompleteByDate = completeByDate
+                CompleteByDate = completeByDate,
+                ProgressID = progressId,
+                EnrollmentMethodID = enrollmentMethodId
             };
         }
 

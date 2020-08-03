@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -49,29 +50,35 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Current");
             }
 
-            try
+            var validationResult = DateValidator.ValidateDate(day, month, year);
+            if (!validationResult.DateValid)
             {
-                var completeByDate = new DateTime(year, month, day);
-                courseService.SetCompleteByDate(progressId, GetCandidateId(), completeByDate);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return RedirectToAction("SetCompleteByDate", new { id, errorMessage = "Please enter a valid date" });
+                return RedirectToAction("SetCompleteByDate", new { id, day, month, year });
             }
 
+            var completeByDate = new DateTime(year, month, day);
+            courseService.SetCompleteByDate(progressId, GetCandidateId(), completeByDate);
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCompleteByDate(int id, string? errorMessage)
+        public IActionResult SetCompleteByDate(int id, int? day, int? month, int? year)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
                 .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
                 .First();
+            if (model.CompleteByDate != null && !model.SelfEnrolled)
+            {
+                return StatusCode(403);
+            }
 
-            ViewData["errorMessage"] = errorMessage;
+            if (day != null && month != null && year != null)
+            {
+                model.CompleteByValidationResult = DateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            }
+
             return View(model);
         }
 
@@ -137,7 +144,15 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/StatusCode/{code:int}")]
         public new IActionResult StatusCode(int code)
         {
-            return View(code == 404 ? "Error/PageNotFound" : "Error/UnknownError");
+            switch (code)
+            {
+                case 404:
+                    return View("Error/PageNotFound");
+                case 403:
+                    return View("Error/Forbidden");
+                default:
+                    return View("Error/UnknownError");
+            }
         }
 
         private int GetCandidateId()

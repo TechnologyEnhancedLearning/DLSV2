@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
+namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System;
     using System.Security.Claims;
@@ -189,12 +189,29 @@
         }
 
         [Test]
+        public void Trying_to_edit_complete_by_date_when_not_self_enrolled_should_return_403()
+        {
+            // Given
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(enrollmentMethodId: 0, completeByDate: new DateTime(2020, 1, 1));
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.SetCompleteByDate(currentCourse.CustomisationID, null, null, null);
+
+            // Then
+            (result as ViewResult).ViewName.Should().Be("Error/Forbidden");
+        }
+
+        [Test]
         public void Setting_a_valid_complete_by_date_should_call_the_course_service()
         {
             // Given
             const int newDay = 29;
             const int newMonth = 7;
-            const int newYear = 2020;
+            const int newYear = 3020;
             var newDate = new DateTime(newYear, newMonth, newDay);
             const int progressId = 1;
 
@@ -222,7 +239,7 @@
         public void Setting_a_valid_complete_by_date_should_redirect_to_current_courses()
         {
             // When
-            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 29, 7, 2020, 1);
+            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 29, 7, 3020, 1);
 
             // Then
             result.ActionName.Should().Be("Current");
@@ -241,13 +258,21 @@
         [Test]
         public void Setting_an_invalid_complete_by_date_should_redirect_with_an_error_message()
         {
+            // Given
+            const int id = 1;
+            const int day = 31;
+            const int month = 2;
+            const int year = 2020;
+
             // When
-            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 31, 2, 2020, 1);
+            var result = (RedirectToActionResult)controller.SetCompleteByDate(id, day, month, year, 1);
 
             // Then
             result.ActionName.Should().Be("SetCompleteByDate");
-            result.RouteValues["id"].Should().Be(1);
-            result.RouteValues["errorMessage"].Should().Be("Please enter a valid date");
+            result.RouteValues["id"].Should().Be(id);
+            result.RouteValues["day"].Should().Be(day);
+            result.RouteValues["month"].Should().Be(month);
+            result.RouteValues["year"].Should().Be(year);
         }
 
         [Test]

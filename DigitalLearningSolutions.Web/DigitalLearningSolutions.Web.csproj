@@ -57,11 +57,10 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\helpers\constants.ts" />
-    <TypeScriptCompile Include="Scripts\learningPortal\setCompleteByDate.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\index.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
-    <TypeScriptCompile Include="Scripts\spec\setCompleteByDateSpec.ts" />
+    <TypeScriptCompile Include="Scripts\spec\exampleSpec.ts" />
   </ItemGroup>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
