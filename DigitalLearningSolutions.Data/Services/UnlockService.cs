@@ -32,7 +32,7 @@
             var unlockData = unlockDataService.GetUnlockData(progressId);
             if (unlockData == null)
             {
-                throw new UnlockDataMissingException();
+                throw new UnlockDataMissingException($"No record found when trying to fetch Unlock Data. Progress ID: {progressId}");
             }
 
             unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;

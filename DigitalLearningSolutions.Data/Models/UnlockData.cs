@@ -14,5 +14,9 @@
 
     public class UnlockDataMissingException : Exception
     {
+        public UnlockDataMissingException(string message)
+            : base(message)
+        {
+        }
     }
 }
