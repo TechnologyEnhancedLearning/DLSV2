@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentMigrator.Runner;
@@ -65,6 +66,10 @@ namespace DigitalLearningSolutions.Web
 
             // Register data services.
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IUnlockDataService, UnlockDataService>();
+            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IUnlockService, UnlockService>();
+            services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

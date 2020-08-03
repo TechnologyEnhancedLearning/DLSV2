@@ -3,9 +3,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System;
     using System.Linq;
     using System.Transactions;
-    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
     using NUnit.Framework;
     using FluentAssertions;
@@ -14,17 +14,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using Microsoft.Extensions.DependencyInjection;
 
     [Parallelizable(ParallelScope.Fixtures)]
-    public class Tests
+    public class CourseServiceTests
     {
         private CourseService courseService;
 
         [SetUp]
         public void Setup()
         {
-            const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
-            var jenkinsConnectionString = GetJenkinsSqlConnectionString();
-            var connectionString = jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
-
+            var connectionString = ServiceTestHelper.GetSqlConnectionString();
             var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
             serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
 
@@ -55,7 +52,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 CompleteByDate = new DateTime(2018, 12, 31, 0, 0, 0, 0),
                 GroupCustomisationId = 0,
                 SupervisorAdminId = 0,
-                ProgressID = 173218
+                ProgressID = 173218,
+                PLLocked = false
             };
             result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -130,13 +128,5 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             }
         }
 
-        private static string GetJenkinsSqlConnectionString()
-        {
-            var jenkinsSqlServerPassword = Environment.GetEnvironmentVariable("SqlTestCredentials_PSW");
-            var jenkinsSqlServerUsername = Environment.GetEnvironmentVariable("SqlTestCredentials_USR");
-            return jenkinsSqlServerUsername.IsNullOrEmpty() || jenkinsSqlServerPassword.IsNullOrEmpty()
-                ? ""
-                : $"Server=HEE-DLS-SQL\\HEETEST; Database=mbdbx101_test; User Id={jenkinsSqlServerUsername}; Password={jenkinsSqlServerPassword};";
-        }
     }
 }

@@ -20,6 +20,7 @@
     {
         private LearningPortalController controller;
         private ICourseService courseService;
+        private IUnlockService unlockService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 254480;
@@ -28,6 +29,7 @@
         public void SetUp()
         {
             courseService = A.Fake<ICourseService>();
+            unlockService = A.Fake<IUnlockService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
@@ -36,7 +38,7 @@
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
             }, "mock"));
-            controller = new LearningPortalController(courseService, logger, config)
+            controller = new LearningPortalController(courseService, unlockService, logger, config)
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
             };
@@ -197,7 +199,7 @@
             const int progressId = 1;
 
             // When
-            controller.SetCompleteByDate(1, newDay,  newMonth, newYear, 1);
+            controller.SetCompleteByDate(1, newDay, newMonth, newYear, 1);
 
             // Then
             A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
@@ -257,6 +259,19 @@
             // Then
             A.CallTo(() => courseService.RemoveCurrentCourse(1, CandidateId)).MustHaveHappened();
 
+        }
+
+        [Test]
+        public void Requesting_a_course_unlock_should_call_the_unlock_service()
+        {
+            // Given
+            const int progressId = 1;
+
+            // When
+            controller.RequestUnlock(progressId);
+
+            // Then
+            A.CallTo(() => unlockService.SendUnlockRequest(progressId)).MustHaveHappened();
         }
 
         [Test]

@@ -37,7 +37,7 @@ You should now see the `mbdbx101` database in your *Databases* folder on the
 We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored database:
 1. Open SQL Server Management Studio
 2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the root of this repo.
-3. Press the Execute button to run the script. 
+3. Press the Execute button to run the script.
 
 ### Inspecting the database
 
@@ -192,3 +192,14 @@ or
 SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Exception] IS NOT NULL
 ```
 to get the full log. The stack trace for the exception will be logged but isn't very easy to view in the table. I'd recommend copying it and pasting it to a text editor or similar.
+
+# Email
+Some features, such as requesting an unlock of a course, require the sending of emails. A test email account, heedlstest@outlook.com has been set up for this purpose.
+In order to set up your dev environment to send emails, make the following changes to the Config table of your local database:
+- MailServer = smtp.office365.com
+- MailFromAddress = heedlstest@outlook.com
+- MailUsername = heedlstest@outlook.com
+- MailPW = <Secret value, found in Zoho>
+- MailPort = 587
+
+The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress

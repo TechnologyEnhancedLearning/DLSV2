@@ -1,4 +1,3 @@
-#nullable enable
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
@@ -15,15 +14,18 @@ namespace DigitalLearningSolutions.Web.Controllers
     public class LearningPortalController : Controller
     {
         private readonly ICourseService courseService;
+        private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
 
         public LearningPortalController(
             ICourseService courseService,
+            IUnlockService unlockService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
         {
             this.courseService = courseService;
+            this.unlockService = unlockService;
             this.logger = logger;
             this.config = config;
         }
@@ -43,7 +45,6 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             if (day == 0 && month == 0 && year == 0)
             {
-
                 courseService.SetCompleteByDate(progressId, GetCandidateId(), null);
                 return RedirectToAction("Current");
             }
@@ -55,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
             catch (ArgumentOutOfRangeException)
             {
-                return RedirectToAction("SetCompleteByDate", new {id = id, errorMessage = "Please enter a valid date"});
+                return RedirectToAction("SetCompleteByDate", new { id, errorMessage = "Please enter a valid date" });
             }
 
             return RedirectToAction("Current");
@@ -92,6 +93,14 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             courseService.RemoveCurrentCourse(progressId, GetCandidateId());
             return RedirectToAction("Current");
+        }
+
+        [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
+        public IActionResult RequestUnlock(int progressId)
+        {
+            unlockService.SendUnlockRequest(progressId);
+
+            return View("UnlockCurrentCourse");
         }
 
         public IActionResult Completed()
