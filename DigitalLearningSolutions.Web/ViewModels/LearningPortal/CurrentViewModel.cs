@@ -24,8 +24,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             SortByOptionTexts.StartedDate,
             SortByOptionTexts.LastAccessed,
             SortByOptionTexts.CompleteByDate,
-            SortByOptionTexts.HasDiagnostic,
-            SortByOptionTexts.HasLearning
+            SortByOptionTexts.DiagnosticScore,
+            SortByOptionTexts.PassedSections
         });
         public readonly string AscendingText = "Ascending";
         public readonly string DescendingText = "Descending";
@@ -46,12 +46,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                 LearningPortal.SortByOptionTexts.CompleteByDate => SortDirection == DescendingText
                     ? currentCourses.OrderByDescending((course) => course.CompleteByDate)
                     : currentCourses.OrderBy((course) => course.CompleteByDate),
-                LearningPortal.SortByOptionTexts.HasDiagnostic => SortDirection == DescendingText
+                LearningPortal.SortByOptionTexts.DiagnosticScore => SortDirection == DescendingText
                     ? currentCourses.OrderByDescending((course) => course.HasDiagnostic)
-                    : currentCourses.OrderBy((course) => course.HasDiagnostic),
-                LearningPortal.SortByOptionTexts.HasLearning => SortDirection == DescendingText
-                    ? currentCourses.OrderByDescending((course) => course.HasLearning)
-                    : currentCourses.OrderBy((course) => course.HasLearning),
+                        .ThenByDescending((course) => course.DiagnosticScore)
+                    : currentCourses.OrderBy((course) => course.HasDiagnostic)
+                        .ThenBy((course) => course.DiagnosticScore),
+                LearningPortal.SortByOptionTexts.PassedSections => SortDirection == DescendingText
+                    ? currentCourses.OrderByDescending((course) => course.IsAssessed)
+                        .ThenByDescending((course) => course.Passes)
+                    : currentCourses.OrderBy((course) => course.IsAssessed)
+                        .ThenBy((course) => course.Passes),
                 LearningPortal.SortByOptionTexts.CourseName => SortDirection == DescendingText
                     ? currentCourses.OrderByDescending((course) => course.CourseName)
                     : currentCourses.OrderBy((course) => course.CourseName),
@@ -138,8 +142,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             StartedDate = "Enrolled Date",
             LastAccessed = "Last Accessed Date",
             CompleteByDate = "Complete By Date",
-            HasDiagnostic = "Has Diagnostic Assessment",
-            HasLearning = "Has Learning Assessment";
+            DiagnosticScore = "Diagnostic Score",
+            PassedSections = "Passed Sections";
     }
 
 }

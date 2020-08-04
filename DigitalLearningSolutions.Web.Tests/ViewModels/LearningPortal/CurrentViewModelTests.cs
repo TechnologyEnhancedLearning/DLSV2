@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     CourseName = "B: Course",
                     HasDiagnostic = true,
                     HasLearning = true,
-                    IsAssessed = false,
+                    IsAssessed = true,
                     StartedDate = new DateTime(2010, 1, 31),
                     LastAccessed = new DateTime(2010, 2, 22),
                     CompleteByDate = new DateTime(2010, 3, 22),
@@ -39,13 +39,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 new CurrentCourse {
                     CustomisationID = 72,
                     CourseName = "C: Course",
-                    HasDiagnostic = false,
-                    HasLearning = false,
+                    HasDiagnostic = true,
+                    HasLearning = true,
                     IsAssessed = false,
                     StartedDate = new DateTime(2010, 2, 1),
                     LastAccessed = new DateTime(2011, 2, 22),
                     CompleteByDate = new DateTime(2011, 3, 22),
-                    DiagnosticScore = 456,
+                    DiagnosticScore = 0,
                     Passes = 14,
                     Sections = 16,
                     SupervisorAdminId = 12,
@@ -56,13 +56,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     CourseName = "A: Course",
                     HasDiagnostic = false,
                     HasLearning = true,
-                    IsAssessed = false,
+                    IsAssessed = true,
                     StartedDate = new DateTime(2001, 1, 22),
                     LastAccessed = new DateTime(2011, 2, 23),
                     CompleteByDate = null,
                     DiagnosticScore = 0,
                     Passes = 0,
-                    Sections = 0,
+                    Sections = 6,
                     SupervisorAdminId = 0,
                     GroupCustomisationId = 0,
                 },
@@ -77,13 +77,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             "A: Course",
             false,
             true,
-            false,
+            true,
             "2001-1-22",
             "2011-2-23",
             null,
             0,
             0,
-            0,
+            06,
             false,
             false,
             "http://www.dls.nhs.uk/tracking/learn?CustomisationID=73&lp=1"
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             "B: Course",
             true,
             true,
-            false,
+            true,
             "2010-1-31",
             "2010-2-22",
             "2010-3-22",
@@ -109,13 +109,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             2,
             72,
             "C: Course",
-            false,
-            false,
+            true,
+            true,
             false,
             "2010-2-1",
             "2011-2-22",
             "2011-3-22",
-            456,
+            0,
             14,
             16,
             true,
@@ -158,10 +158,10 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 
         [TestCase("Course Name", "Ascending", new int[] { 73, 71, 72 })]
         [TestCase("Course Name", "Descending", new int[] { 72, 71, 73 })]
-        [TestCase("Has Diagnostic Assessment", "Ascending", new int[] { 72, 73, 71 })]
-        [TestCase("Has Diagnostic Assessment", "Descending", new int[] { 71, 72, 73 })]
-        [TestCase("Has Learning Assessment", "Ascending", new int[] { 72, 71, 73 })]
-        [TestCase("Has Learning Assessment", "Descending", new int[] { 71, 73, 72 })]
+        [TestCase("Diagnostic Score", "Ascending", new int[] { 73, 72, 71 })]
+        [TestCase("Diagnostic Score", "Descending", new int[] { 71, 72, 73 })]
+        [TestCase("Passed Sections", "Ascending", new int[] { 72, 73, 71 })]
+        [TestCase("Passed Sections", "Descending", new int[] { 71, 73, 72 })]
         [TestCase("Enrolled Date", "Ascending", new int[] { 73, 71, 72 })]
         [TestCase("Enrolled Date", "Descending", new int[] { 72, 71, 73 })]
         [TestCase("Last Accessed Date", "Ascending", new int[] { 71, 72, 73 })]
