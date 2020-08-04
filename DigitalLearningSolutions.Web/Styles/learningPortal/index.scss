@@ -56,10 +56,6 @@ ul > li > ul > li {
   margin-bottom: 4px;
 }
 
-.highlight-tag {
-    background-color: $nhs-dark-blue;
-}
-
 .delete-button {
   background-color: $color_nhsuk-red;
   box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
@@ -74,7 +70,11 @@ ul > li > ul > li {
 }
 
 .overdue {
-    background-color: $color_nhsuk-yellow;
+    background-color: tint($color_nhsuk-red, 80);
+}
+
+.due-soon {
+  background-color: $color_nhsuk-yellow;
 }
 
 .nhsuk-header__navigation-item.selected {
