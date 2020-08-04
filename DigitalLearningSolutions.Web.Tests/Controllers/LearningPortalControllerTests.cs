@@ -79,11 +79,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
 
             // Then
-            course.Overdue().Should().BeTrue();
+            course.DateStyle().Should().Be("overdue");
         }
 
         [Test]
-        public void Current_course_should_not_be_overdue_when_complete_by_date_is_in_the_future()
+        public void Current_course_should__be_due_soon_when_complete_by_date_is_in_the_future()
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
@@ -97,7 +97,25 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
 
             // Then
-            course.Overdue().Should().BeFalse();
+            course.DateStyle().Should().Be("due-soon");
+        }
+
+        [Test]
+        public void Current_course_should_have_no_date_style_when_due_far_in_the_future()
+        {
+            // Given
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
+            var currentCourses = new[] {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
+
+
+            // Then
+            course.DateStyle().Should().Be("");
         }
 
         [Test]

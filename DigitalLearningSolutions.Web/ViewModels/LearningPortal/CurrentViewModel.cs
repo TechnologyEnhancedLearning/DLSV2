@@ -113,9 +113,28 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                 LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
             }
 
-            public bool Overdue()
+            public string DateStyle()
             {
-                return CompleteByDate <= DateTime.Today;
+                if (CompleteByDate < DateTime.Today)
+                {
+                    return "overdue";
+                }
+
+                if (CompleteByDate < (DateTime.Today + TimeSpan.FromDays(30)))
+                {
+                    return "due-soon";
+                }
+                return "";
+            }
+
+            public string DueByDescription()
+            {
+                return DateStyle() switch
+                {
+                    "overdue" => "Overdue:",
+                    "due-soon" => "Due soon:",
+                    _ => ""
+                };
             }
 
             public bool HasDiagnosticScore()
