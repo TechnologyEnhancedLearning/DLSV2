@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web
         public static void SetUpLogger()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var appSettingsFileName = environmentName == Environments.Development ? "appsettings.Development.json" : "appsettings.json";
+            var appSettingsFileName = environmentName == Environments.Production ? "appsettings.json" : $"appsettings.{environmentName}.json";
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(appSettingsFileName)
