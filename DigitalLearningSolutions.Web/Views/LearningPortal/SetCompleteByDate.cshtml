@@ -40,11 +40,7 @@
         <span class="nhsuk-hint" id="example-hint">
           For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
         </span>
-        @if (!(Model.CompleteByValidationResult?.DateValid == false))
-        {
-          <span hidden id="validation-message"></span>
-        }
-        else
+        @if (Model.CompleteByValidationResult?.DateValid == false)
         {
           <span class="nhsuk-error-message" id="validation-message" role="alert">
             <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
