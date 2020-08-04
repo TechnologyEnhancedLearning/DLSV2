@@ -4,51 +4,51 @@
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Set completion date";
 }
 
+@{
+  var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
+  string prefillDay;
+  string prefillMonth;
+  string prefillYear;
+  if (Model.CompleteByValidationResult?.DateValid == false)
+  {
+    prefillDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
+    prefillMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
+    prefillYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
+    prefillDay = prefillDay == "0" ? "" : prefillDay;
+    prefillMonth = prefillMonth == "0" ? "" : prefillMonth;
+    prefillYear = prefillYear == "0" ? "" : prefillYear;
+  }
+  else
+  {
+    prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
+    prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
+    prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
+  }
+  var dayErrorClass = Model.CompleteByValidationResult?.DayValid == false ? "nhsuk-input--error" : "";
+  var monthErrorClass = Model.CompleteByValidationResult?.MonthValid == false ? "nhsuk-input--error" : "";
+  var yearErrorClass = Model.CompleteByValidationResult?.YearValid == false ? "nhsuk-input--error" : "";
+  var formErrorClass = Model.CompleteByValidationResult?.DateValid == false ? "nhsuk-form-group--error" : "";
+}
+
 <div>
   <div class="nhsuk-form-group" id="form-group">
-    <form asp-action="SetCompleteByDate">
-      <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+    <form asp-action="SetCompleteByDate" class="@formErrorClass">
+      <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
+        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
           Enter a completion date for @Model.Name
         </h1>
         <span class="nhsuk-hint" id="example-hint">
-          @{
-              var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
-              string prefillDay;
-              string prefillMonth;
-              string prefillYear;
-              if (Model.CompleteByValidationResult?.DateValid == false)
-              {
-                prefillDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
-                prefillMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
-                prefillYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
-                prefillDay = prefillDay == "0" ? "" : prefillDay;
-                prefillMonth = prefillMonth == "0" ? "" : prefillMonth;
-                prefillYear = prefillYear == "0" ? "" : prefillYear;
-              }
-              else
-              {
-                prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
-                prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
-                prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
-              }
-              var dayErrorClass = Model.CompleteByValidationResult?.DayValid == false ? "nhsuk-input--error" : "";
-              var monthErrorClass = Model.CompleteByValidationResult?.MonthValid == false ? "nhsuk-input--error" : "";
-              var yearErrorClass = Model.CompleteByValidationResult?.YearValid == false ? "nhsuk-input--error" : "";
-              var formErrorClass = Model.CompleteByValidationResult?.DateValid == false ? "nhsuk-form-group--error" : "";
-          }
           For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
         </span>
-        @if (!(Model.CompleteByValidationResult?.DateValid == false))
+        @if (Model.CompleteByValidationResult?.DateValid == false)
         {
-          <span hidden id="validation-message"></span>
-        }
-        else
-        {
-          <span class="nhsuk-error-message" id="validation-message" role="alert"><span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage</span>
+          <span class="nhsuk-error-message" id="validation-message" role="alert">
+            <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
+          </span>
         }
         <div class="nhsuk-date-input" id="date">
           <div class="nhsuk-date-input__item">
-            <div class="nhsuk-form-group @formErrorClass">
+            <div class="nhsuk-form-group">
               <label class="nhsuk-label nhsuk-date-input__label" for="day">
                 Day
               </label>
