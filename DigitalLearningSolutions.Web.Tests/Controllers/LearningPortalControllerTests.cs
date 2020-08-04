@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private LearningPortalController controller;
         private ICourseService courseService;
         private IUnlockService unlockService;
+        private IConfigService configService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 254480;
@@ -30,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             courseService = A.Fake<ICourseService>();
             unlockService = A.Fake<IUnlockService>();
+            configService = A.Fake<IConfigService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
@@ -38,7 +40,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
             }, "mock"));
-            controller = new LearningPortalController(courseService, unlockService, logger, config)
+            controller = new LearningPortalController(courseService, unlockService, configService, logger, config)
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
             };
