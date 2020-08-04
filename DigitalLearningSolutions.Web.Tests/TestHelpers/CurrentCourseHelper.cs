@@ -43,7 +43,7 @@
             };
         }
 
-        public static CurrentViewModel.CurrentCourseViewModel CurrentCourseViewModelFromController(LearningPortalController controller)
+        public static CurrentCourseViewModel CurrentCourseViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Current() as ViewResult;
             var model = result.Model as CurrentViewModel;
