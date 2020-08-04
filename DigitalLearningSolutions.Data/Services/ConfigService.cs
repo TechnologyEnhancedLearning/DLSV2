@@ -18,6 +18,8 @@
         public const string MailPassword = "MailPW";
         public const string MailPort = "MailPort";
         public const string TrackingSystemBaseUrl = "TrackingSystemBaseURL";
+        public const string AccessibilityHelpText = "AccessibilityNotice";
+        public const string TermsText = "TermsAndConditions";
 
         private readonly IDbConnection connection;
 

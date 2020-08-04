@@ -16,17 +16,20 @@ namespace DigitalLearningSolutions.Web.Controllers
     {
         private readonly ICourseService courseService;
         private readonly IUnlockService unlockService;
+        private readonly IConfigService configService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
 
         public LearningPortalController(
             ICourseService courseService,
             IUnlockService unlockService,
+            IConfigService configService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
         {
             this.courseService = courseService;
             this.unlockService = unlockService;
+            this.configService = configService;
             this.logger = logger;
             this.config = config;
         }
@@ -128,12 +131,26 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         public IActionResult AccessibilityHelp()
         {
-            return View();
+            var accessibilityText = configService.GetConfigValue(ConfigService.AccessibilityHelpText);
+            if (accessibilityText == null)
+            {
+                logger.LogError("Accessibility text from Config table is null");
+                return StatusCode(500);
+            }
+            var model = new AccessibilityHelpViewModel(accessibilityText);
+            return View(model);
         }
 
         public IActionResult Terms()
         {
-            return View();
+            var termsText = configService.GetConfigValue(ConfigService.TermsText);
+            if (termsText == null)
+            {
+                logger.LogError("Terms text from Config table is null");
+                return StatusCode(500);
+            }
+            var model = new TermsViewModel(termsText);
+            return View(model);
         }
 
         public IActionResult Error()
@@ -144,15 +161,12 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/StatusCode/{code:int}")]
         public new IActionResult StatusCode(int code)
         {
-            switch (code)
+            return code switch
             {
-                case 404:
-                    return View("Error/PageNotFound");
-                case 403:
-                    return View("Error/Forbidden");
-                default:
-                    return View("Error/UnknownError");
-            }
+                404 => View("Error/PageNotFound"),
+                403 => View("Error/Forbidden"),
+                _ => View("Error/UnknownError")
+            };
         }
 
         private int GetCandidateId()
