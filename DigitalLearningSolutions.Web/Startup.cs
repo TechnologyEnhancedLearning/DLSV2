@@ -7,6 +7,8 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentMigrator.Runner;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Routing;
@@ -38,12 +40,14 @@ namespace DigitalLearningSolutions.Web
                 .AddCookie("Identity.Application", options =>
                 {
                     options.Cookie.Name = ".AspNet.SharedCookie";
-                    options.Events.OnRedirectToLogin = (context) =>
-                    {
-                        context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
-                        return Task.CompletedTask;
-                    };
+                    options.Events.OnRedirectToLogin = RedirectToLogin;
+                    options.Events.OnRedirectToAccessDenied = RedirectToLogin;
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(CustomPolicies.UserOnly, policy => policy.RequireClaim(CustomClaimTypes.LearnCandidateId));
+            });
 
             services.ConfigureApplicationCookie(options => {
                 options.Cookie.Name = ".AspNet.SharedCookie";
@@ -92,7 +96,7 @@ namespace DigitalLearningSolutions.Web
             migrationRunner.MigrateUp();
         }
 
-        private async System.Threading.Tasks.Task ConfigureEndPointsAsync(IEndpointRouteBuilder endpoints, IFeatureManager featureManager)
+        private async Task ConfigureEndPointsAsync(IEndpointRouteBuilder endpoints, IFeatureManager featureManager)
         {
             if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.Login)))
             {
@@ -102,6 +106,12 @@ namespace DigitalLearningSolutions.Web
             {
                 endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}");
             }
+        }
+
+        private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            return Task.CompletedTask;
         }
     }
 }

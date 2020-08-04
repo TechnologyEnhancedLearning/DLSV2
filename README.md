@@ -96,6 +96,8 @@ However when our system is deployed to live it will run alongside the old system
 
 The app should now get the login from the old system. Whenever you login it sets a cookie which will persist. So whenever you change login (e.g. swapping between using our dummy login and the old system login) you need to clear your cookies.
 
+NB the redirect urls for when a user is not logged in or is not authorized (doesn't have the correct claims in the login cookie) always point to the old system; `{CurrentSystemBaseUrl}/home?action=login&app=lp`. If you get redirected to these urls but you want to use our dummy login then just go to the base url for our system (e.g. https://localhost:44363/ when running locally). This should log you in, as long as the login feature flag is set to true.
+
 ## Running the tests
 These tests will also be run by the Jenkins job whenever you push.
 

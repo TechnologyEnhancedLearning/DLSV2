@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize]
+    [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LearningPortalController : Controller
     {
         private readonly ICourseService courseService;
