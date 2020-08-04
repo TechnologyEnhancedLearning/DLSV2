@@ -36,7 +36,7 @@ You should now see the `mbdbx101` database in your *Databases* folder on the
 
 We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored database:
 1. Open SQL Server Management Studio
-2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the root of this repo.
+2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the SQLScripts folder in the root of this repo.
 3. Press the Execute button to run the script.
 
 ### Inspecting the database
