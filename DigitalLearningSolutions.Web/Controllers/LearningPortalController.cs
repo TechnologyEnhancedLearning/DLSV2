@@ -73,7 +73,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
-                .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
+                .Select(c => new CurrentCourseViewModel(c, config))
                 .First();
             if (model.CompleteByDate != null && !model.SelfEnrolled)
             {
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var model = currentCourses
                 .Where(c => c.CustomisationID == id)
-                .Select(c => new CurrentViewModel.CurrentCourseViewModel(c, config))
+                .Select(c => new CurrentCourseViewModel(c, config))
                 .First();
 
             return View(model);
