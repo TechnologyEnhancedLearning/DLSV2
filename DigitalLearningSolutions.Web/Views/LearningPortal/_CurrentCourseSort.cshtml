@@ -21,7 +21,7 @@
                      id="sort-ascending"
                      aria-label="Sort Ascending"
                      type="radio"
-                     value="@Model.AscendingText"
+                     value="@CurrentViewModel.AscendingText"
                      asp-for="SortDirection">
               <label class="nhsuk-label nhsuk-radios__label" for="sort-ascending">
                 Ascending
@@ -32,7 +32,7 @@
                      id="sort-descending"
                      aria-label="Sort Descending"
                      type="radio"
-                     value="@Model.DescendingText"
+                     value="@CurrentViewModel.DescendingText"
                      asp-for="SortDirection">
               <label class="nhsuk-label nhsuk-radios__label" for="sort-descending">
                 Descending

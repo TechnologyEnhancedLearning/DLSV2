@@ -7,10 +7,12 @@
     public class CompletedViewModel
     {
         private readonly IEnumerable<Course> completedCourses;
+        public readonly string? BannerText;
 
-        public CompletedViewModel(IEnumerable<Course> completedCourses)
+        public CompletedViewModel(IEnumerable<Course> completedCourses, string? bannerText)
         {
             this.completedCourses = completedCourses;
+            BannerText = bannerText;
         }
 
         public IEnumerable<CompletedCourseViewModel> CompletedCourses

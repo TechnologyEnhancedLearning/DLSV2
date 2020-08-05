@@ -18,7 +18,7 @@
                 new Course { Id = 2, Name = "Course 2" }
             };
 
-            model = new AvailableViewModel(availableCourses);
+            model = new AvailableViewModel(availableCourses, null);
         }
 
         [TestCase(0, "Course 1", 1)]

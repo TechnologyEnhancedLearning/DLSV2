@@ -13,7 +13,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
         private readonly IConfiguration config;
 
         [BindProperty] public string SortDirection { get; set; }
-
         [BindProperty] public string SortBy { get; set; }
 
         public readonly SelectList SortByOptions = new SelectList(new[]
@@ -26,14 +25,22 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             SortByOptionTexts.PassedSections
         });
 
-        public readonly string AscendingText = "Ascending";
-        public readonly string DescendingText = "Descending";
+        public const string AscendingText = "Ascending";
+        public const string DescendingText = "Descending";
+        public readonly string? BannerText;
 
-        public CurrentViewModel(IEnumerable<CurrentCourse> currentCourses, IConfiguration config, string sortBy, string sortDirection)
+        public CurrentViewModel(
+            IEnumerable<CurrentCourse> currentCourses,
+            IConfiguration config,
+            string sortBy,
+            string sortDirection,
+            string? bannerText
+        )
         {
             this.config = config;
             SortBy = sortBy;
             SortDirection = sortDirection;
+            BannerText = bannerText;
             this.currentCourses = SortBy switch
             {
                 SortByOptionTexts.StartedDate => SortDirection == DescendingText

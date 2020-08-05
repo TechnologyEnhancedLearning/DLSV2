@@ -41,7 +41,8 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             logger.LogInformation("Getting current courses");
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection);
+            var bannerText = GetBannerText();
+            var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection, bannerText);
             return View(model);
         }
 
@@ -120,7 +121,8 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             logger.LogInformation("Getting completed courses");
             var completedCourses = courseService.GetCompletedCourses();
-            var model = new CompletedViewModel(completedCourses);
+            var bannerText = GetBannerText();
+            var model = new CompletedViewModel(completedCourses, bannerText);
             return View(model);
         }
 
@@ -128,7 +130,8 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             logger.LogInformation("Getting available courses");
             var availableCourses = courseService.GetAvailableCourses();
-            var model = new AvailableViewModel(availableCourses);
+            var bannerText = GetBannerText();
+            var model = new AvailableViewModel(availableCourses, bannerText);
             return View(model);
         }
 
@@ -167,11 +170,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             ErrorViewModel model;
             try
             {
-                var centreId = GetCustomClaim(CustomClaimTypes.UserCentreId);
-                var bannerText = centreId == null
-                    ? null
-                    : centresService.GetBannerText(int.Parse(centreId));
-
+                var bannerText = GetBannerText();
                 model = new ErrorViewModel(bannerText);
             }
             catch
@@ -195,8 +194,17 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         private string? GetCustomClaim(string claimType)
         {
-            var customClaim = User.Claims.First(claim => claim.Type == claimType);
-            return customClaim.Value;
+            var customClaim = User.Claims.FirstOrDefault(claim => claim.Type == claimType);
+            return customClaim?.Value;
+        }
+
+        private string? GetBannerText()
+        {
+            var centreId = GetCustomClaim(CustomClaimTypes.UserCentreId);
+            var bannerText = centreId == null
+                ? null
+                : centresService.GetBannerText(int.Parse(centreId));
+            return bannerText;
         }
     }
 }
