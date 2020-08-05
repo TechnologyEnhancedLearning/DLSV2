@@ -8,7 +8,7 @@
 
         public TermsViewModel(string termsText)
         {
-            this.TermsText = new HtmlString(termsText);
+            TermsText = new HtmlString(termsText);
         }
     }
 }

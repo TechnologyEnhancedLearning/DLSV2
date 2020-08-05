@@ -69,11 +69,12 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register data services.
-            services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<IUnlockDataService, UnlockDataService>();
+            services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<IUnlockService, UnlockService>();
+            services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
+            services.AddScoped<IUnlockDataService, UnlockDataService>();
+            services.AddScoped<IUnlockService, UnlockService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

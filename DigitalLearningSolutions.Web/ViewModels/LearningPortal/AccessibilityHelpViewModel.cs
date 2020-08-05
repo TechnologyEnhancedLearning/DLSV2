@@ -8,7 +8,7 @@
 
         public AccessibilityHelpViewModel(string accessibilityText)
         {
-            this.AccessibilityHelpText = new HtmlString(accessibilityText);
+            AccessibilityHelpText = new HtmlString(accessibilityText);
         }
 
     }
