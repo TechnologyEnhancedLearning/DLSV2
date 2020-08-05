@@ -161,22 +161,14 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         public IActionResult Error()
         {
-            return View("Error/UnknownError");
+            var model = GetErrorModel();
+            return View("Error/UnknownError", model);
         }
 
         [Route("/LearningPortal/StatusCode/{code:int}")]
         public new IActionResult StatusCode(int code)
         {
-            ErrorViewModel model;
-            try
-            {
-                var bannerText = GetBannerText();
-                model = new ErrorViewModel(bannerText);
-            }
-            catch
-            {
-                model = new ErrorViewModel(null);
-            }
+            var model = GetErrorModel();
 
             return code switch
             {
@@ -205,6 +197,19 @@ namespace DigitalLearningSolutions.Web.Controllers
                 ? null
                 : centresService.GetBannerText(int.Parse(centreId));
             return bannerText;
+        }
+
+        private ErrorViewModel GetErrorModel()
+        {
+            try
+            {
+                var bannerText = GetBannerText();
+                return new ErrorViewModel(bannerText);
+            }
+            catch
+            {
+                return new ErrorViewModel(null);
+            }
         }
     }
 }
