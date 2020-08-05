@@ -188,22 +188,15 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         private int GetCandidateId()
         {
-            var id = User.Claims.First(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
-            return Convert.ToInt32(id.Value);
-        }
-
-        private string? GetCustomClaim(string claimType)
-        {
-            var customClaim = User.Claims.FirstOrDefault(claim => claim.Type == claimType);
-            return customClaim?.Value;
+            return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
         private string? GetBannerText()
         {
-            var centreId = GetCustomClaim(CustomClaimTypes.UserCentreId);
+            var centreId = User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
             var bannerText = centreId == null
                 ? null
-                : centresService.GetBannerText(int.Parse(centreId));
+                : centresService.GetBannerText(centreId.Value);
             return bannerText;
         }
     }

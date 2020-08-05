@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(CustomPolicies.UserOnly, policy => policy.RequireClaim(CustomClaimTypes.LearnCandidateId));
+                options.AddPolicy(CustomPolicies.UserOnly, policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => {
