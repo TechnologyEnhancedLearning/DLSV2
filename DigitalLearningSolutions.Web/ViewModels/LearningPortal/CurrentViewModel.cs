@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
         }
     }
 
-    public class SortByOptionTexts
+    public static class SortByOptionTexts
     {
         public const string
             CourseName = "Course Name",
