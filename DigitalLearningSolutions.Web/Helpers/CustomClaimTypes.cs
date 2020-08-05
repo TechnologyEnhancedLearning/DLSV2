@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-
-    public class CustomClaimTypes
+    public static class CustomClaimTypes
     {
         public const string UserCentreId = "UserCentreID";
         public const string UserCentreManager = "UserCentreManager";
