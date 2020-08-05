@@ -26,6 +26,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 254480;
+        private const int CentreId = 2;
 
         [SetUp]
         public void SetUp()
@@ -41,6 +42,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
+                new Claim("UserCentreID", CentreId.ToString())
             }, "mock"));
             controller = new LearningPortalController(
                 centresService,
@@ -70,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses, config, "Course Name", "Ascending");
+            var expectedModel = new CurrentViewModel(currentCourses, config, "Course Name", "Ascending", "");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
@@ -331,6 +333,20 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         }
 
         [Test]
+        public void Current_action_should_have_banner_text()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var currentViewModel = CurrentCourseHelper.CurrentViewModelFromController(controller);
+
+            // Then
+            currentViewModel.BannerText.Should().Be(bannerText);
+        }
+
+        [Test]
         public void Completed_action_should_return_view_result()
         {
             // Given
@@ -345,9 +361,23 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = controller.Completed();
 
             // Then
-            var expectedModel = new CompletedViewModel(completedCourses);
+            var expectedModel = new CompletedViewModel(completedCourses, "");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Completed_action_should_have_banner_text()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(2)).Returns(bannerText);
+
+            // When
+            var completedViewModel = CompletedCourseHelper.CompletedViewModelFromController(controller);;
+
+            // Then
+            completedViewModel.BannerText.Should().Be(bannerText);
         }
 
         [Test]
@@ -365,9 +395,23 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = controller.Available();
 
             // Then
-            var expectedModel = new AvailableViewModel(availableCourses);
+            var expectedModel = new AvailableViewModel(availableCourses, "");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Available_action_should_have_banner_text()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(2)).Returns(bannerText);
+
+            // When
+            var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);;
+
+            // Then
+            availableViewModel.BannerText.Should().Be(bannerText);
         }
     }
 }

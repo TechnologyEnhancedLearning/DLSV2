@@ -8,9 +8,12 @@
     {
         private readonly IEnumerable<Course> availableCourses;
 
-        public AvailableViewModel(IEnumerable<Course> availableCourses)
+        public readonly string? BannerText;
+
+        public AvailableViewModel(IEnumerable<Course> availableCourses, string? bannerText)
         {
             this.availableCourses = availableCourses;
+            BannerText = bannerText;
         }
 
         public IEnumerable<AvailableCourseViewModel> AvailableCourses

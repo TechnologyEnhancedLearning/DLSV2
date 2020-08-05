@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
 
-    static class CurrentCourseHelper
+    public static class CurrentCourseHelper
     {
 
         public static CurrentCourse CreateDefaultCurrentCourse(
@@ -45,9 +45,14 @@
 
         public static CurrentCourseViewModel CurrentCourseViewModelFromController(LearningPortalController controller)
         {
-            var result = controller.Current() as ViewResult;
-            var model = result.Model as CurrentViewModel;
+            var model = CurrentViewModelFromController(controller);
             return model.CurrentCourses.First();
+        }
+
+        public static CurrentViewModel CurrentViewModelFromController(LearningPortalController controller)
+        {
+            var result = controller.Current() as ViewResult;
+            return result.Model as CurrentViewModel;
         }
     }
 }
