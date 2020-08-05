@@ -14,22 +14,25 @@ namespace DigitalLearningSolutions.Web.Controllers
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LearningPortalController : Controller
     {
+        private readonly ICentresService centresService;
+        private readonly IConfigService configService;
         private readonly ICourseService courseService;
         private readonly IUnlockService unlockService;
-        private readonly IConfigService configService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
 
         public LearningPortalController(
+            ICentresService centresService,
+            IConfigService configService,
             ICourseService courseService,
             IUnlockService unlockService,
-            IConfigService configService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
         {
+            this.centresService = centresService;
+            this.configService = configService;
             this.courseService = courseService;
             this.unlockService = unlockService;
-            this.configService = configService;
             this.logger = logger;
             this.config = config;
         }
@@ -161,11 +164,26 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/StatusCode/{code:int}")]
         public new IActionResult StatusCode(int code)
         {
+            ErrorViewModel model;
+            try
+            {
+                var centreId = GetCustomClaim(CustomClaimTypes.UserCentreId);
+                var bannerText = centreId == null
+                    ? null
+                    : centresService.GetBannerText(int.Parse(centreId));
+
+                model = new ErrorViewModel(bannerText);
+            }
+            catch
+            {
+                model = new ErrorViewModel(null);
+            }
+
             return code switch
             {
-                404 => View("Error/PageNotFound"),
-                403 => View("Error/Forbidden"),
-                _ => View("Error/UnknownError")
+                404 => View("Error/PageNotFound", model),
+                403 => View("Error/Forbidden", model),
+                _ => View("Error/UnknownError", model)
             };
         }
 
@@ -173,6 +191,12 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var id = User.Claims.First(claim => claim.Type == CustomClaimTypes.LearnCandidateId);
             return Convert.ToInt32(id.Value);
+        }
+
+        private string? GetCustomClaim(string claimType)
+        {
+            var customClaim = User.Claims.First(claim => claim.Type == claimType);
+            return customClaim.Value;
         }
     }
 }

@@ -19,9 +19,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
     public class LearningPortalControllerTests
     {
         private LearningPortalController controller;
+        private ICentresService centresService;
+        private IConfigService configService;
         private ICourseService courseService;
         private IUnlockService unlockService;
-        private IConfigService configService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 254480;
@@ -29,9 +30,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         [SetUp]
         public void SetUp()
         {
+            centresService = A.Fake<ICentresService>();
+            configService = A.Fake<IConfigService>();
             courseService = A.Fake<ICourseService>();
             unlockService = A.Fake<IUnlockService>();
-            configService = A.Fake<IConfigService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
@@ -40,7 +42,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
             }, "mock"));
-            controller = new LearningPortalController(courseService, unlockService, configService, logger, config)
+            controller = new LearningPortalController(
+                centresService,
+                configService,
+                courseService,
+                unlockService,
+                logger,
+                config
+            )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
             };
@@ -50,7 +59,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void Current_action_should_return_view_result()
         {
             // Given
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(),
                 CurrentCourseHelper.CreateDefaultCurrentCourse()
             };
@@ -70,7 +80,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
@@ -87,14 +98,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.DateStyle().Should().Be("due-soon");
@@ -123,14 +134,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.HasDiagnosticScore().Should().BeFalse();
@@ -141,14 +152,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.HasDiagnosticScore().Should().BeFalse();
@@ -159,14 +170,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.HasDiagnosticScore().Should().BeTrue();
@@ -177,14 +188,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.HasPassedSections().Should().BeFalse();
@@ -195,14 +206,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
 
             // Then
             course.HasPassedSections().Should().BeTrue();
@@ -213,7 +224,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(enrollmentMethodId: 0, completeByDate: new DateTime(2020, 1, 1));
-            var currentCourses = new[] {
+            var currentCourses = new[]
+            {
                 currentCourse
             };
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
@@ -303,7 +315,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             A.CallTo(() => courseService.RemoveCurrentCourse(1, CandidateId)).MustHaveHappened();
-
         }
 
         [Test]
@@ -323,7 +334,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void Completed_action_should_return_view_result()
         {
             // Given
-            var completedCourses = new[] {
+            var completedCourses = new[]
+            {
                 new Course { Id = 1, Name = "Course 1" },
                 new Course { Id = 2, Name = "Course 2" }
             };
@@ -342,7 +354,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public void Available_action_should_return_view_result()
         {
             // Given
-            var availableCourses = new[] {
+            var availableCourses = new[]
+            {
                 new Course { Id = 1, Name = "Course 1" },
                 new Course { Id = 2, Name = "Course 2" }
             };

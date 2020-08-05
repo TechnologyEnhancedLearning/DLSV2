@@ -1,4 +1,6 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model ErrorViewModel
+@{
   ViewData["Title"] = "Learning Portal - Page not found";
 }
 
@@ -7,5 +9,6 @@
     <h1>We can’t find the page you’re looking for</h1>
     <p>Please check the web address to make sure it was correct.</p>
     <p>You can also <a href="/">view your current courses</a> or <a href="https://www.dls.nhs.uk/Home">visit the Digital Learning Solutions homepage</a>.</p>
-  </div>
+    <p>@Model.HelpText()</p>
+    </div>
 </div>
