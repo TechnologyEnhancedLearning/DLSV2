@@ -5,6 +5,7 @@ $nhs-dark-blue: #003087;
 
 html {
     height: 100%;
+    overflow-y: auto;
 }
 
 body {
@@ -22,7 +23,9 @@ body {
 #maincontentwrapper {
     flex: 1 0 auto;
     align-self: center;
-    min-width: 50vw;
+    width: 100%;
+    margin: 0;
+    padding: 0 16px;
 }
 
 footer {
