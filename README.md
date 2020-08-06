@@ -1,5 +1,4 @@
-# Digital Learning Solutions
-## Installs
+# Installs
 
 - [Visual Studio Professional 2019](https://visualstudio.microsoft.com/downloads/)
     - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
@@ -8,7 +7,7 @@
 - [Git](https://git-scm.com/)
 - [NPM](https://www.npmjs.com/get-npm)
 
-## Getting the code
+# Getting the code
 
 Checkout the `digitallearningsolutions` repository from [Softwire's GitLab](https://gitlab.softwire.com/softwire/digitallearningsolutions):
 
@@ -18,11 +17,11 @@ git checkout git@gitlab.softwire.com:softwire/digitallearningsolutions.git
 
 You should now be able to open the solution in Visual Studio 2019 by finding and double-clicking the `DigitalLearningSolutions.sln` file.
 
-## Setting up the database
+# Setting up the database
 
 Get a database backup `.bak` file from the current system.
 
-### Restore the database from the backup
+## Restore the database from the backup
 
 - Open SQL Server Management Studio and connect to your `localhost` instance
 - Right-click *Databases* → *Restore Database…*
@@ -32,7 +31,7 @@ Get a database backup `.bak` file from the current system.
 
 You should now see the `mbdbx101` database in your *Databases* folder on the `localhost` server.
 
-### Add the self assessment data
+## Add the self assessment data
 
 We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored database:
 1. Open SQL Server Management Studio
@@ -49,12 +48,12 @@ It can be useful to have a look at what's in the database, to test out and plan 
 4. Expand tables. You can now see all the tables in the database.
 5. Right click a table and click "Select top 1000 rows". This should open an editor with an SQL query to get the first 1000 rows in the DB. You should also be able to see the result of running that query below. You can change this SQL query to anything you like and click the "execute" button to run it and update the results.
 
-### Making changes to the database
+## Making changes to the database
 If you just want to make temporary changes to the database for testing (e.g. adding in some specific data to a table to test something) then you can do that in SQL Management Studio with the SQL scripts as described in the previous section. However if you want to make a permanent change to the database, for example to add a new table, then you need to use a migration.
 
 We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. Our migrations will live in DigitalLearningSolutions.Data.Migrations but we don't currently have any. The migrations will be applied by the RegisterMigrationRunner method in MigrationHelperMethods.cs. They should get applied when you run the app and when you run the data unit tests.
 
-#### Add a new migration
+### Add a new migration
 Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. The fluent migrator docs have a good example of what a migration should look like: https://fluentmigrator.github.io/.
 
 Once you've added your migration file you need to make sure it's applied when running the app and when running the data unit tests. Do this by adding the migration to the ScanIn call in RegisterMigrationRunner in MigrationHelperMethods.cs, something like:
@@ -67,17 +66,17 @@ Once you've added your migration file you need to make sure it's applied when ru
 ```
 The migration should now get applied the next time you run the app or when you run the data unit tests.
 
-#### Reversing a migration
+### Reversing a migration
 If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
 * Remove it from the `ScanIn` statement in Startup.cs
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
-## Setting up the old code
+# Setting up the old code
 
 For testing the integration with the old system (for example launching a course will redirect to the old system) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
 
-## Running the app
+# Running the app
 
 The project should now build. Confirm this via *Build* → *Build Solution* (or `CTRL+SHIFT+B`).
 
@@ -85,7 +84,7 @@ You can now run the app by clicking the play button (▶), which should say *II
 
 This should launch the website at: [https://localhost:44363/](https://localhost:44363/)
 
-## Running the app with login from the old system
+# Running the app with login from the old system
 
 When running our app on its own we have our own dummy login. This is controlled by a feature flag in FeatureManagement.Login in appsettings.Development.json. When this is true the app will start by going to the Login controller where it will set up the claims for our test user and the redirect to the current courses.
 
@@ -98,37 +97,37 @@ The app should now get the login from the old system. Whenever you login it sets
 
 NB the redirect urls for when a user is not logged in or is not authorized (doesn't have the correct claims in the login cookie) always point to the old system; `{CurrentSystemBaseUrl}/home?action=login&app=lp`. If you get redirected to these urls but you want to use our dummy login then just go to the base url for our system (e.g. https://localhost:44363/ when running locally). This should log you in, as long as the login feature flag is set to true.
 
-## Running the tests
+# Running the tests
 These tests will also be run by the Jenkins job whenever you push.
 
-### Running the web tests
+## Running the web tests
 These tests are in the DigitalLearningSolutions.Web.Tests project. No setup is required to run them and they'll also be run by the jenkins job whenever you push. See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
-### Running the data tests
+## Running the data tests
 These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
 
 You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details.
 
 See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
-### Run one test
+## Run one test
 Open the test file, find the test you want to run, click the icon to the left of the test name.
 
-### Run all tests in a file
+## Run all tests in a file
 Open the file and click the icon to the left of the class name.
 
-### Run all the tests
+## Run all the tests
 Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests".
 
-### Typescript tests
+## Typescript tests
 The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `npm t` inside DigitalLearningSolutions.Web.
 
-### Typescript linting
+## Typescript linting
 The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Text Editor>Javascript/Typescript>Linting>General` and tick "Enable ESLint".  This should highlight any lint errors in the editor. It's not the most reliable, and if in doubt, run the lint manually.
 
 Linting can be run with `npm lint` inside `DigitalLearningSolutions.Web`. `npm lint-fix` may autofix some errors.
 
-## Troubleshooting
+# Troubleshooting
 
 ## Undeclared variable warning in `index.scss` (DigitalLearningSolutions.Web)
 
@@ -149,7 +148,7 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 3. In the list select `$(PATH)` and use the up arrow button to move it to the top of the list.
 4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the npm build.
 
-## Logging
+# Logging
 We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
 * Any ASP.NET Core logs with level warning or above
 * Any requests (excluding requests to static files)
@@ -162,14 +161,14 @@ To view the console in Visual Studio select View -> Output and set "Show output 
 
 To view the logs in the database connect to the local db in SQL Server Management Studio. The table with the logs is V2LogEvents (the Logs table stores logs for the old system).
 
-### Useful queries
+## Useful queries
 
-#### Get all the logs for today
+### Get all the logs for today
 ```
 SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE DAY([TimeStamp]) = DAY(GETDATE())
 ```
 
-#### Get all the logs for a session
+### Get all the logs for a session
 Look for the entry with message "starting up", they indicate the start of a session. Once you know the id for the line indicating the start of your session you can do, e.g.
 ```
 SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Id] > 10
@@ -180,12 +179,12 @@ SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Id] > 10 AND [Id] < 16
 ```
 if the id for the start of the next session was 16.
 
-#### Get the logs for all requests
+### Get the logs for all requests
 ```
 SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [MessageTemplate] LIKE '%RequestMethod%'
 ```
 
-#### Get all exceptions
+### Get all exceptions
 ```
 SELECT [Exception] FROM [mbdbx101].[dbo].[V2LogEvents] WHERE [Exception] IS NOT NULL
 ```
@@ -207,3 +206,12 @@ In order to set up your dev environment to send emails, make the following chang
 The recipient addresses can be set with Centres.NotifyEmail and Candidates.EmailAddress, and a course can be locked using Progress.PLLocked
 
 On test, the centre email is heedlstest@mailinator.com, and the user email is heedlstestuser@mailinator.com. These can be viewed by visiting [mailinator.com](https://www.mailinator.com/) and entering the email address at the top of the page.
+
+# Environment variables
+We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
+
+For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want. This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
+
+To set an environment variable you can either:
+1. When running locally you can specify environment variables in launchSettings.json.
+2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
