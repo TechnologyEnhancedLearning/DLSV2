@@ -371,7 +371,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(2)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var completedViewModel = CompletedCourseHelper.CompletedViewModelFromController(controller);;
@@ -405,13 +405,118 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(2)).Returns(bannerText);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);;
 
             // Then
             availableViewModel.BannerText.Should().Be(bannerText);
+        }
+
+        [Test]
+        public void Error_should_render_the_error_view()
+        {
+            // When
+            var result = controller.Error();
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/UnknownError");
+        }
+
+        [Test]
+        public void Error_should_pass_the_banner_text()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var result = controller.Error();
+
+            // Then
+            var expectedModel = new ErrorViewModel(bannerText);
+            result.Should().BeViewResult()
+                .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
+
+        }
+
+        [Test]
+        public void StatusCode_should_render_not_found_view_when_code_is_404()
+        {
+            // When
+            var result = controller.StatusCode(404);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+        }
+
+        [Test]
+        public void StatusCode_should_render_forbidden_view_when_code_is_403()
+        {
+            // When
+            var result = controller.StatusCode(403);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/Forbidden");
+        }
+
+        [Test]
+        public void StatusCode_should_render_unknown_error_view_when_code_is_500()
+        {
+            // When
+            var result = controller.StatusCode(500);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/UnknownError");
+        }
+
+        [Test]
+        public void StatusCode_should_set_banner_text_when_code_is_404()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var result = controller.StatusCode(404);
+
+            // Then
+            var expectedModel = new ErrorViewModel(bannerText);
+            result.Should().BeViewResult()
+                .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
+        }
+
+        [Test]
+        public void StatusCode_should_set_banner_text_when_code_is_403()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var result = controller.StatusCode(403);
+
+            // Then
+            var expectedModel = new ErrorViewModel(bannerText);
+            result.Should().BeViewResult()
+                .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
+        }
+
+        [Test]
+        public void StatusCode_should_set_banner_text_when_code_is_500()
+        {
+            // Given
+            const string bannerText = "Banner text";
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+
+            // When
+            var result = controller.StatusCode(500);
+
+            // Then
+            var expectedModel = new ErrorViewModel(bannerText);
+            result.Should().BeViewResult()
+                .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
         }
     }
 }
