@@ -1,25 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
-    using System;
-    using Castle.Core.Internal;
+    using DigitalLearningSolutions.Web.Helpers;
+    using FluentMigrator.Runner;
+    using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
 
     public static class ServiceTestHelper
     {
-        public static string GetSqlConnectionString()
+        public static SqlConnection GetDatabaseConnection()
         {
-            const string defaultConnectionString = "Data Source=localhost;Initial Catalog=mbdbx101_test;Integrated Security=True;";
-            var jenkinsConnectionString = GetJenkinsSqlConnectionString();
-            return jenkinsConnectionString.IsNullOrEmpty() ? defaultConnectionString : jenkinsConnectionString;
-        }
+            var config = ConfigHelper.GetAppConfig();
+            var connectionString = config.GetConnectionString(ConfigHelper.DefaultConnectionStringName);
+            var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
+            serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
 
-        private static string GetJenkinsSqlConnectionString()
-        {
-
-            var jenkinsSqlServerPassword = Environment.GetEnvironmentVariable("SqlTestCredentials_PSW");
-            var jenkinsSqlServerUsername = Environment.GetEnvironmentVariable("SqlTestCredentials_USR");
-            return jenkinsSqlServerUsername.IsNullOrEmpty() || jenkinsSqlServerPassword.IsNullOrEmpty()
-                ? ""
-                : $"Server=HEE-DLS-SQL\\HEETEST; Database=mbdbx101_test; User Id={jenkinsSqlServerUsername}; Password={jenkinsSqlServerPassword};";
+            return new SqlConnection(connectionString);
         }
 
     }

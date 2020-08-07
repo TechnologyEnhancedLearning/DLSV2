@@ -5,7 +5,7 @@ pipeline {
         label 'windows'
     }
     environment {
-        SqlTestCredentials = credentials('sql-test-credentials')
+        DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
     }
     stages {
         stage('Checkout') {

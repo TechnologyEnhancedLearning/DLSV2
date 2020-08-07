@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web
 {
     using System;
-    using System.IO;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
@@ -35,39 +35,23 @@ namespace DigitalLearningSolutions.Web
                 .UseSerilog()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.AddEnvironmentVariables(prefix: GetEnvironmentVariablePrefix());
+                    config.AddEnvironmentVariables(prefix: ConfigHelper.GetEnvironmentVariablePrefix());
                 })
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
 
         public static void SetUpLogger()
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(GetAppSettingsFilename())
-                .AddEnvironmentVariables(GetEnvironmentVariablePrefix())
-                .Build();
+            var config = ConfigHelper.GetAppConfig();
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.MSSqlServer(
-                    connectionString: config["ConnectionStrings:DefaultConnection"],
+                    connectionString: config.GetConnectionString(ConfigHelper.DefaultConnectionStringName),
                     sinkOptions: new SinkOptions { TableName = "V2LogEvents", AutoCreateSqlTable = true },
                     appConfiguration: config)
                 .CreateLogger();
-        }
-
-        private static string GetEnvironmentVariablePrefix()
-        {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            return $"DlsRefactor{environmentName}_";
-        }
-
-        private static string GetAppSettingsFilename()
-        {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            return environmentName == Environments.Production ? "appsettings.json" : $"appsettings.{environmentName}.json";
         }
     }
 }
