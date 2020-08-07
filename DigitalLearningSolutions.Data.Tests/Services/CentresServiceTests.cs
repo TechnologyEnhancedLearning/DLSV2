@@ -1,15 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
-    using FluentMigrator.Runner;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.DependencyInjection;
     using NUnit.Framework;
 
     [Parallelizable(ParallelScope.Fixtures)]
@@ -20,11 +13,7 @@
         [SetUp]
         public void Setup()
         {
-            var connectionString = ServiceTestHelper.GetSqlConnectionString();
-            var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
-            serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
-
-            var connection = new SqlConnection(connectionString);
+            var connection = ServiceTestHelper.GetDatabaseConnection();
             centresService = new CentresService(connection);
         }
 

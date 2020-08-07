@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Web
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
 
-            var defaultConnectionString = config["ConnectionStrings:DefaultConnection"];
+            var defaultConnectionString = config.GetConnectionString(ConfigHelper.DefaultConnectionStringName);
 
             // Register database migration runner.
             services.RegisterMigrationRunner(defaultConnectionString);

@@ -210,7 +210,7 @@ On test, the centre email is heedlstest@mailinator.com, and the user email is he
 # Environment variables
 We're using environment variables to set any settings we don't want to have committed to source control (e.g. database connection string on uat as it includes a password). In addition to the default .net core environment variables we're using any variables set with the prefix `DlsRefactor{EnvironmentName}_`. The prefix will be removed when reading the variable, see https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1#environment-variables for details.
 
-For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want. This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
+For example, if you want to set the db connection string on uat then set an environment variable called DlsRefactorUAT_ConnectionStrings:DefaultConnection to the connection string you want (`__` can be used instead of `:` in situations where it's not possible to use `:` such as in a jenkinsfile or on a mac). This will override the ConnectionStrings:DefaultConnection set in the appSettings file.
 
 To set an environment variable you can either:
 1. When running locally you can specify environment variables in launchSettings.json.

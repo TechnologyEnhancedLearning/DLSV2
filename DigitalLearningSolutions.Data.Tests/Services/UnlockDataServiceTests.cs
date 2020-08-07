@@ -3,12 +3,8 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Helpers;
     using NUnit.Framework;
     using FluentAssertions;
-    using FluentMigrator.Runner;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.DependencyInjection;
 
     [Parallelizable(ParallelScope.Fixtures)]
     public class UnlockDataServiceTests
@@ -18,11 +14,7 @@
         [SetUp]
         public void Setup()
         {
-            var connectionString = ServiceTestHelper.GetSqlConnectionString();
-            var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
-            serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
-
-            var connection = new SqlConnection(connectionString);
+            var connection = ServiceTestHelper.GetDatabaseConnection();
             unlockDataService = new UnlockDataService(connection);
         }
 
