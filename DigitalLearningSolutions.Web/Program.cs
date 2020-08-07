@@ -33,16 +33,19 @@ namespace DigitalLearningSolutions.Web
         {
             return Host.CreateDefaultBuilder(args)
                 .UseSerilog()
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddEnvironmentVariables(prefix: GetEnvironmentVariablePrefix());
+                })
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
 
         public static void SetUpLogger()
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var appSettingsFileName = environmentName == Environments.Production ? "appsettings.json" : $"appsettings.{environmentName}.json";
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(appSettingsFileName)
+                .AddJsonFile(GetAppSettingsFilename())
+                .AddEnvironmentVariables(GetEnvironmentVariablePrefix())
                 .Build();
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
@@ -53,6 +56,18 @@ namespace DigitalLearningSolutions.Web
                     sinkOptions: new SinkOptions { TableName = "V2LogEvents", AutoCreateSqlTable = true },
                     appConfiguration: config)
                 .CreateLogger();
+        }
+
+        private static string GetEnvironmentVariablePrefix()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            return $"DlsRefactor{environmentName}_";
+        }
+
+        private static string GetAppSettingsFilename()
+        {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            return environmentName == Environments.Production ? "appsettings.json" : $"appsettings.{environmentName}.json";
         }
     }
 }
