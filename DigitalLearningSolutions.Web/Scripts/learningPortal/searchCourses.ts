@@ -21,6 +21,14 @@ function setUpSearch() {
     'input',
     (event) => search((<HTMLInputElement>event.target).value, courseCards),
   );
+  searchInput?.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    }
+  );
 }
 
 export function titleFromCardElement(cardElement: Element): string {

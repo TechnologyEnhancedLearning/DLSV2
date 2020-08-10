@@ -72,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses, config, "Course Name", "Ascending", "");
+            var expectedModel = new CurrentViewModel(currentCourses, config, null, "Course Name", "Ascending", "");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
