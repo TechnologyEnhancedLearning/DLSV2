@@ -17,6 +17,7 @@ $nhs-dark-grey: #425563;
   width: 80%;
   float: left;
   margin-bottom: nhsuk-spacing(4);
+  -webkit-appearance: none;
 
   @include mq($from: tablet) {
     height: 40px;
