@@ -64,7 +64,7 @@ describe('displayCards', () => {
     expect(newChildren![0].tagName).toBe('OL');
   });
 
-  it('should display a message when given an empty list', () => {
+  it('should display nothing when given an empty list', () => {
     // Given
     global.document = new JSDOM(`
       <html>
@@ -84,9 +84,7 @@ describe('displayCards', () => {
 
     // Then
     const newChildren = document.getElementById('current-course-cards')?.children;
-    expect(newChildren?.length).toEqual(1);
-    expect(newChildren![0].tagName).toBe('P');
-    expect(newChildren![0].textContent).toBe('No matching search results');
+    expect(newChildren?.length).toEqual(0);
   });
 });
 
