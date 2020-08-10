@@ -23,7 +23,8 @@
             int groupCustomisationId = 0,
             DateTime? completeByDate = null,
             int progressId = 1,
-            int enrollmentMethodId = 1
+            int enrollmentMethodId = 1,
+            bool locked = false
             )
         {
             return new CurrentCourse {
@@ -39,7 +40,8 @@
                 GroupCustomisationId = groupCustomisationId,
                 CompleteByDate = completeByDate,
                 ProgressID = progressId,
-                EnrollmentMethodID = enrollmentMethodId
+                EnrollmentMethodID = enrollmentMethodId,
+                PLLocked = locked
             };
         }
 

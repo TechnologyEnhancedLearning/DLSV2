@@ -236,7 +236,26 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var result = controller.SetCompleteByDate(currentCourse.CustomisationID, null, null, null);
 
             // Then
-            (result as ViewResult).ViewName.Should().Be("Error/Forbidden");
+            result.Should().BeViewResult().WithViewName("Error/Forbidden");
+            controller.Response.StatusCode.Should().Be(403);
+        }
+
+        [Test]
+        public void Trying_to_edit_complete_by_date_for_non_existent_course_should_return_404()
+        {
+            // Given
+            var currentCourses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(2)
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.SetCompleteByDate(3, null, null, null);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+            controller.Response.StatusCode.Should().Be(404);
         }
 
         [Test]
@@ -320,16 +339,97 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         }
 
         [Test]
+        public void Remove_confirmation_for_a_current_course_should_show_confirmation()
+        {
+            // Given
+            const int customisationId = 2;
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(customisationId);
+            var currentCourses = new[]
+            {
+                currentCourse
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.RemoveCurrentCourseConfirmation(customisationId);
+
+            // Then
+            var expectedModel = new CurrentCourseViewModel(currentCourse, config);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Removing_non_existent_course_should_return_404()
+        {
+            // Given
+            var currentCourses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(2)
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.RemoveCurrentCourseConfirmation(3);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+            controller.Response.StatusCode.Should().Be(404);
+        }
+
+        [Test]
         public void Requesting_a_course_unlock_should_call_the_unlock_service()
         {
             // Given
             const int progressId = 1;
+            var currentCourses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId, locked: true)
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
             controller.RequestUnlock(progressId);
 
             // Then
             A.CallTo(() => unlockService.SendUnlockRequest(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Requesting_unlock_for_non_existent_course_should_return_404()
+        {
+            // Given
+            var currentCourses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: 2, locked: true)
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.RequestUnlock(3);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+            controller.Response.StatusCode.Should().Be(404);
+        }
+
+        [Test]
+        public void Requesting_unlock_for_unlocked_course_should_return_404()
+        {
+            // Given
+            const int progressId = 2;
+            var currentCourses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId)
+            };
+            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+
+            // When
+            var result = controller.RequestUnlock(progressId);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+            controller.Response.StatusCode.Should().Be(404);
         }
 
         [Test]
@@ -422,6 +522,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/UnknownError");
+            controller.Response.StatusCode.Should().Be(500);
         }
 
         [Test]
@@ -449,6 +550,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/PageNotFound");
+            controller.Response.StatusCode.Should().Be(404);
         }
 
         [Test]
@@ -459,6 +561,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/Forbidden");
+            controller.Response.StatusCode.Should().Be(403);
         }
 
         [Test]
@@ -469,6 +572,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/UnknownError");
+            controller.Response.StatusCode.Should().Be(500);
         }
 
         [Test]
