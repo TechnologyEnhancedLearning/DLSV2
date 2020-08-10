@@ -39,7 +39,6 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         public IActionResult Current(string sortBy = "Course Name", string sortDirection = "Ascending")
         {
-            logger.LogInformation("Getting current courses");
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
             var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection, bannerText);
@@ -72,12 +71,20 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult SetCompleteByDate(int id, int? day, int? month, int? year)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var model = currentCourses
-                .Where(c => c.CustomisationID == id)
-                .Select(c => new CurrentCourseViewModel(c, config))
-                .First();
+            var course = currentCourses.FirstOrDefault(c => c.CustomisationID == id);
+            if (course == null)
+            {
+                logger.LogWarning($"Attempt to set complete by date for course with id {id} which is not a current course for user with id {GetCandidateId()}");
+                return StatusCode(404);
+            }
+
+            var model = new CurrentCourseViewModel(course, config);
             if (model.CompleteByDate != null && !model.SelfEnrolled)
             {
+                logger.LogWarning(
+                    $"Attempt to set complete by date for course with id {id} for user with id ${GetCandidateId()} " +
+                    "but the complete by date has already been set and the user has not self enrolled"
+                    );
                 return StatusCode(403);
             }
 
@@ -93,11 +100,14 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult RemoveCurrentCourseConfirmation(int id)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var model = currentCourses
-                .Where(c => c.CustomisationID == id)
-                .Select(c => new CurrentCourseViewModel(c, config))
-                .First();
+            var course = currentCourses.FirstOrDefault(c => c.CustomisationID == id);
+            if (course == null)
+            {
+                logger.LogWarning($"Attempt to remove course with id {id} which is not a current course for user with id {GetCandidateId()}");
+                return StatusCode(404);
+            }
 
+            var model = new CurrentCourseViewModel(course, config);
             return View(model);
         }
 
@@ -112,14 +122,23 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
         public IActionResult RequestUnlock(int progressId)
         {
-            unlockService.SendUnlockRequest(progressId);
+            var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
+            var course = currentCourses.FirstOrDefault(c => c.ProgressID == progressId && c.PLLocked);
+            if (course == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to unlock course with progress id {progressId} however found no course with that progress id " +
+                    $"and PLLocked for user with id {GetCandidateId()}"
+                    );
+                return StatusCode(404);
+            }
 
+            unlockService.SendUnlockRequest(progressId);
             return View("UnlockCurrentCourse");
         }
 
         public IActionResult Completed()
         {
-            logger.LogInformation("Getting completed courses");
             var completedCourses = courseService.GetCompletedCourses();
             var bannerText = GetBannerText();
             var model = new CompletedViewModel(completedCourses, bannerText);
@@ -128,7 +147,6 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         public IActionResult Available()
         {
-            logger.LogInformation("Getting available courses");
             var availableCourses = courseService.GetAvailableCourses();
             var bannerText = GetBannerText();
             var model = new AvailableViewModel(availableCourses, bannerText);
@@ -162,6 +180,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult Error()
         {
             var model = GetErrorModel();
+            Response.StatusCode = 500;
             return View("Error/UnknownError", model);
         }
 
@@ -169,6 +188,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         public new IActionResult StatusCode(int code)
         {
             var model = GetErrorModel();
+            Response.StatusCode = code;
 
             return code switch
             {
