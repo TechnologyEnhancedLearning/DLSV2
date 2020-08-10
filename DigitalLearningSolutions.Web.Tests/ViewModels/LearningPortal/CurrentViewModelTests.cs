@@ -20,8 +20,10 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
         {
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns("http://www.dls.nhs.uk");
 
-            currentCourses = new[] {
-                new CurrentCourse {
+            currentCourses = new[]
+            {
+                new CurrentCourse
+                {
                     CustomisationID = 71,
                     CourseName = "B: Course",
                     HasDiagnostic = true,
@@ -36,7 +38,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     SupervisorAdminId = 0,
                     GroupCustomisationId = 0,
                 },
-                new CurrentCourse {
+                new CurrentCourse
+                {
                     CustomisationID = 72,
                     CourseName = "C: Course",
                     HasDiagnostic = true,
@@ -51,7 +54,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     SupervisorAdminId = 12,
                     GroupCustomisationId = 34,
                 },
-                new CurrentCourse {
+                new CurrentCourse
+                {
                     CustomisationID = 73,
                     CourseName = "A: Course",
                     HasDiagnostic = false,
@@ -68,7 +72,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 },
             };
 
-            model = new CurrentViewModel(currentCourses, config, "Course Name", "Ascending", null);
+            model = new CurrentViewModel(currentCourses, config, null, "Course Name", "Ascending", null);
         }
 
         [TestCase(
@@ -104,7 +108,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             false,
             false,
             "http://www.dls.nhs.uk/tracking/learn?CustomisationID=71&lp=1"
-           )]
+        )]
         [TestCase(
             2,
             72,
@@ -173,9 +177,23 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedModel = new CurrentViewModel(currentCourses, config, sortBy, sortDirection, null);
+            var sortedModel = new CurrentViewModel(currentCourses, config, null, sortBy, sortDirection, null);
             var sortedIds = sortedModel.CurrentCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
+        }
+
+        [TestCase("A:", new int[] { 73 })]
+        [TestCase(null, new int[] { 73, 71, 72 })]
+        [TestCase("course", new int[] { 73, 71, 72 })]
+        [TestCase("Course", new int[] { 73, 71, 72 })]
+        public void Current_courses_should_be_filtered_correctly(
+            string searchString,
+            int[] expectedIds
+        )
+        {
+            var filteredModel = new CurrentViewModel(currentCourses, config, searchString, "Course Name", "Ascending", null);
+            var filteredIds = filteredModel.CurrentCourses.Select(course => course.Id);
+            filteredIds.Should().Equal(expectedIds);
         }
     }
 }

@@ -19,6 +19,11 @@ $nhs-dark-grey: #425563;
   margin-bottom: nhsuk-spacing(4);
   -webkit-appearance: none;
 
+  &:focus {
+    border: 4px solid #212b32;
+    box-shadow: 0 0 0 4px #ffeb3b;
+  }
+
   @include mq($from: tablet) {
     height: 40px;
     width: 70%;
@@ -31,6 +36,10 @@ $nhs-dark-grey: #425563;
   .js-enabled & {
     border-right: 2px solid $nhsuk-form-border-color;
     border-radius: 4px;
+
+    &:focus {
+      border-right: 4px solid #212b32;
+    }
 
     @include mq($until: tablet) {
       width: 100%;

@@ -3,6 +3,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using FuzzySharp;
+    using FuzzySharp.SimilarityRatio;
+    using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
@@ -28,10 +31,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
         public const string AscendingText = "Ascending";
         public const string DescendingText = "Descending";
         public readonly string? BannerText;
+        public readonly string? SearchString;
 
         public CurrentViewModel(
             IEnumerable<CurrentCourse> currentCourses,
             IConfiguration config,
+            string? searchString,
             string sortBy,
             string sortDirection,
             string? bannerText
@@ -41,7 +46,43 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             SortBy = sortBy;
             SortDirection = sortDirection;
             BannerText = bannerText;
-            this.currentCourses = SortBy switch
+            SearchString = searchString;
+
+            var filteredCurrentCourses = FilterCurrentCourses(currentCourses);
+            this.currentCourses = SortCurrentCourses(filteredCurrentCourses);
+        }
+
+        private IEnumerable<CurrentCourse> FilterCurrentCourses(IEnumerable<CurrentCourse> allCurrentCourses)
+        {
+            if (SearchString == null)
+            {
+                return allCurrentCourses;
+            }
+
+            var query = new CurrentCourse()
+            {
+                CourseName = SearchString
+            };
+
+            // This is the lower threshold for the search match score. This value was determined by trial and error.
+            // If there are any issues with strange search results, changing this value or the scorer strategy would
+            // be a good place to start.
+            const int matchCutoffScore = 20;
+
+            var results = Process.ExtractAll(
+                query,
+                allCurrentCourses,
+                currentCourse => currentCourse.CourseName.ToLower(),
+                ScorerCache.Get<TokenSetScorer>(),
+                matchCutoffScore
+            );
+
+            return results.Select(result => result.Value);
+        }
+
+        private IEnumerable<CurrentCourse> SortCurrentCourses(IEnumerable<CurrentCourse> currentCourses)
+        {
+            return SortBy switch
             {
                 SortByOptionTexts.StartedDate => SortDirection == DescendingText
                     ? currentCourses.OrderByDescending(course => course.StartedDate)

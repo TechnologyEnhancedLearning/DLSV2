@@ -37,11 +37,11 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.config = config;
         }
 
-        public IActionResult Current(string sortBy = "Course Name", string sortDirection = "Ascending")
+        public IActionResult Current(string? searchString = null, string sortBy = "Course Name", string sortDirection = "Ascending")
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
-            var model = new CurrentViewModel(currentCourses, config, sortBy, sortDirection, bannerText);
+            var model = new CurrentViewModel(currentCourses, config, searchString, sortBy, sortDirection, bannerText);
             return View(model);
         }
 

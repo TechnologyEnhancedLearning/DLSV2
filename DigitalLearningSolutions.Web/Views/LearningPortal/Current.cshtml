@@ -1,7 +1,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model CurrentViewModel
 
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")">
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")">
 
 @{
   ViewData["Title"] = "Learning Portal - Current";
@@ -11,18 +11,28 @@
   <div class="nhsuk-grid-column-full">
     <h1>My Current Courses</h1>
     <h2 class="page-subheading">@Model.BannerText</h2>
+
+    <partial name="_CurrentCourseSearch" model="Model" />
+    <partial name="_CurrentCourseSort" model="Model" />
+    <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-0" />
     @if (!Model.CurrentCourses.Any())
     {
-      <p>No data to display</p>
+      <p role="alert">No data to display</p>
     }
     else
     {
-      <partial name="_CurrentCourseSearch" model="Model" />
-      <partial name="_CurrentCourseSort" model="Model" />
-      <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-0" />
       <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
-        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        @if (@Model.SearchString == null)
+        {
+          <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        }
+        else
+        {
+          <span role="alert" id="results-count">@Model.CurrentCourses.Count() matching results</span>
+        }
+
       </p>
+
       <div id="current-course-cards">
         @foreach (var currentCourse in Model.CurrentCourses)
         {
@@ -30,6 +40,7 @@
         }
       </div>
     }
+
   </div>
 </div>
 
