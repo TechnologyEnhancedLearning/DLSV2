@@ -75,6 +75,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<IUnlockDataService, UnlockDataService>();
             services.AddScoped<IUnlockService, UnlockService>();
+            services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
