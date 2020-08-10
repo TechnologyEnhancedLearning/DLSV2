@@ -27,23 +27,25 @@ const config = {
     rules: [
       {
         test: /\.[j,t]s$/,
+        exclude: [
+          /\bcore-js\b/,
+        ],
         loader: 'babel-loader',
         options: {
           presets: [
-            ['@babel/preset-env',
-              {
-                targets: {
-                  ie: '11',
-                },
-              }],
             ['@babel/preset-typescript',
               {
                 onlyRemoveTypeImports: true,
               },
             ],
-          ],
-          plugins: [
-            'transform-es2015-arrow-functions',
+            ['@babel/preset-env',
+              {
+                targets: {
+                  ie: '11',
+                },
+                corejs: '3.6',
+                useBuiltIns: 'entry',
+              }],
           ],
         },
       },

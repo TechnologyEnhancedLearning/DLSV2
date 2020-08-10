@@ -1,0 +1,93 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+$nhs-dark-grey: #425563;
+
+.current-course-card {
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-3;
+}
+
+.search-box {
+  border: 2px solid $nhsuk-form-border-color;
+  border-radius: 4px 0 0 4px;
+  border-right: 0;
+  height: 52px;
+  padding: 0 12px;
+  font-size: 16px;
+  width: 80%;
+  float: left;
+  margin-bottom: nhsuk-spacing(4);
+
+  @include mq($from: tablet) {
+    height: 40px;
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 50%;
+  }
+
+  .js-enabled & {
+    border-right: 2px solid $nhsuk-form-border-color;
+    border-radius: 4px;
+
+    @include mq($until: tablet) {
+      width: 100%;
+    }
+  }
+}
+
+.nhsuk-search__submit {
+  background-color: #003d78;
+  float: left;
+
+  .nhsuk-icon__search {
+    fill: #fff;
+  }
+
+  &:hover {
+    background-color: #4c6272;
+  }
+}
+
+form#search {
+  text-align: left;
+  padding: 0 16px;
+}
+
+
+.tags {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: $nhs-dark-grey;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.delete-button {
+  background-color: $color_nhsuk-red;
+  box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
+
+  &:hover {
+    background-color: shade($color_nhsuk-red, 20%);
+  }
+
+  &:active {
+    background-color: shade($color_nhsuk-red, 50%);
+  }
+}
+
+.overdue {
+  background-color: tint($color_nhsuk-red, 80);
+}
+
+.due-soon {
+  background-color: $color_nhsuk-yellow;
+}

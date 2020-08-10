@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
+    "core-js": "^3.6.5",
+    "fuzzy": "^0.1.3",
     "nhsuk-frontend": "3.1.0"
   },
   "devDependencies": {
@@ -29,7 +31,6 @@
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
     "babel-loader": "^8.1.0",
-    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
     "copy-webpack-plugin": "^6.0.3",
     "eslint": "^7.5.0",
     "eslint-config-airbnb-base": "^14.2.0",
