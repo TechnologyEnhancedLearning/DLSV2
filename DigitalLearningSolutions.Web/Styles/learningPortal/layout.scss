@@ -1,0 +1,76 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+html {
+  height: 100%;
+  overflow-y: auto;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#pagewrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+}
+
+#maincontentwrapper {
+  flex: 1 0 auto;
+  align-self: center;
+  width: 100%;
+  margin: 0;
+  padding: 0 16px;
+
+  @include mq($from: desktop, $until: 1024px) {
+    padding: 0 32px;
+  }
+
+  @include mq($from: 1024px) {
+    padding: 0;
+  }
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+.nhsuk-header__navigation-item.selected {
+  @include mq($from: large-desktop) {
+    box-shadow: inset 0 -4px 0 #d8dde0;
+  }
+
+  @include mq($until: large-desktop) {
+    a {
+      font-weight: bold;
+    }
+  }
+}
+
+body:not(.js-enabled) {
+  .nhsuk-header__menu {
+    display: none;
+  }
+
+  .nhsuk-header__navigation {
+    display: block;
+  }
+}
+
+div.nhsuk-header__container {
+  @media (max-width: 40.0525em) {
+    margin: 0;
+  }
+}
+
+nav .nhsuk-width-container {
+  margin: 0;
+}
+
+nav, .nhsuk-header__navigation, #header-navigationc {
+  @include mq($until: 1024px) {
+    margin: 0 32px;
+  }
+}
