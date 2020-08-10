@@ -1,6 +1,8 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model CurrentViewModel
 
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")">
+
 @{
   ViewData["Title"] = "Learning Portal - Current";
 }
@@ -15,15 +17,22 @@
     }
     else
     {
+      <partial name="_CurrentCourseSearch" model="Model" />
       <partial name="_CurrentCourseSort" model="Model" />
-      @foreach (var currentCourse in Model.CurrentCourses)
-      {
-        <partial name="CurrentCourseCard/_CurrentCourseCard" model="currentCourse" />
-      }
+      <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-0" />
+      <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+      </p>
+      <div id="current-course-cards">
+        @foreach (var currentCourse in Model.CurrentCourses)
+        {
+          <partial name="CurrentCourseCard/_CurrentCourseCard" model="currentCourse" />
+        }
+      </div>
     }
   </div>
 </div>
 
 @section scripts {
-  <script src="@Url.Content("~/js/learningPortal/index.js")"></script>
+  <script src="@Url.Content("~/js/learningPortal/searchCourses.js")"></script>
 }
