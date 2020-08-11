@@ -1,10 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using FakeItEasy;
     using NUnit.Framework;
     using FluentAssertions;
+    using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
 
     [Parallelizable(ParallelScope.Fixtures)]
     public class SelfAssessmentServiceTests
@@ -12,12 +19,14 @@
         private SelfAssessmentService selfAssessmentService;
         private const int SelfAssessmentId = 1;
         private const int CandidateId = 254480;
+        private SqlConnection connection;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
-            selfAssessmentService = new SelfAssessmentService(connection);
+            connection = ServiceTestHelper.GetDatabaseConnection();
+            var logger = A.Fake<ILogger<SelfAssessmentService>>();
+            selfAssessmentService = new SelfAssessmentService(connection, logger);
         }
 
         [Test]
@@ -140,6 +149,177 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void SetResultForCompetency_sets_result()
+        {
+            // Given
+            const int competencyId = 2;
+            const int assessmentQuestionId = 2;
+            const int result = 5;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                var insertedResult = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).First();
+
+                // Then
+                insertedResult.Should().Be(result);
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_overwrite_previous_result()
+        {
+            // Given
+            const int competencyId = 2;
+            const int assessmentQuestionId = 2;
+            const int firstResult = 5;
+            const int secondResult = 10;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, firstResult);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, secondResult);
+                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).ToList();
+
+                // Then
+                insertedResults.Should().HaveCount(2);
+                insertedResults[0].Should().Be(firstResult);
+                insertedResults[1].Should().Be(secondResult);
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_invalid_candidate()
+        {
+            // Given
+            const int competencyId = 2;
+            const int assessmentQuestionId = 2;
+            const int result = 5;
+            const int invalidCandidateId = 1;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId, result);
+                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_invalid_assessment()
+        {
+            // Given
+            const int competencyId = 2;
+            const int assessmentQuestionId = 2;
+            const int result = 5;
+            const int invalidSelfAssessmentId = 2;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                var insertedResults = GetAssessmentResults(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_invalid_competency()
+        {
+            // Given
+            const int invalidCompetencyId = 33;
+            const int assessmentQuestionId = 2;
+            const int result = 5;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                var insertedResults = GetAssessmentResults(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_invalid_question()
+        {
+            // Given
+            const int competencyId = 33;
+            const int invalidAssessmentQuestionId = 4;
+            const int result = 5;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId, result);
+                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_negative_result()
+        {
+            // Given
+            const int competencyId = 33;
+            const int assessmentQuestionId = 4;
+            const int invalidResult = -1;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult);
+                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void SetResultForCompetency_does_not_set_result_for_invalid_result()
+        {
+            // Given
+            const int competencyId = 33;
+            const int assessmentQuestionId = 4;
+            const int invalidResult = 11;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult);
+                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+
+                // Then
+                insertedResults.Should().BeEmpty();
+            }
+        }
+
+        private IEnumerable<int> GetAssessmentResults(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId)
+        {
+            return connection.Query<int>(
+                @"SELECT Result FROM SelfAssessmentResults WHERE
+                        CompetencyID = @competencyId AND
+                        SelfAssessmentID = @selfAssessmentId AND
+                        CandidateID = @candidateId AND
+                        AssessmentQuestionID = @assessmentQuestionId",
+                new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId }
+            );
         }
     }
 }
