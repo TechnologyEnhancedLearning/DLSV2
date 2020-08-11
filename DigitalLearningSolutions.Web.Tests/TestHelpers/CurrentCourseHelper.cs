@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
 

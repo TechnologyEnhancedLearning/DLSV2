@@ -10,13 +10,13 @@
     </summary>
     <div class="nhsuk-details__text">
       <div class="nhsuk-grid-row">
-        <partial name="CurrentCourseCard/_TagRow" model="@Model" />
+        <partial name="Current/CurrentCourseCard/_TagRow" model="@Model" />
       </div>
       <div class="nhsuk-grid-row">
-        <partial name="CurrentCourseCard/_Dates" model="@Model" />
+        <partial name="Current/CurrentCourseCard/_Dates" model="@Model" />
       </div>
-      <partial name="CurrentCourseCard/_Scores" model="@Model" />
-      <partial name="CurrentCourseCard/_Unlock" model="@Model" />
+      <partial name="Current/CurrentCourseCard/_Scores" model="@Model" />
+      <partial name="Current/CurrentCourseCard/_Unlock" model="@Model" />
       <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
         Remove course
       </a>
