@@ -23,7 +23,7 @@
                 selfAssessment,
                 bannerText
             );
-            return View(model);
+            return View("Current/Current", model);
         }
 
         [HttpPost]
@@ -74,7 +74,7 @@
                 model.CompleteByValidationResult = DateValidator.ValidateDate(day.Value, month.Value, year.Value);
             }
 
-            return View(model);
+            return View("Current/SetCompleteByDate", model);
         }
 
         [Route("/LearningPortal/Current/Remove/{id:int}")]
@@ -89,7 +89,7 @@
             }
 
             var model = new CurrentCourseViewModel(course, config);
-            return View(model);
+            return View("Current/RemoveCurrentCourseConfirmation", model);
         }
 
         [Route("/LearningPortal/Current/Remove/{progressId:int}")]
@@ -115,7 +115,7 @@
             }
 
             unlockService.SendUnlockRequest(progressId);
-            return View("UnlockCurrentCourse");
+            return View("Current/UnlockCurrentCourse");
         }
     }
 }
