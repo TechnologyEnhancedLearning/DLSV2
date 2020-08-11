@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         private readonly ICentresService centresService;
         private readonly IConfigService configService;
         private readonly ICourseService courseService;
+        private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
@@ -25,6 +26,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             ICentresService centresService,
             IConfigService configService,
             ICourseService courseService,
+            ISelfAssessmentService selfAssessmentService,
             IUnlockService unlockService,
             ILogger<LearningPortalController> logger,
             IConfiguration config)
@@ -32,6 +34,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.centresService = centresService;
             this.configService = configService;
             this.courseService = courseService;
+            this.selfAssessmentService = selfAssessmentService;
             this.unlockService = unlockService;
             this.logger = logger;
             this.config = config;
@@ -41,7 +44,16 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
-            var model = new CurrentViewModel(currentCourses, config, searchString, sortBy, sortDirection, bannerText);
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var model = new CurrentViewModel(
+                currentCourses,
+                config,
+                searchString,
+                sortBy,
+                sortDirection,
+                selfAssessment,
+                bannerText
+            );
             return View(model);
         }
 
@@ -84,7 +96,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 logger.LogWarning(
                     $"Attempt to set complete by date for course with id {id} for user with id ${GetCandidateId()} " +
                     "but the complete by date has already been set and the user has not self enrolled"
-                    );
+                );
                 return StatusCode(403);
             }
 
@@ -129,7 +141,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 logger.LogWarning(
                     $"Attempt to unlock course with progress id {progressId} however found no course with that progress id " +
                     $"and PLLocked for user with id {GetCandidateId()}"
-                    );
+                );
                 return StatusCode(404);
             }
 
@@ -161,6 +173,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 logger.LogError("Accessibility text from Config table is null");
                 return StatusCode(500);
             }
+
             var model = new AccessibilityHelpViewModel(accessibilityText);
             return View(model);
         }
@@ -173,6 +186,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 logger.LogError("Terms text from Config table is null");
                 return StatusCode(500);
             }
+
             var model = new TermsViewModel(termsText);
             return View(model);
         }
