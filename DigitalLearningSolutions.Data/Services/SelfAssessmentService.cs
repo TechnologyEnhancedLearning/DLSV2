@@ -1,13 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
 
     public interface ISelfAssessmentService
     {
         SelfAssessment? GetSelfAssessmentForCandidate(int candidateId);
-        Competency? GetNthCompetency(int n, int selfAssessmentId);
+        Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
     }
 
@@ -35,27 +36,33 @@
             );
         }
 
-        public Competency? GetNthCompetency(int n, int selfAssessmentId)
+        public Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId)
         {
-            if (n >= 10)
-            {
-                return null;
-            }
-            return new Competency
-            {
-                Id = 1,
-                CompetencyGroup = "Data, information and content",
-                Description = "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
-                AssessmentQuestions =
+            Competency? competencyResult = null;
+            return connection.Query<Competency, AssessmentQuestion, Competency>(
+                "WITH CompetencyRowNumber AS " +
+                    "(SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID ASC) as RowNo, CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @selfAssessmentId) " +
+                "SELECT C.ID AS Id, C.Description AS Description, CG.Name AS CompetencyGroup, AQ.ID as Id, AQ.Question, AQ.MaxValueDescription, AQ.MinValueDescription " +
+                "FROM Competencies AS C " +
+                "INNER JOIN CompetencyGroups AS CG ON C.CompetencyGroupID = CG.ID " +
+                "INNER JOIN CompetencyAssessmentQuestions AS CAQ ON CAQ.CompetencyID = C.ID " +
+                "INNER JOIN AssessmentQuestions AS AQ ON AQ.ID = CAQ.AssessmentQuestionID " +
+                "INNER JOIN CompetencyRowNumber AS CRN on CRN.CompetencyID = C.ID " +
+                "INNER JOIN CandidateAssessments AS CA on CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId " +
+                "WHERE CRN.RowNo = @n",
+                (competency, assessmentQuestion) =>
                 {
-                    new AssessmentQuestion { Id = 1, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where are you now" },
-                    new AssessmentQuestion { Id = 2, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where do you need to be"}
-                }
-            };
+                    if (competencyResult == null)
+                    {
+                        competencyResult = competency;
+                    }
+                    competencyResult.AssessmentQuestions.Add(assessmentQuestion);
+                    return competencyResult;
+                },
+                param: new { n, selfAssessmentId, candidateId }
+            ).FirstOrDefault();
         }
 
-        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result)
-        {
-        }
+        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result) { }
     }
 }
