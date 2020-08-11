@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Data;
+    using System.Linq;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface ISelfAssessmentService
     {
-        string Example();
+        SelfAssessment? GetSelfAssessmentForCandidate(int candidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -16,9 +19,19 @@
             this.connection = connection;
         }
 
-        public string Example()
+        public SelfAssessment? GetSelfAssessmentForCandidate(int candidateId)
         {
-            return ""; // TODO: remove once real methods added
+            return connection.QueryFirstOrDefault<SelfAssessment>(
+                @"SELECT
+                        C.SelfAssessmentID AS Id,
+                        SA.Name,
+                        SA.Description
+                    FROM CandidateAssessments C
+                    JOIN SelfAssessments SA on C.SelfAssessmentID = SA.ID
+                    WHERE C.CandidateID = @candidateId
+                ",
+                new { candidateId }
+            );
         }
     }
 }

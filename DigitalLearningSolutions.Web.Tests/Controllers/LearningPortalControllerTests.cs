@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private ICentresService centresService;
         private IConfigService configService;
         private ICourseService courseService;
+        private ISelfAssessmentService selfAssessmentService;
         private IUnlockService unlockService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
@@ -34,6 +35,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             centresService = A.Fake<ICentresService>();
             configService = A.Fake<IConfigService>();
             courseService = A.Fake<ICourseService>();
+            selfAssessmentService = A.Fake<ISelfAssessmentService>();
             unlockService = A.Fake<IUnlockService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
@@ -48,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                 centresService,
                 configService,
                 courseService,
+                selfAssessmentService,
                 unlockService,
                 logger,
                 config
@@ -66,159 +69,32 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                 CurrentCourseHelper.CreateDefaultCurrentCourse(),
                 CurrentCourseHelper.CreateDefaultCurrentCourse()
             };
+            var selfAssessment = new SelfAssessment()
+            {
+                Id = 1,
+                Name = "self assessment",
+                Description = "description"
+            };
+            var bannerText = "bannerText";
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(currentCourses, config, null, "Course Name", "Ascending", "");
+            var expectedModel = new CurrentViewModel(
+                currentCourses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                selfAssessment,
+                bannerText
+            );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
-        }
-
-        [Test]
-        public void Current_course_should_be_overdue_when_complete_by_date_is_in_the_past()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.DateStyle().Should().Be("overdue");
-        }
-
-        [Test]
-        public void Current_course_should__be_due_soon_when_complete_by_date_is_in_the_future()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(1));
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.DateStyle().Should().Be("due-soon");
-        }
-
-        [Test]
-        public void Current_course_should_have_no_date_style_when_due_far_in_the_future()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
-            var currentCourses = new[] {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-
-            // Then
-            course.DateStyle().Should().Be("");
-        }
-
-        [Test]
-        public void Current_course_should_not_have_diagnostic_score_without_diagnostic_assessment()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.HasDiagnosticScore().Should().BeFalse();
-        }
-
-        [Test]
-        public void Current_course_should_not_have_diagnostic_score_without_diagnostic_score_value()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.HasDiagnosticScore().Should().BeFalse();
-        }
-
-        [Test]
-        public void Current_course_should_have_diagnostic_score_with_diagnostic_score_value_and_diagnostic_assessment()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.HasDiagnosticScore().Should().BeTrue();
-        }
-
-        [Test]
-        public void Current_course_should_not_have_passed_sections_without_learning_assessment()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.HasPassedSections().Should().BeFalse();
-        }
-
-        [Test]
-        public void Current_course_should_have_passed_sections_with_learning_assessment()
-        {
-            // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
-            var currentCourses = new[]
-            {
-                currentCourse
-            };
-            A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-
-            // When
-            var course = CurrentCourseHelper.CurrentCourseViewModelFromController(controller);
-
-            // Then
-            course.HasPassedSections().Should().BeTrue();
         }
 
         [Test]
@@ -474,7 +350,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
-            var completedViewModel = CompletedCourseHelper.CompletedViewModelFromController(controller);;
+            var completedViewModel = CompletedCourseHelper.CompletedViewModelFromController(controller);
 
             // Then
             completedViewModel.BannerText.Should().Be(bannerText);
@@ -508,7 +384,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
-            var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);;
+            var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);
 
             // Then
             availableViewModel.BannerText.Should().Be(bannerText);
@@ -539,7 +415,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             var expectedModel = new ErrorViewModel(bannerText);
             result.Should().BeViewResult()
                 .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
-
         }
 
         [Test]

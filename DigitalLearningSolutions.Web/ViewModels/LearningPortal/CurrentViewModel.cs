@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 
         public const string AscendingText = "Ascending";
         public const string DescendingText = "Descending";
+        public readonly SelfAssessment? SelfAssessment;
         public readonly string? BannerText;
         public readonly string? SearchString;
 
@@ -39,14 +40,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             string? searchString,
             string sortBy,
             string sortDirection,
+            SelfAssessment? selfAssessment,
             string? bannerText
         )
         {
             this.config = config;
-            SortBy = sortBy;
-            SortDirection = sortDirection;
             BannerText = bannerText;
             SearchString = searchString;
+            SelfAssessment = selfAssessment;
+            SortBy = sortBy;
+            SortDirection = sortDirection;
 
             var filteredCurrentCourses = FilterCurrentCourses(currentCourses);
             this.currentCourses = SortCurrentCourses(filteredCurrentCourses);

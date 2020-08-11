@@ -72,7 +72,15 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 },
             };
 
-            model = new CurrentViewModel(currentCourses, config, null, "Course Name", "Ascending", null);
+            model = new CurrentViewModel(
+                currentCourses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null,
+                null
+            );
         }
 
         [TestCase(
@@ -177,7 +185,15 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedModel = new CurrentViewModel(currentCourses, config, null, sortBy, sortDirection, null);
+            var sortedModel = new CurrentViewModel(
+                currentCourses,
+                config,
+                null,
+                sortBy,
+                sortDirection,
+                null,
+                null
+            );
             var sortedIds = sortedModel.CurrentCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
@@ -191,7 +207,15 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             int[] expectedIds
         )
         {
-            var filteredModel = new CurrentViewModel(currentCourses, config, searchString, "Course Name", "Ascending", null);
+            var filteredModel = new CurrentViewModel(
+                currentCourses,
+                config,
+                searchString,
+                "Course Name",
+                "Ascending",
+                null,
+                null
+            );
             var filteredIds = filteredModel.CurrentCourses.Select(course => course.Id);
             filteredIds.Should().Equal(expectedIds);
         }
