@@ -11,6 +11,7 @@
     {
         private SelfAssessmentService selfAssessmentService;
         private const int SelfAssessmentId = 1;
+        private const int CandidateId = 254480;
 
         [SetUp]
         public void Setup()
@@ -23,7 +24,7 @@
         public void GetSelfAssessmentForCandidate_should_return_a_self_assessment()
         {
             // When
-            var result = selfAssessmentService.GetSelfAssessmentForCandidate(254480);
+            var result = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId);
 
             // Then
             var expectedSelfAssessment = new SelfAssessment()
@@ -47,33 +48,95 @@
         }
 
         [Test]
-        public void GetNthCompetency_returns_competency()
+        public void GetNthCompetency_returns_first_competency()
         {
             // Given
             var expectedCompetency = new Competency
             {
                 Id = 1,
                 CompetencyGroup = "Data, information and content",
-                Description = "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
+                Description = "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 AssessmentQuestions =
                 {
                     new AssessmentQuestion { Id = 1, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where are you now" },
-                    new AssessmentQuestion { Id = 2, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where do you need to be"}
+                    new AssessmentQuestion { Id = 2, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where do you need to be" }
                 }
             };
 
             // When
-            var result = selfAssessmentService.GetNthCompetency(1, SelfAssessmentId);
+            var result = selfAssessmentService.GetNthCompetency(1, SelfAssessmentId, CandidateId);
 
             // Then
             result.Should().BeEquivalentTo(expectedCompetency);
         }
 
         [Test]
-        public void GetNthCompetency_returns_null_reached_end_of_assessment()
+        public void GetNthCompetency_returns_last_competency()
+        {
+            // Given
+            var expectedCompetency = new Competency
+            {
+                Id = 32,
+                CompetencyGroup = "General questions",
+                Description = "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
+                AssessmentQuestions =
+                {
+                    new AssessmentQuestion { Id = 3, MaxValueDescription = "Strongly agree", MinValueDescription = "Strongly disagree", Question = "To what extent to you agree" }
+                }
+            };
+
+            // When
+            var result = selfAssessmentService.GetNthCompetency(32, SelfAssessmentId, CandidateId);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedCompetency);
+        }
+
+        [Test]
+        public void GetNthCompetency_returns_null_when_reached_end_of_assessment()
         {
             // When
-            var result = selfAssessmentService.GetNthCompetency(10, SelfAssessmentId);
+            var result = selfAssessmentService.GetNthCompetency(33, SelfAssessmentId, CandidateId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetNthCompetency_returns_null_when_n_zero()
+        {
+            // When
+            var result = selfAssessmentService.GetNthCompetency(0, SelfAssessmentId, CandidateId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetNthCompetency_returns_null_when_n_negative()
+        {
+            // When
+            var result = selfAssessmentService.GetNthCompetency(-1, SelfAssessmentId, CandidateId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetNthCompetency_returns_null_when_invalid_candidate()
+        {
+            // When
+            var result = selfAssessmentService.GetNthCompetency(1, SelfAssessmentId, 1);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetNthCompetency_returns_null_when_invalid_assessment()
+        {
+            // When
+            var result = selfAssessmentService.GetNthCompetency(1, 2, CandidateId);
 
             // Then
             result.Should().BeNull();
