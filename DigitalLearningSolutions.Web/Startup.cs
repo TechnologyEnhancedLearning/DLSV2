@@ -22,18 +22,18 @@ namespace DigitalLearningSolutions.Web
     public class Startup
     {
         private readonly IConfiguration config;
-        private readonly bool isDevelopment;
+        private readonly IHostEnvironment env;
 
         public Startup(IConfiguration config, IHostEnvironment env)
         {
             this.config = config;
-            isDevelopment = env.IsDevelopment();
+            this.env = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo("C:\\keys"))
+                .PersistKeysToFileSystem(new DirectoryInfo($"C:\\keys\\{env.EnvironmentName}"))
                 .SetApplicationName("DLSSharedCookieApp");
 
             services.AddAuthentication("Identity.Application")
@@ -55,7 +55,7 @@ namespace DigitalLearningSolutions.Web
 
             services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
-            if (isDevelopment)
+            if (env.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
@@ -80,7 +80,7 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
-            if (isDevelopment)
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
