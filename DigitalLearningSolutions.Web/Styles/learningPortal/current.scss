@@ -18,10 +18,17 @@ $nhs-dark-grey: #425563;
   float: left;
   margin-bottom: nhsuk-spacing(4);
   -webkit-appearance: none;
+  outline: none;
 
   &:focus {
     border: 4px solid #212b32;
     box-shadow: 0 0 0 4px #ffeb3b;
+    margin-right: 4px;
+  }
+
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    display: none;
   }
 
   @include mq($from: tablet) {
