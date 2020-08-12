@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        stage('Build TypeScript') {
+        stage('TS Build') {
             steps {
                 gitlabCommitStatus(name: 'Build TypeScript') {
                     dir("DigitalLearningSolutions.Web/") {
@@ -65,7 +65,7 @@ pipeline {
             }
         }
         stage('Deploy') {
-        when {
+            when {
                 branch 'master'
             }
             steps {
