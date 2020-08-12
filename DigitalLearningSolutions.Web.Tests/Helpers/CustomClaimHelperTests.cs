@@ -8,119 +8,6 @@
 
     public class CustomClaimHelperTests
     {
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_true_if_user_admin()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.UserAdminId, "1"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_true_if_user_authenticated()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, "True"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_true_if_user_authenticated_not_capitalized()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, "true"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_false_if_user_admin_id_zero()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.UserAdminId, "0"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_false_if_user_admin_id_not_valid()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.UserAdminId, "test"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_false_if_user_not_authenticated()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, "false"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void HasMoreThanDelegateAccess_should_be_false_if_user_authenticated_invalid()
-        {
-            // Given
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, "test"),
-            }, "mock"));
-
-            // When
-            var result = user.HasMoreThanDelegateAccess();
-
-            // Then
-            result.Should().BeFalse();
-        }
-
         [Test]
         public void GetCustomClaimAsInt_parses_int()
         {
@@ -167,7 +54,68 @@
         }
 
         [Test]
-        public void GetCustomClaimAsNotNullableInt_parses_int()
+        public void GetCustomClaimAsBool_parses_lowercase_bool()
+        {
+            // Given
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(CustomClaimTypes.LearnUserAuthenticated, "true"),
+            }, "mock"));
+
+            // When
+            var result = user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void GetCustomClaimAsBool_parses_uppercase_bool()
+        {
+            // Given
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(CustomClaimTypes.LearnUserAuthenticated, "FALSE"),
+            }, "mock"));
+
+            // When
+            var result = user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void GetCustomClaimAsBool_handles_claim_missing()
+        {
+            // Given
+            var user = new ClaimsPrincipal(new ClaimsIdentity());
+
+            // When
+            var result = user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCustomClaimAsBool_handles_claim_invalid()
+        {
+            // Given
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(CustomClaimTypes.LearnUserAuthenticated, "test"),
+            }, "mock"));
+
+            // When
+            var result = user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCustomClaimAsRequiredInt_parses_int()
         {
             // Given
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -183,7 +131,7 @@
         }
 
         [Test]
-        public void GetCustomClaimAsNotNullableInt_handles_claim_missing()
+        public void GetCustomClaimAsRequiredInt_handles_claim_missing()
         {
             // Given
             var user = new ClaimsPrincipal(new ClaimsIdentity());
@@ -193,7 +141,7 @@
         }
 
         [Test]
-        public void GetCustomClaimAsNotNullableInt_handles_claim_invalid()
+        public void GetCustomClaimAsRequiredInt_handles_claim_invalid()
         {
             // Given
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
