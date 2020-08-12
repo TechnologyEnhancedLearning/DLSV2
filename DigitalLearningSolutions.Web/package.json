@@ -17,9 +17,10 @@
     "test": "jasmine-ts --config=Scripts/spec/support/jasmine.json"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.14.0",
     "core-js": "^3.6.5",
     "fuzzy": "^0.1.3",
+    "lodash": "^4.17.19",
+    "moment": "^2.27.0",
     "nhsuk-frontend": "3.1.0"
   },
   "devDependencies": {
@@ -28,6 +29,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@types/jasmine": "^3.5.11",
     "@types/jsdom": "^16.2.3",
+    "@types/lodash": "^4.14.159",
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
     "babel-loader": "^8.1.0",

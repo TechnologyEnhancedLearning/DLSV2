@@ -4,53 +4,38 @@
 <div class="nhsuk-form-group">
   <form method="get">
     <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
 
-      <div class="nhsuk-grid-column-one-half">
-        <label class="nhsuk-label--s" for="select-sort">
-          Sort by:
-        </label>
-        <select class="nhsuk-select" id="select-sort" asp-for="SortBy" asp-items="Model.SortByOptions"></select>
-      </div>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-half">
+            <label class="nhsuk-label--s label-reduced-margin" for="select-sort-by">
+              Sort by:
+            </label>
+          </div>
+        </div>
 
-      <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-top-1">
-
-        <fieldset class="nhsuk-fieldset">
-          <div class="nhsuk-radios">
-            <div class="nhsuk-radios__item">
-              <input class="nhsuk-radios__input"
-                     id="sort-ascending"
-                     aria-label="Sort Ascending"
-                     type="radio"
-                     value="@CurrentViewModel.AscendingText"
-                     asp-for="SortDirection">
-              <label class="nhsuk-label nhsuk-radios__label" for="sort-ascending">
-                Ascending
-              </label>
-            </div>
-            <div class="nhsuk-radios__item">
-              <input class="nhsuk-radios__input"
-                     id="sort-descending"
-                     aria-label="Sort Descending"
-                     type="radio"
-                     value="@CurrentViewModel.DescendingText"
-                     asp-for="SortDirection">
-              <label class="nhsuk-label nhsuk-radios__label" for="sort-descending">
-                Descending
-              </label>
-            </div>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-quarter nhsuk-u-padding-top-1">
+            <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortByOptions"></select>
+          </div>
+          <div class="nhsuk-grid-column-one-quarter nhsuk-u-padding-top-1">
+            <select class="nhsuk-select" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
+              <option value="Ascending">Ascending</option>
+              <option value="Descending">Descending</option>
+            </select>
           </div>
 
-        </fieldset>
-      </div>
-
-      <div class="non-js-only">
-        <div class="nhsuk-grid-column-one-quarter nhsuk-u-padding-top-3 nhsuk-u-padding-left-5" name="sort-button">
-          <button class="nhsuk-button nhsuk-button--secondary"
-                  type="submit"
-                  asp-action="Current"
-                  asp-controller="LearningPortal">
-            Sort
-          </button>
+          <div class="non-js-only">
+            <div class="nhsuk-grid-column-one-quarter nhsuk-u-padding-top-1">
+              <button class="nhsuk-button nhsuk-button--secondary button-small"
+                      type="submit"
+                      name="sort-button"
+                      asp-action="Current"
+                      asp-controller="LearningPortal">
+                Sort
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@
   <ItemGroup>
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
-    <None Remove="Scripts\learningPortal\setCompleteByDate.ts" />
+    <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
   </ItemGroup>
@@ -56,10 +56,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningPortal\sortCourses.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\searchCourses.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCoursesSpec.ts" />
+    <TypeScriptCompile Include="Scripts\spec\sortCoursesSpec.ts" />
   </ItemGroup>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
