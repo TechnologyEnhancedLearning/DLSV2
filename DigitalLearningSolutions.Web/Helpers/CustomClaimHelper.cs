@@ -4,14 +4,6 @@
 
     public static class CustomClaimHelper
     {
-        public static bool HasMoreThanDelegateAccess(this ClaimsPrincipal user)
-        {
-            var isAdmin = user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) > 0;
-            return user.HasClaim(CustomClaimTypes.LearnUserAuthenticated, "True")
-                   || user.HasClaim(CustomClaimTypes.LearnUserAuthenticated, "true")
-                   || isAdmin;
-        }
-
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)
         {
             return user.FindFirst(customClaimType)?.Value;
@@ -24,6 +16,20 @@
             try
             {
                 return int.Parse(customClaimString);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static bool? GetCustomClaimAsBool(this ClaimsPrincipal user, string customClaimType)
+        {
+            var customClaimString = user.GetCustomClaim(customClaimType);
+            if (customClaimString == null) return null;
+            try
+            {
+                return bool.Parse(customClaimString);
             }
             catch
             {
