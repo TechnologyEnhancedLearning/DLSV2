@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
     using DigitalLearningSolutions.Data.Models;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
+    using FuzzySharp.SimilarityRatio.Scorer;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -70,17 +71,24 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             // This is the lower threshold for the search match score. This value was determined by trial and error.
             // If there are any issues with strange search results, changing this value or the scorer strategy would
             // be a good place to start.
-            const int matchCutoffScore = 20;
+            const int matchCutoffScore = 70;
 
             var results = Process.ExtractAll(
                 query,
                 allCurrentCourses,
                 currentCourse => currentCourse.CourseName.ToLower(),
-                ScorerCache.Get<TokenSetScorer>(),
+                GetScorer(SearchString),
                 matchCutoffScore
             );
 
             return results.Select(result => result.Value);
+        }
+
+        private static IRatioScorer GetScorer(string searchString)
+        {
+            return searchString.Any(char.IsDigit)
+                ? ScorerCache.Get<TokenSetScorer>()
+                : ScorerCache.Get<PartialTokenAbbreviationScorer>();
         }
 
         private IEnumerable<CurrentCourse> SortCurrentCourses(IEnumerable<CurrentCourse> currentCourses)
