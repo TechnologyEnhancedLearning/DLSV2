@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class CurrentCourseViewModel
@@ -44,7 +45,7 @@
             ProgressId = course.ProgressID;
             SelfEnrolled = course.EnrollmentMethodID == 1;
             IsLocked = course.PLLocked;
-            LaunchUrl = $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={course.CustomisationID}&lp=1";
+            LaunchUrl = config.GetLaunchUrl(course.CustomisationID);
         }
 
         public string DateStyle()

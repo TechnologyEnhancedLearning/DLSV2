@@ -1,36 +1,34 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.Extensions.Configuration;
 
     public class CompletedViewModel
     {
-        private readonly IEnumerable<Course> completedCourses;
+        private readonly IEnumerable<CompletedCourse> completedCourses;
+        private readonly IConfiguration config;
         public readonly string? BannerText;
 
-        public CompletedViewModel(IEnumerable<Course> completedCourses, string? bannerText)
+        public CompletedViewModel(
+            IEnumerable<CompletedCourse> completedCourses,
+            IConfiguration config,
+            string? bannerText
+        )
         {
-            this.completedCourses = completedCourses;
+            this.config = config;
             BannerText = bannerText;
+            this.completedCourses = completedCourses;
         }
 
         public IEnumerable<CompletedCourseViewModel> CompletedCourses
         {
             get
             {
-                return completedCourses.Select(c => new CompletedCourseViewModel
-                {
-                    Name = c.Name,
-                    Id = c.Id
-                });
+                return completedCourses.Select(c => new CompletedCourseViewModel(c, config));
             }
-        }
-
-        public class CompletedCourseViewModel
-        {
-            public string Name { get; set; }
-            public int Id { get; set; }
         }
     }
 }

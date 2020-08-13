@@ -53,18 +53,29 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Get_completed_courses_should_return_applications()
+        public void Get_completed_courses_should_return_courses_for_candidate()
         {
             // When
-            var result = courseService.GetCompletedCourses().ToList();
+            const int candidateId = 1;
+            var result = courseService.GetCompletedCourses(candidateId).ToList();
 
             // Then
-            var expectedFirstCourse = new Course
+            var expectedFirstCourse = new CompletedCourse
             {
-                Name = "Combined Office Course",
-                Id = 39
+                CourseName = "Staying Safe Online Test PLA Issue - test",
+                CustomisationID = 25140,
+                StartedDate = new DateTime(2018, 5, 29, 9, 11, 45, 943),
+                Completed = new DateTime(2018, 5, 29, 14, 28, 5, 557),
+                Evaluated = new DateTime(2019, 4, 5, 7, 10, 28, 507),
+                DiagnosticScore = 0,
+                IsAssessed = true,
+                HasDiagnostic = true,
+                HasLearning = true,
+                Passes = 1,
+                Sections = 2,
+                ProgressID = 251571,
             };
-            result.Should().HaveCount(37);
+            result.Should().HaveCount(15);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 

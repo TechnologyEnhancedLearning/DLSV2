@@ -7,9 +7,13 @@
     {
         public IActionResult Completed()
         {
-            var completedCourses = courseService.GetCompletedCourses();
+            var completedCourses = courseService.GetCompletedCourses(GetCandidateId());
             var bannerText = GetBannerText();
-            var model = new CompletedViewModel(completedCourses, bannerText);
+            var model = new CompletedViewModel(
+                completedCourses,
+                config,
+                bannerText
+            );
             return View(model);
         }
     }

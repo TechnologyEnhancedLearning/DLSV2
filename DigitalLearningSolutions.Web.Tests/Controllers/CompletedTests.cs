@@ -16,16 +16,22 @@
             // Given
             var completedCourses = new[]
             {
-                new Course { Id = 1, Name = "Course 1" },
-                new Course { Id = 2, Name = "Course 2" }
+                CompletedCourseHelper.CreateDefaultCompletedCourse(),
+                CompletedCourseHelper.CreateDefaultCompletedCourse()
             };
-            A.CallTo(() => courseService.GetCompletedCourses()).Returns(completedCourses);
+            var bannerText = "bannerText";
+            A.CallTo(() => courseService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
+            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.Completed();
 
             // Then
-            var expectedModel = new CompletedViewModel(completedCourses, "");
+            var expectedModel = new CompletedViewModel(
+                completedCourses,
+                config,
+                bannerText
+                );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
