@@ -28,5 +28,10 @@
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             return IsNullOrEmpty(environmentName) ? "appsettings.json" : $"appsettings.{environmentName}.json";
         }
+
+        public static string GetLaunchUrl(this IConfiguration config, int customisationID)
+        {
+            return $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={customisationID}&lp=1";
+        }
     }
 }

@@ -9,7 +9,7 @@
     public interface ICourseService
     {
         IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
-        IEnumerable<Course> GetCompletedCourses();
+        IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
         IEnumerable<Course> GetAvailableCourses();
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
         void RemoveCurrentCourse(int progressId, int candidateId);
@@ -29,11 +29,9 @@
             return connection.Query<CurrentCourse>("GetCurrentCoursesForCandidate_V2", new { candidateId }, commandType: CommandType.StoredProcedure);
         }
 
-        public IEnumerable<Course> GetCompletedCourses()
+        public IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId)
         {
-            return connection.Query<Course>(@"
-                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 466
-            ");
+            return connection.Query<CompletedCourse>("GetCompletedCoursesForCandidate", new { candidateId }, commandType: CommandType.StoredProcedure);
         }
 
         public IEnumerable<Course> GetAvailableCourses()
