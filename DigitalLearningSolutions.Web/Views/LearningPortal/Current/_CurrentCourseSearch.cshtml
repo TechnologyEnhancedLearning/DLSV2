@@ -2,7 +2,7 @@
 @model CurrentViewModel
 
 <div class="nhsuk-grid-row">
-  <form id="search" method="get" role="search">
+  <div id="search">
     <label class="nhsuk-u-visually-hidden" for="search-field">Search your current courses</label>
     <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString">
     <button class="nhsuk-search__submit non-js-only" type="submit">
@@ -11,5 +11,5 @@
       </svg>
       <span class="nhsuk-u-visually-hidden">Search</span>
     </button>
-  </form>
+  </div>
 </div>
