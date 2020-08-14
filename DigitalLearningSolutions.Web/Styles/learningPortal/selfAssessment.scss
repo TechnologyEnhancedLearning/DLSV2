@@ -1,0 +1,22 @@
+﻿@import "inputrange";
+
+.range-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.range-output {
+  display: none;
+
+  .js-enabled & {
+    display: inline;
+  }
+}
+
+.left-label {
+  float: left;
+}
+
+.right-label {
+  float: right;
+}

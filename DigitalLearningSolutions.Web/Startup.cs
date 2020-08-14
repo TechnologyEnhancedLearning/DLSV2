@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
@@ -55,6 +56,7 @@ namespace DigitalLearningSolutions.Web
 
             services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
+            mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
             if (env.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();

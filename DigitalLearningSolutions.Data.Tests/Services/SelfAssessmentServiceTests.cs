@@ -152,6 +152,28 @@
         }
 
         [Test]
+        public void GetNthCompetency_gets_the_latest_result()
+        {
+            // Given
+            const int competencyId = 2;
+            const int assessmentQuestionId = 2;
+            const int result = 5;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+
+
+                //Then
+                var competency = selfAssessmentService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
+                var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId).Result;
+                result.Should().Be(actualResult);
+            }
+        }
+
+        [Test]
         public void SetResultForCompetency_sets_result()
         {
             // Given
