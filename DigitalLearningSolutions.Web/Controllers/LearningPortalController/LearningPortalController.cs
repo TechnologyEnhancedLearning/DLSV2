@@ -71,6 +71,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         }
 
         [Route("/LearningPortal/StatusCode/{code:int}")]
+        [IgnoreAntiforgeryToken]
         public new IActionResult StatusCode(int code)
         {
             var model = GetErrorModel();

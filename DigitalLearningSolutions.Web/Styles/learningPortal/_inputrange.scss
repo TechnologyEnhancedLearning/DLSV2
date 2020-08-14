@@ -1,0 +1,171 @@
+﻿// Adapted from:
+// Styling Cross-Browser Compatible Range Inputs with Sass
+// Github: https://github.com/darlanrod/input-range-sass
+// Author: Darlan Rod https://github.com/darlanrod
+// Version 1.5.2
+// MIT License
+@import "~nhsuk-frontend/packages/core/settings/colours";
+
+$track-color: $color_nhsuk-grey-3 !default;
+$thumb-color: $color_nhsuk-grey-2 !default;
+
+$thumb-radius: 2px !default;
+$thumb-height: 24px !default;
+$thumb-width: 24px !default;
+$thumb-shadow-size: 4px !default;
+$thumb-shadow-blur: 4px !default;
+$thumb-shadow-color: rgba(0, 0, 0, .2) !default;
+$thumb-border-width: 2px !default;
+$thumb-border-color: #eceff1 !default;
+
+$track-width: 100% !default;
+$track-height: 24px !default;
+$track-shadow-size: 1px !default;
+$track-shadow-blur: 1px !default;
+$track-shadow-color: rgba(0, 0, 0, .2) !default;
+$track-border-width: 2px !default;
+$track-border-color: $color_nhsuk-grey-3 !default;
+$focus-track-border-width: 4px !default;
+
+$track-radius: 5px !default;
+$contrast: 5% !default;
+
+@mixin shadow($shadow-size, $shadow-blur, $shadow-color) {
+  box-shadow: $shadow-size $shadow-size $shadow-blur $shadow-color, 0 0 $shadow-size lighten($shadow-color, 5%);
+}
+
+@mixin track {
+  cursor: default;
+  height: $track-height;
+  width: $track-width;
+  z-index: 1;
+}
+
+@mixin thumb {
+  background: $thumb-color;
+  border: $thumb-border-width solid $thumb-border-color;
+  border-radius: $thumb-radius;
+  box-sizing: border-box;
+  cursor: default;
+  height: $thumb-height;
+  width: $thumb-width;
+  z-index: 2;
+}
+
+[type='range'] {
+  -webkit-appearance: none;
+  border-radius: $track-radius;
+  margin: $thumb-height / 2 0;
+  width: $track-width;
+  height: $track-height;
+  box-sizing: content-box;
+
+  padding: 0;
+
+  &::-moz-focus-outer {
+    border: 0;
+  }
+
+  &:focus {
+    border: $focus-track-border-width solid $color_nhsuk-black;
+    box-shadow: 0 0 0 4px $nhsuk-focus-color;
+
+    &::-webkit-slider-runnable-track {
+      border: none;
+      height: $track-height - (2 * $track-border-width);
+    }
+
+    &::-moz-range-track {
+      border: none;
+    }
+
+    &::-moz-range-progress {
+      background-color: $color_nhsuk-blue;
+      height: $track-height - ( 2 * $focus-track-border-width);
+      border-radius: 3px;
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+    background: inherit;
+    border: $track-border-width solid $track-border-color;
+    border-radius: $track-radius;
+  }
+
+  &::-webkit-slider-thumb {
+    @include thumb;
+    -webkit-appearance: none;
+    margin-top: ((-$track-border-width * 2 + $track-height) / 2 - $thumb-height / 2);
+  }
+
+  &::-moz-range-track {
+    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
+    @include track;
+    border: $track-border-width solid $track-border-color;
+    border-radius: $track-radius;
+    height: $track-height - ( 2 * $track-border-width);
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &::-ms-track {
+    @include track;
+    border: $track-border-width solid $track-border-color;
+    border-radius: $track-radius;
+    box-sizing: content-box;
+    background: transparent;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower {
+    background: $color_nhsuk-blue;
+  }
+
+  &::-ms-fill-upper {
+    background: #fff;
+  }
+
+  &::-moz-range-progress {
+    background-color: $color_nhsuk-blue;
+    height: $track-height - ( 2 * $track-border-width);
+    border-radius: 3px;
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    overflow-x: hidden;
+    &::-webkit-slider-thumb {
+      box-shadow: -800px 0 0 800px $color_nhsuk-blue;
+    }
+
+    .js-enabled & {
+      overflow-x: visible;
+
+      &::-webkit-slider-thumb {
+        box-shadow: none;
+      }
+
+    }
+  }
+
+  &::-ms-thumb {
+    @include thumb;
+  }
+
+  &::-ms-tooltip {
+    display: none;
+  }
+
+  &:disabled {
+    &::-webkit-slider-thumb,
+    &::-moz-range-thumb,
+    &::-ms-thumb,
+    &::-webkit-slider-runnable-track,
+    &::-ms-fill-lower,
+    &::-ms-fill-upper {
+      cursor: not-allowed;
+    }
+  }
+}

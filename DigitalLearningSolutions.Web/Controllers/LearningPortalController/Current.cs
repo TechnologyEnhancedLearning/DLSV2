@@ -27,7 +27,6 @@
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCompleteByDate(int id, int day, int month, int year, int progressId)
         {

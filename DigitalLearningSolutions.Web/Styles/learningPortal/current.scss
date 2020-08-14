@@ -21,8 +21,8 @@ $nhs-dark-grey: #425563;
   outline: none;
 
   &:focus {
-    border: 4px solid #212b32;
-    box-shadow: 0 0 0 4px #ffeb3b;
+    border: 4px solid $color_nhsuk_black;
+    box-shadow: 0 0 0 4px $nhsuk-focus-color;
     margin-right: 4px;
   }
 
@@ -45,7 +45,7 @@ $nhs-dark-grey: #425563;
     border-radius: 4px;
 
     &:focus {
-      border-right: 4px solid #212b32;
+      border-right: 4px solid $color_nhsuk-black;
     }
 
     @include mq($until: tablet) {

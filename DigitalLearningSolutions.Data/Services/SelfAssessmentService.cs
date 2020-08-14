@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -44,14 +45,51 @@
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
                 @"WITH CompetencyRowNumber AS
-                        (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID ASC) as RowNo, CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @selfAssessmentId)
-                    SELECT C.ID AS Id, C.Description AS Description, CG.Name AS CompetencyGroup, AQ.ID as Id, AQ.Question, AQ.MaxValueDescription, AQ.MinValueDescription
+                     (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID) as RowNo,
+                             CompetencyID
+                      FROM SelfAssessmentStructure
+                      WHERE SelfAssessmentID = @selfAssessmentId
+                     ),
+                     LatestAssessmentResults AS
+                         (SELECT CompetencyID,
+                                 AssessmentQuestionID,
+                                 Result
+                          FROM SelfAssessmentResults s
+                                   INNER JOIN (
+                              SELECT MAX(ID) as ID
+                              FROM SelfAssessmentResults
+                              WHERE CandidateID = @candidateId
+                                AND SelfAssessmentID = @selfAssessmentId
+                              GROUP BY CompetencyID,
+                                       AssessmentQuestionID
+                          ) t
+                                              ON s.ID = t.ID
+                          WHERE CandidateID = @candidateId
+                            AND SelfAssessmentID = @selfAssessmentId
+                         )
+                    SELECT C.ID       AS Id,
+                        C.Description AS Description,
+                        CG.Name       AS CompetencyGroup,
+                        AQ.ID         AS Id,
+                        AQ.Question,
+                        AQ.MaxValueDescription,
+                        AQ.MinValueDescription,
+                        LAR.Result
                     FROM Competencies AS C
-                    INNER JOIN CompetencyGroups AS CG ON C.CompetencyGroupID = CG.ID
-                    INNER JOIN CompetencyAssessmentQuestions AS CAQ ON CAQ.CompetencyID = C.ID
-                    INNER JOIN AssessmentQuestions AS AQ ON AQ.ID = CAQ.AssessmentQuestionID
-                    INNER JOIN CompetencyRowNumber AS CRN on CRN.CompetencyID = C.ID
-                    INNER JOIN CandidateAssessments AS CA on CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId
+                        INNER JOIN CompetencyGroups AS CG
+                            ON C.CompetencyGroupID = CG.ID
+                        INNER JOIN CompetencyAssessmentQuestions AS CAQ
+                            ON CAQ.CompetencyID = C.ID
+                        INNER JOIN AssessmentQuestions AS AQ
+                            ON AQ.ID = CAQ.AssessmentQuestionID
+                        INNER JOIN CompetencyRowNumber AS CRN
+                            ON CRN.CompetencyID = C.ID
+                        INNER JOIN CandidateAssessments AS CA
+                            ON CA.SelfAssessmentID = @selfAssessmentId
+                                   AND CA.CandidateID = @candidateId
+                        LEFT OUTER JOIN LatestAssessmentResults AS LAR
+                            ON LAR.CompetencyID = C.ID
+                                   AND LAR.AssessmentQuestionID = AQ.ID
                     WHERE CRN.RowNo = @n",
                 (competency, assessmentQuestion) =>
                 {
@@ -73,7 +111,7 @@
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +
                     $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
-                    );
+                );
                 return;
             }
 
@@ -94,12 +132,12 @@
                 new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result }
             );
 
-            if (numberOfAffectedRows == 0)
+            if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not saving self assessment result as db insert failed. " +
                     $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
-                    );
+                );
             }
         }
 

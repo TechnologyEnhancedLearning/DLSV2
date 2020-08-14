@@ -59,6 +59,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\sortCourses.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\searchCourses.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCoursesSpec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sortCoursesSpec.ts" />
