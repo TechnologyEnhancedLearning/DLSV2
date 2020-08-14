@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web
                 {
                     options.Cookie.Name = ".AspNet.SharedCookie";
                     options.Events.OnRedirectToLogin = RedirectToLogin;
-                    options.Events.OnRedirectToAccessDenied = RedirectToLogin;
+                    options.Events.OnRedirectToAccessDenied = RedirectToHome;
                 });
 
             services.AddAuthorization(options =>
@@ -112,7 +112,13 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            context.HttpContext.Response.Redirect( $"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            return Task.CompletedTask;
+        }
+
+        private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home");
             return Task.CompletedTask;
         }
     }
