@@ -12,7 +12,7 @@ export function sortCards(sortBy: string, sortDirection: string) {
     Array.from(courseCardsContainer.children),
     [(course: Element) => getSortValue(course, sortBy)],
     [(sortDirection === 'Descending') ? 'desc' : 'asc'],
-  ).forEach((element) => courseCardsContainer.append(element));
+  ).forEach((element) => courseCardsContainer.appendChild(element));
 }
 
 export function getSortValue(courseCard: Element, sortBy: string): string | number | Date {
