@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public class CurrentCourseViewModel
+    public class CurrentCourseViewModel : NamedItemViewModel
     {
         public string Name { get; }
         public int Id { get; }

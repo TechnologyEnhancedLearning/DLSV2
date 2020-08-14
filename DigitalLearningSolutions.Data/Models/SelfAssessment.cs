@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
-    public class SelfAssessment
+    public class SelfAssessment : NamedItem
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public override string Name { get; set; }
         public string Description { get; set; }
     }
 }

@@ -1,33 +1,49 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
-@model CurrentCourseViewModel
+@model NamedItemViewModel
 
-<div class="current-course-card nhsuk-panel">
-  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
-       @Model.Name
-      </span>
-    </summary>
-    <div class="nhsuk-details__text">
-      <div class="nhsuk-grid-row">
-        <partial name="Current/CurrentCourseCard/_TagRow" model="@Model" />
+@if (Model is CurrentCourseViewModel course)
+{
+  <div class="current-course-card nhsuk-panel">
+    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+      <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+        <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name">
+          @course.Name
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <div class="nhsuk-grid-row">
+          <partial name="Current/CurrentCourseCard/_TagRow" model="@course" />
+        </div>
+        <div class="nhsuk-grid-row">
+          <partial name="Current/CurrentCourseCard/_Dates" model="@course" />
+        </div>
+        <partial name="Current/CurrentCourseCard/_Scores" model="@course" />
+        <partial name="Current/CurrentCourseCard/_Unlock" model="@course" />
+        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@course.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@course.Id">
+          Remove course
+        </a>
       </div>
-      <div class="nhsuk-grid-row">
-        <partial name="Current/CurrentCourseCard/_Dates" model="@Model" />
-      </div>
-      <partial name="Current/CurrentCourseCard/_Scores" model="@Model" />
-      <partial name="Current/CurrentCourseCard/_Unlock" model="@Model" />
-      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
-        Remove course
-      </a>
-    </div>
-  </details>
+    </details>
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name" href="@Model.LaunchUrl">
-        Launch course
-      </a>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0" aria-describedby="@course.Id-name" href="@course.LaunchUrl">
+          Launch course
+        </a>
+      </div>
     </div>
   </div>
-</div>
+}
+else if (Model is SelfAssessmentCardViewModel selfAssessment)
+{
+  <div class="nhsuk-panel current-course-card self-assessment-card">
+    <h4 class="course-title" name="name">@selfAssessment.Name</h4>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0" href="">
+          Launch self assessment
+        </a>
+      </div>
+    </div>
+  </div>
+}

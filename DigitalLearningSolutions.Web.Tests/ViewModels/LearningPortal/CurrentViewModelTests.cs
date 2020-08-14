@@ -151,7 +151,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             bool expectedIsGroup,
             string expectedLaunchUrl)
         {
-            var course = model.CurrentCourses.ElementAt(index);
+            var course = model.CurrentCourses.ElementAt(index) as CurrentCourseViewModel;
             course.Id.Should().Be(expectedId);
             course.Name.Should().Be(expectedName);
             course.HasDiagnosticAssessment.Should().Be(expectedDiagnostic);
@@ -194,7 +194,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 null,
                 null
             );
-            var sortedIds = sortedModel.CurrentCourses.Select(course => course.Id);
+            var sortedIds = sortedModel.CurrentCourses.Select(course => (course as CurrentCourseViewModel).Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
@@ -216,7 +216,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 null,
                 null
             );
-            var filteredIds = filteredModel.CurrentCourses.Select(course => course.Id);
+            var filteredIds = filteredModel.CurrentCourses.Select(course => (course as CurrentCourseViewModel).Id);
             filteredIds.Should().Equal(expectedIds);
         }
     }

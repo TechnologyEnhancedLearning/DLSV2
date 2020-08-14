@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -13,11 +14,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 
     public class CurrentViewModel
     {
-        private readonly IEnumerable<CurrentCourse> currentCourses;
         private readonly IConfiguration config;
 
         [BindProperty] public string SortDirection { get; set; }
         [BindProperty] public string SortBy { get; set; }
+
+        public IEnumerable<NamedItemViewModel> CurrentCourses { get; }
 
         public readonly SelectList SortByOptions = new SelectList(new[]
         {
@@ -31,9 +33,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 
         public const string AscendingText = "Ascending";
         public const string DescendingText = "Descending";
-        public readonly SelfAssessment? SelfAssessment;
         public readonly string? BannerText;
         public readonly string? SearchString;
+
+        // This is the lower threshold for the search match score. This value was determined by trial and error.
+        // If there are any issues with strange search results, changing this value or the scorer strategy would
+        // be a good place to start.
+        private const int MatchCutoffScore = 70;
 
         public CurrentViewModel(
             IEnumerable<CurrentCourse> currentCourses,
@@ -48,50 +54,57 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
             this.config = config;
             BannerText = bannerText;
             SearchString = searchString;
-            SelfAssessment = selfAssessment;
             SortBy = sortBy;
             SortDirection = sortDirection;
 
-            var filteredCurrentCourses = FilterCurrentCourses(currentCourses);
-            this.currentCourses = SortCurrentCourses(filteredCurrentCourses);
+            var sortedItems = SortAllItems(currentCourses, selfAssessment);
+            var filteredItems = FilterNamedItems(sortedItems);
+            CurrentCourses = filteredItems.Select<NamedItem, NamedItemViewModel>(course =>
+            {
+                if (course is CurrentCourse currentCourse)
+                {
+                    return new CurrentCourseViewModel(currentCourse, config);
+                }
+
+                return new SelfAssessmentCardViewModel()
+                {
+                    Name = course.Name
+                };
+            });
         }
 
-        private IEnumerable<CurrentCourse> FilterCurrentCourses(IEnumerable<CurrentCourse> allCurrentCourses)
+        private IEnumerable<NamedItem> SortAllItems(IEnumerable<CurrentCourse> currentCourses, SelfAssessment? selfAssessment)
         {
-            if (SearchString == null)
+            if (SortBy == SortByOptionTexts.CourseName)
             {
-                return allCurrentCourses;
+                return SortByName(currentCourses, selfAssessment);
             }
 
-            var query = new CurrentCourse()
+            IEnumerable<NamedItem> sortedCourses = SortCourses(currentCourses);
+            if (selfAssessment == null)
             {
-                CourseName = SearchString
-            };
+                return sortedCourses;
+            }
 
-            // This is the lower threshold for the search match score. This value was determined by trial and error.
-            // If there are any issues with strange search results, changing this value or the scorer strategy would
-            // be a good place to start.
-            const int matchCutoffScore = 70;
-
-            var results = Process.ExtractAll(
-                query,
-                allCurrentCourses,
-                currentCourse => currentCourse.CourseName.ToLower(),
-                GetScorer(SearchString),
-                matchCutoffScore
-            );
-
-            return results.Select(result => result.Value);
+            return SortDirection == DescendingText
+                ? sortedCourses.Append(selfAssessment)
+                : sortedCourses.Prepend(selfAssessment);
         }
 
-        private static IRatioScorer GetScorer(string searchString)
+        private IEnumerable<NamedItem> SortByName(IEnumerable<CurrentCourse> currentCourses, SelfAssessment? selfAssessment)
         {
-            return searchString.Any(char.IsDigit)
-                ? ScorerCache.Get<TokenSetScorer>()
-                : ScorerCache.Get<PartialTokenAbbreviationScorer>();
+            var allItems = new List<NamedItem>(currentCourses);
+            if (selfAssessment != null)
+            {
+                allItems.Add(selfAssessment);
+            }
+
+            return SortDirection == DescendingText
+                ? allItems.OrderByDescending(course => course.Name)
+                : allItems.OrderBy(course => course.Name);
         }
 
-        private IEnumerable<CurrentCourse> SortCurrentCourses(IEnumerable<CurrentCourse> currentCourses)
+        private IEnumerable<CurrentCourse> SortCourses(IEnumerable<CurrentCourse> currentCourses)
         {
             return SortBy switch
             {
@@ -114,19 +127,37 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
                         .ThenByDescending(course => course.Passes)
                     : currentCourses.OrderBy(course => course.IsAssessed)
                         .ThenBy(course => course.Passes),
-                SortByOptionTexts.CourseName => SortDirection == DescendingText
-                    ? currentCourses.OrderByDescending(course => course.CourseName)
-                    : currentCourses.OrderBy(course => course.CourseName),
                 _ => currentCourses
             };
         }
 
-        public IEnumerable<CurrentCourseViewModel> CurrentCourses
+        private IEnumerable<NamedItem> FilterNamedItems(IEnumerable<NamedItem> namedItems)
         {
-            get
+            if (SearchString == null)
             {
-                return currentCourses.Select(c => new CurrentCourseViewModel(c, config));
+                return namedItems;
             }
+
+            var query = new CurrentCourse()
+            {
+                CourseName = SearchString
+            };
+
+            var results = Process.ExtractAll(
+                query,
+                namedItems,
+                currentCourse => currentCourse.Name.ToLower(),
+                GetScorer(SearchString),
+                MatchCutoffScore
+            );
+            return results.Select(result => result.Value);
+        }
+
+        private static IRatioScorer GetScorer(string searchString)
+        {
+            return searchString.Any(char.IsDigit)
+                ? ScorerCache.Get<TokenSetScorer>()
+                : ScorerCache.Get<PartialTokenAbbreviationScorer>();
         }
     }
 
