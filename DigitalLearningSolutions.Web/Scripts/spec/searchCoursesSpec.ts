@@ -8,6 +8,8 @@ global.document = {
 
 // eslint-disable-next-line import/first
 import * as searchCourses from '../learningPortal/searchCourses';
+// eslint-disable-next-line import/first
+import * as sortCourses from '../learningPortal/sortCourses';
 
 describe('titleFromCardElement', () => {
   it('should extract the correct title', () => {
@@ -19,7 +21,7 @@ describe('titleFromCardElement', () => {
       <body>
         <div id="current-course-cards">
           <div class="current-course-card">
-            <span class="nhsuk-details__summary-text">${expectedTitle}</span>
+            <span class="nhsuk-details__summary-text course-title">${expectedTitle}</span>
           </div>
         </div>
       </body>
@@ -32,59 +34,6 @@ describe('titleFromCardElement', () => {
 
     // Then
     expect(actualTitle).toEqual(expectedTitle);
-  });
-});
-
-describe('displayCards', () => {
-  it('should correctly replace the contents of current-course-cards with the provided elements', () => {
-    // Given
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div id="current-course-cards">
-          <div class="current-course-card">
-            <span class="nhsuk-details__summary-text">old title</span>
-          </div>
-          <div class="current-course-card">
-            <span class="nhsuk-details__summary-text">old title 2</span>
-          </div>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-    const newContents = [document.createElement('ol')];
-
-    // When
-    searchCourses.displayCards(newContents);
-
-    // Then
-    const newChildren = document.getElementById('current-course-cards')?.children;
-    expect(newChildren?.length).toEqual(1);
-    expect(newChildren![0].tagName).toBe('OL');
-  });
-
-  it('should display nothing when given an empty list', () => {
-    // Given
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div id="current-course-cards">
-          <div class="current-course-card">
-            <span class="nhsuk-details__summary-text">old title</span>
-          </div>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    searchCourses.displayCards([]);
-
-    // Then
-    const newChildren = document.getElementById('current-course-cards')?.children;
-    expect(newChildren?.length).toEqual(0);
   });
 });
 
@@ -154,6 +103,7 @@ describe('hideResultCount', () => {
 describe('search', () => {
   it('should only show matching results', () => {
     // Given
+    const displaySpy = spyOn(sortCourses, 'sortAndDisplaySearchResults').and.stub();
     global.document = new JSDOM(`
       <html>
       <head></head>
@@ -161,7 +111,7 @@ describe('search', () => {
         <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
         <div id="current-course-cards">
           <div class="current-course-card">
-            <span class="nhsuk-details__summary-text">cheese</span>
+            <span class="nhsuk-details__summary-text course-title">cheese</span>
           </div>
           <div class="current-course-card">
             <span class="nhsuk-details__summary-text">petril</span>
@@ -174,8 +124,7 @@ describe('search', () => {
     searchCourses.search('cheese', searchCourses.getCourseCards());
 
     // Then
-    const courseCards = document.getElementById('current-course-cards')?.children;
-    expect(courseCards?.length).toBe(1);
-    expect(courseCards![0].children[0].textContent).toBe('cheese');
+    expect(displaySpy).toHaveBeenCalledTimes(1);
+    expect(displaySpy.calls.mostRecent().args[0].length).toBe(1);
   });
 });

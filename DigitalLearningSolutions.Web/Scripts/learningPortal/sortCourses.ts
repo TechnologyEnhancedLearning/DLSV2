@@ -7,18 +7,41 @@ export default function onSortCriteriaChange() {
 
 export function sortCards(sortBy: string, sortDirection: string) {
   const courseCardsContainer = document.getElementById('current-course-cards');
-  if (!courseCardsContainer) { return; }
-  _.orderBy(
-    Array.from(courseCardsContainer.children),
+  if (!courseCardsContainer) {
+    return;
+  }
+  const courseCards = Array.from(courseCardsContainer.children);
+
+  sortAndDisplayCards(courseCards, sortBy, sortDirection);
+}
+
+export function sortAndDisplaySearchResults(courseCards: Element[]) {
+  sortAndDisplayCards(courseCards, getSortBy(), getSortDirection());
+}
+
+function sortAndDisplayCards(
+  courseCards: Element[],
+  sortBy: string,
+  sortDirection: string,
+) {
+  const courseCardsContainer = document.getElementById('current-course-cards');
+  if (!courseCardsContainer) {
+    return;
+  }
+  courseCardsContainer.textContent = '';
+
+  const sortedCards = _.orderBy(
+    courseCards,
     [(course: Element) => getSortValue(course, sortBy)],
     [(sortDirection === 'Descending') ? 'desc' : 'asc'],
-  ).forEach((element) => courseCardsContainer.appendChild(element));
+  );
+  sortedCards.forEach((element) => courseCardsContainer.appendChild(element));
 }
 
 export function getSortValue(courseCard: Element, sortBy: string): string | number | Date {
   switch (sortBy) {
     case 'Course Name':
-      return courseCard.querySelector('[name="name"]')?.innerHTML || '';
+      return courseCard.querySelector('[name="name"]')?.textContent?.trim() ?? '';
     case 'Enrolled Date':
       return parseDate(courseCard.querySelector('[name="started-date"]')?.innerHTML || '');
     case 'Last Accessed Date':
@@ -40,7 +63,7 @@ function parseDate(dateString: string): Date {
 }
 
 function getSortBy(): string {
-  const element = <HTMLInputElement> document.getElementById('select-sort-by');
+  const element = <HTMLInputElement>document.getElementById('select-sort-by');
   return element.value;
 }
 

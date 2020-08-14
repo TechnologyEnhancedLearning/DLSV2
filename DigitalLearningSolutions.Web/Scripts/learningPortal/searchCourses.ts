@@ -1,4 +1,5 @@
 import { filter } from 'fuzzy';
+import { sortAndDisplaySearchResults } from './sortCourses';
 
 interface CourseCard {
   element: Element;
@@ -32,8 +33,8 @@ function setUpSearch() {
 }
 
 export function titleFromCardElement(cardElement: Element): string {
-  const titleSpan = <HTMLSpanElement>cardElement.getElementsByClassName('nhsuk-details__summary-text')[0];
-  return titleSpan.textContent ?? '';
+  const titleSpan = <HTMLSpanElement>cardElement.getElementsByClassName('course-title')[0];
+  return titleSpan?.textContent ?? '';
 }
 
 export function search(query: string, courseCards: CourseCard[]) {
@@ -50,13 +51,7 @@ export function search(query: string, courseCards: CourseCard[]) {
   updateResultCount(results.length);
 
   const newElements = results.map((res) => res.original.element);
-  displayCards(newElements);
-}
-
-export function displayCards(courseCardElements: Element[]) {
-  const cardContainer = <HTMLDivElement>document.getElementById('current-course-cards');
-  cardContainer.textContent = '';
-  courseCardElements.forEach((el) => cardContainer.appendChild(el));
+  sortAndDisplaySearchResults(newElements);
 }
 
 export function updateResultCount(count: number) {
@@ -74,7 +69,7 @@ export function hideResultCount() {
 
 function clearSearch(courseCards: CourseCard[]) {
   const originalElements = courseCards.map((card) => card.element);
-  displayCards(originalElements);
+  sortAndDisplaySearchResults(originalElements);
   hideResultCount();
 }
 

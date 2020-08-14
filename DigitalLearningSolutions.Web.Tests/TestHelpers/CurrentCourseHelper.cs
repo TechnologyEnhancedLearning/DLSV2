@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
@@ -46,7 +45,7 @@
             };
         }
 
-        public static CurrentCourseViewModel CurrentCourseViewModelFromController(LearningPortalController controller)
+        public static NamedItemViewModel NamedItemViewModelFromController(LearningPortalController controller)
         {
             var model = CurrentViewModelFromController(controller);
             return model.CurrentCourses.First();
