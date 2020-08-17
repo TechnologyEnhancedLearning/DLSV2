@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model CompletedCourseViewModel
+
+<div class="completed-course-card nhsuk-panel">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
+       @Model.Name
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <div class="nhsuk-grid-row">
+        <partial name="Shared/_TagRow" model="@Model" />
+      </div>
+      <div class="nhsuk-grid-row">
+        <partial name="Shared/_Dates" model="@Model" />
+      </div>
+      <partial name="Shared/_Scores" model="@Model" />
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-one-quarter">
+      <a class="nhsuk-button nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name" href="@Model.LaunchUrl">
+        Launch course
+      </a>
+    </div>
+    <div class="nhsuk-grid-column-one-quarter">
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" aria-describedby="@Model.Id-name">
+        Evaluate
+      </a>
+    </div>
+  </div>
+</div>

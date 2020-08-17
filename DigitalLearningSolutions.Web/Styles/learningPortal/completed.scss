@@ -1,0 +1,8 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.completed-course-card {
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-3;
+  padding-top: 8px;
+  padding-bottom: 16px;
+}

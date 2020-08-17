@@ -1,0 +1,28 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model CompletedViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")">
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")">
+
+@{
+  ViewData["Title"] = "Learning Portal - Completed";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1>My Completed Courses</h1>
+    <h2 class="page-subheading">@Model.BannerText</h2>
+
+    @if (!Model.CompletedCourses.Any())
+    {
+      <p class="nhsuk-u-margin-top-4" role="alert"><b>No data to display</b></p>
+    }
+
+    <div id="completed-course-cards">
+      @foreach (var completedCourse in Model.CompletedCourses)
+      {
+        <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />
+      }
+    </div>
+  </div>
+</div>

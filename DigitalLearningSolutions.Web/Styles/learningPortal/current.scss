@@ -1,7 +1,5 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-$nhs-dark-grey: #425563;
-
 .current-course-card {
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
@@ -82,22 +80,6 @@ $nhs-dark-grey: #425563;
 div#search {
   text-align: left;
   padding: 0 16px;
-}
-
-
-.tags {
-  display: flex;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  background-color: $nhs-dark-grey;
-  color: white;
-  padding: 4px;
-  border-radius: 4px;
-  margin-right: 4px;
-  margin-bottom: 4px;
 }
 
 a.delete-button {

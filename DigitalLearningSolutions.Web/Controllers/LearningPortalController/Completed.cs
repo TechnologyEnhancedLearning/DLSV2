@@ -14,7 +14,7 @@
                 config,
                 bannerText
             );
-            return View(model);
+            return View("Completed/Completed", model);
         }
     }
 }
