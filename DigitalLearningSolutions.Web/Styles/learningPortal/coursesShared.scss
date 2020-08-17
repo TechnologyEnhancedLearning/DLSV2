@@ -1,0 +1,18 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+$nhs-dark-grey: #425563;
+
+.tags {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: $nhs-dark-grey;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}

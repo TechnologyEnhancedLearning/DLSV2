@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model BaseCourseViewModel
+
+<div class="nhsuk-grid-column-one-quarter">
+  <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Enrolled</h5>
+  <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+
+  <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@Model.StartedDate.ToShortDateString()</p>
+</div>
+@if (Model is CurrentCourseViewModel currentCourseViewModel)
+{
+  <div class="nhsuk-grid-column-one-quarter">
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
+    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2"/>
+
+    <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@currentCourseViewModel.LastAccessedDate.ToShortDateString()</p>
+  </div>
+  <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-three-quarters">
+      <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>
+      <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+    </div>
+    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <p class="@currentCourseViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
+        @(currentCourseViewModel.CompleteByDate == null ?
+          Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
+          Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentCourseViewModel.DueByDescription()}</span>{currentCourseViewModel.CompleteByDate?.ToShortDateString()}"))
+      </p>
+    </div>
+    @if (currentCourseViewModel.CompleteByDate == null || currentCourseViewModel.SelfEnrolled)
+    {
+      <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCompleteByDate" asp-route-id="@Model.Id">
+          Edit
+        </a>
+      </div>
+    }
+  </div>
+}
+@if (Model is CompletedCourseViewModel completedCourseViewModel)
+{
+  <div class="nhsuk-grid-column-one-quarter">
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Completed</h5>
+    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+
+    <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
+  </div>
+  <div class="nhsuk-grid-column-one-quarter">
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Evaluated</h5>
+    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
+
+    <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@completedCourseViewModel.EvaluatedDate.ToShortDateString()</p>
+  </div>
+}
