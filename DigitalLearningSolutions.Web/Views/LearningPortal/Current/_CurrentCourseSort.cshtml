@@ -5,8 +5,9 @@
   <div class="nhsuk-grid-row sort-row">
     <div class="nhsuk-grid-column-three-quarters">
       <div class="nhsuk-grid-row">
+        @* label set in CSS ::before due to layout *@
         <div class="nhsuk-grid-column-one-half sort-select-container">
-          <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortByOptions" aria-labelledby="label-sort-by"></select>
+          <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortByOptions" aria-label="Sort by"></select>
         </div>
         <div class="nhsuk-grid-column-one-half sort-select-container">
           <select class="nhsuk-select" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
