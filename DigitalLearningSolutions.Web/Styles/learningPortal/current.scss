@@ -37,7 +37,7 @@ $nhs-dark-grey: #425563;
   }
 
   @include mq($from: desktop) {
-    width: 50%;
+    width: 85%;
   }
 
   .js-enabled & {
@@ -67,7 +67,7 @@ $nhs-dark-grey: #425563;
   }
 }
 
-form#search {
+div#search {
   text-align: left;
   padding: 0 16px;
 }
@@ -115,4 +115,52 @@ form#search {
 
 .button-small {
   padding: 2px 10px
+}
+
+.sort-select-container {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+
+  @include mq($from: desktop) {
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-top: -8px
+  }
+}
+
+.sort-by-label {
+  padding-left: 16px;
+
+  @include mq($from: desktop) {
+    padding-left: 8px;
+    margin-top: -27px;
+  }
+}
+
+.sort-row {
+  @include mq($until: desktop) {
+    margin-top: 36px;
+  }
+}
+
+.sort-row::before {
+  content: "Sort by:";
+  position: relative;
+  top: -32px;
+  height: 0;
+  left: 8px;
+  float: left;
+  font-weight: 600;
+  font-size: 19px;
+  color: rgb(33, 43, 50);
+  font-family: "Frutiger W01", Arial, sans-serif;
+
+  @include mq($until: desktop) {
+    left: 16px;
+  }
+}
+
+.nhsuk-select {
+  border-radius: 4px;
 }
