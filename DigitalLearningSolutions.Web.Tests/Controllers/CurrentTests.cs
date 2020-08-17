@@ -40,8 +40,8 @@
                 currentCourses,
                 config,
                 null,
-                "Course Name",
-                "Ascending",
+                "Last Accessed Date",
+                "Descending",
                 selfAssessment,
                 bannerText
             );

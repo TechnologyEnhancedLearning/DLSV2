@@ -9,7 +9,7 @@
 
     public partial class LearningPortalController
     {
-        public IActionResult Current(string? searchString = null, string sortBy = "Course Name", string sortDirection = "Ascending")
+        public IActionResult Current(string? searchString = null, string sortBy = SortByOptionTexts.LastAccessed, string sortDirection = CurrentViewModel.DescendingText)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
