@@ -90,9 +90,10 @@ div#search {
   margin-bottom: 4px;
 }
 
-.delete-button {
+a.delete-button {
   background-color: $color_nhsuk-red;
   box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
+  margin-bottom: 16px;
 
   &:hover {
     background-color: shade($color_nhsuk-red, 20%);
