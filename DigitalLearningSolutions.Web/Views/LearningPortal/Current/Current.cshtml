@@ -9,9 +9,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1>My Current Courses</h1>
+    <h1 id="page-heading">My Current Courses</h1>
     <h2 class="page-subheading">@Model.BannerText</h2>
-    <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-row sort-and-search">
       <form method="get" role="search">
         <div class="nhsuk-grid-column-one-half">
           <partial name="Current/_CurrentCourseSearch" model="Model" />

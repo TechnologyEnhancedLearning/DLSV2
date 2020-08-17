@@ -33,6 +33,10 @@ input:invalid {
   border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
 }
 
-.page-subheading {
-  margin-top: - nhsuk-spacing(5);
+h1#page-heading {
+  margin-bottom: 16px;
 }
+.page-subheading {
+  margin-bottom: 16px;
+}
+
