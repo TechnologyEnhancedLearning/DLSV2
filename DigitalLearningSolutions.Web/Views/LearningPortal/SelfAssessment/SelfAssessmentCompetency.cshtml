@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model SelfAssessmentCompetencyViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")">
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <hgroup>
   <h4 class="nhsuk-u-margin-bottom-0">@Model.Assessment.Name</h4>
   <h2>@Model.Competency.CompetencyGroup</h2>
@@ -34,5 +34,5 @@
 </div >
 
 @section scripts {
-  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")"></script>
+  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
 }
