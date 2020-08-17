@@ -19,13 +19,13 @@
   <title>@ViewData["Title"] - Digital Learning Solutions</title>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")">
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/index.css")">
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/layout.css")">
+  <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/index.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/layout.css")" asp-append-version="true">
   @await RenderSectionAsync("styles", false)
 
   <!-- Scripts -->
-  <script src="@Url.Content("~/js/nhsuk.js")"></script>
+  <script src="@Url.Content("~/js/nhsuk.js")" asp-append-version="true"></script>
 
   <!-- Favicons -->
   <link rel="icon" href="@Url.Content("~/favicon.ico")">
