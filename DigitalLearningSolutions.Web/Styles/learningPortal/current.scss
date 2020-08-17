@@ -5,6 +5,8 @@ $nhs-dark-grey: #425563;
 .current-course-card {
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
+  padding-top: 8px;
+  padding-bottom: 16px;
 }
 
 .search-box {
@@ -88,9 +90,10 @@ div#search {
   margin-bottom: 4px;
 }
 
-.delete-button {
+a.delete-button {
   background-color: $color_nhsuk-red;
   box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
+  margin-bottom: 16px;
 
   &:hover {
     background-color: shade($color_nhsuk-red, 20%);
@@ -163,4 +166,12 @@ div#search {
 
 .nhsuk-select {
   border-radius: 4px;
+}
+
+.nhsuk-details__text {
+  padding-bottom: 0 !important;
+}
+
+.sort-and-search {
+  margin-top: 32px;
 }
