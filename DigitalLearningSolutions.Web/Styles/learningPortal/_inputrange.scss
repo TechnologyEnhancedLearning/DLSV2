@@ -12,27 +12,16 @@ $thumb-color: $color_nhsuk-grey-2 !default;
 $thumb-radius: 2px !default;
 $thumb-height: 24px !default;
 $thumb-width: 24px !default;
-$thumb-shadow-size: 4px !default;
-$thumb-shadow-blur: 4px !default;
-$thumb-shadow-color: rgba(0, 0, 0, .2) !default;
 $thumb-border-width: 2px !default;
 $thumb-border-color: #eceff1 !default;
 
 $track-width: 100% !default;
 $track-height: 24px !default;
-$track-shadow-size: 1px !default;
-$track-shadow-blur: 1px !default;
-$track-shadow-color: rgba(0, 0, 0, .2) !default;
 $track-border-width: 2px !default;
 $track-border-color: $color_nhsuk-grey-3 !default;
 $focus-track-border-width: 4px !default;
 
 $track-radius: 5px !default;
-$contrast: 5% !default;
-
-@mixin shadow($shadow-size, $shadow-blur, $shadow-color) {
-  box-shadow: $shadow-size $shadow-size $shadow-blur $shadow-color, 0 0 $shadow-size lighten($shadow-color, 5%);
-}
 
 @mixin track {
   cursor: default;
@@ -84,6 +73,22 @@ $contrast: 5% !default;
       height: $track-height - ( 2 * $focus-track-border-width);
       border-radius: 3px;
     }
+
+    &::-ms-fill-lower {
+      border: $track-border-width solid transparent;
+      border-radius: 0;
+
+    }
+
+    &::-ms-fill-upper {
+      border: $track-border-width solid transparent;
+      border-radius: 0;
+    }
+
+    &::-ms-thumb {
+      margin-top: 1px;
+      height: $thumb-height + 1px;
+    }
   }
 
   &::-webkit-slider-runnable-track {
@@ -100,7 +105,6 @@ $contrast: 5% !default;
   }
 
   &::-moz-range-track {
-    @include shadow($track-shadow-size, $track-shadow-blur, $track-shadow-color);
     @include track;
     border: $track-border-width solid $track-border-color;
     border-radius: $track-radius;
@@ -113,7 +117,9 @@ $contrast: 5% !default;
 
   &::-ms-track {
     @include track;
-    border: $track-border-width solid $track-border-color;
+    border: none;
+    outline: none;
+    box-shadow: none;
     border-radius: $track-radius;
     box-sizing: content-box;
     background: transparent;
@@ -121,11 +127,17 @@ $contrast: 5% !default;
   }
 
   &::-ms-fill-lower {
+    border: $track-border-width solid $track-border-color;
+    border-radius: $track-radius;
+    box-sizing: content-box;
     background: $color_nhsuk-blue;
   }
 
   &::-ms-fill-upper {
     background: #fff;
+    border-radius: $track-radius;
+    box-sizing: content-box;
+    border: $track-border-width solid $track-border-color;
   }
 
   &::-moz-range-progress {
@@ -156,16 +168,5 @@ $contrast: 5% !default;
 
   &::-ms-tooltip {
     display: none;
-  }
-
-  &:disabled {
-    &::-webkit-slider-thumb,
-    &::-moz-range-thumb,
-    &::-ms-thumb,
-    &::-webkit-slider-runnable-track,
-    &::-ms-fill-lower,
-    &::-ms-fill-upper {
-      cursor: not-allowed;
-    }
   }
 }
