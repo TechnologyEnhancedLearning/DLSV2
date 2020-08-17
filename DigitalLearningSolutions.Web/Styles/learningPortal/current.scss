@@ -7,6 +7,16 @@ $nhs-dark-grey: #425563;
   @extend .nhsuk-u-margin-bottom-3;
   padding-top: 8px;
   padding-bottom: 16px;
+
+  &.overdue {
+    background-color: #fff;
+    border-left: 6px solid $color_nhsuk-red;
+  }
+
+  &.due-soon {
+    background-color: #fff;
+    border-left: 6px solid $color_nhsuk-yellow;
+  }
 }
 
 .search-box {
