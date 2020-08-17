@@ -5,6 +5,8 @@ $nhs-dark-grey: #425563;
 .current-course-card {
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
+  padding-top: 8px;
+  padding-bottom: 16px;
 }
 
 .search-box {
@@ -163,4 +165,8 @@ div#search {
 
 .nhsuk-select {
   border-radius: 4px;
+}
+
+.nhsuk-details__text {
+  padding-bottom: 0 !important;
 }

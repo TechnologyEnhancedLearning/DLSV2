@@ -19,15 +19,15 @@
         </div>
         <partial name="Current/CurrentCourseCard/_Scores" model="@course" />
         <partial name="Current/CurrentCourseCard/_Unlock" model="@course" />
-        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@course.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@course.Id">
-          Remove course
-        </a>
       </div>
+      <a class="nhsuk-button delete-button small-edit-button nhsuk-u-margin-bottom-3" aria-describedby="@course.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@course.Id">
+        Remove course
+      </a>
     </details>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0" aria-describedby="@course.Id-name" href="@course.LaunchUrl">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" aria-describedby="@course.Id-name" href="@course.LaunchUrl">
           Launch course
         </a>
       </div>
