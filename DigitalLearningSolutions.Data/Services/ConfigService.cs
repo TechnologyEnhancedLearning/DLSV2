@@ -7,7 +7,7 @@
 
     public interface IConfigService
     {
-        public string? GetConfigValue(string key);
+        string? GetConfigValue(string key);
     }
 
     public class ConfigService : IConfigService

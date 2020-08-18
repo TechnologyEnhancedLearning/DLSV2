@@ -6,8 +6,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using FakeItEasy;
     using NUnit.Framework;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
 
     public class CourseServiceTests
     {
@@ -17,7 +19,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            courseService = new CourseService(connection);
+            var logger = A.Fake<ILogger<CourseService>>();
+            courseService = new CourseService(connection, logger);
         }
 
         [Test]
