@@ -9,7 +9,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using NUnit.Framework;
     using FluentAssertions;
 
-    [Parallelizable(ParallelScope.Fixtures)]
     public class CourseServiceTests
     {
         private CourseService courseService;

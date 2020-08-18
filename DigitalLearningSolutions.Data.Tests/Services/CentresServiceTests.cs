@@ -5,7 +5,6 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    [Parallelizable(ParallelScope.Fixtures)]
     public class CentresServiceTests
     {
         private CentresService centresService;
