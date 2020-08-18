@@ -7,23 +7,25 @@
     <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
       <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
         <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name">
-        <span class="nhsuk-u-visually-hidden">@course.DueByDescription()</span>
+          <span class="nhsuk-u-visually-hidden">@course.DueByDescription()</span>
           @course.Name
         </span>
       </summary>
-      <div class="nhsuk-details__text">
-        <div class="nhsuk-grid-row">
-          <partial name="Shared/_TagRow" model="@course" />
+      <div class="nhsuk-details__text nhsuk-u-padding-left-0">
+        <div class="nhsuk-u-padding-left-3">
+          <div class="nhsuk-grid-row">
+            <partial name="Shared/_TagRow" model="@course" />
+          </div>
+          <div class="nhsuk-grid-row">
+            <partial name="Shared/_Dates" model="@course" />
+          </div>
+          <partial name="Shared/_Scores" model="@course" />
+          <partial name="Current/CurrentCourseCard/_Unlock" model="@course" />
         </div>
-        <div class="nhsuk-grid-row">
-          <partial name="Shared/_Dates" model="@course" />
-        </div>
-        <partial name="Shared/_Scores" model="@course" />
-        <partial name="Current/CurrentCourseCard/_Unlock" model="@course" />
+        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@course.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@course.Id">
+          Remove course
+        </a>
       </div>
-      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@course.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@course.Id">
-        Remove course
-      </a>
     </details>
 
     <div class="nhsuk-grid-row">

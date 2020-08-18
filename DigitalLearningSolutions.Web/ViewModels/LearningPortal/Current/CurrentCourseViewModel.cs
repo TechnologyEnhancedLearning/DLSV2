@@ -44,8 +44,8 @@
         {
             return DateStyle() switch
             {
-                "overdue" => "Overdue:",
-                "due-soon" => "Due soon:",
+                "overdue" => "Course overdue; ",
+                "due-soon" => "Course due soon; ",
                 _ => ""
             };
         }
