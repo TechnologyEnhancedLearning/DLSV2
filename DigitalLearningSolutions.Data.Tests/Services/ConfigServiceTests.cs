@@ -5,7 +5,6 @@
     using NUnit.Framework;
     using FluentAssertions;
 
-    [Parallelizable(ParallelScope.Fixtures)]
     public class ConfigServiceTests
     {
         private ConfigService configService;

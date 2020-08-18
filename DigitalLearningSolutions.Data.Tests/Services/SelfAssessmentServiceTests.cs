@@ -12,8 +12,7 @@
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
-
-    [Parallelizable(ParallelScope.Fixtures)]
+    
     public class SelfAssessmentServiceTests
     {
         private SelfAssessmentService selfAssessmentService;

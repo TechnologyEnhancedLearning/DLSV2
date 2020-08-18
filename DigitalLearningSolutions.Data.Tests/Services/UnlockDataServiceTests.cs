@@ -6,7 +6,6 @@
     using NUnit.Framework;
     using FluentAssertions;
 
-    [Parallelizable(ParallelScope.Fixtures)]
     public class UnlockDataServiceTests
     {
         private UnlockDataService unlockDataService;
