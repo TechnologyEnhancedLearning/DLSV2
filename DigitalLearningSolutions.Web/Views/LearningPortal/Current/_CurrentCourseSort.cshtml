@@ -1,28 +1,21 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model CurrentViewModel
-
-<div class="nhsuk-form-group">
-  <div class="nhsuk-grid-row sort-row">
-    <div class="nhsuk-grid-column-three-quarters">
-      <div class="nhsuk-grid-row">
-        @* label set in CSS ::before due to layout *@
-        <div class="nhsuk-grid-column-one-half sort-select-container">
-          <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortByOptions" aria-label="Sort by"></select>
-        </div>
-        <div class="nhsuk-grid-column-one-half sort-select-container">
-          <select class="nhsuk-select" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
-            <option value="Ascending">Ascending</option>
-            <option value="Descending">Descending</option>
-          </select>
-        </div>
-      </div>
+@* label set in CSS ::before due to layout *@
+  <div class="sort-row nhsuk-form-group">
+    <div class=" sort-select-container">
+      <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortByOptions" aria-label="Sort by"></select>
+    </div>
+    <div class=" sort-select-container">
+      <select class="nhsuk-select" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
+        <option value="Ascending">Ascending</option>
+        <option value="Descending">Descending</option>
+      </select>
     </div>
     <div class="non-js-only">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-u-padding-top-1">
+      <div class=" nhsuk-u-padding-top-1">
         <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
           Sort
         </button>
       </div>
     </div>
   </div>
-</div>

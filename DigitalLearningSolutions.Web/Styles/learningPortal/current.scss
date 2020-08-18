@@ -80,6 +80,9 @@
 div#search {
   text-align: left;
   padding: 0 16px;
+  @include mq($from: desktop) {
+    flex-basis: 50%;
+  }
 }
 
 a.delete-button {
@@ -112,9 +115,20 @@ a.delete-button {
   padding: 2px 10px
 }
 
+.sort-row {
+  display: flex;
+  flex-direction: row;
+  @include mq($until: desktop) {
+    margin-top: 36px;
+    flex-direction: column;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}
+
 .sort-select-container {
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 0;
+  padding-right: 0;
   padding-top: 8px;
 
   @include mq($from: desktop) {
@@ -124,35 +138,20 @@ a.delete-button {
   }
 }
 
-.sort-by-label {
-  padding-left: 16px;
-
-  @include mq($from: desktop) {
-    padding-left: 8px;
-    margin-top: -27px;
-  }
-}
-
-.sort-row {
-  @include mq($until: desktop) {
-    margin-top: 36px;
-  }
-}
-
 .sort-row::before {
   content: "Sort by:";
   position: relative;
   top: -32px;
   height: 0;
-  left: 8px;
+  width: 0;
   float: left;
   font-weight: 600;
   font-size: 19px;
   color: rgb(33, 43, 50);
   font-family: "Frutiger W01", Arial, sans-serif;
-
-  @include mq($until: desktop) {
-    left: 16px;
+  white-space: nowrap;
+  @include mq($from: desktop) {
+    left: 8px;
   }
 }
 
@@ -166,4 +165,10 @@ a.delete-button {
 
 .sort-and-search {
   margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+
+  @include mq($from: desktop) {
+    flex-direction: row;
+  }
 }
