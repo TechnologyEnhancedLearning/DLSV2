@@ -87,6 +87,15 @@ div#search {
   @include mq($from: desktop) {
     flex-basis: 50%;
   }
+
+  // IE11 hack, since otherwise this overflows horribly when setting flex-basis
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    flex-basis: auto;
+
+    @include mq($from: large-desktop) {
+      flex-basis: 50%;
+    }
+  }
 }
 
 a.delete-button {
