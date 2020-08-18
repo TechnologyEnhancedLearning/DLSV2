@@ -3,12 +3,11 @@
     using System;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models;
-    using MailKit.Net.Smtp;
     using MimeKit;
 
     public interface IUnlockService
     {
-        public void SendUnlockRequest(int progressId);
+        void SendUnlockRequest(int progressId);
     }
 
     public class UnlockService : IUnlockService
@@ -57,8 +56,7 @@
                     mailServerPassword,
                     mailServerAddress,
                     mailServerPortString,
-                    mailSenderAddress,
-                    trackingSystemBaseUrl
+                    mailSenderAddress
                 );
                 throw new ConfigValueMissingException(errorMessage);
             }
@@ -105,8 +103,7 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
             string? mailServerPassword,
             string? mailServerAddress,
             string? mailServerPortString,
-            string? mailSenderAddress,
-            string? trackingSystemBaseUrl
+            string? mailSenderAddress
             )
         {
             if (mailServerUsername == null)

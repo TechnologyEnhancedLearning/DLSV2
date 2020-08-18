@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.Extensions.Logging;
 
     public interface ICourseService
     {
@@ -18,10 +19,12 @@
     public class CourseService : ICourseService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<CourseService> logger;
 
-        public CourseService(IDbConnection connection)
+        public CourseService(IDbConnection connection, ILogger<CourseService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId)
@@ -43,18 +46,26 @@
 
         public void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate)
         {
-            connection.Execute(
+            var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                         SET CompleteByDate = @date
                         WHERE ProgressID = @progressId
                           AND CandidateID = @candidateId",
                 new { date = completeByDate, progressId, candidateId }
                 );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting complete by date as db update failed. " +
+                    $"Progress id: {progressId}, candidate id: {candidateId}, complete by date: {completeByDate}"
+                );
+            }
         }
 
         public void RemoveCurrentCourse(int progressId, int candidateId)
         {
-            connection.Execute(
+            var numberOfAffectedRows = connection.Execute(
             @"UPDATE Progress
                     SET RemovedDate = getUTCDate(),
                         RemovalMethodID = 1
@@ -63,6 +74,13 @@
                 ",
             new { progressId, candidateId }
             );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing current course as db update failed. Progress id: {progressId}, candidate id: {candidateId}"
+                );
+            }
         }
     }
 }

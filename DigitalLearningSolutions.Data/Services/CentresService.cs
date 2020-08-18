@@ -6,7 +6,7 @@
 
     public interface ICentresService
     {
-        public string? GetBannerText(int centreId);
+        string? GetBannerText(int centreId);
     }
 
     public class CentresService : ICentresService

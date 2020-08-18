@@ -7,7 +7,7 @@
 
     public interface IUnlockDataService
     {
-        public UnlockData? GetUnlockData(int progressId);
+        UnlockData? GetUnlockData(int progressId);
     }
 
     public class UnlockDataService : IUnlockDataService
