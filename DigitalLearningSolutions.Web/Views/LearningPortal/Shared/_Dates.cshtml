@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @model BaseCourseViewModel
 
 <div class="nhsuk-grid-column-one-quarter">
@@ -40,15 +40,18 @@
 @if (Model is CompletedCourseViewModel completedCourseViewModel)
 {
   <div class="nhsuk-grid-column-one-quarter">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Completed</h5>
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</h5>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
 
-    <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
+    <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
   </div>
   <div class="nhsuk-grid-column-one-quarter">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Evaluated</h5>
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-evaluated-title" aria-describedby="@Model.Id-name">Evaluated</h5>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" />
 
-    <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@completedCourseViewModel.EvaluatedDate.ToShortDateString()</p>
+    <p aria-describedby="@Model.Id-name @Model.Id-evaluated-title" name="evaluated-date">
+      @(completedCourseViewModel.EvaluatedDate == null ?
+        Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
+        Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
   </div>
 }
