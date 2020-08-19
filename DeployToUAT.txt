@@ -1,0 +1,14 @@
+open ftp://%1%@40.69.40.103/ -passive=0
+
+lcd DigitalLearningSolutions.Web\OfflineMode
+cd /dls-dev-my-learning-portal
+
+put app_offline.htm
+
+lcd ..\bin\Release\netcoreapp3.1\publish
+
+put *
+
+rm app_offline.htm
+
+exit
