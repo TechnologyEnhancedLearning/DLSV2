@@ -7,12 +7,13 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using NUnit.Framework;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
-    
+
     public class SelfAssessmentServiceTests
     {
         private SelfAssessmentService selfAssessmentService;
@@ -35,12 +36,11 @@
             var result = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId);
 
             // Then
-            var expectedSelfAssessment = new SelfAssessment()
-            {
-                Id = SelfAssessmentId,
-                Name = "Digital Capability Self Assessment",
-                Description = "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision."
-            };
+            var expectedSelfAssessment = SelfAssessmentHelper.SelfAssessment(
+                SelfAssessmentId,
+                "Digital Capability Self Assessment",
+                "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision."
+            );
 
             result.Should().BeEquivalentTo(expectedSelfAssessment);
         }
@@ -59,17 +59,15 @@
         public void GetNthCompetency_returns_first_competency()
         {
             // Given
-            var expectedCompetency = new Competency
-            {
-                Id = 1,
-                CompetencyGroup = "Data, information and content",
-                Description = "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
-                AssessmentQuestions =
+            var expectedCompetency = SelfAssessmentHelper.Competency(
+                competencyGroup: "Data, information and content",
+                description: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
+                assessmentQuestions: new List<AssessmentQuestion>()
                 {
-                    new AssessmentQuestion { Id = 1, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where are you now" },
-                    new AssessmentQuestion { Id = 2, MaxValueDescription = "Very confident", MinValueDescription = "Beginner", Question = "Where do you need to be" }
+                    SelfAssessmentHelper.AssessmentQuestion(id: 1, question: "Where are you now"),
+                    SelfAssessmentHelper.AssessmentQuestion(id: 2, question: "Where do you need to be")
                 }
-            };
+            );
 
             // When
             var result = selfAssessmentService.GetNthCompetency(1, SelfAssessmentId, CandidateId);
@@ -82,16 +80,19 @@
         public void GetNthCompetency_returns_last_competency()
         {
             // Given
-            var expectedCompetency = new Competency
-            {
-                Id = 32,
-                CompetencyGroup = "General questions",
-                Description = "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
-                AssessmentQuestions =
+            var expectedCompetency = SelfAssessmentHelper.Competency(
+                id: 32,
+                competencyGroup: "General questions",
+                description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
+                assessmentQuestions: new List<AssessmentQuestion>()
                 {
-                    new AssessmentQuestion { Id = 3, MaxValueDescription = "Strongly agree", MinValueDescription = "Strongly disagree", Question = "To what extent to you agree" }
-                }
-            };
+                    SelfAssessmentHelper.AssessmentQuestion(
+                        id: 3,
+                        maxValueDescription: "Strongly agree",
+                        minValueDescription: "Strongly disagree",
+                        question: "To what extent do you agree"
+                    )
+                });
 
             // When
             var result = selfAssessmentService.GetNthCompetency(32, SelfAssessmentId, CandidateId);
@@ -163,7 +164,6 @@
                 // When
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1);
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
-
 
                 //Then
                 var competency = selfAssessmentService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
@@ -292,7 +292,6 @@
             }
         }
 
-
         [Test]
         public void SetResultForCompetency_does_not_set_result_for_negative_result()
         {
@@ -328,6 +327,114 @@
 
                 // Then
                 insertedResults.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void GetMostRecentResults_gets_multiple_competencies()
+        {
+            // Given
+            const int firstCompetencyId = 2;
+            const int secondCompetencyId = 3;
+            const int firstAssessmentQuestionId = 1;
+            const int secondAssessmentQuestionId = 2;
+            const int thirdAssessmentQuestionId = 1;
+            const int fourthAssessmentQuestionId = 2;
+            const int firstResult = 1;
+            const int secondResult = 2;
+            const int thirdResult = 3;
+            const int fourthResult = 4;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
+
+                var expectedResults = new List<Competency>()
+                    {
+                        SelfAssessmentHelper.Competency(
+                            id: firstCompetencyId,
+                            description: "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
+                            competencyGroup: "Data, information and content",
+                            assessmentQuestions: new List<AssessmentQuestion>()
+                            {
+                                SelfAssessmentHelper.AssessmentQuestion(id: firstAssessmentQuestionId, question: "Where are you now", result: firstResult),
+                                SelfAssessmentHelper.AssessmentQuestion(id: secondAssessmentQuestionId, question: "Where do you need to be", result: secondResult),
+                            }
+                        ),
+                        SelfAssessmentHelper.Competency(
+                            id: secondCompetencyId,
+                            description: "I’m able to judge how credible and trustworthy sources of data and information are",
+                            competencyGroup: "Data, information and content",
+                            assessmentQuestions: new List<AssessmentQuestion>()
+                            {
+                                SelfAssessmentHelper.AssessmentQuestion(id: thirdAssessmentQuestionId, question: "Where are you now", result: thirdResult),
+                                SelfAssessmentHelper.AssessmentQuestion(id: fourthAssessmentQuestionId, question: "Where do you need to be", result: fourthResult),
+                            }
+                        )
+                    };
+
+                //Then
+                var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
+                results.Should().BeEquivalentTo(expectedResults);
+            }
+        }
+
+        [Test]
+        public void GetMostRecentResults_gets_most_recent_results()
+        {
+            // Given
+            const int firstCompetencyId = 2;
+            const int secondCompetencyId = 3;
+            const int firstAssessmentQuestionId = 1;
+            const int secondAssessmentQuestionId = 2;
+            const int thirdAssessmentQuestionId = 1;
+            const int fourthAssessmentQuestionId = 2;
+            const int firstResult = 1;
+            const int secondResult = 2;
+            const int thirdResult = 3;
+            const int fourthResult = 4;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, 9);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, 9);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
+
+                var expectedResults = new List<Competency>()
+                    {
+                        SelfAssessmentHelper.Competency(
+                            id: firstCompetencyId,
+                            description: "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
+                            competencyGroup: "Data, information and content",
+                            assessmentQuestions: new List<AssessmentQuestion>()
+                            {
+                                SelfAssessmentHelper.AssessmentQuestion(id: firstAssessmentQuestionId, question: "Where are you now", result: firstResult),
+                                SelfAssessmentHelper.AssessmentQuestion(id: secondAssessmentQuestionId, question: "Where do you need to be", result: secondResult),
+                            }
+                        ),
+                        SelfAssessmentHelper.Competency(
+                            id: secondCompetencyId,
+                            description: "I’m able to judge how credible and trustworthy sources of data and information are",
+                            competencyGroup: "Data, information and content",
+                            assessmentQuestions: new List<AssessmentQuestion>()
+                            {
+                                SelfAssessmentHelper.AssessmentQuestion(id: thirdAssessmentQuestionId, question: "Where are you now", result: thirdResult),
+                                SelfAssessmentHelper.AssessmentQuestion(id: fourthAssessmentQuestionId, question: "Where do you need to be", result: fourthResult),
+                            }
+                        )
+                    };
+
+                //Then
+                var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
+                results.Should().BeEquivalentTo(expectedResults);
             }
         }
 

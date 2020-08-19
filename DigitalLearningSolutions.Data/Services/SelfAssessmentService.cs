@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -11,12 +12,55 @@
         SelfAssessment? GetSelfAssessmentForCandidate(int candidateId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
+        IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SelfAssessmentService> logger;
+
+        private const string LatestAssessmentResults =
+            @"LatestAssessmentResults AS
+                         (SELECT CompetencyID,
+                                 AssessmentQuestionID,
+                                 Result
+                          FROM SelfAssessmentResults s
+                                   INNER JOIN (
+                              SELECT MAX(ID) as ID
+                              FROM SelfAssessmentResults
+                              WHERE CandidateID = @candidateId
+                                AND SelfAssessmentID = @selfAssessmentId
+                              GROUP BY CompetencyID,
+                                       AssessmentQuestionID
+                          ) t
+                                              ON s.ID = t.ID
+                          WHERE CandidateID = @candidateId
+                            AND SelfAssessmentID = @selfAssessmentId
+                         )";
+        private const string CompetencyFields = @"C.ID       AS Id,
+                                                  C.Description AS Description,
+                                                  CG.Name       AS CompetencyGroup,
+                                                  AQ.ID         AS Id,
+                                                  AQ.Question,
+                                                  AQ.MaxValueDescription,
+                                                  AQ.MinValueDescription,
+                                                  LAR.Result";
+
+        private const string CompetencyTables =
+            @"Competencies AS C
+                        INNER JOIN CompetencyGroups AS CG
+                            ON C.CompetencyGroupID = CG.ID
+                        INNER JOIN CompetencyAssessmentQuestions AS CAQ
+                            ON CAQ.CompetencyID = C.ID
+                        INNER JOIN AssessmentQuestions AS AQ
+                            ON AQ.ID = CAQ.AssessmentQuestionID
+                        INNER JOIN CandidateAssessments AS CA
+                            ON CA.SelfAssessmentID = @selfAssessmentId
+                                   AND CA.CandidateID = @candidateId
+                        LEFT OUTER JOIN LatestAssessmentResults AS LAR
+                            ON LAR.CompetencyID = C.ID
+                                   AND LAR.AssessmentQuestionID = AQ.ID";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
@@ -43,52 +87,17 @@
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, AssessmentQuestion, Competency>(
-                @"WITH CompetencyRowNumber AS
+                $@"WITH CompetencyRowNumber AS
                      (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID) as RowNo,
                              CompetencyID
                       FROM SelfAssessmentStructure
                       WHERE SelfAssessmentID = @selfAssessmentId
                      ),
-                     LatestAssessmentResults AS
-                         (SELECT CompetencyID,
-                                 AssessmentQuestionID,
-                                 Result
-                          FROM SelfAssessmentResults s
-                                   INNER JOIN (
-                              SELECT MAX(ID) as ID
-                              FROM SelfAssessmentResults
-                              WHERE CandidateID = @candidateId
-                                AND SelfAssessmentID = @selfAssessmentId
-                              GROUP BY CompetencyID,
-                                       AssessmentQuestionID
-                          ) t
-                                              ON s.ID = t.ID
-                          WHERE CandidateID = @candidateId
-                            AND SelfAssessmentID = @selfAssessmentId
-                         )
-                    SELECT C.ID       AS Id,
-                        C.Description AS Description,
-                        CG.Name       AS CompetencyGroup,
-                        AQ.ID         AS Id,
-                        AQ.Question,
-                        AQ.MaxValueDescription,
-                        AQ.MinValueDescription,
-                        LAR.Result
-                    FROM Competencies AS C
-                        INNER JOIN CompetencyGroups AS CG
-                            ON C.CompetencyGroupID = CG.ID
-                        INNER JOIN CompetencyAssessmentQuestions AS CAQ
-                            ON CAQ.CompetencyID = C.ID
-                        INNER JOIN AssessmentQuestions AS AQ
-                            ON AQ.ID = CAQ.AssessmentQuestionID
+                     {LatestAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {CompetencyTables}
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
-                        INNER JOIN CandidateAssessments AS CA
-                            ON CA.SelfAssessmentID = @selfAssessmentId
-                                   AND CA.CandidateID = @candidateId
-                        LEFT OUTER JOIN LatestAssessmentResults AS LAR
-                            ON LAR.CompetencyID = C.ID
-                                   AND LAR.AssessmentQuestionID = AQ.ID
                     WHERE CRN.RowNo = @n",
                 (competency, assessmentQuestion) =>
                 {
@@ -96,6 +105,7 @@
                     {
                         competencyResult = competency;
                     }
+
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
@@ -138,6 +148,28 @@
                     $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
                 );
             }
+        }
+
+        public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId)
+        {
+            var result = connection.Query<Competency, AssessmentQuestion, Competency>(
+                $@"WITH {LatestAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {CompetencyTables}
+                        WHERE LAR.Result IS NOT NULL",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                param: new { selfAssessmentId, candidateId }
+            );
+            return result.GroupBy(competency => competency.Id).Select(group =>
+            {
+                var groupedCompetency = group.First();
+                groupedCompetency.AssessmentQuestions = group.Select(competency => competency.AssessmentQuestions.Single()).ToList();
+                return groupedCompetency;
+            });
         }
 
         private static string PrintResult(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result)
