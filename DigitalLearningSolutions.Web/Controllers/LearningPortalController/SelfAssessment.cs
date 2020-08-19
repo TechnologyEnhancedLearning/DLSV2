@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Mvc;
@@ -35,7 +37,7 @@
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, GetCandidateId());
             if (competency == null)
             {
-                return RedirectToAction("Current"); // TODO HEEDLS-65: Redirect to review page
+                return RedirectToAction("SelfAssessmentReview");
             }
 
             var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber);
@@ -65,6 +67,26 @@
             }
 
             return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
+        }
+
+        [Route("LearningPortal/SelfAssessment/Review")]
+        public IActionResult SelfAssessmentReview()
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            if (assessment == null)
+            {
+                logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
+                return StatusCode(403);
+            }
+
+            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
+            var model = new SelfAssessmentReviewViewModel()
+            {
+                SelfAssessment = assessment,
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                PreviousCompetencyNumber = Math.Max(competencies.Count(), 1)
+            };
+            return View("SelfAssessment/SelfAssessmentReview", model);
         }
     }
 }
