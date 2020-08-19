@@ -7,7 +7,7 @@
     public class CompletedCourseViewModel : BaseCourseViewModel
     {
         public DateTime CompletedDate { get; }
-        public DateTime EvaluatedDate { get; }
+        public DateTime? EvaluatedDate { get; }
 
         public CompletedCourseViewModel(CompletedCourse course, IConfiguration config) : base(course, config)
         {
