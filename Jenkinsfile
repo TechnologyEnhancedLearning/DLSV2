@@ -7,6 +7,9 @@ pipeline {
     environment {
         DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
     }
+    parameters {
+        booleanParam(name: 'DeployToUAT', defaultValue: false, description: 'Deploy changes to UAT after build? NB will not deploy to test if this is set')
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -64,16 +67,29 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy to test') {
             when {
-                branch 'master'
+                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
             }
             steps {
-                gitlabCommitStatus(name: 'Deploy') {
+                gitlabCommitStatus(name: 'Deploy to test') {
                     withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
                         bat "dotnet publish DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToTest.pubxml /p:Password=$PASSWORD /p:AllowUntrustedCertificate=True"
                     }
                 }
+            }
+        }
+        stage('Deploy to UAT') {
+            when {
+                expression { params.DeployToUAT }
+            }
+            steps {
+                gitlabCommitStatus(name: 'Deploy to UAT') {
+                    withCredentials([string(credentialsId: 'ftp-password', variable: 'PASSWORD')]) {
+                        bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\""
+                    }
+                }
+                slack(":tada: Successfully deployed to UAT", "good")
             }
         }
     }
