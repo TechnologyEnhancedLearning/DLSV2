@@ -13,6 +13,7 @@
         public bool HasLearningContent { get; }
         public bool HasLearningAssessmentAndCertification { get; }
         public DateTime StartedDate { get; }
+        public DateTime LastAccessedDate { get; }
         public int? DiagnosticScore { get; }
         public int PassedSections { get; }
         public int Sections { get; }
@@ -27,6 +28,7 @@
             HasLearningContent = course.HasLearning;
             HasLearningAssessmentAndCertification = course.IsAssessed;
             StartedDate = course.StartedDate;
+            LastAccessedDate = course.LastAccessed;
             DiagnosticScore = course.DiagnosticScore;
             PassedSections = course.Passes;
             Sections = course.Sections;

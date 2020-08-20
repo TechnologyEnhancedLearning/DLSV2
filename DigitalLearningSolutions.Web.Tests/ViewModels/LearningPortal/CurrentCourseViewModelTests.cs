@@ -2,7 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;

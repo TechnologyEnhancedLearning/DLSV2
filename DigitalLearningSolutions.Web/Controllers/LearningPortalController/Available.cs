@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
 
     public partial class LearningPortalController

@@ -6,7 +6,7 @@ export default function onSortCriteriaChange() {
 }
 
 export function sortCards(sortBy: string, sortDirection: string) {
-  const courseCardsContainer = document.getElementById('current-course-cards');
+  const courseCardsContainer = document.getElementById('course-cards');
   if (!courseCardsContainer) {
     return;
   }
@@ -24,7 +24,7 @@ function sortAndDisplayCards(
   sortBy: string,
   sortDirection: string,
 ) {
-  const courseCardsContainer = document.getElementById('current-course-cards');
+  const courseCardsContainer = document.getElementById('course-cards');
   if (!courseCardsContainer) {
     return;
   }
@@ -48,6 +48,8 @@ export function getSortValue(courseCard: Element, sortBy: string): string | numb
       return parseDate(courseCard.querySelector('[name="accessed-date"]')?.innerHTML || '');
     case 'Complete By Date':
       return parseDate(courseCard.querySelector('[name="complete-by-date"]')?.innerHTML || '');
+    case 'Completed Date':
+      return parseDate(courseCard.querySelector('[name="completed-date"]')?.innerHTML || '');
     case 'Diagnostic Score':
       return parseInt(courseCard.querySelector('[name="diagnostic-score"]')?.innerHTML.split('/')[0] || '-1', 10);
     case 'Passed Sections':

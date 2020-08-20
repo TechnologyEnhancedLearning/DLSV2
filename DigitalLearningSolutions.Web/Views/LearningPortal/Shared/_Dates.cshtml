@@ -1,4 +1,6 @@
-@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model BaseCourseViewModel
 
 <div class="nhsuk-grid-column-one-quarter">
@@ -7,14 +9,14 @@
 
   <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@Model.StartedDate.ToShortDateString()</p>
 </div>
+<div class="nhsuk-grid-column-one-quarter">
+  <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
+  <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2"/>
+
+  <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@Model.LastAccessedDate.ToShortDateString()</p>
+</div>
 @if (Model is CurrentCourseViewModel currentCourseViewModel)
 {
-  <div class="nhsuk-grid-column-one-quarter">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
-    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2"/>
-
-    <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@currentCourseViewModel.LastAccessedDate.ToShortDateString()</p>
-  </div>
   <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
     <div class="nhsuk-grid-column-three-quarters">
       <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>

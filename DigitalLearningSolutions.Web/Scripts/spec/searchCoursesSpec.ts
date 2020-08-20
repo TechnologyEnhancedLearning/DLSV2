@@ -19,7 +19,7 @@ describe('titleFromCardElement', () => {
       <html>
       <head></head>
       <body>
-        <div id="current-course-cards">
+        <div id="course-cards">
           <div class="current-course-card">
             <span class="nhsuk-details__summary-text course-title">${expectedTitle}</span>
           </div>
@@ -109,7 +109,7 @@ describe('search', () => {
       <head></head>
       <body>
         <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
-        <div id="current-course-cards">
+        <div id="course-cards">
           <div class="current-course-card">
             <span class="nhsuk-details__summary-text course-title">cheese</span>
           </div>

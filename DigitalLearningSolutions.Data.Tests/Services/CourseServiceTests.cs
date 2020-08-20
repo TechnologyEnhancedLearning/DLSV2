@@ -68,6 +68,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 CustomisationID = 25140,
                 StartedDate = new DateTime(2018, 5, 29, 9, 11, 45, 943),
                 Completed = new DateTime(2018, 5, 29, 14, 28, 5, 557),
+                LastAccessed = new DateTime(2018, 5, 29, 14, 28, 5, 020),
                 Evaluated = new DateTime(2019, 4, 5, 7, 10, 28, 507),
                 DiagnosticScore = 0,
                 IsAssessed = true,

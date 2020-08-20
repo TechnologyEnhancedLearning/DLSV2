@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
 
     public static class CurrentCourseHelper
@@ -47,14 +48,14 @@
 
         public static NamedItemViewModel NamedItemViewModelFromController(LearningPortalController controller)
         {
-            var model = CurrentViewModelFromController(controller);
+            var model = CurrentPageViewModelFromController(controller);
             return model.CurrentCourses.First();
         }
 
-        public static CurrentViewModel CurrentViewModelFromController(LearningPortalController controller)
+        public static CurrentPageViewModel CurrentPageViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Current() as ViewResult;
-            return result.Model as CurrentViewModel;
+            return result.Model as CurrentPageViewModel;
         }
     }
 }

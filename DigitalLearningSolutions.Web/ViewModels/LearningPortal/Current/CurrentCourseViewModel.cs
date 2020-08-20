@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
@@ -7,7 +7,6 @@
 
     public class CurrentCourseViewModel : BaseCourseViewModel
     {
-        public DateTime LastAccessedDate { get; }
         public DateTime? CompleteByDate { get; }
         public bool UserIsSupervisor { get; }
         public bool IsEnrolledWithGroup { get; }
@@ -17,7 +16,6 @@
 
         public CurrentCourseViewModel(CurrentCourse course, IConfiguration config) : base(course, config)
         {
-            LastAccessedDate = course.LastAccessed;
             CompleteByDate = course.CompleteByDate;
             UserIsSupervisor = course.SupervisorAdminId != 0;
             IsEnrolledWithGroup = course.GroupCustomisationId != 0;
