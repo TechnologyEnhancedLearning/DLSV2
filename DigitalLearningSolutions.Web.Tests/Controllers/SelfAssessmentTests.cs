@@ -27,7 +27,7 @@
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessment/SelfAssessmentDescription")
+                .WithViewName("SelfAssessments/SelfAssessmentDescription")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 
@@ -61,7 +61,7 @@
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessment/SelfAssessmentCompetency")
+                .WithViewName("SelfAssessments/SelfAssessmentCompetency")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 
