@@ -29,9 +29,14 @@
             return IsNullOrEmpty(environmentName) ? "appsettings.json" : $"appsettings.{environmentName}.json";
         }
 
-        public static string GetLaunchUrl(this IConfiguration config, int customisationID)
+        public static string GetLaunchUrl(this IConfiguration config, int customisationId)
         {
-            return $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={customisationID}&lp=1";
+            return $"{config["CurrentSystemBaseUrl"]}/tracking/learn?CustomisationID={customisationId}&lp=1";
+        }
+
+        public static string GetEvaluateUrl(this IConfiguration config, int progressId)
+        {
+            return $"{config["CurrentSystemBaseUrl"]}/tracking/finalise?ProgressID={progressId}&lp=1";
         }
     }
 }
