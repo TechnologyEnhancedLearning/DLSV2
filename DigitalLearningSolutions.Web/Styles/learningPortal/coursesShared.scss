@@ -17,6 +17,10 @@ $nhs-dark-grey: #425563;
   margin-bottom: 4px;
 }
 
+.nhsuk-details__text {
+  padding-bottom: 0 !important;
+}
+
 .search-box {
   border: 2px solid $nhsuk-form-border-color;
   border-radius: 4px 0 0 4px;

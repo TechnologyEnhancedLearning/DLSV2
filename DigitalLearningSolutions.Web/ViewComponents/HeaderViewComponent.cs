@@ -21,13 +21,13 @@
             var centreId = UserClaimsPrincipal.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
             if (centreId == null)
             {
-                return View();
+                return View(new HeaderViewModel(null));
             }
 
             var customLogo = centresService.GetCentreLogo(centreId.Value);
             if (customLogo.LogoUrl == null)
             {
-                return View();
+                return View(new HeaderViewModel(null));
             }
 
             var model = new HeaderViewModel(customLogo);
