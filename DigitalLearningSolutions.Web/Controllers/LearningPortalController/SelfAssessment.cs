@@ -22,7 +22,7 @@
             }
 
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment);
-            return View("SelfAssessment/SelfAssessmentDescription", model);
+            return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 
         [Route("/LearningPortal/SelfAssessment/{competencyNumber:int}")]
@@ -42,7 +42,7 @@
             }
 
             var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber);
-            return View("SelfAssessment/SelfAssessmentCompetency", model);
+            return View("SelfAssessments/SelfAssessmentCompetency", model);
         }
 
         [HttpPost]
