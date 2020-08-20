@@ -8,7 +8,7 @@
   <div class="current-course-card nhsuk-panel @course.DateStyle()">
     <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
       <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-        <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name">
+        <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name" role="heading" aria-level="3">
           <span class="nhsuk-u-visually-hidden">@course.DueByDescription()</span>
           @course.Name
         </span>
