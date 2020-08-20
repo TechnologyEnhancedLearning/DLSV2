@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;
 
     public static class CompletedCourseHelper
@@ -38,10 +38,10 @@
             };
         }
 
-        public static CompletedViewModel CompletedViewModelFromController(LearningPortalController controller)
+        public static CompletedPageViewModel CompletedViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Completed() as ViewResult;
-            return result.Model as CompletedViewModel;
+            return result.Model as CompletedPageViewModel;
         }
     }
 }

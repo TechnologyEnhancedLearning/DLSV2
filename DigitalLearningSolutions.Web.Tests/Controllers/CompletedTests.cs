@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -27,9 +27,12 @@
             var result = controller.Completed();
 
             // Then
-            var expectedModel = new CompletedViewModel(
+            var expectedModel = new CompletedPageViewModel(
                 completedCourses,
                 config,
+                null,
+                "Completed Date",
+                "Descending",
                 bannerText
                 );
             result.Should().BeViewResult()

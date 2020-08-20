@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
 
     public static class AvailableCourseHelper

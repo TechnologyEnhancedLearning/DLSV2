@@ -1,5 +1,5 @@
-@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
-@model CurrentViewModel
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@model CurrentPageViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")" asp-append-version="true">
@@ -14,8 +14,8 @@
     <h2 class="page-subheading">@Model.BannerText</h2>
     <form method="get" role="search">
       <div class="nhsuk-grid-row sort-and-search">
-        <partial name="Current/_CurrentCourseSearch" model="Model" />
-        <partial name="Current/_CurrentCourseSort" model="Model" />
+        <partial name="Shared/_CoursePageSearch" model="Model" />
+        <partial name="Shared/_CoursePageSort" model="Model" />
       </div>
     </form>
     <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-0" />
@@ -38,7 +38,7 @@
         }
       </p>
 
-      <div id="current-course-cards">
+      <div id="course-cards">
         @foreach (var currentCourse in Model.CurrentCourses)
         {
           <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentCourse" />

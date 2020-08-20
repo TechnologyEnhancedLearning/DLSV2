@@ -214,7 +214,7 @@ describe('sortCards', () => {
       <html>
       <head></head>
       <body>
-        <div id="current-course-cards">
+        <div id="course-cards">
           <div class="current-course-card" id="course-b"> 
             <span name="name">B: Course</span>
             <p name="started-date">31-1-2010</p>
@@ -247,7 +247,7 @@ describe('sortCards', () => {
     sortCards('Course Name', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-a');
     expect(newCards![1].id).toBe('course-b');
@@ -259,7 +259,7 @@ describe('sortCards', () => {
     sortCards('Course Name', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-c');
     expect(newCards![1].id).toBe('course-b');
@@ -271,7 +271,7 @@ describe('sortCards', () => {
     sortCards('Diagnostic Score', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-a');
     expect(newCards![1].id).toBe('course-c');
@@ -283,7 +283,7 @@ describe('sortCards', () => {
     sortCards('Diagnostic Score', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-b');
     expect(newCards![1].id).toBe('course-c');
@@ -295,7 +295,7 @@ describe('sortCards', () => {
     sortCards('Passed Sections', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-c');
     expect(newCards![1].id).toBe('course-a');
@@ -307,7 +307,7 @@ describe('sortCards', () => {
     sortCards('Passed Sections', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-b');
     expect(newCards![1].id).toBe('course-a');
@@ -319,7 +319,7 @@ describe('sortCards', () => {
     sortCards('Enrolled Date', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-a');
     expect(newCards![1].id).toBe('course-b');
@@ -331,7 +331,7 @@ describe('sortCards', () => {
     sortCards('Enrolled Date', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-c');
     expect(newCards![1].id).toBe('course-b');
@@ -343,7 +343,7 @@ describe('sortCards', () => {
     sortCards('Last Accessed Date', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-b');
     expect(newCards![1].id).toBe('course-c');
@@ -355,7 +355,7 @@ describe('sortCards', () => {
     sortCards('Last Accessed Date', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-a');
     expect(newCards![1].id).toBe('course-c');
@@ -367,7 +367,7 @@ describe('sortCards', () => {
     sortCards('Complete By Date', 'Ascending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-a');
     expect(newCards![1].id).toBe('course-b');
@@ -379,7 +379,7 @@ describe('sortCards', () => {
     sortCards('Complete By Date', 'Descending');
 
     // Then
-    const newCards = document.getElementById('current-course-cards')?.children;
+    const newCards = document.getElementById('course-cards')?.children;
     expect(newCards?.length).toEqual(3);
     expect(newCards![0].id).toBe('course-c');
     expect(newCards![1].id).toBe('course-b');

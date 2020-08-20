@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
     using System;
     using DigitalLearningSolutions.Data.Models;

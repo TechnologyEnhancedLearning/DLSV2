@@ -4,17 +4,18 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
     public partial class LearningPortalController
     {
-        public IActionResult Current(string? searchString = null, string sortBy = SortByOptionTexts.LastAccessed, string sortDirection = CurrentViewModel.DescendingText)
+        public IActionResult Current(string? searchString = null, string sortBy = SortByOptionTexts.LastAccessed, string sortDirection = BaseCoursePageViewModel.DescendingText)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
-            var model = new CurrentViewModel(
+            var model = new CurrentPageViewModel(
                 currentCourses,
                 config,
                 searchString,

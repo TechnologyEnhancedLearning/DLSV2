@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -193,7 +194,7 @@
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessment/SelfAssessmentReview")
+                .WithViewName("SelfAssessments/SelfAssessmentReview")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 
@@ -217,7 +218,7 @@
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessment/SelfAssessmentReview")
+                .WithViewName("SelfAssessments/SelfAssessmentReview")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 

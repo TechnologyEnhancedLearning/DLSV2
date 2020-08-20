@@ -3,7 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -36,7 +36,7 @@
             var result = controller.Current();
 
             // Then
-            var expectedModel = new CurrentViewModel(
+            var expectedModel = new CurrentPageViewModel(
                 currentCourses,
                 config,
                 null,
@@ -268,7 +268,7 @@
             A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
-            var currentViewModel = CurrentCourseHelper.CurrentViewModelFromController(controller);
+            var currentViewModel = CurrentCourseHelper.CurrentPageViewModelFromController(controller);
 
             // Then
             currentViewModel.BannerText.Should().Be(bannerText);

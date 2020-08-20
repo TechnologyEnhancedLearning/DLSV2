@@ -2,7 +2,7 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FluentAssertions;
     using NUnit.Framework;
 
