@@ -45,5 +45,27 @@
             // Then
             result.Should().BeNull();
         }
+
+        [Test]
+        public void GetCentreLogo_Returns_Correct_Information()
+        {
+            // When
+            var result = centresService.GetCentreLogo(2);
+
+            // Then
+            result.Height.Should().Be(43);
+            result.Width.Should().Be(309);
+            result.LogoUrl.Should().NotBeNullOrEmpty();
+        }
+
+        [Test]
+        public void GetCentreLogo_Should_Return_Null_LogoUrl_When_No_Logo()
+        {
+            // When
+            var result = centresService.GetCentreLogo(3);
+
+            // Then
+            result.LogoUrl.Should().BeNull();
+        }
     }
 }
