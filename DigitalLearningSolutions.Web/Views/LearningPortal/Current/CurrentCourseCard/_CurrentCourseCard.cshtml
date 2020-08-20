@@ -8,7 +8,7 @@
   <div class="current-course-card nhsuk-panel @course.DateStyle()">
     <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
       <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-        <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name">
+        <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name" role="heading" aria-level="3">
           <span class="nhsuk-u-visually-hidden">@course.DueByDescription()</span>
           @course.Name
         </span>
@@ -42,7 +42,7 @@
 else if (Model is SelfAssessmentCardViewModel selfAssessment)
 {
   <div class="nhsuk-panel current-course-card self-assessment-card">
-    <h4 class="course-title" name="name">@selfAssessment.Name</h4>
+    <h3 class="course-title" name="name">@selfAssessment.Name</h3>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <a class="nhsuk-button nhsuk-u-margin-bottom-0" asp-action="SelfAssessment">

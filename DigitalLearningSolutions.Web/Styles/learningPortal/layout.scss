@@ -54,6 +54,10 @@ body:not(.js-enabled) {
     display: none;
   }
 
+  #close-menu {
+    display: none;
+  }
+
   .nhsuk-header__navigation {
     display: block;
   }
@@ -66,11 +70,29 @@ div.nhsuk-header__container {
 }
 
 nav .nhsuk-width-container {
-  margin: 0;
+  margin: 0 auto;
 }
 
-nav, .nhsuk-header__navigation, #header-navigationc {
+nav, .nhsuk-header__navigation, #header-navigation {
+  border-bottom: 0;
+
   @include mq($until: 1024px) {
-    margin: 0 32px;
+    padding: 0 32px;
   }
+}
+
+.visual-separator {
+  height: 8px;
+  width: 100%;
+  background-color: #005eb8;
+
+  @include mq($from: large-desktop) {
+    display: none;
+  }
+}
+
+.centre-logo {
+  margin-right: 8px;
+  margin-top: 8px;
+  float: right;
 }

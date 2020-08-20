@@ -12,7 +12,7 @@
         {
             Height = height;
             Width = width;
-            if (logoData == null)
+            if (logoData == null || logoData.Length < 10)
             {
                 LogoUrl = null;
             }
