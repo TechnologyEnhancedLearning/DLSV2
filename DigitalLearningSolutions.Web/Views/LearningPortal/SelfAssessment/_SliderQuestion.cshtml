@@ -3,13 +3,13 @@
 
 <h5 class="nhsuk-u-margin-bottom-1">@Model.Question</h5>
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-three-quarters nhsuk-u-three-quarters">
+  <div class="grid-column-85">
     <label class="left-label" for="@Model.Id-input">@Model.MinValueDescription</label>
     <label class="right-label" for="@Model.Id-input">@Model.MaxValueDescription</label>
   </div>
 </div>
 <div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
-  <div class="nhsuk-grid-column-three-quarters nhsuk-u-three-quarters">
+  <div class="grid-column-85">
     <input type="range"
            id="@Model.Id-input"
            name="[@ViewData["index"]].Result"
@@ -21,7 +21,7 @@
            aria-valuemax="10"
            aria-valuenow="@(Model.Result ?? 5)">
   </div>
-  <div class="nhsuk-grid-column-one-quarter">
+  <div class="grid-column-15">
     <span class="range-output" for="@Model.Id-input">5</span>
   </div>
   <input hidden name="[@ViewData["index"]].Id" value="@Model.Id" />
