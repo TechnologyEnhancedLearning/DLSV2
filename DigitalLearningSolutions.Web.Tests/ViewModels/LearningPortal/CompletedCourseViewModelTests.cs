@@ -27,7 +27,6 @@
             // When
             var completedCourseViewModel = new CompletedCourseViewModel(completedCourse, config);
 
-
             // Then
             completedCourseViewModel.HasDiagnosticScore().Should().BeFalse();
         }
@@ -54,7 +53,6 @@
             // When
             var completedCourseViewModel = new CompletedCourseViewModel(completedCourse, config);
 
-
             // Then
             completedCourseViewModel.HasDiagnosticScore().Should().BeTrue();
         }
@@ -72,18 +70,32 @@
             completedCourseViewModel.HasPassedSections().Should().BeFalse();
         }
 
+        [TestCase(false, null, false, "", false)]
+        [TestCase(false, null, true, "Certificate", true)]
+        [TestCase(false, "1/1/2020", false, "", false)]
+        [TestCase(false, "1/1/2020", true, "Certificate", true)]
+        [TestCase(true, null, false, "Evaluate", true)]
+        [TestCase(true, null, true, "Evaluate", true)]
+        [TestCase(true, "1/1/2020", false, "", false)]
+        [TestCase(true, "1/1/2020", true, "Certificate", true)]
         [Test]
-        public void Completed_course_should_have_passed_sections_with_learning_assessment()
+        public void Completed_course_should_have_correct_finalise_button(
+            bool hasLearning,
+            DateTime? evaluated,
+            bool isAssessed,
+            string expectedButtonText,
+            bool hasButton
+        )
         {
             // Given
-            var completedCourse = CompletedCourseHelper.CreateDefaultCompletedCourse();
+            var completedCourse = CompletedCourseHelper.CreateDefaultCompletedCourse(hasLearning: hasLearning, evaluated: evaluated, isAssessed: isAssessed);
 
             // When
             var completedCourseViewModel = new CompletedCourseViewModel(completedCourse, config);
 
-
             // Then
-            completedCourseViewModel.HasPassedSections().Should().BeTrue();
+            completedCourseViewModel.FinaliseButtonText().Should().Be(expectedButtonText);
+            completedCourseViewModel.HasFinaliseButton().Should().Be(hasButton);
         }
     }
 }

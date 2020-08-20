@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
@@ -20,7 +19,7 @@
         public int ProgressId { get; }
         public string LaunchUrl { get; }
 
-        public BaseCourseViewModel(BaseCourse course, IConfiguration config)
+        protected BaseCourseViewModel(BaseCourse course, IConfiguration config)
         {
             Name = course.CourseName;
             Id = course.CustomisationID;
