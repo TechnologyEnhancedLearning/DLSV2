@@ -5,13 +5,19 @@
 
     public static class SelfAssessmentHelper
     {
-        public static SelfAssessment SelfAssessment(int id = 1, string name = "name", string description = "description")
+        public static SelfAssessment SelfAssessment(
+            int id = 1,
+            string name = "name",
+            string description = "description",
+            int numberOfCompetencies = 0
+        )
         {
             return new SelfAssessment()
             {
                 Id = id,
                 Description = description,
-                Name = name
+                Name = name,
+                NumberOfCompetencies = numberOfCompetencies
             };
         }
 

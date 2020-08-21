@@ -71,14 +71,19 @@
         public SelfAssessment? GetSelfAssessmentForCandidate(int candidateId)
         {
             return connection.QueryFirstOrDefault<SelfAssessment>(
-                @"SELECT
-                        C.SelfAssessmentID AS Id,
-                        SA.Name,
-                        SA.Description
-                    FROM CandidateAssessments C
-                    JOIN SelfAssessments SA on C.SelfAssessmentID = SA.ID
-                    WHERE C.CandidateID = @candidateId
-                ",
+                @"SELECT CA.SelfAssessmentID AS Id,
+                             SA.Name,
+                             SA.Description,
+                             COUNT(C.ID)         AS NumberOfCompetencies
+                      FROM CandidateAssessments CA
+                               JOIN SelfAssessments SA
+                                    ON CA.SelfAssessmentID = SA.ID
+                               INNER JOIN SelfAssessmentStructure AS SAS
+                                          ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                               INNER JOIN Competencies AS C
+                                          ON SAS.CompetencyID = C.ID
+                      WHERE CA.CandidateID = @candidateId
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description",
                 new { candidateId }
             );
         }
