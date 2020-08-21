@@ -1,14 +1,24 @@
+@echo off
+IF EXIST WinSCP.log (
+    del WinSCP.log
+)
+
 rem deploy to filesystem
 dotnet build DigitalLearningSolutions.Web/DigitalLearningSolutions.Web.csproj -c Release /p:DeployOnBuild=true /p:PublishProfile=DigitalLearningSolutions.Web/Properties/PublishProfiles/PublishToFolderForUAT.pubxml
-if %ERRORLEVEL% neq 0 goto error 
+if %ERRORLEVEL% neq 0 goto builderror 
 
 rem ftp upload
-%1 /log="WinSCP.log" /ini=nul /script="DeployToUAT.txt" /parameter %2
-if %ERRORLEVEL% neq 0 goto error 
+"C:\Program Files (x86)\WinSCP\WinSCP.exe" /log="WinSCP.log" /ini=nul /script="DeployToUAT.txt" /parameter %1
+if %ERRORLEVEL% neq 0 goto ftperror 
 
-echo Upload succeeded
+echo Deployment succeeded
 exit /b 0
 
-:error
-echo Upload failed
+:builderror
+echo Publish to folder failed, please run 'npm run build' in the DigitalLearningSolutions.Web folder before trying again
+exit /b 1
+
+:ftperror
+echo Ftp transfer failed
+FOR /F "tokens=* delims=" %%x in (WinSCP.log) DO echo %%x
 exit /b 1
