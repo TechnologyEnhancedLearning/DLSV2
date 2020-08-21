@@ -116,6 +116,10 @@ div#search {
       flex-direction: row;
     }
   }
+
+  @include mq($until: 339px) {
+    flex-direction: column !important;
+  }
 }
 
 .sort-select-container {
