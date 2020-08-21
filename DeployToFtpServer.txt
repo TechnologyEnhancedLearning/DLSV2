@@ -1,7 +1,7 @@
 open ftp://%1%@40.69.40.103/ -passive=0
 
 lcd DigitalLearningSolutions.Web\OfflineMode
-cd /dls-dev-my-learning-portal
+cd /%2%
 
 put app_offline.htm
 
