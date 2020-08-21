@@ -168,36 +168,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
 
-        [TestCase("Course Name", "Ascending", new int[] { 73, 71, 72 })]
-        [TestCase("Course Name", "Descending", new int[] { 72, 71, 73 })]
-        [TestCase("Diagnostic Score", "Ascending", new int[] { 73, 72, 71 })]
-        [TestCase("Diagnostic Score", "Descending", new int[] { 71, 72, 73 })]
-        [TestCase("Passed Sections", "Ascending", new int[] { 72, 73, 71 })]
-        [TestCase("Passed Sections", "Descending", new int[] { 71, 73, 72 })]
-        [TestCase("Enrolled Date", "Ascending", new int[] { 73, 71, 72 })]
-        [TestCase("Enrolled Date", "Descending", new int[] { 72, 71, 73 })]
-        [TestCase("Last Accessed Date", "Ascending", new int[] { 71, 72, 73 })]
-        [TestCase("Last Accessed Date", "Descending", new int[] { 73, 72, 71 })]
-        [TestCase("Complete By Date", "Ascending", new int[] { 73, 71, 72 })]
-        [TestCase("Complete By Date", "Descending", new int[] { 72, 71, 73 })]
-        public void Current_courses_should_be_sorted_correctly(
-            string sortBy,
-            string sortDirection,
-            int[] expectedIdsOrder)
-        {
-            var sortedModel = new CurrentPageViewModel(
-                currentCourses,
-                config,
-                null,
-                sortBy,
-                sortDirection,
-                null,
-                null
-            );
-            var sortedIds = sortedModel.CurrentCourses.Select(course => (course as CurrentCourseViewModel).Id);
-            sortedIds.Should().Equal(expectedIdsOrder);
-        }
-
         [TestCase("A:", new int[] { 73 })]
         [TestCase(null, new int[] { 73, 71, 72 })]
         [TestCase("course", new int[] { 73, 71, 72 })]
