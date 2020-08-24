@@ -32,7 +32,7 @@
         }
 
         [Test]
-        public void Comepleted_course_should_not_have_diagnostic_score_without_diagnostic_score_value()
+        public void Completed_course_should_not_have_diagnostic_score_without_diagnostic_score_value()
         {
             // Given
             var completedCourse = CompletedCourseHelper.CreateDefaultCompletedCourse(diagnosticScore: null);
@@ -78,7 +78,6 @@
         [TestCase(true, null, true, "Evaluate", true)]
         [TestCase(true, "1/1/2020", false, "", false)]
         [TestCase(true, "1/1/2020", true, "Certificate", true)]
-        [Test]
         public void Completed_course_should_have_correct_finalise_button(
             bool hasLearning,
             DateTime? evaluated,
