@@ -41,7 +41,7 @@
                 return RedirectToAction("SelfAssessmentReview");
             }
 
-            var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber);
+            var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber, assessment.NumberOfCompetencies);
             return View("SelfAssessments/SelfAssessmentCompetency", model);
         }
 

@@ -39,7 +39,8 @@
             var expectedSelfAssessment = SelfAssessmentHelper.SelfAssessment(
                 SelfAssessmentId,
                 "Digital Capability Self Assessment",
-                "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision."
+                "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision.",
+                32
             );
 
             result.Should().BeEquivalentTo(expectedSelfAssessment);

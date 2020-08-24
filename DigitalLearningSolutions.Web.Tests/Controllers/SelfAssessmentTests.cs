@@ -54,7 +54,7 @@
             var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId)).Returns(competency);
-            var expectedModel = new SelfAssessmentCompetencyViewModel(selfAssessment, competency, competencyNumber);
+            var expectedModel = new SelfAssessmentCompetencyViewModel(selfAssessment, competency, competencyNumber, selfAssessment.NumberOfCompetencies);
 
             // When
             var result = controller.SelfAssessmentCompetency(competencyNumber);

@@ -7,12 +7,19 @@
         public readonly SelfAssessment Assessment;
         public readonly Competency Competency;
         public readonly int CompetencyNumber;
+        public readonly int TotalNumberOfCompetencies;
 
-        public SelfAssessmentCompetencyViewModel(SelfAssessment assessment, Competency competency, int competencyNumber)
+        public SelfAssessmentCompetencyViewModel(
+            SelfAssessment assessment,
+            Competency competency,
+            int competencyNumber,
+            int totalNumberOfCompetencies
+        )
         {
             Assessment = assessment;
             Competency = competency;
             CompetencyNumber = competencyNumber;
+            TotalNumberOfCompetencies = totalNumberOfCompetencies;
         }
     }
 }
