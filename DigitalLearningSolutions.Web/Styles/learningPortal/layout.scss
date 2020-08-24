@@ -63,7 +63,7 @@ body:not(.js-enabled) {
   }
 }
 
-div.nhsuk-header__container {
+:not(.nhsuk-header--transactional) div.nhsuk-header__container {
   @media (max-width: 40.0525em) {
     margin: 0;
   }

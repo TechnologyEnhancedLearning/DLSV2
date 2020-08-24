@@ -1,6 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model SelfAssessmentDescriptionViewModel
 
+@{
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.Name;
+}
+
 <h2>@Model.Name</h2>
 <p class="nhsuk-u-reading-width">@Model.Description</p>
 <a class="nhsuk-button" asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="1">
