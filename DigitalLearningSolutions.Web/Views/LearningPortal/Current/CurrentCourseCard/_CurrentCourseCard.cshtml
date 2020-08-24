@@ -5,7 +5,7 @@
 
 @if (Model is CurrentCourseViewModel course)
 {
-  <div class="current-course-card nhsuk-panel @course.DateStyle()">
+  <div class="course-card nhsuk-panel @course.DateStyle()">
     <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
       <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
         <span class="nhsuk-details__summary-text course-title" id="@course.Id-name" name="name" role="heading" aria-level="3">
@@ -41,7 +41,7 @@
 }
 else if (Model is SelfAssessmentCardViewModel selfAssessment)
 {
-  <div class="nhsuk-panel current-course-card self-assessment-card">
+  <div class="nhsuk-panel course-card">
     <h3 class="course-title" name="name">@selfAssessment.Name</h3>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
