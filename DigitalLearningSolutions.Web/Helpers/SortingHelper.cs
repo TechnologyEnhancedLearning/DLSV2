@@ -3,12 +3,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
 
     public static class SortingHelper
     {
         public static IEnumerable<NamedItem> SortAllItems(
-            IEnumerable<BaseCourse> courses,
+            IEnumerable<StartedCourse> courses,
             SelfAssessment? selfAssessment,
             string sortBy,
             string sortDirection
@@ -30,7 +31,7 @@
                 : sortedCourses.Prepend(selfAssessment);
         }
         private static IEnumerable<NamedItem> SortByName(
-            IEnumerable<BaseCourse> courses,
+            IEnumerable<StartedCourse> courses,
             SelfAssessment? selfAssessment,
             string sortDirection
         )
@@ -46,7 +47,7 @@
                 : allItems.OrderBy(course => course.Name);
         }
 
-        private static IEnumerable<BaseCourse> SortCourses(IEnumerable<BaseCourse> courses, string sortBy, string sortDirection)
+        private static IEnumerable<StartedCourse> SortCourses(IEnumerable<StartedCourse> courses, string sortBy, string sortDirection)
         {
             return sortBy switch
             {

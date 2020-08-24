@@ -90,9 +90,14 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
+        private int? GetCentreId()
+        {
+            return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+        }
+
         private string? GetBannerText()
         {
-            var centreId = User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            var centreId = GetCentreId();
             var bannerText = centreId == null
                 ? null
                 : centresService.GetBannerText(centreId.Value);

@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
     using System;
 
-    public class CurrentCourse : BaseCourse
+    public class CurrentCourse : StartedCourse
     {
         public DateTime? CompleteByDate { get; set; }
         public int SupervisorAdminId { get; set; }

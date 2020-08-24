@@ -2,7 +2,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FluentAssertions;
