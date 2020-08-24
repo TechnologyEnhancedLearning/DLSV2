@@ -69,6 +69,14 @@ body:not(.js-enabled) {
   }
 }
 
+.centre-logo {
+  float: right;
+
+  @include mq($until: large-desktop) {
+    display: none;
+  }
+}
+
 nav .nhsuk-width-container {
   margin: 0 auto;
 }
@@ -89,10 +97,4 @@ nav, .nhsuk-header__navigation, #header-navigation {
   @include mq($from: large-desktop) {
     display: none;
   }
-}
-
-.centre-logo {
-  margin-right: 8px;
-  margin-top: 8px;
-  float: right;
 }
