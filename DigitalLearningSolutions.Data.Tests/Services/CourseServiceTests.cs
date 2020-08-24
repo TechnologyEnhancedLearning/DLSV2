@@ -3,7 +3,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System;
     using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
@@ -83,19 +83,39 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Get_available_courses_should_return_applications()
+        public void Get_available_courses_should_return_courses_for_candidate()
         {
             // When
-            var result = courseService.GetAvailableCourses().ToList();
+            const int candidateId = 1;
+            const int centreId = 101;
+            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
 
             // Then
-            var expectedFirstCourse = new Course
+            var expectedFirstCourse = new AvailableCourse
             {
-                Name = "Mobile DoS",
-                Id = 49
+                CourseName = "An Introduction to Cognition - eLearning",
+                CustomisationID = 17468,
+                Brand = "NHS Pathways",
+                Topic = "Undefined",
+                Category = "Undefined",
+                DelegateStatus = 0,
+                HasLearning = true,
+                HasDiagnostic = true,
+                IsAssessed = false
             };
-            result.Should().HaveCount(45);
+            result.Should().HaveCount(121);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void Get_available_courses_should_return_no_courses_if_no_centre()
+        {
+            // When
+            const int candidateId = 1;
+            var result = courseService.GetAvailableCourses(candidateId, null).ToList();
+
+            // Then
+            result.Should().BeEmpty();
         }
 
         [Test]

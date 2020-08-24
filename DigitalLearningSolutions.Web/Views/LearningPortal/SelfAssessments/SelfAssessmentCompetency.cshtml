@@ -1,5 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model SelfAssessmentCompetencyViewModel
+@{
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
+}
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1 class="competency-group-header">@Model.Competency.CompetencyGroup</h1>

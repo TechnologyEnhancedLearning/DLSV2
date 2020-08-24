@@ -2,7 +2,7 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FluentAssertions;
@@ -148,6 +148,7 @@
             course.DiagnosticScore.Should().Be(expectedDiagnosticScore);
             course.PassedSections.Should().Be(expectedPasses);
             course.Sections.Should().Be(expectedSections);
+            course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
     }
 }

@@ -2,10 +2,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System;
     using System.Security.Claims;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using FakeItEasy;
     using FluentAssertions;
