@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using Microsoft.Extensions.Configuration;
 
-    public class CurrentCourseViewModel : BaseCourseViewModel
+    public class CurrentCourseViewModel : StartedCourseViewModel
     {
         public DateTime? CompleteByDate { get; }
         public bool UserIsSupervisor { get; }

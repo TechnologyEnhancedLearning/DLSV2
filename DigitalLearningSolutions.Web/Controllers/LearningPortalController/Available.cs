@@ -9,7 +9,7 @@
         {
             var availableCourses = courseService.GetAvailableCourses(GetCandidateId(), GetCentreId());
             var bannerText = GetBannerText();
-            var model = new AvailableViewModel(availableCourses, bannerText);
+            var model = new AvailablePageViewModel(availableCourses, config, bannerText);
             return View(model);
         }
     }

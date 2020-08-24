@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FakeItEasy;
@@ -17,8 +15,8 @@
             // Given
             var availableCourses = new[]
             {
-                AvailableCourseHelper.CreateDefaultCompletedCourse(),
-                AvailableCourseHelper.CreateDefaultCompletedCourse()
+                AvailableCourseHelper.CreateDefaultAvailableCourse(),
+                AvailableCourseHelper.CreateDefaultAvailableCourse()
             };
             A.CallTo(() => courseService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
 
@@ -26,7 +24,7 @@
             var result = controller.Available();
 
             // Then
-            var expectedModel = new AvailableViewModel(availableCourses, "");
+            var expectedModel = new AvailablePageViewModel(availableCourses, config, "");
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

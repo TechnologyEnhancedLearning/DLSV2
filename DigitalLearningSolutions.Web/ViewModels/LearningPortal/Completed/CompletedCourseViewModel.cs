@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public class CompletedCourseViewModel : BaseCourseViewModel
+    public class CompletedCourseViewModel : StartedCourseViewModel
     {
         public DateTime CompletedDate { get; }
         public DateTime? EvaluatedDate { get; }
