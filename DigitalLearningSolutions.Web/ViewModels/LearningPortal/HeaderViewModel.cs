@@ -5,14 +5,16 @@
     public class HeaderViewModel
     {
         public readonly string? CustomLogoDataUrl;
-        public readonly int? Height;
-        public readonly int? Width;
+        public readonly int Height;
+        public readonly int Width;
+        public readonly string AltText;
 
         public HeaderViewModel(CentreLogo? customLogo)
         {
             CustomLogoDataUrl = customLogo?.LogoUrl;
             Height = customLogo?.Height ?? 0 ;
             Width = customLogo?.Width ?? 0;
+            AltText = customLogo?.CentreName ?? "";
         }
     }
 }

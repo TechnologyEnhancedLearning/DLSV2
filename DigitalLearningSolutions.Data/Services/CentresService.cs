@@ -35,7 +35,8 @@
                 @"SELECT CentreLogo as logoData,
                             LogoHeight as height,
                             LogoWidth as width,
-                            LogoMimeType as mimeType
+                            LogoMimeType as mimeType,
+                            CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
                 new { centreId });
