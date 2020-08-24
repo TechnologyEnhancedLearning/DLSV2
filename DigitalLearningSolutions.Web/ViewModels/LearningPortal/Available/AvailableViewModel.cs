@@ -2,15 +2,15 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
 
     public class AvailableViewModel
     {
-        private readonly IEnumerable<Course> availableCourses;
+        private readonly IEnumerable<AvailableCourse> availableCourses;
 
         public readonly string? BannerText;
 
-        public AvailableViewModel(IEnumerable<Course> availableCourses, string? bannerText)
+        public AvailableViewModel(IEnumerable<AvailableCourse> availableCourses, string? bannerText)
         {
             this.availableCourses = availableCourses;
             BannerText = bannerText;
@@ -22,8 +22,7 @@
             {
                 return availableCourses.Select(c => new AvailableCourseViewModel
                 {
-                    Name = c.Name,
-                    Id = c.Id
+                    Name = c.Name
                 });
             }
         }
@@ -31,7 +30,6 @@
         public class AvailableCourseViewModel
         {
             public string Name { get; set; }
-            public int Id { get; set; }
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
     using System;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;

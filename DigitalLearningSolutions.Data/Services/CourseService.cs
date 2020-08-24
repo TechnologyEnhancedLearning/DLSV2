@@ -4,14 +4,14 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
     public interface ICourseService
     {
         IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
         IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
-        IEnumerable<Course> GetAvailableCourses();
+        IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
         void RemoveCurrentCourse(int progressId, int candidateId);
     }
@@ -37,11 +37,12 @@
             return connection.Query<CompletedCourse>("GetCompletedCoursesForCandidate", new { candidateId }, commandType: CommandType.StoredProcedure);
         }
 
-        public IEnumerable<Course> GetAvailableCourses()
+        public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
-            return connection.Query<Course>(@"
-                SELECT ApplicationID AS Id, ApplicationName AS Name FROM Applications WHERE CreatedById = 2223
-            ");
+            return connection.Query<AvailableCourse>(
+                @"GetActiveAvailableCustomisationsForCentreFiltered_V4", new { candidateId, centreId },
+                commandType: CommandType.StoredProcedure
+            );
         }
 
         public void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate)

@@ -7,7 +7,7 @@
     {
         public IActionResult Available()
         {
-            var availableCourses = courseService.GetAvailableCourses();
+            var availableCourses = courseService.GetAvailableCourses(GetCandidateId(), GetCentreId());
             var bannerText = GetBannerText();
             var model = new AvailableViewModel(availableCourses, bannerText);
             return View(model);

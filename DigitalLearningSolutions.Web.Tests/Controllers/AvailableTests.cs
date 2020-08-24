@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using FakeItEasy;
@@ -16,10 +17,10 @@
             // Given
             var availableCourses = new[]
             {
-                new Course { Id = 1, Name = "Course 1" },
-                new Course { Id = 2, Name = "Course 2" }
+                AvailableCourseHelper.CreateDefaultCompletedCourse(),
+                AvailableCourseHelper.CreateDefaultCompletedCourse()
             };
-            A.CallTo(() => courseService.GetAvailableCourses()).Returns(availableCourses);
+            A.CallTo(() => courseService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
 
             // When
             var result = controller.Available();
