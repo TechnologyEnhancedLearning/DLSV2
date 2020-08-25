@@ -24,7 +24,14 @@
             var result = controller.Available();
 
             // Then
-            var expectedModel = new AvailablePageViewModel(availableCourses, config, "");
+            var expectedModel = new AvailablePageViewModel(
+                availableCourses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                ""
+            );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

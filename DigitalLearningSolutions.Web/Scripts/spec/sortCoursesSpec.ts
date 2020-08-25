@@ -205,9 +205,117 @@ describe('getSortValue', () => {
     // Then
     expect(actualPassedSections).toEqual(expectedPassedSections);
   });
+
+  it('should correctly extract the brand field', () => {
+    // Given
+    const expectedBrand = 'Brand 1';
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="course-card">
+          <p name="brand">${expectedBrand}</p>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    const courseCard = document.getElementsByClassName('course-card')[0];
+    const actualBrand = getSortValue(courseCard, 'Brand');
+
+    // Then
+    expect(actualBrand).toEqual(expectedBrand);
+  });
+
+  it('should correctly extract the category field', () => {
+    // Given
+    const expectedCategory = 'Category 1';
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="course-card">
+          <p name="category">${expectedCategory}</p>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    const courseCard = document.getElementsByClassName('course-card')[0];
+    const actualCategory = getSortValue(courseCard, 'Category');
+
+    // Then
+    expect(actualCategory).toEqual(expectedCategory);
+  });
+
+  it('should correctly extract the category field with null data', () => {
+    // Given
+    const expectedCategory = '';
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="course-card">
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    const courseCard = document.getElementsByClassName('course-card')[0];
+    const actualCategory = getSortValue(courseCard, 'Category');
+
+    // Then
+    expect(actualCategory).toEqual(expectedCategory);
+  });
+
+  it('should correctly extract the topic field', () => {
+    // Given
+    const expectedTopic = 'Topic 1';
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="course-card">
+          <p name="topic">${expectedTopic}</p>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    const courseCard = document.getElementsByClassName('course-card')[0];
+    const actualTopic = getSortValue(courseCard, 'Topic');
+
+    // Then
+    expect(actualTopic).toEqual(expectedTopic);
+  });
+
+  it('should correctly extract the topic field with null data', () => {
+    // Given
+    const expectedTopic = '';
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="course-card">
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    const courseCard = document.getElementsByClassName('course-card')[0];
+    const actualTopic = getSortValue(courseCard, 'Topic');
+
+    // Then
+    expect(actualTopic).toEqual(expectedTopic);
+  });
 });
 
-describe('sortCards', () => {
+describe('sortCards current', () => {
   beforeEach(() => {
     // Given
     global.document = new JSDOM(`
@@ -384,5 +492,170 @@ describe('sortCards', () => {
     expect(newCards![0].id).toBe('course-c');
     expect(newCards![1].id).toBe('course-b');
     expect(newCards![2].id).toBe('course-a');
+  });
+});
+
+describe('sortCards completed', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div id="course-cards">
+          <div class="course-card" id="course-a"> 
+            <span name="name">A: Course</span>
+            <p name="started-date">31-1-2010</p>
+            <p name="accessed-date">22-2-2010</p>
+            <p name="completed-date">22-3-2010</p>
+            <p name="diagnostic-score">123</p>
+            <p name="passed-sections">4/6</p>
+          </div>
+          <div class="course-card" id="course-b"> 
+            <span name="name">B: Course</span>
+            <p name="started-date">1-2-2010</p>
+            <p name="accessed-date">22-2-2011</p>
+            <p name="completed-date">22-3-2011</p>
+            <p name="diagnostic-score">0</p>
+          </div>
+          <div class="course-card" id="course-c"> 
+            <span name="name">C: Course</span>
+            <p name="started-date">22-1-2001</p>
+            <p name="accessed-date">23-2-2011</p>
+            <p name="completed-date">22-2-2011</p>
+            <p name="evaluated-date">24-2-2011</p>
+            <p name="passed-sections">0/6</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it('should correctly sort ascending by completed date', () => {
+    // When
+    sortCards('Completed Date', 'Ascending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-a');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-b');
+  });
+
+  it('should correctly sort descending by completed date', () => {
+    // When
+    sortCards('Completed Date', 'Descending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-b');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-a');
+  });
+});
+
+describe('sortCards available', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div id="course-cards">
+          <div class="course-card" id="course-a"> 
+            <span name="name">A: Course</span>
+            <p name="brand">C: Brand</p>
+            <p name="topic">Topic 2</p>
+          </div>
+          <div class="course-card" id="course-b"> 
+            <span name="name">B: Course</span>
+            <p name="brand">A: Brand</p>
+            <p name="category">C: Category</p>
+            <p name="topic">Topic 1</p>
+          </div>
+          <div class="course-card" id="course-c"> 
+            <span name="name">C: Course</span>
+            <p name="brand">B: Brand</p>
+            <p name="category">B: Category</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it('should correctly sort ascending by brand', () => {
+    // When
+    sortCards('Brand', 'Ascending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-b');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-a');
+  });
+
+  it('should correctly sort descending by brand', () => {
+    // When
+    sortCards('Brand', 'Descending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-a');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-b');
+  });
+
+  it('should correctly sort ascending by category', () => {
+    // When
+    sortCards('Category', 'Ascending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-a');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-b');
+  });
+
+  it('should correctly sort descending by category', () => {
+    // When
+    sortCards('Category', 'Descending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-b');
+    expect(newCards![1].id).toBe('course-c');
+    expect(newCards![2].id).toBe('course-a');
+  });
+
+  it('should correctly sort ascending by topic', () => {
+    // When
+    sortCards('Topic', 'Ascending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-c');
+    expect(newCards![1].id).toBe('course-b');
+    expect(newCards![2].id).toBe('course-a');
+  });
+
+  it('should correctly sort descending by topic', () => {
+    // When
+    sortCards('Topic', 'Descending');
+
+    // Then
+    const newCards = document.getElementById('course-cards')?.children;
+    expect(newCards?.length).toEqual(3);
+    expect(newCards![0].id).toBe('course-a');
+    expect(newCards![1].id).toBe('course-b');
+    expect(newCards![2].id).toBe('course-c');
   });
 });

@@ -22,7 +22,14 @@
                 AvailableCourseHelper.CreateDefaultAvailableCourse(courseName: "Second course")
             };
 
-            model = new AvailablePageViewModel(courses, config, null);
+            model = new AvailablePageViewModel(
+                courses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null
+            );
         }
 
         [TestCase(0, "First course")]

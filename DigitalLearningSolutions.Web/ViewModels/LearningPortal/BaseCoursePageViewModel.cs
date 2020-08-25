@@ -12,10 +12,11 @@
         public abstract SelectList SortByOptions { get; }
 
         public const string DescendingText = "Descending";
+        public const string AscendingText = "Ascending";
 
         public readonly string? SearchString;
 
-        public BaseCoursePageViewModel(
+        protected BaseCoursePageViewModel(
             string? searchString,
             string sortBy,
             string sortDirection,
@@ -37,6 +38,9 @@
             CompleteByDate = "Complete By Date",
             CompletedDate = "Completed Date",
             DiagnosticScore = "Diagnostic Score",
-            PassedSections = "Passed Sections";
+            PassedSections = "Passed Sections",
+            Brand = "Brand",
+            Category = "Category",
+            Topic = "Topic";
     }
 }
