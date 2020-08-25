@@ -61,6 +61,15 @@ details.nhsuk-details {
   details[open] ~ & {
     display: none;
   }
+
+  // IE11 only, prevent from displaying when js disabled
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    display: none;
+
+    .js-enabled & {
+      display: block;
+    }
+  }
 }
 
 .competency-group-title {
