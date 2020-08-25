@@ -41,22 +41,32 @@ function sortAndDisplayCards(
 export function getSortValue(courseCard: Element, sortBy: string): string | number | Date {
   switch (sortBy) {
     case 'Course Name':
-      return courseCard.querySelector('[name="name"]')?.textContent?.trim() ?? '';
+      return getElementText(courseCard, 'name');
     case 'Enrolled Date':
-      return parseDate(courseCard.querySelector('[name="started-date"]')?.innerHTML || '');
+      return parseDate(getElementText(courseCard, 'started-date'));
     case 'Last Accessed Date':
-      return parseDate(courseCard.querySelector('[name="accessed-date"]')?.innerHTML || '');
+      return parseDate(getElementText(courseCard, 'accessed-date'));
     case 'Complete By Date':
-      return parseDate(courseCard.querySelector('[name="complete-by-date"]')?.innerHTML || '');
+      return parseDate(getElementText(courseCard, 'complete-by-date'));
     case 'Completed Date':
-      return parseDate(courseCard.querySelector('[name="completed-date"]')?.innerHTML || '');
+      return parseDate(getElementText(courseCard, 'completed-date'));
     case 'Diagnostic Score':
-      return parseInt(courseCard.querySelector('[name="diagnostic-score"]')?.innerHTML.split('/')[0] || '-1', 10);
+      return parseInt(getElementText(courseCard, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'Passed Sections':
-      return parseInt(courseCard.querySelector('[name="passed-sections"]')?.innerHTML.split('/')[0] || '-1', 10);
+      return parseInt(getElementText(courseCard, 'passed-sections').split('/')[0] || '-1', 10);
+    case 'Brand':
+      return getElementText(courseCard, 'brand');
+    case 'Category':
+      return getElementText(courseCard, 'category');
+    case 'Topic':
+      return getElementText(courseCard, 'topic');
     default:
       return '';
   }
+}
+
+function getElementText(courseCard: Element, elementName: string): string {
+  return courseCard.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
 }
 
 function parseDate(dateString: string): Date {
