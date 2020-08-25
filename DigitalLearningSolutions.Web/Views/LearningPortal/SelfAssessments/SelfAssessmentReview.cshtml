@@ -9,30 +9,49 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - Review</h1>
+<h2>Check through your answers</h2>
 
 @if (@Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in @Model.CompetencyGroups)
   {
-    <h3 class="competency-group-title">@competencyGroup.Key</h3>
+    <div class="nhsuk-panel competency-group-panel">
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="competency-group-title nhsuk-details__summary-text">
+            @competencyGroup.Key
+          </span>
+        </summary>
 
-    @foreach (var competency in competencyGroup)
-    {
-      <div class="nhsuk-panel review-card">
-        <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-one-third">
-            <h4>@competency.Description</h4>
-          </div>
-          @foreach (var question in competency.AssessmentQuestions)
+        <div class="nhsuk-details__text">
+          <partial
+            name="SelfAssessments/_MeanScores"
+            view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+          @foreach (var competency in competencyGroup)
           {
-            <div class="nhsuk-grid-column-one-third">
-              <h5 class="review-question">@question.Question</h5>
-              <p class="review-result">@question.Result / 10</p>
+            <div class="nhsuk-panel review-card">
+              <div class="nhsuk-grid-row">
+                <div class="nhsuk-grid-column-one-third">
+                  <h4>@competency.Description</h4>
+                </div>
+                @foreach (var question in competency.AssessmentQuestions)
+                {
+                  <div class="nhsuk-grid-column-one-third">
+                    <h5 class="review-question">@question.Question</h5>
+                    <p class="review-result">@(question.Result!) / 10</p>
+                  </div>
+                }
+              </div>
             </div>
           }
         </div>
+      </details>
+      <div class="outer-score-container">
+        <partial
+          name="SelfAssessments/_MeanScores"
+          view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
       </div>
-    }
+    </div>
   }
 }
 else
