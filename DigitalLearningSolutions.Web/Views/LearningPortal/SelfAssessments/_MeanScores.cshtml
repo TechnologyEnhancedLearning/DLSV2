@@ -1,0 +1,11 @@
+﻿@using DigitalLearningSolutions.Data.Models
+
+@foreach (var questionType in ((IGrouping<string, Competency>)ViewData["competencyGroup"])
+  .SelectMany(competency => competency.AssessmentQuestions)
+  .GroupBy(question => question.Question)
+  )
+{
+  var meanScore = Math.Round(questionType.Average(question => question.Result)!.Value, 1);
+  <span class="score">@questionType.Key:&nbsp;@meanScore&nbsp;/&nbsp;10</span>
+  <br>
+}
