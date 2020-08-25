@@ -20,7 +20,7 @@ describe('titleFromCardElement', () => {
       <head></head>
       <body>
         <div id="course-cards">
-          <div class="current-course-card">
+          <div class="course-card">
             <span class="nhsuk-details__summary-text course-title">${expectedTitle}</span>
           </div>
         </div>
@@ -29,7 +29,7 @@ describe('titleFromCardElement', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualTitle = searchCourses.titleFromCardElement(courseCard);
 
     // Then
@@ -110,10 +110,10 @@ describe('search', () => {
       <body>
         <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
         <div id="course-cards">
-          <div class="current-course-card">
+          <div class="course-card">
             <span class="nhsuk-details__summary-text course-title">cheese</span>
           </div>
-          <div class="current-course-card">
+          <div class="course-card">
             <span class="nhsuk-details__summary-text">petril</span>
           </div>
       </body>

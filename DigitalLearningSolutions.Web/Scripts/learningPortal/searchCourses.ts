@@ -7,7 +7,7 @@ interface CourseCard {
 }
 
 export function getCourseCards() {
-  const courseCardElements = Array.from(document.getElementsByClassName('current-course-card'));
+  const courseCardElements = Array.from(document.getElementsByClassName('course-card'));
   return courseCardElements.map((element) => ({
     element,
     title: titleFromCardElement(element),
