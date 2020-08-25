@@ -9,18 +9,32 @@
         public readonly string? Category;
         public readonly string? Topic;
         public readonly DelegateStatus DelegateStatus;
+        public readonly string? EnrolButtonText;
+        public readonly string? EnrolButtonAriaLabel;
+
         public AvailableCourseViewModel(AvailableCourse course, IConfiguration config) : base(course, config)
         {
             Brand = course.Brand;
             Category = GetValidOrNull(course.Category);
             Topic = GetValidOrNull(course.Topic);
             DelegateStatus = (DelegateStatus)course.DelegateStatus;
+            EnrolButtonText = GetEnrolButtonText(DelegateStatus);
+            EnrolButtonAriaLabel = EnrolButtonText == null ? null : $"{EnrolButtonText} on course";
         }
 
         private static string? GetValidOrNull(string toValidate)
         {
             return toValidate.ToLower() == "undefined" ? null : toValidate;
         }
+
+        private static string? GetEnrolButtonText(DelegateStatus delegateStatus) =>
+            delegateStatus switch
+            {
+                DelegateStatus.NotEnrolled => "Enrol",
+                DelegateStatus.Removed => "Enrol",
+                DelegateStatus.Expired => "Re-enrol",
+                _ => null
+            };
     }
 
     public enum DelegateStatus
