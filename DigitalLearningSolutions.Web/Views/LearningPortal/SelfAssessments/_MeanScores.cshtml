@@ -6,6 +6,6 @@
   )
 {
   var meanScore = Math.Round(questionType.Average(question => question.Result)!.Value, 1);
-  <span class="score">@questionType.Key:&nbsp;@meanScore&nbsp;/&nbsp;10</span>
+  <span class="score">@questionType.Key (average score):&nbsp;@meanScore&nbsp;/&nbsp;10</span>
   <br>
 }
