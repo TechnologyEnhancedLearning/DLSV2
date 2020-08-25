@@ -17,7 +17,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <span name="name">${expectedName}</span>
         </div>
       </body>
@@ -25,7 +25,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualName = getSortValue(courseCard, 'Course Name');
 
     // Then
@@ -39,7 +39,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <p name="started-date">${startedDateString}</p>
         </div>
       </body>
@@ -47,7 +47,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualStartedDate = getSortValue(courseCard, 'Enrolled Date');
 
     // Then
@@ -61,7 +61,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <p name="accessed-date">${accessedDateString}</p>
         </div>
       </body>
@@ -69,7 +69,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualAccessedDate = getSortValue(courseCard, 'Last Accessed Date');
 
     // Then
@@ -83,7 +83,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <p name="complete-by-date">${completeByDateString}</p>
         </div>
       </body>
@@ -91,7 +91,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualCompleteByDate = getSortValue(courseCard, 'Complete By Date');
 
     // Then
@@ -105,7 +105,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <p name="diagnostic-score">${expectedDiagnosticScore}/10</p>
         </div>
       </body>
@@ -113,7 +113,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualDiagnosticScore = getSortValue(courseCard, 'Diagnostic Score');
 
     // Then
@@ -127,7 +127,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card"> 
+        <div class="course-card"> 
           <p name="passed-sections">${expectedPassedSections}/10</p>
         </div>
       </body>
@@ -135,7 +135,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualPassedSections = getSortValue(courseCard, 'Passed Sections');
 
     // Then
@@ -149,7 +149,7 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card">
+        <div class="course-card">
           <p name="complete-by-date">-</p>
         </div>
       </body>
@@ -157,7 +157,7 @@ describe('getSortValue', () => {
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualCompleteByDate = getSortValue(courseCard, 'Complete By Date');
 
     // Then
@@ -171,14 +171,14 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card">
+        <div class="course-card">
         </div>
       </body>
       </html>
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualDiagnosticScore = getSortValue(courseCard, 'Diagnostic Score');
 
     // Then
@@ -192,14 +192,14 @@ describe('getSortValue', () => {
       <html>
       <head></head>
       <body>
-        <div class="current-course-card">
+        <div class="course-card">
         </div>
       </body>
       </html>
     `).window.document;
 
     // When
-    const courseCard = document.getElementsByClassName('current-course-card')[0];
+    const courseCard = document.getElementsByClassName('course-card')[0];
     const actualPassedSections = getSortValue(courseCard, 'Passed Sections');
 
     // Then
@@ -215,7 +215,7 @@ describe('sortCards', () => {
       <head></head>
       <body>
         <div id="course-cards">
-          <div class="current-course-card" id="course-b"> 
+          <div class="course-card" id="course-b"> 
             <span name="name">B: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
@@ -223,14 +223,14 @@ describe('sortCards', () => {
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="current-course-card" id="course-c"> 
+          <div class="course-card" id="course-c"> 
             <span name="name">C: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="complete-by-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="current-course-card" id="course-a"> 
+          <div class="course-card" id="course-a"> 
             <span name="name">A: Course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
