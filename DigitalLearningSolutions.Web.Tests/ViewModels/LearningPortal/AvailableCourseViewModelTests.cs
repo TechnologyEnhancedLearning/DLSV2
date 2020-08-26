@@ -17,42 +17,6 @@
             config = A.Fake<IConfiguration>();
         }
 
-        [TestCase("Valid category", "Valid category")]
-        [TestCase("Undefined", null)]
-        [TestCase("undefined", null)]
-        public void Available_course_should_validate_category(
-            string category,
-            string? expectedValidatedCategory
-        )
-        {
-            // Given
-            var availableCourse = AvailableCourseHelper.CreateDefaultAvailableCourse(category: category);
-
-            // When
-            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse, config);
-
-            // Then
-            availableCourseViewModel.Category.Should().Be(expectedValidatedCategory);
-        }
-
-        [TestCase("Valid topic", "Valid topic")]
-        [TestCase("Undefined", null)]
-        [TestCase("undefined", null)]
-        public void Available_course_should_validate_topic(
-            string topic,
-            string? expectedValidatedTopic
-        )
-        {
-            // Given
-            var availableCourse = AvailableCourseHelper.CreateDefaultAvailableCourse(topic: topic);
-
-            // When
-            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse, config);
-
-            // Then
-            availableCourseViewModel.Topic.Should().Be(expectedValidatedTopic);
-        }
-
         [TestCase(0, DelegateStatus.NotEnrolled)]
         [TestCase(1, DelegateStatus.Expired)]
         [TestCase(2, DelegateStatus.Completed)]

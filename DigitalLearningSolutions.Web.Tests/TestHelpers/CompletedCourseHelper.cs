@@ -18,7 +18,10 @@
             int passes = 1,
             int sections = 1,
             int progressId = 1,
-            DateTime? evaluated = null
+            DateTime? evaluated = null,
+            DateTime? startedDate = null,
+            DateTime? lastAccessed = null,
+            DateTime? completed = null
         )
         {
             return new CompletedCourse
@@ -32,7 +35,10 @@
                 Passes = passes,
                 Sections = sections,
                 ProgressID = progressId,
-                Evaluated = evaluated
+                Evaluated = evaluated,
+                StartedDate = startedDate ?? DateTime.Now,
+                LastAccessed = lastAccessed ?? DateTime.Now,
+                Completed = completed ?? DateTime.Now
             };
         }
 

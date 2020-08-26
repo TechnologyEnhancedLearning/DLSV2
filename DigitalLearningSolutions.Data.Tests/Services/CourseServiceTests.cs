@@ -86,25 +86,57 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Get_available_courses_should_return_courses_for_candidate()
         {
             // When
-            const int candidateId = 1;
+            const int candidateId = 254480;
             const int centreId = 101;
             var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
 
             // Then
             var expectedFirstCourse = new AvailableCourse
             {
-                CourseName = "An Introduction to Cognition - eLearning",
-                CustomisationID = 17468,
-                Brand = "NHS Pathways",
-                Topic = "Undefined",
-                Category = "Undefined",
+                CourseName = "5 Jan Test - New",
+                CustomisationID = 18438,
+                Brand = "Local content",
+                Topic = "Microsoft Office",
+                Category = "Digital Workplace",
                 DelegateStatus = 0,
                 HasLearning = true,
                 HasDiagnostic = true,
-                IsAssessed = false
+                IsAssessed = true
             };
-            result.Should().HaveCount(121);
+            result.Should().HaveCount(123);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [TestCase(4, "Office 2010")]
+        [TestCase(2, null)]
+        public void Get_available_courses_should_validate_category(
+            int index,
+            string? expectedValidatedCategory
+        )
+        {
+            // When
+            const int candidateId = 254480;
+            const int centreId = 101;
+            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
+
+            // Then
+            result[index].Category.Should().Be(expectedValidatedCategory);
+        }
+
+        [TestCase(4, "Word")]
+        [TestCase(2, null)]
+        public void Get_available_courses_should_validate_topic(
+            int index,
+            string? expectedValidatedTopic
+        )
+        {
+            // When
+            const int candidateId = 254480;
+            const int centreId = 101;
+            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
+
+            // Then
+            result[index].Topic.Should().Be(expectedValidatedTopic);
         }
 
         [Test]

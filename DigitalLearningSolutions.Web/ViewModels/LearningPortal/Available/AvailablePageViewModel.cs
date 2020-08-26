@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
 
@@ -27,7 +28,13 @@
             string? bannerText
         ) : base(searchString, sortBy, sortDirection, bannerText)
         {
-            AvailableCourses = availableCourses.Select(c => new AvailableCourseViewModel(c, config));
+            var sortedItems = SortingHelper.SortAllItems(
+                availableCourses,
+                null,
+                sortBy,
+                sortDirection
+            );
+            AvailableCourses = sortedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
         }
     }
 }

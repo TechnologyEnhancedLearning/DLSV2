@@ -3,8 +3,28 @@
     public class AvailableCourse : BaseCourse
     {
         public string Brand { get; set; }
-        public string Category { get; set; }
-        public string Topic { get; set; }
+
+        public string? Category
+        {
+            get => category;
+
+            set => category = GetValidOrNull(value);
+        }
+        public string? Topic
+        {
+            get => topic;
+
+            set => topic = GetValidOrNull(value);
+        }
+
         public int DelegateStatus { get; set; }
+
+        private string? category;
+        private string? topic;
+
+        private static string? GetValidOrNull(string? toValidate)
+        {
+            return toValidate != null && toValidate.ToLower() == "undefined" ? null : toValidate;
+        }
     }
 }
