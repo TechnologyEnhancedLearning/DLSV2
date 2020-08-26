@@ -15,16 +15,11 @@
         public AvailableCourseViewModel(AvailableCourse course, IConfiguration config) : base(course, config)
         {
             Brand = course.Brand;
-            Category = GetValidOrNull(course.Category);
-            Topic = GetValidOrNull(course.Topic);
+            Category = course.Category;
+            Topic = course.Topic;
             DelegateStatus = (DelegateStatus)course.DelegateStatus;
             EnrolButtonText = GetEnrolButtonText(DelegateStatus);
             EnrolButtonAriaLabel = EnrolButtonText == null ? null : $"{EnrolButtonText} on course";
-        }
-
-        private static string? GetValidOrNull(string toValidate)
-        {
-            return toValidate.ToLower() == "undefined" ? null : toValidate;
         }
 
         private static string? GetEnrolButtonText(DelegateStatus delegateStatus) =>

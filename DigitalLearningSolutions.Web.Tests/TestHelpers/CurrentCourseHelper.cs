@@ -23,6 +23,8 @@
             int supervisorAdminId = 1,
             int groupCustomisationId = 0,
             DateTime? completeByDate = null,
+            DateTime? startedDate = null,
+            DateTime? lastAccessed = null,
             int progressId = 1,
             int enrollmentMethodId = 1,
             bool locked = false
@@ -40,6 +42,8 @@
                 SupervisorAdminId = supervisorAdminId,
                 GroupCustomisationId = groupCustomisationId,
                 CompleteByDate = completeByDate,
+                StartedDate = startedDate ?? DateTime.Now,
+                LastAccessed = lastAccessed ?? DateTime.Now,
                 ProgressID = progressId,
                 EnrollmentMethodID = enrollmentMethodId,
                 PLLocked = locked

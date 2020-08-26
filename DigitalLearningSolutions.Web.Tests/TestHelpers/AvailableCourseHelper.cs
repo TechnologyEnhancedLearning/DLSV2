@@ -14,8 +14,8 @@
             bool hasLearning = true,
             bool isAssessed = true,
             string brand = "Brand 1",
-            string category = "Category 1",
-            string topic = "Topic 1",
+            string? category = "Category 1",
+            string? topic = "Topic 1",
             int delegateStatus = 0
         )
         {
