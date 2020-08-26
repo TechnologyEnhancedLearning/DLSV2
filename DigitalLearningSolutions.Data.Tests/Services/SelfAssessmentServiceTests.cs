@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using NUnit.Framework;
     using FluentAssertions;
@@ -354,33 +353,15 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
 
-                var expectedResults = new List<Competency>()
-                    {
-                        SelfAssessmentHelper.Competency(
-                            id: firstCompetencyId,
-                            description: "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
-                            competencyGroup: "Data, information and content",
-                            assessmentQuestions: new List<AssessmentQuestion>()
-                            {
-                                SelfAssessmentHelper.AssessmentQuestion(id: firstAssessmentQuestionId, question: "Where are you now", result: firstResult),
-                                SelfAssessmentHelper.AssessmentQuestion(id: secondAssessmentQuestionId, question: "Where do you need to be", result: secondResult),
-                            }
-                        ),
-                        SelfAssessmentHelper.Competency(
-                            id: secondCompetencyId,
-                            description: "I’m able to judge how credible and trustworthy sources of data and information are",
-                            competencyGroup: "Data, information and content",
-                            assessmentQuestions: new List<AssessmentQuestion>()
-                            {
-                                SelfAssessmentHelper.AssessmentQuestion(id: thirdAssessmentQuestionId, question: "Where are you now", result: thirdResult),
-                                SelfAssessmentHelper.AssessmentQuestion(id: fourthAssessmentQuestionId, question: "Where do you need to be", result: fourthResult),
-                            }
-                        )
-                    };
-
                 //Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
-                results.Should().BeEquivalentTo(expectedResults);
+
+                results.Count.Should().Be(32);
+                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, firstAssessmentQuestionId).Should().Be(firstResult);
+                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, secondAssessmentQuestionId).Should().Be(secondResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should().Be(thirdResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should().Be(fourthResult);
+                SelfAssessmentHelper.GetQuestionResult(results, 4, 1).Should().BeNull();
             }
         }
 
@@ -409,33 +390,12 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
 
-                var expectedResults = new List<Competency>()
-                    {
-                        SelfAssessmentHelper.Competency(
-                            id: firstCompetencyId,
-                            description: "I understand and stick to guidelines and regulations when using data and information to make sure of security and confidentiality requirements",
-                            competencyGroup: "Data, information and content",
-                            assessmentQuestions: new List<AssessmentQuestion>()
-                            {
-                                SelfAssessmentHelper.AssessmentQuestion(id: firstAssessmentQuestionId, question: "Where are you now", result: firstResult),
-                                SelfAssessmentHelper.AssessmentQuestion(id: secondAssessmentQuestionId, question: "Where do you need to be", result: secondResult),
-                            }
-                        ),
-                        SelfAssessmentHelper.Competency(
-                            id: secondCompetencyId,
-                            description: "I’m able to judge how credible and trustworthy sources of data and information are",
-                            competencyGroup: "Data, information and content",
-                            assessmentQuestions: new List<AssessmentQuestion>()
-                            {
-                                SelfAssessmentHelper.AssessmentQuestion(id: thirdAssessmentQuestionId, question: "Where are you now", result: thirdResult),
-                                SelfAssessmentHelper.AssessmentQuestion(id: fourthAssessmentQuestionId, question: "Where do you need to be", result: fourthResult),
-                            }
-                        )
-                    };
-
                 //Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
-                results.Should().BeEquivalentTo(expectedResults);
+
+                results.Count.Should().Be(32);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should().Be(thirdResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should().Be(fourthResult);
             }
         }
 

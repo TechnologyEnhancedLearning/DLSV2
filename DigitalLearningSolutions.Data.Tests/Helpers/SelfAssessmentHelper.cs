@@ -1,6 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
 
     public static class SelfAssessmentHelper
@@ -52,6 +53,12 @@
                 MinValueDescription = minValueDescription,
                 Result = result
             };
+        }
+
+        public static int? GetQuestionResult(IEnumerable<Competency> results, int competencyId, int assessmentQuestionId)
+        {
+            return results.First(competency => competency.Id == competencyId).AssessmentQuestions
+                .First(question => question.Id == assessmentQuestionId).Result;
         }
     }
 }

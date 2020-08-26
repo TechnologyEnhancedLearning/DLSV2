@@ -5,7 +5,11 @@
   .GroupBy(question => question.Question)
   )
 {
-  var meanScore = Math.Round(questionType.Average(question => question.Result)!.Value, 1);
-  <span class="score">@questionType.Key (average score):&nbsp;@meanScore&nbsp;/&nbsp;10</span>
+  var meanScore = questionType.Average(question => question.Result);
+  <span class="score">
+    @Html.Raw(
+      $@"{questionType.Key} (average score):&nbsp;{meanScore?.ToString("F1") ?? "<span class ='nhsuk-u-visually-hidden'>No answer submitted </span>&nbsp;-"}"
+      )&nbsp;/&nbsp;10
+  </span>
   <br>
 }
