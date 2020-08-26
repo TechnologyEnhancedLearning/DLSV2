@@ -84,149 +84,31 @@ describe('sortCards current', () => {
     `).window.document;
   });
 
-  it('should correctly sort ascending by name', () => {
-    // When
-    sortCards('Course Name', 'Ascending');
+  cases([
+    ['Course Name', 'Ascending', 'course-a', 'course-b', 'course-c'],
+    ['Course Name', 'Descending', 'course-c', 'course-b', 'course-a'],
+    ['Diagnostic Score', 'Ascending', 'course-a', 'course-c', 'course-b'],
+    ['Diagnostic Score', 'Descending', 'course-b', 'course-c', 'course-a'],
+    ['Passed Sections', 'Ascending', 'course-c', 'course-a', 'course-b'],
+    ['Passed Sections', 'Descending', 'course-b', 'course-a', 'course-c'],
+    ['Enrolled Date', 'Ascending', 'course-a', 'course-b', 'course-c'],
+    ['Enrolled Date', 'Descending', 'course-c', 'course-b', 'course-a'],
+    ['Last Accessed Date', 'Ascending', 'course-b', 'course-c', 'course-a'],
+    ['Last Accessed Date', 'Descending', 'course-a', 'course-c', 'course-b'],
+    ['Complete By Date', 'Ascending', 'course-a', 'course-b', 'course-c'],
+    ['Complete By Date', 'Descending', 'course-c', 'course-b', 'course-a'],
+  ])
+    .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
+      // When
+      sortCards(sortBy, sortDirection);
 
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-c');
-  });
-
-  it('should correctly sort descending by name', () => {
-    // When
-    sortCards('Course Name', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-c');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort ascending by diagnostic score', () => {
-    // When
-    sortCards('Diagnostic Score', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort descending by diagnostic score', () => {
-    // When
-    sortCards('Diagnostic Score', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort ascending by passed sections', () => {
-    // When
-    sortCards('Passed Sections', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-c');
-    expect(newCards![1].id).toBe('course-a');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort descending by passed sections', () => {
-    // When
-    sortCards('Passed Sections', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-a');
-    expect(newCards![2].id).toBe('course-c');
-  });
-
-  it('should correctly sort ascending by enrolled date', () => {
-    // When
-    sortCards('Enrolled Date', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-c');
-  });
-
-  it('should correctly sort descending by enrolled date', () => {
-    // When
-    sortCards('Enrolled Date', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-c');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort ascending by last accessed date', () => {
-    // When
-    sortCards('Last Accessed Date', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort descending by last accessed date', () => {
-    // When
-    sortCards('Last Accessed Date', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort ascending by complete by date', () => {
-    // When
-    sortCards('Complete By Date', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-c');
-  });
-
-  it('should correctly sort descending by complete by date', () => {
-    // When
-    sortCards('Complete By Date', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-c');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-a');
-  });
+      // Then
+      const newCards = document.getElementById('course-cards')?.children;
+      expect(newCards?.length).toEqual(3);
+      expect(newCards![0].id).toBe(firstId);
+      expect(newCards![1].id).toBe(secondId);
+      expect(newCards![2].id).toBe(thirdId);
+    });
 });
 
 describe('sortCards completed', () => {
@@ -266,29 +148,21 @@ describe('sortCards completed', () => {
     `).window.document;
   });
 
-  it('should correctly sort ascending by completed date', () => {
-    // When
-    sortCards('Completed Date', 'Ascending');
+  cases([
+    ['Completed Date', 'Ascending', 'course-a', 'course-c', 'course-b'],
+    ['Completed Date', 'Descending', 'course-b', 'course-c', 'course-a'],
+  ])
+    .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
+      // When
+      sortCards(sortBy, sortDirection);
 
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort descending by completed date', () => {
-    // When
-    sortCards('Completed Date', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-a');
-  });
+      // Then
+      const newCards = document.getElementById('course-cards')?.children;
+      expect(newCards?.length).toEqual(3);
+      expect(newCards![0].id).toBe(firstId);
+      expect(newCards![1].id).toBe(secondId);
+      expect(newCards![2].id).toBe(thirdId);
+    });
 });
 
 describe('sortCards available', () => {
@@ -321,75 +195,23 @@ describe('sortCards available', () => {
     `).window.document;
   });
 
-  it('should correctly sort ascending by brand', () => {
-    // When
-    sortCards('Brand', 'Ascending');
+  cases([
+    ['Brand', 'Ascending', 'course-b', 'course-c', 'course-a'],
+    ['Brand', 'Descending', 'course-a', 'course-c', 'course-b'],
+    ['Category', 'Ascending', 'course-a', 'course-c', 'course-b'],
+    ['Category', 'Descending', 'course-b', 'course-c', 'course-a'],
+    ['Topic', 'Ascending', 'course-c', 'course-b', 'course-a'],
+    ['Topic', 'Descending', 'course-a', 'course-b', 'course-c'],
+  ])
+    .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
+      // When
+      sortCards(sortBy, sortDirection);
 
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort descending by brand', () => {
-    // When
-    sortCards('Brand', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort ascending by category', () => {
-    // When
-    sortCards('Category', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-b');
-  });
-
-  it('should correctly sort descending by category', () => {
-    // When
-    sortCards('Category', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-b');
-    expect(newCards![1].id).toBe('course-c');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort ascending by topic', () => {
-    // When
-    sortCards('Topic', 'Ascending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-c');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-a');
-  });
-
-  it('should correctly sort descending by topic', () => {
-    // When
-    sortCards('Topic', 'Descending');
-
-    // Then
-    const newCards = document.getElementById('course-cards')?.children;
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].id).toBe('course-a');
-    expect(newCards![1].id).toBe('course-b');
-    expect(newCards![2].id).toBe('course-c');
-  });
+      // Then
+      const newCards = document.getElementById('course-cards')?.children;
+      expect(newCards?.length).toEqual(3);
+      expect(newCards![0].id).toBe(firstId);
+      expect(newCards![1].id).toBe(secondId);
+      expect(newCards![2].id).toBe(thirdId);
+    });
 });
