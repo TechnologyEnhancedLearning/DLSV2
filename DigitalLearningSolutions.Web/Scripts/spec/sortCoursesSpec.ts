@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom';
+import { cases } from 'jasmine-parameterized';
 
 // @ts-ignore
 global.document = {
@@ -10,309 +11,42 @@ global.document = {
 import { sortCards, getSortValue } from '../learningPortal/sortCourses';
 
 describe('getSortValue', () => {
-  it('should correctly extract the course name field', () => {
-    // Given
-    const expectedName = 'example name';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <span name="name">${expectedName}</span>
-        </div>
-      </body>
-      </html>
-    `).window.document;
+  cases([
+    ['name', 'example name', 'Course Name', 'example name'],
+    ['started-date', '01/01/2020', 'Enrolled Date', new Date('01/01/2020')],
+    ['accessed-date', '02/02/2020', 'Last Accessed Date', new Date('02/02/2020')],
+    ['complete-by-date', '03/03/2020', 'Complete By Date', new Date('03/03/2020')],
+    ['complete-by-date', '-', 'Complete By Date', new Date(0)],
+    ['diagnostic-score', '6/10', 'Diagnostic Score', 6],
+    ['', '', 'Diagnostic Score', -1],
+    ['passed-sections', '8/10', 'Passed Sections', 8],
+    ['', '', 'Passed Sections', -1],
+    ['brand', 'Brand 1', 'Brand', 'Brand 1'],
+    ['category', 'Category 1', 'Category', 'Category 1'],
+    ['', '', 'Category', ''],
+    ['topic', 'Topic 1', 'Topic', 'Topic 1'],
+    ['', '', 'Topic', ''],
+  ])
+    .it('should correctly extract sort by fields', ([fieldName, fieldValue, sortBy, expectedSortValue]) => {
+      // Given
+      global.document = new JSDOM(`
+        <html>
+        <head></head>
+        <body>
+          <div class="course-card">
+            <span name="${fieldName}">${fieldValue}</span>
+          </div>
+        </body>
+        </html>
+      `).window.document;
 
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualName = getSortValue(courseCard, 'Course Name');
+      // When
+      const courseCard = document.getElementsByClassName('course-card')[0];
+      const actualValue = getSortValue(courseCard, sortBy);
 
-    // Then
-    expect(actualName).toEqual(expectedName);
-  });
-
-  it('should correctly extract the started date field', () => {
-    // Given
-    const startedDateString = '01/01/2020';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <p name="started-date">${startedDateString}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualStartedDate = getSortValue(courseCard, 'Enrolled Date');
-
-    // Then
-    expect(actualStartedDate).toEqual(new Date(startedDateString));
-  });
-
-  it('should correctly extract the accessed date field', () => {
-    // Given
-    const accessedDateString = '02/02/2020';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <p name="accessed-date">${accessedDateString}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualAccessedDate = getSortValue(courseCard, 'Last Accessed Date');
-
-    // Then
-    expect(actualAccessedDate).toEqual(new Date(accessedDateString));
-  });
-
-  it('should correctly extract the complete by date field', () => {
-    // Given
-    const completeByDateString = '03/03/2020';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <p name="complete-by-date">${completeByDateString}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualCompleteByDate = getSortValue(courseCard, 'Complete By Date');
-
-    // Then
-    expect(actualCompleteByDate).toEqual(new Date(completeByDateString));
-  });
-
-  it('should correctly extract the diagnostic score field', () => {
-    // Given
-    const expectedDiagnosticScore = 6;
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <p name="diagnostic-score">${expectedDiagnosticScore}/10</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualDiagnosticScore = getSortValue(courseCard, 'Diagnostic Score');
-
-    // Then
-    expect(actualDiagnosticScore).toEqual(expectedDiagnosticScore);
-  });
-
-  it('should correctly extract the passed sections field', () => {
-    // Given
-    const expectedPassedSections = 8;
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card"> 
-          <p name="passed-sections">${expectedPassedSections}/10</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualPassedSections = getSortValue(courseCard, 'Passed Sections');
-
-    // Then
-    expect(actualPassedSections).toEqual(expectedPassedSections);
-  });
-
-  it('should correctly extract the complete by date field with null data', () => {
-    // Given
-    const expectedCompleteByDate = new Date(0);
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-          <p name="complete-by-date">-</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualCompleteByDate = getSortValue(courseCard, 'Complete By Date');
-
-    // Then
-    expect(actualCompleteByDate).toEqual(expectedCompleteByDate);
-  });
-
-  it('should correctly extract the diagnostic score field with null data', () => {
-    // Given
-    const expectedDiagnosticScore = -1;
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualDiagnosticScore = getSortValue(courseCard, 'Diagnostic Score');
-
-    // Then
-    expect(actualDiagnosticScore).toEqual(expectedDiagnosticScore);
-  });
-
-  it('should correctly extract the passed sections field with null data', () => {
-    // Given
-    const expectedPassedSections = -1;
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualPassedSections = getSortValue(courseCard, 'Passed Sections');
-
-    // Then
-    expect(actualPassedSections).toEqual(expectedPassedSections);
-  });
-
-  it('should correctly extract the brand field', () => {
-    // Given
-    const expectedBrand = 'Brand 1';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-          <p name="brand">${expectedBrand}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualBrand = getSortValue(courseCard, 'Brand');
-
-    // Then
-    expect(actualBrand).toEqual(expectedBrand);
-  });
-
-  it('should correctly extract the category field', () => {
-    // Given
-    const expectedCategory = 'Category 1';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-          <p name="category">${expectedCategory}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualCategory = getSortValue(courseCard, 'Category');
-
-    // Then
-    expect(actualCategory).toEqual(expectedCategory);
-  });
-
-  it('should correctly extract the category field with null data', () => {
-    // Given
-    const expectedCategory = '';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualCategory = getSortValue(courseCard, 'Category');
-
-    // Then
-    expect(actualCategory).toEqual(expectedCategory);
-  });
-
-  it('should correctly extract the topic field', () => {
-    // Given
-    const expectedTopic = 'Topic 1';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-          <p name="topic">${expectedTopic}</p>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualTopic = getSortValue(courseCard, 'Topic');
-
-    // Then
-    expect(actualTopic).toEqual(expectedTopic);
-  });
-
-  it('should correctly extract the topic field with null data', () => {
-    // Given
-    const expectedTopic = '';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div class="course-card">
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualTopic = getSortValue(courseCard, 'Topic');
-
-    // Then
-    expect(actualTopic).toEqual(expectedTopic);
-  });
+      // Then
+      expect(actualValue).toEqual(expectedSortValue);
+    });
 });
 
 describe('sortCards current', () => {

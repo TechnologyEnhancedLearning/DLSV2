@@ -43,6 +43,7 @@
     "fork-ts-checker-webpack-plugin": "^5.0.14",
     "glob": "7.0.4",
     "jasmine": "^3.6.1",
+    "jasmine-parameterized": "^0.4.0",
     "jasmine-ts": "^0.3.0",
     "jsdom": "^16.3.0",
     "node-sass": "4.14.1",
