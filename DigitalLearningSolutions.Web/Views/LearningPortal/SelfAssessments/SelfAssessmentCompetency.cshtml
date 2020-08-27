@@ -8,7 +8,6 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1 class="competency-group-header">@Model.Competency.CompetencyGroup</h1>
-<span>Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies</span>
 
 
 <h3 class="nhsuk-u-margin-top-6 nhsuk-u-margin-bottom-4">@Model.Competency.Description</h3>
@@ -18,7 +17,10 @@
     <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
   }
 
-  <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit">
+  <div class="nhsuk-u-margin-top-4">
+    Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
+  </div>
+  <button class="nhsuk-button nhsuk-u-margin-top-1" type="submit">
     Save and continue
   </button>
 </form>
