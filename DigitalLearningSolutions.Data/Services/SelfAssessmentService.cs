@@ -160,8 +160,7 @@
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {CompetencyTables}
-                        WHERE LAR.Result IS NOT NULL",
+                    FROM {CompetencyTables}",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
