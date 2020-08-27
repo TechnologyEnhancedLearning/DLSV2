@@ -41,7 +41,7 @@ function sortAndDisplayCards(
 export function getSortValue(courseCard: Element, sortBy: string): string | number | Date {
   switch (sortBy) {
     case 'Course Name':
-      return getElementText(courseCard, 'name');
+      return getElementText(courseCard, 'name').toLocaleLowerCase();
     case 'Enrolled Date':
       return parseDate(getElementText(courseCard, 'started-date'));
     case 'Last Accessed Date':
@@ -55,11 +55,11 @@ export function getSortValue(courseCard: Element, sortBy: string): string | numb
     case 'Passed Sections':
       return parseInt(getElementText(courseCard, 'passed-sections').split('/')[0] || '-1', 10);
     case 'Brand':
-      return getElementText(courseCard, 'brand');
+      return getElementText(courseCard, 'brand').toLocaleLowerCase();
     case 'Category':
-      return getElementText(courseCard, 'category');
+      return getElementText(courseCard, 'category').toLocaleLowerCase();
     case 'Topic':
-      return getElementText(courseCard, 'topic');
+      return getElementText(courseCard, 'topic').toLocaleLowerCase();
     default:
       return '';
   }
