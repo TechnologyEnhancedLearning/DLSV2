@@ -6,10 +6,11 @@
   )
 {
   var meanScore = questionType.Average(question => question.Result);
+  var scoreText = meanScore == null
+    ? "<span class ='nhsuk-u-visually-hidden'>No answers submitted </span>&nbsp;-"
+    : meanScore.Value.ToString("F1") + "&nbsp;/&nbsp;10";
   <span class="score">
-    @Html.Raw(
-      $@"{questionType.Key} (average score):&nbsp;{meanScore?.ToString("F1") ?? "<span class ='nhsuk-u-visually-hidden'>No answer submitted </span>&nbsp;-"}"
-      )&nbsp;/&nbsp;10
+    @Html.Raw($@"{questionType.Key} (average score):&nbsp;{scoreText}")
   </span>
   <br>
 }

@@ -38,8 +38,7 @@
                 <div class="nhsuk-grid-column-one-third">
                   <h5 class="review-question">@question.Question</h5>
                   <p class="review-result">
-                    @Html.Raw($@"{question.Result?.ToString() ?? "<span class ='nhsuk-u-visually-hidden'>No answer submitted </span>-"}")
-                    / 10
+                    @(Html.Raw(question.Result == null ?  "<span class ='nhsuk-u-visually-hidden'> No answer submitted</span>-" : question.Result + " / 10"))
                   </p>
                 </div>
               }
