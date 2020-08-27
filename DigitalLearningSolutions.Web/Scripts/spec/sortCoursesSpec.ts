@@ -12,7 +12,7 @@ import { sortCards, getSortValue } from '../learningPortal/sortCourses';
 
 describe('getSortValue', () => {
   cases([
-    ['name', 'example name', 'Course Name', 'example name'],
+    ['name', 'Example name', 'Course Name', 'example name'],
     ['started-date', '01/01/2020', 'Enrolled Date', new Date('01/01/2020')],
     ['accessed-date', '02/02/2020', 'Last Accessed Date', new Date('02/02/2020')],
     ['complete-by-date', '03/03/2020', 'Complete By Date', new Date('03/03/2020')],
@@ -21,10 +21,10 @@ describe('getSortValue', () => {
     ['', '', 'Diagnostic Score', -1],
     ['passed-sections', '8/10', 'Passed Sections', 8],
     ['', '', 'Passed Sections', -1],
-    ['brand', 'Brand 1', 'Brand', 'Brand 1'],
-    ['category', 'Category 1', 'Category', 'Category 1'],
+    ['brand', 'Brand 1', 'Brand', 'brand 1'],
+    ['category', 'Category 1', 'Category', 'category 1'],
     ['', '', 'Category', ''],
-    ['topic', 'Topic 1', 'Topic', 'Topic 1'],
+    ['topic', 'Topic 1', 'Topic', 'topic 1'],
     ['', '', 'Topic', ''],
   ])
     .it('should correctly extract sort by fields', ([fieldName, fieldValue, sortBy, expectedSortValue]) => {
@@ -66,14 +66,14 @@ describe('sortCards current', () => {
             <p name="passed-sections">4/6</p>
           </div>
           <div class="course-card" id="course-c"> 
-            <span name="name">C: Course</span>
+            <span name="name">c: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="complete-by-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
           <div class="course-card" id="course-a"> 
-            <span name="name">A: Course</span>
+            <span name="name">A: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="passed-sections">0/6</p>
@@ -120,7 +120,7 @@ describe('sortCards completed', () => {
       <body>
         <div id="course-cards">
           <div class="course-card" id="course-a"> 
-            <span name="name">A: Course</span>
+            <span name="name">a: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
             <p name="completed-date">22-3-2010</p>
@@ -135,7 +135,7 @@ describe('sortCards completed', () => {
             <p name="diagnostic-score">0</p>
           </div>
           <div class="course-card" id="course-c"> 
-            <span name="name">C: Course</span>
+            <span name="name">c: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
