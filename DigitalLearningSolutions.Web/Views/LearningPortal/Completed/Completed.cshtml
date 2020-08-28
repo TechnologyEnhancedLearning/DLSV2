@@ -23,16 +23,32 @@
     {
       <p class="nhsuk-u-margin-top-4" role="alert"><b>No data to display</b></p>
     }
+    else
+    {
+      <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+        @if (Model.SearchString == null)
+        {
+          <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        }
+        else
+        {
+          var count = Model.CompletedCourses.Count();
+          <span role="alert" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
+        }
+      </p>
 
-    <div id="course-cards">
-      @foreach (var completedCourse in Model.CompletedCourses)
-      {
-        <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />
-      }
-    </div>
+      <div id="course-cards">
+        @foreach (var completedCourse in Model.CompletedCourses)
+        {
+          <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />
+        }
+      </div>
+    }
+
   </div>
 </div>
 
 @section scripts {
+  <script src="@Url.Content("~/js/learningPortal/searchCourses.js")" asp-append-version="true"></script>
   <script src="@Url.Content("~/js/learningPortal/sortCourses.js")" asp-append-version="true"></script>
 }
