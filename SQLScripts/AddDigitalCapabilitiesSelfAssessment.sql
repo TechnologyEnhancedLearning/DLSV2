@@ -20,7 +20,7 @@ SET IDENTITY_INSERT AssessmentQuestions ON
 INSERT INTO AssessmentQuestions (Id, Question, MaxValueDescription, MinValueDescription) VALUES
     (1, 'Where are you now', 'Very confident', 'Beginner'),
     (2, 'Where do you need to be', 'Very confident', 'Beginner'),
-    (3, 'To what extent to you agree', 'Strongly agree', 'Strongly disagree')
+    (3, 'To what extent do you agree', 'Strongly agree', 'Strongly disagree')
 SET IDENTITY_INSERT AssessmentQuestions OFF
     
 SET IDENTITY_INSERT Competencies ON
