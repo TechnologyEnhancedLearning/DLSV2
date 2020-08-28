@@ -13,6 +13,7 @@
         private CurrentCourse[] currentCourses;
         private NamedItem[] currentCoursesWithSelfAssessment;
         private CompletedCourse[] completedCourses;
+        private AvailableCourse[] availableCourses;
 
         [SetUp]
         public void SetUp()
@@ -35,6 +36,12 @@
                 CompletedCourseHelper.CreateDefaultCompletedCourse(71, "First course"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(72, "Course 20: the best course"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(73, "Last course 30105 and a lot of other text")
+            };
+            availableCourses = new[]
+            {
+                AvailableCourseHelper.CreateDefaultAvailableCourse(71, "One great course"),
+                AvailableCourseHelper.CreateDefaultAvailableCourse(72, "The course v1"),
+                AvailableCourseHelper.CreateDefaultAvailableCourse(73, "Course 1: some more title text")
             };
         }
 
@@ -88,6 +95,25 @@
         {
             // When
             var result = SearchHelper.FilterNamedItems(completedCourses, searchString);
+            var filteredIds = result.Select(course => course.Id);
+
+            // Then
+            filteredIds.Should().Equal(expectedIds);
+        }
+
+        [TestCase(null, new[] { 71, 72, 73 })]
+        [TestCase("1", new[] { 72, 73 })]
+        [TestCase("v1", new[] { 72 })]
+        [TestCase("10", new int[] { })]
+        [TestCase(":", new[] { 73 })]
+        [TestCase("one great", new[] { 71 })]
+        public void Available_courses_should_be_filtered_correctly(
+            string searchString,
+            int[] expectedIds
+        )
+        {
+            // When
+            var result = SearchHelper.FilterNamedItems(availableCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
