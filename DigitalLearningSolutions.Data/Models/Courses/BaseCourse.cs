@@ -9,6 +9,12 @@
             set => CourseName = value;
         }
         public int CustomisationID { get; set; }
+
+        public override int Id
+        {
+            get => CustomisationID;
+            set => CustomisationID = value;
+        }
         public bool HasDiagnostic { get; set; }
         public bool HasLearning { get; set; }
         public bool IsAssessed { get; set; }
