@@ -35,7 +35,8 @@
                 sortBy,
                 sortDirection
             );
-            CompletedCourses = sortedItems.Cast<CompletedCourse>().Select(completedCourse =>
+            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString);
+            CompletedCourses = filteredItems.Cast<CompletedCourse>().Select(completedCourse =>
                 new CompletedCourseViewModel(completedCourse, config)
             );
         }

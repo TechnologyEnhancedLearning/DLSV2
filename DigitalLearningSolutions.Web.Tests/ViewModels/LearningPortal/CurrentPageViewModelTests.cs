@@ -167,27 +167,5 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             course.IsEnrolledWithGroup.Should().Be(expectedIsGroup);
             course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
-
-        [TestCase("A:", new int[] { 73 })]
-        [TestCase(null, new int[] { 73, 71, 72 })]
-        [TestCase("course", new int[] { 73, 71, 72 })]
-        [TestCase("Course", new int[] { 73, 71, 72 })]
-        public void Current_courses_should_be_filtered_correctly(
-            string searchString,
-            int[] expectedIds
-        )
-        {
-            var filteredModel = new CurrentPageViewModel(
-                currentCourses,
-                config,
-                searchString,
-                "Course Name",
-                "Ascending",
-                null,
-                null
-            );
-            var filteredIds = filteredModel.CurrentCourses.Select(course => (course as CurrentCourseViewModel).Id);
-            filteredIds.Should().Equal(expectedIds);
-        }
     }
 }
