@@ -34,7 +34,8 @@
                 sortBy,
                 sortDirection
             );
-            AvailableCourses = sortedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
+            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString);
+            AvailableCourses = filteredItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
         }
     }
 }
