@@ -26,6 +26,18 @@
     }
     else
     {
+      <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+        @if (Model.SearchString == null)
+        {
+          <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+        }
+        else
+        {
+          var count = Model.AvailableCourses.Count();
+          <span role="alert" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
+        }
+      </p>
+
       <div id="course-cards">
         @foreach (var availableCourse in Model.AvailableCourses)
         {
@@ -38,5 +50,6 @@
 </div>
 
 @section scripts {
+  <script src="@Url.Content("~/js/learningPortal/searchCourses.js")" asp-append-version="true"></script>
   <script src="@Url.Content("~/js/learningPortal/sortCourses.js")" asp-append-version="true"></script>
 }
