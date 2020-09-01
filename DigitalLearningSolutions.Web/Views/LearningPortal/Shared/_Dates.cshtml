@@ -13,7 +13,7 @@
   <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
   <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
-  <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@Model.LastAccessedDate.ToShortDateString()</p>
+  <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@(Model.LastAccessedDate?.ToShortDateString() ?? "-")</p>
 </div>
 @if (Model is CurrentCourseViewModel currentCourseViewModel)
 {
