@@ -33,8 +33,9 @@
                 null,
                 "Completed Date",
                 "Descending",
-                bannerText
-                );
+                bannerText,
+                1
+            );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

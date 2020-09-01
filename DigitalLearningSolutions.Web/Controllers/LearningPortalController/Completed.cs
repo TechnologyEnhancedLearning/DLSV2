@@ -6,7 +6,13 @@
 
     public partial class LearningPortalController
     {
-        public IActionResult Completed(string? searchString = null, string sortBy = SortByOptionTexts.CompletedDate, string sortDirection = BaseCoursePageViewModel.DescendingText)
+        [Route("/LearningPortal/Completed/{page=1:int}")]
+        public IActionResult Completed(
+            string? searchString = null,
+            string sortBy = SortByOptionTexts.CompletedDate,
+            string sortDirection = BaseCoursePageViewModel.DescendingText,
+            int page = 1
+        )
         {
             var completedCourses = courseService.GetCompletedCourses(GetCandidateId());
             var bannerText = GetBannerText();
@@ -16,7 +22,8 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                bannerText
+                bannerText,
+                page
             );
             return View("Completed/Completed", model);
         }

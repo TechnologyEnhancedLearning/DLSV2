@@ -2,6 +2,6 @@
 {
     public class SelfAssessmentCardViewModel : NamedItemViewModel
     {
-        public string Name { get; set; }
+        public override string Name { get; set; }
     }
 }

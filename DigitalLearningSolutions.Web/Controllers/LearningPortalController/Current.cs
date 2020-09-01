@@ -10,7 +10,13 @@
 
     public partial class LearningPortalController
     {
-        public IActionResult Current(string? searchString = null, string sortBy = SortByOptionTexts.LastAccessed, string sortDirection = BaseCoursePageViewModel.DescendingText)
+        [Route("/LearningPortal/Current/{page=1:int}")]
+        public IActionResult Current(
+            string? searchString = null,
+            string sortBy = SortByOptionTexts.LastAccessed,
+            string sortDirection = BaseCoursePageViewModel.DescendingText,
+            int page = 1
+        )
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
@@ -22,7 +28,8 @@
                 sortBy,
                 sortDirection,
                 selfAssessment,
-                bannerText
+                bannerText,
+                page
             );
             return View("Current/Current", model);
         }

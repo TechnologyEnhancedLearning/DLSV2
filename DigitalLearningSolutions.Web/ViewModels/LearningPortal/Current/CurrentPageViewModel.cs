@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -30,18 +31,22 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortBy,
             string sortDirection,
             SelfAssessment? selfAssessment,
-            string? bannerText
-        ) : base(searchString, sortBy, sortDirection, bannerText)
+            string? bannerText,
+            int page
+        ) : base(searchString, sortBy, sortDirection, bannerText, page)
         {
-
             var sortedItems = SortingHelper.SortAllItems(
                 currentCourses,
                 selfAssessment,
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString);
-            CurrentCourses = filteredItems.Select<NamedItem, NamedItemViewModel>(course =>
+            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString).ToList();
+
+            var paginatedItems = PaginateItems(filteredItems);
+            TotalPages = (int)Math.Ceiling(filteredItems.Count / (double)ItemsPerPage);
+
+            CurrentCourses = paginatedItems.Select<NamedItem, NamedItemViewModel>(course =>
             {
                 if (course is CurrentCourse currentCourse)
                 {
