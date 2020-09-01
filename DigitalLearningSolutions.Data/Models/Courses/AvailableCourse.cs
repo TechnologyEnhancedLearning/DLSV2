@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
-    public class AvailableCourse : BaseCourse
+    public class AvailableCourse : BaseLearningItem
     {
         public string Brand { get; set; }
-
         public string? Category
         {
             get => category;
@@ -16,7 +15,6 @@
 
             set => topic = GetValidOrNull(value);
         }
-
         public int DelegateStatus { get; set; }
 
         private string? category;

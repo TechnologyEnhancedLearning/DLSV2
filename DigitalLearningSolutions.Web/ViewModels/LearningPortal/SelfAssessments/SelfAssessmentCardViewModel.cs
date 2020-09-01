@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
-    public class SelfAssessmentCardViewModel : NamedItemViewModel
+    using DigitalLearningSolutions.Data.Models;
+
+    public class SelfAssessmentCardViewModel : CurrentLearningItemViewModel
     {
-        public override string Name { get; set; }
+        public SelfAssessmentCardViewModel(CurrentLearningItem course) : base(course) { }
     }
 }

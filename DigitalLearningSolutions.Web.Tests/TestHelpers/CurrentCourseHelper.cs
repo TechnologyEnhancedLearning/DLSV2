@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
     using System;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
 
@@ -31,8 +29,8 @@
             )
         {
             return new CurrentCourse {
-                CustomisationID = customisationId,
-                CourseName = courseName,
+                Id = customisationId,
+                Name = courseName,
                 HasDiagnostic = hasDiagnostic,
                 HasLearning = hasLearning,
                 IsAssessed = isAssessed,
@@ -48,12 +46,6 @@
                 EnrollmentMethodID = enrollmentMethodId,
                 PLLocked = locked
             };
-        }
-
-        public static NamedItemViewModel NamedItemViewModelFromController(LearningPortalController controller)
-        {
-            var model = CurrentPageViewModelFromController(controller);
-            return model.CurrentCourses.First();
         }
 
         public static CurrentPageViewModel CurrentPageViewModelFromController(LearningPortalController controller)

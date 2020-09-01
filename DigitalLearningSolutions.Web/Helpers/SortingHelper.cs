@@ -8,81 +8,49 @@
 
     public static class SortingHelper
     {
-        public static IEnumerable<NamedItem> SortAllItems(
-            IEnumerable<BaseCourse> courses,
-            SelfAssessment? selfAssessment,
+        public static IEnumerable<BaseLearningItem> SortAllItems(
+            IEnumerable<BaseLearningItem> learningItems,
             string sortBy,
             string sortDirection
         )
         {
-            if (sortBy == SortByOptionTexts.CourseName)
-            {
-                return SortByName(courses, selfAssessment, sortDirection);
-            }
-
-            IEnumerable<NamedItem> sortedCourses = SortCourses(courses, sortBy, sortDirection);
-            if (selfAssessment == null)
-            {
-                return sortedCourses;
-            }
-
-            return sortDirection == BaseCoursePageViewModel.DescendingText
-                ? sortedCourses.Append(selfAssessment)
-                : sortedCourses.Prepend(selfAssessment);
-        }
-        private static IEnumerable<NamedItem> SortByName(
-            IEnumerable<BaseCourse> courses,
-            SelfAssessment? selfAssessment,
-            string sortDirection
-        )
-        {
-            var allItems = new List<NamedItem>(courses);
-            if (selfAssessment != null)
-            {
-                allItems.Add(selfAssessment);
-            }
-
-            return sortDirection == BaseCoursePageViewModel.DescendingText
-                ? allItems.OrderByDescending(course => course.Name)
-                : allItems.OrderBy(course => course.Name);
-        }
-
-        private static IEnumerable<BaseCourse> SortCourses(IEnumerable<BaseCourse> courses, string sortBy, string sortDirection)
-        {
             return sortBy switch
-            {
+                {
+                SortByOptionTexts.Name => sortDirection == BaseCoursePageViewModel.DescendingText
+                    ? learningItems.OrderByDescending(course => course.Name)
+                    : learningItems.OrderBy(course => course.Name),
                 SortByOptionTexts.StartedDate => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<StartedCourse>().OrderByDescending(course => course.StartedDate)
-                    : courses.Cast<StartedCourse>().OrderBy(course => course.StartedDate),
+                    ? learningItems.Cast<StartedLearningItem>().OrderByDescending(course => course.StartedDate)
+                    : learningItems.Cast<StartedLearningItem>().OrderBy(course => course.StartedDate),
                 SortByOptionTexts.LastAccessed => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<StartedCourse>().OrderByDescending(course => course.LastAccessed)
-                    : courses.Cast<StartedCourse>().OrderBy(course => course.LastAccessed),
+                    ? learningItems.Cast<StartedLearningItem>().OrderByDescending(course => course.LastAccessed)
+                    : learningItems.Cast<StartedLearningItem>().OrderBy(course => course.LastAccessed),
                 SortByOptionTexts.DiagnosticScore => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<StartedCourse>().OrderByDescending(course => course.HasDiagnostic)
+                    ? learningItems.Cast<StartedLearningItem>().OrderByDescending(course => course.HasDiagnostic)
                         .ThenByDescending(course => course.DiagnosticScore)
-                    : courses.Cast<StartedCourse>().OrderBy(course => course.HasDiagnostic)
+                    : learningItems.Cast<StartedLearningItem>().OrderBy(course => course.HasDiagnostic)
                         .ThenBy(course => course.DiagnosticScore),
                 SortByOptionTexts.PassedSections => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<StartedCourse>().OrderByDescending(course => course.IsAssessed)
+                    ? learningItems.Cast<StartedLearningItem>().OrderByDescending(course => course.IsAssessed)
                         .ThenByDescending(course => course.Passes)
-                    : courses.Cast<StartedCourse>().OrderBy(course => course.IsAssessed)
+                    : learningItems.Cast<StartedLearningItem>().OrderBy(course => course.IsAssessed)
                         .ThenBy(course => course.Passes),
                 SortByOptionTexts.CompletedDate => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<CompletedCourse>().OrderByDescending(course => course.Completed)
-                    : courses.Cast<CompletedCourse>().OrderBy(course => course.Completed),
+                    ? learningItems.Cast<CompletedCourse>().OrderByDescending(course => course.Completed)
+                    : learningItems.Cast<CompletedCourse>().OrderBy(course => course.Completed),
                 SortByOptionTexts.CompleteByDate => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<CurrentCourse>().OrderByDescending(course => course.CompleteByDate)
-                    : courses.Cast<CurrentCourse>().OrderBy(course => course.CompleteByDate),
+                    ? learningItems.Cast<CurrentLearningItem>().OrderByDescending(course => course.CompleteByDate)
+                    : learningItems.Cast<CurrentLearningItem>().OrderBy(course => course.CompleteByDate),
                 SortByOptionTexts.Brand => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<AvailableCourse>().OrderByDescending(course => course.Brand)
-                    : courses.Cast<AvailableCourse>().OrderBy(course => course.Brand),
+                    ? learningItems.Cast<AvailableCourse>().OrderByDescending(course => course.Brand)
+                    : learningItems.Cast<AvailableCourse>().OrderBy(course => course.Brand),
                 SortByOptionTexts.Category => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<AvailableCourse>().OrderByDescending(course => course.Category)
-                    : courses.Cast<AvailableCourse>().OrderBy(course => course.Category),
+                    ? learningItems.Cast<AvailableCourse>().OrderByDescending(course => course.Category)
+                    : learningItems.Cast<AvailableCourse>().OrderBy(course => course.Category),
                 SortByOptionTexts.Topic => sortDirection == BaseCoursePageViewModel.DescendingText
-                    ? courses.Cast<AvailableCourse>().OrderByDescending(course => course.Topic)
-                    : courses.Cast<AvailableCourse>().OrderBy(course => course.Topic),
-                _ => courses
+                    ? learningItems.Cast<AvailableCourse>().OrderByDescending(course => course.Topic)
+                    : learningItems.Cast<AvailableCourse>().OrderBy(course => course.Topic),
+                _ => learningItems
             };
         }
     }

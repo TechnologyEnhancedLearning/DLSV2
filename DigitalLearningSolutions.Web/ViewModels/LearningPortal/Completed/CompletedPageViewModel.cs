@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 
         public override SelectList SortByOptions { get; } = new SelectList(new[]
         {
-            SortByOptionTexts.CourseName,
+            SortByOptionTexts.Name,
             SortByOptionTexts.StartedDate,
             SortByOptionTexts.LastAccessed,
             SortByOptionTexts.CompletedDate
@@ -32,11 +32,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 
             var sortedItems = SortingHelper.SortAllItems(
                 completedCourses,
-                null,
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString).ToList();
+            var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
             var paginatedItems = PaginateItems(filteredItems);
             CompletedCourses = paginatedItems.Cast<CompletedCourse>().Select(completedCourse =>
                 new CompletedCourseViewModel(completedCourse, config)

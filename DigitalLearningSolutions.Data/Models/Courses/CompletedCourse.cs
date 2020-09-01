@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class CompletedCourse : StartedCourse
+    public class CompletedCourse : StartedLearningItem
     {
         public DateTime Completed { get; set; }
         public DateTime? Evaluated { get; set; }
