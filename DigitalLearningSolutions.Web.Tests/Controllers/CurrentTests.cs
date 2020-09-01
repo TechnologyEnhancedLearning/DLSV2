@@ -43,7 +43,8 @@
                 "Last Accessed Date",
                 "Descending",
                 selfAssessment,
-                bannerText
+                bannerText,
+                1
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

@@ -30,7 +30,8 @@
                 null,
                 "Course Name",
                 "Ascending",
-                ""
+                "",
+                1
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);

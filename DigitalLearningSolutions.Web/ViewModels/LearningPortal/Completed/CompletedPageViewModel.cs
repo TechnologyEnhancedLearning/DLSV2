@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -25,8 +25,9 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            string? bannerText
-        ) : base (searchString, sortBy, sortDirection, bannerText)
+            string? bannerText,
+            int page
+        ) : base (searchString, sortBy, sortDirection, bannerText, page)
         {
 
             var sortedItems = SortingHelper.SortAllItems(
@@ -35,8 +36,9 @@
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString);
-            CompletedCourses = filteredItems.Cast<CompletedCourse>().Select(completedCourse =>
+            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString).ToList();
+            var paginatedItems = PaginateItems(filteredItems);
+            CompletedCourses = paginatedItems.Cast<CompletedCourse>().Select(completedCourse =>
                 new CompletedCourseViewModel(completedCourse, config)
             );
         }

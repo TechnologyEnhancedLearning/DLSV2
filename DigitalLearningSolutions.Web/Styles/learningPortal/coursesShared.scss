@@ -196,3 +196,28 @@ div#search {
 .button-small {
   padding: 2px 10px
 }
+
+.nhsuk-pagination__list {
+  display: flex;
+}
+
+.pagination-button-container {
+  width: 45%;
+}
+
+.page-indicator-container {
+  width: 10%;
+}
+
+button.nhsuk-pagination__link {
+  border: none;
+  background-color: transparent;
+  color: $nhsuk-link-color;
+
+  &:hover {
+    color: $nhsuk-link-hover-color;
+  }
+  &:active {
+    color: $nhsuk-link-active-color;
+  }
+}

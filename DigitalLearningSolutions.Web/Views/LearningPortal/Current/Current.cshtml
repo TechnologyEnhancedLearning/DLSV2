@@ -12,40 +12,76 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Current Courses</h1>
     <h2 class="page-subheading">@Model.BannerText</h2>
-    <form method="get" role="search">
+    <form method="get" role="search" asp-action="Current" asp-route-page="@Model.Page">
       <div class="nhsuk-grid-row sort-and-search">
         <partial name="Shared/_CoursePageSearch" model="Model" />
         <partial name="Shared/_CoursePageSort" model="Model" />
       </div>
-    </form>
-    <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
-    @if (!Model.CurrentCourses.Any())
-    {
-      <p class="nhsuk-u-margin-top-4" role="alert">
-        <b>No data to display</b>
-      </p>
-    }
-    else
-    {
-      <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
-        @if (Model.SearchString == null)
-        {
-          <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
-        }
-        else
-        {
-          var count = Model.CurrentCourses.Count();
+      <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
+      @if (!Model.CurrentCourses.Any())
+      {
+        <p class="nhsuk-u-margin-top-4" role="alert">
+          <b>No data to display</b>
+        </p>
+      }
+      else
+      {
+        <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+          @if (Model.SearchString == null)
+          {
+            <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+          }
+          else
+          {
+            var count = Model.CurrentCourses.Count();
           <span role="alert" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
-        }
-      </p>
+          }
+        </p>
 
-      <div id="course-cards">
-        @foreach (var currentCourse in Model.CurrentCourses)
-        {
-          <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentCourse" />
-        }
-      </div>
-    }
+        <div id="course-cards">
+          @foreach (var currentCourse in Model.CurrentCourses)
+          {
+            <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentCourse" />
+          }
+        </div>
+      }
+      @if (Model.TotalPages > 1)
+      {
+        <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
+          <ul class="nhsuk-list nhsuk-pagination__list">
+            <div class="pagination-button-container">
+              @if (Model.Page != 1)
+              {
+                <li class="nhsuk-pagination-item--previous">
+                  <button class="nhsuk-pagination__link nhsuk-pagination__link--prev" type="submit" asp-action="Current" asp-route-page="@(Model.Page - 1)">
+                    <span class="nhsuk-pagination__title">Previous</span>
+                    <svg class="nhsuk-icon nhsuk-icon__arrow-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4.1 12.3l2.7 3c.2.2.5.2.7 0 .1-.1.1-.2.1-.3v-2h11c.6 0 1-.4 1-1s-.4-1-1-1h-11V9c0-.2-.1-.4-.3-.5h-.2c-.1 0-.3.1-.4.2l-2.7 3c0 .2 0 .4.1.6z"></path>
+                    </svg>
+                  </button>
+                </li>
+              }
+            </div>
+            <div class="page-indicator-container">
+              <span>@Model.Page of @Model.TotalPages</span>
+            </div>
+            <div class="pagination-button-container">
+              @if (Model.Page < Model.TotalPages)
+              {
+                <li class="nhsuk-pagination-item--next">
+                  <button class="nhsuk-pagination__link nhsuk-pagination__link--next" type="submit" asp-action="Current" asp-route-page="@(Model.Page + 1)">
+                    <span class="nhsuk-pagination__title">Next</span>
+                    <svg class="nhsuk-icon nhsuk-icon__arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M19.6 11.66l-2.73-3A.51.51 0 0 0 16 9v2H5a1 1 0 0 0 0 2h11v2a.5.5 0 0 0 .32.46.39.39 0 0 0 .18 0 .52.52 0 0 0 .37-.16l2.73-3a.5.5 0 0 0 0-.64z"></path>
+                    </svg>
+                  </button>
+                </li>
+              }
+            </div>
+          </ul>
+        </nav>
+      }
+    </form>
 
   </div>
 </div>

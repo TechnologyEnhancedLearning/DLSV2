@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
     using FluentAssertions;
@@ -72,7 +73,8 @@
                 null,
                 "Course Name",
                 "Ascending",
-                null
+                null,
+                1
             );
         }
 
@@ -149,6 +151,70 @@
             course.PassedSections.Should().Be(expectedPasses);
             course.Sections.Should().Be(expectedSections);
             course.LaunchUrl.Should().Be(expectedLaunchUrl);
+        }
+
+
+
+        [Test]
+        public void Completed_courses_should_default_to_returning_the_first_ten_courses()
+        {
+            var courses = new[] {
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "a course 1"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "b course 2"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "c course 3"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "d course 4"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "e course 5"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "f course 6"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "g course 7"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "h course 8"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "i course 9"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "j course 10"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "k course 11"),
+            };
+
+            model = new CompletedPageViewModel(
+                courses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null,
+                1
+            );
+
+            model.CompletedCourses.Count().Should().Be(10);
+            model.CompletedCourses.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
+        }
+
+        [Test]
+        public void Completed_courses_should_correctly_return_the_second_page_of_courses()
+        {
+            var courses = new[] {
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "a course 1"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "b course 2"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "c course 3"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "d course 4"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "e course 5"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "f course 6"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "g course 7"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "h course 8"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "i course 9"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "j course 10"),
+                CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "k course 11"),
+            };
+
+            model = new CompletedPageViewModel(
+                courses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null,
+                2
+            );
+
+            model.CompletedCourses.Count().Should().Be(1);
+            model.CompletedCourses.First().Name.Should().Be("k course 11");
         }
     }
 }

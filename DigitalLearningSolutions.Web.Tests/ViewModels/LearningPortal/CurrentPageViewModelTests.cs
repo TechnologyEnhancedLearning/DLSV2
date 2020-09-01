@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FluentAssertions;
@@ -79,7 +80,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Course Name",
                 "Ascending",
                 null,
-                null
+                null,
+                1
             );
         }
 
@@ -166,6 +168,72 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             course.UserIsSupervisor.Should().Be(expectedIsSupervisor);
             course.IsEnrolledWithGroup.Should().Be(expectedIsGroup);
             course.LaunchUrl.Should().Be(expectedLaunchUrl);
+        }
+
+        [Test]
+        public void Current_courses_should_default_to_returning_the_first_ten_courses()
+        {
+            var courses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "a course 1"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "b course 2"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "c course 3"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "d course 4"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "e course 5"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "f course 6"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "g course 7"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "h course 8"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "i course 9"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
+            };
+
+            model = new CurrentPageViewModel(
+                courses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null,
+                null,
+                1
+            );
+
+            model.CurrentCourses.Count().Should().Be(10);
+            model.CurrentCourses.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
+        }
+
+        [Test]
+        public void Current_courses_should_correctly_return_the_second_page_of_courses()
+        {
+            var courses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "a course 1"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "b course 2"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "c course 3"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "d course 4"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "e course 5"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "f course 6"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "g course 7"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "h course 8"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "i course 9"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
+            };
+
+            model = new CurrentPageViewModel(
+                courses,
+                config,
+                null,
+                "Course Name",
+                "Ascending",
+                null,
+                null,
+                2
+            );
+
+            model.CurrentCourses.Count().Should().Be(1);
+            model.CurrentCourses.First().Name.Should().Be("k course 11");
         }
     }
 }

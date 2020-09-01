@@ -6,7 +6,7 @@
 
     public abstract class BaseCourseViewModel : NamedItemViewModel
     {
-        public string Name { get; }
+        public sealed override string Name { get; set; }
         public int Id { get; }
         public bool HasDiagnosticAssessment { get; }
         public bool HasLearningContent { get; }
