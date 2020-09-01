@@ -1,0 +1,1 @@
+INSERT INTO CandidateAssessments (CandidateID, SelfAssessmentID) VALUES (254480, 1)
