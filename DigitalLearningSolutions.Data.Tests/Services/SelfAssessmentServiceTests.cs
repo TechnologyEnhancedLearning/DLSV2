@@ -36,7 +36,7 @@
             var result = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId);
 
             // Then
-            var expectedSelfAssessment = SelfAssessmentHelper.SelfAssessment(
+            var expectedSelfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(
                 SelfAssessmentId,
                 "Digital Capability Self Assessment",
                 "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision.",
@@ -61,13 +61,13 @@
         public void GetNthCompetency_returns_first_competency()
         {
             // Given
-            var expectedCompetency = SelfAssessmentHelper.Competency(
+            var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 competencyGroup: "Data, information and content",
                 description: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {
-                    SelfAssessmentHelper.AssessmentQuestion(id: 1, question: "Where are you now"),
-                    SelfAssessmentHelper.AssessmentQuestion(id: 2, question: "Where do you need to be")
+                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(id: 1, question: "Where are you now"),
+                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(id: 2, question: "Where do you need to be")
                 }
             );
 
@@ -82,13 +82,13 @@
         public void GetNthCompetency_returns_last_competency()
         {
             // Given
-            var expectedCompetency = SelfAssessmentHelper.Competency(
+            var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {
-                    SelfAssessmentHelper.AssessmentQuestion(
+                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(
                         id: 3,
                         maxValueDescription: "Strongly agree",
                         minValueDescription: "Strongly disagree",

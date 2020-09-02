@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
@@ -28,7 +29,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "d: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
-                SelfAssessmentHelper.SelfAssessment(74, "a: self assessment"),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
             };
             completedCourses = new[]
