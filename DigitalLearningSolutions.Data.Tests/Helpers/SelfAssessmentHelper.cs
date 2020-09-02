@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -10,7 +11,10 @@
             int id = 1,
             string name = "name",
             string description = "description",
-            int numberOfCompetencies = 0
+            int numberOfCompetencies = 0,
+            DateTime? startedDate = null,
+            DateTime? lastAccessed = null,
+            DateTime? completeByDate = null
         )
         {
             return new SelfAssessment()
@@ -18,7 +22,10 @@
                 Id = id,
                 Description = description,
                 Name = name,
-                NumberOfCompetencies = numberOfCompetencies
+                NumberOfCompetencies = numberOfCompetencies,
+                StartedDate = startedDate ?? DateTime.Now,
+                LastAccessed = lastAccessed,
+                CompleteByDate = completeByDate
             };
         }
 

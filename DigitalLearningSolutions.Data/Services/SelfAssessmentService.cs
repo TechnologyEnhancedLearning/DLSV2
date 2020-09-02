@@ -74,7 +74,10 @@
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
-                             COUNT(C.ID)         AS NumberOfCompetencies
+                             COUNT(C.ID)         AS NumberOfCompetencies,
+                             CA.StartedDate,
+                             CA.LastAccessed,
+                             CA.CompleteByDate
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -83,7 +86,7 @@
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
                 new { candidateId }
             );
         }

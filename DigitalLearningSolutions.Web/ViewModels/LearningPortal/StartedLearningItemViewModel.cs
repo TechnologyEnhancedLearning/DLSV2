@@ -7,7 +7,7 @@
     public abstract class StartedLearningItemViewModel : BaseLearningItemViewModel
     {
         public DateTime StartedDate { get; }
-        public DateTime LastAccessedDate { get; }
+        public DateTime? LastAccessedDate { get; }
         public int? DiagnosticScore { get; }
         public int PassedSections { get; }
         public int Sections { get; }
