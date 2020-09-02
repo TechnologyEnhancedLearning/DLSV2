@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -14,6 +15,7 @@
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
+        void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -193,6 +195,25 @@
                 logger.LogWarning(
                     "Not updating self assessment last accessed date as db update failed. " +
                     $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                );
+            }
+        }
+
+        public void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments
+                        SET CompleteByDate = @date
+                        WHERE SelfAssessmentID = @selfAssessmentId
+                          AND CandidateID = @candidateId",
+                new { date = completeByDate, selfAssessmentId, candidateId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting self assessment complete by date as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, complete by date: {completeByDate}"
                 );
             }
         }

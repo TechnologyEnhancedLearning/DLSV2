@@ -58,7 +58,7 @@
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not setting complete by date as db update failed. " +
+                    "Not setting current course complete by date as db update failed. " +
                     $"Progress id: {progressId}, candidate id: {candidateId}, complete by date: {completeByDate}"
                 );
             }

@@ -1,15 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public partial class LearningPortalControllerTests
@@ -276,6 +279,121 @@
             // Then
             result.Should().BeViewResult().WithViewName("Error/Forbidden");
             controller.Response.StatusCode.Should().Be(403);
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_post_action_valid_complete_by_date_should_call_the_course_service()
+        {
+            // Given
+            const int selfAssessmentId = 1;
+            const int newDay = 29;
+            const int newMonth = 7;
+            const int newYear = 3020;
+            var newDate = new DateTime(newYear, newMonth, newDay);
+
+            // When
+            controller.SetSelfAssessmentCompleteByDate(newDay, newMonth, newYear, selfAssessmentId);
+
+            // Then
+            A.CallTo(
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, newDate)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_post_action_empty_complete_by_date_should_call_the_course_service()
+        {
+            // Given
+            const int selfAssessmentId = 1;
+
+            // When
+            controller.SetSelfAssessmentCompleteByDate(0, 0, 0, selfAssessmentId);
+
+            // Then
+            A.CallTo(
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, null)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_post_action_valid_complete_by_date_should_redirect_to_current_courses()
+        {
+            // Given
+            const int selfAssessmentId = 1;
+
+            // When
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(29, 7, 3020, selfAssessmentId);
+
+            // Then
+            result.ActionName.Should().Be("Current");
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_post_action_invalid_complete_by_date_should_not_call_the_course_service()
+        {
+            // Given
+            const int selfAssessmentId = 1;
+
+            // When
+            controller.SetSelfAssessmentCompleteByDate(31, 2, 2020, selfAssessmentId);
+
+            // Then
+            A.CallTo(
+                () => selfAssessmentService.SetCompleteByDate(selfAssessmentId, CandidateId, A<DateTime>._)
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_post_action_invalid_complete_by_date_should_redirect_with_an_error_message()
+        {
+            // Given
+            const int selfAssessmentId = 1;
+            const int day = 31;
+            const int month = 2;
+            const int year = 2020;
+
+            // When
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(day, month, year, selfAssessmentId);
+
+            // Then
+            result.ActionName.Should().Be("SetSelfAssessmentCompleteByDate");
+            result.RouteValues["day"].Should().Be(day);
+            result.RouteValues["month"].Should().Be(month);
+            result.RouteValues["year"].Should().Be(year);
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_get_action_without_self_assessment_should_return_403()
+        {
+            // Given
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(null);
+
+            // When
+            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, 2020);
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/Forbidden");
+            controller.Response.StatusCode.Should().Be(403);
+        }
+
+        [Test]
+        public void SetSelfAssessmentCompleteByDate_get_action_should_return_view_result()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+            var expectedModel = new SelfAssessmentCardViewModel(selfAssessment)
+            {
+                CompleteByValidationResult = new DateValidator.ValidationResult(2, 2, DateTime.Now.Year + 1)
+            };
+
+            // When
+            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, DateTime.Now.Year + 1);
+
+            // Then
+            result.Should().BeViewResult()
+                .WithViewName("Current/SetCompleteByDate")
+                .Model.Should().BeEquivalentTo(expectedModel);
         }
     }
 }

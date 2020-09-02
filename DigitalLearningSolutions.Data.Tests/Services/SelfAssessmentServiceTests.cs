@@ -433,6 +433,54 @@
             }
         }
 
+        [Test]
+        public void SetCompleteByDate_sets_complete_by_date()
+        {
+            // Given
+            var expectedCompleteByDate = new DateTime(2020, 1, 1);
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetCompleteByDate(SelfAssessmentId, CandidateId, expectedCompleteByDate);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+
+                // Then
+                updatedSelfAssessment.CompleteByDate.Should().Be(expectedCompleteByDate);
+            }
+        }
+
+        [Test]
+        public void SetCompleteByDate_resets_complete_by_date()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetCompleteByDate(SelfAssessmentId, CandidateId, null);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+
+                // Then
+                updatedSelfAssessment.CompleteByDate.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void SetCompleteBy_does_not_update_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 2;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.Now);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+
+                // Then
+                updatedSelfAssessment.CompleteByDate.Should().BeNull();
+            }
+        }
+
         private IEnumerable<int> GetAssessmentResults(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId)
         {
             return connection.Query<int>(

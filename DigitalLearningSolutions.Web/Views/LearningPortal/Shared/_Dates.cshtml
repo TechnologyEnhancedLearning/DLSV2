@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model StartedLearningItemViewModel
 
 <div class="nhsuk-grid-column-one-quarter">
@@ -19,27 +20,35 @@
 </div>
 @if (Model is CurrentLearningItemViewModel currentLearningItemViewModel)
 {
-  <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
-    <div class="nhsuk-grid-column-three-quarters">
-      <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>
-      <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-    </div>
-    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-      <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
-        @(currentLearningItemViewModel.CompleteByDate == null ?
+<div class="nhsuk-grid-row nhsuk-grid-column-one-half">
+  <div class="nhsuk-grid-column-three-quarters">
+    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>
+    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
+  </div>
+  <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+    <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
+      @(currentLearningItemViewModel.CompleteByDate == null ?
           Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
           Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
-      </p>
-    </div>
-    @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
-    {
-      <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCurrentCourseCompleteByDate" asp-route-id="@Model.Id">
-          Edit
-        </a>
-      </div>
-    }
+    </p>
   </div>
+  @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
+  {
+    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCurrentCourseCompleteByDate" asp-route-id="@Model.Id">
+        Edit
+      </a>
+    </div>
+  }
+  else if (currentLearningItemViewModel is SelfAssessmentCardViewModel)
+  {
+    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetSelfAssessmentCompleteByDate">
+        Edit
+      </a>
+    </div>
+  }
+</div>
 }
 @if (Model is CompletedCourseViewModel completedCourseViewModel)
 {
