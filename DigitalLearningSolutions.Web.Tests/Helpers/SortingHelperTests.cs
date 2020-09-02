@@ -142,8 +142,8 @@
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCurrentCourses = SortingHelper.SortAllItems(currentCourses, null, sortBy, sortDirection);
-            var sortedIds = sortedCurrentCourses.Select(course => ((CurrentCourse)course).CustomisationID);
+            var sortedCurrentCourses = SortingHelper.SortAllItems(currentCourses, sortBy, sortDirection);
+            var sortedIds = sortedCurrentCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
@@ -160,8 +160,8 @@
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCompletedCourses = SortingHelper.SortAllItems(completedCourses, null, sortBy, sortDirection);
-            var sortedIds = sortedCompletedCourses.Select(course => ((CompletedCourse)course).CustomisationID);
+            var sortedCompletedCourses = SortingHelper.SortAllItems(completedCourses, sortBy, sortDirection);
+            var sortedIds = sortedCompletedCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
@@ -178,8 +178,8 @@
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCompletedCourses = SortingHelper.SortAllItems(availableCourses, null, sortBy, sortDirection);
-            var sortedIds = sortedCompletedCourses.Select(course => ((AvailableCourse)course).CustomisationID);
+            var sortedCompletedCourses = SortingHelper.SortAllItems(availableCourses, sortBy, sortDirection);
+            var sortedIds = sortedCompletedCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
     }

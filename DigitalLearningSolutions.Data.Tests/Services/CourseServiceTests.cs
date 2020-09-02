@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -14,6 +15,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     public class CourseServiceTests
     {
         private CourseService courseService;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            MapperHelper.SetUpFluentMapper();
+        }
 
         [SetUp]
         public void Setup()
@@ -33,8 +40,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             var expectedFirstCourse = new CurrentCourse
             {
-                CourseName = "Office 2013 Essentials for the Workplace - Erin Test 01",
-                CustomisationID = 15853,
+                Name = "Office 2013 Essentials for the Workplace - Erin Test 01",
+                Id = 15853,
                 LastAccessed = new DateTime(2019, 1, 22, 8, 20, 39, 133),
                 StartedDate = new DateTime(2016, 7, 6, 11, 12, 15, 393),
                 DiagnosticScore = 0,
@@ -64,8 +71,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             var expectedFirstCourse = new CompletedCourse
             {
-                CourseName = "Staying Safe Online Test PLA Issue - test",
-                CustomisationID = 25140,
+                Name = "Staying Safe Online Test PLA Issue - test",
+                Id = 25140,
                 StartedDate = new DateTime(2018, 5, 29, 9, 11, 45, 943),
                 Completed = new DateTime(2018, 5, 29, 14, 28, 5, 557),
                 LastAccessed = new DateTime(2018, 5, 29, 14, 28, 5, 020),
@@ -93,8 +100,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             var expectedFirstCourse = new AvailableCourse
             {
-                CourseName = "5 Jan Test - New",
-                CustomisationID = 18438,
+                Name = "5 Jan Test - New",
+                Id = 18438,
                 Brand = "Local content",
                 Topic = "Microsoft Office",
                 Category = "Digital Workplace",

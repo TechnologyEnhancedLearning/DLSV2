@@ -21,8 +21,8 @@
         {
             return new AvailableCourse
             {
-                CustomisationID = customisationId,
-                CourseName = courseName,
+                Id = customisationId,
+                Name = courseName,
                 HasDiagnostic = hasDiagnostic,
                 HasLearning = hasLearning,
                 IsAssessed = isAssessed,

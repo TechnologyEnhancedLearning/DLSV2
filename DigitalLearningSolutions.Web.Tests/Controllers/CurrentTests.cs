@@ -62,7 +62,7 @@
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCompleteByDate(currentCourse.CustomisationID, null, null, null);
+            var result = controller.SetCompleteByDate(currentCourse.Id, null, null, null);
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/Forbidden");

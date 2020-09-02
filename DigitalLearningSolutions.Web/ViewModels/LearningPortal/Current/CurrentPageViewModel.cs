@@ -12,11 +12,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 
     public class CurrentPageViewModel : BaseCoursePageViewModel
     {
-        public IEnumerable<NamedItemViewModel> CurrentCourses { get; }
+        public IEnumerable<CurrentLearningItemViewModel> CurrentCourses { get; }
 
         public override SelectList SortByOptions { get; } = new SelectList(new[]
         {
-            SortByOptionTexts.CourseName,
+            SortByOptionTexts.Name,
             SortByOptionTexts.StartedDate,
             SortByOptionTexts.LastAccessed,
             SortByOptionTexts.CompleteByDate,
@@ -35,28 +35,30 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             int page
         ) : base(searchString, sortBy, sortDirection, bannerText, page)
         {
+            var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
+            if (selfAssessment != null)
+            {
+                allItems.Add(selfAssessment);
+            }
+
             var sortedItems = SortingHelper.SortAllItems(
-                currentCourses,
-                selfAssessment,
+                allItems,
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString).ToList();
+            var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
 
             var paginatedItems = PaginateItems(filteredItems);
             TotalPages = (int)Math.Ceiling(filteredItems.Count / (double)ItemsPerPage);
 
-            CurrentCourses = paginatedItems.Select<NamedItem, NamedItemViewModel>(course =>
+            CurrentCourses = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(course =>
             {
                 if (course is CurrentCourse currentCourse)
                 {
                     return new CurrentCourseViewModel(currentCourse, config);
                 }
 
-                return new SelfAssessmentCardViewModel()
-                {
-                    Name = course.Name
-                };
+                return new SelfAssessmentCardViewModel((SelfAssessment)course);
             });
         }
     }

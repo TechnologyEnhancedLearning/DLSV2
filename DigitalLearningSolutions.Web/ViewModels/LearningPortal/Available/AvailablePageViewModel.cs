@@ -13,7 +13,7 @@
 
         public override SelectList SortByOptions { get; } = new SelectList(new[]
         {
-            SortByOptionTexts.CourseName,
+            SortByOptionTexts.Name,
             SortByOptionTexts.Brand,
             SortByOptionTexts.Category,
             SortByOptionTexts.Topic
@@ -31,11 +31,10 @@
         {
             var sortedItems = SortingHelper.SortAllItems(
                 availableCourses,
-                null,
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterNamedItems(sortedItems, SearchString).ToList();
+            var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
             var paginatedItems = PaginateItems(filteredItems);
             AvailableCourses = paginatedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
         }

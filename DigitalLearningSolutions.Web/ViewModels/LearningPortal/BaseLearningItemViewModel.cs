@@ -1,26 +1,24 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
-    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public abstract class BaseCourseViewModel : NamedItemViewModel
+    public abstract class BaseLearningItemViewModel
     {
-        public sealed override string Name { get; set; }
+        public string Name { get; set; }
         public int Id { get; }
         public bool HasDiagnosticAssessment { get; }
         public bool HasLearningContent { get; }
         public bool HasLearningAssessmentAndCertification { get; }
-        public string LaunchUrl { get; }
 
-        protected BaseCourseViewModel(BaseCourse course, IConfiguration config)
+        protected BaseLearningItemViewModel(BaseLearningItem course)
         {
-            Name = course.CourseName;
-            Id = course.CustomisationID;
+            Name = course.Name;
+            Id = course.Id;
             HasDiagnosticAssessment = course.HasDiagnostic;
             HasLearningContent = course.HasLearning;
             HasLearningAssessmentAndCertification = course.IsAssessed;
-            LaunchUrl = config.GetLaunchUrl(course.CustomisationID);
         }
     }
 }

@@ -16,21 +16,21 @@
         // documentation on the different scorer strategies.
         private const int MatchCutoffScore = 80;
 
-        public static IEnumerable<NamedItem> FilterNamedItems(IEnumerable<NamedItem> namedItems, string? searchString)
+        public static IEnumerable<BaseLearningItem> FilterLearningItems(IEnumerable<BaseLearningItem> learningItems, string? searchString)
         {
             if (searchString == null)
             {
-                return namedItems;
+                return learningItems;
             }
 
             var query = new CurrentCourse()
             {
-                CourseName = searchString
+                Name = searchString
             };
 
             var results = Process.ExtractAll(
                 query,
-                namedItems,
+                learningItems,
                 currentCourse => currentCourse.Name.ToLower(),
                 ScorerCache.Get<PartialRatioScorer>(),
                 MatchCutoffScore

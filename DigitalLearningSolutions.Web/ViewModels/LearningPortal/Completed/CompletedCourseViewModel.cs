@@ -5,18 +5,20 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public class CompletedCourseViewModel : StartedCourseViewModel
+    public class CompletedCourseViewModel : StartedLearningItemViewModel
     {
         public DateTime CompletedDate { get; }
         public DateTime? EvaluatedDate { get; }
         public string EvaluateUrl { get; }
+        public string LaunchUrl { get; }
 
 
-        public CompletedCourseViewModel(CompletedCourse course, IConfiguration config) : base(course, config)
+        public CompletedCourseViewModel(CompletedCourse course, IConfiguration config) : base(course)
         {
             CompletedDate = course.Completed;
             EvaluatedDate = course.Evaluated;
             EvaluateUrl = config.GetEvaluateUrl(course.ProgressID);
+            LaunchUrl = config.GetLaunchUrl(course.Id);
         }
 
         public string FinaliseButtonText()

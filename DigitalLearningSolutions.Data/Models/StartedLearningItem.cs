@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Courses
+﻿namespace DigitalLearningSolutions.Data.Models
 {
     using System;
 
-    public abstract class StartedCourse : BaseCourse
+    public abstract class StartedLearningItem : BaseLearningItem
     {
         public DateTime StartedDate { get; set; }
         public DateTime LastAccessed { get; set; }

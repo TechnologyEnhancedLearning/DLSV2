@@ -11,7 +11,7 @@
     public class SearchHelperTests
     {
         private CurrentCourse[] currentCourses;
-        private NamedItem[] currentCoursesWithSelfAssessment;
+        private CurrentLearningItem[] currentCoursesWithSelfAssessment;
         private CompletedCourse[] completedCourses;
         private AvailableCourse[] availableCourses;
 
@@ -24,7 +24,7 @@
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
             };
-            currentCoursesWithSelfAssessment = new NamedItem[]
+            currentCoursesWithSelfAssessment = new CurrentLearningItem[]
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "d: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
@@ -56,7 +56,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterNamedItems(currentCourses, searchString);
+            var result = SearchHelper.FilterLearningItems(currentCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -74,7 +74,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterNamedItems(currentCoursesWithSelfAssessment, searchString);
+            var result = SearchHelper.FilterLearningItems(currentCoursesWithSelfAssessment, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -94,7 +94,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterNamedItems(completedCourses, searchString);
+            var result = SearchHelper.FilterLearningItems(completedCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -113,7 +113,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterNamedItems(availableCourses, searchString);
+            var result = SearchHelper.FilterLearningItems(availableCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then

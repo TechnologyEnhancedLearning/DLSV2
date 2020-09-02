@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
     using System;
-    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Configuration;
 
-    public abstract class StartedCourseViewModel : BaseCourseViewModel
+    public abstract class StartedLearningItemViewModel : BaseLearningItemViewModel
     {
         public DateTime StartedDate { get; }
         public DateTime LastAccessedDate { get; }
@@ -13,7 +13,7 @@
         public int Sections { get; }
         public int ProgressId { get; }
 
-        protected StartedCourseViewModel(StartedCourse course, IConfiguration config) : base(course, config)
+        protected StartedLearningItemViewModel(StartedLearningItem course) : base(course)
         {
             StartedDate = course.StartedDate;
             LastAccessedDate = course.LastAccessed;

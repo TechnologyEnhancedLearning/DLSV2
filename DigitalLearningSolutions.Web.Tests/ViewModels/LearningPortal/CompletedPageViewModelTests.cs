@@ -25,8 +25,8 @@
             {
                 new CompletedCourse
                 {
-                    CustomisationID = 71,
-                    CourseName = "B: Course",
+                    Id = 71,
+                    Name = "B: Course",
                     HasDiagnostic = true,
                     HasLearning = true,
                     IsAssessed = true,
@@ -39,8 +39,8 @@
                 },
                 new CompletedCourse
                 {
-                    CustomisationID = 72,
-                    CourseName = "C: Course",
+                    Id = 72,
+                    Name = "C: Course",
                     HasDiagnostic = true,
                     HasLearning = true,
                     IsAssessed = false,
@@ -53,8 +53,8 @@
                 },
                 new CompletedCourse
                 {
-                    CustomisationID = 73,
-                    CourseName = "A: Course",
+                    Id = 73,
+                    Name = "A: Course",
                     HasDiagnostic = false,
                     HasLearning = true,
                     IsAssessed = true,

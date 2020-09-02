@@ -40,7 +40,7 @@
             offset = OffsetFromPageNumber(page);
         }
 
-        protected IEnumerable<NamedItem> PaginateItems(IList<NamedItem> items) {
+        protected IEnumerable<BaseLearningItem> PaginateItems(IList<BaseLearningItem> items) {
             if (items.Count > ItemsPerPage)
             {
                 items = items.Skip(offset).Take(ItemsPerPage).ToList();
@@ -49,13 +49,13 @@
             return items;
         }
 
-        private int OffsetFromPageNumber(int pageNumber) =>
+        private static int OffsetFromPageNumber(int pageNumber) =>
             (pageNumber - 1) * ItemsPerPage;
     }
     public static class SortByOptionTexts
     {
         public const string
-            CourseName = "Course Name",
+            Name = "Course Name",
             StartedDate = "Enrolled Date",
             LastAccessed = "Last Accessed Date",
             CompleteByDate = "Complete By Date",

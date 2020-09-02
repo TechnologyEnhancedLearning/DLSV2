@@ -59,7 +59,7 @@
         public IActionResult SetCompleteByDate(int id, int? day, int? month, int? year)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var course = currentCourses.FirstOrDefault(c => c.CustomisationID == id);
+            var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
                 logger.LogWarning($"Attempt to set complete by date for course with id {id} which is not a current course for user with id {GetCandidateId()}");
@@ -88,7 +88,7 @@
         public IActionResult RemoveCurrentCourseConfirmation(int id)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var course = currentCourses.FirstOrDefault(c => c.CustomisationID == id);
+            var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
                 logger.LogWarning($"Attempt to remove course with id {id} which is not a current course for user with id {GetCandidateId()}");
