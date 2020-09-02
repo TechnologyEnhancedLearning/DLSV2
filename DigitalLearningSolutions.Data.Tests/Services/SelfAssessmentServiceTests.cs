@@ -401,6 +401,38 @@
             }
         }
 
+        [Test]
+        public void UpdateLastAccessed_sets_last_accessed_to_current_time()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+
+                // Then
+                updatedSelfAssessment.LastAccessed.Should().NotBeNull();
+                updatedSelfAssessment.LastAccessed.Should().BeCloseTo(DateTime.Now, 1000);
+            }
+        }
+
+        [Test]
+        public void UpdateLastAccessed_does_not_update_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 2;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.UpdateLastAccessed(invalidSelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+
+                // Then
+                updatedSelfAssessment.LastAccessed.Should().BeNull();
+            }
+        }
+
         private IEnumerable<int> GetAssessmentResults(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId)
         {
             return connection.Query<int>(
