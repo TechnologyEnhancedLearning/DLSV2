@@ -58,10 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                     return new CurrentCourseViewModel(currentCourse, config);
                 }
 
-                return new SelfAssessmentCardViewModel((SelfAssessment)course)
-                {
-                    Name = course.Name
-                };
+                return new SelfAssessmentCardViewModel((SelfAssessment)course);
             });
         }
     }
