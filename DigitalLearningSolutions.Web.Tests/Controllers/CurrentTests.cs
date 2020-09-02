@@ -62,7 +62,7 @@
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCompleteByDate(currentCourse.Id, null, null, null);
+            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, null, null, null);
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/Forbidden");
@@ -80,7 +80,7 @@
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCompleteByDate(3, null, null, null);
+            var result = controller.SetCurrentCourseCompleteByDate(3, null, null, null);
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/PageNotFound");
@@ -98,7 +98,7 @@
             const int progressId = 1;
 
             // When
-            controller.SetCompleteByDate(1, newDay, newMonth, newYear, 1);
+            controller.SetCurrentCourseCompleteByDate(1, newDay, newMonth, newYear, 1);
 
             // Then
             A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
@@ -111,7 +111,7 @@
             const int progressId = 1;
 
             // When
-            controller.SetCompleteByDate(1, 0, 0, 0, 1);
+            controller.SetCurrentCourseCompleteByDate(1, 0, 0, 0, 1);
 
             // Then
             A.CallTo(() => courseService.SetCompleteByDate(progressId, CandidateId, null)).MustHaveHappened();
@@ -121,7 +121,7 @@
         public void Setting_a_valid_complete_by_date_should_redirect_to_current_courses()
         {
             // When
-            var result = (RedirectToActionResult)controller.SetCompleteByDate(1, 29, 7, 3020, 1);
+            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(1, 29, 7, 3020, 1);
 
             // Then
             result.ActionName.Should().Be("Current");
@@ -131,7 +131,7 @@
         public void Setting_an_invalid_complete_by_date_should_not_call_the_course_service()
         {
             // When
-            controller.SetCompleteByDate(1, 31, 2, 2020, 1);
+            controller.SetCurrentCourseCompleteByDate(1, 31, 2, 2020, 1);
 
             // Then
             A.CallTo(() => courseService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
@@ -147,10 +147,10 @@
             const int year = 2020;
 
             // When
-            var result = (RedirectToActionResult)controller.SetCompleteByDate(id, day, month, year, 1);
+            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(id, day, month, year, 1);
 
             // Then
-            result.ActionName.Should().Be("SetCompleteByDate");
+            result.ActionName.Should().Be("SetCurrentCourseCompleteByDate");
             result.RouteValues["id"].Should().Be(id);
             result.RouteValues["day"].Should().Be(day);
             result.RouteValues["month"].Should().Be(month);

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
@@ -11,7 +10,6 @@
         public bool IsEnrolledWithGroup { get; }
         public bool IsLocked { get; }
         public bool SelfEnrolled { get; }
-        public DateValidator.ValidationResult? CompleteByValidationResult { get; set; }
         public string LaunchUrl { get; }
 
         public CurrentCourseViewModel(CurrentCourse course, IConfiguration config) : base(course)
