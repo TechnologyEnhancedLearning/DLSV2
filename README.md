@@ -38,6 +38,7 @@ We've added data for the Digital Capabilities self assessment to the database. T
 2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the SQLScripts folder in the root of this repo.
 3. Add `USE [mbdbx101]` to the top of the script. This will ensure it runs on the mbdbx101 database
 4. Press the Execute button to run the script.
+5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
 
 ### Inspecting the database
 
@@ -107,7 +108,7 @@ These tests are in the DigitalLearningSolutions.Web.Tests project. No setup is r
 ## Running the data tests
 These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
 
-You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details. Make sure you've added the self assessment data to the test database as well, using the same process as for the main database.
+You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details. Make sure you've added the self assessment data to the test database as well and enrolled the test user on the self assessment, using the same process as for the main database.
 
 See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
