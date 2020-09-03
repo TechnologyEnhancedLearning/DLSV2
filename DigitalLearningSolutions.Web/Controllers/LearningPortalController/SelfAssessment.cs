@@ -21,6 +21,8 @@
                 return StatusCode(403);
             }
 
+            selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, GetCandidateId());
+
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment);
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
@@ -40,6 +42,8 @@
             {
                 return RedirectToAction("SelfAssessmentReview");
             }
+
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
 
             var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber, assessment.NumberOfCompetencies);
             return View("SelfAssessments/SelfAssessmentCompetency", model);
@@ -79,6 +83,8 @@
                 logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
                 return StatusCode(403);
             }
+
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
 
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
             var model = new SelfAssessmentReviewViewModel()

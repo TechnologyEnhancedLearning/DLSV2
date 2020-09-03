@@ -13,6 +13,7 @@
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
+        void UpdateLastAccessed(int selfAssessmentId, int candidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -177,6 +178,23 @@
                 groupedCompetency.AssessmentQuestions = group.Select(competency => competency.AssessmentQuestions.Single()).ToList();
                 return groupedCompetency;
             });
+        }
+
+        public void UpdateLastAccessed(int selfAssessmentId, int candidateId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
+                      WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId",
+                new { selfAssessmentId, candidateId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating self assessment last accessed date as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                );
+            }
         }
 
         private static string PrintResult(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result)

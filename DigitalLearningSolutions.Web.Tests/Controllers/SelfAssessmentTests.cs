@@ -5,7 +5,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
@@ -30,6 +29,20 @@
             result.Should().BeViewResult()
                 .WithViewName("SelfAssessments/SelfAssessmentDescription")
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void SelfAssessment_action_should_update_last_accessed()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+
+            // When
+            controller.SelfAssessment();
+
+            // Then
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
 
         [Test]
@@ -64,6 +77,20 @@
             result.Should().BeViewResult()
                 .WithViewName("SelfAssessments/SelfAssessmentCompetency")
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void SelfAssessmentCompetency_action_should_update_last_accessed()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+
+            // When
+            controller.SelfAssessmentCompetency(1);
+
+            // Then
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
 
         [Test]
@@ -197,6 +224,20 @@
             result.Should().BeViewResult()
                 .WithViewName("SelfAssessments/SelfAssessmentReview")
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void SelfAssessmentReview_action_should_update_last_accessed()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+
+            // When
+            controller.SelfAssessmentReview();
+
+            // Then
+            A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
 
         [Test]
