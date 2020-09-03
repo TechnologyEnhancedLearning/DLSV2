@@ -13,9 +13,11 @@
   <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
   <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
-  <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">@(Model.LastAccessedDate?.ToShortDateString() ?? "-")</p>
+  <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">
+    @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
+  </p>
 </div>
-@if (Model is CurrentCourseViewModel currentCourseViewModel)
+@if (Model is CurrentLearningItemViewModel currentLearningItemViewModel)
 {
   <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
     <div class="nhsuk-grid-column-three-quarters">
@@ -23,13 +25,13 @@
       <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
     </div>
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-      <p class="@currentCourseViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
-        @(currentCourseViewModel.CompleteByDate == null ?
+      <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
+        @(currentLearningItemViewModel.CompleteByDate == null ?
           Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
-          Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentCourseViewModel.DueByDescription()}</span>{currentCourseViewModel.CompleteByDate?.ToShortDateString()}"))
+          Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
       </p>
     </div>
-    @if (currentCourseViewModel.CompleteByDate == null || currentCourseViewModel.SelfEnrolled)
+    @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
     {
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCompleteByDate" asp-route-id="@Model.Id">

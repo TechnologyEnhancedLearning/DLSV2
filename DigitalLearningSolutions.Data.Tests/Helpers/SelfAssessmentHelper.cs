@@ -7,7 +7,7 @@
 
     public static class SelfAssessmentHelper
     {
-        public static SelfAssessment SelfAssessment(
+        public static SelfAssessment CreateDefaultSelfAssessment(
             int id = 1,
             string name = "name",
             string description = "description",
@@ -29,7 +29,7 @@
             };
         }
 
-        public static Competency Competency(
+        public static Competency CreateDefaultCompetency(
             int id = 1,
             string description = "description",
             string competencyGroup = "competencyGroup",
@@ -45,7 +45,7 @@
             };
         }
 
-        public static AssessmentQuestion AssessmentQuestion(
+        public static AssessmentQuestion CreateDefaultAssessmentQuestion(
             int id = 1,
             string question = "question",
             string maxValueDescription = "Very confident",

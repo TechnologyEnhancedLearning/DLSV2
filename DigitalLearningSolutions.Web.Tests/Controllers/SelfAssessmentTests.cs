@@ -4,6 +4,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -18,7 +19,7 @@
         public void SelfAssessment_action_should_return_view_result()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
             var expectedModel = new SelfAssessmentDescriptionViewModel(selfAssessment);
 
@@ -50,7 +51,7 @@
         {
             // Given
             const int competencyNumber = 1;
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId)).Returns(competency);
@@ -70,7 +71,7 @@
         {
             // Given
             const int competencyNumber = 3;
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId)).Returns(null);
@@ -100,7 +101,7 @@
         public void SelfAssessmentCompetency_Post_Should_Save_Answers()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
             const int assessmentQuestionId = 2;
@@ -132,7 +133,7 @@
         public void SelfAssessmentCompetency_Post_Redirects_To_Next_Question()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
             const int assessmentQuestionId = 2;
@@ -174,7 +175,7 @@
         public void SelfAssessmentReview_Should_Return_View()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>()
             {
                 new Competency() { CompetencyGroup = "A" },
@@ -202,7 +203,7 @@
         public void SelfAssessmentReview_Should_Have_Previous_Competency_Number_One_When_Empty()
         {
             // Given
-            var selfAssessment = SelfAssessmentHelper.SelfAssessment();
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
             var expectedModel = new SelfAssessmentReviewViewModel()
             {
