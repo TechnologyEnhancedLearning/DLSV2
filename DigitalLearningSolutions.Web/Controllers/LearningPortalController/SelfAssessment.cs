@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,47 @@
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1)
             };
             return View("SelfAssessments/SelfAssessmentReview", model);
+        }
+
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/CompleteBy")]
+        public IActionResult SetSelfAssessmentCompleteByDate(int day, int month, int year, int selfAssessmentId)
+        {
+            if (day == 0 && month == 0 && year == 0)
+            {
+                selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), null);
+                return RedirectToAction("Current");
+            }
+
+            var validationResult = DateValidator.ValidateDate(day, month, year);
+            if (!validationResult.DateValid)
+            {
+                return RedirectToAction("SetSelfAssessmentCompleteByDate", new { day, month, year });
+            }
+
+            var completeByDate = new DateTime(year, month, day);
+            selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), completeByDate);
+            return RedirectToAction("Current");
+        }
+
+        [Route("/LearningPortal/SelfAssessment/CompleteBy")]
+        public IActionResult SetSelfAssessmentCompleteByDate(int? day, int? month, int? year)
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            if (assessment == null)
+            {
+                logger.LogWarning($"Attempt to view self assessment complete by date edit page for candidate {GetCandidateId()} with no self assessment");
+                return StatusCode(403);
+            }
+
+            var model = new SelfAssessmentCardViewModel(assessment);
+
+            if (day != null && month != null && year != null)
+            {
+                model.CompleteByValidationResult = DateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            }
+
+            return View("Current/SetCompleteByDate", model);
         }
     }
 }
