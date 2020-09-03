@@ -36,7 +36,7 @@
 
         [HttpPost]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCompleteByDate(int id, int day, int month, int year, int progressId)
+        public IActionResult SetCurrentCourseCompleteByDate(int id, int day, int month, int year, int progressId)
         {
             if (day == 0 && month == 0 && year == 0)
             {
@@ -47,7 +47,7 @@
             var validationResult = DateValidator.ValidateDate(day, month, year);
             if (!validationResult.DateValid)
             {
-                return RedirectToAction("SetCompleteByDate", new { id, day, month, year });
+                return RedirectToAction("SetCurrentCourseCompleteByDate", new { id, day, month, year });
             }
 
             var completeByDate = new DateTime(year, month, day);
@@ -56,7 +56,7 @@
         }
 
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCompleteByDate(int id, int? day, int? month, int? year)
+        public IActionResult SetCurrentCourseCompleteByDate(int id, int? day, int? month, int? year)
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);

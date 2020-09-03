@@ -2,10 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
 
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
     {
         public DateTime? CompleteByDate { get; }
+        public DateValidator.ValidationResult? CompleteByValidationResult { get; set; }
 
         public CurrentLearningItemViewModel(
             CurrentLearningItem course

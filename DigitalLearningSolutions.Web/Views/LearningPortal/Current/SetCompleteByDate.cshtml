@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
-@model CurrentCourseViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@model CurrentLearningItemViewModel
 @{
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Set completion date";
 }
@@ -32,7 +32,7 @@
 
 <div>
   <div class="nhsuk-form-group" id="form-group">
-    <form asp-action="SetCompleteByDate" class="@formErrorClass">
+    <form asp-action="SetCurrentCourseCompleteByDate" class="@formErrorClass">
       <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
         <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
           Enter a completion date for @Model.Name
