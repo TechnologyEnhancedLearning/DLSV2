@@ -235,5 +235,37 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             model.CurrentCourses.Count().Should().Be(1);
             model.CurrentCourses.First().Name.Should().Be("k course 11");
         }
+
+        [Test]
+        public void Current_courses_should_return_correct_number_of_search_results()
+        {
+            var courses = new[]
+            {
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "a course 1"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "b course 2"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "c course 3"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "d course 4"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "e course 5"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "f course 6"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "g course 7"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "h course 8"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "i course 9"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
+                CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
+            };
+
+            model = new CurrentPageViewModel(
+                courses,
+                config,
+                "Course",
+                "Course Name",
+                "Ascending",
+                null,
+                null,
+                1
+            );
+
+            model.MatchingSearchResults.Should().Be(11);
+        }
     }
 }

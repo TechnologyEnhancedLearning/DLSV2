@@ -213,11 +213,37 @@ button.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
   color: $nhsuk-link-color;
+  display: flex;
+  // Since IE is bad at drawing boxes the correct size
+  overflow: visible;
 
+  @include mq($until: tablet) {
+    flex-direction: column;
+  }
+  &.nhsuk-pagination__link--prev {
+    @include mq($until: tablet) {
+      flex-direction: column-reverse;
+    }
+  }
   &:hover {
     color: $nhsuk-link-hover-color;
   }
   &:active {
     color: $nhsuk-link-active-color;
+  }
+}
+
+.nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-right, .nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-left {
+  display: inline-block;
+  position: static;
+  flex-shrink: 0;
+}
+
+.nhsuk-pagination__title {
+  @include mq($until: tablet) {
+    padding: 0 !important;
+  }
+  .nhsuk-pagination-item--next & {
+    text-align: left;
   }
 }
