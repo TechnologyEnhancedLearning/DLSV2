@@ -47,9 +47,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                 sortDirection
             );
             var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
+            MatchingSearchResults = filteredItems.Count;
+
+            TotalPages = (int)Math.Ceiling(filteredItems.Count / (double)ItemsPerPage);
+            if (Page < 1 || Page > TotalPages)
+            {
+                Page = 1;
+            }
 
             var paginatedItems = PaginateItems(filteredItems);
-            TotalPages = (int)Math.Ceiling(filteredItems.Count / (double)ItemsPerPage);
 
             CurrentCourses = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(course =>
             {

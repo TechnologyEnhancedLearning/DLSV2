@@ -10,8 +10,9 @@
     {
         [BindProperty] public string SortDirection { get; set; }
         [BindProperty] public string SortBy { get; set; }
-        public int Page { get; }
+        public int Page { get; protected set; }
         public int TotalPages { get; protected set; }
+        public int MatchingSearchResults;
 
         public readonly string? BannerText;
         public abstract SelectList SortByOptions { get; }
@@ -20,7 +21,6 @@
         public const string AscendingText = "Ascending";
 
         protected const int ItemsPerPage = 10;
-        private readonly int offset;
 
         public readonly string? SearchString;
 
@@ -37,13 +37,12 @@
             SortDirection = sortDirection;
             SearchString = searchString;
             Page = page;
-            offset = OffsetFromPageNumber(page);
         }
 
         protected IEnumerable<BaseLearningItem> PaginateItems(IList<BaseLearningItem> items) {
             if (items.Count > ItemsPerPage)
             {
-                items = items.Skip(offset).Take(ItemsPerPage).ToList();
+                items = items.Skip(OffsetFromPageNumber(Page)).Take(ItemsPerPage).ToList();
             }
 
             return items;
