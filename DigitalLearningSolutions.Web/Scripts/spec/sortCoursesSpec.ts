@@ -1,14 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
 import { cases } from 'jasmine-parameterized';
-
-// @ts-ignore
-global.document = {
-  getElementById: () => null,
-  getElementsByClassName: () => [] as any,
-};
-
-// eslint-disable-next-line import/first
-import { sortCards, getSortValue } from '../learningPortal/sortCourses';
+import * as sortCourses from '../learningPortal/sortCourses';
 
 describe('getSortValue', () => {
   cases([
@@ -41,8 +34,11 @@ describe('getSortValue', () => {
       `).window.document;
 
       // When
-      const courseCard = document.getElementsByClassName('course-card')[0];
-      const actualValue = getSortValue(courseCard, sortBy);
+      const courseCard = {
+        title: ' title',
+        element: document.getElementsByClassName('course-card')[0],
+      };
+      const actualValue = sortCourses.getSortValue(courseCard, sortBy);
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
@@ -56,8 +52,10 @@ describe('sortCards current', () => {
       <html>
       <head></head>
       <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
         <div id="course-cards">
-          <div class="course-card" id="course-b"> 
+          <div class="course-card" id="course-b">
             <span name="name">B: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
@@ -65,14 +63,14 @@ describe('sortCards current', () => {
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="course-card" id="course-c"> 
+          <div class="course-card" id="course-c">
             <span name="name">c: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="complete-by-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="course-card" id="course-a"> 
+          <div class="course-card" id="course-a">
             <span name="name">A: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
@@ -100,14 +98,16 @@ describe('sortCards current', () => {
   ])
     .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
       // When
-      sortCards(sortBy, sortDirection);
+      setSortBy(sortBy);
+      setSortDirection(sortDirection);
+      const courseCards = getCourseCards();
+      const newCards = sortCourses.sortCards(courseCards);
 
       // Then
-      const newCards = document.getElementById('course-cards')?.children;
       expect(newCards?.length).toEqual(3);
-      expect(newCards![0].id).toBe(firstId);
-      expect(newCards![1].id).toBe(secondId);
-      expect(newCards![2].id).toBe(thirdId);
+      expect(newCards![0].element.id).toBe(firstId);
+      expect(newCards![1].element.id).toBe(secondId);
+      expect(newCards![2].element.id).toBe(thirdId);
     });
 });
 
@@ -118,8 +118,10 @@ describe('sortCards completed', () => {
       <html>
       <head></head>
       <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
         <div id="course-cards">
-          <div class="course-card" id="course-a"> 
+          <div class="course-card" id="course-a">
             <span name="name">a: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
@@ -127,14 +129,14 @@ describe('sortCards completed', () => {
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="course-card" id="course-b"> 
+          <div class="course-card" id="course-b">
             <span name="name">B: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="completed-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="course-card" id="course-c"> 
+          <div class="course-card" id="course-c">
             <span name="name">c: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
@@ -154,14 +156,16 @@ describe('sortCards completed', () => {
   ])
     .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
       // When
-      sortCards(sortBy, sortDirection);
+      setSortBy(sortBy);
+      setSortDirection(sortDirection);
+      const courseCards = getCourseCards();
+      const newCards = sortCourses.sortCards(courseCards);
 
       // Then
-      const newCards = document.getElementById('course-cards')?.children;
       expect(newCards?.length).toEqual(3);
-      expect(newCards![0].id).toBe(firstId);
-      expect(newCards![1].id).toBe(secondId);
-      expect(newCards![2].id).toBe(thirdId);
+      expect(newCards![0].element.id).toBe(firstId);
+      expect(newCards![1].element.id).toBe(secondId);
+      expect(newCards![2].element.id).toBe(thirdId);
     });
 });
 
@@ -172,19 +176,21 @@ describe('sortCards available', () => {
       <html>
       <head></head>
       <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
         <div id="course-cards">
-          <div class="course-card" id="course-a"> 
+          <div class="course-card" id="course-a">
             <span name="name">A: Course</span>
             <p name="brand">C: Brand</p>
             <p name="topic">Topic 2</p>
           </div>
-          <div class="course-card" id="course-b"> 
+          <div class="course-card" id="course-b">
             <span name="name">B: Course</span>
             <p name="brand">A: Brand</p>
             <p name="category">C: Category</p>
             <p name="topic">Topic 1</p>
           </div>
-          <div class="course-card" id="course-c"> 
+          <div class="course-card" id="course-c">
             <span name="name">C: Course</span>
             <p name="brand">B: Brand</p>
             <p name="category">B: Category</p>
@@ -205,13 +211,30 @@ describe('sortCards available', () => {
   ])
     .it('should correctly sort the cards', ([sortBy, sortDirection, firstId, secondId, thirdId]) => {
       // When
-      sortCards(sortBy, sortDirection);
+      setSortBy(sortBy);
+      setSortDirection(sortDirection);
+      const courseCards = getCourseCards();
+      const newCards = sortCourses.sortCards(courseCards);
 
       // Then
-      const newCards = document.getElementById('course-cards')?.children;
       expect(newCards?.length).toEqual(3);
-      expect(newCards![0].id).toBe(firstId);
-      expect(newCards![1].id).toBe(secondId);
-      expect(newCards![2].id).toBe(thirdId);
+      expect(newCards![0].element.id).toBe(firstId);
+      expect(newCards![1].element.id).toBe(secondId);
+      expect(newCards![2].element.id).toBe(thirdId);
     });
 });
+
+function getCourseCards() {
+  return Array.from(document.getElementById('course-cards')!.children).map((card) => ({
+    title: '',
+    element: card,
+  }));
+}
+
+function setSortBy(sortBy: string) {
+  (<HTMLInputElement>document.getElementById('select-sort-by')).value = sortBy;
+}
+
+function setSortDirection(sortDirection: string) {
+  (<HTMLInputElement>document.getElementById('select-sort-direction')).value = sortDirection;
+}

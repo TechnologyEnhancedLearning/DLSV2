@@ -1,41 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
-
-// @ts-ignore
-global.document = {
-  getElementById: () => null,
-  getElementsByClassName: () => [] as any,
-};
-
-// eslint-disable-next-line import/first
 import * as searchCourses from '../learningPortal/searchCourses';
-// eslint-disable-next-line import/first
-import * as sortCourses from '../learningPortal/sortCourses';
-
-describe('titleFromCardElement', () => {
-  it('should extract the correct title', () => {
-    // Given
-    const expectedTitle = 'example title';
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <div id="course-cards">
-          <div class="course-card">
-            <span class="nhsuk-details__summary-text course-title">${expectedTitle}</span>
-          </div>
-        </div>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    const courseCard = document.getElementsByClassName('course-card')[0];
-    const actualTitle = searchCourses.titleFromCardElement(courseCard);
-
-    // Then
-    expect(actualTitle).toEqual(expectedTitle);
-  });
-});
+import { CourseCard } from '../learningPortal/searchSortAndPaginate';
 
 describe('updateResultCount', () => {
   it('should make the result count visible', () => {
@@ -103,28 +69,35 @@ describe('hideResultCount', () => {
 describe('search', () => {
   it('should only show matching results', () => {
     // Given
-    const displaySpy = spyOn(sortCourses, 'sortAndDisplaySearchResults').and.stub();
     global.document = new JSDOM(`
       <html>
       <head></head>
       <body>
+        <input type="text" id="search-field" value="cheese" />
         <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
         <div id="course-cards">
           <div class="course-card">
             <span class="nhsuk-details__summary-text course-title">cheese</span>
           </div>
           <div class="course-card">
-            <span class="nhsuk-details__summary-text">petril</span>
+            <span class="nhsuk-details__summary-text course-title">petril</span>
           </div>
       </body>
       </html>
     `).window.document;
 
     // When
-    searchCourses.search('cheese', searchCourses.getCourseCards());
+    const newCourses = searchCourses.search(getCourseCards());
 
     // Then
-    expect(displaySpy).toHaveBeenCalledTimes(1);
-    expect(displaySpy.calls.mostRecent().args[0].length).toBe(1);
+    expect(newCourses.length).toBe(1);
+    expect(newCourses[0].title).toBe('cheese');
   });
 });
+
+function getCourseCards() {
+  return Array.from(document.getElementById('course-cards')!.children).map((card) => ({
+    title: card.getElementsByClassName('course-title')[0].textContent,
+    element: card,
+  } as CourseCard));
+}

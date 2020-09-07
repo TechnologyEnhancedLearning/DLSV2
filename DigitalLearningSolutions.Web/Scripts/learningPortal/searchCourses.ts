@@ -1,27 +1,9 @@
 import { filter } from 'fuzzy';
-import { sortAndDisplaySearchResults } from './sortCourses';
+import type { CourseCard } from './searchSortAndPaginate';
 
-interface CourseCard {
-  element: Element;
-  title: string;
-}
-
-export function getCourseCards() {
-  const courseCardElements = Array.from(document.getElementsByClassName('course-card'));
-  return courseCardElements.map((element) => ({
-    element,
-    title: titleFromCardElement(element),
-  }));
-}
-
-function setUpSearch() {
-  const courseCards = getCourseCards();
-
-  const searchInput = <HTMLInputElement>document.getElementById('search-field');
-  searchInput?.addEventListener(
-    'input',
-    (event) => search((<HTMLInputElement>event.target).value, courseCards),
-  );
+export function setUpSearch(onSearchUpdated: VoidFunction): void {
+  const searchInput = getSearchBox();
+  searchInput?.addEventListener('input', onSearchUpdated);
   searchInput?.addEventListener(
     'keydown',
     (event) => {
@@ -32,15 +14,11 @@ function setUpSearch() {
   );
 }
 
-export function titleFromCardElement(cardElement: Element): string {
-  const titleSpan = <HTMLSpanElement>cardElement.getElementsByClassName('course-title')[0];
-  return titleSpan?.textContent ?? '';
-}
-
-export function search(query: string, courseCards: CourseCard[]) {
+export function search(courseCards: CourseCard[]): CourseCard[] {
+  const query = getQuery();
   if (query.length === 0) {
-    clearSearch(courseCards);
-    return;
+    hideResultCount();
+    return courseCards;
   }
 
   const options = {
@@ -50,27 +28,27 @@ export function search(query: string, courseCards: CourseCard[]) {
 
   updateResultCount(results.length);
 
-  const newElements = results.map((res) => res.original.element);
-  sortAndDisplaySearchResults(newElements);
+  return results.map((res) => res.original);
 }
 
-export function updateResultCount(count: number) {
+export function updateResultCount(count: number): void {
   const resultCount = <HTMLSpanElement>document.getElementById('results-count');
   resultCount.hidden = false;
   resultCount.setAttribute('aria-hidden', 'false');
   resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
 }
 
-export function hideResultCount() {
+export function hideResultCount(): void {
   const resultCount = <HTMLSpanElement>document.getElementById('results-count');
   resultCount.hidden = true;
   resultCount.setAttribute('aria-hidden', 'true');
 }
 
-function clearSearch(courseCards: CourseCard[]) {
-  const originalElements = courseCards.map((card) => card.element);
-  sortAndDisplaySearchResults(originalElements);
-  hideResultCount();
+function getQuery() {
+  const searchBox = getSearchBox();
+  return searchBox.value;
 }
 
-setUpSearch();
+function getSearchBox() {
+  return <HTMLInputElement>document.getElementById('search-field');
+}

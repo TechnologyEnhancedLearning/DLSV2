@@ -33,11 +33,6 @@ const config = {
         loader: 'babel-loader',
         options: {
           presets: [
-            ['@babel/preset-typescript',
-              {
-                onlyRemoveTypeImports: true,
-              },
-            ],
             ['@babel/preset-env',
               {
                 targets: {
@@ -45,7 +40,13 @@ const config = {
                 },
                 corejs: '3.6',
                 useBuiltIns: 'entry',
-              }],
+              },
+            ],
+            ['@babel/preset-typescript',
+              {
+                onlyRemoveTypeImports: true,
+              },
+            ],
           ],
         },
       },

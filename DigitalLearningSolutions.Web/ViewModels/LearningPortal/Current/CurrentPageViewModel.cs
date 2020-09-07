@@ -32,8 +32,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortDirection,
             SelfAssessment? selfAssessment,
             string? bannerText,
-            int page
-        ) : base(searchString, sortBy, sortDirection, bannerText, page)
+            int page,
+            int itemsPerPage = 10
+        ) : base(searchString, sortBy, sortDirection, bannerText, page, itemsPerPage)
         {
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             if (selfAssessment != null)

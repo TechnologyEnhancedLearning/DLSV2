@@ -8,6 +8,7 @@ import Checkboxes from 'nhsuk-frontend/packages/components/checkboxes/checkboxes
 // Polyfills
 import 'nhsuk-frontend/packages/polyfills';
 import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 // Initialize components
 document.addEventListener('DOMContentLoaded',

@@ -20,7 +20,7 @@
         public const string DescendingText = "Descending";
         public const string AscendingText = "Ascending";
 
-        protected const int ItemsPerPage = 10;
+        protected readonly int ItemsPerPage;
 
         public readonly string? SearchString;
 
@@ -29,7 +29,8 @@
             string sortBy,
             string sortDirection,
             string? bannerText,
-            int page
+            int page,
+            int itemsPerPage
         )
         {
             BannerText = bannerText;
@@ -37,6 +38,7 @@
             SortDirection = sortDirection;
             SearchString = searchString;
             Page = page;
+            ItemsPerPage = itemsPerPage;
         }
 
         protected IEnumerable<BaseLearningItem> PaginateItems(IList<BaseLearningItem> items) {
@@ -48,7 +50,7 @@
             return items;
         }
 
-        private static int OffsetFromPageNumber(int pageNumber) =>
+        private int OffsetFromPageNumber(int pageNumber) =>
             (pageNumber - 1) * ItemsPerPage;
     }
     public static class SortByOptionTexts
