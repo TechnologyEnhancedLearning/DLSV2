@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
 import { SearchSortAndPaginate } from '../learningPortal/searchSortAndPaginate';
 

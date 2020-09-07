@@ -27,22 +27,22 @@ export class SearchSortAndPaginate {
     });
   }
 
-  private onSearchUpdated(allCards: CourseCard[]) {
+  private onSearchUpdated(allCards: CourseCard[]): void {
     this.page = 1;
     this.searchSortAndPaginate(allCards);
   }
 
-  private onNextPagePressed(allCards: CourseCard[]) {
+  private onNextPagePressed(allCards: CourseCard[]): void {
     this.page += 1;
     this.searchSortAndPaginate(allCards);
   }
 
-  private onPreviousPagePressed(allCards: CourseCard[]) {
+  private onPreviousPagePressed(allCards: CourseCard[]): void {
     this.page -= 1;
     this.searchSortAndPaginate(allCards);
   }
 
-  private searchSortAndPaginate(courseCards: CourseCard[]) {
+  private searchSortAndPaginate(courseCards: CourseCard[]): void {
     const filteredCards = search(courseCards);
     const sortedCards = sortCards(filteredCards);
     const totalPages = Math.ceil(sortedCards.length / 10);
