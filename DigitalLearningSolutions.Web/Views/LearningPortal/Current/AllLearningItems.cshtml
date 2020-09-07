@@ -1,0 +1,30 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model AllLearningItemsPageViewModel
+@* This is used to provide data to the client-side sort, search, and pagintation functionality. *@
+@* It is not used for display purposes *@
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var currentLearningItem in Model.CurrentCourses)
+{
+  if (currentLearningItem is SelfAssessmentCardViewModel)
+  {
+    <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
+  }
+  else
+  {
+    <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
+  }
+}
+</body>
+</html>

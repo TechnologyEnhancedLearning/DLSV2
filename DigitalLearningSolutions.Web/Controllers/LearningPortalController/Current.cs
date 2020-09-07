@@ -34,6 +34,14 @@
             return View("Current/Current", model);
         }
 
+        public IActionResult AllLearningItems()
+        {
+            var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var model = new AllLearningItemsPageViewModel(currentCourses, config, selfAssessment);
+            return View("Current/AllLearningItems", model);
+        }
+
         [HttpPost]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCurrentCourseCompleteByDate(int id, int day, int month, int year, int progressId)

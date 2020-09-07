@@ -1,44 +1,26 @@
 import moment from 'moment';
 import * as _ from 'lodash';
+import { CourseCard } from './searchSortAndPaginate';
 
-export default function onSortCriteriaChange() {
-  sortCards(getSortBy(), getSortDirection());
+export function setupSort(onSortUpdated: VoidFunction): void {
+  document.getElementById('select-sort-by')?.addEventListener('change', onSortUpdated);
+  document.getElementById('select-sort-direction')?.addEventListener('change', onSortUpdated);
 }
 
-export function sortCards(sortBy: string, sortDirection: string) {
-  const courseCardsContainer = document.getElementById('course-cards');
-  if (!courseCardsContainer) {
-    return;
-  }
-  const courseCards = Array.from(courseCardsContainer.children);
+export function sortCards(
+  courseCards: CourseCard[],
+): CourseCard[] {
+  const sortBy = getSortBy();
+  const sortDirection = getSortDirection();
 
-  sortAndDisplayCards(courseCards, sortBy, sortDirection);
-}
-
-export function sortAndDisplaySearchResults(courseCards: Element[]) {
-  sortAndDisplayCards(courseCards, getSortBy(), getSortDirection());
-}
-
-function sortAndDisplayCards(
-  courseCards: Element[],
-  sortBy: string,
-  sortDirection: string,
-) {
-  const courseCardsContainer = document.getElementById('course-cards');
-  if (!courseCardsContainer) {
-    return;
-  }
-  courseCardsContainer.textContent = '';
-
-  const sortedCards = _.orderBy(
+  return _.orderBy<CourseCard>(
     courseCards,
-    [(course: Element) => getSortValue(course, sortBy)],
+    [(course) => getSortValue(course, sortBy)],
     [(sortDirection === 'Descending') ? 'desc' : 'asc'],
   );
-  sortedCards.forEach((element) => courseCardsContainer.appendChild(element));
 }
 
-export function getSortValue(courseCard: Element, sortBy: string): string | number | Date {
+export function getSortValue(courseCard: CourseCard, sortBy: string): string | number | Date {
   switch (sortBy) {
     case 'Course Name':
       return getElementText(courseCard, 'name').toLocaleLowerCase();
@@ -65,8 +47,8 @@ export function getSortValue(courseCard: Element, sortBy: string): string | numb
   }
 }
 
-function getElementText(courseCard: Element, elementName: string): string {
-  return courseCard.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
+function getElementText(courseCard: CourseCard, elementName: string): string {
+  return courseCard.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
 }
 
 function parseDate(dateString: string): Date {
@@ -83,10 +65,3 @@ function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
   return element.value;
 }
-
-function registerListeners() {
-  document.getElementById('select-sort-by')?.addEventListener('change', onSortCriteriaChange);
-  document.getElementById('select-sort-direction')?.addEventListener('change', onSortCriteriaChange);
-}
-
-registerListeners();

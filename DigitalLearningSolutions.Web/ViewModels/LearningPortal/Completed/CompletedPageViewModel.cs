@@ -26,8 +26,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             string sortBy,
             string sortDirection,
             string? bannerText,
-            int page
-        ) : base (searchString, sortBy, sortDirection, bannerText, page)
+            int page,
+            int itemsPerPage = 10
+        ) : base (searchString, sortBy, sortDirection, bannerText, page, itemsPerPage)
         {
 
             var sortedItems = SortingHelper.SortAllItems(
