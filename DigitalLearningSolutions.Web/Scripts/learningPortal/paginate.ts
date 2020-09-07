@@ -1,6 +1,6 @@
 import { CourseCard } from './searchSortAndPaginate';
 
-const ITEMS_PER_PAGE = 10;
+export const ITEMS_PER_PAGE = 10;
 
 export function setupPagination(
   onNextPressed: VoidFunction,

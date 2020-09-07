@@ -26,9 +26,8 @@
             string sortBy,
             string sortDirection,
             string? bannerText,
-            int page,
-            int itemsPerPage = 10
-        ) : base(searchString, sortBy, sortDirection, bannerText, page, itemsPerPage)
+            int page
+        ) : base(searchString, sortBy, sortDirection, bannerText, page)
         {
             var sortedItems = SortingHelper.SortAllItems(
                 availableCourses,

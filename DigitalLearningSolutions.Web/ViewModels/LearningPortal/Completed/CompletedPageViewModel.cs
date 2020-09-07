@@ -26,9 +26,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             string sortBy,
             string sortDirection,
             string? bannerText,
-            int page,
-            int itemsPerPage = 10
-        ) : base (searchString, sortBy, sortDirection, bannerText, page, itemsPerPage)
+            int page
+        ) : base (searchString, sortBy, sortDirection, bannerText, page)
         {
 
             var sortedItems = SortingHelper.SortAllItems(
@@ -37,6 +36,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
                 sortDirection
             );
             var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
+            MatchingSearchResults = filteredItems.Count;
+            SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
             CompletedCourses = paginatedItems.Cast<CompletedCourse>().Select(completedCourse =>
                 new CompletedCourseViewModel(completedCourse, config)

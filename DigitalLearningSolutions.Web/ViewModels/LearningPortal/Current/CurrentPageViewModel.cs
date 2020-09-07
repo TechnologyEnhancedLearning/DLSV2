@@ -32,9 +32,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortDirection,
             SelfAssessment? selfAssessment,
             string? bannerText,
-            int page,
-            int itemsPerPage = 10
-        ) : base(searchString, sortBy, sortDirection, bannerText, page, itemsPerPage)
+            int page
+        ) : base(searchString, sortBy, sortDirection, bannerText, page)
         {
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             if (selfAssessment != null)
@@ -49,13 +48,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             );
             var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = filteredItems.Count;
-
-            TotalPages = (int)Math.Ceiling(filteredItems.Count / (double)ItemsPerPage);
-            if (Page < 1 || Page > TotalPages)
-            {
-                Page = 1;
-            }
-
+            SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
 
             CurrentCourses = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(course =>
