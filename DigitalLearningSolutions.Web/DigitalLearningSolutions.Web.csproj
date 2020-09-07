@@ -56,6 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\paginate.ts" />

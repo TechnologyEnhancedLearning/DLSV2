@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available
+@model AllAvailableItemsPageViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var availableCourse in Model.AvailableCourses)
+{
+  <partial name="Available/_AvailableCourseCard" model="availableCourse" />
+}
+</body>
+</html>
