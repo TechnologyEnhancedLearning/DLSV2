@@ -41,6 +41,12 @@
         <span class="nhsuk-hint" id="example-hint">
           For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
         </span>
+        @if (Model is CurrentCourseViewModel)
+        {
+          <span class="nhsuk-hint">
+            Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity.
+          </span>
+        }
         @if (Model.CompleteByValidationResult?.DateValid == false)
         {
           <span class="nhsuk-error-message" id="validation-message" role="alert">
