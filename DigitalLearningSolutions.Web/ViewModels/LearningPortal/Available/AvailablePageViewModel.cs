@@ -35,6 +35,8 @@
                 sortDirection
             );
             var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
+            MatchingSearchResults = filteredItems.Count;
+            SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
             AvailableCourses = paginatedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
         }

@@ -27,5 +27,12 @@
             );
             return View("Available/Available", model);
         }
+
+        public IActionResult AllAvailableItems()
+        {
+            var availableCourses = courseService.GetAvailableCourses(GetCandidateId(), GetCentreId());
+            var model = new AllAvailableItemsPageViewModel(availableCourses, config);
+            return View("Available/AllAvailableItems", model);
+        }
     }
 }
