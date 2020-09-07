@@ -56,6 +56,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\paginate.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\searchSortAndPaginate.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\sortCourses.ts" />

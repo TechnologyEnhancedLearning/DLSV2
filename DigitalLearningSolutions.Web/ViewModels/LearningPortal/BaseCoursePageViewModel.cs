@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -20,7 +21,7 @@
         public const string DescendingText = "Descending";
         public const string AscendingText = "Ascending";
 
-        protected readonly int ItemsPerPage;
+        private const int ItemsPerPage = 10;
 
         public readonly string? SearchString;
 
@@ -29,8 +30,7 @@
             string sortBy,
             string sortDirection,
             string? bannerText,
-            int page,
-            int itemsPerPage
+            int page
         )
         {
             BannerText = bannerText;
@@ -38,7 +38,6 @@
             SortDirection = sortDirection;
             SearchString = searchString;
             Page = page;
-            ItemsPerPage = itemsPerPage;
         }
 
         protected IEnumerable<BaseLearningItem> PaginateItems(IList<BaseLearningItem> items) {
@@ -48,6 +47,15 @@
             }
 
             return items;
+        }
+
+        protected void SetTotalPages()
+        {
+            TotalPages = (int)Math.Ceiling(MatchingSearchResults / (double)ItemsPerPage);
+            if (Page < 1 || Page > TotalPages)
+            {
+                Page = 1;
+            }
         }
 
         private int OffsetFromPageNumber(int pageNumber) =>

@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+@model AllCompletedItemsPageViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var completedCourse in Model.CompletedCourses)
+{
+  <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />
+}
+</body>
+</html>

@@ -1,7 +1,7 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
 import { search, setUpSearch } from './searchCourses';
 import { setupSort, sortCards } from './sortCourses';
-import { paginateResults, setupPagination } from './paginate';
+import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
 
 export interface CourseCard {
   element: Element;
@@ -11,9 +11,9 @@ export interface CourseCard {
 export class SearchSortAndPaginate {
   private page: number;
 
-  constructor() {
+  constructor(route: string) {
     this.page = 1;
-    SearchSortAndPaginate.getCourseCards().then((allCards) => {
+    SearchSortAndPaginate.getCourseCards(route).then((allCards) => {
       if (allCards === undefined) {
         return;
       }
@@ -24,6 +24,7 @@ export class SearchSortAndPaginate {
         () => this.onNextPagePressed(allCards),
         () => this.onPreviousPagePressed(allCards),
       );
+      this.searchSortAndPaginate(allCards);
     });
   }
 
@@ -45,13 +46,13 @@ export class SearchSortAndPaginate {
   private searchSortAndPaginate(courseCards: CourseCard[]): void {
     const filteredCards = search(courseCards);
     const sortedCards = sortCards(filteredCards);
-    const totalPages = Math.ceil(sortedCards.length / 10);
+    const totalPages = Math.ceil(sortedCards.length / ITEMS_PER_PAGE);
     const paginatedCards = paginateResults(sortedCards, this.page, totalPages);
     SearchSortAndPaginate.displayCards(paginatedCards);
   }
 
-  static getCourseCards(): Promise<CourseCard[] | undefined> {
-    return SearchSortAndPaginate.fetchAllCourseCards()
+  static getCourseCards(route: string): Promise<CourseCard[] | undefined> {
+    return SearchSortAndPaginate.fetchAllCourseCards(route)
       .then((response): CourseCard[] | undefined => {
         if (response === null) {
           return undefined;
@@ -65,7 +66,8 @@ export class SearchSortAndPaginate {
       });
   }
 
-  static fetchAllCourseCards(): Promise<Document | null> {
+  static fetchAllCourseCards(route: string): Promise<Document | null> {
+    const path = this.getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();
 
@@ -73,7 +75,7 @@ export class SearchSortAndPaginate {
         res(request.responseXML);
       };
 
-      request.open('GET', '/LearningPortal/AllLearningItems', true);
+      request.open('GET', path, true);
       request.responseType = 'document';
       request.send();
     });
@@ -94,7 +96,10 @@ export class SearchSortAndPaginate {
     // This is required to polyfill the new elements in IE
     Details();
   }
-}
 
-// eslint-disable-next-line no-new
-new SearchSortAndPaginate();
+  static getPathForEndpoint(endpoint: string): string {
+    const currentPath = window.location.pathname;
+    const indexOfBaseUrl = currentPath.indexOf('LearningPortal');
+    return `${currentPath.substring(0, indexOfBaseUrl)}LearningPortal/${endpoint}`;
+  }
+}

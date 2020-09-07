@@ -7,11 +7,11 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.Extensions.Configuration;
 
-    public class AllLearningItemsPageViewModel
+    public class AllCurrentItemsPageViewModel
     {
         public readonly IEnumerable<CurrentLearningItemViewModel> CurrentCourses;
 
-        public AllLearningItemsPageViewModel(
+        public AllCurrentItemsPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
             IConfiguration config,
             SelfAssessment? selfAssessment

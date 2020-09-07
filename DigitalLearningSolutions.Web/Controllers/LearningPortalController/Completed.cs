@@ -27,5 +27,12 @@
             );
             return View("Completed/Completed", model);
         }
+
+        public IActionResult AllCompletedItems()
+        {
+            var completedCourses = courseService.GetCompletedCourses(GetCandidateId());
+            var model = new AllCompletedItemsPageViewModel(completedCourses, config);
+            return View("Completed/AllCompletedItems", model);
+        }
     }
 }
