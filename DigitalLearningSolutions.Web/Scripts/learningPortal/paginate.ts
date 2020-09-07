@@ -53,7 +53,7 @@ function updatePageButtonVisibility(page: number, totalPages: number) {
     return;
   }
 
-  nextButton.hidden = page === totalPages;
+  nextButton.hidden = page >= totalPages;
   previousButton.hidden = page === 1;
 }
 

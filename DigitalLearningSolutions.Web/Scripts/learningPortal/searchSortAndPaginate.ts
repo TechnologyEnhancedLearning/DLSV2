@@ -66,7 +66,7 @@ export class SearchSortAndPaginate {
       });
   }
 
-  static fetchAllCourseCards(route: string): Promise<Document | null> {
+  private static fetchAllCourseCards(route: string): Promise<Document | null> {
     const path = this.getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();
@@ -97,7 +97,7 @@ export class SearchSortAndPaginate {
     Details();
   }
 
-  static getPathForEndpoint(endpoint: string): string {
+  private static getPathForEndpoint(endpoint: string): string {
     const currentPath = window.location.pathname;
     const indexOfBaseUrl = currentPath.indexOf('LearningPortal');
     return `${currentPath.substring(0, indexOfBaseUrl)}LearningPortal/${endpoint}`;
