@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
 import * as paginate from '../learningPortal/paginate';
-import { CourseCard } from '../learningPortal/searchSortAndPaginate';
+import getCourseCards from './getCourseCards';
 
 describe('paginateResults', () => {
   it('returns ten results per page', () => {
@@ -15,7 +15,7 @@ describe('paginateResults', () => {
     expect(paginatedCards.length).toBe(10);
   });
 
-  it('return the second page of results', () => {
+  it('returns the second page of results', () => {
     // Given
     const courseCards = createCourseCards();
 
@@ -203,11 +203,4 @@ function createCourseCards() {
       </html>
     `).window.document;
   return getCourseCards();
-}
-
-function getCourseCards() {
-  return Array.from(document.getElementById('course-cards')!.children).map((card) => ({
-    title: card.getElementsByClassName('course-title')[0].textContent,
-    element: card,
-  } as CourseCard));
 }

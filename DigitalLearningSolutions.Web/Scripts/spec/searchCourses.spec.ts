@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
 import * as searchCourses from '../learningPortal/searchCourses';
-import { CourseCard } from '../learningPortal/searchSortAndPaginate';
+import getCourseCards from './getCourseCards';
 
 describe('updateResultCount', () => {
   it('should make the result count visible', () => {
@@ -94,10 +94,3 @@ describe('search', () => {
     expect(newCourses[0].title).toBe('cheese');
   });
 });
-
-function getCourseCards() {
-  return Array.from(document.getElementById('course-cards')!.children).map((card) => ({
-    title: card.getElementsByClassName('course-title')[0].textContent,
-    element: card,
-  } as CourseCard));
-}

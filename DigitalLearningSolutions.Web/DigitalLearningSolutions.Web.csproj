@@ -63,6 +63,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\searchCourses.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+    <TypeScriptCompile Include="Scripts\spec\getCourseCards.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCourses.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
