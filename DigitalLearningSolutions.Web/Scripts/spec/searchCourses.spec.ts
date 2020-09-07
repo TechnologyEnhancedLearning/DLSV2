@@ -20,7 +20,7 @@ describe('updateResultCount', () => {
 
     // Then
     const resultCountElements = document.getElementById('results-count');
-    expect(resultCountElements?.hidden).toBeFalse();
+    expect(resultCountElements?.hidden).toBeFalsy();
     expect(resultCountElements?.getAttribute('aria-hidden')).toBe('false');
   });
 
@@ -61,7 +61,7 @@ describe('hideResultCount', () => {
 
     // Then
     const resultCountElements = document.getElementById('results-count');
-    expect(resultCountElements?.hidden).toBeTrue();
+    expect(resultCountElements?.hidden).toBeTruthy();
     expect(resultCountElements?.getAttribute('aria-hidden')).toBe('true');
   });
 });

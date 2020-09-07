@@ -8,7 +8,7 @@ export interface CourseCard {
   title: string;
 }
 
-class SearchSortAndPaginate {
+export class SearchSortAndPaginate {
   private page: number;
 
   constructor() {
@@ -84,7 +84,7 @@ class SearchSortAndPaginate {
     return titleSpan?.textContent ?? '';
   }
 
-  static displayCards(cards: CourseCard[]) {
+  static displayCards(cards: CourseCard[]): void {
     const courseCardsContainer = document.getElementById('course-cards');
     if (!courseCardsContainer) {
       return;

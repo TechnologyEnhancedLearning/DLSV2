@@ -38,7 +38,7 @@ describe('paginateResults', () => {
     const pageText = document.getElementById('page-indicator')!.textContent;
     expect(pageText).toBe('1 of 2');
     const pageIndicator = document.getElementById('page-indicator');
-    expect(pageIndicator!.hidden).toBeFalse();
+    expect(pageIndicator!.hidden).toBeFalsy();
   });
 
   it('hides the page indicator when there is only one page', () => {
@@ -50,7 +50,7 @@ describe('paginateResults', () => {
 
     // Then
     const pageIndicator = document.getElementById('page-indicator');
-    expect(pageIndicator!.hidden).toBeTrue();
+    expect(pageIndicator!.hidden).toBeTruthy();
   });
 
   it('hides the previous button when on the first page', () => {
@@ -62,7 +62,7 @@ describe('paginateResults', () => {
 
     // Then
     const previousButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--previous')[0];
-    expect(previousButton.hidden).toBeTrue();
+    expect(previousButton.hidden).toBeTruthy();
   });
 
   it('shows the next button when there are more pages', () => {
@@ -74,7 +74,7 @@ describe('paginateResults', () => {
 
     // Then
     const nextButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--next')[0];
-    expect(nextButton.hidden).toBeFalse();
+    expect(nextButton.hidden).toBeFalsy();
   });
 
   it('hides the next button when on the last page', () => {
@@ -86,7 +86,7 @@ describe('paginateResults', () => {
 
     // Then
     const nextButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--next')[0];
-    expect(nextButton.hidden).toBeTrue();
+    expect(nextButton.hidden).toBeTruthy();
   });
 
   it('shows the previous button when not on the first page', () => {
@@ -98,7 +98,7 @@ describe('paginateResults', () => {
 
     // Then
     const previousButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--previous')[0];
-    expect(previousButton.hidden).toBeFalse();
+    expect(previousButton.hidden).toBeFalsy();
   });
 });
 
