@@ -24,7 +24,9 @@ export function search(courseCards: CourseCard[]): CourseCard[] {
   const options = {
     extract: (courseCard: CourseCard) => courseCard.title,
   };
-  const results = filter(query, courseCards, options);
+  const results = filter(query, courseCards, options).filter(
+    (result) => query.length < 4 || result.score > query.length,
+  );
 
   updateResultCount(results.length);
 
