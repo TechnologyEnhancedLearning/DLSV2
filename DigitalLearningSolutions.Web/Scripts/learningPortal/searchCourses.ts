@@ -1,4 +1,4 @@
-import { filter } from 'fuzzy';
+import * as JsSearch from 'js-search';
 import type { CourseCard } from './searchSortAndPaginate';
 
 export function setUpSearch(onSearchUpdated: VoidFunction): void {
@@ -21,16 +21,13 @@ export function search(courseCards: CourseCard[]): CourseCard[] {
     return courseCards;
   }
 
-  const options = {
-    extract: (courseCard: CourseCard) => courseCard.title,
-  };
-  const results = filter(query, courseCards, options).filter(
-    (result) => query.length < 4 || result.score > query.length,
-  );
-
+  const searchEngine = new JsSearch.Search(['element', 'id']);
+  searchEngine.searchIndex = new JsSearch.UnorderedSearchIndex();
+  searchEngine.addIndex('title');
+  searchEngine.addDocuments(courseCards);
+  const results = <CourseCard[]>searchEngine.search(query);
   updateResultCount(results.length);
-
-  return results.map((res) => res.original);
+  return results;
 }
 
 export function updateResultCount(count: number): void {
