@@ -29,7 +29,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "d: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
-                SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
+                Data.Tests.Helpers.SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
             };
             completedCourses = new[]

@@ -21,15 +21,15 @@
                 CurrentCourseHelper.CreateDefaultCurrentCourse(),
                 CurrentCourseHelper.CreateDefaultCurrentCourse()
             };
-            var selfAssessment = new SelfAssessment()
+            var selfAssessments = new[]
             {
-                Id = 1,
-                Name = "self assessment",
-                Description = "description"
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
+            
             var bannerText = "bannerText";
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)).Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
             A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -42,7 +42,7 @@
                 null,
                 "Last Accessed Date",
                 "Descending",
-                selfAssessment,
+                selfAssessments,
                 bannerText,
                 1
             );

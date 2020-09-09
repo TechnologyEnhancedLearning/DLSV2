@@ -20,14 +20,14 @@
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
             var bannerText = GetBannerText();
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var selfAssessments = selfAssessmentService.GetSelfAssessmentsForCandidate(GetCandidateId());
             var model = new CurrentPageViewModel(
                 currentCourses,
                 config,
                 searchString,
                 sortBy,
                 sortDirection,
-                selfAssessment,
+                selfAssessments,
                 bannerText,
                 page
             );
@@ -37,7 +37,7 @@
         public IActionResult AllCurrentItems()
         {
             var currentCourses = courseService.GetCurrentCourses(GetCandidateId());
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentsForCandidate(GetCandidateId());
             var model = new AllCurrentItemsPageViewModel(currentCourses, config, selfAssessment);
             return View("Current/AllCurrentItems", model);
         }

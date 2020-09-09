@@ -10,18 +10,16 @@
     public class AllCurrentItemsPageViewModel
     {
         public readonly IEnumerable<CurrentLearningItemViewModel> CurrentCourses;
+        public readonly IEnumerable<SelfAssessmentCardViewModel> SelfAssessments;
 
         public AllCurrentItemsPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
             IConfiguration config,
-            SelfAssessment? selfAssessment
+            IEnumerable<SelfAssessment> selfAssessments
         )
         {
             CurrentCourses = currentCourses.Select(course => new CurrentCourseViewModel(course, config));
-            if (selfAssessment != null)
-            {
-               CurrentCourses = CurrentCourses.ToList().Append(new SelfAssessmentCardViewModel(selfAssessment));
-            }
+            SelfAssessments = selfAssessments.Select(selfAssessment => new SelfAssessmentCardViewModel(selfAssessment));
         }
     }
 }

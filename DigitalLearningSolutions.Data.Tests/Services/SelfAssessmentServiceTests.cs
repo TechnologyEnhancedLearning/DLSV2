@@ -30,10 +30,10 @@
         }
 
         [Test]
-        public void GetSelfAssessmentForCandidate_should_return_a_self_assessment()
+        public void GetSelfAssessmentForCandidateById_should_return_a_self_assessment()
         {
             // When
-            var result = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId);
+            var result = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId);
 
             // Then
             var expectedSelfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(
@@ -48,10 +48,10 @@
         }
 
         [Test]
-        public void GetSelfAssessmentForCandidate_should_return_null_when_there_are_no_matching_assessments()
+        public void GetSelfAssessmentForCandidateById_should_return_null_when_there_are_no_matching_assessments()
         {
             // When
-            var result = selfAssessmentService.GetSelfAssessmentForCandidate(2);
+            var result = selfAssessmentService.GetSelfAssessmentForCandidateById(2, SelfAssessmentId);
 
             // Then
             result.Should().BeNull();
@@ -408,7 +408,7 @@
             {
                 // When
                 selfAssessmentService.UpdateLastAccessed(SelfAssessmentId, CandidateId);
-                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().NotBeNull();
@@ -426,7 +426,7 @@
             {
                 // When
                 selfAssessmentService.UpdateLastAccessed(invalidSelfAssessmentId, CandidateId);
-                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().BeNull();
@@ -443,7 +443,7 @@
             {
                 // When
                 selfAssessmentService.SetCompleteByDate(SelfAssessmentId, CandidateId, expectedCompleteByDate);
-                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().Be(expectedCompleteByDate);
@@ -457,7 +457,7 @@
             {
                 // When
                 selfAssessmentService.SetCompleteByDate(SelfAssessmentId, CandidateId, null);
-                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().BeNull();
@@ -474,7 +474,7 @@
             {
                 // When
                 selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.Now);
-                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(CandidateId)!;
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
                 updatedSelfAssessment.CompleteByDate.Should().BeNull();

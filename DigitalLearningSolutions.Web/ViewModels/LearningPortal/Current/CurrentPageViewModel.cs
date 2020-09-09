@@ -30,17 +30,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string? searchString,
             string sortBy,
             string sortDirection,
-            SelfAssessment? selfAssessment,
+            IEnumerable<SelfAssessment> selfAssessments,
             string? bannerText,
             int page
         ) : base(searchString, sortBy, sortDirection, bannerText, page)
         {
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
-            if (selfAssessment != null)
+            foreach (SelfAssessment selfAssessment in selfAssessments)
             {
                 allItems.Add(selfAssessment);
             }
-
             var sortedItems = SortingHelper.SortAllItems(
                 allItems,
                 sortBy,

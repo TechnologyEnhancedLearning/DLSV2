@@ -12,9 +12,10 @@
 
     public partial class LearningPortalController
     {
-        public IActionResult SelfAssessment()
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
+        public IActionResult SelfAssessment(int selfAssessmentId)
         {
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
 
             if (selfAssessment == null)
             {
@@ -28,10 +29,10 @@
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 
-        [Route("/LearningPortal/SelfAssessment/{competencyNumber:int}")]
-        public IActionResult SelfAssessmentCompetency(int competencyNumber)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
+        public IActionResult SelfAssessmentCompetency(int selfAssessmentId, int competencyNumber)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning($"Attempt to display self assessment competency for candidate {GetCandidateId()} with no self assessment");
@@ -51,10 +52,10 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{competencyNumber:int}")]
-        public IActionResult SelfAssessmentCompetency(ICollection<AssessmentQuestion> assessmentQuestions, int competencyNumber, int competencyId)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
+        public IActionResult SelfAssessmentCompetency(int selfAssessmentId, ICollection<AssessmentQuestion> assessmentQuestions, int competencyNumber, int competencyId)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning($"Attempt to set self assessment competency for candidate {GetCandidateId()} with no self assessment");
@@ -75,10 +76,10 @@
             return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
         }
 
-        [Route("LearningPortal/SelfAssessment/Review")]
-        public IActionResult SelfAssessmentReview()
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Review")]
+        public IActionResult SelfAssessmentReview(int selfAssessmentId)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
@@ -98,7 +99,7 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/CompleteBy")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int day, int month, int year, int selfAssessmentId)
         {
             if (day == 0 && month == 0 && year == 0)
@@ -118,10 +119,10 @@
             return RedirectToAction("Current");
         }
 
-        [Route("/LearningPortal/SelfAssessment/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int? day, int? month, int? year)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, int? day, int? month, int? year)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidate(GetCandidateId());
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning($"Attempt to view self assessment complete by date edit page for candidate {GetCandidateId()} with no self assessment");

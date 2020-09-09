@@ -10,7 +10,8 @@
 
     public interface ISelfAssessmentService
     {
-        SelfAssessment? GetSelfAssessmentForCandidate(int candidateId);
+        IEnumerable<SelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
+        SelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
@@ -71,9 +72,9 @@
             this.logger = logger;
         }
 
-        public SelfAssessment? GetSelfAssessmentForCandidate(int candidateId)
+        public IEnumerable<SelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
         {
-            return connection.QueryFirstOrDefault<SelfAssessment>(
+            return connection.Query<SelfAssessment>(
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
@@ -91,6 +92,28 @@
                       WHERE CA.CandidateID = @candidateId
                       GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
                 new { candidateId }
+            );
+        }
+        public SelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId)
+        {
+            return connection.QueryFirstOrDefault<SelfAssessment>(
+                @"SELECT CA.SelfAssessmentID AS Id,
+                             SA.Name,
+                             SA.Description,
+                             COUNT(C.ID)         AS NumberOfCompetencies,
+                             CA.StartedDate,
+                             CA.LastAccessed,
+                             CA.CompleteByDate
+                      FROM CandidateAssessments CA
+                               JOIN SelfAssessments SA
+                                    ON CA.SelfAssessmentID = SA.ID
+                               INNER JOIN SelfAssessmentStructure AS SAS
+                                          ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                               INNER JOIN Competencies AS C
+                                          ON SAS.CompetencyID = C.ID
+                      WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
+                new { candidateId, selfAssessmentId }
             );
         }
 
