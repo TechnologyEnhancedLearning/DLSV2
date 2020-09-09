@@ -42,7 +42,7 @@
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, GetCandidateId());
             if (competency == null)
             {
-                return RedirectToAction("SelfAssessmentReview");
+                return RedirectToAction("SelfAssessmentReview", new { selfAssessmentId = assessment.Id });
             }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());

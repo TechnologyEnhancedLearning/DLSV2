@@ -9,7 +9,7 @@
 
 <h2>@Model.Name</h2>
 <p class="nhsuk-u-reading-width">@Model.Description</p>
-<a class="nhsuk-button" asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="1">
+<a class="nhsuk-button" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">
   Continue
 </a>
 
