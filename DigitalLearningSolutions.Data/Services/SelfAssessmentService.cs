@@ -64,7 +64,10 @@
                                    AND CA.CandidateID = @candidateId
                         LEFT OUTER JOIN LatestAssessmentResults AS LAR
                             ON LAR.CompetencyID = C.ID
-                                   AND LAR.AssessmentQuestionID = AQ.ID";
+                                   AND LAR.AssessmentQuestionID = AQ.ID
+                        INNER JOIN SelfAssessmentStructure AS SAS
+                            ON C.ID = SAS.CompetencyID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
