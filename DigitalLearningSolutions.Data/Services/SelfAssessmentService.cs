@@ -81,6 +81,7 @@
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
+SA.UseFilteredApi,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
@@ -93,7 +94,7 @@
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
                 new { candidateId }
             );
         }
@@ -103,6 +104,7 @@
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
+SA.UseFilteredApi,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
@@ -115,7 +117,7 @@
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
                 new { candidateId, selfAssessmentId }
             );
         }
