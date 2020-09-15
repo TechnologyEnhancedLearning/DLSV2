@@ -14,7 +14,8 @@
             int numberOfCompetencies = 0,
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
-            DateTime? completeByDate = null
+            DateTime? completeByDate = null,
+            bool useFilteredApi = false
         )
         {
             return new SelfAssessment()
@@ -25,7 +26,8 @@
                 NumberOfCompetencies = numberOfCompetencies,
                 StartedDate = startedDate ?? DateTime.Now,
                 LastAccessed = lastAccessed,
-                CompleteByDate = completeByDate
+                CompleteByDate = completeByDate,
+                UseFilteredApi = useFilteredApi
             };
         }
 
