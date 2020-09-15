@@ -56,10 +56,20 @@
   </div>
 }
 
-
+@if (Model.SelfAssessment.UseFilteredApi)
+{
+<p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to the Magpie sign-posting tool which will recommend suitable learning modules.</p>
+<a class="nhsuk-button finish-review-button" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="Results">
+  Submit self assessment
+</a>
+}
+else
+{
 <a class="nhsuk-button finish-review-button" asp-action="Current">
   Finish self assessment
 </a>
+}
+
 
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link" asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@(Model.PreviousCompetencyNumber)">

@@ -9,15 +9,19 @@
 
 <h2>@Model.Name</h2>
 <p class="nhsuk-u-reading-width">@Model.Description</p>
-<a class="nhsuk-button" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">
-  Continue
-</a>
-
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-action="Current">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Exit self assessment
+@if (Model.UseFilteredApi)
+{
+<p class="nhsuk-u-reading-width">Once you have completed the self-assessment, your results will be submitted to the Magpie sign-posting tool which will recommend suitable learning modules.</p>
+  }
+  <a class="nhsuk-button" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">
+    Continue
   </a>
-</div>
+
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="Current">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
+      Exit self assessment
+    </a>
+  </div>
