@@ -4,5 +4,6 @@
     {
         public string Description { get; set; }
         public int NumberOfCompetencies { get; set; }
+        public bool UseFilteredApi { get; set; }
     }
 }
