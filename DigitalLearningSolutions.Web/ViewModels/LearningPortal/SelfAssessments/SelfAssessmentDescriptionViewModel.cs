@@ -7,12 +7,14 @@
         public readonly int Id;
         public readonly string Name;
         public readonly string Description;
+        public readonly bool UseFilteredApi;
 
         public SelfAssessmentDescriptionViewModel(SelfAssessment selfAssessment)
         {
             Id = selfAssessment.Id;
             Name = selfAssessment.Name;
             Description = selfAssessment.Description;
+            UseFilteredApi = selfAssessment.UseFilteredApi;
         }
     }
 }
