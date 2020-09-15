@@ -102,6 +102,12 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int day, int month, int year, int selfAssessmentId)
         {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
+            if (assessment.Id == 0)
+            {
+                logger.LogWarning($"Attempt to set complete by date for candidate {GetCandidateId()} with no self assessment");
+                return StatusCode(403);
+            }
             if (day == 0 && month == 0 && year == 0)
             {
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), null);
@@ -113,8 +119,8 @@
             {
                 return RedirectToAction("SetSelfAssessmentCompleteByDate", new { day, month, year });
             }
-
-            var completeByDate = new DateTime(year, month, day);
+            
+                var completeByDate = new DateTime(year, month, day);
             selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), completeByDate);
             return RedirectToAction("Current");
         }

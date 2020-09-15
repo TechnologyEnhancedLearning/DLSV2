@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private IUnlockService unlockService;
         private IConfiguration config;
         private const string BaseUrl = "https://www.dls.nhs.uk";
-        private const int CandidateId = 254480;
+        private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
         private const int CentreId = 2;
 

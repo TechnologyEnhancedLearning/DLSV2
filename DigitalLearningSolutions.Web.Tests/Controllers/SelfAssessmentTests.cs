@@ -369,31 +369,13 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, 2020, 1);
+            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, 2020, 999);
 
             // Then
             result.Should().BeViewResult().WithViewName("Error/Forbidden");
             controller.Response.StatusCode.Should().Be(403);
         }
 
-        [Test]
-        public void SetSelfAssessmentCompleteByDate_get_action_should_return_view_result()
-        {
-            // Given
-            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
-            var expectedModel = new SelfAssessmentCardViewModel(selfAssessment)
-            {
-                CompleteByValidationResult = new DateValidator.ValidationResult(2, 2, DateTime.Now.Year + 1)
-            };
-
-            // When
-            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, DateTime.Now.Year + 1, 1);
-
-            // Then
-            result.Should().BeViewResult()
-                .WithViewName("Current/SetCompleteByDate")
-                .Model.Should().BeEquivalentTo(expectedModel);
-        }
+       
     }
 }
