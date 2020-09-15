@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
@@ -15,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
         private readonly IConfiguration config = A.Fake<IConfiguration>();
         private CurrentPageViewModel model;
         private CurrentCourse[] currentCourses;
-
+        private SelfAssessment[] selfAssessments;
         [SetUp]
         public void SetUp()
         {
@@ -72,14 +73,28 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     GroupCustomisationId = 0,
                 },
             };
-
+            selfAssessments = new[]
+            {
+                new DigitalLearningSolutions.Data.Models.SelfAssessment
+                {
+                    Id = 1,
+                    Name = "Self Assessment 1",
+                    Description = "Self Assessment 1 Description"
+                },
+                new DigitalLearningSolutions.Data.Models.SelfAssessment
+                {
+                    Id = 1,
+                    Name = "Self Assessment 2",
+                    Description = "Self Assessment 2 Description"
+                },
+            };
             model = new CurrentPageViewModel(
                 currentCourses,
                 config,
                 null,
                 "Course Name",
                 "Ascending",
-                null,
+                selfAssessments,
                 null,
                 1
             );
@@ -187,14 +202,18 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
-
+            var selfAssessments = new[]
+           {
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+            };
             model = new CurrentPageViewModel(
                 courses,
                 config,
                 null,
                 "Course Name",
                 "Ascending",
-                null,
+                selfAssessments,
                 null,
                 1
             );
@@ -220,6 +239,11 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
+            var selfAssessments = new[]
+            {
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+            };
 
             model = new CurrentPageViewModel(
                 courses,
@@ -227,12 +251,12 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 null,
                 "Course Name",
                 "Ascending",
-                null,
+                selfAssessments,
                 null,
                 2
             );
 
-            model.CurrentCourses.Count().Should().Be(1);
+            model.CurrentCourses.Count().Should().Be(3);
             model.CurrentCourses.First().Name.Should().Be("k course 11");
         }
 
@@ -253,14 +277,18 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
-
+            var selfAssessments = new[]
+          {
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(),
+            };
             model = new CurrentPageViewModel(
                 courses,
                 config,
                 "Course",
                 "Course Name",
                 "Ascending",
-                null,
+                selfAssessments,
                 null,
                 1
             );

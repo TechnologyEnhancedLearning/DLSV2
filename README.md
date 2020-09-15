@@ -9,10 +9,10 @@
 
 # Getting the code
 
-Checkout the `digitallearningsolutions` repository from [Softwire's GitLab](https://gitlab.softwire.com/softwire/digitallearningsolutions):
+Checkout the `digitallearningsolutions` repository from [GitHub](https://github.com/TechnologyEnhancedLearning/DLSV2):
 
 ```bash
-git checkout git@gitlab.softwire.com:softwire/digitallearningsolutions.git
+git checkout https://github.com/TechnologyEnhancedLearning/DLSV2.git
 ```
 
 You should now be able to open the solution in Visual Studio 2019 by finding and double-clicking the `DigitalLearningSolutions.sln` file.
