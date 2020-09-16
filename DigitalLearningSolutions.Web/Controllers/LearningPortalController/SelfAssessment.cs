@@ -150,12 +150,12 @@
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
+                logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {GetCandidateId()} with no self assessment");
                 return StatusCode(403);
             }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
-
+            var usertoken = filteredApiHelperService.GenerateUserJwt(GetCandidateNumber(), "", GetCandidateForename(), GetCandidateSurname());
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
             var model = new SelfAssessmentFilteredResultsViewModel()
             {
