@@ -16,7 +16,8 @@
                         typeof(AddSelfAssessmentTables).Assembly,
                         typeof(AddSelfAssessmentResultTimestamp).Assembly,
                         typeof(AddSelfAssessmentDates).Assembly,
-                        typeof(AddSelfAssessmentUseApiFlag).Assembly
+                        typeof(AddSelfAssessmentUseApiFlag).Assembly,
+                        typeof(AddFilteredMappingTables).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
