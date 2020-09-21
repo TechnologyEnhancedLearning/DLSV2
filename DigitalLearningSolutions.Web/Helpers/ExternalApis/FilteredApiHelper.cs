@@ -46,29 +46,8 @@
         }
         public async Task AuthenticateUserWithFiltered(string candidateNumber, string candidateEmail, string candidateFName, string candidateSname)
         {
-            var mySecret = "F8F4BA157232CB72762E589ED76A";
-            var mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));
-
-            //var myIssuer = "https://www.dls.nhs.uk";
-            //var myAudience = "https://api.sec.filtered.com/v2/jsonrpc/auth";
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-            new Claim("userID", candidateNumber),
-            new Claim("email", "kevin.whittaker@hee.nhs.uk"),
-            new Claim("firstName", candidateFName),
-            new Claim("lastName", candidateSname),
-                }),
-                //Issuer = myIssuer,
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            await FilteredAuthenticate<Task>(token);
+            string token = GenerateUserJwt(candidateNumber, candidateEmail, candidateFName, candidateSname);
+           
         }
         private static Task<HttpResponseMessage> FilteredAuthenticate<T>(SecurityToken token)
         {
