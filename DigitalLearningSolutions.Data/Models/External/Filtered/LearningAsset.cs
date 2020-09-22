@@ -24,7 +24,7 @@
         public string? restrictedCode { get; set; }
         public string? restrictedLabel { get; set; }
         public Provider provider { get; set; }
-        public List<Competency> competencyList { get; set; } = new List<Competency>();
+        public List<FilteredCompetency> competencyList { get; set; } = new List<FilteredCompetency>();
 #pragma warning restore IDE1006 // Naming Styles
     }
 }

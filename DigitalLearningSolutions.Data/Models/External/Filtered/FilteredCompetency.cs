@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.External.Filtered
 {
-    public class Competency
+    public class FilteredCompetency
     {
 #pragma warning disable IDE1006 // Naming Styles
         public int id { get; set; }
