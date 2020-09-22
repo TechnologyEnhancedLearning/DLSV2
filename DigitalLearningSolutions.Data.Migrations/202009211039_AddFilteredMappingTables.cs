@@ -68,8 +68,6 @@ namespace DigitalLearningSolutions.Data.Migrations
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 8, SectorID = 481 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 9, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 10, SectorID = 479 });
-            Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 11, SectorID = 479 });
-            Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 12, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 13, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 14, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 15, SectorID = 479 });
@@ -92,7 +90,6 @@ namespace DigitalLearningSolutions.Data.Migrations
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 32, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 33, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 34, SectorID = 479 });
-            Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 35, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 36, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 37, SectorID = 479 });
             Insert.IntoTable("FilteredSectorsMapping").Row(new { JobGroupID = 38, SectorID = 479 });
