@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.External.Filtered
 {
+    using Newtonsoft.Json;
     public class Goal
     {
-        #pragma warning disable IDE1006 // Naming Styles
-        public int id { get; set; }
-        public float importance { get; set; }
-        public float confidence { get; set; }
-#pragma warning restore IDE1006 // Naming Styles
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("importance")]
+        public float Importance { get; set; }
+        [JsonProperty("confidence")]
+        public float Confidence { get; set; }
     }
 }

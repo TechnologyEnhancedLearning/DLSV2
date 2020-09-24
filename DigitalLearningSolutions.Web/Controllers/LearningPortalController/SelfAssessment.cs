@@ -153,14 +153,17 @@
                 logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {GetCandidateId()} with no self assessment");
                 return StatusCode(403);
             }
-
             selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
-            var usertoken = filteredApiHelperService.GenerateUserJwt(GetCandidateNumber(), "", GetCandidateForename(), GetCandidateSurname());
+            var profile = selfAssessmentService.GetFilteredProfileForCandidateById(GetCandidateId(), selfAssessmentId);
+            var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(GetCandidateId(), selfAssessmentId).ToList();
+
+            //var usertoken = filteredApiHelperService.GenerateUserJwt(GetCandidateNumber(), "", GetCandidateForename(), GetCandidateSurname());
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
             var model = new SelfAssessmentFilteredResultsViewModel()
             {
                 SelfAssessment = assessment,
-                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup)
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                PlayLists = filteredApiHelperService.GetUserPlayLists(GetCandidateNumber(), profile, goals)
             };
             return View("SelfAssessments/SelfAssessmentFilteredResults", model);
         }

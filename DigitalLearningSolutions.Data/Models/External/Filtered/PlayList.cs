@@ -1,14 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.External.Filtered
 {
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     public class PlayList
     {
-#pragma warning disable IDE1006 // Naming Styles
-        public string id { get; set; }
-        public string name { get; set; }
-        public string type { get; set; }
-        public List<FilteredCompetency> typeExtra { get; set; } = new List<FilteredCompetency>();
-        public List<LearningAsset> laList { get; set; } = new List<LearningAsset>();
-#pragma warning restore IDE1006 // Naming Styles
+        [JsonProperty("id")]
+        public string? Id { get; set; }
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+        [JsonProperty("type")]
+        public string? Type { get; set; }
+        [JsonProperty("typeExtra")]
+        public List<FilteredCompetency> TypeExtra { get; set; } = new List<FilteredCompetency>();
+        [JsonProperty("laList")]
+        public List<LearningAsset> LaList { get; set; } = new List<LearningAsset>();
     }
 }
