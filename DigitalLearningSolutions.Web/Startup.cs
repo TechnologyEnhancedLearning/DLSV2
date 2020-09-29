@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -81,6 +82,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUnlockDataService, UnlockDataService>();
             services.AddScoped<IUnlockService, UnlockService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
+            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

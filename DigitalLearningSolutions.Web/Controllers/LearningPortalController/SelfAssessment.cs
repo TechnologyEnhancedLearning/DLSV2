@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
@@ -145,24 +147,38 @@
             return View("Current/SetCompleteByDate", model);
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/FilteredResults")]
-        public IActionResult SelfAssessmentFilteredResults(int selfAssessmentId)
+        public async System.Threading.Tasks.Task<IActionResult> SelfAssessmentFilteredResultsAsync(int selfAssessmentId)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
+                logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {GetCandidateId()} with no self assessment");
                 return StatusCode(403);
             }
-
             selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
-
+            var profile = selfAssessmentService.GetFilteredProfileForCandidateById(selfAssessmentId, GetCandidateId());
+            var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(selfAssessmentId, GetCandidateId()).ToList();
+            //var usertoken = filteredApiHelperService.GenerateUserJwt(GetCandidateNumber(), "", GetCandidateForename(), GetCandidateSurname());
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
+            string candidateNum = GetCandidateNumber();
+            string? filteredToken = null;
+            //filteredToken = GetCookie(candidateNum);
+            if(filteredToken == null)
+            {
+                var accessToken = await filteredApiHelperService.GetUserAccessToken<AccessToken>(candidateNum);
+                filteredToken = accessToken.Jwt_access_token.ToString();
+                //SetCookie(candidateNum, filteredToken, 15);
+               
+            }
             var model = new SelfAssessmentFilteredResultsViewModel()
             {
                 SelfAssessment = assessment,
-                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup)
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                CompetencyPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchCompetencyPlaylists"),
+                RecommendedPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchNexRexPlaylists"),
+               FavouritePlayList = await filteredApiHelperService.GetPlayList<PlayList>(filteredToken, "playlist.FetchFavouritePlaylist")
             };
-            return View("SelfAssessments/SelfAssessmentFilteredResults", model);
+            return View("SelfAssessments/Filtered/SelfAssessmentFilteredResults", model);
         }
     }
 }

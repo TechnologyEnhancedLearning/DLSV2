@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using FakeItEasy;
     using FluentAssertions;
@@ -23,6 +24,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private ISelfAssessmentService selfAssessmentService;
         private IUnlockService unlockService;
         private IConfiguration config;
+        private IFilteredApiHelperService filteredApiHelperService;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
@@ -38,6 +40,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             unlockService = A.Fake<IUnlockService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
+            filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
+            
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -52,7 +56,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                 selfAssessmentService,
                 unlockService,
                 logger,
-                config
+                config,
+                filteredApiHelperService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
