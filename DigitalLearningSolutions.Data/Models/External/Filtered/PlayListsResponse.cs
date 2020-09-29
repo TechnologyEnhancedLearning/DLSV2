@@ -2,12 +2,12 @@
 {
     using Newtonsoft.Json;
     using System.Collections.Generic;
-    public class PlayListResponse
+    public class PlayListsResponse
     {
         [JsonProperty("jsonrpc")]
         public string? Jsonrpc { get; set; }
         [JsonProperty("result")]
-        public PlayList Result { get; set; }
+        public IEnumerable<PlayList> Result { get; set; }
         [JsonProperty("id")]
         public string? Id { get; set; }
     }

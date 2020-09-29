@@ -4,10 +4,10 @@
     public class Profile
     {
         [JsonProperty("function")]
-        public string? Function { get; set; }
+        public int Function { get; set; }
         [JsonProperty("sector")]
-        public string? Sector { get; set; }
+        public int Sector { get; set; }
         [JsonProperty("seniority")]
-        public string? Seniority { get; set; }
+        public int Seniority { get; set; }
     }
 }
