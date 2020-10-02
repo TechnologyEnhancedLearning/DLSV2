@@ -14,5 +14,6 @@
         public List<FilteredCompetency> TypeExtra { get; set; }
         [JsonProperty("laList")]
         public LaList LaList { get; set; }
+        public List<LearningAsset>? LearningAssets { get; set; }
     }
 }

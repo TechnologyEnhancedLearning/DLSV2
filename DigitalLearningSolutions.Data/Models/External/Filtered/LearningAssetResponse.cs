@@ -2,9 +2,10 @@
 {
     using Newtonsoft.Json;
     using System.Collections.Generic;
-    public class PlayListResponse : FilteredResponse
-    {      
+
+    public class LearningAssetResponse : FilteredResponse
+    {
         [JsonProperty("result")]
-        public PlayList Result { get; set; }
+        public List<LearningAsset>? Result { get; set; }
     }
 }

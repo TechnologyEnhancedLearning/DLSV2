@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.External.Filtered
 {
     using Newtonsoft.Json;
-    public class GoalUpdateRequest : FilteredApiRequest
+    public class ParamAssetIdsRequest : FilteredApiRequest
     {
         [JsonProperty("params")]
-        public Goal Goal { get; set; }
+        public LearningAssetIDs LearningAssetIDs { get; set; }
     }
 }
