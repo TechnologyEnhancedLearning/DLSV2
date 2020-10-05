@@ -12,6 +12,7 @@
 
     <PropertyGroup>
     <GenerateProgramFile>false</GenerateProgramFile>
+    <UserSecretsId>7ea176d2-09f5-4e3a-a3fa-7f3229882b70</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
