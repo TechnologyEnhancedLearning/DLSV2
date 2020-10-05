@@ -1,0 +1,13 @@
+﻿@using DigitalLearningSolutions.Data.Models.External.Filtered
+@model PlayList
+<h2>@Model.Name</h2>
+
+  @if (Model.LearningAssets.Any())
+  {
+<div class="nhsuk-grid-row">
+  @foreach (var learningAsset in Model.LearningAssets)
+  {
+    <partial name="_AssetCard.cshtml" model="learningAsset" />
+  }
+</div>
+  }

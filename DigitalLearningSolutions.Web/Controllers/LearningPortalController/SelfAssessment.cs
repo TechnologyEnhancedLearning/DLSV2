@@ -3,10 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments.FilteredMgp;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -143,26 +146,6 @@
             }
 
             return View("Current/SetCompleteByDate", model);
-        }
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/FilteredResults")]
-        public IActionResult SelfAssessmentFilteredResults(int selfAssessmentId)
-        {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
-            if (assessment == null)
-            {
-                logger.LogWarning($"Attempt to display self assessment review for candidate {GetCandidateId()} with no self assessment");
-                return StatusCode(403);
-            }
-
-            selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
-
-            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, GetCandidateId()).ToList();
-            var model = new SelfAssessmentFilteredResultsViewModel()
-            {
-                SelfAssessment = assessment,
-                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup)
-            };
-            return View("SelfAssessments/SelfAssessmentFilteredResults", model);
         }
     }
 }

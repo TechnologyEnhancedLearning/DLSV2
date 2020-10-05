@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
+        private readonly IFilteredApiHelperService filteredApiHelperService;
 
         public LearningPortalController(
             ICentresService centresService,
@@ -26,7 +28,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ISelfAssessmentService selfAssessmentService,
             IUnlockService unlockService,
             ILogger<LearningPortalController> logger,
-            IConfiguration config)
+            IConfiguration config,
+            IFilteredApiHelperService filteredApiHelperService)
         {
             this.centresService = centresService;
             this.configService = configService;
@@ -35,6 +38,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.unlockService = unlockService;
             this.logger = logger;
             this.config = config;
+            this.filteredApiHelperService = filteredApiHelperService;
         }
 
         public IActionResult AccessibilityHelp()
@@ -94,7 +98,42 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         {
             return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
         }
-
+        private string GetCandidateNumber()
+        {
+            string? sCandNum = User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber);
+            if (sCandNum == null)
+            {
+                return "";
+            }
+            else
+            {
+                return sCandNum;
+            }
+        }
+        private string GetCandidateForename()
+        {
+            string? sFName = User.GetCustomClaim(CustomClaimTypes.UserForename);
+            if (sFName == null)
+            {
+                return "";
+            }
+            else
+            {
+                return sFName;
+            }
+        }
+        private string GetCandidateSurname()
+        {
+            string? sLName = User.GetCustomClaim(CustomClaimTypes.UserSurname);
+            if (sLName == null)
+            {
+                return "";
+            }
+            else
+            {
+                return sLName;
+            }
+        }
         private string? GetBannerText()
         {
             var centreId = GetCentreId();

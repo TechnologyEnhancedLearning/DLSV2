@@ -6,6 +6,7 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.External.Filtered;
     using Microsoft.Extensions.Logging;
 
     public interface ISelfAssessmentService
@@ -17,6 +18,8 @@
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
+        Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
+        IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -250,6 +253,14 @@ SA.UseFilteredApi,
         {
             return $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, candidate id: {candidateId}, " +
                    $"assessment question id: {assessmentQuestionId}, result: {result}";
+        }
+        public Profile GetFilteredProfileForCandidateById(int selfAssessmentId, int candidateId)
+        {
+            return connection.QueryFirstOrDefault<Profile>("GetFilteredProfileForCandidate", new { selfAssessmentId, candidateId }, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<Goal> GetFilteredGoalsForCandidateId(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<Goal>("GetFilteredCompetencyResponsesForCandidate", new { selfAssessmentId, candidateId }, commandType: CommandType.StoredProcedure);
         }
     }
 }
