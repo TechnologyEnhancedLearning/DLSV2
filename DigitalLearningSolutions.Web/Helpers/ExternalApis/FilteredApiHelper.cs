@@ -23,6 +23,8 @@
         Task<IEnumerable<PlayList>> GetPlayListsPoll<T>(string jwtToken, string method);
         Task<PlayList> GetPlayList<T>(string jwtToken, string method, string? id);
         Task<LearningAsset> GetLearningAsset<T>(string jwtToken, string method, int id);
+        Task<string> SetFavouriteAsset<T>(string jwtToken, bool saved, int id);
+        Task<string> SetCompleteAsset<T>(string jwtToken, string complete, int id);
     }
     public class FilteredApiHelper : IFilteredApiHelperService
     {
@@ -35,11 +37,13 @@
         }
         public async Task<Boolean> UpdateProfileAndGoals(string jwtToken, Profile profile, List<Goal> goals)
         {
-            ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest();
-            profileUpdateRequest.Id = "10";
-            profileUpdateRequest.Method = "profile.Update";
-            profileUpdateRequest.JSonRPC = "2.0";
-            profileUpdateRequest.Profile = profile;
+            ProfileUpdateRequest profileUpdateRequest = new ProfileUpdateRequest()
+            {
+                Id = "10",
+                Method = "profile.Update",
+                JSonRPC = "2.0",
+                Profile = profile
+            };
             string request = JsonConvert.SerializeObject(profileUpdateRequest);
             string apiResponse = await CallFilteredApi<string>(request, jwtToken);
             ProfileResponse retProfile = new ProfileResponse();
@@ -80,41 +84,7 @@
             }
             return newPlayLists;
         }
-        private PlayList PopulateLearningAssetsForPlayList(PlayList playList)
-        {
-            if (playList.LearningAssets == null) { playList.LearningAssets = new List<LearningAsset>(); }
-            if (playList.LaList.LA1 != null) { playList.LearningAssets.Add(playList.LaList.LA1); playList.LaList.LA1 = null; };
-            if (playList.LaList.LA2 != null) { playList.LearningAssets.Add(playList.LaList.LA2); playList.LaList.LA2 = null; };
-            if (playList.LaList.LA3 != null) { playList.LearningAssets.Add(playList.LaList.LA3); playList.LaList.LA3 = null; };
-            if (playList.LaList.LA4 != null) { playList.LearningAssets.Add(playList.LaList.LA4); playList.LaList.LA4 = null; };
-            if (playList.LaList.LA5 != null) { playList.LearningAssets.Add(playList.LaList.LA5); playList.LaList.LA5 = null; };
-            if (playList.LaList.LA6 != null) { playList.LearningAssets.Add(playList.LaList.LA6); playList.LaList.LA6 = null; };
-            if (playList.LaList.LA7 != null) { playList.LearningAssets.Add(playList.LaList.LA7); playList.LaList.LA7 = null; };
-            if (playList.LaList.LA8 != null) { playList.LearningAssets.Add(playList.LaList.LA8); playList.LaList.LA8 = null; };
-            if (playList.LaList.LA9 != null) { playList.LearningAssets.Add(playList.LaList.LA9); playList.LaList.LA9 = null; };
-            if (playList.LaList.LA10 != null) { playList.LearningAssets.Add(playList.LaList.LA10); playList.LaList.LA10 = null; };
-            if (playList.LaList.LA11 != null) { playList.LearningAssets.Add(playList.LaList.LA11); playList.LaList.LA11 = null; };
-            if (playList.LaList.LA12 != null) { playList.LearningAssets.Add(playList.LaList.LA12); playList.LaList.LA12 = null; };
-            if (playList.LaList.LA13 != null) { playList.LearningAssets.Add(playList.LaList.LA13); playList.LaList.LA13 = null; };
-            if (playList.LaList.LA14 != null) { playList.LearningAssets.Add(playList.LaList.LA14); playList.LaList.LA14 = null; };
-            if (playList.LaList.LA15 != null) { playList.LearningAssets.Add(playList.LaList.LA15); playList.LaList.LA15 = null; };
-            if (playList.LaList.LA16 != null) { playList.LearningAssets.Add(playList.LaList.LA16); playList.LaList.LA16 = null; };
-            if (playList.LaList.LA17 != null) { playList.LearningAssets.Add(playList.LaList.LA17); playList.LaList.LA17 = null; };
-            if (playList.LaList.LA18 != null) { playList.LearningAssets.Add(playList.LaList.LA18); playList.LaList.LA18 = null; };
-            if (playList.LaList.LA19 != null) { playList.LearningAssets.Add(playList.LaList.LA19); playList.LaList.LA19 = null; };
-            if (playList.LaList.LA20 != null) { playList.LearningAssets.Add(playList.LaList.LA20); playList.LaList.LA20 = null; };
-            if (playList.LaList.LA21 != null) { playList.LearningAssets.Add(playList.LaList.LA21); playList.LaList.LA21 = null; };
-            if (playList.LaList.LA22 != null) { playList.LearningAssets.Add(playList.LaList.LA22); playList.LaList.LA22 = null; };
-            if (playList.LaList.LA23 != null) { playList.LearningAssets.Add(playList.LaList.LA23); playList.LaList.LA23 = null; };
-            if (playList.LaList.LA24 != null) { playList.LearningAssets.Add(playList.LaList.LA24); playList.LaList.LA24 = null; };
-            if (playList.LaList.LA25 != null) { playList.LearningAssets.Add(playList.LaList.LA25); playList.LaList.LA25 = null; };
-            if (playList.LaList.LA26 != null) { playList.LearningAssets.Add(playList.LaList.LA26); playList.LaList.LA26 = null; };
-            if (playList.LaList.LA27 != null) { playList.LearningAssets.Add(playList.LaList.LA27); playList.LaList.LA27 = null; };
-            if (playList.LaList.LA28 != null) { playList.LearningAssets.Add(playList.LaList.LA28); playList.LaList.LA28 = null; };
-            if (playList.LaList.LA29 != null) { playList.LearningAssets.Add(playList.LaList.LA29); playList.LaList.LA29 = null; };
-            if (playList.LaList.LA30 != null) { playList.LearningAssets.Add(playList.LaList.LA30); playList.LaList.LA30 = null; };
-            return playList;
-        }
+
         public String GenerateUserJwt(string candidateNumber)
         {
             var mySecret = "F8F4BA157232CB72762E589ED76A";
@@ -163,12 +133,13 @@
         }
        private async Task<GoalResponse> UpdateGoal<T>(Goal goal, String jwtToken)
         {
-            GoalUpdateRequest goalUpdateRequest = new GoalUpdateRequest();
-            goalUpdateRequest.Id = "5";
-            goalUpdateRequest.Method = "goal.Update";
-            goalUpdateRequest.JSonRPC = "2.0";
-            goalUpdateRequest.Goal = goal;
-
+            GoalUpdateRequest goalUpdateRequest = new GoalUpdateRequest()
+            {
+                Id = "5",
+                Method = "goal.Update",
+                JSonRPC = "2.0",
+                Goal = goal
+            };
             string request = JsonConvert.SerializeObject(goalUpdateRequest);
             string apiResponse = await CallFilteredApi<T>(request, jwtToken);
             GoalResponse goalResponse = new GoalResponse();
@@ -210,10 +181,10 @@
             }
             else
             {
-request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
+request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             }
             
-
+            var playList = new PlayList();
             string apiResponse = await CallFilteredApi<T>(request, token);
             try
             {
@@ -225,12 +196,18 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
             }
             if(playListResponse.Result != null)
             {
-                return PopulateLearningAssetsForPlayList(playListResponse.Result);
+                try
+                {
+                    playList = PopulateLearningAssetsForPlayList(playListResponse.Result);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                
             }
-            else
-            {
-                return new PlayList();
-            }
+            if (playList.Id == "") { playList.Id = "1"; }
+            return playList;
         }
         public async Task<LearningAsset> GetLearningAsset<T>(string token, string method, int id)
         {
@@ -263,6 +240,34 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
                 return new LearningAsset();
             }
         }
+        public async Task<string> SetFavouriteAsset<T>(string jwtToken, bool saved, int id)
+        {
+            SetFavouriteAssetRequest setFavouriteAssetRequest = new SetFavouriteAssetRequest
+            {
+                Id = "3",
+                Method = "profile.SetFavouriteAsset",
+                FavouriteAsset = new FavouriteAsset { Id = id, Saved = saved},
+                JSonRPC = "2.0"
+            };
+            string request = JsonConvert.SerializeObject(setFavouriteAssetRequest);
+            string apiResponse = await CallFilteredApi<T>(request, jwtToken);
+            ResultStringResponse filteredResponse = JsonConvert.DeserializeObject<ResultStringResponse>(apiResponse);
+            return filteredResponse.Result;
+        }
+        public async Task<string> SetCompleteAsset<T>(string jwtToken, string complete, int id)
+        {
+            CompleteAssetRequest completeAssetRequest = new CompleteAssetRequest
+            {
+                Id = "3",
+                Method = "profile.SetFavouriteAsset",
+                CompleteAsset = new CompleteAsset { Id = id, CompletedStatus = complete},
+                JSonRPC = "2.0"
+            };
+            string request = JsonConvert.SerializeObject(completeAssetRequest);
+            string apiResponse = await CallFilteredApi<T>(request, jwtToken);
+            ResultStringResponse filteredResponse = JsonConvert.DeserializeObject<ResultStringResponse>(apiResponse);
+            return filteredResponse.Result;
+        }
         private async Task<string> CallFilteredApi<T>(string request, String jwtToken)
         {
             client.DefaultRequestHeaders.Accept.Clear();
@@ -277,36 +282,68 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
         }
         private FilteredApiRequest GetFilteredApiRequestJSON(string id, string method)
         {
-            FilteredApiRequest filteredApiRequest = new FilteredApiRequest();
-            filteredApiRequest.Id = id;
-            filteredApiRequest.Method = method;
-            filteredApiRequest.JSonRPC = "2.0";
-            return filteredApiRequest;
+            return new FilteredApiRequest()
+            {
+                Id = id,
+                Method = method,
+                JSonRPC = "2.0"
+            };
         }
         private ParamIdRequest GetFilteredParamIdRequestJSON(string id, string method, object objectID)
         {
-            ParamIdRequest paramIdRequest = new ParamIdRequest();
-            paramIdRequest.Id = id;
-            paramIdRequest.Method = method;
-            paramIdRequest.JSonRPC = "2.0";
-            ObjectId newObjectId = new ObjectId();
-            newObjectId.Id = objectID;
-            paramIdRequest.ObjectId = newObjectId;
-            return paramIdRequest;
+            return new ParamIdRequest()
+            {
+                Id = id,
+                Method = method,
+                JSonRPC = "2.0",
+                ObjectId = new ObjectId() { Id = objectID}
+            };
         }
         private ParamAssetIdsRequest GetFilteredParamAssetIdRequestJSON(string id, string method, int assetID)
         {
-            ParamAssetIdsRequest paramAssetIdRequest = new ParamAssetIdsRequest();
-            paramAssetIdRequest.Id = id;
-            paramAssetIdRequest.Method = method;
-            paramAssetIdRequest.JSonRPC = "2.0";
-            LearningAssetIDs newLearningAssetIDs = new LearningAssetIDs();
-            newLearningAssetIDs.AssetIDs = new List<int>
+            return new ParamAssetIdsRequest()
             {
-                assetID
+                Id = id,
+                Method = method,
+                JSonRPC = "2.0",
+                LearningAssetIDs = new LearningAssetIDs() { AssetIDs = new List<int> { assetID } }
             };
-            paramAssetIdRequest.LearningAssetIDs = newLearningAssetIDs;
-            return paramAssetIdRequest;
+        }
+        private PlayList PopulateLearningAssetsForPlayList(PlayList playList)
+        {
+            if (playList.LearningAssets == null) { playList.LearningAssets = new List<LearningAsset>(); }
+            if (playList.LaList.LA0 != null) { playList.LearningAssets.Add(playList.LaList.LA0); playList.LaList.LA0 = null; };
+            if (playList.LaList.LA1 != null) { playList.LearningAssets.Add(playList.LaList.LA1); playList.LaList.LA1 = null; };
+            if (playList.LaList.LA2 != null) { playList.LearningAssets.Add(playList.LaList.LA2); playList.LaList.LA2 = null; };
+            if (playList.LaList.LA3 != null) { playList.LearningAssets.Add(playList.LaList.LA3); playList.LaList.LA3 = null; };
+            if (playList.LaList.LA4 != null) { playList.LearningAssets.Add(playList.LaList.LA4); playList.LaList.LA4 = null; };
+            if (playList.LaList.LA5 != null) { playList.LearningAssets.Add(playList.LaList.LA5); playList.LaList.LA5 = null; };
+            if (playList.LaList.LA6 != null) { playList.LearningAssets.Add(playList.LaList.LA6); playList.LaList.LA6 = null; };
+            if (playList.LaList.LA7 != null) { playList.LearningAssets.Add(playList.LaList.LA7); playList.LaList.LA7 = null; };
+            if (playList.LaList.LA8 != null) { playList.LearningAssets.Add(playList.LaList.LA8); playList.LaList.LA8 = null; };
+            if (playList.LaList.LA9 != null) { playList.LearningAssets.Add(playList.LaList.LA9); playList.LaList.LA9 = null; };
+            if (playList.LaList.LA10 != null) { playList.LearningAssets.Add(playList.LaList.LA10); playList.LaList.LA10 = null; };
+            if (playList.LaList.LA11 != null) { playList.LearningAssets.Add(playList.LaList.LA11); playList.LaList.LA11 = null; };
+            if (playList.LaList.LA12 != null) { playList.LearningAssets.Add(playList.LaList.LA12); playList.LaList.LA12 = null; };
+            if (playList.LaList.LA13 != null) { playList.LearningAssets.Add(playList.LaList.LA13); playList.LaList.LA13 = null; };
+            if (playList.LaList.LA14 != null) { playList.LearningAssets.Add(playList.LaList.LA14); playList.LaList.LA14 = null; };
+            if (playList.LaList.LA15 != null) { playList.LearningAssets.Add(playList.LaList.LA15); playList.LaList.LA15 = null; };
+            if (playList.LaList.LA16 != null) { playList.LearningAssets.Add(playList.LaList.LA16); playList.LaList.LA16 = null; };
+            if (playList.LaList.LA17 != null) { playList.LearningAssets.Add(playList.LaList.LA17); playList.LaList.LA17 = null; };
+            if (playList.LaList.LA18 != null) { playList.LearningAssets.Add(playList.LaList.LA18); playList.LaList.LA18 = null; };
+            if (playList.LaList.LA19 != null) { playList.LearningAssets.Add(playList.LaList.LA19); playList.LaList.LA19 = null; };
+            if (playList.LaList.LA20 != null) { playList.LearningAssets.Add(playList.LaList.LA20); playList.LaList.LA20 = null; };
+            if (playList.LaList.LA21 != null) { playList.LearningAssets.Add(playList.LaList.LA21); playList.LaList.LA21 = null; };
+            if (playList.LaList.LA22 != null) { playList.LearningAssets.Add(playList.LaList.LA22); playList.LaList.LA22 = null; };
+            if (playList.LaList.LA23 != null) { playList.LearningAssets.Add(playList.LaList.LA23); playList.LaList.LA23 = null; };
+            if (playList.LaList.LA24 != null) { playList.LearningAssets.Add(playList.LaList.LA24); playList.LaList.LA24 = null; };
+            if (playList.LaList.LA25 != null) { playList.LearningAssets.Add(playList.LaList.LA25); playList.LaList.LA25 = null; };
+            if (playList.LaList.LA26 != null) { playList.LearningAssets.Add(playList.LaList.LA26); playList.LaList.LA26 = null; };
+            if (playList.LaList.LA27 != null) { playList.LearningAssets.Add(playList.LaList.LA27); playList.LaList.LA27 = null; };
+            if (playList.LaList.LA28 != null) { playList.LearningAssets.Add(playList.LaList.LA28); playList.LaList.LA28 = null; };
+            if (playList.LaList.LA29 != null) { playList.LearningAssets.Add(playList.LaList.LA29); playList.LaList.LA29 = null; };
+            if (playList.LaList.LA30 != null) { playList.LearningAssets.Add(playList.LaList.LA30); playList.LaList.LA30 = null; };
+            return playList;
         }
     }
 }

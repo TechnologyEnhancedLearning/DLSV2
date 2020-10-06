@@ -89,5 +89,24 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             var model = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
             return View("SelfAssessments/FilteredMgp/Asset", model);
         }
+        public async Task<IActionResult> SetFavouriteAsset(int selfAssessmentId, int assetId, bool status)
+        {
+            var filteredToken = await GetFilteredToken();
+            var success = await filteredApiHelperService.SetFavouriteAsset<string>(filteredToken, status, assetId);
+            return RedirectToAction("FilteredLearningAsset", new { selfAssessmentId = selfAssessmentId, assetId= assetId });
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/LearningAsset/{assetId}/AssetComplete")]
+        public async Task<IActionResult> CompleteLearningAssetView(int selfAssessmentId, int assetId)
+        {
+            var filteredToken = await GetFilteredToken();
+            var model = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
+            return View("SelfAssessments/FilteredMgp/AssetComplete", model);
+        }
+        public async Task<IActionResult> SetCompleteAsset(int selfAssessmentId, int assetId, string status)
+        {
+            var filteredToken = await GetFilteredToken();
+            var success = await filteredApiHelperService.SetCompleteAsset<string>(filteredToken, status, assetId);
+            return RedirectToAction("FilteredRecommendations", new { selfAssessmentId = selfAssessmentId });
+        }
     }
 }

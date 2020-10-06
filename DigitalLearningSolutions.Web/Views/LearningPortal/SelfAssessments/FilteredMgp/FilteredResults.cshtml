@@ -29,14 +29,14 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.FavouritePlayList.Id != null)
+    <h1 id="reclist-heading">Recommendations</h1>
+    @if (Model.FavouritePlayList.Name != null)
     {
-      <h1 id="page-heading">Favourites</h1>
-      <partial name="_Playlist" model="Model.FavouritePlayList" />
+      <partial name="_Playlist.cshtml" model="@Model.FavouritePlayList" />
     }
     @if (Model.RecommendedPlayLists.Any())
     {
-      <h1 id="page-heading">Recommendations</h1>
+
       @foreach (var playList in Model.RecommendedPlayLists)
       {
         @if (playList.Name != null)
@@ -48,7 +48,7 @@
     }
     @if (Model.CompetencyPlayLists.Any())
     {
-      <h1 id="page-heading">Explore more</h1>
+      <h1 id="complist-heading">Explore more</h1>
       <div class="nhsuk-grid-row">
         @foreach (var playList in Model.CompetencyPlayLists)
         {

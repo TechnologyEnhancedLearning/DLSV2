@@ -3,6 +3,8 @@
     using Newtonsoft.Json;
     public class LaList
     {
+        [JsonProperty("0")]
+        public LearningAsset? LA0 { get; set; }
         [JsonProperty("1")]
         public LearningAsset? LA1 { get; set; }
         [JsonProperty("2")]

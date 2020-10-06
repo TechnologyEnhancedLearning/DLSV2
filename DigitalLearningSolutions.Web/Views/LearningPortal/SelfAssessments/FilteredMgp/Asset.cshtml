@@ -8,7 +8,7 @@
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
-  <li class="nhsuk-breadcrumb__item">Learning Asset</li>
+  <li class="nhsuk-breadcrumb__item">Learning Resource</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
@@ -27,29 +27,31 @@
 </div>
 <h1 id="asset-title-@Model.Id">@Model.Title</h1>
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-half">
-    <img src="@Model.ScreenshotImageMobile" alt="@Model.Title screenshot" class="img-screenshot" />
-  </div>
-  <div class="nhsuk-grid-column-one-half">
-    @Html.Raw(Model.Description)
-    <div class="nhsuk-action-link">
-      <a class="nhsuk-action-link__link" aria-describedby="asset-title-@Model.Id" target="_blank" href="@Model.DirectUrl">
-        <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
-        </svg>
-        <span class="nhsuk-action-link__text">Launch</span>
-      </a>
+  @if (Model.MainImage != "")
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <img src="@Model.MainImage" alt="@Model.Title screenshot" class="img-screenshot" />
     </div>
-  </div>
-
-</div>
+  }
+    <div class="@(Model.MainImage == ""? "nhsuk-grid-column-full" : "nhsuk-grid-column-one-half")">
+        @Html.Raw(Model.Description)
+        <div class="nhsuk-action-link">
+          <a class="nhsuk-action-link__link" aria-describedby="asset-title-@Model.Id" target="_blank" href="@Model.DirectUrl">
+            <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+            </svg>
+            <span class="nhsuk-action-link__text">Launch</span>
+          </a>
+        </div>
+      </div>
+    </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="@(Model.IsFavourite ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="@Model.Id-name" asp-action="AssetMarkFavourite" asp-route-assetId="@Model.Id">
+    <a class="@(Model.IsFavourite ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="@Model.Id-name" asp-action="SetFavouriteAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id" asp-route-status=@(Model.IsFavourite ? "False" : "True")>
       @(Model.IsFavourite ? "Unbookmark" : "Bookmark")
     </a>
-    <a class="@(Model.Completed ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="@Model.Id-name" asp-action="AssetMarkComplete" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
+    <a class="@(Model.Completed ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="@Model.Id-name" asp-action="CompleteLearningAssetView" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
       Mark Complete
     </a>
   </div>
