@@ -66,7 +66,7 @@
             IEnumerable<PlayList> playLists = new List<PlayList>();
             while (playLists.Count() == 0)
             {
-                await Task.Delay(1000);
+                //await Task.Delay(1000);
                 playLists = await GetPlayLists<T>(method, jwtToken);
             }
             return PopulateLearningAssetsForPlayLists(playLists);
@@ -128,7 +128,7 @@
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-            new Claim("userID", "DLS-" + candidateNumber),
+            new Claim("userID", "DLSUser-" + candidateNumber),
                 }),
                 //Issuer = myIssuer,
                 Expires = DateTime.UtcNow.AddDays(7),
