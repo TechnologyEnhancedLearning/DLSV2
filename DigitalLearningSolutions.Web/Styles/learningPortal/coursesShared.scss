@@ -255,7 +255,7 @@ button.nhsuk-pagination__link {
 }
 @include mq($from: 1024px) {
   .asset-card-header {
-    min-height: 162px;
+    min-height: 163px;
   }
 }
 .tag.tag-article {
@@ -271,7 +271,7 @@ button.nhsuk-pagination__link {
   background-color: $nhsuk-link-visited-color;
 }
 .playlist-title {
-  min-height: 71px;
+  min-height: 72px;
 }
 .asset-title-header {
   padding-bottom: 25px;
