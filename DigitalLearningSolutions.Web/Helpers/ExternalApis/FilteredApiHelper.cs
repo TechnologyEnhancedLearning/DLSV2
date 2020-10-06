@@ -66,7 +66,7 @@
             IEnumerable<PlayList> playLists = new List<PlayList>();
             while (playLists.Count() == 0)
             {
-                //await Task.Delay(1000);
+                await Task.Delay(1000);
                 playLists = await GetPlayLists<T>(method, jwtToken);
             }
             return PopulateLearningAssetsForPlayLists(playLists);
@@ -188,15 +188,17 @@
             string request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("10", method));
            
             string apiResponse = await CallFilteredApi<T>(request, token);
+            IEnumerable<PlayList> playLists = new List<PlayList>();
             try
             {
                 playListsResponse = JsonConvert.DeserializeObject<PlayListsResponse>(apiResponse);
+                playLists = playListsResponse.Result;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-            return playListsResponse.Result;
+            return playLists;
         }
         public async Task<PlayList> GetPlayList<T>(string token, string method, string? id)
         {
