@@ -98,7 +98,7 @@
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-            new Claim("userID", "DLSUser-" + candidateNumber),
+            new Claim("userID", "DLS-" + candidateNumber),
                 }),
                 //Issuer = myIssuer,
                 Expires = DateTime.UtcNow.AddDays(7),
