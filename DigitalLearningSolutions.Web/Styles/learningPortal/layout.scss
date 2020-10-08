@@ -237,3 +237,25 @@ nav, .nhsuk-header__navigation, #header-navigation {
     transform: rotate(360deg);
   }
 }
+
+//Accessibility Visually Hidden Class
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+}
+
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  position: static;
+  overflow: visible;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+}
