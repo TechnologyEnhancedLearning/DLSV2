@@ -35,6 +35,8 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(int selfAssessmentId, int competencyNumber)
         {
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/" + competencyNumber.ToString();
+            selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
@@ -58,10 +60,11 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
         public IActionResult SelfAssessmentCompetency(int selfAssessmentId, ICollection<AssessmentQuestion> assessmentQuestions, int competencyNumber, int competencyId)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
+            var candidateID = GetCandidateId();
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateID, selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to set self assessment competency for candidate {GetCandidateId()} with no self assessment");
+                logger.LogWarning($"Attempt to set self assessment competency for candidate {candidateID} with no self assessment");
                 return StatusCode(403);
             }
 
@@ -75,13 +78,15 @@
                     assessmentQuestion.Result.Value
                 );
             }
-
+            selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);
             return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
         }
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Review")]
         public IActionResult SelfAssessmentReview(int selfAssessmentId)
         {
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Review";
+            selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
