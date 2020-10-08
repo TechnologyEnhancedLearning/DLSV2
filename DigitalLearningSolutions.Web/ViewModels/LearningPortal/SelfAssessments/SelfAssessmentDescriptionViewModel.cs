@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.AspNetCore.Hosting;
 
     public class SelfAssessmentDescriptionViewModel
     {
@@ -10,7 +11,6 @@
         public readonly bool UseFilteredApi;
         public readonly string? UserBookmark;
         public readonly bool UnprocessedUpdates;
-
         public SelfAssessmentDescriptionViewModel(SelfAssessment selfAssessment)
         {
             Id = selfAssessment.Id;
