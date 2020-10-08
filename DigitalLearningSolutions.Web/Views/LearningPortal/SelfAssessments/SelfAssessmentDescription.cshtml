@@ -1,5 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using Microsoft.Extensions.Configuration
 @model SelfAssessmentDescriptionViewModel
+@inject IConfiguration Configuration
 
 @{
   Layout = "SelfAssessments/_Layout";
@@ -9,15 +11,15 @@
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">Self Assessment</li>
 }
-<h2>@Model.Name</h2>
+<h1>@Model.Name</h1>
 <p class="nhsuk-u-reading-width">@Model.Description</p>
 @if (Model.UseFilteredApi)
 {
-  <p class="nhsuk-u-reading-width">Once you have completed the self-assessment, your results will be submitted to the Magpie sign-posting tool which will recommend suitable learning modules.</p>
+<p class="nhsuk-u-reading-width">Once you have completed the self-assessment, your results will be submitted to the Magpie sign-posting tool which will recommend suitable learning modules.</p>
 }
 @if (Model.UserBookmark != null)
 {
-<a class="nhsuk-button trigger-loader" href=@Model.UserBookmark >
+<a class="nhsuk-button trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">
   Continue
 </a>
 }
