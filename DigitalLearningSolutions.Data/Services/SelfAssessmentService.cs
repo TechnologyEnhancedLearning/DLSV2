@@ -17,6 +17,8 @@
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
+        void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status);
+        void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
@@ -88,7 +90,9 @@ SA.UseFilteredApi,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
-                             CA.CompleteByDate
+                             CA.CompleteByDate,
+                             CA.UserBookmark,
+                             CA.UnprocessedUpdates
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -97,7 +101,7 @@ SA.UseFilteredApi,
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates",
                 new { candidateId }
             );
         }
@@ -111,7 +115,9 @@ SA.UseFilteredApi,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
-                             CA.CompleteByDate
+                             CA.CompleteByDate,
+                             CA.UserBookmark,
+                             CA.UnprocessedUpdates
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -120,7 +126,7 @@ SA.UseFilteredApi,
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -261,6 +267,44 @@ SA.UseFilteredApi,
         public IEnumerable<Goal> GetFilteredGoalsForCandidateId(int selfAssessmentId, int candidateId)
         {
             return connection.Query<Goal>("GetFilteredCompetencyResponsesForCandidate", new { selfAssessmentId, candidateId }, commandType: CommandType.StoredProcedure);
+        }
+
+        public void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments
+                        SET UnprocessedUpdates = @status
+                        WHERE SelfAssessmentID = @selfAssessmentId
+                          AND CandidateID = @candidateId",
+                new { status, selfAssessmentId, candidateId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting self assessment updated flag as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, status: {status}"
+                );
+            }
+        }
+
+        public void SetBookmark(int selfAssessmentId, int candidateId, string bookmark)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments
+                        SET UserBookmark = @bookmark
+                        WHERE SelfAssessmentID = @selfAssessmentId
+                          AND CandidateID = @candidateId",
+                new { bookmark, selfAssessmentId, candidateId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting self assessment bookmark as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, bookmark: {bookmark}"
+                );
+            }
         }
     }
 }
