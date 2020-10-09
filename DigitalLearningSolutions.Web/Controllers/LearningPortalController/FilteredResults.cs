@@ -49,14 +49,15 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             var profile = selfAssessmentService.GetFilteredProfileForCandidateById(selfAssessmentId, candidateID);
             var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(selfAssessmentId, candidateID).ToList();
             var response = await filteredApiHelperService.UpdateProfileAndGoals(filteredToken, profile, goals);
+            var favouritePlayList = await filteredApiHelperService.GetPlayList<PlayList>(filteredToken, "playlist.FetchFavouritePlaylist", null);
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, false);
             var model = new SelfAssessmentFilteredResultsViewModel()
              {
                  SelfAssessment = assessment,
                  CompetencyPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchCompetencyPlaylists"),
                  RecommendedPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchNexRexPlaylists"),
-                 FavouritePlayList = await filteredApiHelperService.GetPlayList<PlayList>(filteredToken, "playlist.FetchFavouritePlaylist", null)
-             };
+                 FavouritePlayList = favouritePlayList
+            };
             return View("SelfAssessments/FilteredMgp/FilteredResults", model);
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]
