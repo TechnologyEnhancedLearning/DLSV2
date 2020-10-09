@@ -5,14 +5,14 @@
     <div class="course-card nhsuk-panel card-fixed-height" id="@Model.Id-card">
       
       <div class="asset-card-header">
-        <h3 class="course-title nhsuk-u-padding-top-2 nhsuk-u-margin-bottom-2" id="@Model.Id-name" name="name" role="heading" aria-level="3">
+        <h3 class="course-title nhsuk-u-padding-top-2 nhsuk-u-margin-bottom-2" id="@ViewData["idprefix"]Model.Id-name" name="name" role="heading" aria-level="3">
           @Html.Raw(Model.Title)
         </h3>
         <div class="nhsuk-u-padding-left-0">
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full tags">
               <div class="tag nhsuk-u-font-size-14 nhsuk-u-padding-1 nhsuk-u-margin-right-1 tag-@Model.TypeLabel.ToLower()" aria-describedby="@Model.Id-name">
-                @Model.TypeLabel | @Model.Provider.Name | @Model.LengthLabel
+                @Model.TypeLabel <span aria-hidden="true">|</span> @Model.Provider.Name <span aria-hidden="true">|</span> @Model.LengthLabel
               </div>
             </div>
           </div>
@@ -26,7 +26,7 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <a class="nhsuk-button button-small nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 trigger-loader" aria-describedby="@Model.Id-name" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
-            View
+            View resource
           </a>
         </div>
       </div>
