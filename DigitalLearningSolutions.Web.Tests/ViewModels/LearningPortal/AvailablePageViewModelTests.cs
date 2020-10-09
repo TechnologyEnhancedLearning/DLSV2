@@ -26,7 +26,7 @@
                 courses,
                 config,
                 null,
-                "Course Name",
+                "Activity Name",
                 "Ascending",
                 null,
                 1
@@ -64,7 +64,7 @@
                 courses,
                 config,
                 null,
-                "Course Name",
+                "Activity Name",
                 "Ascending",
                 null,
                 1
@@ -95,7 +95,7 @@
                 courses,
                 config,
                 null,
-                "Course Name",
+                "Activity Name",
                 "Ascending",
                 null,
                 2

@@ -125,8 +125,8 @@
             };
         }
 
-        [TestCase("Course Name", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Course Name", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("Activity Name", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("Activity Name", "Descending", new[] { 72, 71, 73 })]
         [TestCase("Diagnostic Score", "Ascending", new[] { 73, 72, 71 })]
         [TestCase("Diagnostic Score", "Descending", new[] { 71, 72, 73 })]
         [TestCase("Passed Sections", "Ascending", new[] { 72, 73, 71 })]
@@ -147,8 +147,8 @@
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
-        [TestCase("Course Name", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Course Name", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("Activity Name", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("Activity Name", "Descending", new[] { 72, 71, 73 })]
         [TestCase("Enrolled Date", "Ascending", new[] { 73, 71, 72 })]
         [TestCase("Enrolled Date", "Descending", new[] { 72, 71, 73 })]
         [TestCase("Last Accessed Date", "Ascending", new[] { 71, 72, 73 })]
@@ -165,8 +165,8 @@
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
-        [TestCase("Course Name", "Ascending", new[] { 71, 72, 73 })]
-        [TestCase("Course Name", "Descending", new[] { 73, 72, 71 })]
+        [TestCase("Activity Name", "Ascending", new[] { 71, 72, 73 })]
+        [TestCase("Activity Name", "Descending", new[] { 73, 72, 71 })]
         [TestCase("Brand", "Ascending", new[] { 72, 71, 73 })]
         [TestCase("Brand", "Descending", new[] { 73, 71, 72 })]
         [TestCase("Category", "Ascending", new[] { 72, 73, 71 })]

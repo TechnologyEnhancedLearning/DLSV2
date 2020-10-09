@@ -6,7 +6,7 @@ import getCourseCards from './getCourseCards';
 describe('getSortValue', () => {
   it.each`
   fieldName             | fieldValue        | sortBy                  | expectedSortValue
-  ${'name'}             | ${'Example name'} | ${'Course Name'}        | ${'example name'}
+  ${'name'}             | ${'Example name'} | ${'Activity Name'}        | ${'example name'}
   ${'started-date'}     | ${'01/01/2020'}   | ${'Enrolled Date'}      | ${new Date('01/01/2020')}
   ${'accessed-date'}    | ${'02/02/2020'}   | ${'Last Accessed Date'} | ${new Date('02/02/2020')}
   ${'complete-by-date'} | ${'03/03/2020'}   | ${'Complete By Date'}   | ${new Date('03/03/2020')}
@@ -87,8 +87,8 @@ describe('sortCards current', () => {
 
   it.each`
     sortBy                  | sortDirection   | firstId       | secondId      | thirdId
-    ${'Course Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'Course Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'Activity Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'Activity Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
     ${'Diagnostic Score'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
     ${'Diagnostic Score'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
     ${'Passed Sections'}    | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}

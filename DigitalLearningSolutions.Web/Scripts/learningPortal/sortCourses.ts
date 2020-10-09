@@ -22,7 +22,7 @@ export function sortCards(
 
 export function getSortValue(courseCard: CourseCard, sortBy: string): string | number | Date {
   switch (sortBy) {
-    case 'Course Name':
+    case 'Activity Name':
       return getElementText(courseCard, 'name').toLocaleLowerCase();
     case 'Enrolled Date':
       return parseDate(getElementText(courseCard, 'started-date'));

@@ -20,12 +20,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             {
                 filteredToken = Request.Cookies["filtered-" + candidateNum];
             }
-            //filteredToken = GetCookie(candidateNum);
             if (filteredToken == null)
             {
                 var accessToken = await filteredApiHelperService.GetUserAccessToken<AccessToken>(candidateNum);
                 filteredToken = accessToken.Jwt_access_token.ToString();
-                //SetCookie(candidateNum, filteredToken, 15);
                 CookieOptions cookieOptions = new CookieOptions();
                 cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(15));
                 Response.Cookies.Append("filtered-" + candidateNum, filteredToken, cookieOptions);

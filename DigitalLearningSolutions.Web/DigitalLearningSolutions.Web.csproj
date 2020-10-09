@@ -90,4 +90,6 @@
     </ItemGroup>
   </Target>
 
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4js_4learningportal_4completed_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4current_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4paginate_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4searchsortandpaginate_1js_1map__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>
