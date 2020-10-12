@@ -2,7 +2,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
@@ -75,13 +75,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             };
             selfAssessments = new[]
             {
-                new DigitalLearningSolutions.Data.Models.SelfAssessment
+                new SelfAssessment
                 {
                     Id = 1,
                     Name = "Self Assessment 1",
                     Description = "Self Assessment 1 Description"
                 },
-                new DigitalLearningSolutions.Data.Models.SelfAssessment
+                new SelfAssessment
                 {
                     Id = 1,
                     Name = "Self Assessment 2",

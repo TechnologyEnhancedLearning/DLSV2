@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;

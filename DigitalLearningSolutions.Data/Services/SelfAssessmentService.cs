@@ -5,14 +5,14 @@
     using System.Data;
     using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using Microsoft.Extensions.Logging;
 
     public interface ISelfAssessmentService
     {
-        IEnumerable<SelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
-        SelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
+        IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
+        CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
@@ -80,9 +80,9 @@
             this.logger = logger;
         }
 
-        public IEnumerable<SelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
+        public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
         {
-            return connection.Query<SelfAssessment>(
+            return connection.Query<CurrentSelfAssessment>(
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
@@ -105,9 +105,9 @@ SA.UseFilteredApi,
                 new { candidateId }
             );
         }
-        public SelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId)
+        public CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId)
         {
-            return connection.QueryFirstOrDefault<SelfAssessment>(
+            return connection.QueryFirstOrDefault<CurrentSelfAssessment>(
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,

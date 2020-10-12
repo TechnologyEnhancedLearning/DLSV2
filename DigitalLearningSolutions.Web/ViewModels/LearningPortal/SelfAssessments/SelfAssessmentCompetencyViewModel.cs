@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public class SelfAssessmentCompetencyViewModel
     {
@@ -10,7 +10,7 @@
         public readonly int TotalNumberOfCompetencies;
 
         public SelfAssessmentCompetencyViewModel(
-            SelfAssessment assessment,
+            CurrentSelfAssessment assessment,
             Competency competency,
             int competencyNumber,
             int totalNumberOfCompetencies
