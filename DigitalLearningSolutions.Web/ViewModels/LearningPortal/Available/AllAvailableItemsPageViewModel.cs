@@ -4,6 +4,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 
     public class AllAvailableItemsPageViewModel
     {
@@ -14,9 +16,7 @@
             IConfiguration config
         )
         {
-            AvailableCourses = availableCourses.Select(availableCourse =>
-                new AvailableCourseViewModel(availableCourse, config)
-            );
+            AvailableCourses = availableCourses.Select(availableCourse => new AvailableCourseViewModel(availableCourse, config));
         }
     }
 }

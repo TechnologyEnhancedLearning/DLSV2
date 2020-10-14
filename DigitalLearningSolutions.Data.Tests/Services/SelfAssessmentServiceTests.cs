@@ -421,7 +421,7 @@
         public void UpdateLastAccessed_does_not_update_invalid_self_assessment()
         {
             // Given
-            const int invalidSelfAssessmentId = 2;
+            const int invalidSelfAssessmentId = 0;
 
             using (new TransactionScope())
             {
@@ -492,6 +492,100 @@
                         AssessmentQuestionID = @assessmentQuestionId",
                 new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId }
             );
+        }
+        [Test]
+        public void SetUpdatedFlag_sets_updated_flag_to_true()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetUpdatedFlag(SelfAssessmentId, CandidateId, true);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.UnprocessedUpdates.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void SetUpdatedFlag_does_not_update_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 0;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetUpdatedFlag(invalidSelfAssessmentId, CandidateId, true);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.UnprocessedUpdates.Should().BeFalse();
+            }
+        }
+        [Test]
+        public void SetBookmark_sets_bookmark()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetBookmark(SelfAssessmentId, CandidateId, "");
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.UserBookmark.Should().Be("");
+            }
+        }
+
+        [Test]
+        public void SetBookmark_does_not_set_bookmark_for_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 0;
+
+            using (new TransactionScope())
+            {
+                // When
+                selfAssessmentService.SetBookmark(invalidSelfAssessmentId, CandidateId, "test");
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.UserBookmark.Should().BeNull();
+            }
+        }
+        [Test]
+        public void IncrementLaunchCount_increases_launch_count_by_one()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                var originalSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                int originalLaunchCount = originalSelfAssessment.LaunchCount;
+                selfAssessmentService.IncrementLaunchCount(SelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.LaunchCount.Should().BeGreaterThan(originalLaunchCount);
+            }
+        }
+
+        [Test]
+        public void IncrementLaunchCount_does_not_increase_launch_count_by_one_for_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 0;
+
+            using (new TransactionScope())
+            {
+                // When
+                var originalSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                int originalLaunchCount = originalSelfAssessment.LaunchCount;
+                selfAssessmentService.IncrementLaunchCount(invalidSelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.LaunchCount.Should().Be(originalLaunchCount);
+            }
         }
     }
 }

@@ -47,6 +47,19 @@
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
+        [Test]
+        public void SelfAssessment_action_should_increment_launch_count()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
+
+            // When
+            controller.SelfAssessment(SelfAssessmentId);
+
+            // Then
+            A.CallTo(() => selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, CandidateId)).MustHaveHappened();
+        }
 
         [Test]
         public void SelfAssessment_action_without_self_assessment_should_return_403()
@@ -94,6 +107,19 @@
 
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
+        }
+        [Test]
+        public void SelfAssessmentCompetency_action_should_update_user_bookmark()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/1";
+            // When
+            controller.SelfAssessmentCompetency(SelfAssessmentId, 1);
+
+            // Then
+            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl)).MustHaveHappened();
         }
 
         [Test]
@@ -242,7 +268,19 @@
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
+        [Test]
+        public void SelfAssessmentReview_action_should_update_user_bookmark()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Review";
+            // When
+            controller.SelfAssessmentReview(SelfAssessmentId);
 
+            // Then
+            A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl)).MustHaveHappened();
+        }
         [Test]
         public void SelfAssessmentReview_Should_Have_Previous_Competency_Number_One_When_Empty()
         {
@@ -307,7 +345,7 @@
             const int selfAssessmentId = 1;
 
             // When
-            controller.SetSelfAssessmentCompleteByDate(0, 0, 0, selfAssessmentId);
+            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, 0, 0, 0);
 
             // Then
             A.CallTo(

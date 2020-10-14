@@ -21,7 +21,7 @@
             CurrentCourses = currentCourses.Select(course => new CurrentCourseViewModel(course, config));
             foreach (SelfAssessment selfAssessment in selfAssessments)
             {
-                CurrentCourses = CurrentCourses.ToList().Append(new SelfAssessmentCardViewModel(selfAssessment));
+                CurrentCourses = CurrentCourses.Append(new SelfAssessmentCardViewModel(selfAssessment));
             };
         }
     }

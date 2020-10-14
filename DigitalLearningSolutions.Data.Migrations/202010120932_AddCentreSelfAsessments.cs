@@ -19,6 +19,7 @@
             //add enrolment method etc to CandidateAssessments
             Alter.Table("CandidateAssessments")
                 .AddColumn("LaunchCount").AsInt32().NotNullable().WithDefaultValue(0)
+                .AddColumn("CompletedDate").AsDateTime().Nullable()
                 .AddColumn("RemovedDate").AsDateTime().Nullable()
                 .AddColumn("RemovalMethodID").AsInt32().NotNullable().WithDefaultValue(1)
                 .AddColumn("EnrolmentMethodId").AsInt32().NotNullable().WithDefaultValue(1)
@@ -32,6 +33,7 @@
             Delete.Table("CentreSelfAssessments");
             Delete.Column("LearningPortalUrl").FromTable("Centres");
             Delete.Column("LaunchCount").FromTable("CandidateAssessments");
+            Delete.Column("CompletedDate").FromTable("CandidateAssessments");
             Delete.Column("RemovedDate").FromTable("CandidateAssessments");
             Delete.Column("RemovalMethodID").FromTable("CandidateAssessments");
             Delete.Column("EnrolmentMethodId").FromTable("CandidateAssessments");

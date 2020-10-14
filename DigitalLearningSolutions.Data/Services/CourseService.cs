@@ -14,6 +14,7 @@
         IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
         void RemoveCurrentCourse(int progressId, int candidateId);
+        void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
     }
 
     public class CourseService : ICourseService
@@ -40,7 +41,7 @@
         public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActiveAvailableCustomisationsForCentreFiltered_V4", new { candidateId, centreId },
+                @"GetActiveAvailableCustomisationsForCentreFiltered_V5", new { candidateId, centreId },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -80,6 +81,27 @@
             {
                 logger.LogWarning(
                     $"Not removing current course as db update failed. Progress id: {progressId}, candidate id: {candidateId}"
+                );
+            }
+        }
+
+        public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO [dbo].[CandidateAssessments]
+                           ([CandidateID]
+                           ,[SelfAssessmentID])
+                     VALUES
+                           (@candidateId,
+                           @selfAssessmentId)",
+                new { selfAssessmentId, candidateId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not enrolled delegate on self assessment as db insert failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
                 );
             }
         }

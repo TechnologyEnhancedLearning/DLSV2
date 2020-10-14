@@ -21,7 +21,7 @@
                 logger.LogWarning($"Attempt to display self assessment description for candidate {GetCandidateId()} with no self assessment");
                 return StatusCode(403);
             }
-
+            selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, GetCandidateId());
             selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, GetCandidateId());
 
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment);
@@ -104,7 +104,7 @@
 
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int day, int month, int year, int selfAssessmentId)
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, int day, int month, int year)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
             if (assessment.Id == 0)
@@ -121,7 +121,7 @@
             var validationResult = DateValidator.ValidateDate(day, month, year);
             if (!validationResult.DateValid)
             {
-                return RedirectToAction("SetSelfAssessmentCompleteByDate", new { day, month, year });
+                return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
             }
             
                 var completeByDate = new DateTime(year, month, day);

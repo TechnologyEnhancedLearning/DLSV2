@@ -21,7 +21,7 @@
             Topic = course.Topic;
             DelegateStatus = (DelegateStatus)course.DelegateStatus;
             EnrolButtonText = GetEnrolButtonText(DelegateStatus);
-            EnrolButtonAriaLabel = EnrolButtonText == null ? null : $"{EnrolButtonText} on course";
+            EnrolButtonAriaLabel = EnrolButtonText == null ? null : $"{EnrolButtonText} on activity";
             LaunchUrl = config.GetLaunchUrl(course.Id);
         }
 

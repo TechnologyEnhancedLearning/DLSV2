@@ -68,8 +68,10 @@
            
             //get playlists
             IEnumerable<PlayList> playLists = new List<PlayList>();
-            while (playLists.Count() == 0)
+            var i = 0;
+            while (playLists.Count() == 0 && i < 10)
             {
+                i++;
                 await Task.Delay(1000);
                 playLists = await GetPlayLists<T>(method, jwtToken);
             }
@@ -163,7 +165,11 @@
             try
             {
                 playListsResponse = JsonConvert.DeserializeObject<PlayListsResponse>(apiResponse);
-                playLists = playListsResponse.Result;
+                if(playListsResponse.Result != null)
+                {
+playLists = playListsResponse.Result;
+                }
+                
             }
             catch (Exception e)
             {
