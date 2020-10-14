@@ -19,7 +19,10 @@
                         typeof(AddSelfAssessmentUseApiFlag).Assembly,
                         typeof(AddFilteredMappingTables).Assembly,
                         typeof(AddFilteredSPs).Assembly,
-                        typeof(AddCandidateAssessmentNewFields).Assembly
+                        typeof(AddCandidateAssessmentNewFields).Assembly,
+                        typeof(AddCentreSelfAsessments).Assembly,
+                        typeof(AddSelfAssessmentAdditionalFields).Assembly,
+                        typeof(AddNewGetAvailableSproc).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

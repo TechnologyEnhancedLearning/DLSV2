@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.Extensions.Configuration;
@@ -21,7 +21,7 @@
             CurrentCourses = currentCourses.Select(course => new CurrentCourseViewModel(course, config));
             foreach (SelfAssessment selfAssessment in selfAssessments)
             {
-                CurrentCourses = CurrentCourses.ToList().Append(new SelfAssessmentCardViewModel(selfAssessment));
+                CurrentCourses = CurrentCourses.Append(new SelfAssessmentCardViewModel(selfAssessment));
             };
         }
     }

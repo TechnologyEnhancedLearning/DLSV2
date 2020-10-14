@@ -37,19 +37,25 @@
         <partial name='_Playlist.cshtml' for='FavouritePlayList' />
       </div>
       }
+     
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
       @if (Model.RecommendedPlayLists.Any())
       {
-    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
-      @foreach (var playList in Model.RecommendedPlayLists)
-      {
-        @if (playList.Name != null)
+        @foreach (var playList in Model.RecommendedPlayLists)
         {
-          <partial name="_Playlist.cshtml" Model="playList" />
+          @if (playList.Name != null)
+          {
+            <partial name="_Playlist.cshtml" Model="playList" />
+          }
+
         }
 
       }
-    </div>
+      else
+      {
+        <p>Check back soon for recommended learning learning resources. <a class="trigger-loader" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Reload resources.</a></p>
       }
+    </div>
       @if (Model.CompetencyPlayLists.Any())
       {
         <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">

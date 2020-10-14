@@ -44,12 +44,25 @@
   @if (Model.EnrolButtonText != null)
   {
     <div class="flex-row">
+      @if(Model.IsSelfAssessment)
+      {
       <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
          aria-describedby="@Model.Id-name"
-         aria-label="@Model.EnrolButtonAriaLabel"
-         href="@Model.LaunchUrl">
+         aria-label="@Model.EnrolButtonAriaLabel" asp-action="EnrolOnSelfAssessment" asp-route-selfAssessmentId="@Model.Id"
+         >
         @Model.EnrolButtonText
       </a>
+      }
+      else
+      {
+    <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+       aria-describedby="@Model.Id-name"
+       aria-label="@Model.EnrolButtonAriaLabel"
+       href="@Model.LaunchUrl">
+      @Model.EnrolButtonText
+    </a>
+      }
+      
     </div>
   }
 </div>

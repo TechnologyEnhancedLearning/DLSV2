@@ -28,7 +28,7 @@
                 availableCourses,
                 config,
                 null,
-                "Course Name",
+                "Activity Name",
                 "Ascending",
                 "",
                 1

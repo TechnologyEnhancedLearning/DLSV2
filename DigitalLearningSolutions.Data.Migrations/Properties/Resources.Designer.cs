@@ -84,6 +84,16 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DROP PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
+        ///GO.
+        /// </summary>
+        internal static string DropGetActiveAvailableV5 {
+            get {
+                return ResourceManager.GetString("DropGetActiveAvailableV5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 
         ///CREATE FUNCTION [dbo].[GetSelfAssessmentSummaryForCandidate]
         ///(
@@ -108,6 +118,27 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string FilteredSPs {
             get {
                 return ResourceManager.GetString("FilteredSPs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 14/10/2020 10:02:34 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GetActiveAvailableV5 {
+            get {
+                return ResourceManager.GetString("GetActiveAvailableV5", resourceCulture);
             }
         }
     }

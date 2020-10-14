@@ -21,7 +21,20 @@
       Learning assessment and certification
     </div>
   }
-  @if (Model is CurrentCourseViewModel currentCourseViewModel) {
+  @if (Model.IsSelfAssessment)
+  {
+    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
+      Competency assessment
+    </div>
+  }
+  @if (Model.UseFilteredApi)
+  {
+    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
+      Signposts learning
+    </div>
+  }
+  @if (Model is CurrentCourseViewModel currentCourseViewModel)
+  {
     @if (currentCourseViewModel.UserIsSupervisor)
     {
       <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">

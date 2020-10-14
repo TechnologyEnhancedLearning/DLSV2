@@ -64,7 +64,7 @@
     public static class SortByOptionTexts
     {
         public const string
-            Name = "Course Name",
+            Name = "Activity Name",
             StartedDate = "Enrolled Date",
             LastAccessed = "Last Accessed Date",
             CompleteByDate = "Complete By Date",

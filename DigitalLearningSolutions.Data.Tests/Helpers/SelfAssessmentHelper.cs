@@ -3,11 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public static class SelfAssessmentHelper
     {
-        public static SelfAssessment CreateDefaultSelfAssessment(
+        public static CurrentSelfAssessment CreateDefaultSelfAssessment(
             int id = 1,
             string name = "name",
             string description = "description",
@@ -18,7 +18,7 @@
             bool useFilteredApi = false
         )
         {
-            return new SelfAssessment()
+            return new CurrentSelfAssessment()
             {
                 Id = id,
                 Description = description,

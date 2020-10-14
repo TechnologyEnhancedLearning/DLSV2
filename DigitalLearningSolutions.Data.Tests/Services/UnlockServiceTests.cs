@@ -30,7 +30,7 @@
             {
                 ContactEmail = "recipient@example.com",
                 ContactForename = "Forename",
-                CourseName = "Course Name",
+                CourseName = "Activity Name",
                 CustomisationId = 22,
                 DelegateEmail = "cc@example.com",
                 DelegateName = "Delegate Name"

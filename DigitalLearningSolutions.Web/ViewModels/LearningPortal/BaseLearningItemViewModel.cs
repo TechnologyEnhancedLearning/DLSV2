@@ -11,6 +11,8 @@
         public bool HasDiagnosticAssessment { get; }
         public bool HasLearningContent { get; }
         public bool HasLearningAssessmentAndCertification { get; }
+        public bool IsSelfAssessment { get; }
+        public bool UseFilteredApi { get;  }
 
         protected BaseLearningItemViewModel(BaseLearningItem course)
         {
@@ -19,6 +21,8 @@
             HasDiagnosticAssessment = course.HasDiagnostic;
             HasLearningContent = course.HasLearning;
             HasLearningAssessmentAndCertification = course.IsAssessed;
+            IsSelfAssessment = course.IsSelfAssessment;
+            UseFilteredApi = course.UseFilteredApi;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Models
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
 
 @foreach (var questionType in ((IGrouping<string, Competency>)ViewData["competencyGroup"])
   .SelectMany(competency => competency.AssessmentQuestions)
