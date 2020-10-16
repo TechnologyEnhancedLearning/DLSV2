@@ -22,7 +22,8 @@
                         typeof(AddCandidateAssessmentNewFields).Assembly,
                         typeof(AddCentreSelfAsessments).Assembly,
                         typeof(AddSelfAssessmentAdditionalFields).Assembly,
-                        typeof(AddNewGetAvailableSproc).Assembly
+                        typeof(AddNewGetAvailableSproc).Assembly,
+                        typeof(ApplyLPDefaultSPs).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
