@@ -36,6 +36,8 @@
         public bool Dismissed { get; set; }
         [JsonProperty("completed")]
         public bool Completed { get; set; }
+        [JsonProperty("completedStatus")]
+        public string? CompletedStatus { get; set; }
         [JsonProperty("notes")]
         public string? Notes { get; set; }
         [JsonProperty("restrictedCode")]

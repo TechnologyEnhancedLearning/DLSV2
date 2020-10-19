@@ -8,7 +8,7 @@
         {
             Execute.Sql(Properties.Resources.ApplyLPDefaultsSPChanges);
             Create.Table("FilteredAssets")
-               .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
+               .WithColumn("ID").AsInt32().NotNullable().PrimaryKey()
                .WithColumn("Title").AsString(255).NotNullable()
                .WithColumn("Description").AsString(int.MaxValue).NotNullable()
                .WithColumn("DirectUrl").AsString(255).Nullable()

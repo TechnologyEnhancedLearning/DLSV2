@@ -95,8 +95,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Filtered/LearningAsset/" + assetId.ToString();
             selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
             var filteredToken = await GetFilteredToken();
-            var model = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
-            return View("SelfAssessments/FilteredMgp/Asset", model);
+            var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
+            selfAssessmentService.LogAssetLaunch(GetCandidateId(), selfAssessmentId, asset);
+            return View("SelfAssessments/FilteredMgp/Asset", asset);
         }
         public async Task<IActionResult> SetFavouriteAsset(int selfAssessmentId, int assetId, bool status)
         {
