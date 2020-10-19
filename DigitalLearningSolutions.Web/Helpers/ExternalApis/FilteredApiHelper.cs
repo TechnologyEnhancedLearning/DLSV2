@@ -205,6 +205,18 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
                 try
                 {
                     playList = PopulateLearningAssetsForPlayList(playListResponse.Result);
+                   
+                        var i = 0;
+                        while (playList.LearningAssets.Count() > 0 && i < playList.LearningAssets.Count())
+                        {
+                            
+                        LearningAsset learningAsset = playList.LearningAssets[i];
+                        if (learningAsset.Completed)
+                            {
+                            playList.LearningAssets.Remove(learningAsset);
+                            }
+                        i++;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -233,8 +245,9 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
                 }
                 if (learningAssetResponse.Result.FirstOrDefault() != null)
                 {
+                    var learningAsset = learningAssetResponse.Result.FirstOrDefault();
 
-                    return learningAssetResponse.Result.FirstOrDefault();
+                    return learningAsset;
                 }
                 else
                 {
@@ -265,7 +278,7 @@ request = JsonConvert.SerializeObject(GetFilteredApiRequestJSON("5", method));
             CompleteAssetRequest completeAssetRequest = new CompleteAssetRequest
             {
                 Id = "3",
-                Method = "profile.SetFavouriteAsset",
+                Method = "profile.SetCompleteAsset",
                 CompleteAsset = new CompleteAsset { Id = id, CompletedStatus = complete},
                 JSonRPC = "2.0"
             };

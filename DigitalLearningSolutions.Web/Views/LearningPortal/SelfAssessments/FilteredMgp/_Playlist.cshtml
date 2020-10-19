@@ -7,7 +7,10 @@
 <div class="nhsuk-grid-row">
   @foreach (var learningAsset in Model.LearningAssets)
   {
-    <partial name="_AssetCard.cshtml" model="learningAsset" />
+    @if (learningAsset.Completed == false)
+    {
+  <partial name="_AssetCard.cshtml" model="learningAsset" />
+    }
   }
 </div>
   }

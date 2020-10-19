@@ -33,9 +33,12 @@
 
       @if (Model.FavouritePlayList.Name != null)
       {
-      <div class="nhsuk-grid-column-full">
+        @if (Model.FavouritePlayList.LearningAssets.Any())
+        { 
+          <div class="nhsuk-grid-column-full">
         <partial name='_Playlist.cshtml' for='FavouritePlayList' />
       </div>
+      }
       }
      
     <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">

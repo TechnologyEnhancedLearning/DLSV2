@@ -48,11 +48,12 @@
     </div>
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
   <div class="nhsuk-grid-column-full">
-    <a class="@(Model.IsFavourite ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="SetFavouriteAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id" asp-route-status=@(Model.IsFavourite ? "False" : "True")>
+    <a class="@(Model.IsFavourite ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="SetFavouriteAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id" asp-route-status=@(Model.IsFavourite ? "False" : "True")>
       @(Model.IsFavourite ? "Unbookmark" : "Bookmark")
     </a>
-    <a class="@(Model.Completed ? "nhsuk-button" : "nhsuk-button nhsuk-button--secondary")  nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="CompleteLearningAssetView" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
-      Mark Complete
+    <a class="@(Model.Completed ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="CompleteLearningAssetView" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
+      @(Model.Completed ? "Change Outcome" : "Mark Complete")
+      
     </a>
   </div>
 </div>
