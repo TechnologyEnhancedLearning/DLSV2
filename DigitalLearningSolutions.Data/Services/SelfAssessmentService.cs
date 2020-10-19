@@ -23,6 +23,8 @@
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
+        void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
+        void LogAssetCompletion(int candidateId, int selfAssessmentId, int learningAssetID, int duration, string outcome);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -324,6 +326,32 @@ CA.LaunchCount
                     $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
                 );
             }
+        }
+
+        public void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset)
+        {
+            connection.Execute("UpdateFilteredLearningActivity",
+                new
+                {
+                    FilteredAssetID = learningAsset.Id,
+                    Title = learningAsset.Title,
+                    Description = learningAsset.Description,
+                    DirectUrl = learningAsset.DirectUrl,
+                    Type = learningAsset.TypeLabel,
+                    Provider = learningAsset.Provider.Name,
+                    Duration = learningAsset.LengthSeconds,
+                    ActualDuration = learningAsset.LengthSeconds,
+                    CandidateId = candidateId,
+                    SelfAssessmentID = selfAssessmentId,
+                    Completed = learningAsset.Completed,
+                    Outcome = learningAsset.CompletedStatus,
+                    Bookmark = learningAsset.IsFavourite
+                }, commandType: CommandType.StoredProcedure);
+        }
+
+        public void LogAssetCompletion(int candidateId, int selfAssessmentId, int learningAssetID, int duration, string outcome)
+        {
+            
         }
     }
 }

@@ -62,6 +62,56 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/10/2020
+        ///-- Description:	Updates a customisation based on form values
+        ///-- V2 Adds @CCEmail
+        ///-- V3 Adds ApplyLPDefaultsToSelfEnrol
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[UpdateCustomisation_V3]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@CustomisationID As Int,
+        ///	@Active as bit,
+        ///	@CustomisationName as nvarcha [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ApplyLPDefaultsSPChanges {
+            get {
+                return ResourceManager.GetString("ApplyLPDefaultsSPChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15 February 2012
+        ///-- Description:	Creates the Progress and aspProgress record for a new user
+        ///-- Returns:		0 : success, progress created
+        ///--       		1 : Failed - progress already exists
+        ///--       		100 : Failed - CentreID and CustomisationID don&apos;t match
+        ///--       		101 : Failed - CentreID and CandidateID don&apos;t match
+        ///
+        ///-- V3 changes include:
+        ///
+        ///-- Checks that  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DropApplyLPDefaultsSPChanges {
+            get {
+                return ResourceManager.GetString("DropApplyLPDefaultsSPChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
         ///DROP PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
         ///GO
         ///DROP PROCEDURE [dbo].[GetFilteredProfileForCandidate]
