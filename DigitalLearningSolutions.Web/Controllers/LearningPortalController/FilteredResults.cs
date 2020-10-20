@@ -116,6 +116,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         {
             var filteredToken = await GetFilteredToken();
             var success = await filteredApiHelperService.SetCompleteAsset<string>(filteredToken, status, assetId);
+            var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
+            selfAssessmentService.LogAssetLaunch(GetCandidateId(), selfAssessmentId, asset);
             return RedirectToAction("FilteredRecommendations", new { selfAssessmentId = selfAssessmentId });
         }
     }
