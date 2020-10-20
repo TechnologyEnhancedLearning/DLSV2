@@ -24,7 +24,6 @@
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
-        void LogAssetCompletion(int candidateId, int selfAssessmentId, int learningAssetID, int duration, string outcome);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -347,11 +346,6 @@ CA.LaunchCount
                     Outcome = learningAsset.CompletedStatus,
                     Bookmark = learningAsset.IsFavourite
                 }, commandType: CommandType.StoredProcedure);
-        }
-
-        public void LogAssetCompletion(int candidateId, int selfAssessmentId, int learningAssetID, int duration, string outcome)
-        {
-            
         }
     }
 }

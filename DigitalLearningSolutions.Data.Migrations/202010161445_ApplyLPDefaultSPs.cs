@@ -6,7 +6,8 @@
     {
         public override void Up()
         {
-            Execute.Sql(Properties.Resources.ApplyLPDefaultsSPChanges);
+            Alter.Table("Customisations")
+               .AddColumn("ApplyLPDefaultsToSelfEnrol").AsBoolean().NotNullable().WithDefaultValue(0);
             Create.Table("FilteredAssets")
                .WithColumn("ID").AsInt32().NotNullable().PrimaryKey()
                .WithColumn("Title").AsString(255).NotNullable()
@@ -25,6 +26,7 @@
                 .WithColumn("CompletedDate").AsDateTime().Nullable()
                 .WithColumn("Duration").AsInt32().Nullable()
                 .WithColumn("Outcome").AsInt32().Nullable();
+            Execute.Sql(Properties.Resources.ApplyLPDefaultsSPChanges);
         }
 
         public override void Down()
