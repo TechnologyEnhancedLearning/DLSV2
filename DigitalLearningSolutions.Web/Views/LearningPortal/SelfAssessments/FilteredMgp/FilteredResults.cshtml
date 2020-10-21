@@ -34,31 +34,31 @@
       @if (Model.FavouritePlayList.Name != null)
       {
         @if (Model.FavouritePlayList.LearningAssets.Any())
-        { 
-          <div class="nhsuk-grid-column-full">
-        <partial name='_Playlist.cshtml' for='FavouritePlayList' />
-      </div>
-      }
-      }
-     
-    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
-      @if (Model.RecommendedPlayLists.Any())
-      {
-        @foreach (var playList in Model.RecommendedPlayLists)
         {
-          @if (playList.Name != null)
+          <div class="nhsuk-grid-column-full">
+            <partial name='_Playlist.cshtml' for='FavouritePlayList' />
+          </div>
+        }
+      }
+
+      <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
+        @if (Model.RecommendedPlayLists.Any())
+        {
+          @foreach (var playList in Model.RecommendedPlayLists)
           {
-            <partial name="_Playlist.cshtml" Model="playList" />
+            @if (playList.Name != null)
+            {
+              <partial name="_Playlist.cshtml" Model="playList" />
+            }
+
           }
 
         }
-
-      }
-      else
-      {
-        <p>Check back soon for recommended learning learning resources. <a class="trigger-loader" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Reload resources.</a></p>
-      }
-    </div>
+        else
+        {
+          <p>Check back soon for recommended learning learning resources. <a class="trigger-loader" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Reload resources.</a></p>
+        }
+      </div>
       @if (Model.CompetencyPlayLists.Any())
       {
         <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
@@ -86,5 +86,22 @@
           </div>
         </div>
       }
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-top-3">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full card-container">
+          <div class="course-card nhsuk-panel">
+            <h3>Feedback</h3>
+            <p>Once you have explored some of your learning recommendations, please take a moment to provide some feedback:</p>
+            <a class="nhsuk-action-link__link" href="https://forms.office.com/Pages/ResponsePage.aspx?id=K5Gn_5ewMUGcD9DoB1WyqxA7r2SHNIdKjtJ_5ODmb_dUQ1JHUEdWQUwzNDlXVEtHOVMwNks4UVI4VC4u" target="_blank">
+              <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+              </svg>
+              <span class="nhsuk-action-link__text">Review the Digital Capability Self-Assessment tool</span>
+            </a>
+          </div>
+          </div>
+        </div>
+      </div>
     </div>
-  
+
