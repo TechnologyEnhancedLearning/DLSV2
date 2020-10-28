@@ -18,7 +18,7 @@
                 new Claim(ClaimTypes.Email, "kevin.whittaker1@nhs.net"),
                 new Claim(CustomClaimTypes.UserCentreId, "101"),
                 new Claim(CustomClaimTypes.UserCentreManager, "True"),
-                new Claim(CustomClaimTypes.LearnCandidateId, "299639"),
+                new Claim(CustomClaimTypes.LearnCandidateId, "254480"),
                 new Claim(CustomClaimTypes.UserCentreAdmin, "True"),
                 new Claim(CustomClaimTypes.UserUserAdmin, "True"),
                 new Claim(CustomClaimTypes.UserContentCreator, "True"),

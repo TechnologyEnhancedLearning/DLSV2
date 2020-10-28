@@ -217,3 +217,6 @@ For example, if you want to set the db connection string on uat then set an envi
 To set an environment variable you can either:
 1. When running locally you can specify environment variables in launchSettings.json.
 2. For a deployed instance you can set the environment variable in IIS manager on the server the app is deployed to. See https://stackoverflow.com/questions/31049152/publish-to-iis-setting-environment-variable for details. **NB** deploying will remove any environment variables for the site you're deploying to. Therefore to set an environment variable permanently you need to set it for the whole IIS server in IIS manager and lock it.
+
+# GitHub Actions
+We have a GitHub Actions workflow set up. See `.github/workflows/continuous-integration-workflow.yml` for the config. This will build and test the code. If it fails it will email the committer. You can also see the build results on any open pull requests or in the actions tab of the repository: https://github.com/TechnologyEnhancedLearning/DLSV2/actions.

@@ -11,7 +11,7 @@
         public static SqlConnection GetDatabaseConnection()
         {
             var config = ConfigHelper.GetAppConfig();
-            var connectionString = config.GetConnectionString(ConfigHelper.DefaultConnectionStringName);
+            var connectionString = config.GetConnectionString(ConfigHelper.UnitTestConnectionStringName);
             var serviceCollection = new ServiceCollection().RegisterMigrationRunner(connectionString);
             serviceCollection.BuildServiceProvider().GetRequiredService<IMigrationRunner>().MigrateUp();
 

@@ -6,8 +6,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
     using FluentAssertions;
@@ -328,9 +326,11 @@
             const int newMonth = 7;
             const int newYear = 3020;
             var newDate = new DateTime(newYear, newMonth, newDay);
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SetSelfAssessmentCompleteByDate(newDay, newMonth, newYear, selfAssessmentId);
+            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, newDay, newMonth, newYear);
 
             // Then
             A.CallTo(
@@ -343,6 +343,8 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
             controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, 0, 0, 0);
@@ -358,9 +360,11 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(29, 7, 3020, selfAssessmentId);
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, 29, 7, 3020);
 
             // Then
             result.ActionName.Should().Be("Current");
@@ -371,6 +375,8 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
             controller.SetSelfAssessmentCompleteByDate(31, 2, 2020, selfAssessmentId);
@@ -389,9 +395,11 @@
             const int day = 31;
             const int month = 2;
             const int year = 2020;
+            var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(day, month, year, selfAssessmentId);
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, day, month, year);
 
             // Then
             result.ActionName.Should().Be("SetSelfAssessmentCompleteByDate");

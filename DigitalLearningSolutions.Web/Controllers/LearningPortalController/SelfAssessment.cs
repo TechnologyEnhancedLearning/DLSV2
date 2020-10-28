@@ -124,7 +124,7 @@
                 return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
             }
             
-                var completeByDate = new DateTime(year, month, day);
+            var completeByDate = new DateTime(year, month, day);
             selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), completeByDate);
             return RedirectToAction("Current");
         }

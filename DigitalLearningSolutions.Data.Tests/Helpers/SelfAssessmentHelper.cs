@@ -15,7 +15,8 @@
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
             DateTime? completeByDate = null,
-            bool useFilteredApi = false
+            bool useFilteredApi = false,
+            bool unprocessedUpdates = false
         )
         {
             return new CurrentSelfAssessment()
@@ -27,7 +28,8 @@
                 StartedDate = startedDate ?? DateTime.Now,
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
-                UseFilteredApi = useFilteredApi
+                UseFilteredApi = useFilteredApi,
+                UnprocessedUpdates = unprocessedUpdates
             };
         }
 
