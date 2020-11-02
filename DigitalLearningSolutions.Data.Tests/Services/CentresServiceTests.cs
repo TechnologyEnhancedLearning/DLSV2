@@ -23,7 +23,7 @@
             var result = centresService.GetBannerText(2);
 
             // Then
-            result.Should().Be("RiO Training Manager");
+            result.Should().Be("xxxxxxxxxxxxxxxxxxxx");
         }
 
         [Test]

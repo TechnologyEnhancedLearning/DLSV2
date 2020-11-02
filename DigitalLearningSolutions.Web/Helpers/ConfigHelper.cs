@@ -8,6 +8,7 @@
     public static class ConfigHelper
     {
         public const string DefaultConnectionStringName = "DefaultConnection";
+        public const string UnitTestConnectionStringName = "UnitTestConnection";
 
         public static IConfigurationRoot GetAppConfig()
         {

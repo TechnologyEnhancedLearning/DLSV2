@@ -57,11 +57,11 @@
             availableCourseViewModel.EnrolButtonText.Should().Be(expectedEnrolButtonText);
         }
 
-        [TestCase(0, "Enrol on course")]
-        [TestCase(1, "Re-enrol on course")]
+        [TestCase(0, "Enrol on activity")]
+        [TestCase(1, "Re-enrol on activity")]
         [TestCase(2, null)]
         [TestCase(3, null)]
-        [TestCase(4, "Enrol on course")]
+        [TestCase(4, "Enrol on activity")]
         public void Available_course_should_set_enrol_button_aria_label(
             int delegateStatus,
             string? expectedEnrolButtonAriaLabel

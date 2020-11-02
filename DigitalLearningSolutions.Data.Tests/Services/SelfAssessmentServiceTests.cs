@@ -18,7 +18,7 @@
     {
         private SelfAssessmentService selfAssessmentService;
         private const int SelfAssessmentId = 1;
-        private const int CandidateId = 11;
+        private const int CandidateId = 254480;
         private SqlConnection connection;
 
         [SetUp]
@@ -42,6 +42,7 @@
                 "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision.",
                 32,
                 new DateTime(2020, 09, 01, 14, 10, 37, 447),null,null,
+                false,
                 true
             );
 
@@ -516,6 +517,7 @@
             using (new TransactionScope())
             {
                 // When
+                selfAssessmentService.SetUpdatedFlag(SelfAssessmentId, CandidateId, false);
                 selfAssessmentService.SetUpdatedFlag(invalidSelfAssessmentId, CandidateId, true);
                 var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 

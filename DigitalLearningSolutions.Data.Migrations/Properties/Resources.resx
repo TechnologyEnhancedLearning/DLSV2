@@ -119,21 +119,21 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ApplyLPDefaultsSPChanges" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\applylpdefaultsspchanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+    <value>..\Scripts\ApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DropApplyLPDefaultsSPChanges" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\dropapplylpdefaultsspchanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+    <value>..\Scripts\DropApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DropFilteredSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DropFilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DropGetActiveAvailableV5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\dropgetactiveavailablev5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DropGetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="FilteredSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\FilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="GetActiveAvailableV5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\getactiveavailablev5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\GetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
