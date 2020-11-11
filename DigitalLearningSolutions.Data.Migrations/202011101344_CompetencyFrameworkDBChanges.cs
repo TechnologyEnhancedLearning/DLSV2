@@ -14,6 +14,9 @@
             Create.Table("PublishStatus")
                 .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
                 .WithColumn("Status").AsString(255).NotNullable();
+            Insert.IntoTable("PublishStatus").Row(new { Status = "Draft" });
+            Insert.IntoTable("PublishStatus").Row(new { Status = "In Review" });
+            Insert.IntoTable("PublishStatus").Row(new { Status = "Published" });
             //DLSV2-41 new frameworks table and DLSV2-35 with FrameworkConfig field:
             Create.Table("Frameworks")
                 .WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
@@ -25,7 +28,7 @@
                 .WithColumn("FrameworkConfig").AsString(int.MaxValue).Nullable()
                 .WithColumn("OwnerAdminID").AsInt32().NotNullable().ForeignKey("AdminUsers", "AdminID")
                 .WithColumn("CreatedDate").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentDateTime)
-                .WithColumn("PublishStatusID").AsInt32().NotNullable().ForeignKey("PublishStatus", "ID")
+                .WithColumn("PublishStatusID").AsInt32().NotNullable().ForeignKey("PublishStatus", "ID").WithDefaultValue(1)
                 .WithColumn("UpdatedByAdminID").AsInt32().NotNullable().ForeignKey("AdminUsers", "AdminID");
             //DLSV2-33 new FrameworkCollaborators table:
             Create.Table("FrameworkCollaborators")
