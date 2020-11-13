@@ -110,30 +110,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
                 return sCandNum;
             }
         }
-        private string GetCandidateForename()
-        {
-            string? sFName = User.GetCustomClaim(CustomClaimTypes.UserForename);
-            if (sFName == null)
-            {
-                return "";
-            }
-            else
-            {
-                return sFName;
-            }
-        }
-        private string GetCandidateSurname()
-        {
-            string? sLName = User.GetCustomClaim(CustomClaimTypes.UserSurname);
-            if (sLName == null)
-            {
-                return "";
-            }
-            else
-            {
-                return sLName;
-            }
-        }
+
         private string? GetBannerText()
         {
             var centreId = GetCentreId();

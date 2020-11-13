@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
@@ -38,7 +37,6 @@
             // Then
             var expectedModel = new CurrentPageViewModel(
                 currentCourses,
-                config,
                 null,
                 "Last Accessed Date",
                 "Descending",
@@ -183,7 +181,7 @@
             var result = controller.RemoveCurrentCourseConfirmation(customisationId);
 
             // Then
-            var expectedModel = new CurrentCourseViewModel(currentCourse, config);
+            var expectedModel = new CurrentCourseViewModel(currentCourse);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

@@ -21,7 +21,6 @@
 
         public AvailablePageViewModel(
             IEnumerable<AvailableCourse> availableCourses,
-            IConfiguration config,
             string? searchString,
             string sortBy,
             string sortDirection,
@@ -38,7 +37,7 @@
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
-            AvailableCourses = paginatedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c, config));
+            AvailableCourses = paginatedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c));
         }
     }
 }

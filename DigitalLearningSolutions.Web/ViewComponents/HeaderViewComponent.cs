@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
-    using System.Security.Claims;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
 
     public class HeaderViewComponent : ViewComponent
