@@ -2,21 +2,11 @@
 {
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
-    using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class AvailableCourseViewModelTests
     {
-        private IConfiguration config;
-
-        [SetUp]
-        public void SetUp()
-        {
-            config = A.Fake<IConfiguration>();
-        }
-
         [TestCase(0, DelegateStatus.NotEnrolled)]
         [TestCase(1, DelegateStatus.Expired)]
         [TestCase(2, DelegateStatus.Completed)]
@@ -31,7 +21,7 @@
             var availableCourse = AvailableCourseHelper.CreateDefaultAvailableCourse(delegateStatus: delegateStatus);
 
             // When
-            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse, config);
+            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse);
 
             // Then
             availableCourseViewModel.DelegateStatus.Should().Be(expectedMappedDelegateStatus);
@@ -51,7 +41,7 @@
             var availableCourse = AvailableCourseHelper.CreateDefaultAvailableCourse(delegateStatus: delegateStatus);
 
             // When
-            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse, config);
+            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse);
 
             // Then
             availableCourseViewModel.EnrolButtonText.Should().Be(expectedEnrolButtonText);
@@ -71,7 +61,7 @@
             var availableCourse = AvailableCourseHelper.CreateDefaultAvailableCourse(delegateStatus: delegateStatus);
 
             // When
-            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse, config);
+            var availableCourseViewModel = new AvailableCourseViewModel(availableCourse);
 
             // Then
             availableCourseViewModel.EnrolButtonAriaLabel.Should().Be(expectedEnrolButtonAriaLabel);

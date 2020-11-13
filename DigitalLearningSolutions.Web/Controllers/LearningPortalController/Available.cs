@@ -3,7 +3,6 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
-    using System.Data;
 
     public partial class LearningPortalController
     {
@@ -19,7 +18,6 @@
             var bannerText = GetBannerText();
             var model = new AvailablePageViewModel(
                 availableCourses,
-                config,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -32,14 +30,14 @@
         public IActionResult AllAvailableItems()
         {
             var availableCourses = courseService.GetAvailableCourses(GetCandidateId(), GetCentreId());
-            var model = new AllAvailableItemsPageViewModel(availableCourses, config);
+            var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
             courseService.EnrolOnSelfAssessment(selfAssessmentId, GetCandidateId());
-            return RedirectToAction("SelfAssessment", new { selfAssessmentId = selfAssessmentId});
+            return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }
 }

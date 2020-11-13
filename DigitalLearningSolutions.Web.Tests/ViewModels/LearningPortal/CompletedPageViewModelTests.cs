@@ -19,8 +19,6 @@
         [SetUp]
         public void SetUp()
         {
-            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns("http://www.dls.nhs.uk");
-
             completedCourses = new[]
             {
                 new CompletedCourse
@@ -90,8 +88,7 @@
             "2010-3-22",
             123,
             4,
-            6,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=71&lp=1"
+            6
         )]
         [TestCase(
             2,
@@ -105,8 +102,7 @@
             "2011-3-22",
             0,
             14,
-            16,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=72&lp=1"
+            16
         )]
         [TestCase(
             0,
@@ -120,8 +116,7 @@
             "2011-2-23",
             0,
             0,
-            06,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=73&lp=1"
+            06
         )]
         public void Completed_courses_should_map_to_view_models_in_the_correct_order(
             int index,
@@ -135,8 +130,7 @@
             DateTime expectedEvaluated,
             int expectedDiagnosticScore,
             int expectedPasses,
-            int expectedSections,
-            string expectedLaunchUrl)
+            int expectedSections)
         {
             var course = model.CompletedCourses.ElementAt(index);
             course.Id.Should().Be(expectedId);
@@ -150,7 +144,6 @@
             course.DiagnosticScore.Should().Be(expectedDiagnosticScore);
             course.PassedSections.Should().Be(expectedPasses);
             course.Sections.Should().Be(expectedSections);
-            course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
 
 
