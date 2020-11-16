@@ -3,7 +3,7 @@ pipeline {
         label 'windows'
     }
     environment {
-        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string')
+        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string-learning-menu')
     }
     parameters {
         booleanParam(name: 'DeployToUAT', defaultValue: false, description: 'Deploy changes to UAT after build? NB will not deploy to test if this is set')
