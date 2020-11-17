@@ -1,0 +1,16 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@model ContentViewerViewModel
+
+@{
+  ViewData["Title"] = "Learning Menu - Content Viewer";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading">Content viewer</h1>
+    <iframe src="@Model.ScormSource" class="nhsuk-grid-column-full" height="800">
+    </iframe>
+    <iframe src="@Model.HtmlSource" class="nhsuk-grid-column-full" height="800">
+    </iframe>
+  </div>
+</div>
