@@ -5,9 +5,12 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Learning Portal - Completed";
+    ViewData["Application"] = "Learning Portal";
+    ViewData["Title"] = "Learning Portal - Completed";
 }
-
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems"/>
+}
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Completed Activities</h1>
@@ -26,7 +29,7 @@
       }
       else
       {
-        <partial name="Shared/_SearchResultsCount" model="Model"/>
+        <partial name="Shared/_SearchResultsCount" model="Model" />
 
         <div id="course-cards">
           @foreach (var completedCourse in Model.CompletedCourses)
@@ -37,7 +40,7 @@
       }
       @if (Model.TotalPages > 1)
       {
-        <partial name="Shared/_Pagination" model="Model"/>
+        <partial name="Shared/_Pagination" model="Model" />
       }
     </form>
 
