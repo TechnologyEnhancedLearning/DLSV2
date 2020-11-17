@@ -30,6 +30,14 @@
 .competency-group-panel {
   padding-top: 0;
   padding-bottom: 24px;
+  background-color: #fff;
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-bottom: 32px;
+  margin-top: 32px;
+}
+.competency-group-panel .nhsuk-expander {
+  border: none
 }
 
 details.nhsuk-details {
@@ -81,6 +89,9 @@ details.nhsuk-details {
 
 .review-card {
   padding-bottom: 0;
+  padding-top: 32px;
+  padding-left: 32px;
+  padding-right: 32px;
   margin-top: 20px;
   margin-bottom: 20px;
   background-color: $color_nhsuk-grey-5;

@@ -44,10 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\favicon.ico" />
     <None Include="wwwroot\README.txt" />
   </ItemGroup>

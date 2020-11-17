@@ -3,12 +3,17 @@
 $nhs-dark-grey: #425563;
 
 .course-card {
+    background-color: #fff;
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
   padding-top: 8px;
   padding-bottom: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
-
+.course-card .nhsuk-expander {
+    border: none
+}
 .tags {
   display: flex;
   margin-bottom: 16px;
