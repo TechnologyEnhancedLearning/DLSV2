@@ -76,7 +76,11 @@ If the migration has already been deployed and therefore has run on any other da
 
 # Setting up the old code
 
-For testing the integration with the old system (for example launching a course will redirect to the old system) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+For testing the integration with the old system (for example logout or showing SCORM content) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+
+To allow loading pages from the old code in an iframe (which is necessary for tutorials/assessments) you need to make a small tweak to the old code:
+1. Open Web.config in the old code.
+2. On line 150 change `<add name="X-Frame-Options" value="ALLOW-FROM https://future.nhs.uk/" />` to `<add name="X-Frame-Options" value="ALLOWALL" />`
 
 # Running the app
 

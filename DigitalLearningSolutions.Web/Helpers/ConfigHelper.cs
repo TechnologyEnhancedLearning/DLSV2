@@ -9,6 +9,7 @@
     {
         public const string DefaultConnectionStringName = "DefaultConnection";
         public const string UnitTestConnectionStringName = "UnitTestConnection";
+        public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
 
         public static IConfigurationRoot GetAppConfig()
         {
@@ -18,6 +19,7 @@
                 .AddEnvironmentVariables(GetEnvironmentVariablePrefix())
                 .Build();
         }
+
         public static string GetEnvironmentVariablePrefix()
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -32,7 +34,17 @@
 
         public static string GetEvaluateUrl(this IConfiguration config, int progressId)
         {
-            return $"{config["CurrentSystemBaseUrl"]}/tracking/finalise?ProgressID={progressId}&lp=1";
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}&lp=1";
+        }
+
+        public static string GetTrackingUrl(this IConfiguration config)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking";
+        }
+
+        public static string GetScormPlayerUrl(this IConfiguration config)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/scoplayer/sco";
         }
     }
 }
