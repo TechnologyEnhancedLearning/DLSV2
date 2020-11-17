@@ -1,0 +1,77 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard
+@model DashboardViewModel
+
+@{
+  ViewData["Title"] = "Dashboard";
+  ViewData["Application"] = "Framework Service";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<h1>Dashboard</h1>
+@if (!Model.BaseFrameworks.Any())
+{
+  <p class="nhsuk-u-margin-top-4" role="alert">
+    <b>You are not currently working on any frameworks.</b>
+  </p>
+}
+else
+{
+  <table role="table" class="nhsuk-table-responsive">
+    <caption class="nhsuk-table__caption">My Frameworks</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Framework
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Status
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Owner
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var baseFramework in Model.BaseFrameworks)
+      {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Framework </span>
+            @baseFramework.FrameworkName
+          </td>
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Status </span>
+            @baseFramework.PublishStatus
+          </td>
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Owner </span>
+            @baseFramework.Owner
+          </td>
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Actions </span>
+            @if (baseFramework.UserCanModify)
+            {
+              <a href="#">
+                View/Edit
+              </a>
+            }
+            else
+            {
+              <a href="#">
+                Review
+              </a>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+<button class="nhsuk-button nhsuk-u-margin-top-4">
+  Create new framework
+</button>
