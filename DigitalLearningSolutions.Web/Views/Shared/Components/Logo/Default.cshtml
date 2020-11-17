@@ -1,0 +1,6 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model LogoViewModel
+@if (Model.CustomLogoDataUrl != null)
+{
+  <img class="centre-logo" src="@Model.CustomLogoDataUrl" height="@Model.Height" width="@Model.Width" alt="@Model.AltText" />
+}
