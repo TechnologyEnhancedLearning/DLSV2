@@ -71,7 +71,8 @@
                     assessment.Id,
                     GetCandidateId(),
                     assessmentQuestion.Id,
-                    assessmentQuestion.Result.Value
+                    assessmentQuestion.Result.Value,
+                    null
                 );
             }
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);

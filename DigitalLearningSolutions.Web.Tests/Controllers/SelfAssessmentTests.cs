@@ -179,7 +179,8 @@
                 selfAssessment.Id,
                 CandidateId,
                 assessmentQuestionId,
-                assessmentQuestionResult
+                assessmentQuestionResult,
+                null
             )).MustHaveHappened();
         }
 

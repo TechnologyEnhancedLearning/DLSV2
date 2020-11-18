@@ -166,8 +166,8 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1);
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1, null);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
 
                 //Then
                 var competency = selfAssessmentService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
@@ -187,7 +187,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
                 var insertedResult = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).First();
 
                 // Then
@@ -207,8 +207,8 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, firstResult);
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, secondResult);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, firstResult, null);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, secondResult, null);
                 var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).ToList();
 
                 // Then
@@ -230,7 +230,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId, result, null);
                 var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId);
 
                 // Then
@@ -250,7 +250,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
                 var insertedResults = GetAssessmentResults(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId);
 
                 // Then
@@ -269,7 +269,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
                 var insertedResults = GetAssessmentResults(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
 
                 // Then
@@ -288,7 +288,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId, result);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId, result, null);
                 var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId);
 
                 // Then
@@ -307,7 +307,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult, null);
                 var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
 
                 // Then
@@ -326,7 +326,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult);
+                selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult, null);
                 var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
 
                 // Then
@@ -352,10 +352,10 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult);
-                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult, null);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
                 //Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
@@ -387,12 +387,12 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult);
-                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, 9);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, 9);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult);
-                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult, null);
+                selfAssessmentService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, 9, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, 9, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
+                selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
                 //Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
