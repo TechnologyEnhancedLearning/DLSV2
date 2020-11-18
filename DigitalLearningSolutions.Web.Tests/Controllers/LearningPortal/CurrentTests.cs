@@ -1,7 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
@@ -65,8 +64,11 @@
             var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, null, null, null);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
         [Test]
@@ -83,8 +85,11 @@
             var result = controller.SetCurrentCourseCompleteByDate(3, null, null, null);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
-            controller.Response.StatusCode.Should().Be(404);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
         }
 
         [Test]
@@ -202,8 +207,11 @@
             var result = controller.RemoveCurrentCourseConfirmation(3);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
-            controller.Response.StatusCode.Should().Be(404);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
         }
 
         [Test]
@@ -238,8 +246,11 @@
             var result = controller.RequestUnlock(3);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
-            controller.Response.StatusCode.Should().Be(404);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
         }
 
         [Test]
@@ -257,8 +268,11 @@
             var result = controller.RequestUnlock(progressId);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/PageNotFound");
-            controller.Response.StatusCode.Should().Be(404);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
         }
 
         [Test]
