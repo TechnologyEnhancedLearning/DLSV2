@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Data.Models.CourseContent;
+
     public class InitialMenuViewModel
     {
-        public int CustomisationId { get; }
+        public string Name { get; }
 
-        public InitialMenuViewModel(int customisationId)
+        public InitialMenuViewModel(CourseContent courseContent)
         {
-            CustomisationId = customisationId;
+            Name = $"{courseContent.ApplicationName} - {courseContent.CustomisationName}";
         }
     }
 }
