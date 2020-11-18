@@ -24,7 +24,8 @@
                         typeof(AddSelfAssessmentAdditionalFields).Assembly,
                         typeof(AddNewGetAvailableSproc).Assembly,
                         typeof(ApplyLPDefaultSPs).Assembly,
-                        typeof(ReflectiveAccounts).Assembly
+                        typeof(ReflectiveAccounts).Assembly,
+                        typeof(CompetencyFrameworkDBChanges).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

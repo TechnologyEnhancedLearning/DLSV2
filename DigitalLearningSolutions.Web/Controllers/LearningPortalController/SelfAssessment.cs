@@ -71,7 +71,8 @@
                     assessment.Id,
                     GetCandidateId(),
                     assessmentQuestion.Id,
-                    assessmentQuestion.Result.Value
+                    assessmentQuestion.Result.Value,
+                    null
                 );
             }
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);
@@ -123,7 +124,7 @@
             {
                 return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
             }
-            
+
             var completeByDate = new DateTime(year, month, day);
             selfAssessmentService.SetCompleteByDate(selfAssessmentId, GetCandidateId(), completeByDate);
             return RedirectToAction("Current");

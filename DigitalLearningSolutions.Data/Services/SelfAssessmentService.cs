@@ -14,7 +14,7 @@
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
-        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result);
+        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -164,7 +164,7 @@ CA.LaunchCount
             ).FirstOrDefault();
         }
 
-        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result)
+        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
         {
             if (result < 0 || result > 10)
             {
@@ -187,9 +187,17 @@ CA.LaunchCount
                             AND CAQ.AssessmentQuestionID = @assessmentQuestionId
                     )
                     BEGIN
-                        INSERT INTO SelfAssessmentResults VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETDATE())
+                        INSERT INTO SelfAssessmentResults
+                          ([CandidateID]
+                          ,[SelfAssessmentID]
+                          ,[CompetencyID]
+                          ,[AssessmentQuestionID]
+                          ,[Result]
+                          ,[DateTime]
+                          ,[SupportingComments])
+                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETDATE(), @supportingComments)
                     END",
-                new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result }
+                new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result, supportingComments }
             );
 
             if (numberOfAffectedRows < 1)

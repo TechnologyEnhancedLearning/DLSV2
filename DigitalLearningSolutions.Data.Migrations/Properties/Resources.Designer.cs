@@ -86,6 +86,48 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
+        ///
+        ///--Frameworks table
+        ///ALTER TABLE Frameworks
+        ///    ADD
+        ///        SysStartTime DATETIME2 GENERATED ALWAYS AS ROW START HIDDEN
+        ///            CONSTRAINT DF_Frameworks_SysStart DEFAULT SYSUTCDATETIME()
+        ///      , SysEndTime DATETIME2 GENERATED ALWAYS AS ROW END HIDDEN
+        ///            CONSTRAINT DF_Frameworks_SysEnd DEFAULT CONVERT(DATETIME2, &apos;9999-12-31 23:59:59.9999999&apos;),
+        ///        PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime);
+        ///GO
+        ///
+        ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_95_AddSystemVersioning {
+            get {
+                return ResourceManager.GetString("DLSV2_95_AddSystemVersioning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
+        ///
+        ///-- Remove versioning from Frameworks table
+        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = OFF);
+        ///ALTER TABLE Frameworks DROP PERIOD FOR SYSTEM_TIME;
+        ///ALTER TABLE Frameworks DROP COLUMN SysStartTime;
+        ///ALTER TABLE Frameworks DROP COLUMN SysEndTime;
+        ///DROP TABLE dbo.FrameworksHistory;
+        ///GO
+        ///
+        ///-- Remove versioning from FrameworkCompetencyGroups table
+        ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = OFF);
+        ///ALTER TABLE FrameworkCompetenc [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_95_RemoveSystemVersioning {
+            get {
+                return ResourceManager.GetString("DLSV2_95_RemoveSystemVersioning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
