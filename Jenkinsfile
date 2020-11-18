@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Deploy to test') {
             when {
-                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
+                allOf { branch 'learning-menu-master'; not { expression { params.DeployToUAT } } }
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
@@ -87,7 +87,7 @@ pipeline {
 def slack(message, color = "") {
     withCredentials([string(credentialsId: 'slack-token', variable: 'SLACKTOKEN')]) {
         slackSend teamDomain: "softwire",
-            channel: "#hee-framework-development-notifications",
+            channel: "#hee-notifications",
             token: "$SLACKTOKEN",
             message: "*$message* - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
             color: color
