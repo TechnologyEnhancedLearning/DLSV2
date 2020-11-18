@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Migrations
+namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
     using FluentMigrator.SqlServer;
@@ -138,35 +138,35 @@
         }
         public override void Down()
         {
-            Delete.Column("IsFrameworkDeveloper").FromTable("AdminUsers");
-            Delete.Table("PublishStatus");
-            Delete.Table("Frameworks");
             Delete.Table("FrameworkCollaborators");
             Delete.Table("FrameworkComments");
-            Delete.Table("FrameworkCompetencyGroups");
-            Delete.Table("FrameworkCompetencies");
+            Execute.Sql(Properties.Resources.DLSV2_95_RemoveSystemVersioning);
+            Delete.Column("IsFrameworkDeveloper").FromTable("AdminUsers");
+            Delete.Table("PublishStatus");
+            Delete.Table("CompetencyLevelCriteria");  
             Delete.Table("AssessmentQuestionLevels");
-            Delete.Table("CompetencyLevelCriteria");
-            Delete.Table("AssessmentQuestionInputTypes");
+            Delete.ForeignKey("FK_AssessmentQuestions_AssessmentQuestionInputTypeID_AssessmentQuestionInputTypes_ID").OnTable("AssessmentQuestions");
             Delete.Column("AssessmentQuestionInputTypeID").FromTable("AssessmentQuestions");
+            Delete.Table("AssessmentQuestionInputTypes");
             Delete.Column("IncludeComments").FromTable("AssessmentQuestions");
             Delete.Column("IncludeDevelopment").FromTable("SelfAssessments");
             Delete.Table("SelfAssessmentComments");
-            Delete.Table("RoleProfiles");
             Delete.Table("RoleProfileRequirements");
+            Delete.Table("RoleProfiles");
             Delete.Column("Ordering").FromTable("SelfAssessmentStructure");
             Delete.Column("SubmittedForSignOff").FromTable("SelfAssessments");
             Delete.Column("OutcomeId").FromTable("SelfAssessments");
+            Delete.ForeignKey("FK_SelfAssessments_SignedByAdminId_AdminUsers_AdminID").OnTable("SelfAssessments");
             Delete.Column("SignedByAdminId").FromTable("SelfAssessments");
             Delete.Column("Signed").FromTable("SelfAssessments");
             Delete.Column("OutcomeAgreed").FromTable("SelfAssessments");
             Delete.Column("SupportingComments").FromTable("SelfAssessmentResults");
             Delete.Column("VerificationRequested").FromTable("SelfAssessmentResults");
             Delete.Column("VerificationOutcomeId").FromTable("SelfAssessmentResults");
+            Delete.ForeignKey("FK_SelfAssessmentResults_VerifierAdminID_AdminUsers_AdminID").OnTable("SelfAssessmentResults");
             Delete.Column("VerifierAdminID").FromTable("SelfAssessmentResults");
             Delete.Column("VerifierComments").FromTable("SelfAssessmentResults");
             Delete.Column("VerifiedDate").FromTable("SelfAssessmentResults");
-            Execute.Sql(Properties.Resources.DLSV2_95_RemoveSystemVersioning);
         }
     }
 }
