@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;

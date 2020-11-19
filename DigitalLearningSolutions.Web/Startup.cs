@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Web
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
-    using Dapper.FluentMap;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Services;
@@ -93,8 +92,8 @@ namespace DigitalLearningSolutions.Web
                 app.UseBrowserLink();
             }
 
-            app.UseExceptionHandler("/LearningPortal/Error");
-            app.UseStatusCodePagesWithReExecute("/LearningPortal/StatusCode/{0}");
+            app.UseExceptionHandler("/LearningSolutions/Error");
+            app.UseStatusCodePagesWithReExecute("/LearningSolutions/StatusCode/{0}");
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseRouting();

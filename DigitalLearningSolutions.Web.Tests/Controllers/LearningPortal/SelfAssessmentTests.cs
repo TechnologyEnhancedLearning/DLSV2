@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
     using System.Collections.Generic;
@@ -69,8 +69,11 @@
             var result = controller.SelfAssessment(SelfAssessmentId);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
         [Test]
@@ -126,7 +129,6 @@
             // Given
             const int competencyNumber = 3;
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId)).Returns(null);
 
@@ -147,8 +149,11 @@
             var result = controller.SelfAssessmentCompetency(SelfAssessmentId, 1);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
         [Test]
@@ -179,7 +184,8 @@
                 selfAssessment.Id,
                 CandidateId,
                 assessmentQuestionId,
-                assessmentQuestionResult
+                assessmentQuestionResult,
+                null
             )).MustHaveHappened();
         }
 
@@ -221,8 +227,11 @@
             var result = controller.SelfAssessmentCompetency(1, null, 1, 1);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
         [Test]
@@ -313,8 +322,11 @@
             var result = controller.SelfAssessmentReview(SelfAssessmentId);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
         [Test]
@@ -418,10 +430,13 @@
             var result = controller.SetSelfAssessmentCompleteByDate(2, 2, 2020, 999);
 
             // Then
-            result.Should().BeViewResult().WithViewName("Error/Forbidden");
-            controller.Response.StatusCode.Should().Be(403);
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 403);
         }
 
-       
+
     }
 }
