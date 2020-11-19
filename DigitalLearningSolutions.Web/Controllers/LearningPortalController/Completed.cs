@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@
             int page = 1
         )
         {
-            var completedCourses = courseService.GetCompletedCourses(GetCandidateId());
+            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateId());
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
@@ -30,7 +31,7 @@
 
         public IActionResult AllCompletedItems()
         {
-            var completedCourses = courseService.GetCompletedCourses(GetCandidateId());
+            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateId());
             var model = new AllCompletedItemsPageViewModel(completedCourses, config);
             return View("Completed/AllCompletedItems", model);
         }
