@@ -1,33 +1,23 @@
-namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningSolutions
 {
-    using System;
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
-    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    public partial class LearningPortalControllerTests
+    class LearningSolutionsControllerTests
     {
-        private LearningPortalController controller;
+        private LearningSolutionsController controller;
         private ICentresService centresService;
         private IConfigService configService;
-        private ICourseService courseService;
-        private ISelfAssessmentService selfAssessmentService;
-        private IUnlockService unlockService;
-        private IConfiguration config;
-        private IFilteredApiHelperService filteredApiHelperService;
-        private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
-        private const int SelfAssessmentId = 1;
         private const int CentreId = 2;
 
         [SetUp]
@@ -35,29 +25,17 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             centresService = A.Fake<ICentresService>();
             configService = A.Fake<IConfigService>();
-            courseService = A.Fake<ICourseService>();
-            selfAssessmentService = A.Fake<ISelfAssessmentService>();
-            unlockService = A.Fake<IUnlockService>();
-            var logger = A.Fake<ILogger<LearningPortalController>>();
-            config = A.Fake<IConfiguration>();
-            filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
-            
-            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+            var logger = A.Fake<ILogger<LearningSolutionsController>>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
                 new Claim("UserCentreID", CentreId.ToString())
             }, "mock"));
-            controller = new LearningPortalController(
-                centresService,
+            controller = new LearningSolutionsController(
                 configService,
-                courseService,
-                selfAssessmentService,
-                unlockService,
                 logger,
-                config,
-                filteredApiHelperService
+                centresService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }

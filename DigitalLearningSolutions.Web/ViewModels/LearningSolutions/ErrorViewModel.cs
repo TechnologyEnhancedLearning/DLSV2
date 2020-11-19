@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningSolutions
 {
     public class ErrorViewModel
     {

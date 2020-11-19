@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DigitalLearningSolutions.Data.Models.External.Filtered;
-using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments.FilteredMgp;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
+﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Models.External.Filtered;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments.FilteredMgp;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+
     public partial class LearningPortalController
     {
         private async Task<string> GetFilteredToken()
@@ -33,14 +34,14 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Results")]
         public async Task<IActionResult> SelfAssessmentFilteredResults(int selfAssessmentId)
         {
-            int candidateID = GetCandidateId();
+            var candidateID = User.GetCandidateId();
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Filtered/Dashboard";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateID, destUrl);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateID, selfAssessmentId);
             if (assessment == null)
             {
                 logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {candidateID} with no self assessment");
-                return StatusCode(403);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateID);
             var filteredToken = await GetFilteredToken();
@@ -62,14 +63,14 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         public async Task<IActionResult> FilteredRecommendations(int selfAssessmentId)
         {
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Filtered/Dashboard";
-            selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(GetCandidateId(), selfAssessmentId);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateId(), destUrl);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateId(), selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {GetCandidateId()} with no self assessment");
-                return StatusCode(403);
+                logger.LogWarning($"Attempt to display self assessment Filtered API results for candidate {User.GetCandidateId()} with no self assessment");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            selfAssessmentService.UpdateLastAccessed(assessment.Id, GetCandidateId());
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, User.GetCandidateId());
             var filteredToken = await GetFilteredToken();
             var model = new SelfAssessmentFilteredResultsViewModel()
             {
@@ -84,7 +85,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         public async Task<IActionResult> FilteredCompetencyPlaylist(int selfAssessmentId, string playListId)
         {
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Filtered/PlayList/" + playListId.ToString();
-            selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateId(), destUrl);
             var filteredToken = await GetFilteredToken();
             var model = await filteredApiHelperService.GetPlayList<PlayList>(filteredToken, "playlist.FetchCompetencyPlaylist", playListId);
             return View("SelfAssessments/FilteredMgp/PlayList", model);
@@ -93,10 +94,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         public async Task<IActionResult> FilteredLearningAsset(int selfAssessmentId, int assetId)
         {
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Filtered/LearningAsset/" + assetId.ToString();
-            selfAssessmentService.SetBookmark(selfAssessmentId, GetCandidateId(), destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateId(), destUrl);
             var filteredToken = await GetFilteredToken();
             var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
-            selfAssessmentService.LogAssetLaunch(GetCandidateId(), selfAssessmentId, asset);
+            selfAssessmentService.LogAssetLaunch(User.GetCandidateId(), selfAssessmentId, asset);
             return View("SelfAssessments/FilteredMgp/Asset", asset);
         }
         public async Task<IActionResult> SetFavouriteAsset(int selfAssessmentId, int assetId, bool status)
@@ -117,7 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             var filteredToken = await GetFilteredToken();
             var success = await filteredApiHelperService.SetCompleteAsset<string>(filteredToken, status, assetId);
             var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(filteredToken, "playlist.GetAssets", assetId);
-            selfAssessmentService.LogAssetLaunch(GetCandidateId(), selfAssessmentId, asset);
+            selfAssessmentService.LogAssetLaunch(User.GetCandidateId(), selfAssessmentId, asset);
             return RedirectToAction("FilteredRecommendations", new { selfAssessmentId = selfAssessmentId });
         }
     }
