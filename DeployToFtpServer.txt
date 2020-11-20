@@ -1,4 +1,4 @@
-open ftp://%1%@40.69.40.103/ -passive=0
+open ftp://%1%@%3%/ -passive=0
 
 lcd DigitalLearningSolutions.Web\OfflineMode
 cd /%2%

@@ -67,7 +67,7 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'ftp-password', variable: 'PASSWORD')]) {
-                    bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\""
+                    bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
                 }
                 slack(":tada: Successfully deployed to UAT", "good")
             }

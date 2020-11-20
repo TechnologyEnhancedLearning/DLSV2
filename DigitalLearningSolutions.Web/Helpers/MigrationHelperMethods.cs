@@ -25,7 +25,8 @@
                         typeof(AddNewGetAvailableSproc).Assembly,
                         typeof(ApplyLPDefaultSPs).Assembly,
                         typeof(ReflectiveAccounts).Assembly,
-                        typeof(CompetencyFrameworkDBChanges).Assembly
+                        typeof(CompetencyFrameworkDBChanges).Assembly,
+                        typeof(AddInsertCustomisationV3sp).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

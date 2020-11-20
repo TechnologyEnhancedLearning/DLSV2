@@ -40,6 +40,10 @@ We've added data for the Digital Capabilities self assessment to the database. T
 4. Press the Execute button to run the script.
 5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
 
+## Fix inconsistencies with live
+
+There are a few inconsistencies with the live database, as there were some changes made after the db backup was created. There is a script which will fix this, MakeLocalDatabaseConsistentWithLive. Run this on the mbdbx101 database in the same way as the script to add the self assessment data.
+
 ### Inspecting the database
 
 It can be useful to have a look at what's in the database, to test out and plan SQL queries. The easiest way to do this is:
