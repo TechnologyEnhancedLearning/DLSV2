@@ -122,10 +122,10 @@
     <value>..\Scripts\ApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DLSV2_106_CreateOrAlterInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2_106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_106_DropInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\DLSV2_106-DropInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-106-DropInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_95_AddSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
