@@ -34,11 +34,11 @@
 
         private static string GetScormSource(IConfiguration config)
         {
-            const string tutorialPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course37/Section245/Tutorials/officeessentials/imsmanifest.xml";
+            const string tutorialPath = "https://www.dls.nhs.uk/cms/CMSContent/Course589/Section2295/Tutorials/2 Patient Reg PDS/imsmanifest.xml";
             const int centreId = 101;
-            const int customisationId = 27639;
+            const int customisationId = 37545;
             const int candidateId = 254480;
-            const int version = 2;
+            const int version = 1;
             return $"{config.GetScormPlayerUrl()}" +
                    $"?CentreID={centreId}" +
                    $"&CustomisationID={customisationId}" +
