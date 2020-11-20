@@ -37,8 +37,8 @@
         public void Content_viewer_should_have_scorm_url()
         {
             // Given
-            var expectedScormUrl = $"{BaseUrl}/scoplayer/sco?CentreID=101&CustomisationID=27639&CandidateID=254480&Version=2"
-                                  + "&tutpath=https://www.dls.nhs.uk/CMS/CMSContent/Course37/Section245/Tutorials/officeessentials/imsmanifest.xml";
+            var expectedScormUrl = $"{BaseUrl}/scoplayer/sco?CentreID=101&CustomisationID=37545&CandidateID=254480&Version=1"
+                                  + "&tutpath=https://www.dls.nhs.uk/cms/CMSContent/Course589/Section2295/Tutorials/2 Patient Reg PDS/imsmanifest.xml";
 
             // When
             var contentViewerViewModel = new ContentViewerViewModel(config);
