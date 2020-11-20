@@ -86,6 +86,45 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[InsertCustomisation_V3]    Script Date: 20/11/2020 14:12:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 28 February 2020
+        ///-- V2 Adds @CCCompletion field
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[InsertCustomisation_V3] 
+        ///	@Active as bit,
+        ///	@ApplicationID as int,
+        ///	@CentreID as int,
+        ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
+            get {
+                return ResourceManager.GetString("DLSV2_106_CreateOrAlterInsertCustomisation_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[InsertCustomisation_V3]    Script Date: 20/11/2020 14:12:52 ******/
+        ///DROP PROCEDURE [dbo].[InsertCustomisation_V3]
+        ///GO
+        ///
+        ///
+        ///.
+        /// </summary>
+        internal static string DLSV2_106_DropInsertCustomisation_V3 {
+            get {
+                return ResourceManager.GetString("DLSV2_106_DropInsertCustomisation_V3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table
@@ -107,19 +146,22 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
+        ///   Looks up a localized string similar to --DLSV2-95 Removes System Versioning to auditable tables (DOWN)
         ///
-        ///-- Remove versioning from Frameworks table
-        ///ALTER TABLE Frameworks SET (SYSTEM_VERSIONING = OFF);
-        ///ALTER TABLE Frameworks DROP PERIOD FOR SYSTEM_TIME;
-        ///ALTER TABLE Frameworks DROP COLUMN SysStartTime;
-        ///ALTER TABLE Frameworks DROP COLUMN SysEndTime;
-        ///DROP TABLE dbo.FrameworksHistory;
+        ///
+        ///-- Remove versioning from FrameworkCompetencies table
+        ///ALTER TABLE FrameworkCompetencies SET (SYSTEM_VERSIONING = OFF);
+        ///DROP TABLE dbo.FrameworkCompetencies;
+        ///DROP TABLE dbo.FrameworkCompetenciesHistory;
         ///GO
         ///
         ///-- Remove versioning from FrameworkCompetencyGroups table
         ///ALTER TABLE FrameworkCompetencyGroups SET (SYSTEM_VERSIONING = OFF);
-        ///ALTER TABLE FrameworkCompetenc [rest of string was truncated]&quot;;.
+        ///DROP TABLE dbo.FrameworkCompetencyGroups;
+        ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
+        ///GO
+        ///
+        ///--  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -128,23 +170,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SET ANSI_NULLS ON
-        ///GO
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///
-        ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 15 February 2012
-        ///-- Description:	Creates the Progress and aspProgress record for a new user
-        ///-- Returns:		0 : success, progress created
-        ///--       		1 : Failed - progress already exists
-        ///--       		100 : Failed - CentreID and CustomisationID don&apos;t match
-        ///--       		101 : Failed - CentreID and CandidateID don&apos;t match
-        ///
-        ///-- V3 changes include:
-        ///
-        ///-- Checks that  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to 䕓⁔乁䥓也䱕卌传ൎ䜊൏匊呅儠何䕔彄䑉久䥔䥆剅传ൎ䜊൏ഊⴊ‭㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽ഽⴊ‭畁桴牯ऺ䬉癥湩圠楨瑴歡牥਍ⴭ䌠敲瑡⁥慤整›㔱䘠扥畲牡⁹〲㈱਍ⴭ䐠獥牣灩楴湯ऺ牃慥整⁳桴⁥牐杯敲獳愠摮愠灳牐杯敲獳爠捥牯⁤潦⁲⁡敮⁷獵牥਍ⴭ删瑥牵獮ऺ〉㨠猠捵散獳‬牰杯敲獳挠敲瑡摥਍ⴭ†††ठㄉ㨠䘠楡敬⁤‭牰杯敲獳愠牬慥祤攠楸瑳൳ⴊ‭†††उ〱‰›慆汩摥ⴠ䌠湥牴䥥⁄湡⁤畃瑳浯獩瑡潩䥮⁄潤❮⁴慭捴൨ⴊ‭†††उ〱‱›慆汩摥ⴠ䌠湥牴䥥⁄湡⁤慃摮摩瑡䥥⁄潤❮⁴慭捴൨ഊⴊ‭㍖挠慨杮獥椠据畬敤ഺഊⴊ‭桃捥獫琠慨⁴硥獩楴杮瀠潲牧獥⁳慨湳琧戠敥⁮敒潭敶⁤牯删晥敲桳摥戠晥牯⁥敲畴楲楮杮攠牲牯മⴊ‭摁獤瀠牡浡瑥牥⁳潦⁲湅潲汬敭瑮洠瑥潨⁤湡⁤摡業⁮䑉਍ⴭ㴠㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽㴽਍䱁䕔⁒剐䍏䑅剕⁅摛潢⹝畛灳牃慥整牐杯敲獳敒潣摲噟崳਍䀉慃摮摩瑡䥥⁄湩ⱴ਍䀉畃瑳浯獩瑡潩䥮⁄湩ⱴ਍䀉敃瑮敲䑉椠瑮ബऊ䕀牮汯浬湥䵴瑥潨䥤⁄湩ⱴ਍䀉湅潲汬摥祂摁業䥮⁄湩൴䄊൓䈊䝅义਍ⴉ‭䕓⁔低佃乕⁔乏愠摤摥琠⁯牰癥湥⁴硥牴⁡敲畳瑬猠瑥⁳牦浯਍ⴉ‭湩整晲牥湩⁧楷桴匠䱅䍅⁔瑳瑡浥湥獴മऊ䕓⁔低佃乕⁔乏഻ऊⴭ਍ⴉ‭桔牥⁥牡⁥慶楲畯⁳桴湩獧琠 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DropApplyLPDefaultsSPChanges {
             get {
