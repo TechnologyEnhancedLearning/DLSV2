@@ -1,2 +1,2 @@
 @echo off
-DeployToFtpServer.bat %1 PublishToFolderForProduction dlsweb-v2
+DeployToFtpServer.bat %1 PublishToFolderForProduction dlsweb-v2 %2
