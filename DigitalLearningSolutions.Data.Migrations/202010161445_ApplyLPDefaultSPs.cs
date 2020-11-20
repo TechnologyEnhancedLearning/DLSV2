@@ -31,6 +31,8 @@
         public override void Down()
         {
             Execute.Sql(Properties.Resources.DropApplyLPDefaultsSPChanges);
+            Delete.Table("FilteredLearningActivity");
+            Delete.Table("FilteredAssets");
         }
     }
 }

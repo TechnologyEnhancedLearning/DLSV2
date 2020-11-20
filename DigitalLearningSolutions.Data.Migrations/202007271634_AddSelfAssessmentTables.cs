@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
-    using FluentMigrator.SqlServer;
 
     [Migration(202007271634)]
     public class AddSelfAssessmentTables : Migration
