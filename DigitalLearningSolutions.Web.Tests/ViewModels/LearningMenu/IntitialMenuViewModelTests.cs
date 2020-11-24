@@ -31,9 +31,7 @@
 
             // Then
             initialMenuViewModel.CourseContent.Title.Should().Be($"{applicationName} - {customisationName}");
-            initialMenuViewModel.CourseContent.AverageDuration.Should().Be(averageDuration);
-            initialMenuViewModel.CourseContent.CentreName.Should().Be(centreName);
-            initialMenuViewModel.CourseContent.BannerText.Should().Be(bannerText);
+            initialMenuViewModel.CourseContent.Should().BeEquivalentTo(expectedCourseContent);
         }
     }
 }
