@@ -28,12 +28,14 @@
             var result = courseContentService.GetCourseContent(customisationId);
 
             // Then
-            var expectedCourse = new CourseContent
-            {
-                Id = 1,
-                CustomisationName = "Standard",
-                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD"
-            };
+            var expectedCourse = new CourseContent(
+                1,
+                "Entry Level - Win XP, Office 2003/07 OLD",
+                "Standard",
+                "N/A",
+                "North West Boroughs Healthcare NHS Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxx"
+            );
             result.Should().BeEquivalentTo(expectedCourse);
         }
     }
