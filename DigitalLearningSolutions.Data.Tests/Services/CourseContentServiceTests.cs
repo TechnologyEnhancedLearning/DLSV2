@@ -24,17 +24,17 @@
         public void Get_course_content_should_return_course()
         {
             // When
-            const int customisationId = 1;
+            const int customisationId = 1604;
             var result = courseContentService.GetCourseContent(customisationId);
 
             // Then
             var expectedCourse = new CourseContent(
-                1,
-                "Entry Level - Win XP, Office 2003/07 OLD",
-                "Standard",
-                "N/A",
-                "North West Boroughs Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxx"
+                1604,
+                "Level 2 - Microsoft Word 2007",
+                "Word Core 07 Testing",
+                "3h 56m",
+                "Northumbria Healthcare NHS Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
             );
             result.Should().BeEquivalentTo(expectedCourse);
         }

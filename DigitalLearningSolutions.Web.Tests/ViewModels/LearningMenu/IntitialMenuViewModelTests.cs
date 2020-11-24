@@ -30,10 +30,10 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Title.Should().Be($"{applicationName} - {customisationName}");
-            initialMenuViewModel.AverageDuration.Should().Be(averageDuration);
-            initialMenuViewModel.CentreName.Should().Be(centreName);
-            initialMenuViewModel.BannerText.Should().Be(bannerText);
+            initialMenuViewModel.CourseContent.Title.Should().Be($"{applicationName} - {customisationName}");
+            initialMenuViewModel.CourseContent.AverageDuration.Should().Be(averageDuration);
+            initialMenuViewModel.CourseContent.CentreName.Should().Be(centreName);
+            initialMenuViewModel.CourseContent.BannerText.Should().Be(bannerText);
         }
     }
 }

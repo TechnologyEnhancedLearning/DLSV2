@@ -2,11 +2,11 @@
 {
     public class CourseContent
     {
-        public int Id { get; }
-        public string Title { get; }
-        public string AverageDuration { get; }
-        public string CentreName { get; }
-        public string? BannerText { get; }
+        public int Id { get; private set; }
+        public string Title { get; private set; }
+        public string AverageDuration { get; private set; }
+        public string CentreName { get; private set; }
+        public string? BannerText { get; private set; }
 
         public CourseContent(
             int id,
