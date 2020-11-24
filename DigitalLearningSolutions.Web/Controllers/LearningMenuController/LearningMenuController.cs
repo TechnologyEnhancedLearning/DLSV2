@@ -36,6 +36,9 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
+            var progressId = courseContentService.GetProgressId(User.GetCandidateId(), customisationId);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
         }
