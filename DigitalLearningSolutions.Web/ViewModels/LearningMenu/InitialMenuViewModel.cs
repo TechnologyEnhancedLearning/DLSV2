@@ -4,11 +4,11 @@
 
     public class InitialMenuViewModel
     {
-        public string Name { get; }
+        public CourseContent CourseContent { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
         {
-            Name = $"{courseContent.ApplicationName} - {courseContent.CustomisationName}";
+            CourseContent = courseContent;
         }
     }
 }

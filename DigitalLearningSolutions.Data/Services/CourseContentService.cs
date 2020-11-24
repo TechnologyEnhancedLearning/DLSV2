@@ -24,10 +24,16 @@
         public CourseContent? GetCourseContent(int customisationId)
         {
             return connection.QueryFirstOrDefault<CourseContent>(
-                @"SELECT C.CustomisationID AS Id, C.CustomisationName, A.ApplicationName 
-                      FROM Customisations as C
-                      JOIN Applications AS A ON C.ApplicationID = A.ApplicationID
-                      WHERE C.CustomisationID = @customisationId",
+                @"SELECT Customisations.CustomisationID AS id,
+                         Applications.ApplicationName,
+	                     Customisations.CustomisationName,
+	                     dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
+	                     Centres.CentreName,
+	                     Centres.BannerText
+                  FROM Applications
+                  INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                  INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
+                  WHERE Customisations.CustomisationID = @customisationId;",
                 new { customisationId }
             );
         }

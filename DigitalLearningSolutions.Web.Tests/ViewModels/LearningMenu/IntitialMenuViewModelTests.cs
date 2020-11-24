@@ -14,13 +14,24 @@
             const int customisationId = 12;
             const string customisationName = "Custom";
             const string applicationName = "My course";
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId, customisationName, applicationName);
+            const string averageDuration = "5h 33m";
+            const string centreName = "Central";
+            const string bannerText = "Centre Banner";
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                customisationId,
+                customisationName,
+                applicationName,
+                averageDuration,
+                centreName,
+                bannerText
+            );
 
             // When
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Name.Should().Be($"{applicationName} - {customisationName}");
+            initialMenuViewModel.CourseContent.Title.Should().Be($"{applicationName} - {customisationName}");
+            initialMenuViewModel.CourseContent.Should().BeEquivalentTo(expectedCourseContent);
         }
     }
 }
