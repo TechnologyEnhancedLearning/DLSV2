@@ -3,7 +3,7 @@
 $nhs-dark-grey: #425563;
 
 .course-card {
-    background-color: #fff;
+  background-color: #fff;
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
   padding-top: 8px;
@@ -11,9 +11,11 @@ $nhs-dark-grey: #425563;
   padding-left: 32px;
   padding-right: 32px;
 }
+
 .course-card .nhsuk-expander {
-    border: none
+  border: none
 }
+
 .tags {
   display: flex;
   margin-bottom: 16px;
@@ -122,8 +124,8 @@ div#search {
     margin-top: 36px;
     margin-left: 16px;
     margin-right: 16px;
-
     flex-direction: column;
+
     .js-enabled & {
       flex-direction: row;
     }
@@ -226,14 +228,17 @@ button.nhsuk-pagination__link {
   @include mq($until: tablet) {
     flex-direction: column;
   }
+
   &.nhsuk-pagination__link--prev {
     @include mq($until: tablet) {
       flex-direction: column-reverse;
     }
   }
+
   &:hover {
     color: $nhsuk-link-hover-color;
   }
+
   &:active {
     color: $nhsuk-link-active-color;
   }
@@ -249,38 +254,48 @@ button.nhsuk-pagination__link {
   @include mq($until: tablet) {
     padding: 0 !important;
   }
+
   .nhsuk-pagination-item--next & {
     text-align: left;
   }
 }
+
 @include mq($from: 768px, $until: 1024px) {
   .asset-card-header {
     min-height: 222px;
   }
 }
+
 @include mq($from: 1024px) {
   .asset-card-header {
     min-height: 163px;
   }
 }
+
 .tag.tag-article {
   background-color: $nhsuk-link-active-color;
 }
+
 .tag.tag-online.course {
   background-color: $nhsuk-link-color;
 }
+
 .tag.tag-learning.guide {
   background-color: $nhsuk-link-hover-color;
 }
+
 .tag.tag-video {
   background-color: $nhsuk-link-visited-color;
 }
+
 .playlist-title {
   min-height: 72px;
 }
+
 .asset-title-header {
   padding-bottom: 25px;
 }
+
 .asset-title-header .img-circle {
   height: 47px;
   width: 47px;
@@ -291,6 +306,7 @@ button.nhsuk-pagination__link {
   margin-right: 15px;
   vertical-align: middle;
 }
+
 .asset-title-header .title {
   font-size: 1.6rem;
   font-weight: bold;
@@ -298,6 +314,7 @@ button.nhsuk-pagination__link {
   padding: 1rem 0 0 0;
   display: inline-block;
 }
+
 .img-screenshot {
   max-width: 100%;
   width: auto;

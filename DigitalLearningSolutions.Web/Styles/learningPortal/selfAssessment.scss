@@ -36,6 +36,7 @@
   margin-bottom: 32px;
   margin-top: 32px;
 }
+
 .competency-group-panel .nhsuk-expander {
   border: none
 }
@@ -69,7 +70,6 @@ details.nhsuk-details {
   details[open] ~ & {
     display: none;
   }
-
   // IE11 only, prevent from displaying when js disabled
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     display: none;
@@ -133,4 +133,3 @@ details.nhsuk-details {
   left: auto;
   right: -24px
 }
-
