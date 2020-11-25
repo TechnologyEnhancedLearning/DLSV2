@@ -9,12 +9,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading">Course: @Model.CourseContent.Title</h1>
-    <h2 class="nhsuk-u-secondary-text-color">Average Course Time: @Model.CourseContent.AverageDuration</h2>
-    <p>
-      <span>Centre: @Model.CourseContent.CentreName</span>
-      <br/>
-      <span class="nhsuk-u-secondary-text-color">@Model.CourseContent.BannerText</span>
-    </p>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.CourseContent.Title</h1>
+    <h2 class="nhsuk-u-secondary-text-color nhsuk-heading-l">Average Course Time: @Model.CourseContent.AverageDuration</h2>
+    <p class="nhsuk-u-margin-bottom-0">@Model.CourseContent.CentreName</p>
+    <p class="nhsuk-u-secondary-text-color">@Model.CourseContent.BannerText</p>
   </div>
 </div>
