@@ -36,11 +36,12 @@
 
         public int GetProgressId(int candidateId, int customisationId)
         {
+            // TODO HEEDLS-202: change QueryFirstOrDefault to creating progress record if not found
             return connection.QueryFirstOrDefault<int>(
                 @"SELECT ProgressId
                         FROM Progress
-                        WHERE CandidateId = @candidateId
-                          AND customisationId = @customisationId",
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId",
                 new { candidateId, customisationId }
             );
         }
@@ -50,15 +51,15 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
 	                    SET LoginCount = (SELECT COALESCE(COUNT(*), 0)
-		                    FROM Sessions as s
-		                    WHERE s.CandidateID = Progress.CandidateID
-		                      AND s.CustomisationID = Progress.CustomisationID
-		                      AND (s.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime)),
+		                    FROM Sessions AS S
+		                    WHERE S.CandidateID = Progress.CandidateID
+		                      AND S.CustomisationID = Progress.CustomisationID
+		                      AND (S.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime)),
                             Duration = (SELECT COALESCE(SUM(S1.Duration), 0)
-		                    FROM Sessions as s1
-		                    WHERE s1.CandidateID = Progress.CandidateID
-		                      AND s1.CustomisationID = Progress.CustomisationID
-		                      AND (s1.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime))
+		                    FROM Sessions AS S1
+		                    WHERE S1.CandidateID = Progress.CandidateID
+		                      AND S1.CustomisationID = Progress.CustomisationID
+		                      AND (S1.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime))
 	                    WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );

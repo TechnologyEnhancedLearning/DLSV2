@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -35,6 +36,87 @@
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD"
             };
             result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_progress_id_should_return_progress_id()
+        {
+            // When
+            const int candidateId = 9;
+            const int customisationId = 259;
+            var result = courseContentService.GetProgressId(candidateId, customisationId);
+
+            // Then
+            var expectedProgressId = 10;
+            result.Should().Be(expectedProgressId);
+        }
+
+        [Test]
+        public void Update_login_count_should_not_increment_login_if_no_new_session()
+        {
+            // When
+            const int candidateId = 9;
+            const int customisationId = 259;
+            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            var expectedLoginCount = CourseContentHelper.GetLoginCount(progressId);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = CourseContentHelper.GetLoginCount(progressId);
+
+            // Then
+            result.Should().Be(expectedLoginCount);
+        }
+
+        [Test]
+        public void Update_duration_should_not_increment_login_if_no_new_session()
+        {
+            // When
+            const int candidateId = 9;
+            const int customisationId = 259;
+            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            var expectedDuration = CourseContentHelper.GetDuration(progressId);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = CourseContentHelper.GetDuration(progressId);
+
+            // Then
+            result.Should().Be(expectedDuration);
+        }
+
+        [Test]
+        public void Update_login_count_should_increment_login_if_new_session()
+        {
+            // When
+            const int candidateId = 9;
+            const int customisationId = 259;
+            const int duration = 5;
+            const int active = 0;
+            var loginTime = new DateTime(2010, 9, 23);
+            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            var initialLoginCount = CourseContentHelper.GetLoginCount(progressId);
+            CourseContentHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = CourseContentHelper.GetLoginCount(progressId);
+
+            // Then
+            result.Should().Be(initialLoginCount + 1);
+        }
+
+        [Test]
+        public void Update_duration_should_increment_login_if_new_session()
+        {
+            // When
+            const int candidateId = 9;
+            const int customisationId = 259;
+            const int duration = 5;
+            const int active = 0;
+            var loginTime = new DateTime(2010, 9, 23);
+            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
+            var initialDuration = CourseContentHelper.GetDuration(progressId);
+            CourseContentHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = CourseContentHelper.GetDuration(progressId);
+
+            // Then
+            result.Should().Be(initialDuration + duration);
         }
     }
 }

@@ -85,5 +85,38 @@
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
+
+        [Test]
+        public void Index_valid_customisation_id_should_call_the_course_content_service()
+        {
+            // Given
+            const int progressId = 13;
+            var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(defaultCourseContent);
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(progressId);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Index_invalid_customisation_id_should_not_call_the_course_content_service()
+        {
+            // Given
+            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(null);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.GetProgressId(A<int>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(A<int>._)).MustNotHaveHappened();
+        }
     }
 }
