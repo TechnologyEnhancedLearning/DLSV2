@@ -87,7 +87,7 @@
         }
 
         [Test]
-        public void Index_always_calls_checks_course_content()
+        public void Index_always_calls_get_course_content()
         {
             // Given
             const int customisationId = 1;
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void Index_valid_customisation_id_should_call_the_course_content_service()
+        public void Index_valid_customisation_id_should_update_login_and_duration()
         {
             // Given
             const int progressId = 13;
@@ -117,7 +117,7 @@
         }
 
         [Test]
-        public void Index_invalid_customisation_id_should_not_call_the_course_content_service()
+        public void Index_invalid_customisation_id_should_not_update_login_and_duration()
         {
             // Given
             A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(null);
@@ -126,7 +126,6 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).MustHaveHappened();
             A.CallTo(() => courseContentService.GetProgressId(A<int>._, A<int>._)).MustNotHaveHappened();
             A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(A<int>._)).MustNotHaveHappened();
         }

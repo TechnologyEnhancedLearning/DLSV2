@@ -56,7 +56,7 @@
         }
 
         [Test]
-        public void Update_login_count_should_not_increment_login_if_no_new_session()
+        public void Update_login_count_should_not_increment_login_count_if_no_new_session()
         {
             // Given
             const int progressId = 10;
@@ -86,7 +86,47 @@
         }
 
         [Test]
-        public void Update_login_count_should_increment_login_if_new_session()
+        public void Update_login_count_should_not_increment_login_count_if_session_time_not_in_range()
+        {
+            // Given
+            const int candidateId = 9;
+            const int customisationId = 259;
+            const int progressId = 10;
+            const int duration = 5;
+            var loginTime = new DateTime(2011, 9, 23);
+            var expectedLoginCount = courseContentTestHelper.GetLoginCount(progressId);
+
+            // When
+            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = courseContentTestHelper.GetLoginCount(progressId);
+
+            // Then
+            result.Should().Be(expectedLoginCount);
+        }
+
+        [Test]
+        public void Update_duration_should_not_increment_duration_if_session_time_not_in_range()
+        {
+            // Given
+            const int candidateId = 9;
+            const int customisationId = 259;
+            const int progressId = 10;
+            const int duration = 5;
+            var loginTime = new DateTime(2011, 9, 23);
+            var expectedDuration = courseContentTestHelper.GetDuration(progressId);
+
+            // When
+            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+            courseContentService.UpdateLoginCountAndDuration(progressId);
+            var result = courseContentTestHelper.GetDuration(progressId);
+            
+            // Then
+            result.Should().Be(expectedDuration);
+        }
+
+        [Test]
+        public void Update_login_count_should_increment_login_count_if_new_session()
         {
             // Given
             const int candidateId = 9;
