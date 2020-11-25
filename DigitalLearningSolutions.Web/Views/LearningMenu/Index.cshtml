@@ -2,12 +2,19 @@
 @model InitialMenuViewModel
 
 @{
-  ViewData["Application"] = "Learning Menu";
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseContent.Title;
   ViewData["Title"] = "Learning Menu";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">Course: @Model.CourseContent.Title</h1>
+    <h2 class="nhsuk-u-secondary-text-color">Average Course Time: @Model.CourseContent.AverageDuration</h2>
+    <p>
+      <span>Centre: @Model.CourseContent.CentreName</span>
+      <br/>
+      <span class="nhsuk-u-secondary-text-color">@Model.CourseContent.BannerText</span>
+    </p>
   </div>
 </div>
