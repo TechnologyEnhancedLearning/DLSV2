@@ -58,9 +58,9 @@
             const int candidateId = 9;
             const int customisationId = 259;
             var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var expectedLoginCount = CourseContentHelper.GetLoginCount(progressId);
+            var expectedLoginCount = CourseContentTestHelper.GetLoginCount(progressId);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentHelper.GetLoginCount(progressId);
+            var result = CourseContentTestHelper.GetLoginCount(progressId);
 
             // Then
             result.Should().Be(expectedLoginCount);
@@ -73,9 +73,9 @@
             const int candidateId = 9;
             const int customisationId = 259;
             var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var expectedDuration = CourseContentHelper.GetDuration(progressId);
+            var expectedDuration = CourseContentTestHelper.GetDuration(progressId);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentHelper.GetDuration(progressId);
+            var result = CourseContentTestHelper.GetDuration(progressId);
 
             // Then
             result.Should().Be(expectedDuration);
@@ -91,10 +91,10 @@
             const int active = 0;
             var loginTime = new DateTime(2010, 9, 23);
             var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var initialLoginCount = CourseContentHelper.GetLoginCount(progressId);
-            CourseContentHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            var initialLoginCount = CourseContentTestHelper.GetLoginCount(progressId);
+            CourseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentHelper.GetLoginCount(progressId);
+            var result = CourseContentTestHelper.GetLoginCount(progressId);
 
             // Then
             result.Should().Be(initialLoginCount + 1);
@@ -110,10 +110,10 @@
             const int active = 0;
             var loginTime = new DateTime(2010, 9, 23);
             var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var initialDuration = CourseContentHelper.GetDuration(progressId);
-            CourseContentHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            var initialDuration = CourseContentTestHelper.GetDuration(progressId);
+            CourseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentHelper.GetDuration(progressId);
+            var result = CourseContentTestHelper.GetDuration(progressId);
 
             // Then
             result.Should().Be(initialDuration + duration);
