@@ -2,12 +2,19 @@
 {
     using System;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
-    public static class CourseContentTestHelper
+    public class CourseContentTestHelper
     {
-        public static int GetLoginCount(int progressId)
+        private SqlConnection connection;
+
+        public CourseContentTestHelper(SqlConnection connection)
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            this.connection = connection;
+        }
+
+        public int GetLoginCount(int progressId)
+        {
             return connection.QueryFirstOrDefault<int>(
                 @"SELECT LoginCount
                         FROM Progress
@@ -16,9 +23,8 @@
             );
         }
 
-        public static int GetDuration(int progressId)
+        public int GetDuration(int progressId)
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
             return connection.QueryFirstOrDefault<int>(
                 @"SELECT Duration
                         FROM Progress
@@ -27,10 +33,12 @@
             );
         }
 
-        public static void InsertSession(
-            int candidateId, int customisationId, DateTime loginTime, int duration, int active)
+        public void InsertSession(
+            int candidateId,
+            int customisationId,
+            DateTime loginTime,
+            int duration)
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
             connection.Execute(
                 @"INSERT INTO SESSIONS
                         ([CandidateID]
@@ -38,8 +46,8 @@
                         ,[LoginTime]
                         ,[Duration]
                         ,[Active])
-                    VALUES (@candidateId, @customisationId, @loginTime, @duration, @active)",
-                new { candidateId, customisationId, loginTime, duration, active }
+                    VALUES (@candidateId, @customisationId, @loginTime, @duration, 0)",
+                new { candidateId, customisationId, loginTime, duration }
             );
         }
     }

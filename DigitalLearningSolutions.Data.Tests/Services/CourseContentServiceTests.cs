@@ -12,6 +12,7 @@
     internal class CourseContentServiceTests
     {
         private CourseContentService courseContentService;
+        private CourseContentTestHelper courseContentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -19,6 +20,7 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<CourseContentService>>();
             courseContentService = new CourseContentService(connection, logger);
+            courseContentTestHelper = new CourseContentTestHelper(connection);
         }
 
         [Test]
@@ -41,41 +43,43 @@
         [Test]
         public void Get_progress_id_should_return_progress_id()
         {
-            // When
+            // Given
             const int candidateId = 9;
             const int customisationId = 259;
+
+            // When
             var result = courseContentService.GetProgressId(candidateId, customisationId);
 
             // Then
-            var expectedProgressId = 10;
+            const int expectedProgressId = 10;
             result.Should().Be(expectedProgressId);
         }
 
         [Test]
         public void Update_login_count_should_not_increment_login_if_no_new_session()
         {
+            // Given
+            const int progressId = 10;
+            var expectedLoginCount = courseContentTestHelper.GetLoginCount(progressId);
+
             // When
-            const int candidateId = 9;
-            const int customisationId = 259;
-            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var expectedLoginCount = CourseContentTestHelper.GetLoginCount(progressId);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentTestHelper.GetLoginCount(progressId);
+            var result = courseContentTestHelper.GetLoginCount(progressId);
 
             // Then
             result.Should().Be(expectedLoginCount);
         }
 
         [Test]
-        public void Update_duration_should_not_increment_login_if_no_new_session()
+        public void Update_duration_should_not_increment_duration_if_no_new_session()
         {
+            // Given
+            const int progressId = 10;
+            var expectedDuration = courseContentTestHelper.GetDuration(progressId);
+
             // When
-            const int candidateId = 9;
-            const int customisationId = 259;
-            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var expectedDuration = CourseContentTestHelper.GetDuration(progressId);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentTestHelper.GetDuration(progressId);
+            var result = courseContentTestHelper.GetDuration(progressId);
 
             // Then
             result.Should().Be(expectedDuration);
@@ -84,36 +88,38 @@
         [Test]
         public void Update_login_count_should_increment_login_if_new_session()
         {
-            // When
+            // Given
             const int candidateId = 9;
             const int customisationId = 259;
+            const int progressId = 10;
             const int duration = 5;
-            const int active = 0;
             var loginTime = new DateTime(2010, 9, 23);
-            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var initialLoginCount = CourseContentTestHelper.GetLoginCount(progressId);
-            CourseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            var initialLoginCount = courseContentTestHelper.GetLoginCount(progressId);
+
+            // When
+            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentTestHelper.GetLoginCount(progressId);
+            var result = courseContentTestHelper.GetLoginCount(progressId);
 
             // Then
             result.Should().Be(initialLoginCount + 1);
         }
 
         [Test]
-        public void Update_duration_should_increment_login_if_new_session()
+        public void Update_duration_should_increment_duration_if_new_session()
         {
-            // When
+            // Given
             const int candidateId = 9;
             const int customisationId = 259;
+            const int progressId = 10;
             const int duration = 5;
-            const int active = 0;
             var loginTime = new DateTime(2010, 9, 23);
-            var progressId = courseContentService.GetProgressId(candidateId, customisationId);
-            var initialDuration = CourseContentTestHelper.GetDuration(progressId);
-            CourseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration, active);
+            var initialDuration = courseContentTestHelper.GetDuration(progressId);
+
+            // When
+            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
             courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = CourseContentTestHelper.GetDuration(progressId);
+            var result = courseContentTestHelper.GetDuration(progressId);
 
             // Then
             result.Should().Be(initialDuration + duration);

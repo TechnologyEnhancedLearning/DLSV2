@@ -87,6 +87,19 @@
         }
 
         [Test]
+        public void Index_always_calls_checks_course_content()
+        {
+            // Given
+            const int customisationId = 1;
+
+            // When
+            controller.Index(1);
+
+            // Then
+            A.CallTo(() => courseContentService.GetCourseContent(customisationId)).MustHaveHappened();
+        }
+
+        [Test]
         public void Index_valid_customisation_id_should_call_the_course_content_service()
         {
             // Given
@@ -99,7 +112,6 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).MustHaveHappened();
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).MustHaveHappened();
             A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(progressId)).MustHaveHappened();
         }
