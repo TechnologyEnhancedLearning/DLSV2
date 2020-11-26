@@ -28,7 +28,7 @@
         {
             CourseContent? courseContent = null;
             return connection.Query<CourseContent, CourseSection, CourseContent>(
-                @"SELECT TOP 10000 Customisations.CustomisationID AS id,
+                @"SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
@@ -51,7 +51,8 @@
                   LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
                   WHERE Customisations.CustomisationID = @customisationId
                   GROUP BY
-                         Sections.SectionID, Customisations.CustomisationID,
+                         Sections.SectionID,
+                         Customisations.CustomisationID,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          Centres.CentreName,
