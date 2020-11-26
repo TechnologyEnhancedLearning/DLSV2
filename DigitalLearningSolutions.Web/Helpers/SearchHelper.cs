@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
@@ -34,6 +35,27 @@
                 currentCourse => currentCourse.Name.ToLower(),
                 ScorerCache.Get<PartialRatioScorer>(),
                 MatchCutoffScore
+            );
+            return results.Select(result => result.Value);
+        }
+        public static IEnumerable<BrandedFramework> FilterFrameworks(IEnumerable<BrandedFramework> frameworks, string? searchString, int minMatchScore)
+        {
+            if (searchString == null)
+            {
+                return frameworks;
+            }
+
+            var query = new BrandedFramework()
+            {
+                FrameworkName = searchString
+            };
+
+            var results = Process.ExtractAll(
+                query,
+                frameworks,
+                framework => framework.FrameworkName.ToLower(),
+                ScorerCache.Get<PartialRatioScorer>(),
+                minMatchScore
             );
             return results.Select(result => result.Value);
         }

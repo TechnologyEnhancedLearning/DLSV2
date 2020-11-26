@@ -11,7 +11,8 @@
     public interface IFrameworkService
     {
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId);
-        IEnumerable<BaseFramework> GetFrameworksForAdminId(int adminId);
+        IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
+        IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -32,9 +33,8 @@
             ,FW.UpdatedByAdminID
 	        ,(SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FW.UpdatedByAdminID) AS UpdatedBy
 	        , CASE WHEN FW.OwnerAdminID = @AdminID THEN 1 ELSE FWC.CanModify END AS UserCanModify";
-        private const string DetailFrameworkFields =
-            @",FW.Description
-            ,(SELECT BrandName
+        private const string BrandedFrameworkFields =
+            @",(SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName
@@ -42,8 +42,10 @@
                                  WHERE (CourseCategoryID = FW.CategoryID)) AS Category,
                                  (SELECT CourseTopic
                  FROM    CourseTopics
-                                 WHERE (CourseTopicID = FW.TopicID)) AS Topic
-            ,FW.FrameworkConfig";
+                                 WHERE (CourseTopicID = FW.TopicID)) AS Topic";
+        private const string DetailFrameworkFields =
+            @",FW.Description
+              ,FW.FrameworkConfig";
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
             FrameworkCollaborators AS FWC
@@ -56,20 +58,27 @@
         public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId)
         {
             return connection.QueryFirstOrDefault<DetailFramework>(
-               $@"SELECT {BaseFrameworkFields} {DetailFrameworkFields}
+               $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields} {DetailFrameworkFields}
                       FROM {FrameworkTables}
                       WHERE FW.ID = @frameworkId",
                new { frameworkId }
            );
         }
 
-        public IEnumerable<BaseFramework> GetFrameworksForAdminId(int adminId)
+        public IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId)
         {
-            return connection.Query<BaseFramework>(
-                $@"SELECT {BaseFrameworkFields} {DetailFrameworkFields}
+            return connection.Query<BrandedFramework>(
+                $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
                       FROM {FrameworkTables}
                       WHERE FW.OwnerAdminID = @AdminID OR FWC.AdminID = @AdminID",
                new { adminId }
+           );
+        }
+        public IEnumerable<BrandedFramework> GetAllFrameworks(int adminId)
+        {
+            return connection.Query<BrandedFramework>(
+                $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
+                      FROM {FrameworkTables}", new { adminId }
            );
         }
     }

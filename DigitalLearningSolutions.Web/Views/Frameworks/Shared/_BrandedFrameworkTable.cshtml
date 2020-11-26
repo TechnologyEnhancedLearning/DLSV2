@@ -1,0 +1,76 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks
+@model IEnumerable<BrandedFramework>
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Frameworks </caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+    <tr role="row">
+      <th role="columnheader" class="" scope="col">
+        Framework
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Created
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Status
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Owner
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+    @foreach (var framework in Model)
+    {
+      <tr role="row" class="nhsuk-table__row framework-row">
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+          <span class="nhsuk-table-responsive__heading">Framework </span>
+          <span class="framework-brand">
+            @framework.Brand
+          </span>
+          @if (framework.Category != null)
+          {<span>/</span><span class="framework-category"> @framework.Category </span>}<span>/</span>
+          <span class="framework-name nhsuk-u-font-weight-bold">
+            @framework.FrameworkName
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+          <span class="nhsuk-table-responsive__heading">Created </span>
+          <span class="framework-created-date">
+            @framework.CreatedDate.ToShortDateString()
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+          <span class="nhsuk-table-responsive__heading">Status </span>
+          <span class="framework-publish-status">
+            @framework.PublishStatus
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+          <span class="nhsuk-table-responsive__heading">Owner </span>
+          <span class="framework-owner">
+            @framework.Owner
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+          <span class="nhsuk-table-responsive__heading">Actions </span>
+          @if (framework.UserCanModify)
+          {
+            <a href="#">
+              View/Edit
+            </a>
+          }
+          else
+          {
+            <a href="#">
+              View
+            </a>
+          }
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
