@@ -17,6 +17,13 @@
   </div>
 </div>
 
+<div>
+  @for (var i = 0; i < 3; i++)
+  {
+    <partial name="_SectionCard" />
+  }
+</div>
+
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link" asp-action="Current" asp-controller="LearningPortal">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
