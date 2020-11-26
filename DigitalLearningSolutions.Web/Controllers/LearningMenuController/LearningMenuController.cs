@@ -29,7 +29,7 @@
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
-            var courseContent = courseContentService.GetCourseContent(customisationId);
+            var courseContent = courseContentService.GetCourseContent(User.GetCandidateId(), customisationId);
 
             if (courseContent == null)
             {

@@ -46,7 +46,8 @@
         {
             // Given
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(expectedCourseContent);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+             .Returns(expectedCourseContent);
 
             // When
             var result = controller.Index(CustomisationId);
@@ -61,7 +62,7 @@
         public void Index_should_return_404_if_unknown_course()
         {
             // Given
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(null);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
 
             // When
             var result = controller.Index(CustomisationId);
@@ -96,7 +97,7 @@
             controller.Index(1);
 
             // Then
-            A.CallTo(() => courseContentService.GetCourseContent(customisationId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId)).MustHaveHappened();
         }
 
         [Test]
@@ -105,7 +106,8 @@
             // Given
             const int progressId = 13;
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(defaultCourseContent);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+             .Returns(defaultCourseContent);
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(progressId);
 
             // When
@@ -120,7 +122,7 @@
         public void Index_invalid_customisation_id_should_not_update_login_and_duration()
         {
             // Given
-            A.CallTo(() => courseContentService.GetCourseContent(CustomisationId)).Returns(null);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
 
             // When
             controller.Index(CustomisationId);
