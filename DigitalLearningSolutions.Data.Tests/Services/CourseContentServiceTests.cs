@@ -65,12 +65,15 @@
             const int progressId = 10;
             var expectedLoginCount = courseContentTestHelper.GetLoginCount(progressId);
 
-            // When
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetLoginCount(progressId);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetLoginCount(progressId);
 
-            // Then
-            result.Should().Be(expectedLoginCount);
+                // Then
+                result.Should().Be(expectedLoginCount);
+            }
         }
 
         [Test]
@@ -80,12 +83,15 @@
             const int progressId = 10;
             var expectedDuration = courseContentTestHelper.GetDuration(progressId);
 
-            // When
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetDuration(progressId);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetDuration(progressId);
 
-            // Then
-            result.Should().Be(expectedDuration);
+                // Then
+                result.Should().Be(expectedDuration);
+            }
         }
 
         [Test]
