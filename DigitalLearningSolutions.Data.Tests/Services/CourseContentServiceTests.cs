@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -98,13 +99,16 @@
             var loginTime = new DateTime(2011, 9, 23);
             var expectedLoginCount = courseContentTestHelper.GetLoginCount(progressId);
 
-            // When
-            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetLoginCount(progressId);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetLoginCount(progressId);
 
-            // Then
-            result.Should().Be(expectedLoginCount);
+                // Then
+                result.Should().Be(expectedLoginCount);
+            }
         }
 
         [Test]
@@ -118,13 +122,16 @@
             var loginTime = new DateTime(2011, 9, 23);
             var expectedDuration = courseContentTestHelper.GetDuration(progressId);
 
-            // When
-            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetDuration(progressId);
-            
-            // Then
-            result.Should().Be(expectedDuration);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetDuration(progressId);
+
+                // Then
+                result.Should().Be(expectedDuration);
+            }
         }
 
         [Test]
@@ -138,13 +145,16 @@
             var loginTime = new DateTime(2010, 9, 23);
             var initialLoginCount = courseContentTestHelper.GetLoginCount(progressId);
 
-            // When
-            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetLoginCount(progressId);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetLoginCount(progressId);
 
-            // Then
-            result.Should().Be(initialLoginCount + 1);
+                // Then
+                result.Should().Be(initialLoginCount + 1);
+            }
         }
 
         [Test]
@@ -158,13 +168,16 @@
             var loginTime = new DateTime(2010, 9, 23);
             var initialDuration = courseContentTestHelper.GetDuration(progressId);
 
-            // When
-            courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-            courseContentService.UpdateLoginCountAndDuration(progressId);
-            var result = courseContentTestHelper.GetDuration(progressId);
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
+                courseContentService.UpdateLoginCountAndDuration(progressId);
+                var result = courseContentTestHelper.GetDuration(progressId);
 
-            // Then
-            result.Should().Be(initialDuration + duration);
+                // Then
+                result.Should().Be(initialDuration + duration);
+            }
         }
     }
 }
