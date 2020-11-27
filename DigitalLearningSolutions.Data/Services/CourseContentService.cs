@@ -60,12 +60,13 @@
 		                    FROM Sessions AS S
 		                    WHERE S.CandidateID = Progress.CandidateID
 		                      AND S.CustomisationID = Progress.CustomisationID
-		                      AND (S.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime)),
+		                      AND S.LoginTime >= Progress.FirstSubmittedTime),
                             Duration = (SELECT COALESCE(SUM(S1.Duration), 0)
 		                    FROM Sessions AS S1
 		                    WHERE S1.CandidateID = Progress.CandidateID
 		                      AND S1.CustomisationID = Progress.CustomisationID
-		                      AND (S1.LoginTime BETWEEN Progress.FirstSubmittedTime AND Progress.SubmittedTime))
+		                      AND S1.LoginTime >= Progress.FirstSubmittedTime),
+                            SubmittedTime = GETDATE()
 	                    WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );
