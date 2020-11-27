@@ -26,6 +26,12 @@
 
         public CourseContent? GetCourseContent(int candidateId, int customisationId)
         {
+            // Get course content, section names and section progress for a candidate
+            // When the candidate is not doing this course, (ie there isn't an entry in the progress table for the
+            // given customisation and candidate IDs) we still get the general course information, just with the
+            // percentage completion set to 0.
+            // This is achieved using LEFT JOINs on Progress, so we get the candidates progress details or some nulls.
+
             CourseContent? courseContent = null;
             return connection.Query<CourseContent, CourseSection, CourseContent>(
                 @"SELECT Customisations.CustomisationID AS id,
