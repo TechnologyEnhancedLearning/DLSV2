@@ -56,6 +56,14 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.Name = ".AspNet.SharedCookie";
             });
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
             mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -100,6 +108,9 @@ namespace DigitalLearningSolutions.Web
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
+
             app.UseEndpoints(async (endpoints) => await ConfigureEndPointsAsync(endpoints, featureManager));
 
             migrationRunner.MigrateUp();
