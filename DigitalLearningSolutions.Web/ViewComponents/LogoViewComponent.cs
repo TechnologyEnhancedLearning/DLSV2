@@ -7,26 +7,17 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 
     public class LogoViewComponent : ViewComponent
     {
-        private readonly ICentresService centresService;
+        private readonly ILogoService logoService;
 
-        public LogoViewComponent(ICentresService centresService)
+        public LogoViewComponent(ILogoService logoService)
         {
-            this.centresService = centresService;
+            this.logoService = logoService;
         }
 
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(int? customisationId)
         {
             var centreId = UserClaimsPrincipal.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
-            if (centreId == null)
-            {
-                return View(new LogoViewModel(null));
-            }
-
-            var customLogo = centresService.GetCentreLogo(centreId.Value);
-            if (customLogo.LogoUrl == null)
-            {
-                return View(new LogoViewModel(null));
-            }
+            var customLogo = logoService.GetLogo(centreId, customisationId);
 
             var model = new LogoViewModel(customLogo);
             return View(model);

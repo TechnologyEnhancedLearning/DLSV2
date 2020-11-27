@@ -70,8 +70,10 @@ body:not(.js-enabled) {
   }
 }
 
-.centre-logo {
+.centre-brand-logo {
   float: right;
+  max-width: 280px;
+  max-height: 75px;
 
   @include mq($until: large-desktop) {
     display: none;

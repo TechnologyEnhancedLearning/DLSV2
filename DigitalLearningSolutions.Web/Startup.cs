@@ -77,6 +77,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<IUnlockDataService, UnlockDataService>();
             services.AddScoped<IUnlockService, UnlockService>();
