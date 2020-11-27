@@ -50,6 +50,7 @@
                   LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId
                   LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
                   WHERE Customisations.CustomisationID = @customisationId
+                    AND ((Progress.CandidateID IS NULL) OR (Progress.SystemRefreshed = 0 AND Progress.RemovedDate IS NULL))
                   GROUP BY
                          Sections.SectionID,
                          Customisations.CustomisationID,
@@ -102,7 +103,7 @@
 	                    WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );
-            
+
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
