@@ -5,12 +5,12 @@
 
     public class CourseContent
     {
-        public int Id { get; private set; }
-        public string Title { get; private set; }
-        public string AverageDuration { get; private set; }
-        public string CentreName { get; private set; }
-        public string? BannerText { get; private set; }
-        public List<CourseSection> Sections { get; private set; } = new List<CourseSection>();
+        public int Id { get; }
+        public string Title { get; }
+        public string AverageDuration { get; }
+        public string CentreName { get; }
+        public string? BannerText { get; }
+        public List<CourseSection> Sections { get; } = new List<CourseSection>();
 
         public CourseContent(
             int id,
