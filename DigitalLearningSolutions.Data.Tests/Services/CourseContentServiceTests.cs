@@ -59,7 +59,7 @@
         }
 
         [Test]
-        public void Update_login_count_should_not_increment_login_count_if_no_new_session()
+        public void Update_progress_should_not_increment_login_count_if_no_new_session()
         {
             // Given
             const int progressId = 10;
@@ -68,7 +68,7 @@
             using (new TransactionScope())
             {
                 // When
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetLoginCount(progressId);
 
                 // Then
@@ -77,7 +77,7 @@
         }
 
         [Test]
-        public void Update_duration_should_not_increment_duration_if_no_new_session()
+        public void Update_progress_should_not_increment_duration_if_no_new_session()
         {
             // Given
             const int progressId = 10;
@@ -86,7 +86,7 @@
             using (new TransactionScope())
             {
                 // When
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetDuration(progressId);
 
                 // Then
@@ -95,7 +95,7 @@
         }
 
         [Test]
-        public void Update_login_count_should_not_increment_login_count_if_session_time_is_before_first_submitted_time()
+        public void Update_progress_should_not_increment_login_count_if_session_time_is_before_first_submitted_time()
         {
             // Given
             const int candidateId = 9;
@@ -109,7 +109,7 @@
             {
                 // When
                 courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetLoginCount(progressId);
 
                 // Then
@@ -118,7 +118,7 @@
         }
 
         [Test]
-        public void Update_duration_should_not_increment_duration_if_session_time_is_before_first_submitted_time()
+        public void Update_progress_should_not_increment_duration_if_session_time_is_before_first_submitted_time()
         {
             // Given
             const int candidateId = 9;
@@ -132,7 +132,7 @@
             {
                 // When
                 courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetDuration(progressId);
 
                 // Then
@@ -141,7 +141,7 @@
         }
 
         [Test]
-        public void Update_login_count_should_increment_login_count_if_new_session()
+        public void Update_progress_should_increment_login_count_if_new_session()
         {
             // Given
             const int candidateId = 9;
@@ -155,7 +155,7 @@
             {
                 // When
                 courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetLoginCount(progressId);
 
                 // Then
@@ -164,7 +164,7 @@
         }
 
         [Test]
-        public void Update_duration_should_increment_duration_if_new_session()
+        public void Update_progress_should_increment_duration_if_new_session()
         {
             // Given
             const int candidateId = 9;
@@ -178,11 +178,29 @@
             {
                 // When
                 courseContentTestHelper.InsertSession(candidateId, customisationId, loginTime, duration);
-                courseContentService.UpdateLoginCountAndDuration(progressId);
+                courseContentService.UpdateProgress(progressId);
                 var result = courseContentTestHelper.GetDuration(progressId);
 
                 // Then
                 result.Should().Be(initialDuration + duration);
+            }
+        }
+
+        [Test]
+        public void Update_progress_should_update_submitted_time()
+        {
+            // Given
+            const int progressId = 10;
+            var initialSubmittedTime = courseContentTestHelper.GetSubmittedTime(progressId);
+
+            using (new TransactionScope())
+            {
+                // When
+                courseContentService.UpdateProgress(progressId);
+                var result = courseContentTestHelper.GetSubmittedTime(progressId);
+
+                // Then
+                courseContentTestHelper.IsApproximatelyNow(result).Should().Be(true);
             }
         }
     }

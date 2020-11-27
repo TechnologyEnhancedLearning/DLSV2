@@ -9,7 +9,7 @@
     {
         CourseContent? GetCourseContent(int customisationId);
         int GetProgressId(int candidateId, int customisationId);
-        void UpdateLoginCountAndDuration(int progressId);
+        void UpdateProgress(int progressId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -52,7 +52,7 @@
             );
         }
 
-        public void UpdateLoginCountAndDuration(int progressId)
+        public void UpdateProgress(int progressId)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
@@ -66,7 +66,7 @@
 		                    WHERE S1.CandidateID = Progress.CandidateID
 		                      AND S1.CustomisationID = Progress.CustomisationID
 		                      AND S1.LoginTime >= Progress.FirstSubmittedTime),
-                            SubmittedTime = GETDATE()
+                            SubmittedTime = GETUTCDATE()
 	                    WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );

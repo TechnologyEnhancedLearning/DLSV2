@@ -33,6 +33,16 @@
             );
         }
 
+        public DateTime GetSubmittedTime(int progressId)
+        {
+            return connection.QueryFirstOrDefault<DateTime>(
+                @"SELECT SubmittedTime
+                        FROM Progress
+                        WHERE ProgressID = @progressId",
+                new { progressId }
+            );
+        }
+
         public void InsertSession(
             int candidateId,
             int customisationId,
@@ -49,6 +59,12 @@
                     VALUES (@candidateId, @customisationId, @loginTime, @duration, 0)",
                 new { candidateId, customisationId, loginTime, duration }
             );
+        }
+
+        public bool IsApproximatelyNow(DateTime timeToCheck)
+        {
+            var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
+            return (timeToCheck >= twoMinutesAgo && timeToCheck <= DateTime.Now);
         }
     }
 }
