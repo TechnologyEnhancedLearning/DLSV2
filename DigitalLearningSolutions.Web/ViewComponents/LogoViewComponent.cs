@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 
         public IViewComponentResult Invoke(int? customisationId)
         {
-            var centreId = UserClaimsPrincipal.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            var centreId = ((ClaimsPrincipal) User).GetCentreId();
             var customLogo = logoService.GetLogo(centreId, customisationId);
 
             var model = new LogoViewModel(customLogo);

@@ -4,7 +4,7 @@
 
     public class Logo
     {
-        public readonly string? LogoUrl;
+        public readonly string LogoUrl;
         public readonly string Name;
 
         public Logo(
@@ -31,8 +31,7 @@
                 return;
             }
 
-            LogoUrl = null;
-            Name = "";
+            throw new LogoNotFoundException();
         }
 
         private string? ParseLogoData(byte[]? logoData, string? logoMimeType = null)
@@ -44,7 +43,7 @@
                 return null;
             }
 
-            string base64Logo = Convert.ToBase64String(logoData);
+            var base64Logo = Convert.ToBase64String(logoData);
             return $"data:{logoMimeType};base64,{base64Logo}";
         }
     }

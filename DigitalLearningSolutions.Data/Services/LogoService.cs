@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
 
@@ -21,8 +20,10 @@
 
         public Logo? GetLogo(int? centreId, int? customisationId)
         {
-            var logo = connection.Query<Logo>(
-                @"SELECT Centres.CentreName,
+            try
+            {
+                var logo = connection.QueryFirstOrDefault<Logo>(
+                    @"SELECT Centres.CentreName,
                          Centres.CentreLogo,
                          Centres.LogoMimeType as CentreMimeType,
                          Brands.BrandName,
@@ -38,9 +39,13 @@
                          LEFT JOIN Brands
                          ON Applications.BrandID = Brands.BrandID
                    WHERE Centres.CentreID = @centreId;",
-                new { centreId, customisationId }).FirstOrDefault();
-
-            return logo?.LogoUrl != null ? logo : null;
+                    new { centreId, customisationId });
+                return logo;
+            }
+            catch (LogoNotFoundException)
+            {
+                return null;
+            }
         }
     }
 }
