@@ -25,20 +25,141 @@
         }
 
         [Test]
-        public void Get_course_content_should_return_course()
+        public void Get_course_content_of_partially_complete_course_should_return_course()
         {
             // When
-            const int customisationId = 1604;
-            var result = courseContentService.GetCourseContent(customisationId);
+            const int candidateId = 22044;
+            const int customisationId = 4169;
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
             var expectedCourse = new CourseContent(
-                1604,
-                "Level 2 - Microsoft Word 2007",
-                "Word Core 07 Testing",
-                "3h 56m",
+                4169,
+                "Level 2 - Microsoft Excel 2010",
+                "MOS Excel 2010 CORE",
+                "5h 49m",
                 "Northumbria Healthcare NHS Foundation Trust",
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Viewing workbooks", true, 12.5),
+                    new CourseSection("Manipulating worksheets", true, 20),
+                    new CourseSection("Manipulating information", true, 25),
+                    new CourseSection("Using formulas", true, 100 / 3.0),
+                    new CourseSection("Using functions", true, 400 / 7.0),
+                    new CourseSection("Managing formulas and functions", true, 0),
+                    new CourseSection("Working with data", true, 0),
+                    new CourseSection("Formatting cells and worksheets", true, 0),
+                    new CourseSection("Formatting numbers", true, 0),
+                    new CourseSection("Working with charts", true, 0),
+                    new CourseSection("Working with illustrations", true, 0),
+                    new CourseSection("Collaborating with others", true, 0),
+                    new CourseSection("Preparing to print", true, 0)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_of_unstarted_course_should_return_course()
+        {
+            // When
+            const int candidateId = 22044000;
+            const int customisationId = 4169;
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var expectedCourse = new CourseContent(
+                4169,
+                "Level 2 - Microsoft Excel 2010",
+                "MOS Excel 2010 CORE",
+                "5h 49m",
+                "Northumbria Healthcare NHS Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Viewing workbooks", true, 0),
+                    new CourseSection("Manipulating worksheets", true, 0),
+                    new CourseSection("Manipulating information", true, 0),
+                    new CourseSection("Using formulas", true, 0),
+                    new CourseSection("Using functions", true, 0),
+                    new CourseSection("Managing formulas and functions", true, 0),
+                    new CourseSection("Working with data", true, 0),
+                    new CourseSection("Formatting cells and worksheets", true, 0),
+                    new CourseSection("Formatting numbers", true, 0),
+                    new CourseSection("Working with charts", true, 0),
+                    new CourseSection("Working with illustrations", true, 0),
+                    new CourseSection("Collaborating with others", true, 0),
+                    new CourseSection("Preparing to print", true, 0)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_of_course_without_learning_should_return_course()
+        {
+            // When
+            const int customisationId = 2921;
+            const int candidateId = 22044;
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var expectedCourse = new CourseContent(
+                2921,
+                "Level 2 - Microsoft Outlook 2007",
+                "MOST OUTLOOK CORE 2007",
+                "46m",
+                "Northumbria Healthcare NHS Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Introducing Outlook", false, 0),
+                    new CourseSection("Writing and sending emails", false, 0),
+                    new CourseSection("Managing emails", false, 0),
+                    new CourseSection("Using the Calendar", true, 300/ 11.0),
+                    new CourseSection("Working with Contacts", false, 0),
+                    new CourseSection("Using Tasks", false, 0),
+                    new CourseSection("Using Notes and  the  Journal", true, 0),
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_of_unstarted_course_without_learning_should_return_course()
+        {
+            // When
+            const int customisationId = 2921;
+            const int candidateId = 22044000;
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var expectedCourse = new CourseContent(
+                2921,
+                "Level 2 - Microsoft Outlook 2007",
+                "MOST OUTLOOK CORE 2007",
+                "46m",
+                "Northumbria Healthcare NHS Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Introducing Outlook", false, 0),
+                    new CourseSection("Writing and sending emails", false, 0),
+                    new CourseSection("Managing emails", false, 0),
+                    new CourseSection("Using the Calendar", true, 0),
+                    new CourseSection("Working with Contacts", false, 0),
+                    new CourseSection("Using Tasks", false, 0),
+                    new CourseSection("Using Notes and  the  Journal", true, 0),
+                }
             );
             result.Should().BeEquivalentTo(expectedCourse);
         }

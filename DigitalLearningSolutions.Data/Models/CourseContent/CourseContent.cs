@@ -1,12 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CourseContent
 {
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
+
     public class CourseContent
     {
-        public int Id { get; private set; }
-        public string Title { get; private set; }
-        public string AverageDuration { get; private set; }
-        public string CentreName { get; private set; }
-        public string? BannerText { get; private set; }
+        public int Id { get; }
+        public string Title { get; }
+        public string AverageDuration { get; }
+        public string CentreName { get; }
+        public string? BannerText { get; }
+        public List<CourseSection> Sections { get; } = new List<CourseSection>();
 
         public CourseContent(
             int id,

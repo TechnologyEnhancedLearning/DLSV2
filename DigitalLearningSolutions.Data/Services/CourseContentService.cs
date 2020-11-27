@@ -1,13 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using Microsoft.Extensions.Logging;
 
     public interface ICourseContentService
     {
-        CourseContent? GetCourseContent(int customisationId);
+        CourseContent? GetCourseContent(int candidateId, int customisationId);
         int GetProgressId(int candidateId, int customisationId);
         void UpdateLoginCountAndDuration(int progressId);
     }
@@ -23,21 +24,60 @@
             this.logger = logger;
         }
 
-        public CourseContent? GetCourseContent(int customisationId)
+        public CourseContent? GetCourseContent(int candidateId, int customisationId)
         {
-            return connection.QueryFirstOrDefault<CourseContent>(
+            // Get course content, section names and section progress for a candidate
+            // When the candidate is not doing this course, (ie there isn't an entry in the progress table for the
+            // given customisation and candidate IDs) we still get the general course information, just with the
+            // percentage completion set to 0.
+            // This is achieved using LEFT JOINs on Progress, so we get the candidates progress details or some nulls.
+
+            CourseContent? courseContent = null;
+            return connection.Query<CourseContent, CourseSection, CourseContent>(
                 @"SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
-	                     Customisations.CustomisationName,
-	                     dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
-	                     Centres.CentreName,
-	                     Centres.BannerText
+                         Customisations.CustomisationName,
+                         dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
+                         Centres.CentreName,
+                         Centres.BannerText,
+                         Sections.SectionName,
+                         dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
+                         (CASE
+                            WHEN Progress.CandidateID IS NULL
+                                 OR dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) = 0
+                            THEN 0
+                            ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
+                         END) AS PercentComplete
                   FROM Applications
                   INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                  INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
                   INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
-                  WHERE Customisations.CustomisationID = @customisationId;",
-                new { customisationId }
-            );
+                  LEFT JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
+                  LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId
+                  LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
+                  WHERE Customisations.CustomisationID = @customisationId
+                    AND ((Progress.CandidateID IS NULL) OR (Progress.SystemRefreshed = 0 AND Progress.RemovedDate IS NULL))
+                  GROUP BY
+                         Sections.SectionID,
+                         Customisations.CustomisationID,
+                         Applications.ApplicationName,
+                         Customisations.CustomisationName,
+                         Centres.CentreName,
+                         Centres.BannerText,
+                         Sections.SectionName,
+                         Sections.SectionNumber,
+                         Progress.CandidateID
+                  ORDER BY Sections.SectionNumber;",
+                (course, section) =>
+                {
+                    courseContent ??= course;
+
+                    courseContent.Sections.Add(section);
+                    return courseContent;
+                },
+                new { candidateId, customisationId },
+                splitOn: "SectionName"
+            ).FirstOrDefault();
         }
 
         public int GetProgressId(int candidateId, int customisationId)
@@ -69,7 +109,7 @@
 	                    WHERE Progress.ProgressID = @progressId",
                 new { progressId }
             );
-            
+
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
