@@ -42,9 +42,13 @@
                     new { centreId, customisationId });
                 return logo;
             }
-            catch (LogoNotFoundException)
+            catch (DataException e)
             {
-                return null;
+                if (e.InnerException is LogoNotFoundException)
+                {
+                    return null;
+                }
+                else throw;
             }
         }
     }
