@@ -115,7 +115,7 @@
 
             // Then
             A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).MustHaveHappened();
-            A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(progressId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
         }
 
         [Test]
@@ -129,7 +129,7 @@
 
             // Then
             A.CallTo(() => courseContentService.GetProgressId(A<int>._, A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => courseContentService.UpdateLoginCountAndDuration(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
         }
     }
 }

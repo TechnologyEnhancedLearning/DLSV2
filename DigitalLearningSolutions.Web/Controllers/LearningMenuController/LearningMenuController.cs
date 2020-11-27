@@ -37,7 +37,7 @@
             }
 
             var progressId = courseContentService.GetProgressId(User.GetCandidateId(), customisationId);
-            courseContentService.UpdateLoginCountAndDuration(progressId);
+            courseContentService.UpdateProgress(progressId);
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
