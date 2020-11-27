@@ -4,9 +4,9 @@
 
     public class LogoViewModel
     {
-        public readonly Logo Logo;
+        public readonly Logo? Logo;
 
-        public LogoViewModel(Logo logo)
+        public LogoViewModel(Logo? logo)
         {
             Logo = logo;
         }

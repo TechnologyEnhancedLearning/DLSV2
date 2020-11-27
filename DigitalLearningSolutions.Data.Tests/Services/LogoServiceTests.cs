@@ -17,7 +17,7 @@
         }
 
         [Test]
-        public void Get_Logo_Should_Return_Centre_logo()
+        public void GetLogo_Should_Return_Centre_Logo()
         {
             // When
             var result = logoService.GetLogo(25, 1176);
@@ -29,7 +29,7 @@
         }
 
         [Test]
-        public void Get_Logo_Should_Return_Centre_logo_When_CustomisationId_Is_Null()
+        public void GetLogo_Should_Return_Centre_Logo_When_CustomisationId_Is_Null()
         {
             // When
             var result = logoService.GetLogo(25, null);
@@ -59,7 +59,7 @@
             var result = logoService.GetLogo(3, 100);
 
             // Then
-            result.LogoUrl.Should().BeNull();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -69,7 +69,7 @@
             var result = logoService.GetLogo(-100, -100);
 
             // Then
-            result.LogoUrl.Should().BeNull();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -79,7 +79,7 @@
             var result = logoService.GetLogo(null, null);
 
             // Then
-            result.LogoUrl.Should().BeNull();
+            result.Should().BeNull();
         }
 
         [Test]

@@ -7,7 +7,7 @@
 
     public interface ILogoService
     {
-        Logo GetLogo(int? centreId, int? customisationId);
+        Logo? GetLogo(int? centreId, int? customisationId);
     }
 
     public class LogoService : ILogoService
@@ -19,37 +19,28 @@
             this.connection = connection;
         }
 
-        public Logo GetLogo(int? centreId, int? customisationId)
+        public Logo? GetLogo(int? centreId, int? customisationId)
         {
-            using var multi = connection.QueryMultiple(
-                @"SELECT Centres.CentreName AS LogoName,
-                         Centres.CentreLogo AS LogoData,
-                         Centres.LogoMimeType
+            var logo = connection.Query<Logo>(
+                @"SELECT Centres.CentreName,
+                         Centres.CentreLogo,
+                         Centres.LogoMimeType as CentreMimeType,
+                         Brands.BrandName,
+                         Brands.BrandLogo
                     FROM Centres
-                   WHERE Centres.CentreID = @centreId;
+                         LEFT JOIN Customisations
+                         ON Centres.CentreID = Customisations.CentreID
+                            AND Customisations.CustomisationID = @customisationId
 
-                  SELECT Brands.BrandName AS LogoName, Brands.BrandLogo AS LogoData
-                    FROM Customisations
-                         INNER JOIN Applications
+                         LEFT JOIN Applications
                          ON Applications.ApplicationID = Customisations.ApplicationID
 
-                         INNER JOIN Brands
+                         LEFT JOIN Brands
                          ON Applications.BrandID = Brands.BrandID
-                   WHERE Customisations.CustomisationID = @customisationId AND CentreID = @centreId;",
-                new { centreId, customisationId });
+                   WHERE Centres.CentreID = @centreId;",
+                new { centreId, customisationId }).FirstOrDefault();
 
-            var centreLogo = multi.Read<Logo>().FirstOrDefault();
-            var brandLogo = multi.Read<Logo>().FirstOrDefault();
-
-            if (centreLogo?.LogoUrl != null)
-            {
-                return centreLogo;
-            }
-            if (brandLogo?.LogoUrl != null)
-            {
-                return brandLogo;
-            }
-            return new Logo("", null);
+            return logo?.LogoUrl != null ? logo : null;
         }
     }
 }
