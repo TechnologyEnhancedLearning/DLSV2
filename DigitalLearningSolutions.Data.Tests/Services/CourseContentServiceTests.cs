@@ -200,7 +200,7 @@
                 var result = courseContentTestHelper.GetSubmittedTime(progressId);
 
                 // Then
-                courseContentTestHelper.IsApproximatelyNow(result).Should().Be(true);
+                courseContentTestHelper.IsApproximatelyNow(result).Should().BeTrue();
             }
         }
     }

@@ -64,7 +64,7 @@
         public bool IsApproximatelyNow(DateTime timeToCheck)
         {
             var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
-            return (timeToCheck >= twoMinutesAgo && timeToCheck <= DateTime.Now);
+            return timeToCheck >= twoMinutesAgo && timeToCheck <= DateTime.Now;
         }
     }
 }
