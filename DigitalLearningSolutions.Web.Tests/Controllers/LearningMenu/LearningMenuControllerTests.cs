@@ -48,6 +48,7 @@
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(expectedCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(10);
 
             // When
             var result = controller.Index(CustomisationId);
@@ -108,13 +109,12 @@
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
              .Returns(defaultCourseContent);
-            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).Returns(progressId);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
 
             // When
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.GetProgressId(CandidateId, CustomisationId)).MustHaveHappened();
             A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
         }
 
@@ -128,7 +128,7 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.InsertNewProgress(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -141,34 +141,21 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.GetProgressId(A<int>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
         }
 
         [Test]
-        public void Index_launching_new_course_should_insert_new_progress()
+        public void Index_failing_to_insert_progress_should_not_update_progress()
         {
             // Given
-            A.CallTo(() => courseContentService.DoesProgressExist(CandidateId, CustomisationId)).Returns(false);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
             // When
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.InsertNewProgress(CandidateId, CustomisationId, CentreId)).MustHaveHappened();
-        }
-
-        [Test]
-        public void Index_launching_existing_course_should_not_insert_new_progress()
-        {
-            // Given
-            A.CallTo(() => courseContentService.DoesProgressExist(CandidateId, CustomisationId)).Returns(true);
-
-            // When
-            controller.Index(CustomisationId);
-
-            // Then
-            A.CallTo(() => courseContentService.InsertNewProgress(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
         }
     }
 }

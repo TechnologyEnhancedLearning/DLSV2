@@ -165,46 +165,21 @@
         }
 
         [Test]
-        public void Get_progress_id_should_return_progress_id()
+        public void Get_existing_progress_id_should_return_progress_id()
         {
             // Given
             const int candidateId = 9;
             const int customisationId = 259;
+            const int centreId = 53;
+            var initialDoesProgressExist = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
 
             // When
-            var result = courseContentService.GetProgressId(candidateId, customisationId);
+            var result = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             // Then
+            initialDoesProgressExist.Should().BeTrue();
             const int expectedProgressId = 10;
             result.Should().Be(expectedProgressId);
-        }
-
-        [Test]
-        public void Does_progress_exist_returns_true_for_existing_progress()
-        {
-            // Given
-            const int candidateId = 9;
-            const int customisationId = 259;
-
-            // When
-            var result = courseContentService.DoesProgressExist(candidateId, customisationId);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void Does_progress_exist_returns_false_for_non_existing_progress()
-        {
-            // Given
-            const int candidateId = 123;
-            const int customisationId = 123;
-
-            // When
-            var result = courseContentService.DoesProgressExist(candidateId, customisationId);
-
-            // Then
-            result.Should().BeFalse();
         }
 
         [Test]
@@ -214,15 +189,16 @@
             const int candidateId = 187251;
             const int customisationId = 17468;
             const int centreId = 549;
-            var initialDoesProgressExist = courseContentService.DoesProgressExist(candidateId, customisationId);
+            var initialDoesProgressExist = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
 
             using (new TransactionScope())
             {
                 // When
-                courseContentService.InsertNewProgress(candidateId, customisationId, centreId);
-                var result = courseContentService.DoesProgressExist(candidateId, customisationId);
+                var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
+                var result = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
 
                 //Then
+                progressId.Should().NotBeNull();
                 initialDoesProgressExist.Should().BeFalse();
                 result.Should().BeTrue();
             }
@@ -361,7 +337,6 @@
         {
             // Given
             const int progressId = 10;
-            var initialSubmittedTime = courseContentTestHelper.GetSubmittedTime(progressId);
 
             using (new TransactionScope())
             {

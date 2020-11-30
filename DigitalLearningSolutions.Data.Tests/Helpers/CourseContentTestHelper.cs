@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System;
+    using System.Linq;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
@@ -65,6 +66,19 @@
         {
             var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
             return timeToCheck >= twoMinutesAgo && timeToCheck <= DateTime.Now;
+        }
+
+        public bool DoesProgressExist(int candidateId, int customisationId)
+        {
+            return connection.Query<int>(
+                @"SELECT ProgressId
+                        FROM Progress
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId
+                          AND SystemRefreshed = 0
+                          AND RemovedDate IS NULL",
+                new { candidateId, customisationId }
+            ).Any();
         }
     }
 }

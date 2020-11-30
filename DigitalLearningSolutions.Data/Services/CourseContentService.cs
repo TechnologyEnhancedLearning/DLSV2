@@ -9,10 +9,8 @@
     public interface ICourseContentService
     {
         CourseContent? GetCourseContent(int candidateId, int customisationId);
-        int GetProgressId(int candidateId, int customisationId);
+        int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId);
         void UpdateProgress(int progressId);
-        bool DoesProgressExist(int candidateId, int customisationId);
-        void InsertNewProgress(int candidateId, int customisationId, int centreId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -82,34 +80,13 @@
             ).FirstOrDefault();
         }
 
-        public bool DoesProgressExist(int candidateId, int customisationId)
+        public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
         {
-            return connection.Query<int>(
-                @"SELECT ProgressId
-                        FROM Progress
-                        WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId
-                          AND SystemRefreshed = 0
-                          AND RemovedDate IS NULL",
-                new { candidateId, customisationId }
-            ).Any();
-        }
+            if (DoesProgressExist(candidateId, customisationId))
+            {
+                return GetProgressId(candidateId, customisationId);
+            }
 
-        public int GetProgressId(int candidateId, int customisationId)
-        {
-            return connection.QueryFirstOrDefault<int>(
-                @"SELECT ProgressId
-                        FROM Progress
-                        WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId
-                          AND SystemRefreshed = 0
-                          AND RemovedDate IS NULL",
-                new { candidateId, customisationId }
-            );
-        }
-
-        public void InsertNewProgress(int candidateId, int customisationId, int centreId)
-        {
             var errorCode = connection.QueryFirst<int>(
                 @"uspCreateProgressRecord_V3",
                 new
@@ -125,22 +102,31 @@
 
             switch (errorCode)
             {
+                case 0:
+                    return GetProgressId(candidateId, customisationId);
                 case 1:
-                    logger.LogWarning(
+                    logger.LogError(
                         "Not enrolled candidate on course as progress already exists. " +
                         $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
                     break;
                 case 100:
-                    logger.LogWarning(
+                    logger.LogError(
                         "Not enrolled candidate on course as customisation id doesn't match centre id. " +
                         $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
                     break;
                 case 101:
-                    logger.LogWarning(
+                    logger.LogError(
                         "Not enrolled candidate on course as candidate id doesn't match centre id. " +
                         $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
                     break;
+                default:
+                    logger.LogError(
+                        "Not enrolled candidate on course as stored procedure failed. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                    break;
             }
+
+            return null;
         }
         
         public void UpdateProgress(int progressId)
@@ -169,6 +155,32 @@
                     $"Progress id: {progressId}"
                 );
             }
+        }
+
+        private bool DoesProgressExist(int candidateId, int customisationId)
+        {
+            return connection.Query<int>(
+                @"SELECT ProgressId
+                        FROM Progress
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId
+                          AND SystemRefreshed = 0
+                          AND RemovedDate IS NULL",
+                new { candidateId, customisationId }
+            ).Any();
+        }
+
+        private int GetProgressId(int candidateId, int customisationId)
+        {
+            return connection.QueryFirst<int>(
+                @"SELECT ProgressId
+                        FROM Progress
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId
+                          AND SystemRefreshed = 0
+                          AND RemovedDate IS NULL",
+                new { candidateId, customisationId }
+            );
         }
     }
 }

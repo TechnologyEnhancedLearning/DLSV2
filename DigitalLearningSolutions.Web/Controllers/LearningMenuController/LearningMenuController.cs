@@ -36,13 +36,14 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            if (!courseContentService.DoesProgressExist(User.GetCandidateId(), customisationId))
+            var progressId = courseContentService.GetOrCreateProgressId(User.GetCandidateId(), customisationId, User.GetCentreId().Value);
+
+            if (progressId == null)
             {
-                courseContentService.InsertNewProgress(User.GetCandidateId(), customisationId, User.GetCentreId().Value);
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             }
 
-            var progressId = courseContentService.GetProgressId(User.GetCandidateId(), customisationId);
-            courseContentService.UpdateProgress(progressId);
+            courseContentService.UpdateProgress(progressId.Value);
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
