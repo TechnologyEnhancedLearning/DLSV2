@@ -12,34 +12,32 @@
         public void Section_should_return_empty_string_if_has_learning_is_false()
         {
             // Given
-            const string sectionName = "TestName";
             const bool hasLearning = false;
-            const double percentComplete = 12.00;
-            var section = new CourseSection(sectionName, hasLearning, percentComplete);
+            var section = CourseSectionHelper.CreateDefaultCourseSection(hasLearning: hasLearning);
 
             // When
             var sectionCardViewModel = new SectionCardViewModel(section);
 
             // Then
-            sectionCardViewModel.HasLearning.Should().BeFalse();
-            sectionCardViewModel.GetPercentComplete().Should().Be("");
+            sectionCardViewModel.PercentComplete.Should().Be("");
         }
 
         [Test]
         public void Section_should_return_correct_string_if_has_learning_is_true()
         {
             // Given
-            const string sectionName = "TestName";
             const bool hasLearning = true;
             const double percentComplete = 12.00;
-            var section = new CourseSection(sectionName, hasLearning, percentComplete);
+            var section = CourseSectionHelper.CreateDefaultCourseSection(
+                hasLearning: hasLearning,
+                percentComplete: percentComplete
+                );
 
             // When
             var sectionCardViewModel = new SectionCardViewModel(section);
 
             // Then
-            sectionCardViewModel.HasLearning.Should().BeTrue();
-            sectionCardViewModel.GetPercentComplete().Should().Be($"{percentComplete}% Complete");
+            sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
         }
     }
 }
