@@ -30,16 +30,23 @@
         public IActionResult Index(int customisationId)
         {
             var courseContent = courseContentService.GetCourseContent(User.GetCandidateId(), customisationId);
+            var centreId = User.GetCentreId();
 
-            if (courseContent == null)
+            if (courseContent == null || centreId == null)
             {
+                logger.LogError(
+                    "Redirecting to 404 as course/centre id was not found. " +
+                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(User.GetCandidateId(), customisationId, User.GetCentreId().Value);
+            var progressId = courseContentService.GetOrCreateProgressId(User.GetCandidateId(), customisationId, centreId.Value);
 
             if (progressId == null)
             {
+                logger.LogError(
+                    "Redirecting to 500 as no progress id was returned. " +
+                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             }
 

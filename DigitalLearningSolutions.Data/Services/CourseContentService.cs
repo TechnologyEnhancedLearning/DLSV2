@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -107,22 +108,22 @@
                 case 1:
                     logger.LogError(
                         "Not enrolled candidate on course as progress already exists. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
                     break;
                 case 100:
                     logger.LogError(
                         "Not enrolled candidate on course as customisation id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
                     break;
                 case 101:
                     logger.LogError(
                         "Not enrolled candidate on course as candidate id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
                     break;
                 default:
                     logger.LogError(
                         "Not enrolled candidate on course as stored procedure failed. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
                     break;
             }
 
@@ -170,17 +171,24 @@
             ).Any();
         }
 
-        private int GetProgressId(int candidateId, int customisationId)
+        public int? GetProgressId(int candidateId, int customisationId)
         {
-            return connection.QueryFirst<int>(
-                @"SELECT ProgressId
-                        FROM Progress
-                        WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId
-                          AND SystemRefreshed = 0
-                          AND RemovedDate IS NULL",
-                new { candidateId, customisationId }
-            );
+            try
+            {
+                return connection.QueryFirst<int>(
+                    @"SELECT ProgressId
+                    FROM Progress
+                    WHERE CandidateID = @candidateId
+                      AND CustomisationID = @customisationId
+                      AND SystemRefreshed = 0
+                      AND RemovedDate IS NULL",
+                    new { candidateId, customisationId }
+                );
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
     }
 }

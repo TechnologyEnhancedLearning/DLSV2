@@ -141,7 +141,6 @@
             controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
         }
 
