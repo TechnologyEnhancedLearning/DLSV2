@@ -119,6 +119,19 @@
         }
 
         [Test]
+        public void Index_invalid_customisation_id_should_not_insert_new_progress()
+        {
+            // Given
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.InsertNewProgress(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
         public void Index_invalid_customisation_id_should_not_update_login_and_duration()
         {
             // Given
@@ -130,6 +143,32 @@
             // Then
             A.CallTo(() => courseContentService.GetProgressId(A<int>._, A<int>._)).MustNotHaveHappened();
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Index_launching_new_course_should_insert_new_progress()
+        {
+            // Given
+            A.CallTo(() => courseContentService.DoesProgressExist(CandidateId, CustomisationId)).Returns(false);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.InsertNewProgress(CandidateId, CustomisationId, CentreId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Index_launching_existing_course_should_not_insert_new_progress()
+        {
+            // Given
+            A.CallTo(() => courseContentService.DoesProgressExist(CandidateId, CustomisationId)).Returns(true);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.InsertNewProgress(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
         }
     }
 }

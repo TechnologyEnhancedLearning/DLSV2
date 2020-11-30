@@ -11,6 +11,8 @@
         CourseContent? GetCourseContent(int candidateId, int customisationId);
         int GetProgressId(int candidateId, int customisationId);
         void UpdateProgress(int progressId);
+        bool DoesProgressExist(int candidateId, int customisationId);
+        void InsertNewProgress(int candidateId, int customisationId, int centreId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -80,18 +82,67 @@
             ).FirstOrDefault();
         }
 
+        public bool DoesProgressExist(int candidateId, int customisationId)
+        {
+            return connection.Query<int>(
+                @"SELECT ProgressId
+                        FROM Progress
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId
+                          AND SystemRefreshed = 0
+                          AND RemovedDate IS NULL",
+                new { candidateId, customisationId }
+            ).Any();
+        }
+
         public int GetProgressId(int candidateId, int customisationId)
         {
-            // TODO HEEDLS-202: change QueryFirstOrDefault to creating progress record if not found
             return connection.QueryFirstOrDefault<int>(
                 @"SELECT ProgressId
                         FROM Progress
                         WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId",
+                          AND CustomisationID = @customisationId
+                          AND SystemRefreshed = 0
+                          AND RemovedDate IS NULL",
                 new { candidateId, customisationId }
             );
         }
 
+        public void InsertNewProgress(int candidateId, int customisationId, int centreId)
+        {
+            var errorCode = connection.QueryFirst<int>(
+                @"uspCreateProgressRecord_V3",
+                new
+                {
+                    candidateId,
+                    customisationId,
+                    centreId,
+                    EnrollmentMethodID = 1,
+                    EnrolledByAdminID = 0
+                },
+                commandType: CommandType.StoredProcedure
+            );
+
+            switch (errorCode)
+            {
+                case 1:
+                    logger.LogWarning(
+                        "Not enrolled candidate on course as progress already exists. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                    break;
+                case 100:
+                    logger.LogWarning(
+                        "Not enrolled candidate on course as customisation id doesn't match centre id. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                    break;
+                case 101:
+                    logger.LogWarning(
+                        "Not enrolled candidate on course as candidate id doesn't match centre id. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId{centreId}");
+                    break;
+            }
+        }
+        
         public void UpdateProgress(int progressId)
         {
             var numberOfAffectedRows = connection.Execute(

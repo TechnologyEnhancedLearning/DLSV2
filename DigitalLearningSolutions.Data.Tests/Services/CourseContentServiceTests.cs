@@ -180,6 +180,55 @@
         }
 
         [Test]
+        public void Does_progress_exist_returns_true_for_existing_progress()
+        {
+            // Given
+            const int candidateId = 9;
+            const int customisationId = 259;
+
+            // When
+            var result = courseContentService.DoesProgressExist(candidateId, customisationId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void Does_progress_exist_returns_false_for_non_existing_progress()
+        {
+            // Given
+            const int candidateId = 123;
+            const int customisationId = 123;
+
+            // When
+            var result = courseContentService.DoesProgressExist(candidateId, customisationId);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void Insert_new_progress_should_insert_progress()
+        {
+            // Given
+            const int candidateId = 187251;
+            const int customisationId = 17468;
+            const int centreId = 549;
+            var initialDoesProgressExist = courseContentService.DoesProgressExist(candidateId, customisationId);
+
+            using (new TransactionScope())
+            {
+                // When
+                courseContentService.InsertNewProgress(candidateId, customisationId, centreId);
+                var result = courseContentService.DoesProgressExist(candidateId, customisationId);
+
+                //Then
+                initialDoesProgressExist.Should().BeFalse();
+                result.Should().BeTrue();
+            }
+        }
+
+        [Test]
         public void Update_progress_should_not_increment_login_count_if_no_new_session()
         {
             // Given

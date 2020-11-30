@@ -36,6 +36,11 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
+            if (!courseContentService.DoesProgressExist(User.GetCandidateId(), customisationId))
+            {
+                courseContentService.InsertNewProgress(User.GetCandidateId(), customisationId, User.GetCentreId().Value);
+            }
+
             var progressId = courseContentService.GetProgressId(User.GetCandidateId(), customisationId);
             courseContentService.UpdateProgress(progressId);
 
