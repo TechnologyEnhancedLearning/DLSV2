@@ -22,7 +22,7 @@
         {
             try
             {
-                var logo = connection.QueryFirstOrDefault<Logo>(
+                return connection.QueryFirstOrDefault<Logo>(
                     @"SELECT Centres.CentreName,
                          Centres.CentreLogo,
                          Centres.LogoMimeType as CentreMimeType,
@@ -40,7 +40,6 @@
                          ON Applications.BrandID = Brands.BrandID
                    WHERE Centres.CentreID = @centreId;",
                     new { centreId, customisationId });
-                return logo;
             }
             catch (DataException e)
             {
