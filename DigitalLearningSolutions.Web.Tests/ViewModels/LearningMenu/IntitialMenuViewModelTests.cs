@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
@@ -8,7 +9,7 @@
     public class InitialMenuViewModelTests
     {
         [Test]
-        public void Initial_menu_should_have_name()
+        public void Initial_menu_should_have_values_for_all_courseContent_fields()
         {
             // Given
             const int customisationId = 12;
@@ -25,13 +26,21 @@
                 centreName,
                 bannerText
             );
+            const string sectionName = "TestName";
+            const bool hasLearning = true;
+            const double percentComplete = 12.00;
+            var section = new CourseSection(sectionName, hasLearning, percentComplete);
+            expectedCourseContent.Sections.Add(section);
 
             // When
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.CourseContent.Title.Should().Be($"{applicationName} - {customisationName}");
-            initialMenuViewModel.CourseContent.Should().BeEquivalentTo(expectedCourseContent);
+            initialMenuViewModel.Title.Should().Be($"{applicationName} - {customisationName}");
+            initialMenuViewModel.Id.Should().Be(customisationId);
+            initialMenuViewModel.AverageDuration.Should().Be(averageDuration);
+            initialMenuViewModel.CentreName.Should().Be(centreName);
+            initialMenuViewModel.BannerText.Should().Be(bannerText);
         }
     }
 }
