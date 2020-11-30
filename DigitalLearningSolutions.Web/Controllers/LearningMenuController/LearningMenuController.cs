@@ -36,7 +36,7 @@
             {
                 logger.LogError(
                     "Redirecting to 404 as course/centre id was not found. " +
-                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}");
+                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}, centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 

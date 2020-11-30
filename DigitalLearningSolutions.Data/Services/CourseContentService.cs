@@ -83,9 +83,11 @@
 
         public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
         {
-            if (DoesProgressExist(candidateId, customisationId))
+            var progressId = GetProgressId(candidateId, customisationId);
+
+            if (progressId != null)
             {
-                return GetProgressId(candidateId, customisationId);
+                return progressId;
             }
 
             var errorCode = connection.QueryFirst<int>(
@@ -108,22 +110,22 @@
                 case 1:
                     logger.LogError(
                         "Not enrolled candidate on course as progress already exists. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                     break;
                 case 100:
                     logger.LogError(
                         "Not enrolled candidate on course as customisation id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                     break;
                 case 101:
                     logger.LogError(
                         "Not enrolled candidate on course as candidate id doesn't match centre id. " +
-                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                     break;
                 default:
                     logger.LogError(
                         "Not enrolled candidate on course as stored procedure failed. " +
-                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centreId: {centreId}");
+                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                     break;
             }
 
@@ -156,19 +158,6 @@
                     $"Progress id: {progressId}"
                 );
             }
-        }
-
-        private bool DoesProgressExist(int candidateId, int customisationId)
-        {
-            return connection.Query<int>(
-                @"SELECT ProgressId
-                        FROM Progress
-                        WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId
-                          AND SystemRefreshed = 0
-                          AND RemovedDate IS NULL",
-                new { candidateId, customisationId }
-            ).Any();
         }
 
         public int? GetProgressId(int candidateId, int customisationId)
