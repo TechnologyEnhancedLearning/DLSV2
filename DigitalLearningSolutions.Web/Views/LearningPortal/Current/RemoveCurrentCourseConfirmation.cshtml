@@ -2,6 +2,11 @@
 @model CurrentCourseViewModel
 @{
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Remove - Confirmation";
+  ViewData["Application"] = "Learning Portal - Remove Confirmation";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems"/>
 }
 
 <div>

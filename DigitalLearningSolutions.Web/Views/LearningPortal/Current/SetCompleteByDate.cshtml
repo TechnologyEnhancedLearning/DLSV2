@@ -3,6 +3,11 @@
 @model CurrentLearningItemViewModel
 @{
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Set completion date";
+  ViewData["Application"] = "Learning Portal - Set completion date";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
 }
 
 @{
