@@ -31,7 +31,7 @@
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
-                );
+            );
 
             // When
             var sectionCardViewModel = new SectionCardViewModel(section);

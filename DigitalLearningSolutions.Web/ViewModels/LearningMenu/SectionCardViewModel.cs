@@ -5,15 +5,12 @@
     public class SectionCardViewModel
     {
         public string Title { get; }
-        public string PercentComplete { get; private set; }
-        private bool HasLearning;
-        
+        public string PercentComplete { get; }
 
         public SectionCardViewModel(CourseSection section)
         {
             Title = section.Title;
-            HasLearning = section.HasLearning;
-            PercentComplete = HasLearning ? $"{section.PercentComplete}% Complete" : "";
+            PercentComplete = section.HasLearning ? $"{section.PercentComplete}% Complete" : "";
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -40,23 +41,23 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Id.Should().Be(12);
+            initialMenuViewModel.Id.Should().Be(customisationId);
         }
 
         [Test]
         public void Initial_menu_should_have_averageDuration()
         {
             // Given
-            const int customisationId = 12;
+            const string averageDuration = "TestDuration";
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                customisationId: customisationId
+                averageDuration: averageDuration
             );
 
             // When
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Id.Should().Be(12);
+            initialMenuViewModel.AverageDuration.Should().Be(averageDuration);
         }
 
         [Test]
@@ -115,14 +116,18 @@
             const double percentComplete = 12.00;
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent();
             var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName, hasLearning, percentComplete);
-            var expectedSection = new SectionCardViewModel(section);
             expectedCourseContent.Sections.Add(section);
+            var expectedSection = new SectionCardViewModel(section);
+            var expectedSectionList = new List<SectionCardViewModel>
+            {
+                expectedSection
+            };
 
             // When
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.Sections.First().Should().BeEquivalentTo(expectedSection);
+            initialMenuViewModel.Sections.Should().BeEquivalentTo(expectedSectionList);
         }
     }
 }
