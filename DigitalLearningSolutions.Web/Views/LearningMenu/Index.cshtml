@@ -3,19 +3,19 @@
 
 @{
   ViewData["HeaderPrefix"] = "";
-  ViewData["Application"] = Model.CourseContent.Title;
+  ViewData["Application"] = Model.Title;
   ViewData["Title"] = "Learning Menu";
-  ViewData["CustomisationId"] = Model.CourseContent.Id;
+  ViewData["CustomisationId"] = Model.Id;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.CourseContent.Title</h1>
-    <h2 class="nhsuk-u-secondary-text-color nhsuk-heading-l">Average Course Time: @Model.CourseContent.AverageDuration</h2>
-    <p class="nhsuk-u-margin-bottom-0">@Model.CourseContent.CentreName</p>
-    <p class="nhsuk-u-secondary-text-color">@Model.CourseContent.BannerText</p>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.Title</h1>
+    <h2 class="nhsuk-u-secondary-text-color nhsuk-heading-l">Average Course Time: @Model.AverageDuration</h2>
+    <p class="nhsuk-u-margin-bottom-0">@Model.CentreName</p>
+    <p class="nhsuk-u-secondary-text-color">@Model.BannerText</p>
   </div>
 </div>
 
@@ -26,4 +26,11 @@
     </svg>
     Return to your current activities
   </a>
+</div>
+
+<div>
+  @foreach(var section in Model.Sections)
+  {
+    <partial name="_SectionCard" model="section" />
+  }
 </div>
