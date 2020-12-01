@@ -14,7 +14,7 @@
                 sectionName,
                 hasLearning,
                 percentComplete
-                );
+            );
         }
     }
 }

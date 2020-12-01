@@ -48,7 +48,7 @@
         public void Initial_menu_should_have_averageDuration()
         {
             // Given
-            const string averageDuration = "TestDuration";
+            const string averageDuration = "3h 20m";
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
                 averageDuration: averageDuration
             );
