@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -9,7 +10,7 @@
     public interface ICourseContentService
     {
         CourseContent? GetCourseContent(int candidateId, int customisationId);
-        int GetProgressId(int candidateId, int customisationId);
+        int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId);
         void UpdateProgress(int progressId);
     }
 
@@ -80,18 +81,57 @@
             ).FirstOrDefault();
         }
 
-        public int GetProgressId(int candidateId, int customisationId)
+        public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
         {
-            // TODO HEEDLS-202: change QueryFirstOrDefault to creating progress record if not found
-            return connection.QueryFirstOrDefault<int>(
-                @"SELECT ProgressId
-                        FROM Progress
-                        WHERE CandidateID = @candidateId
-                          AND CustomisationID = @customisationId",
-                new { candidateId, customisationId }
-            );
-        }
+            var progressId = GetProgressId(candidateId, customisationId);
 
+            if (progressId != null)
+            {
+                return progressId;
+            }
+
+            var errorCode = connection.QueryFirst<int>(
+                @"uspCreateProgressRecord_V3",
+                new
+                {
+                    candidateId,
+                    customisationId,
+                    centreId,
+                    EnrollmentMethodID = 1,
+                    EnrolledByAdminID = 0
+                },
+                commandType: CommandType.StoredProcedure
+            );
+
+            switch (errorCode)
+            {
+                case 0:
+                    return GetProgressId(candidateId, customisationId);
+                case 1:
+                    logger.LogError(
+                        "Not enrolled candidate on course as progress already exists. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    break;
+                case 100:
+                    logger.LogError(
+                        "Not enrolled candidate on course as customisation id doesn't match centre id. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    break;
+                case 101:
+                    logger.LogError(
+                        "Not enrolled candidate on course as candidate id doesn't match centre id. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    break;
+                default:
+                    logger.LogError(
+                        "Not enrolled candidate on course as stored procedure failed. " +
+                        $"Unknown error code: {errorCode}, candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    break;
+            }
+
+            return null;
+        }
+        
         public void UpdateProgress(int progressId)
         {
             var numberOfAffectedRows = connection.Execute(
@@ -117,6 +157,26 @@
                     "Not updating login count and duration as db update failed. " +
                     $"Progress id: {progressId}"
                 );
+            }
+        }
+
+        private int? GetProgressId(int candidateId, int customisationId)
+        {
+            try
+            {
+                return connection.QueryFirst<int>(
+                    @"SELECT ProgressId
+                    FROM Progress
+                    WHERE CandidateID = @candidateId
+                      AND CustomisationID = @customisationId
+                      AND SystemRefreshed = 0
+                      AND RemovedDate IS NULL",
+                    new { candidateId, customisationId }
+                );
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
             }
         }
     }

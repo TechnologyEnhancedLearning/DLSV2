@@ -165,18 +165,46 @@
         }
 
         [Test]
-        public void Get_progress_id_should_return_progress_id()
+        public void Get_or_create_progress_id_should_return_progress_id_if_exists()
         {
             // Given
             const int candidateId = 9;
             const int customisationId = 259;
+            const int centreId = 53;
+            var initialDoesProgressExist = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
 
-            // When
-            var result = courseContentService.GetProgressId(candidateId, customisationId);
+            using (new TransactionScope())
+            {
+                // When
+                var result = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
-            // Then
-            const int expectedProgressId = 10;
-            result.Should().Be(expectedProgressId);
+                // Then
+                initialDoesProgressExist.Should().BeTrue();
+                const int expectedProgressId = 10;
+                result.Should().Be(expectedProgressId);
+            }
+        }
+
+        [Test]
+        public void Get_or_create_progress_id_should_insert_new_progress_if_does_not_exist()
+        {
+            // Given
+            const int candidateId = 187251;
+            const int customisationId = 17468;
+            const int centreId = 549;
+            var initialDoesProgressExist = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
+
+            using (new TransactionScope())
+            {
+                // When
+                var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
+                var isProgressAdded = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
+
+                //Then
+                progressId.Should().NotBeNull();
+                initialDoesProgressExist.Should().BeFalse();
+                isProgressAdded.Should().BeTrue();
+            }
         }
 
         [Test]
@@ -312,7 +340,6 @@
         {
             // Given
             const int progressId = 10;
-            var initialSubmittedTime = courseContentTestHelper.GetSubmittedTime(progressId);
 
             using (new TransactionScope())
             {
