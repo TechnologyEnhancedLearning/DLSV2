@@ -160,7 +160,7 @@
             }
         }
 
-        public int? GetProgressId(int candidateId, int customisationId)
+        private int? GetProgressId(int candidateId, int customisationId)
         {
             try
             {

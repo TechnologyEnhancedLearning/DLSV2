@@ -165,7 +165,7 @@
         }
 
         [Test]
-        public void Get_existing_progress_id_should_return_progress_id()
+        public void Get_or_create_progress_id_should_return_progress_id_if_exists()
         {
             // Given
             const int candidateId = 9;
