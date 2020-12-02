@@ -1,7 +1,10 @@
-﻿@{
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
   ViewData["Title"] = $"Learning Portal - Request Unlock";
   ViewData["Application"] = "Learning Portal";
-  ViewData["HeaderPath"] = "/LearningPortal/Current";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
   ViewData["HeaderPathName"] = "My Current Activities";
 }
 
