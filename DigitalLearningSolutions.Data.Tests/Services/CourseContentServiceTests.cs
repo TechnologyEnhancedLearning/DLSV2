@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
@@ -162,6 +163,21 @@
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_for_removed_course_should_return_course()
+        {
+            // Given
+            const int candidateId = 210962;
+            const int customisationId = 24635;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.Sections.Where(section => section.PercentComplete != 0).Should().BeEmpty();
         }
 
         [Test]
