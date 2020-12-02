@@ -10,7 +10,7 @@
         public SectionCardViewModel(CourseSection section)
         {
             Title = section.Title;
-            PercentComplete = section.HasLearning ? $"{section.PercentComplete}% Complete" : "";
+            PercentComplete = section.HasLearning ? $"{section.PercentComplete:f0}% Complete" : "";
         }
     }
 }
