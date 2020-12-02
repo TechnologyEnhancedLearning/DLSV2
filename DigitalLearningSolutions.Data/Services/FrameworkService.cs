@@ -10,9 +10,11 @@
 
     public interface IFrameworkService
     {
-        DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId);
+        DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
+        IEnumerable<BrandedFramework> GetFrameworkDetailByFrameworkName(string frameworkName, int adminId);
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
+        Int32 CreateFramework(string frameworkName, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -55,7 +57,7 @@
             this.connection = connection;
             this.logger = logger;
         }
-        public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId)
+        public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId)
         {
             return connection.QueryFirstOrDefault<DetailFramework>(
                $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields} {DetailFrameworkFields}
@@ -64,7 +66,15 @@
                new { frameworkId }
            );
         }
-
+        public IEnumerable<BrandedFramework> GetFrameworkDetailByFrameworkName(string frameworkName, int adminId)
+        {
+            return connection.Query<BrandedFramework>(
+               $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields} {DetailFrameworkFields}
+                      FROM {FrameworkTables}
+                      WHERE FW.FrameworkName = @frameworkName",
+               new { adminId, frameworkName }
+           );
+        }
         public IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId)
         {
             return connection.Query<BrandedFramework>(
@@ -80,6 +90,35 @@
                 $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
                       FROM {FrameworkTables}", new { adminId }
            );
+        }
+
+        public Int32 CreateFramework(string frameworkName, int adminId)
+        {
+            if (frameworkName.Length == 0 )
+            {
+                logger.LogWarning(
+                    "Not inserting framework as it frameworkname. AdminId: " + adminId
+                ) ;
+                return -2;
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO Frameworks (FrameworkName, OwnerAdminID, PublishStatusID, UpdatedByAdminID)
+                    VALUES (@frameworkName, @adminId, 1, @adminId)",
+               new { frameworkName, adminId }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting framework as db insert failed. " +
+                    $"FrameworkName: {frameworkName}, admin id: {adminId}"
+                );
+                return -1;
+            }
+            var frameworkId = connection.ExecuteScalar(
+                @"SELECT ID FROM Frameworks WHERE FrameworkName = @frameworkName AND OwnerAdminID = @adminId",
+                new { frameworkName, adminId }
+                );
+            return Convert.ToInt32(frameworkId);
         }
     }
 }

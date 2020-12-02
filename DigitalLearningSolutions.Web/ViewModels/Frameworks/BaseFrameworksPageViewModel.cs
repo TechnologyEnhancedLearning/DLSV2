@@ -13,8 +13,6 @@
         public int Page { get; protected set; }
         public int TotalPages { get; protected set; }
         public int MatchingSearchResults;
-
-        public readonly string? BannerText;
         public abstract SelectList FrameworkSortByOptions { get; }
 
         public const string DescendingText = "Descending";

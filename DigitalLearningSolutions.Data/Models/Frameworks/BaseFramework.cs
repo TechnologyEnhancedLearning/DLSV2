@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Runtime.Versioning;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class BaseFramework
     {
         public int Id { get; set; }
+        [StringLength(255, MinimumLength = 3)]
+        [Required]
         public string FrameworkName { get; set; }
         public int OwnerAdminID { get; set; }
         public string? Owner { get; set; }

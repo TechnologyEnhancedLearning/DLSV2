@@ -28,7 +28,7 @@
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterFrameworks(sortedItems, SearchString, 60).ToList();
+            var filteredItems = SearchHelper.FilterFrameworks(sortedItems, SearchString, 60, false).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
