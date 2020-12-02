@@ -38,14 +38,7 @@
                 newSession.Should().NotBeNull();
                 SessionTestHelper.SessionsShouldBeApproximatelyEquivalent(
                     newSession!,
-                    new Session(
-                        sessionId,
-                        candidateId,
-                        customisationId,
-                        DateTime.Now,
-                        0,
-                        true
-                    )
+                    SessionTestHelper.CreateDefaultSession(sessionId, candidateId, customisationId)
                 );
             }
         }
@@ -66,14 +59,7 @@
                 newSession.Should().NotBeNull();
                 SessionTestHelper.SessionsShouldBeApproximatelyEquivalent(
                     newSession!,
-                    new Session(
-                        sessionId,
-                        candidateId,
-                        customisationId,
-                        DateTime.Now,
-                        0,
-                        true
-                    )
+                    SessionTestHelper.CreateDefaultSession(sessionId)
                 );
             }
         }
@@ -121,26 +107,25 @@
 
             using (new TransactionScope())
             {
-                // When
+                // Given
                 const int candidateId = 9;
-                const int sessionId = 473;
                 var startingSessions = sessionTestHelper.GetCandidateSessions(candidateId);
 
+                // When
+                const int sessionId = 473;
                 sessionService.UpdateSessionDuration(sessionId);
 
                 // Then
-                var newSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
+                var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
 
-                newSessions
+                updatedSessions
                     .Where(session => session.SessionId != sessionId)
                     .Should()
                     .BeEquivalentTo(startingSessions.Where(session => session.SessionId != sessionId));
 
-                var newSession = newSessions.First(session => session.SessionId == sessionId);
-                DateTime.Now.Should().BeCloseTo(
-                    newSession.LoginTime.AddMinutes(newSession.Duration),
-                    twoMinutesInMilliseconds
-                );
+                var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
+                activeSession.LoginTime.AddMinutes(activeSession.Duration)
+                    .Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
             }
         }
 
@@ -149,17 +134,18 @@
         {
             using (new TransactionScope())
             {
-                // When
+                // Given
                 const int candidateId = 9;
-                const int sessionId = 468;
                 var startingSessions = sessionTestHelper.GetCandidateSessions(candidateId);
 
+                // When
+                const int sessionId = 468;
                 sessionService.UpdateSessionDuration(sessionId);
 
                 // Then
-                var newSessions = sessionTestHelper.GetCandidateSessions(candidateId);
+                var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId);
 
-                newSessions.Should().BeEquivalentTo(startingSessions);
+                updatedSessions.Should().BeEquivalentTo(startingSessions);
             }
         }
     }

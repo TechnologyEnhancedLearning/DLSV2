@@ -20,14 +20,14 @@
         }
 
         private const string stopSessionsSql =
-            @"UPDATE [Sessions] SET [Active] = 0
-              WHERE [CandidateId] = @candidateId;";
+            @"UPDATE Sessions SET Active = 0
+               WHERE CandidateId = @candidateId;";
 
         public int StartOrRestartSession(int candidateId, int customisationId)
         {
             return connection.QueryFirst<int>(
                 stopSessionsSql +
-                @"INSERT INTO [Sessions] ([CandidateID], [CustomisationID], [LoginTime], [Duration], [Active])
+                @"INSERT INTO Sessions (CandidateID, CustomisationID, LoginTime, Duration, Active)
                   VALUES (@candidateId, @customisationId, GetUTCDate(), 0, 1);
 
                   SELECT SCOPE_IDENTITY();",
@@ -43,8 +43,8 @@
         public void UpdateSessionDuration(int sessionId)
         {
             connection.Query(
-                @"UPDATE [Sessions] SET [Duration] = DATEDIFF(minute, [LoginTime], GetUTCDate())
-                   WHERE [SessionID] = @sessionId AND [Active] = 1;",
+                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())
+                   WHERE [SessionID] = @sessionId AND Active = 1;",
                 new { sessionId }
             );
         }
