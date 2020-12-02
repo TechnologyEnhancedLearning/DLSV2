@@ -64,10 +64,11 @@
 
         public void UpdateSystemRefreshed(int candidateId, int customisationId, bool systemRefreshed)
         {
-            connection.Execute(@"UPDATE Progress
-                    SET SystemRefreshed = @systemRefreshed
-                    WHERE CandidateID = @candidateId
-                      AND CustomisationID = @customisationId",
+            connection.Execute(
+                @"UPDATE Progress
+                        SET SystemRefreshed = @systemRefreshed
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId",
                 new { candidateId, customisationId, systemRefreshed }
             );
         }
