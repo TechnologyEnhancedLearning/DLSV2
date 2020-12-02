@@ -92,6 +92,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ICourseContentService, CourseContentService>();
+            services.AddScoped<ISessionService, SessionService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
