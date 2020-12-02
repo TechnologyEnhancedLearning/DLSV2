@@ -39,5 +39,25 @@
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
         }
+
+        [Test]
+        public void Section_should_round_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            const double percentComplete = 16.6666666667;
+            const double percentCompleteRounded = 17;
+            var section = CourseSectionHelper.CreateDefaultCourseSection(
+                hasLearning: hasLearning,
+                percentComplete: percentComplete
+            );
+
+            // When
+            var sectionCardViewModel = new SectionCardViewModel(section);
+
+            // Then
+            sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");
+        }
+
     }
 }
