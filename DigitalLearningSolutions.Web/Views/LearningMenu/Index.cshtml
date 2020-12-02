@@ -1,5 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
 @model InitialMenuViewModel
+@inject IConfiguration Configuration
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 
@@ -8,7 +10,7 @@
   ViewData["Application"] = Model.Title;
   ViewData["Title"] = "Learning Menu";
   ViewData["CustomisationId"] = Model.Id;
-  ViewData["HeaderPath"] = $"/LearningMenu/{Model.Id}";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
   ViewData["HeaderPathName"] = Model.Title;
 }
 @section NavMenuItems {
