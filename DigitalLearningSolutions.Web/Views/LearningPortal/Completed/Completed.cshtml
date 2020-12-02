@@ -1,5 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+@using Microsoft.Extensions.Configuration
 @model CompletedPageViewModel
+@inject IConfiguration Configuration
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")" asp-append-version="true">
@@ -7,7 +9,7 @@
 @{
     ViewData["Application"] = "Learning Portal";
     ViewData["Title"] = "Learning Portal - Completed";
-    ViewData["HeaderPath"] = "/LearningPortal/Current";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
     ViewData["HeaderPathName"] = "My Current Activities";
 }
 @section NavMenuItems {
