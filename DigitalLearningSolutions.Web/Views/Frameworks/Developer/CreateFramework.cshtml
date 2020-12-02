@@ -1,0 +1,35 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model BaseFramework
+@{
+  ViewData["Title"] = "New Framework";
+  ViewData["Application"] = "Framework Service";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<h1>Create a new framework</h1>
+<form method="post">
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="framework-name-hint">
+      <h2>What is the name of your framework?</h2>
+    </label>
+    <div class="nhsuk-hint" id="framework-name-hint">
+      Choose a relevant, descriptive name that will be recognisable by others. It can be changed later.
+    </div>
+    <span asp-validation-for="FrameworkName" class="nhsuk-error-message"></span>
+    <input class="nhsuk-input" asp-for="FrameworkName" id="frameworkname" name="FrameworkName" type="text" aria-describedby="framework-name-hint">
+  </div>
+  <input name="brandId" type="hidden" asp-for="BrandID" />
+  <input name="categoryId" type="hidden" asp-for="CategoryID" />
+  <input name="topicId" type="hidden" asp-for="TopicID" />
+  <input name="ownerAdminId" type="hidden" asp-for="OwnerAdminID" />
+  <input name="updateByAdminId" type="hidden" asp-for="UpdatedByAdminID" />
+  <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworksDashboard">
+    Cancel
+  </a>
+  <button class="nhsuk-button" type="submit">
+    Continue
+  </button>
+</form>
