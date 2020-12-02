@@ -12,16 +12,16 @@
 
     public class SessionService : ISessionService
     {
+        private const string stopSessionsSql =
+            @"UPDATE Sessions SET Active = 0
+               WHERE CandidateId = @candidateId;";
+
         private readonly IDbConnection connection;
 
         public SessionService(IDbConnection connection)
         {
             this.connection = connection;
         }
-
-        private const string stopSessionsSql =
-            @"UPDATE Sessions SET Active = 0
-               WHERE CandidateId = @candidateId;";
 
         public int StartOrRestartSession(int candidateId, int customisationId)
         {
