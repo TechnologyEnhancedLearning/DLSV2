@@ -1,8 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
@@ -108,6 +107,70 @@
         }
 
         [Test]
+        public void Initial_menu_include_certification_can_be_true()
+        {
+            // Given
+            const bool includeCertification = true;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                includeCertification: includeCertification
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.IncludeCertification.Should().Be(includeCertification);
+        }
+
+        [Test]
+        public void Initial_menu_include_certification_can_be_false()
+        {
+            // Given
+            const bool includeCertification = false;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                includeCertification: includeCertification
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.IncludeCertification.Should().Be(includeCertification);
+        }
+
+        [Test]
+        public void Initial_menu_can_have_completed()
+        {
+            // Given
+            var completed = DateTime.Today;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: completed
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.Completed.Should().Be(completed);
+        }
+
+        [Test]
+        public void Initial_menu_completed_can_be_null()
+        {
+            // Given
+            var completed = DateTime.Today;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: null
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.Completed.Should().BeNull();
+        }
+
+        [Test]
         public void Initial_menu_should_have_list_of_section_card_view_model()
         {
             // Given
@@ -128,6 +191,66 @@
 
             // Then
             initialMenuViewModel.Sections.Should().BeEquivalentTo(expectedSectionList);
+        }
+
+        [Test]
+        public void Get_completion_status_for_completed_should_return_complete()
+        {
+            // Given
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: DateTime.Now
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
+
+            // Then
+            initialMenuViewModel.GetCompletionStatus().Should().Be("Complete");
+        }
+
+        [Test]
+        public void Get_completion_status_for_null_completed_should_return_incomplete()
+        {
+            // Given
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: null
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
+
+            // Then
+            initialMenuViewModel.GetCompletionStatus().Should().Be("Incomplete");
+        }
+
+        [Test]
+        public void Get_completion_styling_for_completed_should_return_complete()
+        {
+            // Given
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: DateTime.Now
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
+
+            // Then
+            initialMenuViewModel.GetCompletionStyling().Should().Be("complete");
+        }
+
+        [Test]
+        public void Get_completion_styling_for_null_completed_should_return_incomplete()
+        {
+            // Given
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
+                completed: null
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
+
+            // Then
+            initialMenuViewModel.GetCompletionStyling().Should().Be("incomplete");
         }
     }
 }

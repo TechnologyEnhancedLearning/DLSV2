@@ -41,17 +41,19 @@
   }
 </div>
 
-<div class="nhsuk-card incomplete">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Course Completion Status: Incomplete
-    </h2>
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
-          Show Summary
-        </a>
+@if (Model.IncludeCertification) {
+  <div class="nhsuk-card @Model.GetCompletionStyling()">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Course Completion Status: @Model.GetCompletionStatus()
+      </h2>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
+            Show Summary
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}
