@@ -26,7 +26,8 @@
                         typeof(ApplyLPDefaultSPs).Assembly,
                         typeof(ReflectiveAccounts).Assembly,
                         typeof(CompetencyFrameworkDBChanges).Assembly,
-                        typeof(AddInsertCustomisationV3sp).Assembly
+                        typeof(AddInsertCustomisationV3sp).Assembly,
+                        typeof(CandidateAssessmentSubmittedDate).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
