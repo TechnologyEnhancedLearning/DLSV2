@@ -56,10 +56,9 @@
                   INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
                   INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
                   LEFT JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
-                  LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId
+                  LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
                   LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
                   WHERE Customisations.CustomisationID = @customisationId
-                    AND ((Progress.CandidateID IS NULL) OR (Progress.SystemRefreshed = 0 AND Progress.RemovedDate IS NULL))
                   GROUP BY
                          Sections.SectionID,
                          Customisations.CustomisationID,

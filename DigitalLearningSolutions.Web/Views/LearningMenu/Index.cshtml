@@ -1,11 +1,17 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
 @model InitialMenuViewModel
+@inject IConfiguration Configuration
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 
 @{
   ViewData["HeaderPrefix"] = "";
   ViewData["Application"] = Model.Title;
   ViewData["Title"] = "Learning Menu";
   ViewData["CustomisationId"] = Model.Id;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
+  ViewData["HeaderPathName"] = Model.Title;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -29,8 +35,23 @@
 </div>
 
 <div>
-  @foreach(var section in Model.Sections)
+  @foreach (var section in Model.Sections)
   {
     <partial name="_SectionCard" model="section" />
   }
+</div>
+
+<div class="nhsuk-card incomplete">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-heading-m">
+      Course Completion Status: Incomplete
+    </h2>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
+          Show Summary
+        </a>
+      </div>
+    </div>
+  </div>
 </div>

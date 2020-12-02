@@ -1,6 +1,8 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using Microsoft.Extensions.Configuration
 @model CurrentPageViewModel
+@inject IConfiguration Configuration
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")" asp-append-version="true">
@@ -8,6 +10,8 @@
 @{
     ViewData["Application"] = "Learning Portal";
     ViewData["Title"] = "Learning Portal - Current";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
+    ViewData["HeaderPathName"] = "My Current Activities";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems"/>

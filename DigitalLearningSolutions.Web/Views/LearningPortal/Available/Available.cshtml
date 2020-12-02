@@ -1,11 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Configuration
 @model AvailablePageViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
 
 @{
-    ViewData["Application"] = "Learning Portal";
-    ViewData["Title"] = "Learning Portal - Available";
+  ViewData["Application"] = "Learning Portal";
+  ViewData["Title"] = "Learning Portal - Available";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
+  ViewData["HeaderPathName"] = "My Current Activities";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />

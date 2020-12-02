@@ -261,6 +261,125 @@
             }
         }
 
+        [Test]
+        public void Get_course_content_for_removed_and_refreshed_course_should_return_new_course()
+        {
+            // Given
+            const int candidateId = 210962;
+            const int customisationId = 24635;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var expectedCourse = new CourseContent(
+                24635,
+                "Digital Literacy for the Workplace",
+                "TEST 2LH new course",
+                "N/A",
+                "NHS Digital",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Getting started", false, 0),
+                    new CourseSection("Digital devices", false, 0),
+                    new CourseSection("Apps, applications and files", false, 0),
+                    new CourseSection("Staying safe", false, 0),
+                    new CourseSection("Communication", false, 0),
+                    new CourseSection("The Internet", false, 0)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_for_removed_course_should_return_new_course()
+        {
+            // Given
+            const int candidateId = 281358;
+            const int customisationId = 8950;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var expectedCourse = new CourseContent(
+                8950,
+                "Level 2 - Microsoft Word 2010",
+                "BSMHFT",
+                "3h 50m",
+                "Birmingham & Solihull Mental Health Foundation Trust",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Working with documents", true, 0),
+                    new CourseSection("Formatting content", true, 0),
+                    new CourseSection("Formatting documents", true, 0),
+                    new CourseSection("Illustrations and graphics", true, 0),
+                    new CourseSection("Using tables", true, 0),
+                    new CourseSection("Working with references", true, 0),
+                    new CourseSection("Proofing and working on documents with others", true, 0),
+                    new CourseSection("Sharing documents", true, 0),
+                    new CourseSection("Mass-mailing documents", true, 0)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_for_refreshed_course_should_return_new_course()
+        {
+            // Given
+            const int candidateId = 22044;
+            const int customisationId = 4169;
+
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.UpdateSystemRefreshed(candidateId, customisationId, true);
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                var expectedCourse = new CourseContent(
+                    4169,
+                    "Level 2 - Microsoft Excel 2010",
+                    "MOS Excel 2010 CORE",
+                    "5h 49m",
+                    "Northumbria Healthcare NHS Foundation Trust",
+                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    false,
+                    null
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Viewing workbooks", true, 0),
+                        new CourseSection("Manipulating worksheets", true, 0),
+                        new CourseSection("Manipulating information", true, 0),
+                        new CourseSection("Using formulas", true, 0),
+                        new CourseSection("Using functions", true, 0),
+                        new CourseSection("Managing formulas and functions", true, 0),
+                        new CourseSection("Working with data", true, 0),
+                        new CourseSection("Formatting cells and worksheets", true, 0),
+                        new CourseSection("Formatting numbers", true, 0),
+                        new CourseSection("Working with charts", true, 0),
+                        new CourseSection("Working with illustrations", true, 0),
+                        new CourseSection("Collaborating with others", true, 0),
+                        new CourseSection("Preparing to print", true, 0)
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
+
 
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()
