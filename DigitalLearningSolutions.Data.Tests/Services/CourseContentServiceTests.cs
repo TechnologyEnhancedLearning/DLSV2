@@ -176,8 +176,26 @@
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
-            result.Should().NotBeNull();
-            result!.Sections.Where(section => section.PercentComplete != 0).Should().BeEmpty();
+            var expectedCourse = new CourseContent(
+                24635,
+                "Digital Literacy for the Workplace",
+                "TEST 2LH new course",
+                "N/A",
+                "NHS Digital",
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            );
+            expectedCourse.Sections.AddRange(
+                new[]
+                {
+                    new CourseSection("Getting started", false, 0),
+                    new CourseSection("Digital devices", false, 0),
+                    new CourseSection("Apps, applications and files", false, 0),
+                    new CourseSection("Staying safe", false, 0),
+                    new CourseSection("Communication", false, 0),
+                    new CourseSection("The Internet", false, 0)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedCourse);
         }
 
         [Test]
