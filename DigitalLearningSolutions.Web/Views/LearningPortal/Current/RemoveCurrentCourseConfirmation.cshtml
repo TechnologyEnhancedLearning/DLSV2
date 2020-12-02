@@ -1,9 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@using Microsoft.Extensions.Configuration
 @model CurrentCourseViewModel
+@inject IConfiguration Configuration
+
 @{
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Remove - Confirmation";
   ViewData["Application"] = "Learning Portal";
-  ViewData["HeaderPath"] = "/LearningPortal/Current";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
   ViewData["HeaderPathName"] = "My Current Activities";
 }
 
