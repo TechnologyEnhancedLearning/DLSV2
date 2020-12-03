@@ -39,7 +39,9 @@
                 "MOS Excel 2010 CORE",
                 "5h 49m",
                 "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -77,7 +79,9 @@
                 "MOS Excel 2010 CORE",
                 "5h 49m",
                 "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -115,7 +119,9 @@
                 "MOST OUTLOOK CORE 2007",
                 "46m",
                 "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -147,7 +153,9 @@
                 "MOST OUTLOOK CORE 2007",
                 "46m",
                 "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -162,6 +170,95 @@
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
+        }
+
+        [Test]
+        public void Get_course_content_with_non_null_completed_date_should_return_completed_date()
+        {
+            // Given
+            const int candidateId = 144100;
+            const int customisationId = 4169;
+
+            using (new TransactionScope())
+            {
+                // When
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                var expectedCourse = new CourseContent(
+                    4169,
+                    "Level 2 - Microsoft Excel 2010",
+                    "MOS Excel 2010 CORE",
+                    "5h 49m",
+                    "Northumbria Healthcare NHS Foundation Trust",
+                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    false,
+                    new DateTime(2016, 9, 15, 13, 1, 30, 623)
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Viewing workbooks", true, 100.0),
+                        new CourseSection("Manipulating worksheets", true, 100.0),
+                        new CourseSection("Manipulating information", true, 100.0),
+                        new CourseSection("Using formulas", true, 100.0),
+                        new CourseSection("Using functions", true, 100.0),
+                        new CourseSection("Managing formulas and functions", true, 100.0),
+                        new CourseSection("Working with data", true, 100.0),
+                        new CourseSection("Formatting cells and worksheets", true, 100.0),
+                        new CourseSection("Formatting numbers", true, 100.0),
+                        new CourseSection("Working with charts", true, 100.0),
+                        new CourseSection("Working with illustrations", true, 100.0),
+                        new CourseSection("Collaborating with others", true, 100.0),
+                        new CourseSection("Preparing to print", true, 100.0)
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
+
+        [Test]
+        public void Get_course_content_with_include_certification_should_return_include_certification()
+        {
+            // Given
+            const int candidateId = 22044;
+            const int customisationId = 4169;
+
+            using (new TransactionScope())
+            {
+                // Then
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+                var expectedCourse = new CourseContent(
+                    4169,
+                    "Level 2 - Microsoft Excel 2010",
+                    "MOS Excel 2010 CORE",
+                    "5h 49m",
+                    "Northumbria Healthcare NHS Foundation Trust",
+                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    true,
+                    null
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Viewing workbooks", true, 12.5),
+                        new CourseSection("Manipulating worksheets", true, 20),
+                        new CourseSection("Manipulating information", true, 25),
+                        new CourseSection("Using formulas", true, 100 / 3.0),
+                        new CourseSection("Using functions", true, 400 / 7.0),
+                        new CourseSection("Managing formulas and functions", true, 0),
+                        new CourseSection("Working with data", true, 0),
+                        new CourseSection("Formatting cells and worksheets", true, 0),
+                        new CourseSection("Formatting numbers", true, 0),
+                        new CourseSection("Working with charts", true, 0),
+                        new CourseSection("Working with illustrations", true, 0),
+                        new CourseSection("Collaborating with others", true, 0),
+                        new CourseSection("Preparing to print", true, 0)
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
         }
 
         [Test]
@@ -181,7 +278,9 @@
                 "TEST 2LH new course",
                 "N/A",
                 "NHS Digital",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -214,7 +313,9 @@
                 "BSMHFT",
                 "3h 50m",
                 "Birmingham & Solihull Mental Health Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                false,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -253,7 +354,9 @@
                     "MOS Excel 2010 CORE",
                     "5h 49m",
                     "Northumbria Healthcare NHS Foundation Trust",
-                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    false,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -276,6 +379,7 @@
                 result.Should().BeEquivalentTo(expectedCourse);
             }
         }
+
 
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()
@@ -461,7 +565,8 @@
                 var result = courseContentTestHelper.GetSubmittedTime(progressId);
 
                 // Then
-                courseContentTestHelper.IsApproximatelyNow(result).Should().BeTrue();
+                const int twoMinutesInMilliseconds = 120000;
+                result.Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
             }
         }
     }

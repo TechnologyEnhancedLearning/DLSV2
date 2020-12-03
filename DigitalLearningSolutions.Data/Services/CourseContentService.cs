@@ -41,6 +41,8 @@
                          dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
+                         Applications.IncludeCertification,
+                         Progress.Completed,
                          Sections.SectionName,
                          dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
                          (CASE
@@ -64,6 +66,8 @@
                          Customisations.CustomisationName,
                          Centres.CentreName,
                          Centres.BannerText,
+                         Applications.IncludeCertification,
+                         Progress.Completed,
                          Sections.SectionName,
                          Sections.SectionNumber,
                          Progress.CandidateID

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.CourseContent;
 
     internal class CourseContentHelper
@@ -10,7 +11,9 @@
             string applicationName = "Application",
             string averageDuration = "Duration",
             string centreName = "Centre",
-            string? bannerText = "Banner"
+            string? bannerText = "Banner",
+            bool includeCertification = false,
+            DateTime? completed = null
         )
         {
             return new CourseContent(
@@ -19,7 +22,9 @@
                 customisationName,
                 averageDuration,
                 centreName,
-                bannerText
+                bannerText,
+                includeCertification,
+                completed
             );
         }
     }
