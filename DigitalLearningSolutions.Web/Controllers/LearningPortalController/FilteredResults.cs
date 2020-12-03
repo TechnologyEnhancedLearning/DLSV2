@@ -49,6 +49,7 @@
             var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(selfAssessmentId, candidateID).ToList();
             var response = await filteredApiHelperService.UpdateProfileAndGoals(filteredToken, profile, goals);
             var favouritePlayList = await filteredApiHelperService.GetPlayList<PlayList>(filteredToken, "playlist.FetchFavouritePlaylist", null);
+            selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, candidateID);
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, false);
             var model = new SelfAssessmentFilteredResultsViewModel()
              {
