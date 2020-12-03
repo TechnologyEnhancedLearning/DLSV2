@@ -85,9 +85,6 @@
                 .MustNotHaveHappened();
 
             A.CallTo(() => sessionDataService.StartOrRestartSession(A<int>._, A<int>._)).MustNotHaveHappened();
-
-            httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{courseInSession}");
-            httpContextSession.GetInt32($"SessionID-{courseInSession}").Should().Be(DefaultSessionId);
         }
 
         [Test]
