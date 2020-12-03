@@ -107,7 +107,7 @@
         }
 
         [Test]
-        public void Initial_menu_include_certification_can_be_true()
+        public void Initial_menu_should_show_certification_summary_can_be_true()
         {
             // Given
             const bool includeCertification = true;
@@ -119,11 +119,11 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.IncludeCertification.Should().Be(includeCertification);
+            initialMenuViewModel.ShouldShowCompletionSummary.Should().Be(includeCertification);
         }
 
         [Test]
-        public void Initial_menu_include_certification_can_be_false()
+        public void Initial_menu_should_show_certification_summary_can_be_false()
         {
             // Given
             const bool includeCertification = false;
@@ -135,39 +135,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.IncludeCertification.Should().Be(includeCertification);
-        }
-
-        [Test]
-        public void Initial_menu_can_have_completed()
-        {
-            // Given
-            var completed = DateTime.Today;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: completed
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.Completed.Should().Be(completed);
-        }
-
-        [Test]
-        public void Initial_menu_completed_can_be_null()
-        {
-            // Given
-            var completed = DateTime.Today;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: null
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.Completed.Should().BeNull();
+            initialMenuViewModel.ShouldShowCompletionSummary.Should().Be(includeCertification);
         }
 
         [Test]
@@ -205,7 +173,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
-            initialMenuViewModel.GetCompletionStatus().Should().Be("Complete");
+            initialMenuViewModel.CompletionStatus.Should().Be("Complete");
         }
 
         [Test]
@@ -220,7 +188,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
-            initialMenuViewModel.GetCompletionStatus().Should().Be("Incomplete");
+            initialMenuViewModel.CompletionStatus.Should().Be("Incomplete");
         }
 
         [Test]
@@ -235,7 +203,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
-            initialMenuViewModel.GetCompletionStyling().Should().Be("complete");
+            initialMenuViewModel.CompletionStyling.Should().Be("complete");
         }
 
         [Test]
@@ -250,7 +218,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
-            initialMenuViewModel.GetCompletionStyling().Should().Be("incomplete");
+            initialMenuViewModel.CompletionStyling.Should().Be("incomplete");
         }
     }
 }

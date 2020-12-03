@@ -72,14 +72,6 @@
                 new { candidateId, customisationId, systemRefreshed }
             );
         }
-        
-        public bool IsApproximatelyNow(DateTime? timeToCheck)
-        {
-            var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
-            return timeToCheck != null
-                && timeToCheck >= twoMinutesAgo
-                && timeToCheck <= DateTime.Now;
-        }
 
         public bool DoesProgressExist(int candidateId, int customisationId)
         {

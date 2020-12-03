@@ -565,7 +565,8 @@
                 var result = courseContentTestHelper.GetSubmittedTime(progressId);
 
                 // Then
-                courseContentTestHelper.IsApproximatelyNow(result).Should().BeTrue();
+                const int twoMinutesInMilliseconds = 120000;
+                result.Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
             }
         }
     }

@@ -12,9 +12,11 @@
         public string AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
-        public bool IncludeCertification { get; }
-        public DateTime? Completed { get; }
+        public bool ShouldShowCompletionSummary { get; }
         public IEnumerable<SectionCardViewModel> Sections { get; }
+        public string CompletionStatus { get; }
+        public string CompletionStyling { get; }
+        private DateTime? Completed { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
         {
@@ -23,19 +25,11 @@
             AverageDuration = courseContent.AverageDuration;
             CentreName = courseContent.CentreName;
             BannerText = courseContent.BannerText;
-            IncludeCertification = courseContent.IncludeCertification;
+            ShouldShowCompletionSummary = courseContent.IncludeCertification;
             Completed = courseContent.Completed;
             Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section));
-        }
-
-        public string GetCompletionStyling()
-        {
-            return Completed == null ? "incomplete" : "complete";
-        }
-
-        public string GetCompletionStatus()
-        {
-            return Completed == null ? "Incomplete" : "Complete";
+            CompletionStatus = Completed == null ? "Incomplete" : "Complete";
+            CompletionStyling = Completed == null ? "incomplete" : "complete";
         }
     }
 }

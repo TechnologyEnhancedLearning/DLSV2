@@ -41,11 +41,11 @@
   }
 </div>
 
-@if (Model.IncludeCertification) {
-  <div class="nhsuk-card @Model.GetCompletionStyling()">
+@if (Model.ShouldShowCompletionSummary) {
+  <div class="nhsuk-card @Model.CompletionStyling">
     <div class="nhsuk-card__content">
       <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Course Completion Status: @Model.GetCompletionStatus()
+        Course Completion Status: @Model.CompletionStatus
       </h2>
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
