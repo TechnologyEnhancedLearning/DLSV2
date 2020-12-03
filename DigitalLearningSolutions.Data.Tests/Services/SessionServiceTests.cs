@@ -1,195 +1,99 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System;
-    using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
-    internal class SessionServiceTests
+    public class SessionServiceTests
     {
-        private SessionService sessionService;
-        private SessionTestHelper sessionTestHelper;
+        private ISessionService sessionService;
+        private ISessionDataService sessionDataService;
         private ISession httpContextSession;
 
+        private const int CandidateId = 11;
+        private const int CustomisationId = 12;
+        private const int DefaultSessionId = 13;
+
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
-            sessionService = new SessionService(connection);
-            sessionTestHelper = new SessionTestHelper(connection);
+            sessionDataService = A.Fake<ISessionDataService>();
+            A.CallTo(() => sessionDataService.StartOrRestartSession(A<int>._, A<int>._)).Returns(DefaultSessionId);
+
             httpContextSession = new MockHttpContextSession();
+
+            sessionService = new SessionService(sessionDataService);
         }
 
         [Test]
-        public void StartOrUpdateSession_Should_Start_Users_First_Session()
+        public void Index_should_StartOrRestartSession_for_course_not_in_session()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                httpContextSession.Clear();
+            // Given
+            httpContextSession.Clear();
+            const int newCourseId = CustomisationId;  // Not in session
+            const int oldCourseInSession = CustomisationId + 1;
+            httpContextSession.SetInt32($"SessionID-{oldCourseInSession}", DefaultSessionId + 1);
 
-                // When
-                const int candidateId = 29;
-                const int customisationId = 100;
-                sessionService.StartOrUpdateSession(candidateId, customisationId, httpContextSession);
+            // When
+            sessionService.StartOrUpdateSession(CandidateId, newCourseId, httpContextSession);
 
-                // Then
-                httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{customisationId}");
+            // Then
+            A.CallTo(() => sessionDataService.StartOrRestartSession(CandidateId, newCourseId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionDataService.StartOrRestartSession(A<int>._, A<int>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId) =>
+                    candidateId != CandidateId || customisationId != newCourseId)
+                .MustNotHaveHappened();
 
-                var sessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
-                sessionId.Should().NotBeNull();
+            A.CallTo(() => sessionDataService.UpdateSessionDuration(A<int>._)).MustNotHaveHappened();
 
-                var newSession = sessionTestHelper.GetSession(sessionId.Value);
-                newSession.Should().NotBeNull();
-                SessionTestHelper.SessionsShouldBeApproximatelyEquivalent(
-                    newSession!,
-                    SessionTestHelper.CreateDefaultSession(sessionId.Value, candidateId, customisationId)
-                );
-            }
+            httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{newCourseId}");
+            httpContextSession.GetInt32($"SessionID-{newCourseId}").Should().Be(DefaultSessionId);
         }
 
         [Test]
-        public void StartOrUpdateSession_Should_Start_Subsequent_Session()
+        public void Index_should_UpdateSession_for_course_in_session()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                httpContextSession.Clear();
+            // Given
+            httpContextSession.Clear();
+            const int courseInSession = CustomisationId;
+            httpContextSession.SetInt32($"SessionID-{courseInSession}", DefaultSessionId);
 
-                // When
-                const int candidateId = 101;
-                const int customisationId = 1240;
-                sessionService.StartOrUpdateSession(candidateId, customisationId, httpContextSession);
+            // When
+            sessionService.StartOrUpdateSession(CandidateId, courseInSession, httpContextSession);
 
-                // Then
-                httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{customisationId}");
+            // Then
+            A.CallTo(() => sessionDataService.UpdateSessionDuration(DefaultSessionId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionDataService.UpdateSessionDuration(A<int>._))
+                .WhenArgumentsMatch((int sessionId) => sessionId != DefaultSessionId)
+                .MustNotHaveHappened();
 
-                var sessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
-                sessionId.Should().NotBeNull();
+            A.CallTo(() => sessionDataService.StartOrRestartSession(A<int>._, A<int>._)).MustNotHaveHappened();
 
-                var newSession = sessionTestHelper.GetSession(sessionId.Value);
-
-                newSession.Should().NotBeNull();
-                SessionTestHelper.SessionsShouldBeApproximatelyEquivalent(
-                    newSession!,
-                    SessionTestHelper.CreateDefaultSession(sessionId.Value)
-                );
-            }
+            httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{courseInSession}");
+            httpContextSession.GetInt32($"SessionID-{courseInSession}").Should().Be(DefaultSessionId);
         }
 
         [Test]
-        public void StartOrUpdateSession_Should_Stop_Other_Sessions()
+        public void Close_should_close_sessions()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                httpContextSession.Clear();
-                const int customisationId = 1240;
-                httpContextSession.SetInt32($"SessionID-{customisationId + 1}", 10);
+            // Given
+            httpContextSession.Clear();
+            const int courseInSession = CustomisationId;
+            httpContextSession.SetInt32($"SessionID-{courseInSession}", DefaultSessionId);
 
-                // When
-                const int candidateId = 101;
-                sessionService.StartOrUpdateSession(candidateId, customisationId, httpContextSession);
+            // When
+            sessionService.StopSession(CandidateId, httpContextSession);
 
-                // Then
-                httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{customisationId}");
+            // Then
+            A.CallTo(() => sessionDataService.StopSession(CandidateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionDataService.StopSession(A<int>._))
+                .WhenArgumentsMatch((int candidateId) => candidateId != CandidateId)
+                .MustNotHaveHappened();
 
-                var sessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
-                sessionId.Should().NotBeNull();
-
-                var sessions = sessionTestHelper.GetCandidateSessions(candidateId);
-                var activeSessions = sessions.Where(session => session.Active).ToList();
-
-                activeSessions.Should().HaveCount(1);
-                activeSessions.First().SessionId.Should().Be(sessionId);
-            }
-        }
-
-        [Test]
-        public void StopSession_Should_Stop_Candidates_Sessions()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                httpContextSession.Clear();
-                httpContextSession.SetInt32("SessionID-1240", 10);
-
-                // When
-                const int candidateId = 101;
-                sessionService.StopSession(candidateId, httpContextSession);
-
-                // Then
-                httpContextSession.Keys.Should().BeEmpty();
-
-                var sessions = sessionTestHelper.GetCandidateSessions(candidateId);
-                var activeSessions = sessions.Where(session => session.Active);
-
-                activeSessions.Should().BeEmpty();
-            }
-        }
-
-        [Test]
-        public void StartOrUpdateSession_Should_Only_Update_Active_Session()
-        {
-            const int twoMinutesInMilliseconds = 120 * 1000;
-
-            using (new TransactionScope())
-            {
-                // Given
-                const int customisationId = 325;
-                const int sessionId = 473;
-                const int candidateId = 9;
-
-                httpContextSession.Clear();
-                httpContextSession.SetInt32($"SessionID-{customisationId}", sessionId);
-                var startingSessions = sessionTestHelper.GetCandidateSessions(candidateId);
-
-                // When
-                sessionService.StartOrUpdateSession(candidateId, customisationId, httpContextSession);
-
-                // Then
-                httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{customisationId}");
-                httpContextSession.GetInt32($"SessionID-{customisationId}").Should().Be(sessionId);
-
-                var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
-
-                updatedSessions
-                    .Where(session => session.SessionId != sessionId)
-                    .Should()
-                    .BeEquivalentTo(startingSessions.Where(session => session.SessionId != sessionId));
-
-                var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
-                activeSession.LoginTime.AddMinutes(activeSession.Duration)
-                    .Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
-            }
-        }
-
-        [Test]
-        public void StartOrUpdateSession_Should_Not_Update_Inactive_Session()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                const int customisationId = 325;
-                const int sessionId = 468;
-                const int candidateId = 9;
-
-                httpContextSession.Clear();
-                httpContextSession.SetInt32($"SessionID-{customisationId}", sessionId);
-                var startingSessions = sessionTestHelper.GetCandidateSessions(candidateId);
-
-                // When
-                sessionService.StartOrUpdateSession(candidateId, customisationId, httpContextSession);
-
-                // Then
-                var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId);
-
-                updatedSessions.Should().BeEquivalentTo(startingSessions);
-            }
+            httpContextSession.Keys.Should().BeEmpty();
         }
     }
 }
