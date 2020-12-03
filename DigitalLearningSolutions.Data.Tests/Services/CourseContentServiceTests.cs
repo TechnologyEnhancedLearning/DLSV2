@@ -46,19 +46,19 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Viewing workbooks", true, 12.5),
-                    new CourseSection("Manipulating worksheets", true, 20),
-                    new CourseSection("Manipulating information", true, 25),
-                    new CourseSection("Using formulas", true, 100 / 3.0),
-                    new CourseSection("Using functions", true, 400 / 7.0),
-                    new CourseSection("Managing formulas and functions", true, 0),
-                    new CourseSection("Working with data", true, 0),
-                    new CourseSection("Formatting cells and worksheets", true, 0),
-                    new CourseSection("Formatting numbers", true, 0),
-                    new CourseSection("Working with charts", true, 0),
-                    new CourseSection("Working with illustrations", true, 0),
-                    new CourseSection("Collaborating with others", true, 0),
-                    new CourseSection("Preparing to print", true, 0)
+                    new CourseSection("Viewing workbooks", 112, true, 12.5),
+                    new CourseSection("Manipulating worksheets", 113, true, 20),
+                    new CourseSection("Manipulating information", 114, true, 25),
+                    new CourseSection("Using formulas", 115, true, 100 / 3.0),
+                    new CourseSection("Using functions", 116, true, 400 / 7.0),
+                    new CourseSection("Managing formulas and functions", 117, true, 0),
+                    new CourseSection("Working with data", 118, true, 0),
+                    new CourseSection("Formatting cells and worksheets", 119, true, 0),
+                    new CourseSection("Formatting numbers", 120, true, 0),
+                    new CourseSection("Working with charts", 121, true, 0),
+                    new CourseSection("Working with illustrations", 122, true, 0),
+                    new CourseSection("Collaborating with others", 123, true, 0),
+                    new CourseSection("Preparing to print", 124, true, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -86,19 +86,19 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Viewing workbooks", true, 0),
-                    new CourseSection("Manipulating worksheets", true, 0),
-                    new CourseSection("Manipulating information", true, 0),
-                    new CourseSection("Using formulas", true, 0),
-                    new CourseSection("Using functions", true, 0),
-                    new CourseSection("Managing formulas and functions", true, 0),
-                    new CourseSection("Working with data", true, 0),
-                    new CourseSection("Formatting cells and worksheets", true, 0),
-                    new CourseSection("Formatting numbers", true, 0),
-                    new CourseSection("Working with charts", true, 0),
-                    new CourseSection("Working with illustrations", true, 0),
-                    new CourseSection("Collaborating with others", true, 0),
-                    new CourseSection("Preparing to print", true, 0)
+                    new CourseSection("Viewing workbooks", 112, true, 0),
+                    new CourseSection("Manipulating worksheets", 113, true, 0),
+                    new CourseSection("Manipulating information", 114, true, 0),
+                    new CourseSection("Using formulas", 115, true, 0),
+                    new CourseSection("Using functions", 116, true, 0),
+                    new CourseSection("Managing formulas and functions", 117, true, 0),
+                    new CourseSection("Working with data", 118, true, 0),
+                    new CourseSection("Formatting cells and worksheets", 119, true, 0),
+                    new CourseSection("Formatting numbers", 120, true, 0),
+                    new CourseSection("Working with charts", 121, true, 0),
+                    new CourseSection("Working with illustrations", 122, true, 0),
+                    new CourseSection("Collaborating with others", 123, true, 0),
+                    new CourseSection("Preparing to print", 124, true, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -126,13 +126,13 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Introducing Outlook", false, 0),
-                    new CourseSection("Writing and sending emails", false, 0),
-                    new CourseSection("Managing emails", false, 0),
-                    new CourseSection("Using the Calendar", true, 300/ 11.0),
-                    new CourseSection("Working with Contacts", false, 0),
-                    new CourseSection("Using Tasks", false, 0),
-                    new CourseSection("Using Notes and  the  Journal", true, 0),
+                    new CourseSection("Introducing Outlook", 96, false, 0),
+                    new CourseSection("Writing and sending emails", 97, false, 0),
+                    new CourseSection("Managing emails", 98, false, 0),
+                    new CourseSection("Using the Calendar", 99, true, 300/ 11.0),
+                    new CourseSection("Working with Contacts", 100, false, 0),
+                    new CourseSection("Using Tasks", 101, false, 0),
+                    new CourseSection("Using Notes and  the  Journal", 102, true, 0),
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -160,13 +160,13 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Introducing Outlook", false, 0),
-                    new CourseSection("Writing and sending emails", false, 0),
-                    new CourseSection("Managing emails", false, 0),
-                    new CourseSection("Using the Calendar", true, 0),
-                    new CourseSection("Working with Contacts", false, 0),
-                    new CourseSection("Using Tasks", false, 0),
-                    new CourseSection("Using Notes and  the  Journal", true, 0),
+                    new CourseSection("Introducing Outlook", 96, false, 0),
+                    new CourseSection("Writing and sending emails", 97, false, 0),
+                    new CourseSection("Managing emails", 98, false, 0),
+                    new CourseSection("Using the Calendar", 99, true, 0),
+                    new CourseSection("Working with Contacts", 100, false, 0),
+                    new CourseSection("Using Tasks", 101, false, 0),
+                    new CourseSection("Using Notes and  the  Journal", 102, true, 0),
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -198,19 +198,19 @@
                 expectedCourse.Sections.AddRange(
                     new[]
                     {
-                        new CourseSection("Viewing workbooks", true, 100.0),
-                        new CourseSection("Manipulating worksheets", true, 100.0),
-                        new CourseSection("Manipulating information", true, 100.0),
-                        new CourseSection("Using formulas", true, 100.0),
-                        new CourseSection("Using functions", true, 100.0),
-                        new CourseSection("Managing formulas and functions", true, 100.0),
-                        new CourseSection("Working with data", true, 100.0),
-                        new CourseSection("Formatting cells and worksheets", true, 100.0),
-                        new CourseSection("Formatting numbers", true, 100.0),
-                        new CourseSection("Working with charts", true, 100.0),
-                        new CourseSection("Working with illustrations", true, 100.0),
-                        new CourseSection("Collaborating with others", true, 100.0),
-                        new CourseSection("Preparing to print", true, 100.0)
+                        new CourseSection("Viewing workbooks", 112, true, 100.0),
+                        new CourseSection("Manipulating worksheets", 113, true, 100.0),
+                        new CourseSection("Manipulating information", 114, true, 100.0),
+                        new CourseSection("Using formulas", 115, true, 100.0),
+                        new CourseSection("Using functions", 116, true, 100.0),
+                        new CourseSection("Managing formulas and functions", 117, true, 100.0),
+                        new CourseSection("Working with data", 118, true, 100.0),
+                        new CourseSection("Formatting cells and worksheets", 119, true, 100.0),
+                        new CourseSection("Formatting numbers", 120, true, 100.0),
+                        new CourseSection("Working with charts", 121, true, 100.0),
+                        new CourseSection("Working with illustrations", 122, true, 100.0),
+                        new CourseSection("Collaborating with others", 123, true, 100.0),
+                        new CourseSection("Preparing to print", 124, true, 100.0)
                     }
                 );
                 result.Should().BeEquivalentTo(expectedCourse);
@@ -242,19 +242,19 @@
                 expectedCourse.Sections.AddRange(
                     new[]
                     {
-                        new CourseSection("Viewing workbooks", true, 12.5),
-                        new CourseSection("Manipulating worksheets", true, 20),
-                        new CourseSection("Manipulating information", true, 25),
-                        new CourseSection("Using formulas", true, 100 / 3.0),
-                        new CourseSection("Using functions", true, 400 / 7.0),
-                        new CourseSection("Managing formulas and functions", true, 0),
-                        new CourseSection("Working with data", true, 0),
-                        new CourseSection("Formatting cells and worksheets", true, 0),
-                        new CourseSection("Formatting numbers", true, 0),
-                        new CourseSection("Working with charts", true, 0),
-                        new CourseSection("Working with illustrations", true, 0),
-                        new CourseSection("Collaborating with others", true, 0),
-                        new CourseSection("Preparing to print", true, 0)
+                        new CourseSection("Viewing workbooks", 112, true, 12.5),
+                        new CourseSection("Manipulating worksheets", 113, true, 20),
+                        new CourseSection("Manipulating information", 114, true, 25),
+                        new CourseSection("Using formulas", 115, true, 100 / 3.0),
+                        new CourseSection("Using functions", 116, true, 400 / 7.0),
+                        new CourseSection("Managing formulas and functions", 117, true, 0),
+                        new CourseSection("Working with data", 118, true, 0),
+                        new CourseSection("Formatting cells and worksheets", 119, true, 0),
+                        new CourseSection("Formatting numbers", 120, true, 0),
+                        new CourseSection("Working with charts", 121, true, 0),
+                        new CourseSection("Working with illustrations", 122, true, 0),
+                        new CourseSection("Collaborating with others", 123, true, 0),
+                        new CourseSection("Preparing to print", 124, true, 0)
                     }
                 );
                 result.Should().BeEquivalentTo(expectedCourse);
@@ -285,12 +285,12 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Getting started", false, 0),
-                    new CourseSection("Digital devices", false, 0),
-                    new CourseSection("Apps, applications and files", false, 0),
-                    new CourseSection("Staying safe", false, 0),
-                    new CourseSection("Communication", false, 0),
-                    new CourseSection("The Internet", false, 0)
+                    new CourseSection("Getting started", 2123, false, 0),
+                    new CourseSection("Digital devices", 2124, false, 0),
+                    new CourseSection("Apps, applications and files", 2125, false, 0),
+                    new CourseSection("Staying safe", 2126, false, 0),
+                    new CourseSection("Communication", 2127, false, 0),
+                    new CourseSection("The Internet", 2128, false, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -320,15 +320,15 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Working with documents", true, 0),
-                    new CourseSection("Formatting content", true, 0),
-                    new CourseSection("Formatting documents", true, 0),
-                    new CourseSection("Illustrations and graphics", true, 0),
-                    new CourseSection("Using tables", true, 0),
-                    new CourseSection("Working with references", true, 0),
-                    new CourseSection("Proofing and working on documents with others", true, 0),
-                    new CourseSection("Sharing documents", true, 0),
-                    new CourseSection("Mass-mailing documents", true, 0)
+                    new CourseSection("Working with documents", 103, true, 0),
+                    new CourseSection("Formatting content", 104, true, 0),
+                    new CourseSection("Formatting documents", 105, true, 0),
+                    new CourseSection("Illustrations and graphics", 106, true, 0),
+                    new CourseSection("Using tables", 107, true, 0),
+                    new CourseSection("Working with references", 108, true, 0),
+                    new CourseSection("Proofing and working on documents with others", 109, true, 0),
+                    new CourseSection("Sharing documents", 110, true, 0),
+                    new CourseSection("Mass-mailing documents", 111, true, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -361,19 +361,19 @@
                 expectedCourse.Sections.AddRange(
                     new[]
                     {
-                        new CourseSection("Viewing workbooks", true, 0),
-                        new CourseSection("Manipulating worksheets", true, 0),
-                        new CourseSection("Manipulating information", true, 0),
-                        new CourseSection("Using formulas", true, 0),
-                        new CourseSection("Using functions", true, 0),
-                        new CourseSection("Managing formulas and functions", true, 0),
-                        new CourseSection("Working with data", true, 0),
-                        new CourseSection("Formatting cells and worksheets", true, 0),
-                        new CourseSection("Formatting numbers", true, 0),
-                        new CourseSection("Working with charts", true, 0),
-                        new CourseSection("Working with illustrations", true, 0),
-                        new CourseSection("Collaborating with others", true, 0),
-                        new CourseSection("Preparing to print", true, 0)
+                        new CourseSection("Viewing workbooks", 112, true, 0),
+                        new CourseSection("Manipulating worksheets", 113, true, 0),
+                        new CourseSection("Manipulating information", 114, true, 0),
+                        new CourseSection("Using formulas", 115, true, 0),
+                        new CourseSection("Using functions", 116, true, 0),
+                        new CourseSection("Managing formulas and functions", 117, true, 0),
+                        new CourseSection("Working with data", 118, true, 0),
+                        new CourseSection("Formatting cells and worksheets", 119, true, 0),
+                        new CourseSection("Formatting numbers", 120, true, 0),
+                        new CourseSection("Working with charts", 121, true, 0),
+                        new CourseSection("Working with illustrations", 122, true, 0),
+                        new CourseSection("Collaborating with others", 123, true, 0),
+                        new CourseSection("Preparing to print", 124, true, 0)
                     }
                 );
                 result.Should().BeEquivalentTo(expectedCourse);

@@ -56,6 +56,12 @@
             return View(model);
         }
 
+        [Route("/LearningMenu/Section/{sectionId:int}")]
+        public IActionResult Section(int sectionId)
+        {
+            return View("Section/Section");
+        }
+
         public IActionResult ContentViewer()
         {
             var model = new ContentViewerViewModel(config);
