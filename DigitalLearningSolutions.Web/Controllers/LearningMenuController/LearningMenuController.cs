@@ -72,8 +72,8 @@
             return RedirectToAction("Current", "LearningPortal");
         }
 
-        [Route("/LearningMenu/Section/{sectionId:int}")]
-        public IActionResult Section(int sectionId)
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}")]
+        public IActionResult Section(int customisationId, int sectionId)
         {
             return View("Section/Section");
         }

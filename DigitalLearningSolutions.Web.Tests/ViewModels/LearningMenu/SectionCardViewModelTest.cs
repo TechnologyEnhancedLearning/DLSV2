@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
-    using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
@@ -16,7 +15,7 @@
             var section = CourseSectionHelper.CreateDefaultCourseSection(hasLearning: hasLearning);
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, 1);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be("");
@@ -34,10 +33,24 @@
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, 1);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_should_return_customisation_id()
+        {
+            // Given
+            const int customisationId = 10;
+            var section = CourseSectionHelper.CreateDefaultCourseSection();
+
+            // When
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+
+            // Then
+            sectionCardViewModel.CustomisationId.Should().Be(customisationId);
         }
 
         [Test]
@@ -53,7 +66,7 @@
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, 1);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");

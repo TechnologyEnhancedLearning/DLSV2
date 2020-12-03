@@ -148,7 +148,7 @@
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent();
             var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName: sectionName, hasLearning: hasLearning, percentComplete: percentComplete);
             expectedCourseContent.Sections.Add(section);
-            var expectedSection = new SectionCardViewModel(section);
+            var expectedSection = new SectionCardViewModel(section, 1);
             var expectedSectionList = new List<SectionCardViewModel>
             {
                 expectedSection
