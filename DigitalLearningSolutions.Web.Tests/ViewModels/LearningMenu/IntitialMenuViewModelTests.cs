@@ -146,7 +146,7 @@
             const bool hasLearning = true;
             const double percentComplete = 12.00;
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent();
-            var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName, hasLearning, percentComplete);
+            var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName: sectionName, hasLearning: hasLearning, percentComplete: percentComplete);
             expectedCourseContent.Sections.Add(section);
             var expectedSection = new SectionCardViewModel(section);
             var expectedSectionList = new List<SectionCardViewModel>

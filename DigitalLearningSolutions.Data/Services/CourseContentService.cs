@@ -44,6 +44,7 @@
                          Applications.IncludeCertification,
                          Progress.Completed,
                          Sections.SectionName,
+                         Sections.SectionID AS id,
                          dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
                          (CASE
                             WHEN Progress.CandidateID IS NULL
@@ -69,6 +70,7 @@
                          Applications.IncludeCertification,
                          Progress.Completed,
                          Sections.SectionName,
+                         Sections.SectionID,
                          Sections.SectionNumber,
                          Progress.CandidateID
                   ORDER BY Sections.SectionNumber;",
