@@ -145,10 +145,11 @@
             const string sectionName = "TestSectionName";
             const bool hasLearning = true;
             const double percentComplete = 12.00;
+            const int customisationId = 1;
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent();
             var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName: sectionName, hasLearning: hasLearning, percentComplete: percentComplete);
             expectedCourseContent.Sections.Add(section);
-            var expectedSection = new SectionCardViewModel(section, 1);
+            var expectedSection = new SectionCardViewModel(section, customisationId);
             var expectedSectionList = new List<SectionCardViewModel>
             {
                 expectedSection
