@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CourseContent
 {
+    using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Models.Courses;
 
     public class CourseContent
     {
@@ -10,6 +10,8 @@
         public string AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
+        public bool IncludeCertification { get; }
+        public DateTime? Completed { get; }
         public List<CourseSection> Sections { get; } = new List<CourseSection>();
 
         public CourseContent(
@@ -18,7 +20,9 @@
             string customisationName,
             string averageDuration,
             string centreName,
-            string? bannerText
+            string? bannerText,
+            bool includeCertification,
+            DateTime? completed
         )
         {
             Id = id;
@@ -26,6 +30,8 @@
             AverageDuration = averageDuration;
             CentreName = centreName;
             BannerText = bannerText;
+            IncludeCertification = includeCertification;
+            Completed = completed;
         }
     }
 }

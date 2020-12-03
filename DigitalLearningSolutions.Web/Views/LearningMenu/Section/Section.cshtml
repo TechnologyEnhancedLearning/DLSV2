@@ -1,0 +1,8 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
