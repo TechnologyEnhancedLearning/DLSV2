@@ -107,7 +107,7 @@
         }
 
         [Test]
-        public void Initial_menu_should_show_certification_summary_can_be_true()
+        public void Initial_menu_show_completion_summary_should_be_include_certification_when_true()
         {
             // Given
             const bool includeCertification = true;
@@ -123,7 +123,7 @@
         }
 
         [Test]
-        public void Initial_menu_should_show_certification_summary_can_be_false()
+        public void Initial_menu_show_completion_summary_should_be_include_certification_when_false()
         {
             // Given
             const bool includeCertification = false;

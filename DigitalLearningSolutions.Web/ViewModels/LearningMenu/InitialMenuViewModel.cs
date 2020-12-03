@@ -16,7 +16,6 @@
         public IEnumerable<SectionCardViewModel> Sections { get; }
         public string CompletionStatus { get; }
         public string CompletionStyling { get; }
-        private DateTime? Completed { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
         {
@@ -26,10 +25,9 @@
             CentreName = courseContent.CentreName;
             BannerText = courseContent.BannerText;
             ShouldShowCompletionSummary = courseContent.IncludeCertification;
-            Completed = courseContent.Completed;
             Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section));
-            CompletionStatus = Completed == null ? "Incomplete" : "Complete";
-            CompletionStyling = Completed == null ? "incomplete" : "complete";
+            CompletionStatus = courseContent.Completed == null ? "Incomplete" : "Complete";
+            CompletionStyling = courseContent.Completed == null ? "incomplete" : "complete";
         }
     }
 }
