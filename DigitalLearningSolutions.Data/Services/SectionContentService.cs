@@ -25,7 +25,8 @@
         public SectionContent? GetSectionContent(int customisationId, int progressId, int sectionId)
         {
             return connection.Query<SectionContent>(
-                @"SELECT Sections.SectionName, 
+                @"
+                    SELECTcSections.SectionName, 
 	                    SUM(aspProgress.TutTime) AS TimeMins, 
 	                    Sections.AverageSectionMins AS AverageSectionTime, 
                         dbo.CheckCustomisationSectionHasLearning(Progress.CustomisationID, Sections.SectionID) AS HasLearning,
@@ -36,13 +37,13 @@
 		                    ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
 	                    END) AS PercentComplete
                     FROM aspProgress
-                        INNER JOIN Progress ON aspProgress.ProgressID = Progress.ProgressID 
-	                    INNER JOIN Sections 
-		                    INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID 
-		                    INNER JOIN CustomisationTutorials ON Tutorials.TutorialID = CustomisationTutorials.TutorialID 
-	                    ON aspProgress.TutorialID = Tutorials.TutorialID 
-	                    INNER JOIN Customisations ON Progress.CustomisationID = Customisations.CustomisationID
-	                    LEFT OUTER JOIN AssessAttempts ON Progress.ProgressID = AssessAttempts.ProgressID AND Sections.SectionNumber = AssessAttempts.SectionNumber
+                    INNER JOIN Progress ON aspProgress.ProgressID = Progress.ProgressID 
+	                INNER JOIN Sections 
+		                INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID 
+		                INNER JOIN CustomisationTutorials ON Tutorials.TutorialID = CustomisationTutorials.TutorialID 
+	                ON aspProgress.TutorialID = Tutorials.TutorialID 
+	                INNER JOIN Customisations ON Progress.CustomisationID = Customisations.CustomisationID
+	                LEFT OUTER JOIN AssessAttempts ON Progress.ProgressID = AssessAttempts.ProgressID AND Sections.SectionNumber = AssessAttempts.SectionNumber
                     WHERE
                         (CustomisationTutorials.CustomisationID = Progress.CustomisationID)
 	                    AND (Progress.CustomisationID = @customisationId)
