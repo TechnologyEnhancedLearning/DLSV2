@@ -1,52 +1,44 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Data;
-    using Dapper;
+    using Microsoft.AspNetCore.Http;
 
     public interface ISessionService
     {
-        int StartOrRestartSession(int candidateId, int customisationId);
-        void StopSession(int candidateId);
-        void UpdateSessionDuration(int sessionId);
+        void StartOrUpdateSession(int candidateId, int customisationId, ISession httpContextSession);
+        void StopSession(int candidateId, ISession httpContextSession);
     }
 
     public class SessionService : ISessionService
     {
-        private const string stopSessionsSql =
-            @"UPDATE Sessions SET Active = 0
-               WHERE CandidateId = @candidateId;";
+        private readonly ISessionDataService sessionDataService;
 
-        private readonly IDbConnection connection;
-
-        public SessionService(IDbConnection connection)
+        public SessionService(ISessionDataService sessionDataService)
         {
-            this.connection = connection;
+            this.sessionDataService = sessionDataService;
         }
 
-        public int StartOrRestartSession(int candidateId, int customisationId)
+        public void StartOrUpdateSession(int candidateId, int customisationId, ISession httpContextSession)
         {
-            return connection.QueryFirst<int>(
-                stopSessionsSql +
-                @"INSERT INTO Sessions (CandidateID, CustomisationID, LoginTime, Duration, Active)
-                  VALUES (@candidateId, @customisationId, GetUTCDate(), 0, 1);
+            var currentSessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
+            if (currentSessionId != null)
+            {
+                sessionDataService.UpdateSessionDuration(currentSessionId.Value);
+            }
+            else
+            {
+                // Clear all session variables
+                httpContextSession.Clear();
 
-                  SELECT SCOPE_IDENTITY();",
-                new { candidateId, customisationId }
-            );
+                // Make and keep track of a new session starting at this request
+                var newSessionId = sessionDataService.StartOrRestartSession(candidateId, customisationId);
+                httpContextSession.SetInt32($"SessionID-{customisationId}", newSessionId);
+            }
         }
 
-        public void StopSession(int candidateId)
+        public void StopSession(int candidateId, ISession httpContextSession)
         {
-            connection.Query(stopSessionsSql, new { candidateId });
-        }
-
-        public void UpdateSessionDuration(int sessionId)
-        {
-            connection.Query(
-                @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())
-                   WHERE [SessionID] = @sessionId AND Active = 1;",
-                new { sessionId }
-            );
+            sessionDataService.StopSession(candidateId);
+            httpContextSession.Clear();
         }
     }
 }

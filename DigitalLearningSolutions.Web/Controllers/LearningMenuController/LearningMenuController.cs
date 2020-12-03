@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -14,39 +15,46 @@
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
         private readonly ICourseContentService courseContentService;
+        private readonly ISessionService sessionService;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
-            ICourseContentService courseContentService
+            ICourseContentService courseContentService,
+            ISessionService sessionService
         )
         {
             this.logger = logger;
             this.config = config;
             this.courseContentService = courseContentService;
+            this.sessionService = sessionService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
-            var courseContent = courseContentService.GetCourseContent(User.GetCandidateId(), customisationId);
+            var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
+            var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
 
             if (courseContent == null || centreId == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as course/centre id was not found. " +
-                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}, centre id: {centreId?.ToString() ?? "null"}");
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(User.GetCandidateId(), customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
 
             if (progressId == null)
             {
                 logger.LogError(
                     "Redirecting to 500 as no progress id was returned. " +
-                    $"Candidate id: {User.GetCandidateId()}, customisation id: {customisationId}, centre id: {centreId}");
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             }
 
@@ -54,6 +62,14 @@
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
+        }
+
+        [Route("/LearningMenu/Close")]
+        public IActionResult Close()
+        {
+            sessionService.StopSession(User.GetCandidateId(), HttpContext.Session);
+
+            return RedirectToAction("Current", "LearningPortal");
         }
 
         [Route("/LearningMenu/Section/{sectionId:int}")]
