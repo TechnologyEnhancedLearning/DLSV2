@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
 
-    internal class MockHttpContextSession : ISession
+    public class MockHttpContextSession : ISession
     {
         private readonly Dictionary<string, byte[]> store = new Dictionary<string, byte[]>();
 

@@ -2,12 +2,12 @@
 {
     using System.Data;
     using Dapper;
+    using Microsoft.AspNetCore.Http;
 
     public interface ISessionService
     {
-        int StartOrRestartSession(int candidateId, int customisationId);
-        void StopSession(int candidateId);
-        void UpdateSessionDuration(int sessionId);
+        void StartOrUpdateSession(int candidateId, int customisationId, ISession httpSession);
+        void StopSession(int candidateId, ISession httpSession);
     }
 
     public class SessionService : ISessionService
@@ -23,7 +23,31 @@
             this.connection = connection;
         }
 
-        public int StartOrRestartSession(int candidateId, int customisationId)
+        public void StartOrUpdateSession(int candidateId, int customisationId, ISession httpSession)
+        {
+            var currentSessionId = httpSession.GetInt32($"SessionID-{customisationId}");
+            if (currentSessionId != null)
+            {
+                UpdateSessionDuration(currentSessionId.Value);
+            }
+            else
+            {
+                // Clear all session variables
+                httpSession.Clear();
+
+                // Make and keep track of a new session starting at this request
+                var newSessionId = StartOrRestartSession(candidateId, customisationId);
+                httpSession.SetInt32($"SessionID-{customisationId}", newSessionId);
+            }
+        }
+
+        public void StopSession(int candidateId, ISession httpSession)
+        {
+            httpSession.Clear();
+            connection.Query(stopSessionsSql, new { candidateId });
+        }
+
+        private int StartOrRestartSession(int candidateId, int customisationId)
         {
             return connection.QueryFirst<int>(
                 stopSessionsSql +
@@ -35,12 +59,7 @@
             );
         }
 
-        public void StopSession(int candidateId)
-        {
-            connection.Query(stopSessionsSql, new { candidateId });
-        }
-
-        public void UpdateSessionDuration(int sessionId)
+        private void UpdateSessionDuration(int sessionId)
         {
             connection.Query(
                 @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())

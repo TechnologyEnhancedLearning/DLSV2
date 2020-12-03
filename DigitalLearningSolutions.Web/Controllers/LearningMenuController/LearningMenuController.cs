@@ -37,7 +37,7 @@
             var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
 
-            StartOrUpdateSession(candidateId, customisationId);
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
 
             if (courseContent == null || centreId == null)
             {
@@ -67,8 +67,7 @@
         [Route("/LearningMenu/Close")]
         public IActionResult Close()
         {
-            sessionService.StopSession(User.GetCandidateId());
-            HttpContext.Session.Clear();
+            sessionService.StopSession(User.GetCandidateId(), HttpContext.Session);
 
             return RedirectToAction("Current", "LearningPortal");
         }
@@ -77,24 +76,6 @@
         {
             var model = new ContentViewerViewModel(config);
             return View(model);
-        }
-
-        private void StartOrUpdateSession(int candidateId, int customisationId)
-        {
-            var currentSessionId = HttpContext.Session.GetInt32($"SessionID-{customisationId}");
-            if (currentSessionId != null)
-            {
-                sessionService.UpdateSessionDuration(currentSessionId.Value);
-            }
-            else
-            {
-                // Clear all session variables
-                HttpContext.Session.Clear();
-
-                // Make and keep track of a new session starting at this request
-                var newSessionId = sessionService.StartOrRestartSession(candidateId, customisationId);
-                HttpContext.Session.SetInt32($"SessionID-{customisationId}", newSessionId);
-            }
         }
     }
 }

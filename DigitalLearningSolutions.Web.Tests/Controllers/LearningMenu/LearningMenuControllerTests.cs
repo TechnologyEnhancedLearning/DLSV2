@@ -2,6 +2,7 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
@@ -25,7 +26,6 @@
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private const int CustomisationId = 12;
-        private const int DefaultSessionId = 13;
 
         [SetUp]
         public void SetUp()
@@ -34,7 +34,6 @@
             config = A.Fake<IConfiguration>();
             courseContentService = A.Fake<ICourseContentService>();
             sessionService = A.Fake<ISessionService>();
-            A.CallTo(() => sessionService.StartOrRestartSession(A<int>._, A<int>._)).Returns(DefaultSessionId);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -172,71 +171,30 @@
         }
 
         [Test]
-        public void Index_should_StartOrRestartSession_for_course_not_in_session()
+        public void Index_should_StartOrUpdate_course_sessions()
         {
-            // Given
-            httpContextSession.Clear();
-            const int newCourseId = CustomisationId;  // Not in session
-            const int oldCourseInSession = CustomisationId + 1;
-            httpContextSession.SetInt32($"SessionID-{oldCourseInSession}", DefaultSessionId + 1);
-
             // When
-            controller.Index(newCourseId);
+            controller.Index(CustomisationId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrRestartSession(CandidateId, newCourseId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StartOrRestartSession(A<int>._, A<int>._))
-                .WhenArgumentsMatch((int candidateId, int customisationId) =>
-                    candidateId != CandidateId || customisationId != newCourseId)
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
-
-            A.CallTo(() => sessionService.UpdateSessionDuration(A<int>._)).MustNotHaveHappened();
-
-            httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{newCourseId}");
-            httpContextSession.GetInt32($"SessionID-{newCourseId}").Should().Be(DefaultSessionId);
-        }
-
-        [Test]
-        public void Index_should_UpdateSession_for_course_in_session()
-        {
-            // Given
-            httpContextSession.Clear();
-            const int courseInSession = CustomisationId;
-            httpContextSession.SetInt32($"SessionID-{courseInSession}", DefaultSessionId);
-
-            // When
-            controller.Index(courseInSession);
-
-            // Then
-            A.CallTo(() => sessionService.UpdateSessionDuration(DefaultSessionId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.UpdateSessionDuration(A<int>._))
-                .WhenArgumentsMatch((int sessionId) => sessionId != DefaultSessionId)
-                .MustNotHaveHappened();
-
-            A.CallTo(() => sessionService.StartOrRestartSession(A<int>._, A<int>._)).MustNotHaveHappened();
-
-            httpContextSession.Keys.Should().BeEquivalentTo($"SessionID-{courseInSession}");
-            httpContextSession.GetInt32($"SessionID-{courseInSession}").Should().Be(DefaultSessionId);
         }
 
         [Test]
         public void Close_should_close_sessions()
         {
-            // Given
-            httpContextSession.Clear();
-            const int courseInSession = CustomisationId;
-            httpContextSession.SetInt32($"SessionID-{courseInSession}", DefaultSessionId);
-
             // When
             controller.Close();
 
             // Then
-            A.CallTo(() => sessionService.StopSession(CandidateId)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StopSession(A<int>._))
-                .WhenArgumentsMatch((int candidateId) => candidateId != CandidateId)
+            A.CallTo(() => sessionService.StopSession(CandidateId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StopSession(A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, ISession _) => candidateId != CandidateId)
                 .MustNotHaveHappened();
-
-            httpContextSession.Keys.Should().BeEmpty();
         }
 
         [Test]
