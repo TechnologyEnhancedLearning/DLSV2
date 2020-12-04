@@ -25,7 +25,7 @@
             CentreName = courseContent.CentreName;
             BannerText = courseContent.BannerText;
             ShouldShowCompletionSummary = courseContent.IncludeCertification;
-            Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section));
+            Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section, Id));
             CompletionStatus = courseContent.Completed == null ? "Incomplete" : "Complete";
             CompletionStyling = courseContent.Completed == null ? "incomplete" : "complete";
         }

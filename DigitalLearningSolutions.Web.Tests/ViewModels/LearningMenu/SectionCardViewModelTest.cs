@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
-    using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
@@ -13,10 +12,11 @@
         {
             // Given
             const bool hasLearning = false;
+            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(hasLearning: hasLearning);
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be("");
@@ -28,16 +28,31 @@
             // Given
             const bool hasLearning = true;
             const double percentComplete = 12.00;
+            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_should_return_customisation_id()
+        {
+            // Given
+            const int customisationId = 10;
+            var section = CourseSectionHelper.CreateDefaultCourseSection();
+
+            // When
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+
+            // Then
+            sectionCardViewModel.CustomisationId.Should().Be(customisationId);
         }
 
         [Test]
@@ -47,13 +62,14 @@
             const bool hasLearning = true;
             const double percentComplete = 16.6666666667;
             const double percentCompleteRounded = 17;
+            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section);
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");

@@ -184,6 +184,23 @@
         }
 
         [Test]
+        public void Sections_should_StartOrUpdate_course_sessions()
+        {
+            // Given
+            const int sectionId = 199;
+
+            // When
+            controller.Section(CustomisationId, sectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
         public void Close_should_close_sessions()
         {
             // When

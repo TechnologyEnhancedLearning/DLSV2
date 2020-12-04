@@ -145,17 +145,18 @@
             const string sectionName = "TestSectionName";
             const bool hasLearning = true;
             const double percentComplete = 12.00;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent();
+            const int customisationId = 1;
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId: customisationId);
             var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName: sectionName, hasLearning: hasLearning, percentComplete: percentComplete);
-            expectedCourseContent.Sections.Add(section);
-            var expectedSection = new SectionCardViewModel(section);
+            courseContent.Sections.Add(section);
+            var expectedSection = new SectionCardViewModel(section, customisationId);
             var expectedSectionList = new List<SectionCardViewModel>
             {
                 expectedSection
             };
 
             // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
             initialMenuViewModel.Sections.Should().BeEquivalentTo(expectedSectionList);
