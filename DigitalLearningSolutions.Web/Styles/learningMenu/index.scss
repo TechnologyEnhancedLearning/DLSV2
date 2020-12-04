@@ -1,7 +1,13 @@
-﻿.incomplete {
-  border-left: 6px solid #d5281b;
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.section-card {
+  border: none;
+}
+
+.incomplete {
+  border-left: 6px solid $color_nhsuk-red;
 }
 
 .complete {
-  border-left: 6px solid #007f3b;
+  border-left: 6px solid $color_nhsuk-green;
 }
