@@ -92,6 +92,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ICourseContentService, CourseContentService>();
+            services.AddScoped<ITutorialContentService, TutorialContentService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISessionService, SessionService>();
         }
