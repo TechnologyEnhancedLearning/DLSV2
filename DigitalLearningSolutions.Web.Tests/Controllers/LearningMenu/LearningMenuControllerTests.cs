@@ -2,6 +2,7 @@
 {
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -18,6 +19,8 @@
     {
         private LearningMenuController controller;
         private ICourseContentService courseContentService;
+        private ISessionService sessionService;
+        private ISession httpContextSession;
         private IConfiguration config;
         private const int CandidateId = 11;
         private const int CentreId = 2;
@@ -29,15 +32,24 @@
             var logger = A.Fake<ILogger<LearningMenuController>>();
             config = A.Fake<IConfiguration>();
             courseContentService = A.Fake<ICourseContentService>();
+            sessionService = A.Fake<ISessionService>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim("learnCandidateID", CandidateId.ToString()),
                 new Claim("UserCentreID", CentreId.ToString())
             }, "mock"));
-            controller = new LearningMenuController(logger, config, courseContentService)
+            httpContextSession = new MockHttpContextSession();
+
+            controller = new LearningMenuController(logger, config, courseContentService, sessionService)
             {
-                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+                ControllerContext = new ControllerContext {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = httpContextSession
+                    }
+                }
             };
         }
 
@@ -155,6 +167,63 @@
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Index_should_StartOrUpdate_course_sessions()
+        {
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_StartOrUpdate_course_sessions()
+        {
+            // Given
+            const int sectionId = 199;
+
+            // When
+            controller.Section(CustomisationId, sectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Close_should_close_sessions()
+        {
+            // When
+            controller.Close();
+
+            // Then
+            A.CallTo(() => sessionService.StopSession(CandidateId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StopSession(A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, ISession _) => candidateId != CandidateId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Close_should_redirect_to_Current_LearningPortal()
+        {
+            // When
+            var result = controller.Close();
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningPortal")
+                .WithActionName("Current");
         }
     }
 }

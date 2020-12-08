@@ -62,10 +62,15 @@
             );
         }
 
-        public bool IsApproximatelyNow(DateTime timeToCheck)
+        public void UpdateSystemRefreshed(int candidateId, int customisationId, bool systemRefreshed)
         {
-            var twoMinutesAgo = DateTime.Now.AddMinutes(-2);
-            return timeToCheck >= twoMinutesAgo && timeToCheck <= DateTime.Now;
+            connection.Execute(
+                @"UPDATE Progress
+                        SET SystemRefreshed = @systemRefreshed
+                        WHERE CandidateID = @candidateId
+                          AND CustomisationID = @customisationId",
+                new { candidateId, customisationId, systemRefreshed }
+            );
         }
 
         public bool DoesProgressExist(int candidateId, int customisationId)
@@ -79,6 +84,20 @@
                           AND RemovedDate IS NULL",
                 new { candidateId, customisationId }
             ).Any();
+        }
+
+        public void UpdateIncludeCertification(int customisationId, bool includeCertification)
+        {
+            connection.Execute(
+                @"UPDATE Applications
+                        SET IncludeCertification = @includeCertification
+                        WHERE ApplicationID = (
+                            SELECT Applications.ApplicationID
+                            FROM Applications JOIN Customisations
+                              ON Applications.ApplicationID = Customisations.ApplicationID
+                            WHERE Customisations.CustomisationID = @customisationId)",
+                new { customisationId, includeCertification }
+            );
         }
     }
 }

@@ -1,13 +1,17 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
 @model InitialMenuViewModel
+@inject IConfiguration Configuration
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 
 @{
   ViewData["HeaderPrefix"] = "";
   ViewData["Application"] = Model.Title;
-  ViewData["Title"] = "Learning Menu";
+  ViewData["Title"] = Model.Title;
   ViewData["CustomisationId"] = Model.Id;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
+  ViewData["HeaderPathName"] = Model.Title;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -22,7 +26,7 @@
 </div>
 
 <div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-action="Current" asp-controller="LearningPortal">
+  <a class="nhsuk-back-link__link" asp-action="Close" asp-controller="LearningMenu">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
     </svg>
@@ -37,17 +41,19 @@
   }
 </div>
 
-<div class="nhsuk-card incomplete">
-  <div class="nhsuk-card__content">
-    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-      Course Completion Status: Incomplete
-    </h2>
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
-          Show Summary
-        </a>
+@if (Model.ShouldShowCompletionSummary) {
+  <div class="nhsuk-card learning-menu-card @Model.CompletionStyling">
+    <div class="nhsuk-card__content">
+      <h2 class="nhsuk-card__heading nhsuk-heading-m">
+        Course Completion Status: @Model.CompletionStatus
+      </h2>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
+            Show Summary
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}

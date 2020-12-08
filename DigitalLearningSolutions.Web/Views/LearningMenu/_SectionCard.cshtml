@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
 @model SectionCardViewModel
 
-<div class="nhsuk-card nhsuk-u-margin-bottom-3">
+<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
@@ -17,7 +17,7 @@
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" asp-action="Section" asp-route-sectionId="@Model.SectionId" asp-route-customisationId="@Model.CustomisationId">
           Launch section
         </a>
       </div>

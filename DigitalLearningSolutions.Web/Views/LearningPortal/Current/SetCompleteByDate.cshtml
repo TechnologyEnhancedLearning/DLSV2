@@ -1,8 +1,17 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
-@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@using Microsoft.Extensions.Configuration
 @model CurrentLearningItemViewModel
+@inject IConfiguration Configuration
+
 @{
   ViewData["Title"] = $"Learning Portal - {Model.Name} - Set completion date";
+  ViewData["Application"] = "Learning Portal";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
+  ViewData["HeaderPathName"] = "My Current Activities";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
 }
 
 @{

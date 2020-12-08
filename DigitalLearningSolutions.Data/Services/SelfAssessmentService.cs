@@ -17,6 +17,7 @@
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
+        void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
         void SetUpdatedFlag(int selfAssessmentId, int candidateId, bool status);
         void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
@@ -94,7 +95,7 @@ SA.UseFilteredApi,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, 1 AS IsSelfAssessment
+CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -103,7 +104,7 @@ CA.LaunchCount, 1 AS IsSelfAssessment
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId }
             );
         }
@@ -120,7 +121,7 @@ SA.UseFilteredApi,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount
+CA.LaunchCount, CA.SubmittedDate
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -129,7 +130,7 @@ CA.LaunchCount
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -354,6 +355,23 @@ CA.LaunchCount
                     Outcome = learningAsset.CompletedStatus,
                     Bookmark = learningAsset.IsFavourite
                 }, commandType: CommandType.StoredProcedure);
+        }
+
+        public void SetSubmittedDateNow(int selfAssessmentId, int candidateId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE CandidateAssessments SET SubmittedDate = GETDATE()
+                      WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId AND SubmittedDate IS NULL",
+               new { selfAssessmentId, candidateId }
+           );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting self assessment submitted date as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
+                );
+            }
         }
     }
 }

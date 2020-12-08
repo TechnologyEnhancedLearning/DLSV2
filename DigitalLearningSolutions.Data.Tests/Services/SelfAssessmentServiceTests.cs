@@ -589,5 +589,39 @@
                 updatedSelfAssessment.LaunchCount.Should().Be(originalLaunchCount);
             }
         }
+        [Test]
+        public void SetSubmittedDate_sets_submitted_date_for_candidate_assessment()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                var originalSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                var originalSubmittedDate = originalSelfAssessment.SubmittedDate;
+                selfAssessmentService.SetSubmittedDateNow(SelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                originalSubmittedDate.Should().BeNull();
+                    updatedSelfAssessment.SubmittedDate.Should().BeSameDateAs(System.DateTime.Now);
+            }
+        }
+        [Test]
+        public void SetSubmittedDate_does_not_set_submitted_date_for_invalid_self_assessment()
+        {
+            // Given
+            const int invalidSelfAssessmentId = 0;
+
+            using (new TransactionScope())
+            {
+                // When
+                var originalSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+                var originalSubmittedDate = originalSelfAssessment.SubmittedDate;
+                selfAssessmentService.SetSubmittedDateNow(invalidSelfAssessmentId, CandidateId);
+                var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
+
+                // Then
+                updatedSelfAssessment.SubmittedDate.Should().Be(originalSubmittedDate);
+            }
+        }
     }
 }
