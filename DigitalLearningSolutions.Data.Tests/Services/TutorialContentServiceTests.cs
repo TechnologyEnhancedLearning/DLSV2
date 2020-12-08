@@ -33,6 +33,8 @@
             tutorial.Should().BeEquivalentTo(new TutorialContent(
                 50,
                 "Navigate documents",
+                "Level 2 - Microsoft Word 2007",
+                "Testing",
                 "Complete",
                 3,
                 5,
