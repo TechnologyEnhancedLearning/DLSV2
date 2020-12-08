@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void Get_tutorial_content_of_consistent_tutorial_should_return_tutorial()
+        public void Get_tutorial_content_should_return_tutorial()
         {
             // Given
             const int candidateId = 1;
@@ -49,12 +49,60 @@
         }
 
         [Test]
-        public void Get_tutorial_content_of_inconsistent_tutorial_should_return_null()
+        public void Get_tutorial_content_should_return_null_if_customisation_id_invalid()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1378;
+            const int sectionId = 74;
+            const int tutorialId = 50;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_section_id_invalid()
         {
             // Given
             const int candidateId = 1;
             const int customisationId = 1379;
             const int sectionId = 75;
+            const int tutorialId = 50;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_tutorial_id_invalid()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1379;
+            const int sectionId = 74;
+            const int tutorialId = 500;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_candidate_not_on_course()
+        {
+            // Given
+            const int candidateId = 100;
+            const int customisationId = 1379;
+            const int sectionId = 74;
             const int tutorialId = 50;
 
             // When
