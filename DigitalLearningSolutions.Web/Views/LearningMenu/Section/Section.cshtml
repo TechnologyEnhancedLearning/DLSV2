@@ -11,8 +11,6 @@
   ViewData["CustomisationId"] = 18438;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/18438";
   ViewData["HeaderPathName"] = "CMS Demonstration Course";
-  var diagnosticAssessmentStatus = "Not attempted";
-  var postLearningAssessmentStatus = "Not attempted";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -34,8 +32,8 @@
   </a>
 </div>
 
-<partial name="_DiagnosticAssessmentCard" model="diagnosticAssessmentStatus" />
+<partial name="_DiagnosticAssessmentCard" />
 
 <partial name="_TutorialCard" />
 
-<partial name="_PostLearningAssessmentCard" model="postLearningAssessmentStatus" />
+<partial name="_PostLearningAssessmentCard" />
