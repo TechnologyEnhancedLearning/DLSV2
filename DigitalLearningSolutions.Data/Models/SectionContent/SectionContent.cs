@@ -2,8 +2,7 @@
 {
     public class SectionContent
     {
-        public string CustomisationName { get; }
-        public string ApplicationName { get; }
+        public string CourseTitle { get; }
         public string SectionName { get; }
         public int TimeMins { get; }
         public int AverageSectionTime { get; }
@@ -20,8 +19,7 @@
             double percentComplete
         )
         {
-            CustomisationName = customisationName;
-            ApplicationName = applicationName;
+            CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
             TimeMins = timeMins;
             AverageSectionTime = averageSectionTime;
