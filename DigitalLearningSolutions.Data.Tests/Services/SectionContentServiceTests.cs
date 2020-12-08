@@ -35,6 +35,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             var expectedSectionContent = new SectionContent(
+                "Erin Test 01",
+                "Office 2013 Essentials for the Workplace",
                 "Working with Microsoft Office applications",
                 0,
                 28,
@@ -94,6 +96,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             var expectedSectionContent = new SectionContent(
+                "Testing",
+                "Excel 2013 for the Workplace",
                 "Entering data",
                 4,
                 28,

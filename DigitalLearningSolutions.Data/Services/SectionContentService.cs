@@ -27,6 +27,8 @@
             return connection.QueryFirstOrDefault<SectionContent>(
                 @"
                     SELECT
+	                    Customisations.CustomisationName,
+	                    Applications.ApplicationName,
 	                    Sections.SectionName, 
 	                    SUM(aspProgress.TutTime) AS TimeMins, 
 	                    Sections.AverageSectionMins AS AverageSectionTime, 
@@ -43,16 +45,19 @@
 	                    INNER JOIN CustomisationTutorials ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
 	                    INNER JOIN Sections ON Sections.SectionID = Tutorials.SectionID 
 	                    INNER JOIN Customisations ON Progress.CustomisationID = Customisations.CustomisationID
+	                    INNER JOIN Applications ON Customisations.ApplicationID = Applications.ApplicationID
 	                    LEFT OUTER JOIN AssessAttempts ON Progress.ProgressID = AssessAttempts.ProgressID AND Sections.SectionNumber = AssessAttempts.SectionNumber
                     WHERE (CustomisationTutorials.CustomisationID = Progress.CustomisationID)
 	                    AND (Progress.CustomisationID = @customisationId)
-	                    AND (Progress.ProgressID = @progressID) 
-	                    AND (Sections.SectionID = @sectionID)
+	                    AND (Progress.ProgressID = @progressId) 
+	                    AND (Sections.SectionID = @sectionId)
                     GROUP BY Sections.SectionID, 
 	                    Sections.SectionName, 
 	                    Sections.AverageSectionMins, 
 	                    Progress.CandidateID, 
-	                    Progress.CustomisationID;",
+	                    Progress.CustomisationID,
+	                    Customisations.CustomisationName,
+	                    Applications.ApplicationName;",
                 new { customisationId, progressId, sectionId }
             );
         }
