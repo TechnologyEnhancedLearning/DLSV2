@@ -32,9 +32,6 @@
             // Then
             tutorial.Should().BeEquivalentTo(new TutorialContent(
                 50,
-                candidateId,
-                sectionId,
-                customisationId,
                 "Navigate documents",
                 "Complete",
                 3,

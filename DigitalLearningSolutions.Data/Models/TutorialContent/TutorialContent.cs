@@ -3,57 +3,48 @@
     public class TutorialContent
     {
         public int Id { get; }
-        public int CandidateID { get; }
-        public int SectionID { get; }
-        public int CustomisationID { get; }
-        public string TutorialName { get; }
+        public string Name { get; }
         public string Status { get; }
         public int TimeSpent { get; }
-        public int AverageTutMins { get; }
-        public int TutScore { get; }
-        public int PossScore { get; }
-        public bool DiagStatus { get; }
-        public int DiagAttempts { get; }
+        public int AverageTutorialDuration { get; }
+        public int CurrentScore { get; }
+        public int PossibleScore { get; }
+        public bool CanShowDiagnosticStatus { get; }
+        public int AttemptCount { get; }
         public string Objectives { get; }
         public string VideoPath { get; }
         public string TutorialPath { get; }
-        public string SupportingMatsPath { get; }
+        public string SupportingMaterialPath { get; }
 
         public TutorialContent(
             int id,
-            int candidateId,
-            int sectionId,
-            int customisationId,
-            string tutorialName,
+            string name,
             string status,
             int timeSpent,
-            int averageTutMins,
-            int tutScore,
-            int possScore,
-            bool diagStatus,
-            int diagAttempts,
+            int averageTutorialDuration,
+            int currentScore,
+            int possibleScore,
+            bool canShowDiagnosticStatus,
+            int attemptCount,
             string objectives,
             string videoPath,
             string tutorialPath,
-            string supportingMatsPath
+            string supportingMaterialPath
         )
         {
             Id = id;
-            CandidateID = candidateId;
-            SectionID = sectionId;
-            CustomisationID = customisationId;
-            TutorialName = tutorialName;
+            Name = name;
             Status = status;
             TimeSpent = timeSpent;
-            AverageTutMins = averageTutMins;
-            TutScore = tutScore;
-            PossScore = possScore;
-            DiagStatus = diagStatus;
-            DiagAttempts = diagAttempts;
+            AverageTutorialDuration = averageTutorialDuration;
+            CurrentScore = currentScore;
+            PossibleScore = possibleScore;
+            CanShowDiagnosticStatus = canShowDiagnosticStatus;
+            AttemptCount = attemptCount;
             Objectives = objectives;
             VideoPath = videoPath;
             TutorialPath = tutorialPath;
-            SupportingMatsPath = supportingMatsPath;
+            SupportingMaterialPath = supportingMaterialPath;
         }
     }
 }

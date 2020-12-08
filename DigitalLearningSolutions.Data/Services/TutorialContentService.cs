@@ -22,21 +22,18 @@
         {
             return connection.QueryFirstOrDefault<TutorialContent?>(
                 @"SELECT Tutorials.TutorialID AS Id,
-                         Progress.CandidateID,
-                         Tutorials.SectionID,
-                         CustomisationTutorials.CustomisationID,
-                         Tutorials.TutorialName,
+                         Tutorials.TutorialName AS Name,
                          TutStatus.Status,
                          aspProgress.TutTime AS TimeSpent,
-                         Tutorials.AverageTutMins,
-                         aspProgress.DiagLast AS TutScore,
-                         Tutorials.DiagAssessOutOf AS PossScore,
-                         CustomisationTutorials.DiagStatus,
-                         aspProgress.DiagAttempts,
+                         Tutorials.AverageTutMins AS AverageTutorialDuration,
+                         aspProgress.DiagLast AS CurrentScore,
+                         Tutorials.DiagAssessOutOf AS PossibleScore,
+                         CustomisationTutorials.DiagStatus AS CanShowDiagnosticStatus,
+                         aspProgress.DiagAttempts AS AttemptCount,
                          Tutorials.Objectives,
                          Tutorials.VideoPath,
                          Tutorials.TutorialPath,
-                         Tutorials.SupportingMatsPath
+                         Tutorials.SupportingMatsPath AS SupportingMaterialPath
                     FROM Tutorials
                          INNER JOIN aspProgress
                          ON aspProgress.TutorialID = Tutorials.TutorialID
