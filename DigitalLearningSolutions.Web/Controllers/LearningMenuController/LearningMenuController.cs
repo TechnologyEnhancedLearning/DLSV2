@@ -37,8 +37,6 @@
             var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
-
             if (courseContent == null || centreId == null)
             {
                 logger.LogError(
@@ -53,11 +51,12 @@
             if (progressId == null)
             {
                 logger.LogError(
-                    "Redirecting to 500 as no progress id was returned. " +
+                    "Redirecting to 404 as no progress id was returned. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new InitialMenuViewModel(courseContent);
