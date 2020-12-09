@@ -85,15 +85,29 @@
         public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
         {
             var candidateId = User.GetCandidateId();
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            var centreId = User.GetCentreId();
 
             var tutorialContent =
                 tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
 
-            if (tutorialContent == null)
+            if (tutorialContent == null || centreId == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 500 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            }
+
+            courseContentService.UpdateProgress(progressId.Value);
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+
             return View("Tutorial/Tutorial", new TutorialViewModel(tutorialContent, customisationId, sectionId));
         }
 

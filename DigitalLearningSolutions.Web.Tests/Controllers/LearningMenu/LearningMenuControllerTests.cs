@@ -205,8 +205,14 @@
         }
 
         [Test]
-        public void Tutorials_should_StartOrUpdate_course_sessions()
+        public void Tutorials_should_StartOrUpdate_course_sessions_if_valid_tutorial()
         {
+            // Given
+            var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(defaultTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+
             // When
             controller.Tutorial(CustomisationId, SectionId, TutorialId);
 
@@ -219,12 +225,93 @@
         }
 
         [Test]
+        public void Tutorials_should_not_StartOrUpdate_course_sessions_if_invalid_tutorial()
+        {
+            // Given
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+
+            // When
+            controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Tutorials_should_not_StartOrUpdate_course_sessions_if_progress_missing()
+        {
+            // Given
+            var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(defaultTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Tutorials_should_UpdateProgress_course_sessions_if_valid_tutorial()
+        {
+            // Given
+            var progressId = 3;
+            var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(defaultTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
+
+            // When
+            controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Tutorials_should_not_UpdateProgress_course_sessions_if_invalid_tutorial()
+        {
+            // Given
+            var progressId = 3;
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
+
+            // When
+            controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Tutorials_should_not_UpdateProgress_course_sessions_if_progress_missing()
+        {
+            // Given
+            var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
+            A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
+                .Returns(defaultTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
         public void Tutorials_should_render_view()
         {
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
             A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(expectedTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(3);
 
             // When
             var result = controller.Tutorial(CustomisationId, SectionId, TutorialId);
