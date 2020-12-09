@@ -12,18 +12,21 @@
     public partial class FrameworksController : Controller
     {
         private readonly IFrameworkService frameworkService;
+        private readonly ICommonService commonService;
         private readonly ICentresService centresService;
         private readonly IConfigService configService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
         public FrameworksController(
             IFrameworkService frameworkService,
+            ICommonService commonService,
            ICentresService centresService,
            IConfigService configService,
             ILogger<FrameworksController> logger,
             IConfiguration config)
         {
             this.frameworkService = frameworkService;
+            this.commonService = commonService;
             this.centresService = centresService;
             this.configService = configService;
             this.logger = logger;

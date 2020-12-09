@@ -1,0 +1,76 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model CreateBrandingViewModel
+@{
+  ViewData["Title"] = "Framework Branding";
+  ViewData["Application"] = "Framework Service";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<h1>Choose Framework Branding</h1>
+<form method="post">
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--xl">
+      <h2>How should the framework, @Model.BrandedFramework.FrameworkName, be branded?</h2>
+    </legend>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="brand-select">
+        Brand
+      </label>
+      <select class="nhsuk-select" id="brand-select" name="BrandID" asp-for="BrandedFramework.BrandID" asp-items="Model.BrandSelectList">
+        <option value="0">* New brand *</option>
+      </select>
+      <div id="new-brand-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
+        <label class="nhsuk-label" for="brand-field">
+          New brand name
+        </label>
+        <input type="text" id="brand-field" name="Brand" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="BrandedFramework.Brand" />
+      </div>
+    </div>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="category-select">
+        Category
+      </label>
+      <select class="nhsuk-select" id="category-select" name="CategoryID" asp-for="BrandedFramework.CategoryID" asp-items="Model.CategorySelectList">
+        <option value="0">* New category *</option>
+      </select>
+      <div id="new-category-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
+        <label class="nhsuk-label" for="category-field">
+          New category name
+        </label>
+        <input type="text" id="category-field" name="Category" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="BrandedFramework.Category" />
+      </div>
+    </div>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="topic-select">
+        Topic
+      </label>
+      <select class="nhsuk-select" id="topic-select" name="TopicID" asp-for="BrandedFramework.TopicID" asp-items="Model.TopicSelectList">
+        <option value="0">* New topic *</option>
+      </select>
+      <div id="new-topic-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
+        <label class="nhsuk-label" for="topic-field">
+          New topic name
+        </label>
+        <input type="text" id="topic-field" class="nhsuk-input nhsuk-u-width-two-thirds" name="Topic" asp-for="BrandedFramework.Topic" />
+      </div>
+    </div>
+  </fieldset>
+  <button class="nhsuk-button" type="submit">
+    Save and continue
+  </button>  
+</form>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-back-link grid-column-85">
+    <a class="nhsuk-back-link__link skip-link">
+      Skip
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+      </svg>
+    </a>
+  </div>
+</div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/branding.js")" asp-append-version="true"></script>
+}

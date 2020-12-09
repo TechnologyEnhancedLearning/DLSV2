@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
@@ -54,6 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />

@@ -1,8 +1,10 @@
-﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+﻿using DigitalLearningSolutions.Data.Models.Common;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
@@ -73,7 +75,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 CategoryID = 1,
                 PublishStatusID = 1
             };
-            return View("Developer/CreateFramework", newFramework);
+            return View("Developer/CreateName", newFramework);
         }
         [HttpPost]
         [Route("/Frameworks/New")]
@@ -82,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (!ModelState.IsValid)
             {
                 // do something
-                return View("Developer/CreateFramework", baseFramework);
+                return View("Developer/CreateName", baseFramework);
             }
             else
             {
@@ -105,33 +107,112 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var matchingSearchResults = similarItems.ToList().Count;
             if (matchingSearchResults > 0)
             {
-                var model = new SimilarViewModel()
+                var model = new CreateSimilarViewModel()
                 {
                     FrameworkName = frameworkname,
                     MatchingSearchResults = matchingSearchResults,
                     SimilarFrameworks = similarItems,
                     SameFrameworks = sameItems
                 };
-                return View("Developer/SimilarFrameworks", model);
+                return View("Developer/CreateSimilar", model);
             }
             else
             {
-                //need to create framework and move to next step.
-                return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkname });
+                return RedirectToAction("SaveNewFramework", "Frameworks", new { frameworkname });
             }
 
         }
-        [Route("/Frameworks/New/Brand")]
-        public IActionResult SetNewFrameworkBrand(string frameworkname)
+        public IActionResult SaveNewFramework(string frameworkname)
+        {
+            var framework = frameworkService.CreateFramework(frameworkname, GetAdminID());
+            //need to create framework and move to next step.
+            return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId = framework.Id });
+        }
+        [Route("/Frameworks/New/Brand/{frameworkId}")]
+        public IActionResult SetNewFrameworkBrand(int frameworkId)
         {
             var adminId = GetAdminID();
-            var frameworkId = frameworkService.CreateFramework(frameworkname, adminId);
-            if (frameworkId <= 0)
+            var centreId = GetCentreId();
+            var framework = frameworkService.GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework == null | centreId == null)
             {
-                logger.LogWarning($"Failed to insert n {adminId} without Framework Developer role.");
+                logger.LogWarning($"Failed to load branding page for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                 return StatusCode(500);
             }
-            return StatusCode(403);
+            var brandsList = commonService.GetBrandListForCentre((int)centreId).Select(b => new { b.BrandID, b.BrandName }).ToList();
+            var categoryList = commonService.GetCategoryListForCentre((int)centreId).Select(c => new { c.CourseCategoryID, c.CategoryName }).ToList();
+            var topicList = commonService.GetTopicListForCentre((int)centreId).Select(t => new { t.CourseTopicID, t.CourseTopic }).ToList();
+            var brandSelectList = new SelectList(brandsList, "BrandID", "BrandName");
+            var categorySelectList = new SelectList(categoryList, "CourseCategoryID", "CategoryName");
+            var topicSelectList = new SelectList(topicList, "CourseTopicID", "CourseTopic");
+            var model = new CreateBrandingViewModel()
+            {
+                BrandedFramework = framework,
+                BrandSelectList = brandSelectList,
+                CategorySelectList = categorySelectList,
+                TopicSelectList = topicSelectList
+            };
+            return View("Developer/CreateBranding", model);
+        }
+        [HttpPost]
+        [Route("/Frameworks/New/Brand/{frameworkId}")]
+        public IActionResult SetNewFrameworkBrand(BrandedFramework brandedFramework, int frameworkId)
+        {
+            var adminId = GetAdminID();
+            var centreId = GetCentreId();
+            if (brandedFramework.BrandID == 0)
+            {
+                if (brandedFramework.Brand != null)
+                {
+                    //create brand and set brand id
+                    brandedFramework.BrandID = commonService.InsertBrandAndReturnId(brandedFramework.Brand, (int)centreId);
+                }
+                else
+                {
+                    return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
+                }
+            }
+            if (brandedFramework.CategoryID == 0)
+            {
+                if (brandedFramework.Category != null)
+                {
+                    //create category and set category id to new category
+                    brandedFramework.CategoryID = commonService.InsertCategoryAndReturnId(brandedFramework.Category, (int)centreId);
+                }
+                else
+                {
+                    return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
+                }
+            }
+            if (brandedFramework.TopicID == 0)
+            {
+                if (brandedFramework.Topic != null)
+                {
+                    //create topic and set topic id to new topic
+                    brandedFramework.TopicID = commonService.InsertTopicAndReturnId(brandedFramework.Topic, (int)centreId);
+                }
+                else
+                {
+                    return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
+                }
+            }
+            if (brandedFramework.BrandID == null | brandedFramework.CategoryID == null | brandedFramework.TopicID == null)
+            {
+                logger.LogWarning($"Failed to update branding for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
+                return StatusCode(500);
+            }
+            var updatedFramework = frameworkService.UpdateFrameworkBranding(frameworkId, (int)brandedFramework.BrandID, (int)brandedFramework.CategoryID, (int)brandedFramework.TopicID, adminId);
+            if (updatedFramework == null)
+            {
+                logger.LogWarning($"Failed to update branding for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
+                return StatusCode(500);
+            }
+            return RedirectToAction("AddContributors", "Frameworks", new { frameworkId });
+        }
+        [Route("/Frameworks/New/Contributors/{frameworkId}")]
+        public IActionResult AddContributors(int frameworkId)
+        {
+            return StatusCode(500);
         }
     }
 }
