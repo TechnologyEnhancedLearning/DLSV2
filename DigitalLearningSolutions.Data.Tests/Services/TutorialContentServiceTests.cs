@@ -55,7 +55,7 @@
         {
             // Given
             const int candidateId = 1;
-            const int customisationId = -1;
+            const int customisationId = 1378;
             const int sectionId = 74;
             const int tutorialId = 50;
 
@@ -72,7 +72,7 @@
             // Given
             const int candidateId = 1;
             const int customisationId = 1379;
-            const int sectionId = 100;
+            const int sectionId = 75;
             const int tutorialId = 50;
 
             // When

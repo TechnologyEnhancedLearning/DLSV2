@@ -49,6 +49,8 @@
                          LEFT JOIN Progress
                          ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
                             AND Progress.CandidateID = @candidateId
+                            AND Progress.RemovedDate IS NULL
+                            AND Progress.SystemRefreshed = 0
 
                          LEFT JOIN aspProgress
                          ON aspProgress.TutorialID = Tutorials.TutorialID
@@ -60,8 +62,7 @@
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1
-                     AND (Progress.CandidateID IS NULL OR (Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0));",
+                     AND CustomisationTutorials.Status = 1;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
     }
