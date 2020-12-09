@@ -170,8 +170,14 @@
         }
 
         [Test]
-        public void Index_should_StartOrUpdate_course_sessions()
+        public void Index_valid_customisationId_should_StartOrUpdate_course_sessions()
         {
+            // Given
+            var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+                .Returns(defaultCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+
             // When
             controller.Index(CustomisationId);
 
@@ -182,6 +188,36 @@
                     candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
         }
+
+        [Test]
+        public void Index_invalid_customisationId_should_not_StartOrUpdate_course_sessions()
+        {
+            // Given
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(1);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Index_missing_progressId_should_not_StartOrUpdate_course_sessions()
+        {
+            // Given
+            var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(defaultCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            controller.Index(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
 
         [Test]
         public void Sections_should_StartOrUpdate_course_sessions()

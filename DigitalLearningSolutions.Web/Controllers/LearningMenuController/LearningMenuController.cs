@@ -37,8 +37,6 @@
             var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
-
             if (courseContent == null || centreId == null)
             {
                 logger.LogError(
@@ -58,6 +56,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             }
 
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new InitialMenuViewModel(courseContent);
