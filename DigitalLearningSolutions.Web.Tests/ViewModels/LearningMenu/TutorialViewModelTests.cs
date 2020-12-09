@@ -24,17 +24,29 @@
         }
 
         [Test]
-        public void Tutorial_should_have_ids()
+        public void Tutorial_should_have_customisationId()
         {
             // Given
             var expectedCourseContent = TutorialContentHelper.CreateDefaultTutorialContent();
 
             // When
-            var initialMenuViewModel = new TutorialViewModel(expectedCourseContent, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(expectedCourseContent, CustomisationId, SectionId);
 
             // Then
-            initialMenuViewModel.CustomisationId.Should().Be(CustomisationId);
-            initialMenuViewModel.SectionId.Should().Be(SectionId);
+            tutorialViewModel.CustomisationId.Should().Be(CustomisationId);
+        }
+
+        [Test]
+        public void Tutorial_should_have_sectionId()
+        {
+            // Given
+            var expectedCourseContent = TutorialContentHelper.CreateDefaultTutorialContent();
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(expectedCourseContent, CustomisationId, SectionId);
+
+            // Then
+            tutorialViewModel.SectionId.Should().Be(SectionId);
         }
     }
 }

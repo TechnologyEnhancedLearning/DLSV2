@@ -15,13 +15,13 @@
             SectionId = sectionId;
         }
 
-        public string ParseMinutes(int minutes)
+        private static string ParseMinutes(int minutes)
         {
             if (minutes > 60)
             {
                 return $"{minutes / 60}h {minutes % 60}m";
             }
-            return $"{minutes % 60}m";
+            return $"{minutes}m";
         }
 
         public bool CanShowProgress => TutorialContent.CanShowDiagnosticStatus && TutorialContent.AttemptCount > 0;
