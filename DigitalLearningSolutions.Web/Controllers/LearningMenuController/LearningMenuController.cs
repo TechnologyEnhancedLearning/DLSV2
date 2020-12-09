@@ -100,7 +100,7 @@
             if (progressId == null)
             {
                 logger.LogError(
-                    "Redirecting to 500 as no progress id was returned. " +
+                    "Redirecting to 404 as no progress id was returned. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
