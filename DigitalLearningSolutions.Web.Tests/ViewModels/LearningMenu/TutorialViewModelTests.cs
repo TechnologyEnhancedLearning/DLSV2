@@ -17,10 +17,10 @@
             var expectedCourseContent = TutorialContentHelper.CreateDefaultTutorialContent();
 
             // When
-            var initialMenuViewModel = new TutorialViewModel(expectedCourseContent, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(expectedCourseContent, CustomisationId, SectionId);
 
             // Then
-            initialMenuViewModel.TutorialContent.Should().BeEquivalentTo(expectedCourseContent);
+            tutorialViewModel.TutorialContent.Should().BeEquivalentTo(expectedCourseContent);
         }
 
         [Test]

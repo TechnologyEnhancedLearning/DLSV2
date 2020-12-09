@@ -59,6 +59,8 @@
                      AND CustomisationTutorials.CustomisationID = @customisationId
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
+                     AND Customisations.Active = 1
+                     AND CustomisationTutorials.Status = 1
                      AND Progress.RemovedDate IS NULL
                      AND Progress.SystemRefreshed = 0;",
             new { candidateId, customisationId, sectionId, tutorialId });
