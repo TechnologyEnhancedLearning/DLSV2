@@ -76,6 +76,29 @@
         {
             // Given
             A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId)).Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(3);
+
+            // When
+            var result = controller.Index(CustomisationId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Index_should_return_404_if_unable_to_enrol()
+        {
+            // Given
+            var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, CustomisationId))
+                .Returns(defaultCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
 
             // When
             var result = controller.Index(CustomisationId);
