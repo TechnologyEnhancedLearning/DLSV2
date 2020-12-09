@@ -126,13 +126,8 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Introducing Outlook", 96, false, 0),
-                    new CourseSection("Writing and sending emails", 97, false, 0),
-                    new CourseSection("Managing emails", 98, false, 0),
                     new CourseSection("Using the Calendar", 99, true, 300/ 11.0),
-                    new CourseSection("Working with Contacts", 100, false, 0),
-                    new CourseSection("Using Tasks", 101, false, 0),
-                    new CourseSection("Using Notes and  the  Journal", 102, true, 0),
+                    new CourseSection("Using Notes and  the  Journal", 102, true, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -160,13 +155,8 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Introducing Outlook", 96, false, 0),
-                    new CourseSection("Writing and sending emails", 97, false, 0),
-                    new CourseSection("Managing emails", 98, false, 0),
                     new CourseSection("Using the Calendar", 99, true, 0),
-                    new CourseSection("Working with Contacts", 100, false, 0),
-                    new CourseSection("Using Tasks", 101, false, 0),
-                    new CourseSection("Using Notes and  the  Journal", 102, true, 0),
+                    new CourseSection("Using Notes and  the  Journal", 102, true, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -285,12 +275,7 @@
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Getting started", 2123, false, 0),
-                    new CourseSection("Digital devices", 2124, false, 0),
-                    new CourseSection("Apps, applications and files", 2125, false, 0),
-                    new CourseSection("Staying safe", 2126, false, 0),
-                    new CourseSection("Communication", 2127, false, 0),
-                    new CourseSection("The Internet", 2128, false, 0)
+                    new CourseSection("Getting started", 2123, false, 0)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -380,6 +365,38 @@
             }
         }
 
+        [Test]
+        public void Get_course_content_should_only_return_sections_with_tutorials_in_customisation()
+        {
+            // Given
+            const int candidateId = 254480;
+            const int customisationId = 24224;
+
+            using (new TransactionScope())
+            {
+                // When
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                var expectedCourse = new CourseContent(
+                    24224,
+                    "CMS Demonstration Course",
+                    "Captivate Test",
+                    "13m",
+                    "Test Centre NHSD",
+                    null,
+                    false,
+                    null
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Dementia Awareness", 245, true, 0),
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
 
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()

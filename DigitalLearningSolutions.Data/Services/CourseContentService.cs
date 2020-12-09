@@ -56,10 +56,14 @@
                   INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                   INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
                   INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
-                  LEFT JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
+                  INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
+                  INNER JOIN CustomisationTutorials ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
+                                                   AND Tutorials.TutorialID = CustomisationTutorials.TutorialID
                   LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
                   LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
                   WHERE Customisations.CustomisationID = @customisationId
+                    AND Sections.ArchivedDate IS NULL
+                    AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
                   GROUP BY
                          Sections.SectionID,
                          Customisations.CustomisationID,
