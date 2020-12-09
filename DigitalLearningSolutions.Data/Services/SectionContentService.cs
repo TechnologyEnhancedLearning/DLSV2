@@ -22,7 +22,6 @@
             this.logger = logger;
         }
 
-
         public SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId)
         {
             return connection.QueryFirstOrDefault<SectionContent>(
