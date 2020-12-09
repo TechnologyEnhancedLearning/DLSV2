@@ -99,7 +99,7 @@
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_candidate_not_on_course()
+        public void Get_tutorial_content_should_return_tutorial_with_default_progress_if_candidate_not_on_course()
         {
             // Given
             const int candidateId = 100;
@@ -111,7 +111,24 @@
             var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
-            tutorial.Should().BeNull();
+            tutorial.Should().BeEquivalentTo(new TutorialContent(
+                50,
+                "Navigate documents",
+                "Level 2 - Microsoft Word 2007",
+                "Testing",
+                "Not started",
+                0,
+                5,
+                0,
+                3,
+                true,
+                0,
+                "<html><head><title>Tutorial Objective</title></head><body>In this tutorial you will learn to:" +
+                "<ul><li>use the Go To feature to jump to a particular page</li><li>browse a document by a specific element</li></ul></body></html>",
+                "/MOST/Word07Core/swf/1_1_02_Navigate_documents.swf",
+                "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
+                "/MOST/Word07Core/support.html?popup=1&item=navigateDocs"
+            ));
         }
 
         [Test]

@@ -25,24 +25,18 @@
                          Tutorials.TutorialName AS Name,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         TutStatus.Status,
-                         aspProgress.TutTime AS TimeSpent,
+                         COALESCE(TutStatus.Status, 'Not started') AS Status,
+                         COALESCE(aspProgress.TutTime, 0) AS TimeSpent,
                          Tutorials.AverageTutMins AS AverageTutorialDuration,
-                         aspProgress.DiagLast AS CurrentScore,
+                         COALESCE(aspProgress.DiagLast, 0) AS CurrentScore,
                          Tutorials.DiagAssessOutOf AS PossibleScore,
                          CustomisationTutorials.DiagStatus AS CanShowDiagnosticStatus,
-                         aspProgress.DiagAttempts AS AttemptCount,
+                         COALESCE(aspProgress.DiagAttempts, 0) AS AttemptCount,
                          Tutorials.Objectives,
                          Tutorials.VideoPath,
                          Tutorials.TutorialPath,
                          Tutorials.SupportingMatsPath AS SupportingMaterialPath
                     FROM Tutorials
-                         INNER JOIN aspProgress
-                         ON aspProgress.TutorialID = Tutorials.TutorialID
-
-                         INNER JOIN TutStatus
-                         ON aspProgress.TutStat = TutStatus.TutStatusID
-
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
 
@@ -52,17 +46,23 @@
                          INNER JOIN Applications
                          ON Customisations.ApplicationId = Applications.ApplicationId
 
-                         INNER JOIN Progress
-                         ON aspProgress.ProgressID = Progress.ProgressID
-                            AND CustomisationTutorials.CustomisationID = Progress.CustomisationID
-                   WHERE Progress.CandidateID = @candidateId
-                     AND CustomisationTutorials.CustomisationID = @customisationId
+                         LEFT JOIN Progress
+                         ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
+                            AND Progress.CandidateID = @candidateId
+                            AND Progress.RemovedDate IS NULL
+                            AND Progress.SystemRefreshed = 0
+
+                         LEFT JOIN aspProgress
+                         ON aspProgress.TutorialID = Tutorials.TutorialID
+                            AND aspProgress.ProgressID = Progress.ProgressID
+
+                         LEFT JOIN TutStatus
+                         ON aspProgress.TutStat = TutStatus.TutStatusID
+                   WHERE CustomisationTutorials.CustomisationID = @customisationId
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1
-                     AND Progress.RemovedDate IS NULL
-                     AND Progress.SystemRefreshed = 0;",
+                     AND CustomisationTutorials.Status = 1;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
     }
