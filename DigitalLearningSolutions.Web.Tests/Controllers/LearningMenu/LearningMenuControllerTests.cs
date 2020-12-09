@@ -204,7 +204,7 @@
         }
 
         [Test]
-        public void Index_missing_progressId_should_not_StartOrUpdate_course_sessions()
+        public void Index_unable_to_enrol_should_not_StartOrUpdate_course_sessions()
         {
             // Given
             var defaultCourseContent = CourseContentHelper.CreateDefaultCourseContent(CustomisationId);
