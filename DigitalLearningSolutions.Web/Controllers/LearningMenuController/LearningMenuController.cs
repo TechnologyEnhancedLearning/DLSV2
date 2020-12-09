@@ -102,7 +102,7 @@
                 logger.LogError(
                     "Redirecting to 500 as no progress id was returned. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
             courseContentService.UpdateProgress(progressId.Value);

@@ -240,7 +240,7 @@
         }
 
         [Test]
-        public void Tutorials_should_not_StartOrUpdate_course_sessions_if_progress_missing()
+        public void Tutorials_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
         {
             // Given
             var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
@@ -259,7 +259,7 @@
         public void Tutorials_should_UpdateProgress_course_sessions_if_valid_tutorial()
         {
             // Given
-            var progressId = 3;
+            const int progressId = 3;
             var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
             A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(defaultTutorialContent);
@@ -276,7 +276,7 @@
         public void Tutorials_should_not_UpdateProgress_course_sessions_if_invalid_tutorial()
         {
             // Given
-            var progressId = 3;
+            const int progressId = 3;
             A.CallTo(() => tutorialContentService.GetTutorialContent(CandidateId, CustomisationId, SectionId, TutorialId))
                 .Returns(null);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(progressId);
@@ -289,7 +289,7 @@
         }
 
         [Test]
-        public void Tutorials_should_not_UpdateProgress_course_sessions_if_progress_missing()
+        public void Tutorials_should_not_UpdateProgress_course_sessions_if_unable_to_enrol()
         {
             // Given
             var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
@@ -332,6 +332,33 @@
                 SectionId,
                 TutorialId
             )).Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(3);
+
+            // When
+            var result = controller.Tutorial(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Tutorials_should_return_404_if_unable_to_enrol()
+        {
+            // Given
+            var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);
+            A.CallTo(() => tutorialContentService.GetTutorialContent(
+                CandidateId,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            )).Returns(defaultTutorialContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
 
             // When
             var result = controller.Tutorial(CustomisationId, SectionId, TutorialId);

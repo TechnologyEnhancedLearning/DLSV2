@@ -15,15 +15,6 @@
             SectionId = sectionId;
         }
 
-        private static string ParseMinutes(int minutes)
-        {
-            if (minutes > 60)
-            {
-                return $"{minutes / 60}h {minutes % 60}m";
-            }
-            return $"{minutes}m";
-        }
-
         public bool CanShowProgress => TutorialContent.CanShowDiagnosticStatus && TutorialContent.AttemptCount > 0;
 
         public string TutorialRecommendation =>
@@ -32,8 +23,17 @@
         public string ScoreSummary =>
             CanShowProgress ? $"(score: {TutorialContent.CurrentScore} out of {TutorialContent.PossibleScore})" : "";
 
-        public string GetTimeSummary =>
+        public string TimeSummary =>
             $"{ParseMinutes(TutorialContent.TimeSpent)}" +
             $" (average time {ParseMinutes(TutorialContent.AverageTutorialDuration)})";
+
+        private static string ParseMinutes(int minutes)
+        {
+            if (minutes > 60)
+            {
+                return $"{minutes / 60}h {minutes % 60}m";
+            }
+            return $"{minutes}m";
+        }
     }
 }
