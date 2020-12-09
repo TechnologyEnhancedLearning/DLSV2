@@ -113,5 +113,37 @@
             // Then
             tutorial.Should().BeNull();
         }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_course_is_inactive()
+        {
+            // Given
+            const int candidateId = 100;
+            const int customisationId = 1512;
+            const int sectionId = 74;
+            const int tutorialId = 52;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_tutorial_status_0()
+        {
+            // Given
+            const int candidateId = 100;
+            const int customisationId = 1530;
+            const int sectionId = 74;
+            const int tutorialId = 49;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
     }
 }
