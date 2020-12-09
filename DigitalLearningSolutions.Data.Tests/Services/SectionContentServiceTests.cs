@@ -29,9 +29,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // When
             const int customisationId = 15853;
-            const int progressId = 173218;
+            const int candidateId = 1;
             const int sectionId = 382;
-            var result = sectionContentService.GetSectionContent(customisationId, progressId, sectionId);
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
             var expectedSectionContent = new SectionContent(
@@ -51,22 +51,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             //When
             const int customisationId = 0;
-            const int progressId = 173218;
+            const int candidateId = 1;
             const int sectionId = 382;
-            var result = sectionContentService.GetSectionContent(customisationId, progressId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_section_content_should_return_null_if_progress_id_is_invalid()
-        {
-            //When
-            const int customisationId = 15853;
-            const int progressId = 0;
-            const int sectionId = 382;
-            var result = sectionContentService.GetSectionContent(customisationId, progressId, sectionId);
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
             result.Should().BeNull();
@@ -77,9 +64,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             //When
             const int customisationId = 15853;
-            const int progressId = 173218;
+            const int candidateId = 1;
             const int sectionId = 0;
-            var result = sectionContentService.GetSectionContent(customisationId, progressId, sectionId);
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
             result.Should().BeNull();
@@ -90,9 +77,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // When
             const int customisationId = 19262;
-            const int progressId = 201058;
+            const int candidateId = 1;
             const int sectionId = 1011;
-            var result = sectionContentService.GetSectionContent(customisationId, progressId, sectionId);
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
             var expectedSectionContent = new SectionContent(
@@ -103,6 +90,28 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 28,
                 true,
                 25
+            );
+            result.Should().BeEquivalentTo(expectedSectionContent);
+        }
+
+        [Test]
+        public void Get_section_content_should_still_return_content_if_candidate_is_not_enrolled()
+        {
+            // When
+            const int customisationId = 19262;
+            const int candidateId = 0;
+            const int sectionId = 1011;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedSectionContent = new SectionContent(
+                "Testing",
+                "Excel 2013 for the Workplace",
+                "Entering data",
+                null,
+                28,
+                true,
+                0
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }

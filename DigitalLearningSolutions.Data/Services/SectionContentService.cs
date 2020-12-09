@@ -8,7 +8,7 @@
 
     public interface ISectionContentService
     {
-        SectionContent? GetSectionContent(int customisationId, int progressId, int sectionId);
+        SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
     }
 
     public class SectionContentService : ISectionContentService
@@ -22,43 +22,56 @@
             this.logger = logger;
         }
 
-        public SectionContent? GetSectionContent(int customisationId, int progressId, int sectionId)
+
+        public SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId)
         {
             return connection.QueryFirstOrDefault<SectionContent>(
                 @"
                     SELECT
-	                    Customisations.CustomisationName,
-	                    Applications.ApplicationName,
-	                    Sections.SectionName, 
-	                    SUM(aspProgress.TutTime) AS TimeMins, 
-	                    Sections.AverageSectionMins AS AverageSectionTime, 
-                        dbo.CheckCustomisationSectionHasLearning(Progress.CustomisationID, Sections.SectionID) AS HasLearning,
-	                    (CASE
-		                    WHEN Progress.CandidateID IS NULL
-				                    OR dbo.CheckCustomisationSectionHasLearning(Progress.CustomisationID, Sections.SectionID) = 0
-		                    THEN 0
-		                    ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
-	                    END) AS PercentComplete
-                    FROM aspProgress 
-	                    INNER JOIN Progress ON aspProgress.ProgressID = Progress.ProgressID 
-	                    INNER JOIN Tutorials ON Tutorials.TutorialID = aspProgress.TutorialID
-	                    INNER JOIN CustomisationTutorials ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
-	                    INNER JOIN Sections ON Sections.SectionID = Tutorials.SectionID 
-	                    INNER JOIN Customisations ON Progress.CustomisationID = Customisations.CustomisationID
-	                    INNER JOIN Applications ON Customisations.ApplicationID = Applications.ApplicationID
-	                    LEFT OUTER JOIN AssessAttempts ON Progress.ProgressID = AssessAttempts.ProgressID AND Sections.SectionNumber = AssessAttempts.SectionNumber
-                    WHERE (CustomisationTutorials.CustomisationID = Progress.CustomisationID)
-	                    AND (Progress.CustomisationID = @customisationId)
-	                    AND (Progress.ProgressID = @progressId) 
-	                    AND (Sections.SectionID = @sectionId)
-                    GROUP BY Sections.SectionID, 
-	                    Sections.SectionName, 
-	                    Sections.AverageSectionMins, 
-	                    Progress.CandidateID, 
-	                    Progress.CustomisationID,
-	                    Customisations.CustomisationName,
-	                    Applications.ApplicationName;",
-                new { customisationId, progressId, sectionId }
+                        Customisations.CustomisationName,
+                        Applications.ApplicationName,
+                        Sections.SectionName,
+                        SUM(aspProgress.TutTime) AS TimeMins, 
+                        Sections.AverageSectionMins AS AverageSectionTime, 
+                        dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
+                        (CASE
+                            WHEN Progress.CandidateID IS NULL
+                                OR dbo.CheckCustomisationSectionHasLearning(Progress.CustomisationID, Sections.SectionID) = 0
+                            THEN 0
+                            ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
+                        END) AS PercentComplete
+                    FROM
+                        Tutorials
+                        INNER JOIN CustomisationTutorials
+                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                        INNER JOIN Customisations
+                            ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
+                        INNER JOIN Applications
+                            ON Applications.ApplicationID = Customisations.ApplicationID
+                        INNER JOIN Sections
+                            ON Sections.SectionID = Tutorials.SectionID
+                        LEFT JOIN Progress
+                            ON Progress.CustomisationID = Customisations.CustomisationID
+                            AND Progress.CandidateID = @candidateId
+                        LEFT JOIN aspProgress
+                            ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
+                            and aspProgress.ProgressID = Progress.ProgressID
+                    WHERE
+                        CustomisationTutorials.CustomisationID = @customisationId
+	                    AND Sections.SectionID = @sectionId
+	                    AND (Sections.ArchivedDate IS NULL)
+	                    AND (CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1 OR CustomisationTutorials.Status = 1)
+                    GROUP BY
+                        Sections.SectionID,
+                        Customisations.CustomisationID,
+                        Progress.ProgressID,
+                        Progress.CustomisationID,
+                        Progress.CandidateID,
+                        Customisations.CustomisationName,
+                        Applications.ApplicationName,
+                        Sections.SectionName, 
+                        Sections.AverageSectionMins",
+                new { customisationId, candidateId, sectionId }
             );
         }
     }
