@@ -4,6 +4,7 @@
     {
         public int Id { get; }
         public string Name { get; }
+        public string CourseTitle { get; }
         public string Status { get; }
         public int TimeSpent { get; }
         public int AverageTutorialDuration { get; }
@@ -11,14 +12,16 @@
         public int PossibleScore { get; }
         public bool CanShowDiagnosticStatus { get; }
         public int AttemptCount { get; }
-        public string Objectives { get; }
-        public string VideoPath { get; }
-        public string TutorialPath { get; }
-        public string SupportingMaterialPath { get; }
+        public string? Objectives { get; }
+        public string? VideoPath { get; }
+        public string? TutorialPath { get; }
+        public string? SupportingMaterialPath { get; }
 
         public TutorialContent(
             int id,
             string name,
+            string applicationName,
+            string customisationName,
             string status,
             int timeSpent,
             int averageTutorialDuration,
@@ -26,14 +29,15 @@
             int possibleScore,
             bool canShowDiagnosticStatus,
             int attemptCount,
-            string objectives,
-            string videoPath,
-            string tutorialPath,
-            string supportingMaterialPath
+            string? objectives,
+            string? videoPath,
+            string? tutorialPath,
+            string? supportingMaterialPath
         )
         {
             Id = id;
             Name = name;
+            CourseTitle = $"{applicationName} - {customisationName}";
             Status = status;
             TimeSpent = timeSpent;
             AverageTutorialDuration = averageTutorialDuration;

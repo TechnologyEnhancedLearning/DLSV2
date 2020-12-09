@@ -23,6 +23,8 @@
             return connection.QueryFirstOrDefault<TutorialContent?>(
                 @"SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
+                         Applications.ApplicationName,
+                         Customisations.CustomisationName,
                          TutStatus.Status,
                          aspProgress.TutTime AS TimeSpent,
                          Tutorials.AverageTutMins AS AverageTutorialDuration,
@@ -44,6 +46,12 @@
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
 
+                         INNER JOIN Customisations
+                         ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+
+                         INNER JOIN Applications
+                         ON Customisations.ApplicationId = Applications.ApplicationId
+
                          INNER JOIN Progress
                          ON aspProgress.ProgressID = Progress.ProgressID
                             AND CustomisationTutorials.CustomisationID = Progress.CustomisationID
@@ -51,6 +59,8 @@
                      AND CustomisationTutorials.CustomisationID = @customisationId
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
+                     AND Customisations.Active = 1
+                     AND CustomisationTutorials.Status = 1
                      AND Progress.RemovedDate IS NULL
                      AND Progress.SystemRefreshed = 0;",
             new { candidateId, customisationId, sectionId, tutorialId });

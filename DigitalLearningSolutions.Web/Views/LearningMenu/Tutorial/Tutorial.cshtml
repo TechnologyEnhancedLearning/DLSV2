@@ -1,0 +1,82 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model TutorialViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/tutorial.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.TutorialContent.CourseTitle;
+  ViewData["Title"] = Model.TutorialContent.CourseTitle;
+  ViewData["CustomisationId"] = @Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.TutorialContent.CourseTitle;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialContent.Name</h1>
+    <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.TutorialContent.Status @Model.ScoreSummary</h2>
+    <p class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-4">@Model.TimeSummary</p>
+  </div>
+</div>
+
+@if (Model.CanShowProgress) {
+  <div class="nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p>Based on your diagnostic assessment outcome, this tutorial is <b>@Model.TutorialRecommendation</b>.</p>
+  </div>
+}
+
+@if (Model.TutorialContent.Objectives != null) {
+  <details class="nhsuk-details nhsuk-u-margin-bottom-4">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text">
+        Objectives
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <p>Here are some example objectives:</p>
+      <ul>
+        <li>objective 1</li>
+        <li>objective 2</li>
+        <li>objective 3</li>
+        <li>objective 4</li>
+      </ul>
+    </div>
+  </details>
+}
+
+<div class="tutorial-actions-container">
+  @if (Model.TutorialContent.TutorialPath != null) {
+    <div>
+      <a class="nhsuk-button" href="">Launch tutorial</a>
+    </div>
+  }
+
+  @if (Model.TutorialContent.VideoPath != null) {
+    <div>
+      <a class="nhsuk-button nhsuk-button--secondary" href="">Watch video</a>
+    </div>
+  }
+
+  @if (Model.TutorialContent.SupportingMaterialPath != null) {
+    <div>
+      <a class="nhsuk-button nhsuk-button--secondary" href="">Download supporting materials</a>
+    </div>
+  }
+</div>
+
+
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link" asp-action="Section" asp-controller="LearningMenu" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+    </svg>
+    Return to section
+  </a>
+</div>

@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -16,17 +15,20 @@
         private readonly IConfiguration config;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
+        private readonly ITutorialContentService tutorialContentService;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
             ICourseContentService courseContentService,
+            ITutorialContentService tutorialContentService,
             ISessionService sessionService
         )
         {
             this.logger = logger;
             this.config = config;
             this.courseContentService = courseContentService;
+            this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
         }
 
@@ -76,6 +78,36 @@
         {
             sessionService.StartOrUpdateSession(User.GetCandidateId(), customisationId, HttpContext.Session);
             return View("Section/Section");
+        }
+
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]
+        public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
+        {
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+
+            var tutorialContent =
+                tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+
+            if (tutorialContent == null || centreId == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            courseContentService.UpdateProgress(progressId.Value);
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+
+            return View("Tutorial/Tutorial", new TutorialViewModel(tutorialContent, customisationId, sectionId));
         }
 
         public IActionResult ContentViewer()
