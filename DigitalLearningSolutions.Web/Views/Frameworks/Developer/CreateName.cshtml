@@ -10,6 +10,9 @@
 }
 <h1>Create a new framework</h1>
 <form method="post">
+  @if (!ViewData.ModelState.IsValid)
+  {
+<partial name="_ErrorSummary" />}
   <nhs-form-group nhs-validation-for="FrameworkName">
     <label class="nhsuk-label" for="framework-name-hint">
       <h2>What is the name of your framework?</h2>
@@ -30,6 +33,6 @@
     Cancel
   </a>
   <button class="nhsuk-button" type="submit">
-    Continue
+    Save and continue
   </button>
 </form>
