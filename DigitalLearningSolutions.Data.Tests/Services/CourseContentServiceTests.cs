@@ -380,6 +380,39 @@
             }
         }
 
+        [Test]
+        public void Get_course_content_should_only_return_sections_with_tutorials_in_customisation()
+        {
+            // Given
+            const int candidateId = 254480;
+            const int customisationId = 24224;
+
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.UpdateSystemRefreshed(candidateId, customisationId, true);
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                var expectedCourse = new CourseContent(
+                    24224,
+                    "CMS Demonstration Course",
+                    "Captivate Test",
+                    "13m",
+                    "Test Centre NHSD",
+                    null,
+                    false,
+                    null
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Dementia Awareness", 245, true, 0),
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
 
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()
