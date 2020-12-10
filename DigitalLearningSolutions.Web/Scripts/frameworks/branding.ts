@@ -1,4 +1,4 @@
-﻿var bs = <HTMLSelectElement>document.getElementById('brand-select');
+﻿const bs = <HTMLSelectElement>document.getElementById('brand-select');
 if (bs != null) {
   bs.addEventListener('change', function () {
     var style = this.value == '0' ? 'block' : 'none';
@@ -15,7 +15,7 @@ if (bs != null) {
     }
   });
 }
-var cs = <HTMLSelectElement>document.getElementById('category-select');
+const cs = <HTMLSelectElement>document.getElementById('category-select');
 if (cs != null) {
   cs.addEventListener('change', function () {
     var style = this.value == '0' ? 'block' : 'none';
@@ -32,7 +32,7 @@ if (cs != null) {
     }
   });
 }
-var ts = <HTMLSelectElement>document.getElementById('topic-select');
+const ts = <HTMLSelectElement>document.getElementById('topic-select');
 if (ts != null) {
   ts.addEventListener('change', function () {
     var style = this.value == '0' ? 'block' : 'none';
