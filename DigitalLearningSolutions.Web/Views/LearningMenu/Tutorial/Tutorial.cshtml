@@ -7,11 +7,11 @@
 
 @{
   ViewData["HeaderPrefix"] = "";
-  ViewData["Application"] = Model.TutorialContent.CourseTitle;
-  ViewData["Title"] = Model.TutorialContent.CourseTitle;
+  ViewData["Application"] = Model.TutorialInformation.CourseTitle;
+  ViewData["Title"] = Model.TutorialInformation.CourseTitle;
   ViewData["CustomisationId"] = @Model.CustomisationId;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
-  ViewData["HeaderPathName"] = Model.TutorialContent.CourseTitle;
+  ViewData["HeaderPathName"] = Model.TutorialInformation.CourseTitle;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -19,8 +19,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialContent.Name</h1>
-    <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.TutorialContent.Status @Model.ScoreSummary</h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialInformation.Name</h1>
+    <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.TutorialInformation.Status @Model.ScoreSummary</h2>
     <p class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-4">@Model.TimeSummary</p>
   </div>
 </div>
@@ -32,7 +32,7 @@
   </div>
 }
 
-@if (Model.TutorialContent.Objectives != null) {
+@if (Model.TutorialInformation.Objectives != null) {
   <details class="nhsuk-details nhsuk-u-margin-bottom-4">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
@@ -52,26 +52,26 @@
 }
 
 <div class="tutorial-actions-container">
-  @if (Model.TutorialContent.TutorialPath != null) {
+  @if (Model.TutorialInformation.TutorialPath != null) {
     <div>
       <a class="nhsuk-button"
          asp-action="ContentViewer"
          asp-controller="LearningMenu"
          asp-route-customisationId="@Model.CustomisationId"
          asp-route-sectionId="@Model.SectionId"
-         asp-route-tutorialId="@Model.TutorialContent.Id">
+         asp-route-tutorialId="@Model.TutorialInformation.Id">
         Launch tutorial
       </a>
     </div>
   }
 
-  @if (Model.TutorialContent.VideoPath != null) {
+  @if (Model.TutorialInformation.VideoPath != null) {
     <div>
       <a class="nhsuk-button nhsuk-button--secondary" href="">Watch video</a>
     </div>
   }
 
-  @if (Model.TutorialContent.SupportingMaterialPath != null) {
+  @if (Model.TutorialInformation.SupportingMaterialPath != null) {
     <div>
       <a class="nhsuk-button nhsuk-button--secondary" href="">Download supporting materials</a>
     </div>

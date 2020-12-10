@@ -4,7 +4,7 @@
 
     internal class TutorialContentHelper
     {
-        public static TutorialContent CreateDefaultTutorialContent(
+        public static TutorialInformation CreateDefaultTutorialInformation(
             int id = 1,
             string name = "Tutorial",
             string customisationName = "Customisation",
@@ -22,7 +22,7 @@
             string? supportingMaterialPath = "material"
         )
         {
-            return new TutorialContent(
+            return new TutorialInformation(
                 id,
                 name,
                 applicationName,

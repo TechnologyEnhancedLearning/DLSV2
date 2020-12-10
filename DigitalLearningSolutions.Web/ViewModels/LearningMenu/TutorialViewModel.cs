@@ -4,28 +4,28 @@
 
     public class TutorialViewModel
     {
-        public TutorialContent TutorialContent { get; }
+        public TutorialInformation TutorialInformation { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
 
-        public TutorialViewModel(TutorialContent tutorialContent, int customisationId, int sectionId)
+        public TutorialViewModel(TutorialInformation tutorialInformation, int customisationId, int sectionId)
         {
-            TutorialContent = tutorialContent;
+            TutorialInformation = tutorialInformation;
             CustomisationId = customisationId;
             SectionId = sectionId;
         }
 
-        public bool CanShowProgress => TutorialContent.CanShowDiagnosticStatus && TutorialContent.AttemptCount > 0;
+        public bool CanShowProgress => TutorialInformation.CanShowDiagnosticStatus && TutorialInformation.AttemptCount > 0;
 
         public string TutorialRecommendation =>
-            TutorialContent.CurrentScore < TutorialContent.PossibleScore ? "recommended" : "optional";
+            TutorialInformation.CurrentScore < TutorialInformation.PossibleScore ? "recommended" : "optional";
 
         public string ScoreSummary =>
-            CanShowProgress ? $"(score: {TutorialContent.CurrentScore} out of {TutorialContent.PossibleScore})" : "";
+            CanShowProgress ? $"(score: {TutorialInformation.CurrentScore} out of {TutorialInformation.PossibleScore})" : "";
 
         public string TimeSummary =>
-            $"{ParseMinutes(TutorialContent.TimeSpent)}" +
-            $" (average time {ParseMinutes(TutorialContent.AverageTutorialDuration)})";
+            $"{ParseMinutes(TutorialInformation.TimeSpent)}" +
+            $" (average time {ParseMinutes(TutorialInformation.AverageTutorialDuration)})";
 
         private static string ParseMinutes(int minutes)
         {

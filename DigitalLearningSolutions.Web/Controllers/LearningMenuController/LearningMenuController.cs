@@ -86,10 +86,10 @@
             var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
 
-            var tutorialContent =
-                tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorialInformation =
+                tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
-            if (tutorialContent == null || centreId == null)
+            if (tutorialInformation == null || centreId == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
@@ -107,7 +107,7 @@
             courseContentService.UpdateProgress(progressId.Value);
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
 
-            return View("Tutorial/Tutorial", new TutorialViewModel(tutorialContent, customisationId, sectionId));
+            return View("Tutorial/Tutorial", new TutorialViewModel(tutorialInformation, customisationId, sectionId));
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]

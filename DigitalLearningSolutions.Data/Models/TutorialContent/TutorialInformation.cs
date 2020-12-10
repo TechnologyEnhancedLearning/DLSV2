@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.TutorialContent
 {
-    public class TutorialContent
+    public class TutorialInformation
     {
         public int Id { get; }
         public string Name { get; }
@@ -17,7 +17,7 @@
         public string? TutorialPath { get; }
         public string? SupportingMaterialPath { get; }
 
-        public TutorialContent(
+        public TutorialInformation(
             int id,
             string name,
             string applicationName,

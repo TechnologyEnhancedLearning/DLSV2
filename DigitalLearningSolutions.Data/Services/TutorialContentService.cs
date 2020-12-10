@@ -6,7 +6,12 @@
 
     public interface ITutorialContentService
     {
-        TutorialContent? GetTutorialContent(int candidateId, int customisationId, int sectionId, int tutorialId);
+        TutorialInformation? GetTutorialInformation(
+            int candidateId,
+            int customisationId,
+            int sectionId,
+            int tutorialId
+        );
     }
 
     public class TutorialContentService : ITutorialContentService
@@ -18,9 +23,14 @@
             this.connection = connection;
         }
 
-        public TutorialContent? GetTutorialContent(int candidateId, int customisationId, int sectionId, int tutorialId)
+        public TutorialInformation? GetTutorialInformation(
+            int candidateId,
+            int customisationId,
+            int sectionId,
+            int tutorialId
+        )
         {
-            return connection.QueryFirstOrDefault<TutorialContent?>(
+            return connection.QueryFirstOrDefault<TutorialInformation?>(
                 @"SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
                          Applications.ApplicationName,
