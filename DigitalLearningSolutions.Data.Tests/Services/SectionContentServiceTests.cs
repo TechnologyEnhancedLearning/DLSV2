@@ -115,5 +115,97 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
+
+        [Test]
+        public void Get_section_content_should_return_null_if_archived_date_is_null()
+        {
+            // When
+            const int customisationId = 14212;
+            const int candidateId = 23031;
+            const int sectionId = 261;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_should_return_null_if_diag_status_and_is_assessed_and_tutorial_status_are_not_equal_to_one()
+        {
+            // When
+            const int customisationId = 1530;
+            const int candidateId = 23573;
+            const int sectionId = 74;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_should_return_content_if_only_diag_status_is_one()
+        {
+            // When
+            const int customisationId = 5982;
+            const int candidateId = 59561;
+            const int sectionId = 74;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedSectionContent = new SectionContent(
+                "Level 2 - MS Word 2007 DIAGNOSTIC TESTING",
+                "Level 2 - Microsoft Word 2007",
+                "Working with documents",
+                0,
+                28,
+                false,
+                0
+            );
+            result.Should().BeEquivalentTo(expectedSectionContent);
+        }
+
+        [Test]
+        public void Get_section_content_should_return_content_if_only_is_assessed_is_one()
+        {
+            // When
+            const int customisationId = 2684;
+            const int candidateId = 196;
+            const int sectionId = 74;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedSectionContent = new SectionContent(
+                "Styles and Working with References",
+                "Level 2 - Microsoft Word 2007",
+                "Working with documents",
+                0,
+                28,
+                false,
+                0
+            );
+            result.Should().BeEquivalentTo(expectedSectionContent);
+        }
+
+        [Test]
+        public void Get_section_content_should_return_content_if_only_tutorial_status_is_one()
+        {
+            // When
+            const int customisationId = 1499;
+            const int candidateId = 6;
+            const int sectionId = 74;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedSectionContent = new SectionContent(
+                "Test",
+                "Level 2 - Microsoft Word 2007",
+                "Working with documents",
+                3,
+                28,
+                true,
+                50
+            );
+            result.Should().BeEquivalentTo(expectedSectionContent);
+        }
     }
 }

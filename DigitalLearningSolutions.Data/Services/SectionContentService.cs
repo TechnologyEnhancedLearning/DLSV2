@@ -52,6 +52,8 @@
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId
+                            AND Progress.RemovedDate IS NULL
+                            AND Progress.SystemRefreshed = 0
                         LEFT JOIN aspProgress
                             ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
                             and aspProgress.ProgressID = Progress.ProgressID
