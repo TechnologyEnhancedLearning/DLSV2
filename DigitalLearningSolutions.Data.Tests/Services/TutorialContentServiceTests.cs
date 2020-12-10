@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_tutorial()
+        public void Get_tutorial_information_should_return_tutorial()
         {
             // Given
             const int candidateId = 1;
@@ -27,10 +27,10 @@
             const int tutorialId = 50;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
-            tutorial.Should().BeEquivalentTo(new TutorialContent(
+            tutorial.Should().BeEquivalentTo(new TutorialInformation(
                 50,
                 "Navigate documents",
                 "Level 2 - Microsoft Word 2007",
@@ -51,7 +51,7 @@
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_customisation_id_invalid()
+        public void Get_tutorial_information_should_return_null_if_customisation_id_invalid()
         {
             // Given
             const int candidateId = 1;
@@ -60,14 +60,14 @@
             const int tutorialId = 50;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().BeNull();
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_section_id_invalid()
+        public void Get_tutorial_information_should_return_null_if_section_id_invalid()
         {
             // Given
             const int candidateId = 1;
@@ -76,14 +76,14 @@
             const int tutorialId = 50;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().BeNull();
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_tutorial_id_invalid()
+        public void Get_tutorial_information_should_return_null_if_tutorial_id_invalid()
         {
             // Given
             const int candidateId = 1;
@@ -92,14 +92,14 @@
             const int tutorialId = 500;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().BeNull();
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_tutorial_with_default_progress_if_candidate_not_on_course()
+        public void Get_tutorial_information_should_return_tutorial_with_default_progress_if_candidate_not_on_course()
         {
             // Given
             const int candidateId = 100;
@@ -108,10 +108,10 @@
             const int tutorialId = 50;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
-            tutorial.Should().BeEquivalentTo(new TutorialContent(
+            tutorial.Should().BeEquivalentTo(new TutorialInformation(
                 50,
                 "Navigate documents",
                 "Level 2 - Microsoft Word 2007",
@@ -132,7 +132,7 @@
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_course_is_inactive()
+        public void Get_tutorial_information_should_return_null_if_course_is_inactive()
         {
             // Given
             const int candidateId = 100;
@@ -141,14 +141,14 @@
             const int tutorialId = 52;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().BeNull();
         }
 
         [Test]
-        public void Get_tutorial_content_should_return_null_if_tutorial_status_0()
+        public void Get_tutorial_information_should_return_null_if_tutorial_status_0()
         {
             // Given
             const int candidateId = 100;
@@ -157,10 +157,106 @@
             const int tutorialId = 49;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialContent(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_tutorial_content()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int sectionId = 74;
+            const int tutorialId = 50;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeEquivalentTo(new TutorialContent(
+                "Navigate documents",
+                "Level 2 - Microsoft Word 2007",
+                "Testing",
+                "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
+                13
+            ));
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_customisation_id_invalid()
+        {
+            // Given
+            const int customisationId = 1378;
+            const int sectionId = 74;
+            const int tutorialId = 50;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_section_id_invalid()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int sectionId = 75;
+            const int tutorialId = 50;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_tutorial_id_invalid()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int sectionId = 74;
+            const int tutorialId = 500;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_course_is_inactive()
+        {
+            // Given
+            const int customisationId = 1512;
+            const int sectionId = 74;
+            const int tutorialId = 52;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_tutorial_status_0()
+        {
+            // Given
+            const int customisationId = 1530;
+            const int sectionId = 74;
+            const int tutorialId = 49;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
         }
     }
 }
