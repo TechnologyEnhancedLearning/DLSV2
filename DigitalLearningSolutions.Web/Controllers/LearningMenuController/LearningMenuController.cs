@@ -110,7 +110,8 @@
             return View("Tutorial/Tutorial", new TutorialViewModel(tutorialContent, customisationId, sectionId));
         }
 
-        public IActionResult ContentViewer()
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]
+        public IActionResult ContentViewer(int customisationId, int sectionId, int tutorialId)
         {
             var model = new ContentViewerViewModel(config);
             return View(model);

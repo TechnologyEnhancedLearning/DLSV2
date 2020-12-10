@@ -119,7 +119,7 @@
         public void ContentViewer_should_render_view()
         {
             // When
-            var result = controller.ContentViewer();
+            var result = controller.ContentViewer(CustomisationId, SectionId, TutorialId);
 
             // Then
             var expectedModel = new ContentViewerViewModel(config);

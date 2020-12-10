@@ -54,7 +54,14 @@
 <div class="tutorial-actions-container">
   @if (Model.TutorialContent.TutorialPath != null) {
     <div>
-      <a class="nhsuk-button" href="">Launch tutorial</a>
+      <a class="nhsuk-button"
+         asp-action="ContentViewer"
+         asp-controller="LearningMenu"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId"
+         asp-route-tutorialId="@Model.TutorialContent.Id">
+        Launch tutorial
+      </a>
     </div>
   }
 
