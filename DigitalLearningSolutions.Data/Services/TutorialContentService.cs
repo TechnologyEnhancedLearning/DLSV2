@@ -31,7 +31,7 @@
             int tutorialId
         )
         {
-            return connection.QueryFirstOrDefault<TutorialInformation?>(
+            return connection.QueryFirstOrDefault<TutorialInformation>(
                 @"SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
                          Applications.ApplicationName,
@@ -79,7 +79,7 @@
 
         public TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId)
         {
-            return connection.QueryFirstOrDefault<TutorialContent?>(
+            return connection.QueryFirstOrDefault<TutorialContent>(
                 @"SELECT Tutorials.TutorialName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
