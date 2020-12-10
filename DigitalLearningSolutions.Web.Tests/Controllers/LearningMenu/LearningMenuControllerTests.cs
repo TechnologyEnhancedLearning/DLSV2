@@ -21,6 +21,7 @@
         private ICourseContentService courseContentService;
         private ITutorialContentService tutorialContentService;
         private ISessionService sessionService;
+        private ISectionContentService sectionContentService;
         private ISession httpContextSession;
         private IConfiguration config;
         private const int CandidateId = 11;
@@ -37,6 +38,7 @@
             courseContentService = A.Fake<ICourseContentService>();
             tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
+            sectionContentService = A.Fake<ISectionContentService>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -45,7 +47,7 @@
             }, "mock"));
             httpContextSession = new MockHttpContextSession();
 
-            controller = new LearningMenuController(logger, config, courseContentService, tutorialContentService, sessionService)
+            controller = new LearningMenuController(logger, config, courseContentService, sectionContentService, tutorialContentService, sessionService)
             {
                 ControllerContext = new ControllerContext {
                     HttpContext = new DefaultHttpContext
@@ -245,15 +247,19 @@
             A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
         }
 
-
         [Test]
-        public void Sections_should_StartOrUpdate_course_sessions()
+        public void Sections_should_StartOrUpdate_course_sessions_if_valid_section()
         {
             // Given
-            const int sectionId = 199;
+            const int progressId = 299;
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
 
             // When
-            controller.Section(CustomisationId, sectionId);
+            controller.Section(CustomisationId, SectionId);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
@@ -261,6 +267,145 @@
                 .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
                     candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_not_StartOrUpdate_course_sessions_if_session_not_found()
+        {
+            // Given
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
+        {
+            // Given
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_UpdateProgress_course_sessions_if_valid_section()
+        {
+            // Given
+            const int progressId = 299;
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_not_UpdateProgress_course_sessions_if_invalid_section()
+        {
+            // Given
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_UpdateProgress_course_sessions_if_unable_to_enrol()
+        {
+            // Given
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Sections_should_render_view()
+        {
+            // Given
+            const int progressId = 299;
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
+                Returns(progressId);
+
+            // When
+            var result = controller.Section(CustomisationId, SectionId);
+
+            // Then
+            var expectedModel = new SectionContentViewModel(defaultSectionContent, CustomisationId);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_404_if_section_not_found()
+        {
+            // Given
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            var result = controller.Section(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Sections_should_500_if_failed_to_enrol()
+        {
+            // Given
+            var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
+            A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            var result = controller.Section(CustomisationId, SectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 500);
         }
 
         [Test]
