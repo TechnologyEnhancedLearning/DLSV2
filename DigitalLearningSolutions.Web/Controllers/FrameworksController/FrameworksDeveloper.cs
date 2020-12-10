@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                FrameworkSortByOptionTexts.FrameworkName,
                BaseFrameworksPageViewModel.AscendingText
            );
-            var similarItems = SearchHelper.FilterFrameworks(sortedItems, frameworkname, 50, true);
+            var similarItems = SearchHelper.FilterFrameworks(sortedItems, frameworkname, 55, true);
             var matchingSearchResults = similarItems.ToList().Count;
             if (matchingSearchResults > 0)
             {

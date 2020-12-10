@@ -53,17 +53,32 @@
             }
             var query = new BrandedFramework()
             {
-                FrameworkName = searchString
+                FrameworkName = searchString.ToLower()
             };
-
-            var results = Process.ExtractAll(
+            if (stripStopWords)
+            {
+                var results = Process.ExtractSorted(
+                query,
+                frameworks,
+                framework => framework.FrameworkName.ToLower(),
+                ScorerCache.Get<DefaultRatioScorer>(),
+                minMatchScore
+            );
+                return results.Select(result => result.Value);
+            }
+            else
+            {
+                var results = Process.ExtractSorted(
                 query,
                 frameworks,
                 framework => framework.FrameworkName.ToLower(),
                 ScorerCache.Get<PartialRatioScorer>(),
                 minMatchScore
             );
-            return results.Select(result => result.Value);
+                return results.Select(result => result.Value);
+            }
+
+
         }
         private static string[] stopWordsArrary = new string[] { "a", "about", "actually", "after", "also", "am", "an", "and", "any", "are", "as", "at", "be", "because", "but", "by",
                                                 "could", "do", "each", "either", "en", "for", "from", "has", "have", "how",
