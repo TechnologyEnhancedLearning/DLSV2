@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.CourseContent;
     using Microsoft.Data.SqlClient;
 
     public class CourseContentTestHelper
@@ -97,6 +100,36 @@
                               ON Applications.ApplicationID = Customisations.ApplicationID
                             WHERE Customisations.CustomisationID = @customisationId)",
                 new { customisationId, includeCertification }
+            );
+        }
+
+        public IEnumerable<OldCourseSection> SectionsFromOldStoredProcedure(int progressId)
+        {
+            return connection.Query<OldCourseSection>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure);
+        }
+
+        public int CreateProgressId(int customisationId, int candidateId, int centreId)
+        {
+            connection.Execute(
+                @"uspCreateProgressRecord_V3",
+                new
+                {
+                    candidateId,
+                    customisationId,
+                    centreId,
+                    EnrollmentMethodID = 1,
+                    EnrolledByAdminID = 0
+                },
+                commandType: CommandType.StoredProcedure
+            );
+            return connection.QueryFirst<int>(
+                @"SELECT ProgressId
+                    FROM Progress
+                    WHERE CandidateID = @candidateId
+                      AND CustomisationID = @customisationId
+                      AND SystemRefreshed = 0
+                      AND RemovedDate IS NULL",
+                new { candidateId, customisationId }
             );
         }
     }

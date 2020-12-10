@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
@@ -395,6 +396,37 @@
                     }
                 );
                 result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
+
+        [TestCase(254480, 12589, 101, 285054)]
+        [TestCase(1, 15853, 101, 173218)]
+        [TestCase(254480, 24224, 101, null)]
+        [TestCase(22044, 10059, 121, 100467)]
+        public void Get_course_content_should_have_same_sections_as_stored_procedure(
+            int candidateId,
+            int customisationId,
+            int centreId,
+            int? progressId
+        )
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                var validProgressId = progressId ?? courseContentTestHelper.CreateProgressId(customisationId, candidateId, centreId);
+
+                var sectionIdsReturnedFromOldStoredProcedure = courseContentTestHelper
+                    .SectionsFromOldStoredProcedure(validProgressId)
+                    .Select(section => section.SectionID);
+
+                // When
+                var sectionIdsInCourseContent = courseContentService
+                    .GetCourseContent(candidateId, customisationId)?
+                    .Sections
+                    .Select(section => section.Id);
+
+                // Then
+                sectionIdsInCourseContent.Should().BeEquivalentTo(sectionIdsReturnedFromOldStoredProcedure);
             }
         }
 
