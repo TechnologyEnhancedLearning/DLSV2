@@ -7,20 +7,21 @@
 
     public class SectionContentViewModelTests
     {
+        private const int CustomisationId = 5;
+
         [Test]
         public void Section_content_should_have_title()
         {
             // Given
             const string applicationName = "Application name";
             const string customisationName = "Customisation name";
-            const int customisationId = 5;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 applicationName: applicationName,
                 customisationName: customisationName
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
             sectionContentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
@@ -31,13 +32,12 @@
         {
             // Given
             const string sectionName = "Section name";
-            const int customisationId = 5;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 sectionName: sectionName
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
             sectionContentViewModel.SectionName.Should().Be(sectionName);
@@ -48,18 +48,17 @@
         {
             // Given
             const bool hasLearning = true;
-            const double percentComplete = 0.5;
-            const int customisationId = 5;
+            const double percentComplete = 50.1;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{percentComplete:f0}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be("50% Complete");
         }
 
         [Test]
@@ -67,15 +66,14 @@
         {
             // Given
             const bool hasLearning = false;
-            const double percentComplete = 0.5;
-            const int customisationId = 5;
+            const double percentComplete = 50;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be("");
@@ -87,14 +85,13 @@
             // Given
             const int timeMins = 4;
             const int averageSectionTime = 10;
-            const int customisationId = 5;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 timeMins: timeMins,
                 averageSectionTime: averageSectionTime
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
             sectionContentViewModel.TimeInformation.Should().Be($"{timeMins}m (average time {averageSectionTime}m)");
@@ -104,14 +101,13 @@
         public void Section_content_should_have_customisation_id()
         {
             // Given
-            const int customisationId = 5;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent();
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, customisationId);
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
-            sectionContentViewModel.CustomisationId.Should().Be(customisationId);
+            sectionContentViewModel.CustomisationId.Should().Be(CustomisationId);
         }
     }
 }

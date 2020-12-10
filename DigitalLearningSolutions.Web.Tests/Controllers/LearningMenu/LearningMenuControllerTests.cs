@@ -47,9 +47,16 @@
             }, "mock"));
             httpContextSession = new MockHttpContextSession();
 
-            controller = new LearningMenuController(logger, config, courseContentService, sectionContentService, tutorialContentService, sessionService)
+            controller = new LearningMenuController(
+                logger,
+                config,
+                courseContentService,
+                sectionContentService,
+                tutorialContentService,
+                sessionService)
             {
-                ControllerContext = new ControllerContext {
+                ControllerContext = new ControllerContext
+                {
                     HttpContext = new DefaultHttpContext
                     {
                         User = user,
@@ -301,7 +308,7 @@
         }
 
         [Test]
-        public void Sections_should_UpdateProgress_course_sessions_if_valid_section()
+        public void Sections_should_UpdateProgress_if_valid_section()
         {
             // Given
             const int progressId = 299;
@@ -319,7 +326,7 @@
         }
 
         [Test]
-        public void Sections_should_not_UpdateProgress_course_sessions_if_invalid_section()
+        public void Sections_should_not_UpdateProgress_if_invalid_section()
         {
             // Given
             A.CallTo(() => sectionContentService.GetSectionContent(CustomisationId, CandidateId, SectionId))
@@ -333,7 +340,7 @@
         }
 
         [Test]
-        public void Sections_should_UpdateProgress_course_sessions_if_unable_to_enrol()
+        public void Sections_should_UpdateProgress_if_unable_to_enrol()
         {
             // Given
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
@@ -389,7 +396,7 @@
         }
 
         [Test]
-        public void Sections_should_500_if_failed_to_enrol()
+        public void Sections_should_404_if_failed_to_enrol()
         {
             // Given
             var defaultSectionContent = SectionContentHelper.CreateDefaultSectionContent();
@@ -405,7 +412,7 @@
                 .BeRedirectToActionResult()
                 .WithControllerName("LearningSolutions")
                 .WithActionName("StatusCode")
-                .WithRouteValue("code", 500);
+                .WithRouteValue("code", 404);
         }
 
         [Test]
@@ -460,7 +467,7 @@
         }
 
         [Test]
-        public void Tutorials_should_UpdateProgress_course_sessions_if_valid_tutorial()
+        public void Tutorials_should_UpdateProgress_if_valid_tutorial()
         {
             // Given
             const int progressId = 3;
@@ -477,7 +484,7 @@
         }
 
         [Test]
-        public void Tutorials_should_not_UpdateProgress_course_sessions_if_invalid_tutorial()
+        public void Tutorials_should_not_UpdateProgress_if_invalid_tutorial()
         {
             // Given
             const int progressId = 3;
@@ -493,7 +500,7 @@
         }
 
         [Test]
-        public void Tutorials_should_not_UpdateProgress_course_sessions_if_unable_to_enrol()
+        public void Tutorials_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
             var defaultTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(TutorialId);

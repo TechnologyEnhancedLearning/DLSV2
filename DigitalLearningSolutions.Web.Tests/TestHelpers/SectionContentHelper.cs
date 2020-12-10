@@ -11,7 +11,7 @@
             int? timeMins = 1,
             int averageSectionTime = 2,
             bool hasLearning = true,
-            double percentComplete = 0.25
+            double percentComplete = 10
         )
         {
             return new SectionContent(

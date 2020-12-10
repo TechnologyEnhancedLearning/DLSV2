@@ -81,22 +81,14 @@
         {
             var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
-
-            if (centreId == null)
-            {
-                logger.LogError(
-                    "Redirecting to 404 as centre id was not found. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: null, section id: {sectionId}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
-            }
-
             var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
-            
-            if (sectionContent == null)
+
+            if (sectionContent == null || centreId == null)
             {
                 logger.LogError(
-                    "Redirecting to 404 as section was not found. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}, section id: {sectionId}");
+                    "Redirecting to 404 as section/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -105,9 +97,10 @@
             if (progressId == null)
             {
                 logger.LogError(
-                    "Redirecting to 500 as no progress id was returned. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId}, section id: {sectionId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
