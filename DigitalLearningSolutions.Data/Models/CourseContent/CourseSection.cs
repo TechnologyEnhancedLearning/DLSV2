@@ -9,7 +9,8 @@
         public int TimeMins { get; }
         public int AverageSectionTime { get; }
 
-        public CourseSection(string sectionName,
+        public CourseSection(
+            string sectionName,
             int id,
             bool hasLearning,
             double percentComplete,
