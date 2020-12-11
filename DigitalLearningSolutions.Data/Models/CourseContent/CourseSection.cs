@@ -9,7 +9,13 @@
         public int TimeMins { get; }
         public int AverageSectionTime { get; }
 
-        public CourseSection(string sectionName, int id, bool hasLearning, double percentComplete, int timeMins, int averageSectionTime)
+        public CourseSection(string sectionName,
+            int id,
+            bool hasLearning,
+            double percentComplete,
+            int timeMins,
+            int averageSectionTime
+        )
         {
             Title = sectionName;
             Id = id;
