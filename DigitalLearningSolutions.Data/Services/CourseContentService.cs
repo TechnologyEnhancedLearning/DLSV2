@@ -79,7 +79,7 @@
                          Sections.SectionID,
                          Sections.SectionNumber,
                          Progress.CandidateID,
-						 Sections.AverageSectionMins
+                         Sections.AverageSectionMins
                   ORDER BY Sections.SectionNumber;",
                 (course, section) =>
                 {
