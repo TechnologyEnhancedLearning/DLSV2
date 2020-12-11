@@ -30,7 +30,7 @@
                         Customisations.CustomisationName,
                         Applications.ApplicationName,
                         Sections.SectionName,
-                        SUM(aspProgress.TutTime) AS TimeMins, 
+                        COALESCE(SUM(aspProgress.TutTime), 0) AS TimeMins, 
                         Sections.AverageSectionMins AS AverageSectionTime, 
                         dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
                         (CASE

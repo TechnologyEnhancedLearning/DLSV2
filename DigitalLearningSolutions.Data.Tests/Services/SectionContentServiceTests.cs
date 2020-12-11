@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using DigitalLearningSolutions.Data.Services;
@@ -97,10 +93,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void Get_section_content_should_still_return_content_if_candidate_is_not_enrolled()
         {
-            // When
+            // Given
             const int customisationId = 19262;
             const int candidateId = 0;
             const int sectionId = 1011;
+
+            // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
@@ -108,7 +106,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 "Testing",
                 "Excel 2013 for the Workplace",
                 "Entering data",
-                null,
+                0,
                 28,
                 true,
                 0

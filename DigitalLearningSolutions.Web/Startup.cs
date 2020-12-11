@@ -95,6 +95,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialContentService, TutorialContentService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISectionContentService, SectionContentService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
