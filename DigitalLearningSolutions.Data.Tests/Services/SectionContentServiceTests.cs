@@ -321,6 +321,6 @@
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
-        } 
-    } 
+        }
+    }
 }
