@@ -52,8 +52,8 @@
                             THEN 0
                             ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
                          END) AS PercentComplete,
-						 SUM(aspProgress.TutTime) as TimeMins,
-						 Sections.AverageSectionMins as AverageSectionTime
+                         SUM(aspProgress.TutTime) as TimeMins,
+                         Sections.AverageSectionMins as AverageSectionTime
                   FROM Applications
                   INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                   INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
