@@ -143,7 +143,39 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]
         public IActionResult ContentViewer(int customisationId, int sectionId, int tutorialId)
         {
-            var model = new ContentViewerViewModel(config);
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            if (tutorialContent?.TutorialPath == null || centreId == null)
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            courseContentService.UpdateProgress(progressId.Value);
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+
+            var model = new ContentViewerViewModel(
+                config,
+                tutorialContent,
+                customisationId,
+                centreId.Value,
+                sectionId,
+                tutorialId,
+                candidateId,
+                progressId.Value
+            );
             return View(model);
         }
     }
