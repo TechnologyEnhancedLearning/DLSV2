@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using System.Linq;
+    using System.Net;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using HtmlAgilityPack;
 
     public class TutorialViewModel
     {
         public TutorialInformation TutorialInformation { get; }
+        public string? Objectives { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
 
@@ -13,6 +17,7 @@
             TutorialInformation = tutorialInformation;
             CustomisationId = customisationId;
             SectionId = sectionId;
+            Objectives = ParseObjectives(tutorialInformation.Objectives);
         }
 
         public bool CanShowProgress => TutorialInformation.CanShowDiagnosticStatus && TutorialInformation.AttemptCount > 0;
@@ -34,6 +39,21 @@
                 return $"{minutes / 60}h {minutes % 60}m";
             }
             return $"{minutes}m";
+        }
+
+        private static string? ParseObjectives(string? objectives)
+        {
+            if (objectives == null)
+            {
+                return null;
+            }
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(objectives);
+
+            var body = doc.DocumentNode.SelectSingleNode("//body");
+
+            return body?.InnerHtml ?? objectives;
         }
     }
 }
