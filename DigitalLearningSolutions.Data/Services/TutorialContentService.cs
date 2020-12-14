@@ -2,7 +2,9 @@
 {
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     public interface ITutorialContentService
     {
@@ -108,8 +110,10 @@
 
         public TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId)
         {
-            var tutorialVideo = connection.QueryFirstOrDefault<TutorialVideo>(
-                @"SELECT Tutorials.TutorialName,
+            try
+            {
+                return connection.QueryFirstOrDefault<TutorialVideo>(
+                    @"SELECT Tutorials.TutorialName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          Tutorials.VideoPath
@@ -130,14 +134,16 @@
                          AND Tutorials.TutorialId = @tutorialId
                          AND Customisations.Active = 1
                          AND CustomisationTutorials.Status = 1;",
-                new { customisationId, sectionId, tutorialId });
-
-            if (tutorialVideo?.VideoPath == null)
-            {
-                return null;
+                    new { customisationId, sectionId, tutorialId });
             }
-
-            return tutorialVideo;
+            catch (DataException e)
+            {
+                if (e.InnerException is VideoNotFoundException)
+                {
+                    return null;
+                }
+                else throw;
+            }
         }
     }
 }

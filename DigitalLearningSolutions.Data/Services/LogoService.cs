@@ -2,6 +2,7 @@
 {
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
 
     public interface ILogoService
