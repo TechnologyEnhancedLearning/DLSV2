@@ -139,7 +139,10 @@
         public void Content_viewer_should_have_tutorialName()
         {
             // Given
-            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
+            const string tutorialName = "Tutorial Name";
+            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(
+                tutorialName
+            );
 
             // When
             var contentViewerViewModel = new ContentViewerViewModel(
@@ -154,14 +157,19 @@
             );
 
             // Then
-            contentViewerViewModel.TutorialName.Should().BeEquivalentTo(expectedTutorialContent.TutorialName);
+            contentViewerViewModel.TutorialName.Should().BeEquivalentTo(tutorialName);
         }
 
         [Test]
         public void Content_viewer_should_have_courseTitle()
         {
             // Given
-            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
+            const string applicationName = "Application Name";
+            const string customisationName = "Customisation Name";
+            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(
+                applicationName: applicationName,
+                customisationName: customisationName
+            );
 
             // When
             var contentViewerViewModel = new ContentViewerViewModel(
@@ -176,7 +184,8 @@
             );
 
             // Then
-            contentViewerViewModel.CourseTitle.Should().BeEquivalentTo(expectedTutorialContent.CourseTitle);
+            var courseTitle = $"{applicationName} - {customisationName}";
+            contentViewerViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 
         [Test]

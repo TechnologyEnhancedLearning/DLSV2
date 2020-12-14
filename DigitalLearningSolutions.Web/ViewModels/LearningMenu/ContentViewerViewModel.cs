@@ -40,14 +40,8 @@
             TutorialName = tutorialContent.TutorialName;
             CourseTitle = tutorialContent.CourseTitle;
 
-            if (IsScormPath(tutorialContent.TutorialPath!))
-            {
-                ContentSource = GetScormSource(config, tutorialContent);
-            }
-            else
-            {
-                ContentSource = GetHtmlSource(config, tutorialContent);
-            }
+            ContentSource = IsScormPath(tutorialContent.TutorialPath!) ? GetScormSource(config, tutorialContent)
+                                                                       : GetHtmlSource(config, tutorialContent);
         }
 
         private static bool IsScormPath(string path) => ScormRegex.IsMatch(path);
