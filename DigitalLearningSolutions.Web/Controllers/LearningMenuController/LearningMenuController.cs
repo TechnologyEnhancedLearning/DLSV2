@@ -121,6 +121,10 @@
 
             if (tutorialInformation == null || centreId == null)
             {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/tutorial id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -150,6 +154,10 @@
 
             if (tutorialContent?.TutorialPath == null || centreId == null)
             {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/tutorial id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -163,8 +171,8 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            courseContentService.UpdateProgress(progressId.Value);
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
 
             var model = new ContentViewerViewModel(
                 config,

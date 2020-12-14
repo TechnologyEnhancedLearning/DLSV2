@@ -571,7 +571,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_StartOrUpdate_course_sessions_if_valid_tutorial()
+        public void ContentViewer_should_StartOrUpdate_session_if_valid_tutorial()
         {
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
@@ -595,7 +595,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_not_StartOrUpdate_course_sessions_if_invalid_tutorial()
+        public void ContentViewer_should_not_StartOrUpdate_session_if_invalid_tutorial()
         {
             // Given
             const int progressId = 3;
@@ -614,7 +614,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
+        public void ContentViewer_should_not_StartOrUpdate_session_if_unable_to_enrol()
         {
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
@@ -633,7 +633,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_UpdateProgress_course_sessions_if_valid_tutorial()
+        public void ContentViewer_should_UpdateProgress_if_valid_tutorial()
         {
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
@@ -655,7 +655,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_not_UpdateProgress_course_sessions_if_invalid_tutorial()
+        public void ContentViewer_should_not_UpdateProgress_if_invalid_tutorial()
         {
             // Given
             const int progressId = 3;
@@ -673,7 +673,7 @@
         }
 
         [Test]
-        public void ContentViewer_should_not_UpdateProgress_course_sessions_if_unable_to_enrol()
+        public void ContentViewer_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
