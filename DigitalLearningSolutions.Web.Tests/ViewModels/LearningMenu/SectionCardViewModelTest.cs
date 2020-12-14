@@ -7,16 +7,17 @@
 
     class SectionCardViewModelTest
     {
+        const int CustomisationId = 1;
+
         [Test]
         public void Section_should_return_empty_string_if_has_learning_is_false()
         {
             // Given
             const bool hasLearning = false;
-            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(hasLearning: hasLearning);
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be("");
@@ -28,14 +29,13 @@
             // Given
             const bool hasLearning = true;
             const double percentComplete = 12.00;
-            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
@@ -62,18 +62,34 @@
             const bool hasLearning = true;
             const double percentComplete = 16.6666666667;
             const double percentCompleteRounded = 17;
-            const int customisationId = 1;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");
         }
 
+        [Test]
+        public void Section_should_return_time_information()
+        {
+            // Given
+            const int timeMins = 10;
+            const int averageSectionTime = 20;
+            var section = CourseSectionHelper.CreateDefaultCourseSection(
+                timeMins: timeMins,
+                averageSectionTime: averageSectionTime
+            );
+
+            // When
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
+
+            // Then
+            sectionCardViewModel.TimeInformation.Should().Be("10m (average time 20m)");
+        }
     }
 }
