@@ -160,5 +160,66 @@
             // Then
             tutorialViewModel.TutorialRecommendation.Should().Be("optional");
         }
+
+        [Test]
+        public void Tutorial_parsed_objectives_are_null_when_objectives_are_null()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                objectives: null
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+
+            // Then
+            tutorialViewModel.Objectives.Should().BeNull();
+        }
+
+        [Test]
+        public void Tutorial_parses_inline_html_objectives()
+        {
+            // Given
+            const string objectives =
+                "Here are some example objectives: <ul> <li> objective 1 </li> <li> objective 2 </li> </ul>";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                objectives: objectives
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+
+            // Then
+            tutorialViewModel.Objectives.Should().Be(objectives);
+        }
+
+        [Test]
+        public void Tutorial_parses_html_document_of_objectives()
+        {
+            // Given
+            const string objectives =
+                "<html> <head> <title>Tutorial Objective</title> </head>" +
+                "<body> In this tutorial you will learn to: " +
+                  "<ul>" +
+                    "<li>open another window on to a workbook</li>" +
+                    "<li>arrange workbook windows</li>" +
+                    "<li>hide and show windows</li>" +
+                 "</ul>" +
+                "</body> </html>";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                objectives: objectives
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+
+            // Then
+            tutorialViewModel.Objectives.Should().Be(" In this tutorial you will learn to: " +
+                                                     "<ul>" +
+                                                       "<li>open another window on to a workbook</li>" +
+                                                       "<li>arrange workbook windows</li>" +
+                                                       "<li>hide and show windows</li>" +
+                                                     "</ul>");
+        }
     }
 }
