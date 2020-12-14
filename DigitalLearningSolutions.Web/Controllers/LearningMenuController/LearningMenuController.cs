@@ -184,7 +184,7 @@
                 candidateId,
                 progressId.Value
             );
-            return View(model);
+            return View("Tutorial/ContentViewer", model);
         }
     }
 }
