@@ -51,10 +51,9 @@
             var doc = new HtmlDocument();
             doc.LoadHtml(objectives);
 
-            var body = doc.DocumentNode.SelectNodes("//body");
+            var body = doc.DocumentNode.SelectSingleNode("//body");
 
-            return body?.FirstOrDefault()?.InnerHtml
-                   ?? WebUtility.HtmlDecode(objectives);
+            return body?.InnerHtml ?? objectives;
         }
     }
 }

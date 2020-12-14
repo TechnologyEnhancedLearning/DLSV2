@@ -162,7 +162,7 @@
         }
 
         [Test]
-        public void Tutorial_parsed_objectives_are_null_when_objectives_are_null()
+        public void Tutorial_handles_null_objectives()
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
