@@ -108,7 +108,7 @@
 
         public TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId)
         {
-            return connection.QueryFirstOrDefault<TutorialVideo>(
+            var tutorialVideo = connection.QueryFirstOrDefault<TutorialVideo>(
                 @"SELECT Tutorials.TutorialName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
@@ -131,6 +131,13 @@
                          AND Customisations.Active = 1
                          AND CustomisationTutorials.Status = 1;",
                 new { customisationId, sectionId, tutorialId });
+
+            if (tutorialVideo?.VideoPath == null)
+            {
+                return null;
+            }
+
+            return tutorialVideo;
         }
     }
 }

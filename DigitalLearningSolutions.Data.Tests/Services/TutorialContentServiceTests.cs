@@ -353,5 +353,20 @@
             // Then
             tutorialVideo.Should().BeNull();
         }
+
+        [Test]
+        public void Get_tutorial_video_should_return_null_if_videoPath_is_null()
+        {
+            // Given
+            const int customisationId = 4207;
+            const int sectionId = 152;
+            const int tutorialId = 642;
+
+            // When
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialVideo.Should().BeNull();
+        }
     }
 }
