@@ -11,7 +11,7 @@
         private const int SectionId = 10;
 
         [Test]
-        public void Tutorial_should_have_tutorial_content()
+        public void Tutorial_should_have_tutorial_infomation()
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();

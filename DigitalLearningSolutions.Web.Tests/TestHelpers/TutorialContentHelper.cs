@@ -40,5 +40,22 @@
                 supportingMaterialPath
             );
         }
+
+        public static TutorialContent CreateDefaultTutorialContent(
+            string tutorialName = "tutorial",
+            string applicationName = "application",
+            string customisationName = "customisation",
+            string tutorialPath = "tutorialPath",
+            int currentVersion = 1
+        )
+        {
+            return new TutorialContent(
+                tutorialName,
+                applicationName,
+                customisationName,
+                tutorialPath,
+                currentVersion
+            );
+        }
     }
 }

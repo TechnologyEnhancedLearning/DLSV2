@@ -1,17 +1,50 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
 @model ContentViewerViewModel
+@inject IConfiguration Configuration
 
 @{
-    ViewData["Application"] = "Learning Menu";
-    ViewData["Title"] = "Learning Menu - Content Viewer";
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
+  ViewData["CustomisationId"] = Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.CourseTitle;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading">Content viewer</h1>
-    <iframe src="@Model.ScormSource" class="nhsuk-grid-column-full" height="800">
-    </iframe>
-    <iframe src="@Model.HtmlSource" class="nhsuk-grid-column-full" height="800">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+
+    <div class="nhsuk-error-summary non-js-only" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+      <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="nhsuk-error-summary__body">
+        <p class="nhsuk-u-margin-0">
+          JavaScript is required to view this tutorial.
+        </p>
+      </div>
+    </div>
+
+    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
     </iframe>
   </div>
+</div>
+
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link"
+       asp-action="Tutorial"
+       asp-controller="LearningMenu"
+       asp-route-customisationId="@Model.CustomisationId"
+       asp-route-sectionId="@Model.SectionId"
+       asp-route-tutorialId="@Model.TutorialId">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+    </svg>
+    Return to tutorial overview
+  </a>
 </div>

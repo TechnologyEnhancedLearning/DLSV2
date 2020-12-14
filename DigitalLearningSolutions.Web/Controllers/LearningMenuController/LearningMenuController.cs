@@ -121,6 +121,10 @@
 
             if (tutorialInformation == null || centreId == null)
             {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/tutorial id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -143,7 +147,43 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]
         public IActionResult ContentViewer(int customisationId, int sectionId, int tutorialId)
         {
-            var model = new ContentViewerViewModel(config);
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            if (tutorialContent?.TutorialPath == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/tutorial id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new ContentViewerViewModel(
+                config,
+                tutorialContent,
+                customisationId,
+                centreId.Value,
+                sectionId,
+                tutorialId,
+                candidateId,
+                progressId.Value
+            );
             return View(model);
         }
     }
