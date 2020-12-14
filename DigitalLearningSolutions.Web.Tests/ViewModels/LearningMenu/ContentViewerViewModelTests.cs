@@ -26,28 +26,6 @@
         }
 
         [Test]
-        public void Content_viewer_should_have_tutorial_content()
-        {
-            // Given
-            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
-
-            // When
-            var contentViewerViewModel = new ContentViewerViewModel(
-                config,
-                expectedTutorialContent,
-                CustomisationId,
-                CentreId,
-                SectionId,
-                TutorialId,
-                CandidateId,
-                ProgressId
-            );
-
-            // Then
-            contentViewerViewModel.TutorialContent.Should().BeEquivalentTo(expectedTutorialContent);
-        }
-
-        [Test]
         public void Content_viewer_should_have_customisationId()
         {
             // Given
@@ -155,6 +133,50 @@
 
             // Then
             contentViewerViewModel.ProgressId.Should().Be(ProgressId);
+        }
+
+        [Test]
+        public void Content_viewer_should_have_tutorialName()
+        {
+            // Given
+            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
+
+            // When
+            var contentViewerViewModel = new ContentViewerViewModel(
+                config,
+                expectedTutorialContent,
+                CustomisationId,
+                CentreId,
+                SectionId,
+                TutorialId,
+                CandidateId,
+                ProgressId
+            );
+
+            // Then
+            contentViewerViewModel.TutorialName.Should().BeEquivalentTo(expectedTutorialContent.TutorialName);
+        }
+
+        [Test]
+        public void Content_viewer_should_have_courseTitle()
+        {
+            // Given
+            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent();
+
+            // When
+            var contentViewerViewModel = new ContentViewerViewModel(
+                config,
+                expectedTutorialContent,
+                CustomisationId,
+                CentreId,
+                SectionId,
+                TutorialId,
+                CandidateId,
+                ProgressId
+            );
+
+            // Then
+            contentViewerViewModel.CourseTitle.Should().BeEquivalentTo(expectedTutorialContent.CourseTitle);
         }
 
         [Test]

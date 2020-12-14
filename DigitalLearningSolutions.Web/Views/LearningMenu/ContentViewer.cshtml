@@ -5,11 +5,11 @@
 
 @{
   ViewData["HeaderPrefix"] = "";
-  ViewData["Application"] = Model.TutorialContent.CourseTitle;
-  ViewData["Title"] = Model.TutorialContent.CourseTitle;
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
   ViewData["CustomisationId"] = Model.CustomisationId;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
-  ViewData["HeaderPathName"] = Model.TutorialContent.CourseTitle;
+  ViewData["HeaderPathName"] = Model.CourseTitle;
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -17,7 +17,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialContent.TutorialName</h1>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
 
     <div class="nhsuk-error-summary non-js-only" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
       <h2 class="nhsuk-error-summary__title" id="error-summary-title">

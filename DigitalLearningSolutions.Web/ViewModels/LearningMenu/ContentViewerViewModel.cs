@@ -7,16 +7,17 @@
 
     public class ContentViewerViewModel
     {
-        public TutorialContent TutorialContent { get; }
         public int CustomisationId { get; }
         public int CentreId { get; }
         public int SectionId { get; }
         public int TutorialId { get; }
         public int CandidateId { get; }
         public int ProgressId { get; }
+        public string TutorialName { get; }
+        public string CourseTitle { get; }
         public string ContentSource { get; }
 
-        private static readonly Regex scormRegex = new Regex(@".*imsmanifest\.xml$");
+        private static readonly Regex ScormRegex = new Regex(@".*imsmanifest\.xml$");
 
         public ContentViewerViewModel(
             IConfiguration config,
@@ -29,7 +30,6 @@
             int progressId
         )
         {
-            TutorialContent = tutorialContent;
             CustomisationId = customisationId;
             CentreId = centreId;
             SectionId = sectionId;
@@ -37,31 +37,41 @@
             CandidateId = candidateId;
             ProgressId = progressId;
 
-            ContentSource = IsScormPath(TutorialContent.TutorialPath!) ? GetScormSource(config) : GetHtmlSource(config);
+            TutorialName = tutorialContent.TutorialName;
+            CourseTitle = tutorialContent.CourseTitle;
+
+            if (IsScormPath(tutorialContent.TutorialPath!))
+            {
+                ContentSource = GetScormSource(config, tutorialContent);
+            }
+            else
+            {
+                ContentSource = GetHtmlSource(config, tutorialContent);
+            }
         }
 
-        private static bool IsScormPath(string path) => scormRegex.IsMatch(path);
+        private static bool IsScormPath(string path) => ScormRegex.IsMatch(path);
 
-        private string GetHtmlSource(IConfiguration config)
+        private string GetHtmlSource(IConfiguration config, TutorialContent tutorialContent)
         {
-            return $"{TutorialContent.TutorialPath}" +
+            return $"{tutorialContent.TutorialPath}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
                    $"&CandidateID={CandidateId}" +
-                   $"&Version={TutorialContent.Version}" +
+                   $"&Version={tutorialContent.Version}" +
                    $"&ProgressID={ProgressId}" +
                    "&type=learn" +
                    $"&TrackURL={config.GetTrackingUrl()}";
         }
 
-        private string GetScormSource(IConfiguration config)
+        private string GetScormSource(IConfiguration config, TutorialContent tutorialContent)
         {
             return $"{config.GetScormPlayerUrl()}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
                    $"&CandidateID={CandidateId}" +
-                   $"&Version={TutorialContent.Version}" +
-                   $"&tutpath={TutorialContent.TutorialPath}";
+                   $"&Version={tutorialContent.Version}" +
+                   $"&tutpath={tutorialContent.TutorialPath}";
         }
     }
 }
