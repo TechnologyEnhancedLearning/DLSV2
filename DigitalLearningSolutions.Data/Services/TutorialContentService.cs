@@ -13,6 +13,7 @@
             int tutorialId
         );
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
+        TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
     }
 
     public class TutorialContentService : ITutorialContentService
@@ -85,6 +86,33 @@
                          Customisations.CustomisationName,
                          Tutorials.TutorialPath,
                          Customisations.CurrentVersion
+                    FROM CustomisationTutorials
+                         INNER JOIN Tutorials
+                         ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+
+                         INNER JOIN Customisations
+                         ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+
+                         INNER JOIN Applications
+                         ON Customisations.ApplicationID = Applications.ApplicationID
+
+                         INNER JOIN Sections
+                         ON Tutorials.SectionID = Sections.SectionID
+                   WHERE Customisations.CustomisationID = @customisationId
+                         AND Sections.SectionID = @sectionId
+                         AND Tutorials.TutorialId = @tutorialId
+                         AND Customisations.Active = 1
+                         AND CustomisationTutorials.Status = 1;",
+                new { customisationId, sectionId, tutorialId });
+        }
+
+        public TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId)
+        {
+            return connection.QueryFirstOrDefault<TutorialVideo>(
+                @"SELECT Tutorials.TutorialName,
+                         Applications.ApplicationName,
+                         Customisations.CustomisationName,
+                         Tutorials.VideoPath
                     FROM CustomisationTutorials
                          INNER JOIN Tutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
