@@ -8,6 +8,7 @@
         public int SectionId { get; }
         public string PercentComplete { get; }
         public int CustomisationId { get; }
+        public string TimeInformation { get; }
 
         public SectionCardViewModel(CourseSection section, int customisationId)
         {
@@ -15,6 +16,7 @@
             SectionId = section.Id;
             PercentComplete = section.HasLearning ? $"{section.PercentComplete:f0}% Complete" : "";
             CustomisationId = customisationId;
+            TimeInformation = $"{section.TimeMins}m (average time {section.AverageSectionTime}m)";
         }
     }
 }
