@@ -316,5 +316,19 @@
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
+
+        [Test]
+        public void Get_section_content_post_learning_assessment_passed_should_convert_to_true()
+        {
+            // When
+            const int customisationId = 9865;
+            const int candidateId = 1;
+            const int sectionId = 232;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.PostLearningPassed.Should().BeTrue();
+
+        }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
-    using DigitalLearningSolutions.Data.Models.SectionContent;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
-    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
 

@@ -32,11 +32,11 @@
                         Applications.ApplicationName,
                         Customisations.CustomisationName,
                         Sections.SectionName,
-                        aspProgress.TutTime, 
+                        COALESCE (aspProgress.TutTime, 0) AS TutTime,
                         Sections.AverageSectionMins AS AverageSectionTime, 
                         dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
-                        aspProgress.DiagAttempts,
-                        aspProgress.DiagLast,
+                        COALESCE (aspProgress.DiagAttempts, 0) AS DiagAttempts,
+                        COALESCE (aspProgress.DiagLast, 0) AS DiagLast,
                         Tutorials.DiagAssessOutOf,
                         Sections.DiagAssessPath, 
                         Sections.PLAssessPath,
@@ -45,7 +45,7 @@
                         CustomisationTutorials.DiagStatus,
                         Customisations.IsAssessed,
                         Tutorials.TutorialName,
-                        COALESCE(aspProgress.TutStat,0) AS TutStat,
+                        COALESCE (aspProgress.TutStat,0) AS TutStat,
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,
                         COALESCE (aspProgress.TutTime, 0) AS TutTime,
                         Tutorials.AverageTutMins
@@ -69,7 +69,7 @@
                         LEFT JOIN (SELECT COUNT(AssessAttemptID) AS AttemptsPL,
                             AssessAttempts.ProgressID,
                             AssessAttempts.SectionNumber,
-                            COALESCE (MAX(ISNULL(CAST(AssessAttempts.Status AS Integer), 0)), 0) AS PLPassed
+                            COALESCE (SUM(CAST(AssessAttempts.Status AS Integer)), 0) AS PLPassed
                             FROM AssessAttempts
                             GROUP BY
                                 AssessAttempts.ProgressID,

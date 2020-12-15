@@ -26,10 +26,10 @@
         public double GetPercentComplete(SectionContent sectionContent)
         {
             var totalStatus = sectionContent.Tutorials.Sum(tutorial => tutorial.TutorialStatus);
-            var percentComplete = sectionContent.Tutorials.Count == 0
+            return sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
                 ? 0
                 : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
-            return sectionContent.HasLearning ? percentComplete : 0;
+            
         }
     }
 }

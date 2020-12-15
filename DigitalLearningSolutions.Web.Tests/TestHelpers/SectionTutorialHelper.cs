@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Web.Tests.TestHelpers
+﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
     using DigitalLearningSolutions.Data.Models.SectionContent;
 

@@ -12,10 +12,10 @@
         public int DiagnosticAttempts { get; set; }
         public int SectionScore { get; set; }
         public int MaxSectionScore { get; set; }
-        public string DiagnosticAssessmentPath { get; }
-        public string PostLearningAssessmentPath { get; }
+        public string? DiagnosticAssessmentPath { get; }
+        public string? PostLearningAssessmentPath { get; }
         public int PostLearningAttempts { get; }
-        public int PostLearningPassed { get; }
+        public bool PostLearningPassed { get; }
         public bool DiagnosticStatus { get; }
         public bool IsAssessed { get; }
         public List<SectionTutorial> Tutorials { get; } = new List<SectionTutorial>();
@@ -30,7 +30,7 @@
             int diagAttempts,
             int diagLast,
             int diagAssessOutOf,
-            string diagAssessPath,
+            string? diagAssessPath,
             string plAssessPath,
             int attemptsPl,
             int plPassed,
@@ -48,7 +48,7 @@
             DiagnosticAssessmentPath = diagAssessPath;
             PostLearningAssessmentPath = plAssessPath;
             PostLearningAttempts = attemptsPl;
-            PostLearningPassed = plPassed;
+            PostLearningPassed = plPassed > 0;
             DiagnosticStatus = diagStatus;
             IsAssessed = isAssessed;
         }
