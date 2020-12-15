@@ -31,9 +31,9 @@
             int diagLast,
             int diagAssessOutOf,
             string? diagAssessPath,
-            string plAssessPath,
+            string? plAssessPath,
             int attemptsPl,
-            int plPassed,
+            int plPasses,
             bool diagStatus,
             bool isAssessed)
         {
@@ -48,7 +48,7 @@
             DiagnosticAssessmentPath = diagAssessPath;
             PostLearningAssessmentPath = plAssessPath;
             PostLearningAttempts = attemptsPl;
-            PostLearningPassed = plPassed > 0;
+            PostLearningPassed = plPasses > 0;
             DiagnosticStatus = diagStatus;
             IsAssessed = isAssessed;
         }

@@ -29,7 +29,6 @@
             return sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
                 ? 0
                 : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
-            
         }
     }
 }
