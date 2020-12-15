@@ -109,26 +109,34 @@
         public void Get_course_content_of_course_without_learning_should_return_course()
         {
             // When
-            const int customisationId = 2921;
-            const int candidateId = 22044;
+            const int customisationId = 4339;
+            const int candidateId = 213382;
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
             var expectedCourse = new CourseContent(
-                2921,
-                "Level 2 - Microsoft Outlook 2007",
-                "MOST OUTLOOK CORE 2007",
-                "46m",
-                "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                4339,
+                "Level 2 - Microsoft PowerPoint 2007",
+                "Working with Graphics and Multimedia",
+                "20m",
+                "NHS Highland",
+                null,
                 false,
                 null
             );
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Using the Calendar", 99, true, 300/ 11.0, 20, 28),
-                    new CourseSection("Using Notes and  the  Journal", 102, true, 0, 0, 28)
+                    new CourseSection("Working in PowerPoint", 125, false, 0, 0, 28),
+                    new CourseSection("Creating a presentation", 126, false, 0, 0, 28),
+                    new CourseSection("Formatting slides", 127, false, 0, 0, 28),
+                    new CourseSection("Working with text", 128, false, 0, 0, 28),
+                    new CourseSection("Working with graphics and multimedia", 129, true, 20.0, 4, 28),
+                    new CourseSection("Working with tables and charts", 130, false, 0, 0, 28),
+                    new CourseSection("Using animations and transitions", 131, false, 0, 0, 28),
+                    new CourseSection("Collaborating on presentations", 132, false, 0, 0, 28),
+                    new CourseSection("Preparing presentations", 133, false, 0, 0, 28),
+                    new CourseSection("Delivering presentations", 134, false, 0, 0, 28)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -138,26 +146,34 @@
         public void Get_course_content_of_unstarted_course_without_learning_should_return_course()
         {
             // When
-            const int customisationId = 2921;
-            const int candidateId = 22044000;
+            const int customisationId = 4339;
+            const int candidateId = 260132;
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
             var expectedCourse = new CourseContent(
-                2921,
-                "Level 2 - Microsoft Outlook 2007",
-                "MOST OUTLOOK CORE 2007",
-                "46m",
-                "Northumbria Healthcare NHS Foundation Trust",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                4339,
+                "Level 2 - Microsoft PowerPoint 2007",
+                "Working with Graphics and Multimedia",
+                "20m",
+                "NHS Highland",
+                null,
                 false,
                 null
             );
             expectedCourse.Sections.AddRange(
                 new[]
                 {
-                    new CourseSection("Using the Calendar", 99, true, 0, 0, 28),
-                    new CourseSection("Using Notes and  the  Journal", 102, true, 0, 0, 28)
+                    new CourseSection("Working in PowerPoint", 125, false, 0, 0, 28),
+                    new CourseSection("Creating a presentation", 126, false, 0, 0, 28),
+                    new CourseSection("Formatting slides", 127, false, 0, 0, 28),
+                    new CourseSection("Working with text", 128, false, 0, 0, 28),
+                    new CourseSection("Working with graphics and multimedia", 129, true, 0, 0, 28),
+                    new CourseSection("Working with tables and charts", 130, false, 0, 0, 28),
+                    new CourseSection("Using animations and transitions", 131, false, 0, 0, 28),
+                    new CourseSection("Collaborating on presentations", 132, false, 0, 0, 28),
+                    new CourseSection("Preparing presentations", 133, false, 0, 0, 28),
+                    new CourseSection("Delivering presentations", 134, false, 0, 0, 28)
                 }
             );
             result.Should().BeEquivalentTo(expectedCourse);
@@ -256,6 +272,48 @@
         public void Get_course_content_for_removed_and_refreshed_course_should_return_new_course()
         {
             // Given
+            const int candidateId = 281358;
+            const int customisationId = 8950;
+
+            using (new TransactionScope())
+            {
+                // When
+                courseContentTestHelper.UpdateSystemRefreshed(candidateId, customisationId, true);
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                var expectedCourse = new CourseContent(
+                    8950,
+                    "Level 2 - Microsoft Word 2010",
+                    "BSMHFT",
+                    "3h 50m",
+                    "Birmingham & Solihull Mental Health Foundation Trust",
+                    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    false,
+                    null
+                );
+                expectedCourse.Sections.AddRange(
+                    new[]
+                    {
+                        new CourseSection("Working with documents", 103, true, 0, 0, 28),
+                        new CourseSection("Formatting content", 104, true, 0, 0, 28),
+                        new CourseSection("Formatting documents", 105, true, 0, 0, 28),
+                        new CourseSection("Illustrations and graphics", 106, true, 0, 0, 28),
+                        new CourseSection("Using tables", 107, true, 0, 0, 28),
+                        new CourseSection("Working with references", 108, true, 0, 0, 28),
+                        new CourseSection("Proofing and working on documents with others", 109, true, 0, 0, 28),
+                        new CourseSection("Sharing documents", 110, true, 0, 0, 28),
+                        new CourseSection("Mass-mailing documents", 111, true, 0, 0, 28)
+                    }
+                );
+                result.Should().BeEquivalentTo(expectedCourse);
+            }
+        }
+
+        [Test]
+        public void Get_course_content_for_inactive_course_should_return_null()
+        {
+            // Given
             const int candidateId = 210962;
             const int customisationId = 24635;
 
@@ -263,23 +321,7 @@
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
-            var expectedCourse = new CourseContent(
-                24635,
-                "Digital Literacy for the Workplace",
-                "TEST 2LH new course",
-                "N/A",
-                "NHS Digital",
-                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                false,
-                null
-            );
-            expectedCourse.Sections.AddRange(
-                new[]
-                {
-                    new CourseSection("Getting started", 2123, false, 0, 0, 28)
-                }
-            );
-            result.Should().BeEquivalentTo(expectedCourse);
+            result.Should().BeNull();
         }
 
         [Test]
