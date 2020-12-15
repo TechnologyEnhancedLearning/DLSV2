@@ -61,7 +61,14 @@
 
   @if (Model.TutorialInformation.VideoPath != null) {
     <div>
-      <a class="nhsuk-button nhsuk-button--secondary" href="">Watch video</a>
+      <a class="nhsuk-button nhsuk-button--secondary"
+         asp-controller="LearningMenu"
+         asp-action="TutorialVideo"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId"
+         asp-route-tutorialId="@Model.TutorialInformation.Id">
+        Watch video
+      </a>
     </div>
   }
 

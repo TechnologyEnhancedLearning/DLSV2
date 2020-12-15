@@ -184,7 +184,47 @@
                 candidateId,
                 progressId.Value
             );
-            return View(model);
+            return View("Tutorial/ContentViewer", model);
+        }
+
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Video")]
+        public IActionResult TutorialVideo(int customisationId, int sectionId, int tutorialId)
+        {
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+
+            if (tutorialVideo == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/tutorial id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new TutorialVideoViewModel(
+                config,
+                tutorialVideo,
+                customisationId,
+                sectionId,
+                tutorialId
+            );
+            return View("Tutorial/TutorialVideo", model);
         }
     }
 }
