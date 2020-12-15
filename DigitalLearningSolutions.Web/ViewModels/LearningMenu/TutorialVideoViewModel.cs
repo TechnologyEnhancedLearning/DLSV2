@@ -35,9 +35,11 @@
             {
                 return videoPath;
             }
-            if (Uri.IsWellFormedUriString("https://" + videoPath, UriKind.Absolute))
+
+            var urlWithProtocol = $"https://{videoPath}";
+            if (Uri.IsWellFormedUriString(urlWithProtocol, UriKind.Absolute))
             {
-                return "https://" + videoPath;
+                return urlWithProtocol;
             }
             return config["CurrentSystemBaseUrl"] + videoPath;
         }

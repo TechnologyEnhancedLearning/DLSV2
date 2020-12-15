@@ -167,7 +167,7 @@
             );
 
             // Then
-            tutorialVideoViewModel.VideoPath.Should().Be("https://" + videoPath);
+            tutorialVideoViewModel.VideoPath.Should().Be($"https://{videoPath}");
         }
 
         [Test]
