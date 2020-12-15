@@ -61,8 +61,6 @@
 
         private const string CompetencyTables =
             @"Competencies AS C
-                        INNER JOIN CompetencyGroups AS CG
-                            ON C.CompetencyGroupID = CG.ID
                         INNER JOIN CompetencyAssessmentQuestions AS CAQ
                             ON CAQ.CompetencyID = C.ID
                         INNER JOIN AssessmentQuestions AS AQ
@@ -75,7 +73,9 @@
                                    AND LAR.AssessmentQuestionID = AQ.ID
                         INNER JOIN SelfAssessmentStructure AS SAS
                             ON C.ID = SAS.CompetencyID
-                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {

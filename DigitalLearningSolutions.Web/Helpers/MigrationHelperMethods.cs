@@ -27,7 +27,8 @@
                         typeof(ReflectiveAccounts).Assembly,
                         typeof(CompetencyFrameworkDBChanges).Assembly,
                         typeof(AddInsertCustomisationV3sp).Assembly,
-                        typeof(CandidateAssessmentSubmittedDate).Assembly
+                        typeof(CandidateAssessmentSubmittedDate).Assembly,
+                        typeof(AddFrameworkIdToFrameworkCompetencies).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
