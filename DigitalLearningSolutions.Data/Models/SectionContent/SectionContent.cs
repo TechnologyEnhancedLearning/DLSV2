@@ -6,18 +6,17 @@
     {
         public string CourseTitle { get; }
         public string SectionName { get; }
-        public int TimeMins { get; }
+        public int SectionTime { get; set; }
         public int AverageSectionTime { get; }
         public bool HasLearning { get; }
-        public double PercentComplete { get; }
-        public int DiagAttempts { get; }
-        public int SecScore { get; }
-        public int SecOutOf { get; }
-        public string DiagAssessPath { get; }
-        public string PLAssessPath { get; }
-        public int AttemptsPL { get; }
-        public int PLPassed { get; }
-        public bool DiagStatus { get; }
+        public int DiagnosticAttempts { get; set; }
+        public int SectionScore { get; set; }
+        public int MaxSectionScore { get; set; }
+        public string DiagnosticAssessmentPath { get; }
+        public string PostLearningAssessmentPath { get; }
+        public int PostLearningAttempts { get; }
+        public int PostLearningPassed { get; }
+        public bool DiagnosticStatus { get; }
         public bool IsAssessed { get; }
         public List<SectionTutorial> Tutorials { get; } = new List<SectionTutorial>();
 
@@ -25,13 +24,12 @@
             string applicationName,
             string customisationName,
             string sectionName,
-            int timeMins,
+            int tutTime,
             int averageSectionTime,
             bool hasLearning,
-            double percentComplete,
             int diagAttempts,
-            int secScore,
-            int secOutOf,
+            int diagLast,
+            int diagAssessOutOf,
             string diagAssessPath,
             string plAssessPath,
             int attemptsPl,
@@ -41,18 +39,17 @@
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
-            TimeMins = timeMins;
+            SectionTime = tutTime;
             AverageSectionTime = averageSectionTime;
             HasLearning = hasLearning;
-            PercentComplete = percentComplete;
-            DiagAttempts = diagAttempts;
-            SecScore = secScore;
-            SecOutOf = secOutOf;
-            DiagAssessPath = diagAssessPath;
-            PLAssessPath = plAssessPath;
-            AttemptsPL = attemptsPl;
-            PLPassed = plPassed;
-            DiagStatus = diagStatus;
+            DiagnosticAttempts = diagAttempts;
+            SectionScore = diagLast;
+            MaxSectionScore = diagAssessOutOf;
+            DiagnosticAssessmentPath = diagAssessPath;
+            PostLearningAssessmentPath = plAssessPath;
+            PostLearningAttempts = attemptsPl;
+            PostLearningPassed = plPassed;
+            DiagnosticStatus = diagStatus;
             IsAssessed = isAssessed;
         }
     }
