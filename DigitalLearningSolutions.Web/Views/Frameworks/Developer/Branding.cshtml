@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
-@model CreateBrandingViewModel
+@model BrandingViewModel
 @{
   ViewData["Title"] = "Framework Branding";
   ViewData["Application"] = "Framework Service";
@@ -63,7 +63,7 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-back-link grid-column-85">
-    <a class="nhsuk-back-link__link skip-link">
+    <a class="nhsuk-back-link__link skip-link" asp-action="AddCollaborators" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
       Skip
       <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>

@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
-@model CreateSimilarViewModel
+@model SimilarViewModel
 @{
   ViewData["Title"] = "Similar Frameworks";
   ViewData["Application"] = "Framework Service";
@@ -53,7 +53,7 @@ else
   <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworksDashboard">
     Cancel
   </a>
-  <a class="nhsuk-button" asp-action="SaveNewFramework" asp-route-frameworkname="@Model.FrameworkName">
+  <a class="nhsuk-button" asp-action="SaveNewFramework" asp-route-frameworkname="@Model.FrameworkName" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
     Continue
   </a>
 }

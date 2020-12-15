@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using System.Collections.Generic;
-    public class CreateSimilarViewModel
+    public class SimilarViewModel
     {
         public int MatchingSearchResults { get; set; }
         public string FrameworkName { get; set; }
