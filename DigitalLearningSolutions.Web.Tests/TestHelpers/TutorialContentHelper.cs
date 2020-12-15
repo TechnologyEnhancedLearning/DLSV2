@@ -57,5 +57,20 @@
                 currentVersion
             );
         }
+
+        public static TutorialVideo CreateDefaultTutorialVideo(
+            string tutorialName = "tutorial",
+            string applicationName = "application",
+            string customisationName = "customisation",
+            string videoPath = "/video.mp4"
+        )
+        {
+            return new TutorialVideo(
+                tutorialName,
+                applicationName,
+                customisationName,
+                videoPath
+            );
+        }
     }
 }
