@@ -18,7 +18,7 @@
         public const string DescendingText = "Descending";
         public const string AscendingText = "Ascending";
 
-        private const int ItemsPerPage = 20;
+        private const int ItemsPerPage = 12;
 
         public readonly string? SearchString;
 
