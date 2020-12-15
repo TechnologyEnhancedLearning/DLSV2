@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.Common.Users;
     using Microsoft.Extensions.Logging;
     public interface ICommonService
     {
@@ -14,6 +15,7 @@
         int InsertBrandAndReturnId(string brandName, int centreId);
         int InsertCategoryAndReturnId(string categoryName, int centreId);
         int InsertTopicAndReturnId(string topicName, int centreId);
+        IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId);
     }
     public class CommonService : ICommonService
     {
@@ -162,5 +164,19 @@
                 return newTopicId;
             }
         }
+
+    
+    public IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId)
+    {
+        {
+            return connection.Query<Administrator>(
+                @"SELECT        AdminID, CentreID, Email, Forename, Surname, IsFrameworkDeveloper
+                    FROM            AdminUsers
+                    WHERE           (Active = 1) AND (CentreID = @centreId) AND (Approved = 1) AND (AdminID <> @adminID)
+                    ORDER BY Surname, Forename",
+               new { centreId, adminId }
+           );
+        }
     }
+}
 }

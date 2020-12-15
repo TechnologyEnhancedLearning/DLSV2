@@ -12,7 +12,7 @@
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
         BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId);
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
-        IEnumerable<BrandedFramework> GetFrameworkDetailByFrameworkName(string frameworkName, int adminId);
+        IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
         BrandedFramework CreateFramework(string frameworkName, int adminId);
@@ -21,6 +21,9 @@
         int InsertCompetency(string description, int competencyGroupId, int adminId);
         int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId);
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
+        IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
+        int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
+        void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -90,7 +93,7 @@
                new { frameworkId, adminId }
            );
         }
-        public IEnumerable<BrandedFramework> GetFrameworkDetailByFrameworkName(string frameworkName, int adminId)
+        public IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId)
         {
             return connection.Query<BrandedFramework>(
                $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields} {DetailFrameworkFields}
@@ -162,7 +165,7 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Frameworks SET BrandID = @brandId, CategoryID = @categoryId, TopicID = @topicId, UpdatedByAdminID = @adminId
                     WHERE ID = @frameworkId",
-               new { brandId, categoryId, topicId, adminId, frameworkId  }
+               new { brandId, categoryId, topicId, adminId, frameworkId }
            );
             if (numberOfAffectedRows < 1)
             {
@@ -179,7 +182,7 @@
             if (groupName.Length == 0 | adminId < 1)
             {
                 logger.LogWarning(
-                    $"Not inserting competency group as it failed server side validation. AdminId: {adminId}, GroupName: {groupName}" 
+                    $"Not inserting competency group as it failed server side validation. AdminId: {adminId}, GroupName: {groupName}"
                 );
                 return -2;
             }
@@ -321,6 +324,61 @@
                new { competencyId, frameworkCompetencyGroupID });
                 return existingId;
             }
+        }
+
+        public IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId)
+        {
+            return connection.Query<CollaboratorDetail>(
+                $@"SELECT fw.ID AS FrameworkID, au1.AdminID AS AdminID, 1 AS CanModify, au1.Email, au1.Forename, au1.Surname, 'Owner' AS FrameworkRole
+                    FROM   Frameworks AS fw INNER JOIN
+                        AdminUsers AS au1 ON fw.OwnerAdminID = au1.AdminID
+                    WHERE (fw.ID = @FrameworkID)
+                    UNION ALL
+                   SELECT fwc.FrameworkID, fwc.AdminID, fwc.CanModify, au.Email, au.Forename, au.Surname, CASE WHEN fwc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+                    FROM   FrameworkCollaborators AS fwc INNER JOIN
+                        AdminUsers AS au ON fwc.AdminID = au.AdminID
+                    WHERE (fwc.FrameworkID = @FrameworkID) AND (au.Active=1)", new { frameworkId });
+        }
+
+        public int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify)
+        {
+            int existingId = (int)connection.ExecuteScalar(
+               @"SELECT COALESCE
+                 ((SELECT AdminID
+                  FROM    FrameworkCollaborators
+                  WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)), 0) AS AdminID",
+               new { frameworkId, adminId });
+            if (existingId > 0)
+            {
+                return -2;
+            }
+            else
+            {
+                var numberOfAffectedRows = connection.Execute(
+                             @"INSERT INTO FrameworkCollaborators (FrameworkID, AdminID, CanModify)
+                    VALUES (@frameworkId, @adminId, @canModify)",
+                            new { frameworkId, adminId, canModify });
+                if (numberOfAffectedRows < 1)
+                {
+                    logger.LogWarning(
+                        $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, frameworkId: {frameworkId}, canModify: {canModify}"
+                    );
+                    return -1;
+                }
+                existingId = (int)connection.ExecuteScalar(
+                 @"SELECT COALESCE
+                 ((SELECT AdminID
+                  FROM    FrameworkCollaborators
+                  WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)), 0) AS AdminID",
+               new { frameworkId, adminId });
+                return existingId;
+            }
+        }
+        public void RemoveCollaboratorFromFramework(int frameworkId, int adminId)
+        {
+            connection.Execute(
+                             @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)",
+                            new { frameworkId, adminId });
         }
     }
 }
