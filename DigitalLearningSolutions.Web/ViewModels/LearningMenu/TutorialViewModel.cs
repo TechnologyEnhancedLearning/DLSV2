@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
-    using System.Linq;
-    using System.Net;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using DigitalLearningSolutions.Web.Helpers;
     using HtmlAgilityPack;
+    using Microsoft.Extensions.Configuration;
 
     public class TutorialViewModel
     {
@@ -11,13 +11,22 @@
         public string? Objectives { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
+        public string? SupportingMaterialPath { get; }
 
-        public TutorialViewModel(TutorialInformation tutorialInformation, int customisationId, int sectionId)
+        public TutorialViewModel(
+            IConfiguration config,
+            TutorialInformation tutorialInformation,
+            int customisationId,
+            int sectionId
+        )
         {
             TutorialInformation = tutorialInformation;
             CustomisationId = customisationId;
             SectionId = sectionId;
             Objectives = ParseObjectives(tutorialInformation.Objectives);
+
+            SupportingMaterialPath =
+                ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
         }
 
         public bool CanShowProgress => TutorialInformation.CanShowDiagnosticStatus && TutorialInformation.AttemptCount > 0;

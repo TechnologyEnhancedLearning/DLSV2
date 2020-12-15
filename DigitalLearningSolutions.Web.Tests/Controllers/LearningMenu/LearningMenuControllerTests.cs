@@ -516,7 +516,7 @@
             var result = controller.Tutorial(CustomisationId, SectionId, TutorialId);
 
             // Then
-            var expectedModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var expectedModel = new TutorialViewModel(config, expectedTutorialInformation, CustomisationId, SectionId);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }

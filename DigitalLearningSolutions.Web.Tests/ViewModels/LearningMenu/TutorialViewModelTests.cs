@@ -1,23 +1,40 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class TutorialViewModelTests
     {
+        private IConfiguration config;
+        private const string BaseUrl = "https://example.com";
         private const int CustomisationId = 1;
         private const int SectionId = 10;
 
+        [SetUp]
+        public void SetUp()
+        {
+            config = A.Fake<IConfiguration>();
+            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+        }
+
         [Test]
-        public void Tutorial_should_have_tutorial_infomation()
+        public void Tutorial_should_have_tutorial_information()
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.TutorialInformation.Should().BeEquivalentTo(expectedTutorialInformation);
@@ -30,7 +47,12 @@
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.CustomisationId.Should().Be(CustomisationId);
@@ -43,7 +65,12 @@
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.SectionId.Should().Be(SectionId);
@@ -59,7 +86,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.TimeSummary.Should().Be("41m (average time 1h 13m)");
@@ -75,7 +107,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.ScoreSummary.Should().Be("(score: 9 out of 10)");
@@ -91,7 +128,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.CanShowProgress.Should().BeTrue();
@@ -107,7 +149,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.CanShowProgress.Should().BeFalse();
@@ -123,7 +170,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.CanShowProgress.Should().BeFalse();
@@ -139,7 +191,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.TutorialRecommendation.Should().Be("recommended");
@@ -155,7 +212,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.TutorialRecommendation.Should().Be("optional");
@@ -170,7 +232,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.Objectives.Should().BeNull();
@@ -187,7 +254,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.Objectives.Should().Be(objectives);
@@ -211,7 +283,12 @@
             );
 
             // When
-            var tutorialViewModel = new TutorialViewModel(expectedTutorialInformation, CustomisationId, SectionId);
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialViewModel.Objectives.Should().Be(" In this tutorial you will learn to: " +
@@ -220,6 +297,30 @@
                                                        "<li>arrange workbook windows</li>" +
                                                        "<li>hide and show windows</li>" +
                                                      "</ul>");
+        }
+
+        [TestCase("https://example.com/testVideo.mp4")]
+        [TestCase("example.com/testVideo.mp4")]
+        [TestCase("/testVideo.mp4")]
+        [TestCase(null)]
+        public void Tutorial_parses_supporting_materials_path(string? supportingMaterialPath)
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                supportingMaterialPath: supportingMaterialPath
+            );
+            var expectedParsedPath = ContentUrlHelper.GetNullableContentPath(config, supportingMaterialPath);
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.SupportingMaterialPath.Should().Be(expectedParsedPath);
         }
     }
 }

@@ -19,5 +19,8 @@
             }
             return config["CurrentSystemBaseUrl"] + videoPath;
         }
+
+        public static string? GetNullableContentPath(IConfiguration config, string? videoPath) =>
+            videoPath != null ? GetContentPath(config, videoPath) : null;
     }
 }

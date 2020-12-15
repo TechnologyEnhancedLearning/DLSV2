@@ -72,9 +72,11 @@
     </div>
   }
 
-  @if (Model.TutorialInformation.SupportingMaterialPath != null) {
+  @if (Model.SupportingMaterialPath != null) {
     <div>
-      <a class="nhsuk-button nhsuk-button--secondary" href="">Download supporting materials</a>
+      <a class="nhsuk-button nhsuk-button--secondary" href="@Model.SupportingMaterialPath" download>
+        Download supporting materials
+      </a>
     </div>
   }
 </div>

@@ -56,5 +56,30 @@
             // Then
             parsedPath.Should().Be(BaseUrl + videoPath);
         }
+
+        [TestCase("https://example.com/testVideo.mp4")]
+        [TestCase("example.com/testVideo.mp4")]
+        [TestCase("/testVideo.mp4")]
+        public void GetNullableContentPath_should_parse_paths_when_not_null(string videoPath)
+        {
+            // Given
+            var expectedParsedPath = ContentUrlHelper.GetContentPath(config, videoPath);
+
+            // When
+            var actualParsedPath = ContentUrlHelper.GetNullableContentPath(config, videoPath);
+
+            // Then
+            actualParsedPath.Should().Be(expectedParsedPath);
+        }
+
+        [Test]
+        public void GetNullableContentPath_should_return_null_when_path_is_null()
+        {
+            // When
+            var parsedPath = ContentUrlHelper.GetNullableContentPath(config, null);
+
+            // Then
+            parsedPath.Should().BeNull();
+        }
     }
 }
