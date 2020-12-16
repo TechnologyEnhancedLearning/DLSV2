@@ -49,16 +49,38 @@
                          Tutorials.Objectives,
                          Tutorials.VideoPath,
                          Tutorials.TutorialPath,
-                         Tutorials.SupportingMatsPath AS SupportingMaterialPath
+                         Tutorials.SupportingMatsPath AS SupportingMaterialPath,
+                         Sections.PLAssessPath AS PostLearningAssessmentPath,
+                         MIN(SubsequentTutorials.TutorialID) AS NextTutorialID,
+                         MIN(SubsequentSections.SectionID) AS NextSectionID
                     FROM Tutorials
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+
+                         INNER JOIN Sections
+                         ON Tutorials.SectionID = Sections.SectionID
 
                          INNER JOIN Customisations
                          ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
 
                          INNER JOIN Applications
                          ON Customisations.ApplicationId = Applications.ApplicationId
+
+                         LEFT JOIN CustomisationTutorials AS SubsequentCustomisationTutorials
+                         ON SubsequentCustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                            AND SubsequentCustomisationTutorials.Status = 1
+
+                         LEFT JOIN Tutorials AS SubsequentTutorials
+                         ON SubsequentTutorials.SectionID = Sections.SectionID
+                            AND Tutorials.OrderByNumber < SubsequentTutorials.OrderByNumber
+                            AND SubsequentCustomisationTutorials.TutorialID = SubsequentTutorials.TutorialID
+
+                         LEFT JOIN Tutorials AS SubsequentSectionsTutorials
+                         ON  SubsequentCustomisationTutorials.TutorialID = SubsequentSectionsTutorials.TutorialID
+
+                         LEFT JOIN Sections AS SubsequentSections
+                         ON SubsequentSectionsTutorials.SectionID = SubsequentSections.SectionID
+                            AND Sections.SectionNumber < SubsequentSections.SectionNumber
 
                          LEFT JOIN Progress
                          ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
@@ -76,7 +98,23 @@
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1;",
+                     AND CustomisationTutorials.Status = 1
+                   GROUP BY Tutorials.TutorialID,
+                            Tutorials.TutorialName,
+                            Applications.ApplicationName,
+                            Customisations.CustomisationName,
+                            TutStatus.Status,
+                            aspProgress.TutTime,
+                            Tutorials.AverageTutMins,
+                            aspProgress.DiagLast,
+                            Tutorials.DiagAssessOutOf,
+                            CustomisationTutorials.DiagStatus,
+                            aspProgress.DiagAttempts,
+                            Tutorials.Objectives,
+                            Tutorials.VideoPath,
+                            Tutorials.TutorialPath,
+                            Tutorials.SupportingMatsPath,
+                            Sections.PLAssessPath;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
 
