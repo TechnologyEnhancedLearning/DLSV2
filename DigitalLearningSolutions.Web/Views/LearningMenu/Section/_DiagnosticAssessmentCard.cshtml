@@ -1,4 +1,6 @@
-﻿<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@model SectionContentViewModel
+<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
@@ -14,7 +16,7 @@
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
           Launch assessment
         </a>
       </div>

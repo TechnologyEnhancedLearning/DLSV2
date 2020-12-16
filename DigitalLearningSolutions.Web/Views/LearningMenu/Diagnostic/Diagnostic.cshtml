@@ -1,0 +1,86 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = "CMS Demonstration Course - Vimetube test";
+  ViewData["Title"] = "CMS Demonstration Course - Vimetube test";
+  ViewData["CustomisationId"] = 18438;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{18438}";
+  ViewData["HeaderPathName"] = "CMS Demonstration Course - Vimetube test";
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Working with Microsoft Office applications</h1>
+    <h2 class="nhsuk-u-secondary-text-color">Not attempted</h2>
+  </div>
+</div>
+
+<div class="nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
+  <h3 class="nhsuk-heading-s">Important information:</h3>
+  <ul class="nhsuk-list nhsuk-list--bullet">
+    <li>Your score will be reset for any areas that you have attempted previously and choose to attempt again.</li>
+    <li>Please allow sufficient time to complete the assessment. If you close part way through, your progress will not be stored.</li>
+    <li>Throughout most assessments, green or red indicators will appear to indicate whether you have answered correctly.</li>
+    <li>Most keyboard shortcuts will be disabled in the assessment because we are unable to capture them in the testing software. If in doubt, use the mouse.</li>
+  </ul>
+</div>
+
+<form class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      Which areas do you want to assess?
+    </legend>
+
+    <div class="nhsuk-hint" id="contact-hint">
+      Select all areas that you want to test.
+    </div>
+
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="1" value="1">
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="1">
+        Introduction to applications
+      </label>
+    </div>
+
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="2" value="2">
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="2">
+        Common screen elements
+      </label>
+    </div>
+
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="3" value="3">
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="3">
+        Using ribbon tabs
+      </label>
+    </div>
+
+    <div class="nhsuk-checkboxes__item">
+      <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="4" value="4">
+      <label class="nhsuk-label nhsuk-checkboxes__label" for="4">
+        Getting help
+      </label>
+    </div>
+
+    <button class="nhsuk-button nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-0" type="submit">
+      Start assessment
+    </button>
+  </fieldset>
+</form>
+
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link" asp-action="Section" asp-controller="LearningMenu" asp-route-customisationId="18438" asp-route-sectionId="993">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+    </svg>
+    Return to section
+  </a>
+</div>
