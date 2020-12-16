@@ -106,7 +106,7 @@
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            var model = new SectionContentViewModel(sectionContent, customisationId);
+            var model = new SectionContentViewModel(sectionContent, customisationId, sectionId);
             return View("Section/Section", model);
         }
 

@@ -1,15 +1,20 @@
-﻿<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@model TutorialCardViewModel
+<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
         <h3 class="nhsuk-card__heading">
-          Introduction to Assessments
+          @Model.TutorialName
         </h3>
       </div>
       <div class="nhsuk-grid-column-one-quarter">
         <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color">
-          Not started
+          @Model.CompletionStatus
         </h3>
+        <p class="nhsuk-u-secondary-text-color">
+          @Model.TimeInformation
+        </p>
       </div>
     </div>
     <div class="nhsuk-grid-row">
@@ -17,9 +22,9 @@
         <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
            asp-action="Tutorial"
            asp-controller="LearningMenu"
-           asp-route-customisationId="18438"
-           asp-route-sectionId="993"
-           asp-route-tutorialId="4341">
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-sectionId="@Model.SectionId"
+           asp-route-tutorialId="@Model.Id">
           Launch tutorial
         </a>
       </div>
