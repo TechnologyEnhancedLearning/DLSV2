@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
-    using System;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class TutorialVideoViewModel
@@ -26,22 +26,7 @@
             TutorialId = tutorialId;
             TutorialName = tutorialVideo.TutorialName;
             CourseTitle = tutorialVideo.CourseTitle;
-            VideoPath = GetVideoPath(config, tutorialVideo.VideoPath);
-        }
-
-        private static string GetVideoPath(IConfiguration config, string videoPath)
-        {
-            if (Uri.IsWellFormedUriString(videoPath, UriKind.Absolute))
-            {
-                return videoPath;
-            }
-
-            var urlWithProtocol = $"https://{videoPath}";
-            if (Uri.IsWellFormedUriString(urlWithProtocol, UriKind.Absolute))
-            {
-                return urlWithProtocol;
-            }
-            return config["CurrentSystemBaseUrl"] + videoPath;
+            VideoPath = ContentUrlHelper.GetContentPath(config, tutorialVideo.VideoPath);
         }
     }
 }

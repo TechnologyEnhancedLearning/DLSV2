@@ -106,7 +106,7 @@
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            var model = new SectionContentViewModel(sectionContent, customisationId);
+            var model = new SectionContentViewModel(sectionContent, customisationId, sectionId);
             return View("Section/Section", model);
         }
 
@@ -147,7 +147,8 @@
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            return View("Tutorial/Tutorial", new TutorialViewModel(tutorialInformation, customisationId, sectionId));
+            var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId);
+            return View("Tutorial/Tutorial", viewModel);
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]
