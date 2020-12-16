@@ -50,15 +50,15 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("Introduction to applications", 0, "Not started", 0, 17),
-                    new SectionTutorial("Common screen elements", 0, "Not started", 0, 11),
-                    new SectionTutorial("Using ribbon tabs", 0, "Not started", 0, 6),
-                    new SectionTutorial("Getting help", 0, "Not started", 0, 11)
+                    new SectionTutorial("Introduction to applications", 0, "Not started", 0, 17, 1461),
+                    new SectionTutorial("Common screen elements", 0, "Not started", 0, 11, 1462),
+                    new SectionTutorial("Using ribbon tabs", 0, "Not started", 0, 6, 1463),
+                    new SectionTutorial("Getting help", 0, "Not started", 0, 11, 1464)
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
-
+        
         [Test]
         public void Get_section_content_should_return_null_if_customisation_id_is_invalid()
         {
@@ -115,14 +115,14 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("Entering data in the Worksheet", 0, "Not started", 0, 9),
-                    new SectionTutorial("Copying, moving and Auto-Filling data", 2, "Complete", 3, 14),
-                    new SectionTutorial("Define names for cells and cell ranges", 0, "Not started", 0, 10),
-                    new SectionTutorial("Using absolute and relative addresses", 0, "Not started", 0, 12),
-                    new SectionTutorial("Insert and delete rows, columns and cells", 0, "Not started", 0, 5),
-                    new SectionTutorial("Hide and unhide rows or columns", 2, "Complete", 1, 3),
-                    new SectionTutorial("Use pick lists", 0, "Not started", 0, 8),
-                    new SectionTutorial("Use comments", 0, "Not started", 0, 21), 
+                    new SectionTutorial("Entering data in the Worksheet", 0, "Not started", 0, 9, 4453),
+                    new SectionTutorial("Copying, moving and Auto-Filling data", 2, "Complete", 3, 14, 4454),
+                    new SectionTutorial("Define names for cells and cell ranges", 0, "Not started", 0, 10, 4455),
+                    new SectionTutorial("Using absolute and relative addresses", 0, "Not started", 0, 12, 4456),
+                    new SectionTutorial("Insert and delete rows, columns and cells", 0, "Not started", 0, 5, 4457),
+                    new SectionTutorial("Hide and unhide rows or columns", 2, "Complete", 1, 3, 4458),
+                    new SectionTutorial("Use pick lists", 0, "Not started", 0, 8, 4459),
+                    new SectionTutorial("Use comments", 0, "Not started", 0, 21, 4460)
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
@@ -160,14 +160,14 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("Entering data in the Worksheet", 0, "Not started", 0, 9),
-                    new SectionTutorial("Copying, moving and Auto-Filling data", 0, "Not started", 0, 14),
-                    new SectionTutorial("Define names for cells and cell ranges", 0, "Not started", 0, 10),
-                    new SectionTutorial("Using absolute and relative addresses", 0, "Not started", 0, 12),
-                    new SectionTutorial("Insert and delete rows, columns and cells", 0, "Not started", 0, 5),
-                    new SectionTutorial("Hide and unhide rows or columns", 0, "Not started", 0, 3),
-                    new SectionTutorial("Use pick lists", 0, "Not started", 0, 8),
-                    new SectionTutorial("Use comments", 0, "Not started", 0, 21),
+                    new SectionTutorial("Entering data in the Worksheet", 0, "Not started", 0, 9, 4453),
+                    new SectionTutorial("Copying, moving and Auto-Filling data", 0, "Not started", 0, 14, 4454),
+                    new SectionTutorial("Define names for cells and cell ranges", 0, "Not started", 0, 10, 4455),
+                    new SectionTutorial("Using absolute and relative addresses", 0, "Not started", 0, 12, 4456),
+                    new SectionTutorial("Insert and delete rows, columns and cells", 0, "Not started", 0, 5, 4457),
+                    new SectionTutorial("Hide and unhide rows or columns", 0, "Not started", 0, 3, 4458),
+                    new SectionTutorial("Use pick lists", 0, "Not started", 0, 8, 4459),
+                    new SectionTutorial("Use comments", 0, "Not started", 0, 21, 4460),
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
@@ -229,10 +229,10 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("View documents", 0, "Not started", 0, 9),
-                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5),
-                    new SectionTutorial("Use document properties", 0, "Not started", 0, 2),
-                    new SectionTutorial("Save documents", 0, "Not started", 0, 4)
+                    new SectionTutorial("View documents", 0, "Not started", 0, 9, 49),
+                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5, 50),
+                    new SectionTutorial("Use document properties", 0, "Not started", 0, 2, 51),
+                    new SectionTutorial("Save documents", 0, "Not started", 0, 4, 52)
                 }
             );
 
@@ -269,10 +269,10 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("View documents", 0, "Not started", 0, 9),
-                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5),
-                    new SectionTutorial("Use document properties", 0, "Not started", 0, 2),
-                    new SectionTutorial("Save documents", 0, "Not started", 0, 4)
+                    new SectionTutorial("View documents", 0, "Not started", 0, 9, 49),
+                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5, 50),
+                    new SectionTutorial("Use document properties", 0, "Not started", 0, 2, 51),
+                    new SectionTutorial("Save documents", 0, "Not started", 0, 4, 52)
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
@@ -308,10 +308,10 @@
             expectedSectionContent.Tutorials.AddRange(
                 new[]
                 {
-                    new SectionTutorial("View documents", 0, "Not started", 0, 9),
-                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5),
-                    new SectionTutorial("Use document properties", 2, "Complete", 1, 2),
-                    new SectionTutorial("Save documents", 2, "Complete", 2, 4)
+                    new SectionTutorial("View documents", 0, "Not started", 0, 9, 49),
+                    new SectionTutorial("Navigate documents", 0, "Not started", 0, 5, 50),
+                    new SectionTutorial("Use document properties", 2, "Complete", 1, 2, 51),
+                    new SectionTutorial("Save documents", 2, "Complete", 2, 4, 52)
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
