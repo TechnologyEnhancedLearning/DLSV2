@@ -141,7 +141,7 @@
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId);
+            var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId, tutorialId);
             return View("Tutorial/Tutorial", viewModel);
         }
 

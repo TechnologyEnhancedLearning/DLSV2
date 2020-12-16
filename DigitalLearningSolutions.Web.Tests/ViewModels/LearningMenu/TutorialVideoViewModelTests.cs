@@ -127,16 +127,18 @@
             tutorialVideoViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 
-        [TestCase("https://example.com/testVideo.mp4")]
-        [TestCase("example.com/testVideo.mp4")]
-        [TestCase("/testVideo.mp4")]
-        public void TutorialVideo_should_parse_path(string videoPath)
+        [TestCase("https://example.com/testVideo.mp4", "https://example.com/testVideo.mp4")]
+        [TestCase("example.com/testVideo.mp4", "https://example.com/testVideo.mp4")]
+        [TestCase("/testVideo.mp4", BaseUrl + "/testVideo.mp4")]
+        public void TutorialVideo_should_parse_path(
+            string givenVideoPath,
+            string expectedParsedPath
+        )
         {
             // Given
             var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo(
-                videoPath: videoPath
+                videoPath: givenVideoPath
             );
-            var expectedParsedPath = ContentUrlHelper.GetContentPath(config, videoPath);
 
             // When
             var tutorialVideoViewModel = new TutorialVideoViewModel(

@@ -14,6 +14,7 @@
         private const string BaseUrl = "https://example.com";
         private const int CustomisationId = 1;
         private const int SectionId = 10;
+        private const int TutorialId = 1000;
 
         [SetUp]
         public void SetUp()
@@ -23,21 +24,117 @@
         }
 
         [Test]
-        public void Tutorial_should_have_tutorial_information()
+        public void Tutorial_should_have_tutorialName()
         {
             // Given
-            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
+            const string tutorialName = "Tutorial Name";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                name: tutorialName
+            );
 
             // When
             var tutorialViewModel = new TutorialViewModel(
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
-            tutorialViewModel.TutorialInformation.Should().BeEquivalentTo(expectedTutorialInformation);
+            tutorialViewModel.TutorialName.Should().Be(tutorialName);
+        }
+
+        [Test]
+        public void Tutorial_should_have_courseTitle()
+        {
+            // Given
+            const string applicationName = "Application";
+            const string customisationName = "Customisation";
+            var courseTitle = $"{applicationName} - {customisationName}";
+
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                applicationName: applicationName,
+                customisationName: customisationName
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialViewModel.CourseTitle.Should().Be(courseTitle);
+        }
+
+        [Test]
+        public void Tutorial_should_have_status()
+        {
+            // Given
+            const string status = "Not started";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: status
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialViewModel.Status.Should().Be(status);
+        }
+
+        [Test]
+        public void Tutorial_should_have_tutorialPath()
+        {
+            // Given
+            const string tutorialPath = "Tutorial path";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                tutorialPath: tutorialPath
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialViewModel.TutorialPath.Should().Be(tutorialPath);
+        }
+
+        [Test]
+        public void Tutorial_should_have_videoPath()
+        {
+            // Given
+            const string videoPath = "Video path";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                videoPath: videoPath
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialViewModel.VideoPath.Should().Be(videoPath);
         }
 
         [Test]
@@ -51,7 +148,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -69,11 +167,31 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
             tutorialViewModel.SectionId.Should().Be(SectionId);
+        }
+
+        [Test]
+        public void Tutorial_should_have_tutorialId()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialViewModel.TutorialId.Should().Be(TutorialId);
         }
 
         [Test]
@@ -90,7 +208,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -111,7 +230,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -132,7 +252,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -153,7 +274,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -174,7 +296,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -195,7 +318,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -216,7 +340,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -236,7 +361,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -258,7 +384,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -287,7 +414,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
@@ -316,7 +444,8 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId
+                SectionId,
+                TutorialId
             );
 
             // Then
