@@ -44,39 +44,135 @@
         }
 
         [Test]
-        public void Section_content_with_has_learning_should_have_percent_complete()
-        {
-            // Given
-            const bool hasLearning = true;
-            const double percentComplete = 50.1;
-            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                hasLearning: hasLearning,
-                percentComplete: percentComplete
-            );
-
-            // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
-
-            // Then
-            sectionContentViewModel.PercentComplete.Should().Be("50% Complete");
-        }
-
-        [Test]
         public void Section_content_without_has_learning_should_have_empty_percent_complete()
         {
             // Given
             const bool hasLearning = false;
-            const double percentComplete = 50;
-            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                hasLearning: hasLearning,
-                percentComplete: percentComplete
-            );
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
 
             // When
             var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be("");
+        }
+
+        [Test]
+        public void Section_content_with_no_complete_tutorials_should_have_zero_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            const int expectedPercentComplete = 0;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_content_with_all_complete_tutorials_should_have_one_hundred_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2)
+            };
+            const int expectedPercentComplete = 100;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_content_with_all_started_tutorials_should_have_fifty_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 1),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 1),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 1)
+            };
+            const int expectedPercentComplete = 50;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_content_with_mixed_status_tutorials_that_dont_need_rounding_returns_correct_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 1),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 1),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2)
+            };
+            const int expectedPercentComplete = 50;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_content_with_mixed_status_tutorials_that_need_rounding_returns_correct_percent_complete()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            const int roundedPercentComplete = 33;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% Complete");
         }
 
         [Test]
