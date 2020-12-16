@@ -110,6 +110,12 @@
             return View("Section/Section", model);
         }
 
+        [Route("/LearningMenu/1/1/Diagnostic")]
+        public IActionResult Diagnostic()
+        {
+            return View("Diagnostic/Diagnostic");
+        }
+
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]
         public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
         {
