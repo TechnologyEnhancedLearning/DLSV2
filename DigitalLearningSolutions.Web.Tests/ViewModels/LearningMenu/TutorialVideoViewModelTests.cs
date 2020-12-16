@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
@@ -126,13 +127,17 @@
             tutorialVideoViewModel.CourseTitle.Should().BeEquivalentTo(courseTitle);
         }
 
-        [Test]
-        public void TutorialVideo_should_parse_absolute_url()
+        [TestCase("https://example.com/testVideo.mp4", "https://example.com/testVideo.mp4")]
+        [TestCase("example.com/testVideo.mp4", "https://example.com/testVideo.mp4")]
+        [TestCase("/testVideo.mp4", BaseUrl + "/testVideo.mp4")]
+        public void TutorialVideo_should_parse_path(
+            string givenVideoPath,
+            string expectedParsedPath
+        )
         {
             // Given
-            const string videoPath = "https://example.com/testVideo.mp4";
             var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo(
-                videoPath: videoPath
+                videoPath: givenVideoPath
             );
 
             // When
@@ -145,51 +150,7 @@
             );
 
             // Then
-            tutorialVideoViewModel.VideoPath.Should().Be(videoPath);
-        }
-
-        [Test]
-        public void TutorialVideo_should_parse_protocol_relative_url()
-        {
-            // Given
-            const string videoPath = "example.com/testVideo.mp4";
-            var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo(
-                videoPath: videoPath
-            );
-
-            // When
-            var tutorialVideoViewModel = new TutorialVideoViewModel(
-                config,
-                expectedTutorialVideo,
-                CustomisationId,
-                SectionId,
-                TutorialId
-            );
-
-            // Then
-            tutorialVideoViewModel.VideoPath.Should().Be($"https://{videoPath}");
-        }
-
-        [Test]
-        public void TutorialVideo_should_parse_relative_path()
-        {
-            // Given
-            const string videoPath = "/testVideo.mp4";
-            var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo(
-                videoPath: videoPath
-            );
-
-            // When
-            var tutorialVideoViewModel = new TutorialVideoViewModel(
-                config,
-                expectedTutorialVideo,
-                CustomisationId,
-                SectionId,
-                TutorialId
-            );
-
-            // Then
-            tutorialVideoViewModel.VideoPath.Should().Be(BaseUrl + videoPath);
+            tutorialVideoViewModel.VideoPath.Should().Be(expectedParsedPath);
         }
     }
 }

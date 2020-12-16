@@ -1,36 +1,75 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
-    using System.Linq;
-    using System.Net;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
+    using DigitalLearningSolutions.Web.Helpers;
     using HtmlAgilityPack;
+    using Microsoft.Extensions.Configuration;
 
     public class TutorialViewModel
     {
-        public TutorialInformation TutorialInformation { get; }
+        public string TutorialName { get; }
+        public string CourseTitle { get; }
+        public string Status { get; }
+        public string? TutorialPath { get; }
+        public string? VideoPath { get; }
         public string? Objectives { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
+        public int TutorialId { get; }
+        public bool CanShowProgress { get; }
+        public string TutorialRecommendation { get; }
+        public string ScoreSummary { get; }
+        public string TimeSummary { get; }
+        public string? SupportingMaterialPath { get; }
 
-        public TutorialViewModel(TutorialInformation tutorialInformation, int customisationId, int sectionId)
+        public TutorialViewModel(
+            IConfiguration config,
+            TutorialInformation tutorialInformation,
+            int customisationId,
+            int sectionId
+        )
         {
-            TutorialInformation = tutorialInformation;
+            TutorialName = tutorialInformation.Name;
+            CourseTitle = tutorialInformation.CourseTitle;
+            TutorialPath = tutorialInformation.TutorialPath;
+            VideoPath = tutorialInformation.VideoPath;
+            Status = tutorialInformation.Status;
+
             CustomisationId = customisationId;
             SectionId = sectionId;
+            TutorialId = tutorialInformation.Id;
             Objectives = ParseObjectives(tutorialInformation.Objectives);
+
+            CanShowProgress =
+                GetCanShowProgress(tutorialInformation.CanShowDiagnosticStatus, tutorialInformation.AttemptCount);
+            TutorialRecommendation =
+                GetTutorialRecommendation(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
+            ScoreSummary = GetScoreSummary(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
+            TimeSummary = GetTimeSummary(tutorialInformation.TimeSpent, tutorialInformation.AverageTutorialDuration);
+            SupportingMaterialPath =
+                ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
         }
 
-        public bool CanShowProgress => TutorialInformation.CanShowDiagnosticStatus && TutorialInformation.AttemptCount > 0;
+        private bool GetCanShowProgress(bool canShowDiagnosticStatus, int attemptCount)
+        {
+            return canShowDiagnosticStatus && attemptCount > 0;
+        }
 
-        public string TutorialRecommendation =>
-            TutorialInformation.CurrentScore < TutorialInformation.PossibleScore ? "recommended" : "optional";
+        private string GetTutorialRecommendation(int currentScore, int possibleScore)
+        {
+            return currentScore < possibleScore ? "recommended" : "optional";
+        }
 
-        public string ScoreSummary =>
-            CanShowProgress ? $"(score: {TutorialInformation.CurrentScore} out of {TutorialInformation.PossibleScore})" : "";
+        private string GetScoreSummary(int currentScore, int possibleScore)
+        {
+            return CanShowProgress ? $"(score: {currentScore} out of {possibleScore})" : "";
+        }
 
-        public string TimeSummary =>
-            $"{ParseMinutes(TutorialInformation.TimeSpent)}" +
-            $" (average time {ParseMinutes(TutorialInformation.AverageTutorialDuration)})";
+        private string GetTimeSummary(int timeSpent, int averageTutorialDuration)
+        {
+            return $"{ParseMinutes(timeSpent)}" +
+                   $" (average time {ParseMinutes(averageTutorialDuration)})";
+        }
 
         private static string ParseMinutes(int minutes)
         {
