@@ -35,6 +35,9 @@
 
 <partial name="Section/_DiagnosticAssessmentCard" />
 
-<partial name="Section/_TutorialCard" />
+@foreach (var tutorial in Model.Tutorials)
+{
+  <partial name="Section/_TutorialCard" model="tutorial" />
+}
 
 <partial name="Section/_PostLearningAssessmentCard" />
