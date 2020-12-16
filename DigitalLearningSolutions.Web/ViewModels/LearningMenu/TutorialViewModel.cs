@@ -16,21 +16,17 @@
         public int CustomisationId { get; }
         public int SectionId { get; }
         public int TutorialId { get; }
+        public bool CanShowProgress { get; }
+        public string TutorialRecommendation { get; }
+        public string ScoreSummary { get; }
+        public string TimeSummary { get; }
         public string? SupportingMaterialPath { get; }
-
-        private readonly int timeSpent;
-        private readonly int averageTutorialDuration;
-        private readonly int currentScore;
-        private readonly int possibleScore;
-        private readonly bool canShowDiagnosticStatus;
-        private readonly int attemptCount;
 
         public TutorialViewModel(
             IConfiguration config,
             TutorialInformation tutorialInformation,
             int customisationId,
-            int sectionId,
-            int tutorialId
+            int sectionId
         )
         {
             TutorialName = tutorialInformation.Name;
@@ -39,33 +35,41 @@
             VideoPath = tutorialInformation.VideoPath;
             Status = tutorialInformation.Status;
 
-            timeSpent = tutorialInformation.TimeSpent;
-            averageTutorialDuration = tutorialInformation.AverageTutorialDuration;
-            currentScore = tutorialInformation.CurrentScore;
-            possibleScore = tutorialInformation.PossibleScore;
-            canShowDiagnosticStatus = tutorialInformation.CanShowDiagnosticStatus;
-            attemptCount = tutorialInformation.AttemptCount;
-
             CustomisationId = customisationId;
             SectionId = sectionId;
-            TutorialId = tutorialId;
+            TutorialId = tutorialInformation.Id;
             Objectives = ParseObjectives(tutorialInformation.Objectives);
 
+            CanShowProgress =
+                GetCanShowProgress(tutorialInformation.CanShowDiagnosticStatus, tutorialInformation.AttemptCount);
+            TutorialRecommendation =
+                GetTutorialRecommendation(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
+            ScoreSummary = GetScoreSummary(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
+            TimeSummary = GetTimeSummary(tutorialInformation.TimeSpent, tutorialInformation.AverageTutorialDuration);
             SupportingMaterialPath =
                 ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
         }
 
-        public bool CanShowProgress => canShowDiagnosticStatus && attemptCount > 0;
+        private bool GetCanShowProgress(bool canShowDiagnosticStatus, int attemptCount)
+        {
+            return canShowDiagnosticStatus && attemptCount > 0;
+        }
 
-        public string TutorialRecommendation =>
-            currentScore < possibleScore ? "recommended" : "optional";
+        private string GetTutorialRecommendation(int currentScore, int possibleScore)
+        {
+            return currentScore < possibleScore ? "recommended" : "optional";
+        }
 
-        public string ScoreSummary =>
-            CanShowProgress ? $"(score: {currentScore} out of {possibleScore})" : "";
+        private string GetScoreSummary(int currentScore, int possibleScore)
+        {
+            return CanShowProgress ? $"(score: {currentScore} out of {possibleScore})" : "";
+        }
 
-        public string TimeSummary =>
-            $"{ParseMinutes(timeSpent)}" +
-            $" (average time {ParseMinutes(averageTutorialDuration)})";
+        private string GetTimeSummary(int timeSpent, int averageTutorialDuration)
+        {
+            return $"{ParseMinutes(timeSpent)}" +
+                   $" (average time {ParseMinutes(averageTutorialDuration)})";
+        }
 
         private static string ParseMinutes(int minutes)
         {

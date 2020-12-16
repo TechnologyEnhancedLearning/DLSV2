@@ -37,8 +37,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -63,8 +62,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -85,8 +83,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -107,8 +104,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -129,8 +125,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -148,8 +143,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -167,8 +161,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -179,15 +172,14 @@
         public void Tutorial_should_have_tutorialId()
         {
             // Given
-            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation();
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(TutorialId);
 
             // When
             var tutorialViewModel = new TutorialViewModel(
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -208,8 +200,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -230,8 +221,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -252,8 +242,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -274,8 +263,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -296,8 +284,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -318,8 +305,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -340,8 +326,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -361,8 +346,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -384,8 +368,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -414,8 +397,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
@@ -444,8 +426,7 @@
                 config,
                 expectedTutorialInformation,
                 CustomisationId,
-                SectionId,
-                TutorialId
+                SectionId
             );
 
             // Then
