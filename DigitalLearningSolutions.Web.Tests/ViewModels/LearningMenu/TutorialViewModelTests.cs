@@ -187,6 +187,38 @@
         }
 
         [Test]
+        public void Tutorial_should_have_nextLinkViewModel()
+        {
+            // Given
+            const string postLearningAssessmentPath = "/assessment";
+            const int nextTutorialId = 101;
+            const int nextSectionId = 100;
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                nextTutorialId: nextTutorialId,
+                nextSectionId: nextSectionId,
+                postLearningAssessmentPath: postLearningAssessmentPath
+            );
+            var expectedNextLinkViewModel = new TutorialNextLinkViewModel(
+                CustomisationId,
+                SectionId,
+                postLearningAssessmentPath,
+                nextTutorialId,
+                nextSectionId
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.NextLinkViewModel.Should().BeEquivalentTo(expectedNextLinkViewModel);
+        }
+
+        [Test]
         public void Tutorial_should_summarise_duration()
         {
             // Given

@@ -21,8 +21,8 @@
             string? tutorialPath = "tutorial",
             string? supportingMaterialPath = "material",
             string? postLearningAssessmentPath = "/postLearningAssessment",
-            int? subsequentTutorialId = 2,
-            int? subsequentSectionId = 45
+            int? nextTutorialId = 2,
+            int? nextSectionId = 45
         )
         {
             return new TutorialInformation(
@@ -42,8 +42,8 @@
                 tutorialPath,
                 supportingMaterialPath,
                 postLearningAssessmentPath,
-                subsequentTutorialId,
-                subsequentSectionId
+                nextTutorialId,
+                nextSectionId
             );
         }
 

@@ -25,14 +25,16 @@
   </div>
 </div>
 
-@if (Model.CanShowProgress) {
+@if (Model.CanShowProgress)
+{
   <div class="nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
     <span class="nhsuk-u-visually-hidden">Information: </span>
     <p>Based on your diagnostic assessment outcome, this tutorial is <b>@Model.TutorialRecommendation</b>.</p>
   </div>
 }
 
-@if (Model.Objectives != null) {
+@if (Model.Objectives != null)
+{
   <details class="nhsuk-details nhsuk-u-margin-bottom-4">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
@@ -46,7 +48,8 @@
 }
 
 <div class="tutorial-actions-container">
-  @if (Model.TutorialPath != null) {
+  @if (Model.TutorialPath != null)
+  {
     <div>
       <a class="nhsuk-button"
          asp-action="ContentViewer"
@@ -59,7 +62,8 @@
     </div>
   }
 
-  @if (Model.VideoPath != null) {
+  @if (Model.VideoPath != null)
+  {
     <div>
       <a class="nhsuk-button nhsuk-button--secondary"
          asp-controller="LearningMenu"
@@ -72,7 +76,8 @@
     </div>
   }
 
-  @if (Model.SupportingMaterialPath != null) {
+  @if (Model.SupportingMaterialPath != null)
+  {
     <div>
       <a class="nhsuk-button nhsuk-button--secondary" href="@Model.SupportingMaterialPath" download>
         Download supporting materials
@@ -81,12 +86,15 @@
   }
 </div>
 
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-back-link grid-column-85">
+    <a class="nhsuk-back-link__link" asp-action="Section" asp-controller="LearningMenu" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Return to section
+    </a>
 
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-action="Section" asp-controller="LearningMenu" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Return to section
-  </a>
+    <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
+  </div>
 </div>

@@ -21,6 +21,7 @@
         public string ScoreSummary { get; }
         public string TimeSummary { get; }
         public string? SupportingMaterialPath { get; }
+        public TutorialNextLinkViewModel NextLinkViewModel { get; }
 
         public TutorialViewModel(
             IConfiguration config,
@@ -48,6 +49,13 @@
             TimeSummary = GetTimeSummary(tutorialInformation.TimeSpent, tutorialInformation.AverageTutorialDuration);
             SupportingMaterialPath =
                 ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
+            NextLinkViewModel = new TutorialNextLinkViewModel(
+                customisationId,
+                sectionId,
+                tutorialInformation.PostLearningAssessmentPath,
+                tutorialInformation.NextTutorialId,
+                tutorialInformation.NextSectionId
+            );
         }
 
         private bool GetCanShowProgress(bool canShowDiagnosticStatus, int attemptCount)
