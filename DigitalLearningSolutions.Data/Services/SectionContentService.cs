@@ -83,7 +83,7 @@
                         AND Sections.SectionID = @sectionId
                         AND (Sections.ArchivedDate IS NULL)
                         AND (CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1 OR CustomisationTutorials.Status = 1)
-                    ORDER BY Tutorials.OrderByNumber",
+                    ORDER BY Tutorials.OrderByNumber, Tutorials.TutorialID",
                     (section, tutorial) =>
                 {
                     if (sectionContent == null)
