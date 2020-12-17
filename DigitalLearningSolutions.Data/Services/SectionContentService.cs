@@ -32,8 +32,6 @@
                         Applications.ApplicationName,
                         Customisations.CustomisationName,
                         Sections.SectionName,
-                        COALESCE (aspProgress.TutTime, 0) AS TutTime,
-                        Sections.AverageSectionMins AS AverageSectionTime, 
                         dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
                         COALESCE (aspProgress.DiagAttempts, 0) AS DiagAttempts,
                         COALESCE (aspProgress.DiagLast, 0) AS DiagLast,
@@ -93,7 +91,6 @@
 
                     else
                     {
-                        sectionContent.SectionTime += tutorial.TutorialTime;
                         sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, section.DiagnosticAttempts);
                         sectionContent.SectionScore += section.SectionScore;
                         sectionContent.MaxSectionScore += section.MaxSectionScore;

@@ -177,24 +177,6 @@
         }
 
         [Test]
-        public void Section_content_should_have_time_information()
-        {
-            // Given
-            const int timeMins = 4;
-            const int averageSectionTime = 10;
-            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                timeMins: timeMins,
-                averageSectionTime: averageSectionTime
-            );
-
-            // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
-
-            // Then
-            sectionContentViewModel.TimeInformation.Should().Be($"{timeMins}m (average time {averageSectionTime}m)");
-        }
-
-        [Test]
         public void Section_content_should_have_customisation_id()
         {
             // Given
