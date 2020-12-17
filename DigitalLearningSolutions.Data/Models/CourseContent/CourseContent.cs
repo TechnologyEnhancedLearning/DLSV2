@@ -12,7 +12,7 @@
         public string? BannerText { get; }
         public bool IncludeCertification { get; }
         public DateTime? Completed { get; }
-        public int AssessAttempts { get; }
+        public int MaxPostLearningAssessmentAttempts { get; }
         public bool IsAssessed { get; }
         public int PostLearningAssessmentPassThreshold { get; }
         public int DiagnosticAssessmentCompletionThreshold { get; }
@@ -28,7 +28,7 @@
             string? bannerText,
             bool includeCertification,
             DateTime? completed,
-            int assessAttempts,
+            int maxPostLearningAssessmentAttempts,
             bool isAssessed,
             int postLearningAssessmentPassThreshold,
             int diagnosticAssessmentCompletionThreshold,
@@ -42,7 +42,7 @@
             BannerText = bannerText;
             IncludeCertification = includeCertification;
             Completed = completed;
-            AssessAttempts = assessAttempts;
+            MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;
             IsAssessed = isAssessed;
             PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;
             DiagnosticAssessmentCompletionThreshold = diagnosticAssessmentCompletionThreshold;

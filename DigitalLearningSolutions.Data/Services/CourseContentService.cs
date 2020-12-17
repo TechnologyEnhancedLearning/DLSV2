@@ -43,7 +43,7 @@
                          Centres.BannerText,
                          Applications.IncludeCertification,
                          Progress.Completed,
-                         Applications.AssessAttempts,
+                         Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
                          Customisations.IsAssessed,
                          Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
                          Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
