@@ -54,7 +54,11 @@
 
                          LEFT JOIN Tutorials AS NextTutorials
                          ON NextTutorials.SectionID = Tutorials.SectionID
-                            AND Tutorials.OrderByNumber < NextTutorials.OrderByNumber
+                            AND Tutorials.OrderByNumber <= NextTutorials.OrderByNumber
+                            AND (
+                                 Tutorials.OrderByNumber < NextTutorials.OrderByNumber
+                                 OR Tutorials.TutorialID < NextTutorials.TutorialID
+                            )
                             AND NextCustomisationTutorials.TutorialID = NextTutorials.TutorialID
 
                          LEFT JOIN Tutorials AS NextSectionsTutorials
@@ -62,7 +66,11 @@
 
                          LEFT JOIN Sections AS NextSections
                          ON NextSectionsTutorials.SectionID = NextSections.SectionID
-                            AND CurrentSection.SectionNumber < NextSections.SectionNumber
+                            AND CurrentSection.SectionNumber <= NextSections.SectionNumber
+                            AND (
+                                 CurrentSection.SectionNumber < NextSections.SectionNumber
+                                 OR CurrentSection.SectionID < NextSections.SectionID
+                            )
                    WHERE Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                    GROUP BY Tutorials.TutorialID
@@ -105,10 +113,18 @@
                          LEFT JOIN Tutorials AS NextTutorial
                          ON NextTutorialAndSectionNumbers.NextTutorialOrderByNumber = NextTutorial.OrderByNumber
                             AND Sections.SectionID = NextTutorial.SectionID
+                            AND (
+                                 Tutorials.OrderByNumber < NextTutorialAndSectionNumbers.NextTutorialOrderByNumber
+                                 OR Tutorials.TutorialID < NextTutorial.TutorialID
+                            )
 
                          LEFT JOIN Sections AS NextSection
                          ON NextTutorialAndSectionNumbers.NextSectionNumber = NextSection.SectionNumber
                             AND Customisations.ApplicationID = NextSection.ApplicationID
+                            AND (
+                                 Sections.SectionNumber < NextTutorialAndSectionNumbers.NextSectionNumber
+                                 OR Sections.SectionID < NextSection.SectionID
+                            )
 
                          LEFT JOIN Progress
                          ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
@@ -126,7 +142,8 @@
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1;",
+                     AND CustomisationTutorials.Status = 1
+                   ORDER BY NextTutorial.TutorialID, NextSection.SectionID;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
 

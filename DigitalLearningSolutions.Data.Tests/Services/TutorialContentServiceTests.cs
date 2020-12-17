@@ -135,9 +135,9 @@
             const int candidateId = 210934;
             const int customisationId = 17731;
             const int sectionId = 801;
-            const int tutorialId = 3332;
+            const int tutorialId = 3334;
 
-            const int nextTutorialId = 3334;
+            const int nextTutorialId = 3333;
 
             // When
             var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
@@ -164,6 +164,77 @@
             // Then
             tutorial.Should().NotBeNull();
             tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_smaller_tutorialId_for_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 927;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            const int nextTutorialId = 928;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_next_tutorialId_with_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 928;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            const int nextTutorialId = 929;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_tutorialId_after_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 929;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            const int nextTutorialId = 930;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
         }
 
         [Test]
