@@ -206,5 +206,188 @@
             // Then
             sectionContentViewModel.CustomisationId.Should().Be(CustomisationId);
         }
+
+        [Test]
+        public void Section_content_post_learning_passed_should_be_false_if_pl_passes_is_zero()
+        {
+            // When
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(plPasses: 0);
+
+            // Then
+            sectionContent.PostLearningPassed.Should().BeFalse();
+        }
+
+        [Test]
+        public void Section_content_post_learning_passed_should_be_true_if_pl_passes_is_one()
+        {
+            // When
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(plPasses: 1);
+
+            // Then
+            sectionContent.PostLearningPassed.Should().BeTrue();
+        }
+
+        [Test]
+        public void Section_content_post_learning_passed_should_be_true_if_pl_passes_is_more_than_one()
+        {
+            // When
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(plPasses: 3);
+
+            // Then
+            sectionContent.PostLearningPassed.Should().BeTrue();
+        }
+
+        [Test]
+        public void Post_learning_should_not_be_shown_if_no_post_learning_path()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(plAssessPath: null);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowPostLearning.Should().BeFalse();
+        }
+
+        [Test]
+        public void Post_learning_should_not_be_shown_if_is_assessed_is_false()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(isAssessed: false);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowPostLearning.Should().BeFalse();
+        }
+
+        [Test]
+        public void Post_learning_should_be_shown_if_there_is_post_learning_path_and_is_assessed_is_true()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                plAssessPath: "https://www.dls.nhs.uk/CMS/CMSContent/Course308/PLAssess/02-PLA-Entering-data/itspplayer.html",
+                isAssessed: true);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowPostLearning.Should().BeTrue();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_not_be_shown_if_no_diagnostic_path()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagAssessPath: null);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowDiagnostic.Should().BeFalse();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_not_be_shown_if_diag_status_is_false()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagStatus: false);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowDiagnostic.Should().BeFalse();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_be_shown_if_diag_status_is_true_and_diag_assessment_path_exists()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html",
+                diagStatus: true);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowDiagnostic.Should().BeTrue();
+        }
+
+        [Test]
+        public void Post_learning_status_should_be_not_attempted_if_pl_attempts_is_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 0);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatus.Should().Be("Not Attempted");
+        }
+
+        [Test]
+        public void Post_learning_status_should_be_failed_if_pl_attempts_is_more_than_zero_and_pl_passes_is_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 0);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatus.Should().Be("Failed");
+        }
+
+        [Test]
+        public void Post_learning_status_should_be_passed_if_pl_attempts_is_more_than_zero_and_pl_passes_is_more_than_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 1);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatus.Should().Be("Passed");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_completion_status_is_not_attempted_if_diag_attempts_is_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagAttempts: 0);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DiagnosticCompletionStatus.Should().Be("Not Attempted");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_completion_status_shows_score_and_attempts_if_diag_attempts_is_more_than_0()
+        {
+            // Given
+            const int diagAttempts = 4;
+            const int secScore = 10;
+            const int secOutOf = 15;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAttempts: diagAttempts,
+                secScore: secScore,
+                secOutOf: secOutOf);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempts");
+        }
     }
 }

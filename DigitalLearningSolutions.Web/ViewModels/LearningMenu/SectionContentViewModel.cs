@@ -12,6 +12,10 @@
         public string TimeInformation { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
+        public bool ShowPostLearning { get; }
+        public string PostLearningStatus { get; }
+        public bool ShowDiagnostic { get; }
+        public string DiagnosticCompletionStatus { get; }
         public IEnumerable<TutorialCardViewModel> Tutorials { get; }
 
         public SectionContentViewModel(SectionContent sectionContent, int customisationId, int sectionId)
@@ -22,6 +26,10 @@
             TimeInformation = $"{sectionContent.SectionTime}m (average time {sectionContent.AverageSectionTime}m)";
             CustomisationId = customisationId;
             SectionId = sectionId;
+            ShowPostLearning = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
+            PostLearningStatus = GetPostLearningStatus(sectionContent);
+            ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
+            DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(tutorial, sectionId, customisationId));
         }
 
@@ -31,6 +39,41 @@
             return sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
                 ? 0
                 : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
+        }
+
+        private static string GetPostLearningStatus(SectionContent sectionContent)
+        {
+            if (sectionContent.PostLearningAttempts == 0)
+            {
+                return "Not Attempted";
+            }
+
+            if (sectionContent.PostLearningAttempts > 0 && sectionContent.PostLearningPassed)
+            {
+                return "Passed";
+            }
+
+            if (sectionContent.PostLearningAttempts > 0 && !sectionContent.PostLearningPassed)
+            {
+                return "Failed";
+            }
+
+            return "";
+        }
+
+        private static string GetDiagnosticCompletionStatus(SectionContent sectionContent)
+        {
+            if (sectionContent.DiagnosticAttempts == 0)
+            {
+                return "Not Attempted";
+            }
+
+            if (sectionContent.DiagnosticAttempts > 0)
+            {
+                return $"{sectionContent.SectionScore}/{sectionContent.MaxSectionScore} - {sectionContent.DiagnosticAttempts} attempts";
+            }
+
+            return "";
         }
     }
 }
