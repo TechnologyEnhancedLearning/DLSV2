@@ -6,8 +6,6 @@
     {
         public string CourseTitle { get; }
         public string SectionName { get; }
-        public int SectionTime { get; set; }
-        public int AverageSectionTime { get; }
         public bool HasLearning { get; }
         public int DiagnosticAttempts { get; set; }
         public int SectionScore { get; set; }
@@ -24,8 +22,6 @@
             string applicationName,
             string customisationName,
             string sectionName,
-            int tutTime,
-            int averageSectionTime,
             bool hasLearning,
             int diagAttempts,
             int diagLast,
@@ -39,8 +35,6 @@
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
-            SectionTime = tutTime;
-            AverageSectionTime = averageSectionTime;
             HasLearning = hasLearning;
             DiagnosticAttempts = diagAttempts;
             SectionScore = diagLast;

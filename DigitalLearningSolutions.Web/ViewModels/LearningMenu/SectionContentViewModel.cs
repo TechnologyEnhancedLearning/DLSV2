@@ -9,7 +9,6 @@
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string PercentComplete { get; }
-        public string TimeInformation { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
         public bool ShowPostLearning { get; }
@@ -23,7 +22,6 @@
             CourseTitle = sectionContent.CourseTitle;
             SectionName = sectionContent.SectionName;
             PercentComplete = sectionContent.HasLearning ? $"{GetPercentComplete(sectionContent):f0}% Complete" : "";
-            TimeInformation = $"{sectionContent.SectionTime}m (average time {sectionContent.AverageSectionTime}m)";
             CustomisationId = customisationId;
             SectionId = sectionId;
             ShowPostLearning = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
