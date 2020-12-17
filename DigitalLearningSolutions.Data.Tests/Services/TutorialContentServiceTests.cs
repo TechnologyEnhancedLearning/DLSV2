@@ -46,8 +46,195 @@
                 "<ul><li>use the Go To feature to jump to a particular page</li><li>browse a document by a specific element</li></ul></body></html>",
                 "/MOST/Word07Core/swf/1_1_02_Navigate_documents.swf",
                 "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
-                "/MOST/Word07Core/support.html?popup=1&item=navigateDocs"
+                "/MOST/Word07Core/support.html?popup=1&item=navigateDocs",
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
+                51,
+                75
             ));
+        }
+
+        [Test]
+        public void Get_tutorial_information_should_return_null_nextTutorial_if_last_tutorial_in_section()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1379;
+            const int sectionId = 74;
+            const int tutorialId = 52;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_information_should_return_null_nextSection_if_last_section_in_course()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1379;
+            const int sectionId = 82;
+            const int tutorialId = 94;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_should_skip_tutorials_not_in_customisation()
+        {
+            // Given
+            const int candidateId = 210934;
+            const int customisationId = 18366;
+            const int sectionId = 973;
+            const int tutorialId = 4257;
+
+            // The next tutorial ID in this section is 4258, but the next tutorial selected in CustomisationTutorials is 4263
+            const int nextTutorialId = 4263;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_should_skip_empty_sections()
+        {
+            // Given
+            const int candidateId = 210934;
+            const int customisationId = 18366;
+            const int sectionId = 974;
+            const int tutorialId = 4262;
+
+            // The next section ID in this Application is 975, but the next section with a tutorial selected in
+            // CustomisationTutorials is 978
+            const int nextSectionId = 978;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_can_return_smaller_tutorialId()
+        {
+            // Given
+            const int candidateId = 210934;
+            const int customisationId = 17731;
+            const int sectionId = 801;
+            const int tutorialId = 3334;
+
+            const int nextTutorialId = 3333;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_can_return_smaller_sectionId()
+        {
+            // Given
+            const int candidateId = 210962;
+            const int customisationId = 24057;
+            const int sectionId = 2201;
+            const int tutorialId = 10184;
+
+            const int nextSectionId = 2193;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_smaller_tutorialId_for_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 927;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            const int nextTutorialId = 928;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_next_tutorialId_with_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 928;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            const int nextTutorialId = 929;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextTutorial_returns_tutorialId_after_shared_orderByNumber()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+            const int tutorialId = 929;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            const int nextTutorialId = 930;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
         }
 
         [Test]
@@ -127,7 +314,10 @@
                 "<ul><li>use the Go To feature to jump to a particular page</li><li>browse a document by a specific element</li></ul></body></html>",
                 "/MOST/Word07Core/swf/1_1_02_Navigate_documents.swf",
                 "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
-                "/MOST/Word07Core/support.html?popup=1&item=navigateDocs"
+                "/MOST/Word07Core/support.html?popup=1&item=navigateDocs",
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
+                51,
+                75
             ));
         }
 

@@ -16,6 +16,9 @@
         public string? VideoPath { get; }
         public string? TutorialPath { get; }
         public string? SupportingMaterialPath { get; }
+        public string? PostLearningAssessmentPath { get; }
+        public int? NextTutorialId { get; }
+        public int? NextSectionId { get; }
 
         public TutorialInformation(
             int id,
@@ -32,7 +35,10 @@
             string? objectives,
             string? videoPath,
             string? tutorialPath,
-            string? supportingMaterialPath
+            string? supportingMaterialPath,
+            string? postLearningAssessmentPath,
+            int? nextTutorialId,
+            int? nextSectionId
         )
         {
             Id = id;
@@ -49,6 +55,9 @@
             VideoPath = videoPath;
             TutorialPath = tutorialPath;
             SupportingMaterialPath = supportingMaterialPath;
+            PostLearningAssessmentPath = postLearningAssessmentPath;
+            NextTutorialId = nextTutorialId;
+            NextSectionId = nextSectionId;
         }
     }
 }

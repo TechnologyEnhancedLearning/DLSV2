@@ -445,6 +445,7 @@
         [TestCase(1, 15853, 101, 173218)]
         [TestCase(254480, 24224, 101, null)]
         [TestCase(22044, 10059, 121, 100467)]
+        [TestCase(11, 6226, 101, 89490)]
         public void Get_course_content_should_have_same_sections_as_stored_procedure(
             int candidateId,
             int customisationId,

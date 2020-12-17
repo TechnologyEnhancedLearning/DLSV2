@@ -19,7 +19,10 @@
             string? objectives = "objectives",
             string? videoPath = "video",
             string? tutorialPath = "tutorial",
-            string? supportingMaterialPath = "material"
+            string? supportingMaterialPath = "material",
+            string? postLearningAssessmentPath = "/postLearningAssessment",
+            int? subsequentTutorialId = 2,
+            int? subsequentSectionId = 45
         )
         {
             return new TutorialInformation(
@@ -37,7 +40,10 @@
                 objectives,
                 videoPath,
                 tutorialPath,
-                supportingMaterialPath
+                supportingMaterialPath,
+                postLearningAssessmentPath,
+                subsequentTutorialId,
+                subsequentSectionId
             );
         }
 

@@ -35,7 +35,48 @@
         )
         {
             return connection.QueryFirstOrDefault<TutorialInformation>(
-                @"SELECT Tutorials.TutorialID AS Id,
+                // NextTutorialID is the ID of the next tutorial in the section, according to Tutorials.OrderBy
+                // or null if the last in the section.
+
+                // Similar for sections, using Sections.SectionNumber
+
+                @"  WITH NextTutorialAndSectionNumbers AS (
+                  SELECT Tutorials.TutorialID,
+                         MIN(NextTutorials.OrderByNumber) AS NextTutorialOrderByNumber,
+                         MIN(NextSections.SectionNumber) AS NextSectionNumber
+                    FROM Tutorials
+                         INNER JOIN Sections AS CurrentSection
+                         ON Tutorials.SectionID = CurrentSection.SectionID
+
+                         LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
+                         ON NextCustomisationTutorials.CustomisationID = @customisationId
+                            AND NextCustomisationTutorials.Status = 1
+
+                         LEFT JOIN Tutorials AS NextTutorials
+                         ON NextTutorials.SectionID = Tutorials.SectionID
+                            AND Tutorials.OrderByNumber <= NextTutorials.OrderByNumber
+                            AND (
+                                 Tutorials.OrderByNumber < NextTutorials.OrderByNumber
+                                 OR Tutorials.TutorialID < NextTutorials.TutorialID
+                            )
+                            AND NextCustomisationTutorials.TutorialID = NextTutorials.TutorialID
+
+                         LEFT JOIN Tutorials AS NextSectionsTutorials
+                         ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+
+                         LEFT JOIN Sections AS NextSections
+                         ON NextSectionsTutorials.SectionID = NextSections.SectionID
+                            AND CurrentSection.SectionNumber <= NextSections.SectionNumber
+                            AND (
+                                 CurrentSection.SectionNumber < NextSections.SectionNumber
+                                 OR CurrentSection.SectionID < NextSections.SectionID
+                            )
+                   WHERE Tutorials.SectionId = @sectionId
+                     AND Tutorials.TutorialID = @tutorialId
+                   GROUP BY Tutorials.TutorialID
+                  )
+
+                  SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
@@ -49,16 +90,41 @@
                          Tutorials.Objectives,
                          Tutorials.VideoPath,
                          Tutorials.TutorialPath,
-                         Tutorials.SupportingMatsPath AS SupportingMaterialPath
+                         Tutorials.SupportingMatsPath AS SupportingMaterialPath,
+                         Sections.PLAssessPath AS PostLearningAssessmentPath,
+                         NextTutorial.TutorialID AS NextTutorialID,
+                         NextSection.SectionID AS NextSectionID
                     FROM Tutorials
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+
+                         INNER JOIN Sections
+                         ON Tutorials.SectionID = Sections.SectionID
 
                          INNER JOIN Customisations
                          ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
 
                          INNER JOIN Applications
                          ON Customisations.ApplicationId = Applications.ApplicationId
+
+                         LEFT JOIN NextTutorialAndSectionNumbers
+                         ON Tutorials.TutorialID = NextTutorialAndSectionNumbers.TutorialID
+
+                         LEFT JOIN Tutorials AS NextTutorial
+                         ON NextTutorialAndSectionNumbers.NextTutorialOrderByNumber = NextTutorial.OrderByNumber
+                            AND Sections.SectionID = NextTutorial.SectionID
+                            AND (
+                                 Tutorials.OrderByNumber < NextTutorialAndSectionNumbers.NextTutorialOrderByNumber
+                                 OR Tutorials.TutorialID < NextTutorial.TutorialID
+                            )
+
+                         LEFT JOIN Sections AS NextSection
+                         ON NextTutorialAndSectionNumbers.NextSectionNumber = NextSection.SectionNumber
+                            AND Customisations.ApplicationID = NextSection.ApplicationID
+                            AND (
+                                 Sections.SectionNumber < NextTutorialAndSectionNumbers.NextSectionNumber
+                                 OR Sections.SectionID < NextSection.SectionID
+                            )
 
                          LEFT JOIN Progress
                          ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
@@ -76,7 +142,8 @@
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1;",
+                     AND CustomisationTutorials.Status = 1
+                   ORDER BY NextTutorial.TutorialID, NextSection.SectionID;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
 
