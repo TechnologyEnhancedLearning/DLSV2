@@ -7,6 +7,7 @@
         public string? PostLearningAssessmentPath { get; }
         public int? NextTutorialId { get; }
         public int? NextSectionId { get; }
+
         public TutorialNextLinkViewModel(
             int customisationId,
             int sectionId,
