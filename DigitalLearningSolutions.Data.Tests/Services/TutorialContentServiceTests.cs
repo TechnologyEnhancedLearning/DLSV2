@@ -129,6 +129,44 @@
         }
 
         [Test]
+        public void Get_tutorial_information_nextTutorial_can_return_smaller_tutorialId()
+        {
+            // Given
+            const int candidateId = 210934;
+            const int customisationId = 17731;
+            const int sectionId = 801;
+            const int tutorialId = 3332;
+
+            const int nextTutorialId = 3334;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_can_return_smaller_sectionId()
+        {
+            // Given
+            const int candidateId = 210962;
+            const int customisationId = 24057;
+            const int sectionId = 2201;
+            const int tutorialId = 10184;
+
+            const int nextSectionId = 2193;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
         public void Get_tutorial_information_should_return_null_if_customisation_id_invalid()
         {
             // Given

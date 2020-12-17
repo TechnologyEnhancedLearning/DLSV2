@@ -40,7 +40,35 @@
 
                 // Similar for sections, using Sections.SectionNumber
 
-                @"SELECT Tutorials.TutorialID AS Id,
+                @"  WITH NextTutorialAndSectionNumbers AS (
+                  SELECT Tutorials.TutorialID,
+                         MIN(NextTutorials.OrderByNumber) AS NextTutorialOrderByNumber,
+                         MIN(NextSections.SectionNumber) AS NextSectionNumber
+                    FROM Tutorials
+                         INNER JOIN Sections AS CurrentSection
+                         ON Tutorials.SectionID = CurrentSection.SectionID
+
+                         LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
+                         ON NextCustomisationTutorials.CustomisationID = @customisationId
+                            AND NextCustomisationTutorials.Status = 1
+
+                         LEFT JOIN Tutorials AS NextTutorials
+                         ON NextTutorials.SectionID = Tutorials.SectionID
+                            AND Tutorials.OrderByNumber < NextTutorials.OrderByNumber
+                            AND NextCustomisationTutorials.TutorialID = NextTutorials.TutorialID
+
+                         LEFT JOIN Tutorials AS NextSectionsTutorials
+                         ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+
+                         LEFT JOIN Sections AS NextSections
+                         ON NextSectionsTutorials.SectionID = NextSections.SectionID
+                            AND CurrentSection.SectionNumber < NextSections.SectionNumber
+                   WHERE Tutorials.SectionId = @sectionId
+                     AND Tutorials.TutorialID = @tutorialId
+                   GROUP BY Tutorials.TutorialID
+                  )
+
+                  SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
@@ -56,8 +84,8 @@
                          Tutorials.TutorialPath,
                          Tutorials.SupportingMatsPath AS SupportingMaterialPath,
                          Sections.PLAssessPath AS PostLearningAssessmentPath,
-                         MIN(NextTutorials.TutorialID) AS NextTutorialID,
-                         MIN(NextSections.SectionID) AS NextSectionID
+                         NextTutorial.TutorialID AS NextTutorialID,
+                         NextSection.SectionID AS NextSectionID
                     FROM Tutorials
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
@@ -71,21 +99,16 @@
                          INNER JOIN Applications
                          ON Customisations.ApplicationId = Applications.ApplicationId
 
-                         LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
-                         ON NextCustomisationTutorials.CustomisationID = Customisations.CustomisationID
-                            AND NextCustomisationTutorials.Status = 1
+                         LEFT JOIN NextTutorialAndSectionNumbers
+                         ON Tutorials.TutorialID = NextTutorialAndSectionNumbers.TutorialID
 
-                         LEFT JOIN Tutorials AS NextTutorials
-                         ON NextTutorials.SectionID = Sections.SectionID
-                            AND Tutorials.OrderByNumber < NextTutorials.OrderByNumber
-                            AND NextCustomisationTutorials.TutorialID = NextTutorials.TutorialID
+                         LEFT JOIN Tutorials AS NextTutorial
+                         ON NextTutorialAndSectionNumbers.NextTutorialOrderByNumber = NextTutorial.OrderByNumber
+                            AND Sections.SectionID = NextTutorial.SectionID
 
-                         LEFT JOIN Tutorials AS NextSectionsTutorials
-                         ON  NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
-
-                         LEFT JOIN Sections AS NextSections
-                         ON NextSectionsTutorials.SectionID = NextSections.SectionID
-                            AND Sections.SectionNumber < NextSections.SectionNumber
+                         LEFT JOIN Sections AS NextSection
+                         ON NextTutorialAndSectionNumbers.NextSectionNumber = NextSection.SectionNumber
+                            AND Customisations.ApplicationID = NextSection.ApplicationID
 
                          LEFT JOIN Progress
                          ON CustomisationTutorials.CustomisationID = Progress.CustomisationID
@@ -103,23 +126,7 @@
                      AND Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
-                     AND CustomisationTutorials.Status = 1
-                   GROUP BY Tutorials.TutorialID,
-                            Tutorials.TutorialName,
-                            Applications.ApplicationName,
-                            Customisations.CustomisationName,
-                            TutStatus.Status,
-                            aspProgress.TutTime,
-                            Tutorials.AverageTutMins,
-                            aspProgress.DiagLast,
-                            Tutorials.DiagAssessOutOf,
-                            CustomisationTutorials.DiagStatus,
-                            aspProgress.DiagAttempts,
-                            Tutorials.Objectives,
-                            Tutorials.VideoPath,
-                            Tutorials.TutorialPath,
-                            Tutorials.SupportingMatsPath,
-                            Sections.PLAssessPath;",
+                     AND CustomisationTutorials.Status = 1;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
 
