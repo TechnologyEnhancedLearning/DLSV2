@@ -42,7 +42,12 @@
                 "Northumbria Healthcare NHS Foundation Trust",
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                 false,
-                null
+                null,
+                0,
+                true,
+                85,
+                90,
+                0
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -82,7 +87,12 @@
                 "Northumbria Healthcare NHS Foundation Trust",
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                 false,
-                null
+                null,
+                0,
+                true,
+                85,
+                90,
+                0
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -122,7 +132,12 @@
                 "NHS Highland",
                 null,
                 false,
-                null
+                null,
+                0,
+                true,
+                85,
+                0,
+                100
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -159,7 +174,12 @@
                 "NHS Highland",
                 null,
                 false,
-                null
+                null,
+                0,
+                true,
+                85,
+                0,
+                100
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -200,7 +220,12 @@
                     "Northumbria Healthcare NHS Foundation Trust",
                     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     false,
-                    new DateTime(2016, 9, 15, 13, 1, 30, 623)
+                    new DateTime(2016, 9, 15, 13, 1, 30, 623),
+                    0,
+                    true,
+                    85,
+                    90,
+                    0
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -244,7 +269,12 @@
                     "Northumbria Healthcare NHS Foundation Trust",
                     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     true,
-                    null
+                    null,
+                    0,
+                    true,
+                    85,
+                    90,
+                    0
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -290,7 +320,12 @@
                     "Birmingham & Solihull Mental Health Foundation Trust",
                     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     false,
-                    null
+                    null,
+                    0,
+                    true,
+                    85,
+                    85,
+                    0
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -343,7 +378,12 @@
                 "Birmingham & Solihull Mental Health Foundation Trust",
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                 false,
-                null
+                null,
+                0,
+                true,
+                85,
+                85,
+                0
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -384,7 +424,12 @@
                     "Northumbria Healthcare NHS Foundation Trust",
                     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     false,
-                    null
+                    null,
+                    0,
+                    true,
+                    85,
+                    90,
+                    0
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -429,7 +474,12 @@
                     "Test Centre NHSD",
                     null,
                     false,
-                    null
+                    null,
+                    1,
+                    false,
+                    85,
+                    0,
+                    100
                 );
                 expectedCourse.Sections.AddRange(
                     new[]

@@ -13,7 +13,12 @@
             string centreName = "Centre",
             string? bannerText = "Banner",
             bool includeCertification = false,
-            DateTime? completed = null
+            DateTime? completed = null,
+            int assessAttempts = 0,
+            bool isAssessed = true,
+            int postLearningAssessmentPassThreshold = 100,
+            int diagnosticAssessmentCompletionThreshold = 85,
+            int tutorialsCompletionThreshold = 0
         )
         {
             return new CourseContent(
@@ -24,7 +29,12 @@
                 centreName,
                 bannerText,
                 includeCertification,
-                completed
+                completed,
+                assessAttempts,
+                isAssessed,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold
             );
         }
     }

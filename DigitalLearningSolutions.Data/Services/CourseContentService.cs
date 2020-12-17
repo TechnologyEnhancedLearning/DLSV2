@@ -43,6 +43,11 @@
                          Centres.BannerText,
                          Applications.IncludeCertification,
                          Progress.Completed,
+                         Applications.AssessAttempts,
+                         Customisations.IsAssessed,
+                         Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
+                         Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
+                         Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
                          Sections.SectionName,
                          Sections.SectionID AS id,
                          dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
@@ -76,6 +81,11 @@
                          Centres.BannerText,
                          Applications.IncludeCertification,
                          Progress.Completed,
+                         Applications.AssessAttempts,
+                         Customisations.IsAssessed,
+                         Applications.PLAPassThreshold,
+                         Customisations.DiagCompletionThreshold,
+                         Customisations.TutCompletionThreshold,
                          Sections.SectionName,
                          Sections.SectionID,
                          Sections.SectionNumber,
@@ -144,7 +154,7 @@
 
             return null;
         }
-        
+
         public void UpdateProgress(int progressId)
         {
             var numberOfAffectedRows = connection.Execute(
