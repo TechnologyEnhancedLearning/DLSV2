@@ -14,10 +14,10 @@
             int diagAttempts = 5,
             int secScore = 10,
             int secOutOf = 14,
-            string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html",
-            string plAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/PLAssess/02-PLA-Entering-data/itspplayer.html",
+            string? diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html",
+            string? plAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/PLAssess/02-PLA-Entering-data/itspplayer.html",
             int attemptsPl = 2,
-            int plPassed = 1,
+            int plPasses = 1,
             bool diagStatus = true,
             bool isAssessed = true
         )
@@ -35,7 +35,7 @@
                 diagAssessPath,
                 plAssessPath,
                 attemptsPl,
-                plPassed,
+                plPasses,
                 diagStatus,
                 isAssessed
             );

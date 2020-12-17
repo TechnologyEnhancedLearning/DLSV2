@@ -32,12 +32,18 @@
     Return to course menu
   </a>
 </div>
+@if (Model.ShowDiagnostic)
+{
+  <partial name="Section/_DiagnosticAssessmentCard" model="Model" />
+}
 
-<partial name="Section/_DiagnosticAssessmentCard" />
 
 @foreach (var tutorial in Model.Tutorials)
 {
   <partial name="Section/_TutorialCard" model="tutorial" />
 }
 
-<partial name="Section/_PostLearningAssessmentCard" />
+@if (Model.ShowPostLearning)
+{
+  <partial name="Section/_PostLearningAssessmentCard" model="Model" />
+}
