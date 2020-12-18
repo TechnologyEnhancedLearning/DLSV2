@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -303,6 +304,28 @@
                 }
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
+        }
+
+        [Test]
+        public void Get_section_content_should_order_by_tutorial_id_when_shared_order_by_number()
+        {
+            // When
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedTutorialOrder = new[]
+                { 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940 };
+
+            result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
         }
     }
 }
