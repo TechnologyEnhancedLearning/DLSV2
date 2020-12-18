@@ -9,6 +9,7 @@
 
     public interface IFrameworkService
     {
+        //Retrieve data
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
         BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId);
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
@@ -16,13 +17,19 @@
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
         BrandedFramework CreateFramework(string frameworkName, int adminId);
+        IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
+        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
+        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
+        //Insert data
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
         int InsertCompetency(string description, int competencyGroupId, int adminId);
         int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId);
-        BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
-        IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
+        //Update data
+        BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
+        bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
+        //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
     }
     public class FrameworkService : IFrameworkService
@@ -128,6 +135,13 @@
                 );
                 return new BrandedFramework();
             }
+            int existingFrameworks = (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName",
+                new { frameworkName });
+            if (existingFrameworks > 0)
+            {
+                return new BrandedFramework();
+            }
             var numberOfAffectedRows = connection.Execute(
                 @"INSERT INTO Frameworks (FrameworkName, OwnerAdminID, PublishStatusID, UpdatedByAdminID)
                     VALUES (@frameworkName, @adminId, 1, @adminId)",
@@ -141,10 +155,6 @@
                 );
                 return new BrandedFramework();
             }
-            var framework = connection.ExecuteScalar(
-                @"SELECT ID FROM Frameworks WHERE FrameworkName = @frameworkName AND OwnerAdminID = @adminId",
-                new { frameworkName, adminId }
-                );
             return connection.QueryFirstOrDefault<BrandedFramework>(
                $@"SELECT {BaseFrameworkFields}
                       FROM {FrameworkTables}
@@ -379,6 +389,71 @@
             connection.Execute(
                              @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)",
                             new { frameworkId, adminId });
+        }
+
+        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
+        {
+            return connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.Description, fc.Ordering
+                    FROM FrameworkCompetencyGroups AS fcg 
+                        INNER JOIN CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID 
+                        LEFT OUTER JOIN FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID 
+                        INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
+                    WHERE fcg.FrameworkID = @frameworkId",
+                (frameworkCompetencyGroup, frameworkCompetency) =>
+                {
+                    frameworkCompetencyGroup.FrameworkCompetencies.Add(frameworkCompetency);
+                    return frameworkCompetencyGroup;
+                   },
+              param: new { frameworkId }
+           );
+        }
+        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
+        {
+            return connection.Query<FrameworkCompetency>(
+                @"SELECT fc.ID, c.Description, fc.Ordering
+                	FROM FrameworkCompetencies AS fc 
+                		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
+                	WHERE fc.FrameworkID = @frameworkId 
+                		AND fc.FrameworkCompetencyGroupID IS NULL",
+                new { frameworkId }
+                );
+          
+        }
+
+        public bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName)
+        {
+            if (frameworkName.Length == 0 | adminId < 1 | frameworkId < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating framework name as it failed server side validation. AdminId: {adminId}, frameworkName: {frameworkName}, frameworkId: {frameworkId}"
+                );
+                return false;
+            }
+            int existingFrameworks = (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName AND ID <> @frameworkId",
+                new { frameworkName, frameworkId });
+            if (existingFrameworks > 0)
+            {
+                return false;
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE Frameworks SET FrameworkName = @frameworkName, UpdatedByAdminID = @adminId
+                    WHERE ID = @frameworkId",
+               new { frameworkName, adminId, frameworkId }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework name as db update failed. " +
+                    $"FrameworkName: {frameworkName}, admin id: {adminId}, frameworkId: {frameworkId}"
+                );
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

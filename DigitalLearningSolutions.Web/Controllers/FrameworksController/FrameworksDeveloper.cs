@@ -61,11 +61,19 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 page);
             return View("Developer/AllFrameworks", model);
         }
+        [Route("/Frameworks/{actionname}/Name/{frameworkId}")]
         [Route("/Frameworks/{actionname}/Name")]
-        public IActionResult CreateNewFramework(string actionname)
+        public IActionResult CreateNewFramework(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
-            var newFramework = new BaseFramework()
+            BaseFramework? baseFramework;
+            if(frameworkId > 0)
+            {
+                baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            }
+            else
+            {
+                baseFramework = new BaseFramework()
             {
                 BrandID = 6,
                 OwnerAdminID = adminId,
@@ -74,11 +82,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 CategoryID = 1,
                 PublishStatusID = 1
             };
-            return View("Developer/Name", newFramework);
+            }
+            return View("Developer/Name", baseFramework);
         }
         [HttpPost]
+        [Route("/Frameworks/{actionname}/Name/{frameworkId}")]
         [Route("/Frameworks/{actionname}/Name")]
-        public IActionResult CreateNewFramework(BaseFramework baseFramework, string actionname)
+        public IActionResult CreateNewFramework(BaseFramework baseFramework, string actionname, int frameworkId = 0)
         {
             if (!ModelState.IsValid)
             {
@@ -91,11 +101,22 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if(actionname == "New")
                 {
-return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramework.FrameworkName, actionname });
+                    return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramework.FrameworkName, actionname });
                 }
                 else
                 {
-                    return StatusCode(500);
+                    var adminId = GetAdminID();
+                    var isUpdated =  frameworkService.UpdateFrameworkName(baseFramework.ID, adminId, baseFramework.FrameworkName);
+                    if(isUpdated)
+                    {
+                        return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(BaseFramework.FrameworkName), "Another framework exists with that name. Please choose a different name.");
+                        // do something
+                        return View("Developer/Name", baseFramework);
+                    }
                 }
                 
             }
@@ -136,7 +157,7 @@ return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramewo
             //need to create framework and move to next step.
             if (actionname == "New")
             {
-                return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId = framework.Id, actionname });
+                return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId = framework.ID, actionname });
             }
             else
             {
@@ -228,7 +249,7 @@ return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramewo
             }
             else
             {
-                return StatusCode(500);
+                return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
             }
         }
         [Route("/Frameworks/{actionname}/Collaborators/{frameworkId}")]
@@ -261,14 +282,22 @@ return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramewo
             frameworkService.RemoveCollaboratorFromFramework(frameworkId, adminId);
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
-        [Route("/Framework/{frameworkId}/{tabname}")]
-        public IActionResult ViewFramework(int frameworkId, string tabname)
+        [Route("/Framework/{tabname}/{frameworkId}")]
+        public IActionResult ViewFramework(string tabname, int frameworkId)
         {
-            //var model = new FrameworkViewModel()
-            //{
-
-            //}
-            return View("Developer/Framework");
+            var adminId = GetAdminID();
+            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
+            var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
+            var frameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            var model = new FrameworkViewModel()
+            {
+                detailFramework = detailFramework,
+                collaborators = collaborators,
+                frameworkCompetencyGroups = frameworkCompetencyGroups,
+                frameworkCompetencies = frameworkCompetencies
+            };
+            return View("Developer/Framework", model);
         }
     }
 }

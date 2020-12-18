@@ -86,11 +86,14 @@
     </div>
   </div>
 </form>
-  <div class=" nhsuk-u-margin-top-6">
+<div class=" nhsuk-u-margin-top-6">
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+    {
     <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworksDashboard">
       Back
     </a>
-    <a class="nhsuk-button">
+    }
+    <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
       Continue
     </a>
   </div>
