@@ -8,7 +8,9 @@
           @Model.TutorialName
         </h3>
         <p class="nhsuk-u-secondary-text-color">
-          @Model.TimeInformation
+          @Model.TutorialTime minutes spent
+          <span class="visually-hidden">on this tutorial</span>
+          (average tutorial time @Model.AverageTutorialTime minutes)
         </p>
       </div>
       <div class="nhsuk-grid-column-one-quarter">
