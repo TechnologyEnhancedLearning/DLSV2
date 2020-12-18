@@ -39,7 +39,7 @@
 
         public static string GetTrackingUrl(this IConfiguration config)
         {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking";
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/tracker";
         }
 
         public static string GetScormPlayerUrl(this IConfiguration config)

@@ -223,7 +223,7 @@
             const int customisationId = 24861;
             var expectedHtmlUrl = "https://www.dls.nhs.uk/CMS/CMSContent/Course508/Section1904/Tutorials/Intro to Social Media/itspplayer.html"
                                 + "?CentreID=101&CustomisationID=24861&CandidateID=254480&Version=2&ProgressID=276837&type=learn"
-                                + $"&TrackURL={BaseUrl}/tracking";
+                                + $"&TrackURL={BaseUrl}/tracking/tracker";
 
             // Given
             var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(
