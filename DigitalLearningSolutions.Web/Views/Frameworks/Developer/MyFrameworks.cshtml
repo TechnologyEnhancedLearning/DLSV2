@@ -78,13 +78,13 @@ else
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (framework.UserCanModify)
               {
-                <a href="#">
+                <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
                   View/Edit
                 </a>
               }
               else
               {
-                <a href="#">
+                <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
                   Review
                 </a>
               }

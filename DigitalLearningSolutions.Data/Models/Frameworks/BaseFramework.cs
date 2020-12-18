@@ -5,7 +5,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class BaseFramework
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         [StringLength(255, MinimumLength = 3)]
         [Required]
         public string FrameworkName { get; set; }

@@ -131,7 +131,7 @@ div#search {
   }
 }
 
-.sort-row::before {
+.sort-row:not(.no-label)::before {
   content: "Sort by:";
   position: relative;
   top: -32px;
@@ -255,4 +255,76 @@ button.nhsuk-pagination__link {
   .asset-card-header {
     min-height: 163px;
   }
+}
+
+.hee-fwservice--tabs {
+  ul {
+    display: table;
+    list-style-type: none;
+    border-bottom: 1px solid $color_nhsuk-grey-1;
+    table-layout: fixed;
+    width: 100%;
+    text-align: center;
+    li {
+      display: table-cell;
+      margin-bottom: 0;
+      a {
+        display: block;
+        padding: 1rem;
+        text-decoration: none;
+      }
+      &.active {
+        border-bottom: 3px solid $color_nhsuk-blue;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+ol.hee-fwservice--framework-progress-bar {
+  display: flex;
+  list-style-type: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 150px; // hacky way to make the line the right size
+    .hee-fwservice--framework-progress-marker {
+      position: relative;
+      border: 2px solid $color_nhsuk-blue;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    &:not(:last-child) {
+      .hee-fwservice--framework-progress-marker::before {
+        content: '';
+        width: 120px;
+        border-top: 1px solid $color_nhsuk-blue;
+        position: absolute;
+        top: 50%;
+        left: 100%;
+      }
+    }
+
+    .hee-fwservice--framework-progress-caption {
+      padding-top: 0.5rem;
+    }
+  }
+
+  li.active {
+    font-weight: bold;
+
+    .hee-fwservice--framework-progress-marker {
+      font-weight: normal;
+      color: $color_nhsuk-white;
+      background-color: $color_nhsuk-blue;
+    }
+  }
+}
+ul.no-decs {
+  list-style-type: none;
 }
