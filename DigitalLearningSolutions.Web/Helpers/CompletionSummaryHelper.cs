@@ -20,15 +20,12 @@
 
             if (isAssessed)
             {
-                if (maxPostLearningAssessmentAttempts == 0)
-                {
-                    return $"To complete this course, you must pass all post learning assessments with a score of " +
-                           $"{postLearningAssessmentPassThreshold}% or higher.";
-                }
-
-                return $"To complete this course, you must pass all post learning assessments with a score of " +
-                       $"{postLearningAssessmentPassThreshold}% or higher. Failing an assessment " +
-                       $"{maxPostLearningAssessmentAttempts} times will lock your progress.";
+                return maxPostLearningAssessmentAttempts == 0
+                    ? $"To complete this course, you must pass all post learning assessments with a score of " +
+                      $"{postLearningAssessmentPassThreshold}% or higher."
+                    : $"To complete this course, you must pass all post learning assessments with a score of " +
+                      $"{postLearningAssessmentPassThreshold}% or higher. Failing an assessment " +
+                      $"{maxPostLearningAssessmentAttempts} times will lock your progress.";
             }
 
             if (diagnosticAssessmentCompletionThreshold > 0 && tutorialsCompletionThreshold > 0)
@@ -50,7 +47,6 @@
                        $"the diagnostic assessment.";
             }
 
-            // There are no requirements to complete the course
             return "There are no requirements to complete this course.";
         }
     }

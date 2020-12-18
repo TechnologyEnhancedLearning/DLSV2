@@ -222,20 +222,69 @@
             initialMenuViewModel.CompletionStyling.Should().Be("incomplete");
         }
 
-        [TestCase("2020-12-25T15:00:00Z", 1, true, 75, 80, 85,
-            "You completed this course on 25 December 2020.")]
-        [TestCase(null, 0, true, 75, 80, 85,
-            "To complete this course, you must pass all post learning assessments with a score of 75% or higher.")]
-        [TestCase(null, 3, true, 75, 80, 85,
-            "To complete this course, you must pass all post learning assessments with a score of 75% or higher. Failing an assessment 3 times will lock your progress.")]
-        [TestCase(null, 3, false, 75, 80, 85,
-            "To complete this course, you must achieve 80% in the diagnostic assessment and complete 85% of the learning material.")]
-        [TestCase(null, 3, false, 75, 80, 0,
-            "To complete this course, you must achieve 80% in the diagnostic assessment.")]
-        [TestCase(null, 3, false, 75, 0, 85,
-            "To complete this course, you must complete 85% of the learning material.")]
-        [TestCase(null, 3, false, 75, 0, 0,
-            "There are no requirements to complete this course.")]
+        [TestCase(
+            "2020-12-25T15:00:00Z",
+            1,
+            true,
+            75,
+            80,
+            85,
+            "You completed this course on 25 December 2020."
+        )]
+        [TestCase(
+            null,
+            0,
+            true,
+            75,
+            80,
+            85,
+            "To complete this course, you must pass all post learning assessments with a score of 75% or higher."
+        )]
+        [TestCase(
+            null,
+            3,
+            true,
+            75,
+            80,
+            85,
+            "To complete this course, you must pass all post learning assessments with a score of 75% or higher. Failing an assessment 3 times will lock your progress."
+        )]
+        [TestCase(
+            null,
+            3,
+            false,
+            75,
+            80,
+            85,
+            "To complete this course, you must achieve 80% in the diagnostic assessment and complete 85% of the learning material."
+        )]
+        [TestCase(
+            null,
+            3,
+            false,
+            75,
+            80,
+            0,
+            "To complete this course, you must achieve 80% in the diagnostic assessment."
+        )]
+        [TestCase(
+            null,
+            3,
+            false,
+            75,
+            0,
+            85,
+            "To complete this course, you must complete 85% of the learning material."
+        )]
+        [TestCase(
+            null,
+            3,
+            false,
+            75,
+            0,
+            0,
+            "There are no requirements to complete this course."
+        )]
         public void TutorialVideo_should_parse_path(
             string? completed,
             int maxPostLearningAssessmentAttempts,
