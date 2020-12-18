@@ -17,6 +17,7 @@
         private readonly ISessionService sessionService;
         private readonly ISectionContentService sectionContentService;
         private readonly ITutorialContentService tutorialContentService;
+        private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
@@ -24,6 +25,7 @@
             ICourseContentService courseContentService,
             ISectionContentService sectionContentService,
             ITutorialContentService tutorialContentService,
+            IDiagnosticAssessmentService diagnosticAssessmentService,
             ISessionService sessionService
         )
         {
@@ -33,6 +35,7 @@
             this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
             this.sectionContentService = sectionContentService;
+            this.diagnosticAssessmentService = diagnosticAssessmentService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -113,7 +116,35 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/Diagnostic")]
         public IActionResult Diagnostic(int customisationId, int sectionId)
         {
-            return View("Diagnostic/Diagnostic");
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+            var diagnosticAssessment =
+                diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
+
+            if (diagnosticAssessment == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as section/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"section id: {sectionId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
+            return View("Diagnostic/Diagnostic", model);
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]

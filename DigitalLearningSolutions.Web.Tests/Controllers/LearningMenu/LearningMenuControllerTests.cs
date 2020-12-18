@@ -22,6 +22,7 @@
         private ITutorialContentService tutorialContentService;
         private ISessionService sessionService;
         private ISectionContentService sectionContentService;
+        private IDiagnosticAssessmentService diagnosticAssessmentService;
         private ISession httpContextSession;
         private IConfiguration config;
         private const int CandidateId = 11;
@@ -39,6 +40,7 @@
             tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
             sectionContentService = A.Fake<ISectionContentService>();
+            diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -53,7 +55,9 @@
                 courseContentService,
                 sectionContentService,
                 tutorialContentService,
-                sessionService)
+                diagnosticAssessmentService,
+                sessionService
+            )
             {
                 ControllerContext = new ControllerContext
                 {
@@ -394,6 +398,167 @@
 
             // When
             var result = controller.Section(CustomisationId, SectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_StartOrUpdate_course_sessions_if_valid_diagnostic_assessment()
+        {
+            // Given
+            const int progressId = 299;
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_not_StartOrUpdate_course_sessions_if_diagnostic_assessment_not_found()
+        {
+            // Given
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
+        {
+            // Given
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_UpdateProgress_if_valid_diagnostic_assessment()
+        {
+            // Given
+            const int progressId = 299;
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_not_UpdateProgress_if_invalid_diagnostic_assessment()
+        {
+            // Given
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_UpdateProgress_if_unable_to_enrol()
+        {
+            // Given
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_render_view()
+        {
+            // Given
+            const int progressId = 299;
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
+                Returns(progressId);
+
+            // When
+            var result = controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            var expectedModel = new DiagnosticAssessmentViewModel(defaultDiagnosticAssessment, CustomisationId, SectionId);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_404_if_diagnostic_assessment_not_found()
+        {
+            // Given
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(null);
+
+            // When
+            var result = controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Diagnostic_assessment_should_404_if_failed_to_enrol()
+        {
+            // Given
+            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
+                .Returns(defaultDiagnosticAssessment);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            var result = controller.Diagnostic(CustomisationId, SectionId);
 
             // Then
             result.Should()

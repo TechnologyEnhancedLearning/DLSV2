@@ -1,0 +1,89 @@
+﻿namespace DigitalLearningSolutions.Data.Services
+{
+    using System;
+    using System.Data;
+    using System.Linq;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
+    using Microsoft.Extensions.Logging;
+
+    public interface IDiagnosticAssessmentService
+    {
+        public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
+    }
+
+    public class DiagnosticAssessmentService : IDiagnosticAssessmentService
+    {
+        private readonly IDbConnection connection;
+        private readonly ILogger<SectionContentService> logger;
+
+        public DiagnosticAssessmentService(IDbConnection connection, ILogger<SectionContentService> logger)
+        {
+            this.connection = connection;
+            this.logger = logger;
+        }
+
+        public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId)
+        {
+            DiagnosticAssessment? diagnosticAssessment = null;
+            return connection.Query<DiagnosticAssessment, DiagnosticTutorial, DiagnosticAssessment>(
+                @"
+                    SELECT
+                        Applications.ApplicationName,
+                        Customisations.CustomisationName,
+                        Sections.SectionName,
+                        COALESCE (aspProgress.DiagAttempts, 0) AS DiagAttempts,
+                        COALESCE (aspProgress.DiagLast, 0) AS DiagLast,
+                        Tutorials.DiagAssessOutOf,
+                        Sections.DiagAssessPath,
+	                    Customisations.DiagObjSelect,
+                        Tutorials.TutorialName,
+                        Tutorials.TutorialID AS id
+                    FROM Tutorials
+                        INNER JOIN CustomisationTutorials
+                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                        INNER JOIN Customisations
+                            ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
+                        INNER JOIN Applications
+                            ON Applications.ApplicationID = Customisations.ApplicationID
+                        INNER JOIN Sections
+                            ON Sections.SectionID = Tutorials.SectionID
+                        LEFT JOIN Progress
+                            ON Progress.CustomisationID = Customisations.CustomisationID
+                            AND Progress.CandidateID = @candidateId
+                            AND Progress.RemovedDate IS NULL
+                            AND Progress.SystemRefreshed = 0
+                        LEFT JOIN aspProgress
+                            ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
+                            AND aspProgress.ProgressID = Progress.ProgressID
+                    WHERE
+                        CustomisationTutorials.CustomisationID = @customisationId
+                        AND Sections.SectionID = @sectionId
+                        AND Sections.ArchivedDate IS NULL
+                        AND CustomisationTutorials.DiagStatus = 1
+                        AND Sections.DiagAssessPath IS NOT NULL
+                    ORDER BY
+	                    Tutorials.OrderByNumber,
+	                    Tutorials.TutorialID",
+                    (diagnostic, tutorial) =>
+                {
+                    if (diagnosticAssessment == null)
+                    {
+                        diagnosticAssessment = diagnostic;
+                    }
+                    else
+                    {
+                        diagnosticAssessment.DiagnosticAttempts = Math.Max(diagnosticAssessment.DiagnosticAttempts, diagnostic.DiagnosticAttempts);
+                        diagnosticAssessment.SectionScore += diagnostic.SectionScore;
+                        diagnosticAssessment.MaxSectionScore += diagnostic.MaxSectionScore;
+                    }
+
+                    diagnosticAssessment.Tutorials.Add(tutorial);
+                    return diagnosticAssessment;
+                },
+                new { customisationId, candidateId, sectionId },
+                splitOn: "TutorialName"
+            ).FirstOrDefault();
+        }
+    }
+}
