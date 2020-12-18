@@ -8,18 +8,14 @@
             int id = 1,
             string sectionName = "SectionName",
             bool hasLearning = true,
-            double percentComplete = 15.0,
-            int timeMins = 1,
-            int averageSectionTime = 2
+            double percentComplete = 15.0
         )
         {
             return new CourseSection(
                 sectionName,
                 id,
                 hasLearning,
-                percentComplete,
-                timeMins,
-                averageSectionTime
+                percentComplete
             );
         }
     }

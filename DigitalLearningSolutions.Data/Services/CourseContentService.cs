@@ -56,9 +56,7 @@
                                  OR dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) = 0
                             THEN 0
                             ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
-                         END) AS PercentComplete,
-                         COALESCE(SUM(aspProgress.TutTime), 0) as TimeMins,
-                         Sections.AverageSectionMins as AverageSectionTime
+                         END) AS PercentComplete
                   FROM Applications
                   INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                   INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
@@ -89,8 +87,7 @@
                          Sections.SectionName,
                          Sections.SectionID,
                          Sections.SectionNumber,
-                         Progress.CandidateID,
-                         Sections.AverageSectionMins
+                         Progress.CandidateID
                   ORDER BY Sections.SectionNumber;",
                 (course, section) =>
                 {
