@@ -73,23 +73,5 @@
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");
         }
-
-        [Test]
-        public void Section_should_return_time_information()
-        {
-            // Given
-            const int timeMins = 10;
-            const int averageSectionTime = 20;
-            var section = CourseSectionHelper.CreateDefaultCourseSection(
-                timeMins: timeMins,
-                averageSectionTime: averageSectionTime
-            );
-
-            // When
-            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
-
-            // Then
-            sectionCardViewModel.TimeInformation.Should().Be("10m (average time 20m)");
-        }
     }
 }
