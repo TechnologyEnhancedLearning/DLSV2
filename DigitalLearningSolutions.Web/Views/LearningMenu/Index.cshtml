@@ -41,17 +41,28 @@
   }
 </div>
 
-@if (Model.ShouldShowCompletionSummary) {
-  <div class="nhsuk-card learning-menu-card @Model.CompletionStyling">
+@if (Model.ShouldShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <div class="nhsuk-card nhsuk-card--clickable learning-menu-card">
     <div class="nhsuk-card__content">
-      <h2 class="nhsuk-card__heading nhsuk-heading-m">
-        Course Completion Status: @Model.CompletionStatus
-      </h2>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-three-quarters">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m completion-card-heading">
+            <a class="nhsuk-card__link" href="#">Course Completion Summary</a>
+          </h2>
+        </div>
+        <div class="nhsuk-grid-column-one-quarter">
+          <strong class="status-tag @Model.CompletionStyling">
+            @Model.CompletionStatus
+          </strong>
+        </div>
+      </div>
+
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0">
-            Show Summary
-          </a>
+          <p class="nhsuk-u-secondary-text-color nhsuk-u-margin-0">@Model.CompletionSummary</p>
         </div>
       </div>
     </div>

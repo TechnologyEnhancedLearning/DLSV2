@@ -1,13 +1,32 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
+@import "~nhsuk-frontend/packages/components/tag/_tag";
 
 .learning-menu-card {
   border: none;
 }
 
-.incomplete {
-  border-left: 6px solid $color_nhsuk-red;
+.completion-card-heading {
+  @extend .nhsuk-u-margin-bottom-3;
+
+  // Add padding to match border and padding of status tag
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
-.complete {
-  border-left: 6px solid $color_nhsuk-green;
+.status-tag {
+  @extend .nhsuk-tag;
+  @extend .nhsuk-u-font-size-24;
+  @extend .nhsuk-u-margin-bottom-3;
+
+  &.incomplete {
+    @extend .nhsuk-tag--orange;
+  }
+
+  &.complete {
+    @extend .nhsuk-tag--green;
+  }
+}
+
+hr.thick {
+  border-bottom-width: 6pt;
 }

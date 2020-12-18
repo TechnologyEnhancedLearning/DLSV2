@@ -88,7 +88,7 @@
                          Sections.SectionID,
                          Sections.SectionNumber,
                          Progress.CandidateID
-                  ORDER BY Sections.SectionNumber;",
+                  ORDER BY Sections.SectionNumber, Sections.SectionID;",
                 (course, section) =>
                 {
                     courseContent ??= course;

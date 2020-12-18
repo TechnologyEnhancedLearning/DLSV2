@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CourseContent;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class InitialMenuViewModel
     {
@@ -16,6 +17,7 @@
         public IEnumerable<SectionCardViewModel> Sections { get; }
         public string CompletionStatus { get; }
         public string CompletionStyling { get; }
+        public string CompletionSummary { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
         {
@@ -28,6 +30,14 @@
             Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section, Id));
             CompletionStatus = courseContent.Completed == null ? "Incomplete" : "Complete";
             CompletionStyling = courseContent.Completed == null ? "incomplete" : "complete";
+            CompletionSummary = CompletionSummaryHelper.GetCompletionSummary(
+                courseContent.Completed,
+                courseContent.MaxPostLearningAssessmentAttempts,
+                courseContent.IsAssessed,
+                courseContent.PostLearningAssessmentPassThreshold,
+                courseContent.DiagnosticAssessmentCompletionThreshold,
+                courseContent.TutorialsCompletionThreshold
+            );
         }
     }
 }
