@@ -11,13 +11,11 @@
         private const int SectionId = 5;
 
         [Test]
-        public void Tutorial_card_should_have_time_information()
+        public void Tutorial_card_should_have_average_time()
         {
             // Given
-            const int timeMins = 4;
             const int averageTime = 10;
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
-                tutTime: timeMins,
                 averageTutMins: averageTime
             );
 
@@ -25,7 +23,23 @@
             var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
 
             // Then
-            tutorialCardViewModel.TimeInformation.Should().Be($"{timeMins}m (average time {averageTime}m)");
+            tutorialCardViewModel.AverageTutorialTime.Should().Be(averageTime);
+        }
+
+        [Test]
+        public void Tutorial_card_should_have_tutorial_time()
+        {
+            // Given
+            const int tutTime = 10;
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                tutTime: tutTime
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+
+            // Then
+            tutorialCardViewModel.TutorialTime.Should().Be(tutTime);
         }
 
         [Test]
