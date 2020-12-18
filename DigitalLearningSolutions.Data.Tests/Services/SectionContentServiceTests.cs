@@ -316,5 +316,64 @@
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
+
+        [Test]
+        public void Get_section_content_should_order_by_tutorial_id_when_shared_order_by_number()
+        {
+            // When
+            const int candidateId = 1;
+            const int customisationId = 8194;
+            const int sectionId = 216;
+
+            // All in section 216
+            // Tutorial: 927  OrderByNumber 34
+            // Tutorial: 928  OrderByNumber 35
+            // Tutorial: 929  OrderByNumber 35
+            // Tutorial: 930  OrderByNumber 36
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            var expectedSectionContent = new SectionContent(
+                "Entry Level - Win 7, Office 2010",
+                "Testing",
+                "Working with applications",
+                11,
+                28,
+                true,
+                7,
+                35,
+                35,
+                "https://www.dls.nhs.uk/tracking/entrylevel/win7/Assess/ELW7_0.05_Diag.dcr",
+                "https://www.dls.nhs.uk/tracking/entrylevel/win7/Assess/ELW7_0.05_Post.dcr",
+                1,
+                18,
+                true,
+                true
+            );
+            expectedSectionContent.Tutorials.AddRange(
+                new[]
+                {
+                    new SectionTutorial("Introduction to Applications", 1, "Started", 0, 5, 923),
+                    new SectionTutorial("Starting Applications", 1, "Started", 0, 4, 924),
+                    new SectionTutorial("Toolbars", 2, "Complete", 0, 5, 925),
+                    new SectionTutorial("Menus", 0, "Not started", 0, 4, 926),
+                    new SectionTutorial("The Application Ribbon", 2, "Complete", 2, 8, 927),
+                    new SectionTutorial("Context Menus", 0, "Not started", 0, 5, 928),
+                    new SectionTutorial("Working with Dialogue Boxes & Task Panes", 0, "Not started", 0, 5, 929),
+                    new SectionTutorial("Save & Save As", 0, "Not started", 0, 7, 930),
+                    new SectionTutorial("Opening Files", 0, "Not started", 0, 4, 931),
+                    new SectionTutorial("Page Setup, Print Preview and Printing", 0, "Not started", 0, 7, 932),
+                    new SectionTutorial("Accessing ‘Help’", 1, "Started", 0, 3, 933),
+                    new SectionTutorial("Switching Between Windows", 1, "Started", 5, 4, 934),
+                    new SectionTutorial("Selecting Text", 0, "Not started", 0, 6, 935),
+                    new SectionTutorial("Overtyping", 2, "Complete", 3, 3, 936),
+                    new SectionTutorial("Cut, Copy and Paste", 0, "Not started", 0, 6, 937),
+                    new SectionTutorial("Using ‘Undo’", 1, "Started", 1, 2, 938),
+                    new SectionTutorial("Working with Tables", 0, "Not started", 0, 9, 939),
+                    new SectionTutorial("Using Task Manager", 0, "Not started", 0, 3, 940)
+                }
+            );
+            result.Should().BeEquivalentTo(expectedSectionContent);
+        }
     }
 }
