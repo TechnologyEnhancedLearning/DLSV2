@@ -91,7 +91,7 @@
                          Sections.SectionNumber,
                          Progress.CandidateID,
                          Sections.AverageSectionMins
-                  ORDER BY Sections.SectionNumber;",
+                  ORDER BY Sections.SectionNumber, Sections.SectionID;",
                 (course, section) =>
                 {
                     courseContent ??= course;
