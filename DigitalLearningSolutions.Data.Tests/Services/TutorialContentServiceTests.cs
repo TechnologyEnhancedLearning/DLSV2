@@ -238,6 +238,23 @@
         }
 
         [Test]
+        public void Get_tutorial_information_should_return_null_postLearningAssessmentPath_when_isAssessed_is_false()
+        {
+            // Given
+            const int candidateId = 11;
+            const int customisationId = 24224;
+            const int sectionId = 245;
+            const int tutorialId = 4407;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.PostLearningAssessmentPath.Should().BeNull();
+        }
+
+        [Test]
         public void Get_tutorial_information_should_return_null_if_customisation_id_invalid()
         {
             // Given

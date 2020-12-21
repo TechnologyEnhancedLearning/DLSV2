@@ -91,7 +91,10 @@
                          Tutorials.VideoPath,
                          Tutorials.TutorialPath,
                          Tutorials.SupportingMatsPath AS SupportingMaterialPath,
-                         Sections.PLAssessPath AS PostLearningAssessmentPath,
+                         CASE
+                              WHEN Customisations.IsAssessed = 0 THEN NULL
+                              ELSE Sections.PLAssessPath
+                         END AS PostLearningAssessmentPath,
                          NextTutorial.TutorialID AS NextTutorialID,
                          NextSection.SectionID AS NextSectionID
                     FROM Tutorials
