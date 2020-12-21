@@ -35,10 +35,25 @@
 
             CourseContent? courseContent = null;
             return connection.Query<CourseContent, CourseSection, CourseContent>(
-                @"SELECT Customisations.CustomisationID AS id,
+                @"  WITH CustomisationDurations AS (
+                  SELECT CustomisationId,
+                         SUM(AverageDuration) AS AverageDuration
+                    FROM (SELECT Customisations.CustomisationID,
+                                 CASE
+                                 WHEN Tutorials.OverrideTutorialMins > 0 THEN Tutorials.OverrideTutorialMins
+                                 ELSE Tutorials.AverageTutMins END AS AverageDuration
+                            FROM CustomisationTutorials
+                            INNER JOIN Customisations ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                            INNER JOIN Tutorials ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                            WHERE CustomisationTutorials.CustomisationID = @customisationId
+                                  AND CustomisationTutorials.Status = 1
+                       ) AS TutorialDurations
+                   GROUP BY CustomisationID
+                  )
+                  SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         dbo.GetMinsForCustomisation(Customisations.CustomisationID) AS AverageDuration,
+                         CustomisationDurations.AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
                          Applications.IncludeCertification,
@@ -57,24 +72,26 @@
                             THEN 0
                             ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
                          END) AS PercentComplete
-                  FROM Applications
-                  INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
-                  INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
-                  INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
-                  INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
-                  INNER JOIN CustomisationTutorials ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
+                    FROM Applications
+                   INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
+                   INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
+                   INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
+                   INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
+                   INNER JOIN CustomisationTutorials ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
                                                    AND Tutorials.TutorialID = CustomisationTutorials.TutorialID
-                  LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
-                  LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
-                  WHERE Customisations.CustomisationID = @customisationId
-                    AND Customisations.Active = 1
-                    AND Sections.ArchivedDate IS NULL
-                    AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
-                  GROUP BY
+                    LEFT JOIN CustomisationDurations ON CustomisationDurations.CustomisationID = Customisations.CustomisationID
+                    LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
+                    LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
+                   WHERE Customisations.CustomisationID = @customisationId
+                     AND Customisations.Active = 1
+                     AND Sections.ArchivedDate IS NULL
+                     AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                   GROUP BY
                          Sections.SectionID,
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
+                         CustomisationDurations.AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
                          Applications.IncludeCertification,
@@ -88,7 +105,7 @@
                          Sections.SectionID,
                          Sections.SectionNumber,
                          Progress.CandidateID
-                  ORDER BY Sections.SectionNumber, Sections.SectionID;",
+                   ORDER BY Sections.SectionNumber, Sections.SectionID;",
                 (course, section) =>
                 {
                     courseContent ??= course;

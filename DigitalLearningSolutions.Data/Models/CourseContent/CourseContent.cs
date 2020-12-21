@@ -7,7 +7,7 @@
     {
         public int Id { get; }
         public string Title { get; }
-        public string AverageDuration { get; }
+        public int? AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
         public bool IncludeCertification { get; }
@@ -23,7 +23,7 @@
             int id,
             string applicationName,
             string customisationName,
-            string averageDuration,
+            int? averageDuration,
             string centreName,
             string? bannerText,
             bool includeCertification,

@@ -23,7 +23,8 @@
         {
             Id = courseContent.Id;
             Title = courseContent.Title;
-            AverageDuration = courseContent.AverageDuration;
+            AverageDuration = FormatDuration(courseContent.AverageDuration);
+
             CentreName = courseContent.CentreName;
             BannerText = courseContent.BannerText;
             ShouldShowCompletionSummary = courseContent.IncludeCertification;
@@ -39,5 +40,27 @@
                 courseContent.TutorialsCompletionThreshold
             );
         }
+
+        private static string FormatDuration(int? duration)
+        {
+            if (duration == null)
+            {
+                return "Not applicable";
+            }
+
+            if (duration < 60)
+            {
+                return FormatTimeUnits(duration.Value, "minute");
+            }
+
+            var durationMinutes = duration.Value % 60;
+            var formattedHours = FormatTimeUnits(duration.Value / 60, "hour");
+            var formattedMinutes = FormatTimeUnits(durationMinutes, "minute");
+            return durationMinutes == 0 ? formattedHours : $"{formattedHours} {formattedMinutes}";
+
+        }
+
+        private static string FormatTimeUnits(int duration, string unit) =>
+            duration == 1 ? $"{duration} {unit}" : $"{duration} {unit}s";
     }
 }
