@@ -1,5 +1,5 @@
 function closeMpe(): void {
-  // Extract the customisationId and sectionId out of the URL
+  // Extract the customisationId, sectionId and tutorialId out of the URL
   const matches = window.location.href.match(/.*\/LearningMenu\/(\d+)\/(\d+)\/(\d+)\/Tutorial$/);
 
   if (!matches || matches.length < 4) {
