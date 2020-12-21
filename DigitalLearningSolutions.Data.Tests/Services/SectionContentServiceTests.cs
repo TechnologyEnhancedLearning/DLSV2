@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -12,6 +13,8 @@
     internal class SectionContentServiceTests
     {
         private SectionContentService sectionContentService;
+        private SectionContentTestHelper sectionContentTestHelper;
+        private CourseContentTestHelper courseContentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -19,6 +22,8 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<SectionContentService>>();
             sectionContentService = new SectionContentService(connection, logger);
+            sectionContentTestHelper = new SectionContentTestHelper(connection);
+            courseContentTestHelper = new CourseContentTestHelper(connection);
         }
 
         [Test]
@@ -311,6 +316,38 @@
                 { 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940 };
 
             result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
+        }
+
+        [TestCase(46, 353, 50, 45633, 103)]
+        [TestCase(262288, 22400, 386, 392, 225371)]
+        [TestCase(1, 9850, 101, 170, 284965)]
+        [TestCase(254480, 24224, 101, 1, null)]
+        public void Get_section_content_should_have_same_tutorials_as_stored_procedure(
+            int candidateId,
+            int customisationId,
+            int centreId,
+            int sectionId,
+            int? progressId
+        )
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                var validProgressId = progressId ?? courseContentTestHelper.CreateProgressId(customisationId, candidateId, centreId);
+
+                var tutorialIdsReturnedFromOldStoredProcedure = sectionContentTestHelper
+                    .TutorialsFromOldStoredProcedure(validProgressId, sectionId)
+                    .Select(tutorial => tutorial.TutorialID);
+
+                // When
+                var tutorialIdsInSectionContent = sectionContentService
+                    .GetSectionContent(customisationId, candidateId, sectionId)?
+                    .Tutorials
+                    .Select(tutorial => tutorial.Id);
+
+                // Then
+                tutorialIdsInSectionContent?.Should().BeEquivalentTo(tutorialIdsReturnedFromOldStoredProcedure);
+            }
         }
     }
 }
