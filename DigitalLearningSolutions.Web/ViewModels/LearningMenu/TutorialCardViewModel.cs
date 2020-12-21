@@ -7,8 +7,8 @@
         public int Id { get; }
         public string TutorialName { get; }
         public string CompletionStatus { get; }
-        public int TutorialTime { get; }
-        public int AverageTutorialTime { get; }
+        public string TimeSpentInformation { get; }
+        public string AverageTimeInformation { get; }
         public int SectionId { get; }
         public int CustomisationId { get; }
 
@@ -17,8 +17,12 @@
             Id = tutorial.Id;
             TutorialName = tutorial.TutorialName;
             CompletionStatus = tutorial.CompletionStatus;
-            TutorialTime = tutorial.TutorialTime;
-            AverageTutorialTime = tutorial.AverageTutorialTime;
+            TimeSpentInformation = tutorial.TutorialTime == 1
+                ? $"{tutorial.TutorialTime} minute spent"
+                : $"{tutorial.TutorialTime} minutes spent";
+            AverageTimeInformation = tutorial.AverageTutorialTime == 1
+                ? $"(average tutorial time {tutorial.TutorialTime} minute)"
+                : $"(average tutorial time {tutorial.TutorialTime} minutes)";
             SectionId = sectionId;
             CustomisationId = customisationId;
         }
