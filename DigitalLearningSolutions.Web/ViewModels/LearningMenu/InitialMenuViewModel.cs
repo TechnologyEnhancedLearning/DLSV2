@@ -41,15 +41,20 @@
             );
         }
 
-        private static string FormatDuration(int duration)
+        private static string FormatDuration(int? duration)
         {
-            if (duration < 60)
+            if (duration == null)
             {
-                return FormatTimeUnits(duration, "minute");
+                return "Not applicable";
             }
 
-            var durationMinutes = duration % 60;
-            var formattedHours = FormatTimeUnits(duration / 60, "hour");
+            if (duration < 60)
+            {
+                return FormatTimeUnits(duration.Value, "minute");
+            }
+
+            var durationMinutes = duration.Value % 60;
+            var formattedHours = FormatTimeUnits(duration.Value / 60, "hour");
             var formattedMinutes = FormatTimeUnits(durationMinutes, "minute");
             return durationMinutes == 0 ? formattedHours : $"{formattedHours} {formattedMinutes}";
 

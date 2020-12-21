@@ -141,6 +141,22 @@
         }
 
         [Test]
+        public void Initial_menu_should_have_not_applicable_for_null_duration()
+        {
+            // Given
+            int? averageDuration = null;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be("Not applicable");
+        }
+
+        [Test]
         public void Initial_menu_should_have_centre_name()
         {
             // Given

@@ -523,6 +523,34 @@
             }
         }
 
+        [TestCase(254480, 12589)]
+        [TestCase(1, 15853)]
+        [TestCase(254480, 24224)]
+        [TestCase(22044, 10059)]
+        [TestCase(11, 6226)]
+        [TestCase(207900, 274400)]
+        [TestCase(213382, 4339)]
+        [TestCase(286788, 23638)]
+        public void Get_course_content_should_have_same_sections_as_stored_procedure2(
+            int candidateId,
+            int customisationId
+        )
+        {
+            // Given
+            var durationFromOldStoredFunction =
+                courseContentTestHelper.GetCustomisationDurationFromOldProcedure(customisationId);
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            var formattedResult = courseContentTestHelper.FormatDurationLikeOldProcedure(
+                result?.AverageDuration
+            );
+            formattedResult.Should().Be(durationFromOldStoredFunction);
+        }
+
+
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()
         {

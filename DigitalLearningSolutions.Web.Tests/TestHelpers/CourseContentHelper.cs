@@ -9,7 +9,7 @@
             int customisationId = 1,
             string customisationName = "Customisation",
             string applicationName = "Application",
-            int averageDuration = 45,
+            int? averageDuration = 45,
             string centreName = "Centre",
             string? bannerText = "Banner",
             bool includeCertification = false,

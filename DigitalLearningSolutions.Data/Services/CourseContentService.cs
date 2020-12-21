@@ -53,7 +53,7 @@
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         COALESCE(CustomisationDurations.AverageDuration, 0) AS AverageDuration,
+                         CustomisationDurations.AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
                          Applications.IncludeCertification,

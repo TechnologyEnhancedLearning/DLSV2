@@ -108,6 +108,35 @@
             return connection.Query<OldCourseSection>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure);
         }
 
+        public string GetCustomisationDurationFromOldProcedure(int customisationId)
+        {
+            return connection.QueryFirstOrDefault<string>(
+                "SELECT dbo.GetMinsForCustomisation(@customisationId);",
+                new { customisationId }
+            );
+        }
+
+        public string FormatDurationLikeOldProcedure(int? duration)
+        {
+            if (duration == null)
+            {
+                return "N/A";
+            }
+
+            if (duration < 60)
+            {
+                return $"{duration}m";
+            }
+
+            var durationMinutes = duration % 60;
+            if (durationMinutes == 0)
+            {
+                return $"{duration / 60}h";
+            }
+
+            return $"{duration / 60}h {durationMinutes}m";
+        }
+
         public int CreateProgressId(int customisationId, int candidateId, int centreId)
         {
             connection.Execute(
