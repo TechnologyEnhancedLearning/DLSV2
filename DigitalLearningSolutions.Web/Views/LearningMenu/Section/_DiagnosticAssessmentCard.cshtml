@@ -16,7 +16,11 @@
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+           aria-label="Launch Diagnostic Assessment"
+           asp-action="Diagnostic"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-sectionId="@Model.SectionId">
           Launch assessment
         </a>
       </div>
