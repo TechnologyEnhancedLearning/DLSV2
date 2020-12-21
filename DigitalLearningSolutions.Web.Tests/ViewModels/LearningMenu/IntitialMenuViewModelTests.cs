@@ -44,10 +44,10 @@
         }
 
         [Test]
-        public void Initial_menu_should_have_averageDuration()
+        public void Initial_menu_should_have_averageDuration_for_0_minutes()
         {
             // Given
-            const string averageDuration = "3h 20m";
+            const int averageDuration = 0;
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
                 averageDuration: averageDuration
             );
@@ -56,7 +56,88 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(averageDuration);
+            initialMenuViewModel.AverageDuration.Should().Be(" 0 minutes");
+        }
+
+        [Test]
+        public void Initial_menu_should_have_averageDuration_for_1_minute()
+        {
+            // Given
+            const int averageDuration = 1;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be(" 1 minute");
+        }
+
+        [Test]
+        public void Initial_menu_should_have_averageDuration_for_under_an_hour()
+        {
+            // Given
+            const int averageDuration = 30;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be(" 30 minutes");
+        }
+
+        [Test]
+        public void Initial_menu_should_have_averageDuration_for_whole_number_of_hours()
+        {
+            // Given
+            const int averageDuration = 120;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be(" 2 hours");
+        }
+
+        [Test]
+        public void Initial_menu_should_have_averageDuration_for_one_hour_one_minute()
+        {
+            // Given
+            const int averageDuration = 61;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be(" 1 hour 1 minute");
+        }
+
+
+        [Test]
+        public void Initial_menu_should_have_averageDuration_for_multiple_hours()
+        {
+            // Given
+            const int averageDuration = 195;
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: averageDuration
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.AverageDuration.Should().Be(" 3 hours 15 minutes");
         }
 
         [Test]
