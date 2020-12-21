@@ -11,7 +11,7 @@
         private const int SectionId = 5;
 
         [Test]
-        public void Tutorial_card_should_have_average_time()
+        public void Tutorial_card_average_time_spent_string_should_have_plural_if_value_is_not_one()
         {
             // Given
             const int averageTime = 10;
@@ -23,11 +23,27 @@
             var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
 
             // Then
-            tutorialCardViewModel.AverageTutorialTime.Should().Be(averageTime);
+            tutorialCardViewModel.AverageTimeInformation.Should().Be($"(average tutorial time {averageTime} minutes)");
         }
 
         [Test]
-        public void Tutorial_card_should_have_tutorial_time()
+        public void Tutorial_card_average_time_spent_string_should_not_have_plural_if_value_is_one()
+        {
+            // Given
+            const int averageTime = 1;
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                averageTutMins: averageTime
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+
+            // Then
+            tutorialCardViewModel.AverageTimeInformation.Should().Be($"(average tutorial time {averageTime} minute)");
+        }
+
+        [Test]
+        public void Tutorial_card_time_spent_string_should_have_plural_if_value_is_not_one()
         {
             // Given
             const int tutTime = 10;
@@ -39,7 +55,23 @@
             var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
 
             // Then
-            tutorialCardViewModel.TutorialTime.Should().Be(tutTime);
+            tutorialCardViewModel.TimeSpentInformation.Should().Be($"{tutTime} minutes spent");
+        }
+
+        [Test]
+        public void Tutorial_card_time_spent_string_should_not_have_plural_if_value_is_one()
+        {
+            // Given
+            const int tutTime = 1;
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                tutTime: tutTime
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+
+            // Then
+            tutorialCardViewModel.TimeSpentInformation.Should().Be($"{tutTime} minute spent");
         }
 
         [Test]

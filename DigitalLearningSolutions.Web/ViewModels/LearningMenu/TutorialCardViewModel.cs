@@ -21,8 +21,8 @@
                 ? $"{tutorial.TutorialTime} minute spent"
                 : $"{tutorial.TutorialTime} minutes spent";
             AverageTimeInformation = tutorial.AverageTutorialTime == 1
-                ? $"(average tutorial time {tutorial.TutorialTime} minute)"
-                : $"(average tutorial time {tutorial.TutorialTime} minutes)";
+                ? $"(average tutorial time {tutorial.AverageTutorialTime} minute)"
+                : $"(average tutorial time {tutorial.AverageTutorialTime} minutes)";
             SectionId = sectionId;
             CustomisationId = customisationId;
         }
