@@ -371,5 +371,24 @@
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempts");
         }
+
+        [Test]
+        public void Diagnostic_assessment_completion_status_does_not_use_plural_if_attempts_is_one()
+        {
+            // Given
+            const int diagAttempts = 1;
+            const int secScore = 10;
+            const int secOutOf = 15;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAttempts: diagAttempts,
+                secScore: secScore,
+                secOutOf: secOutOf);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempt");
+        }
     }
 }
