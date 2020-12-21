@@ -8,8 +8,9 @@
         public int TutorialTime { get; }
         public int AverageTutorialTime { get; }
         public int Id { get; }
+        public bool CustomisationTutorialStatus { get; }
 
-        public SectionTutorial(string tutorialName, int tutStat, string completionStatus, int tutTime, int averageTutMins, int id)
+        public SectionTutorial(string tutorialName, int tutStat, string completionStatus, int tutTime, int averageTutMins, int id, bool status)
         {
             TutorialName = tutorialName;
             TutorialStatus = tutStat;
@@ -17,6 +18,7 @@
             TutorialTime = tutTime;
             AverageTutorialTime = averageTutMins;
             Id = id;
+            CustomisationTutorialStatus = status;
         }
     }
 }
