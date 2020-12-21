@@ -46,14 +46,14 @@
                             INNER JOIN Customisations ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
                             INNER JOIN Tutorials ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
                             WHERE CustomisationTutorials.CustomisationID = @customisationId
-                                  AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1)
+                                  AND CustomisationTutorials.Status = 1
                        ) AS TutorialDurations
                    GROUP BY CustomisationID
                   )
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         CustomisationDurations.AverageDuration,
+                         COALESCE(CustomisationDurations.AverageDuration, 0) AS AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
                          Applications.IncludeCertification,
@@ -77,9 +77,9 @@
                    INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
                    INNER JOIN Centres ON Customisations.CentreID = Centres.CentreID
                    INNER JOIN Tutorials ON Sections.SectionID = Tutorials.SectionID
-                   INNER JOIN CustomisationDurations ON CustomisationDurations.CustomisationID = Customisations.CustomisationID
                    INNER JOIN CustomisationTutorials ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
                                                    AND Tutorials.TutorialID = CustomisationTutorials.TutorialID
+                    LEFT JOIN CustomisationDurations ON CustomisationDurations.CustomisationID = Customisations.CustomisationID
                     LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
                     LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
                    WHERE Customisations.CustomisationID = @customisationId

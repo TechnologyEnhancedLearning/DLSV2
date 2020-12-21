@@ -23,7 +23,6 @@
         {
             Id = courseContent.Id;
             Title = courseContent.Title;
-            //AverageDuration = courseContent.AverageDuration;
             AverageDuration = FormatDuration(courseContent.AverageDuration);
 
             CentreName = courseContent.CentreName;
@@ -49,13 +48,14 @@
                 return FormatTimeUnits(duration, "minute");
             }
 
+            var durationMinutes = duration % 60;
             var formattedHours = FormatTimeUnits(duration / 60, "hour");
-            var formattedMinutes = FormatTimeUnits(duration % 60, "minute");
-            return duration % 60 == 0 ? formattedHours : formattedHours + formattedMinutes;
+            var formattedMinutes = FormatTimeUnits(durationMinutes, "minute");
+            return durationMinutes == 0 ? formattedHours : $"{formattedHours} {formattedMinutes}";
 
         }
 
         private static string FormatTimeUnits(int duration, string unit) =>
-            duration == 1 ? $" {duration} {unit}" : $" {duration} {unit}s";
+            duration == 1 ? $"{duration} {unit}" : $"{duration} {unit}s";
     }
 }

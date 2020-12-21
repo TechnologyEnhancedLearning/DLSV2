@@ -56,7 +56,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 0 minutes");
+            initialMenuViewModel.AverageDuration.Should().Be("0 minutes");
         }
 
         [Test]
@@ -72,7 +72,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 1 minute");
+            initialMenuViewModel.AverageDuration.Should().Be("1 minute");
         }
 
         [Test]
@@ -88,7 +88,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 30 minutes");
+            initialMenuViewModel.AverageDuration.Should().Be("30 minutes");
         }
 
         [Test]
@@ -104,7 +104,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 2 hours");
+            initialMenuViewModel.AverageDuration.Should().Be("2 hours");
         }
 
         [Test]
@@ -120,7 +120,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 1 hour 1 minute");
+            initialMenuViewModel.AverageDuration.Should().Be("1 hour 1 minute");
         }
 
 
@@ -137,7 +137,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be(" 3 hours 15 minutes");
+            initialMenuViewModel.AverageDuration.Should().Be("3 hours 15 minutes");
         }
 
         [Test]
