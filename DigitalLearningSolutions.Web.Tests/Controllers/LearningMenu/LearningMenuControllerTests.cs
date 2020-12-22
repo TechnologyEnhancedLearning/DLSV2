@@ -23,6 +23,7 @@
         private ISessionService sessionService;
         private ISectionContentService sectionContentService;
         private IDiagnosticAssessmentService diagnosticAssessmentService;
+        private ICourseCompletionService courseCompletionService;
         private ISession httpContextSession;
         private IConfiguration config;
         private const int CandidateId = 11;
@@ -41,6 +42,7 @@
             sessionService = A.Fake<ISessionService>();
             sectionContentService = A.Fake<ISectionContentService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
+            courseCompletionService = A.Fake<ICourseCompletionService>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
@@ -56,7 +58,8 @@
                 sectionContentService,
                 tutorialContentService,
                 diagnosticAssessmentService,
-                sessionService
+                sessionService,
+                courseCompletionService
             )
             {
                 ControllerContext = new ControllerContext
@@ -1113,6 +1116,218 @@
 
             // When
             var result = controller.TutorialVideo(CustomisationId, SectionId, TutorialId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void CompletionSummary_should_StartOrUpdate_session_if_valid_course()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+            const int progressId = 3;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CompletionSummary_should_not_StartOrUpdate_session_if_invalid_course()
+        {
+            // Given
+            const int progressId = 3;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CompletionSummary_should_not_StartOrUpdate_session_if_unable_to_enrol()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CourseCompletion_should_UpdateProgress_if_valid_course()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+            const int progressId = 3;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._))
+                .WhenArgumentsMatch((int id) => id != progressId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_UpdateProgress_if_invalid_course()
+        {
+            // Given
+            const int progressId = 3;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_UpdateProgress_if_unable_to_enrol()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.CompletionSummary(CustomisationId);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void CourseCompletion_should_render_view()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+            const int progressId = 101;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            var result = controller.CompletionSummary(CustomisationId);
+
+            // Then
+            var expectedModel = new CourseCompletionViewModel(expectedCourseCompletion);
+
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void CompletionSummary_should_return_404_if_invalid_course()
+        {
+            // Given
+            const int progressId = 101;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(null);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            var result = controller.CompletionSummary(CustomisationId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void CompletionSummary_should_return_404_if_unable_to_enrol()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            var result = controller.CompletionSummary(CustomisationId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void CompletionSummary_should_return_404_if_course_does_not_include_certification()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                CustomisationId,
+                includeCertification: false
+            );
+            const int progressId = 101;
+
+            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
+                .Returns(expectedCourseCompletion);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            var result = controller.CompletionSummary(CustomisationId);
 
             // Then
             result.Should()
