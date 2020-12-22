@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
-    using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
