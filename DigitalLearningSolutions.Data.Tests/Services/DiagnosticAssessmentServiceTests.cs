@@ -16,7 +16,7 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            var logger = A.Fake<ILogger<SectionContentService>>();
+            var logger = A.Fake<ILogger<DiagnosticAssessmentService>>();
             diagnosticAssessmentService = new DiagnosticAssessmentService(connection, logger);
         }
 

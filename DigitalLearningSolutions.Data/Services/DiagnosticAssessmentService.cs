@@ -15,9 +15,9 @@
     public class DiagnosticAssessmentService : IDiagnosticAssessmentService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<SectionContentService> logger;
+        private readonly ILogger<DiagnosticAssessmentService> logger;
 
-        public DiagnosticAssessmentService(IDbConnection connection, ILogger<SectionContentService> logger)
+        public DiagnosticAssessmentService(IDbConnection connection, ILogger<DiagnosticAssessmentService> logger)
         {
             this.connection = connection;
             this.logger = logger;
