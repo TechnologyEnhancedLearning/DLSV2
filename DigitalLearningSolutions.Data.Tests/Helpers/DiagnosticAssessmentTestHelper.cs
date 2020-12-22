@@ -4,6 +4,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using Microsoft.Data.SqlClient;
 
