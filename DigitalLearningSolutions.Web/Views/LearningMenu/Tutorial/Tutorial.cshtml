@@ -3,6 +3,7 @@
 @inject IConfiguration Configuration
 @model TutorialViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/tutorial.css")" asp-append-version="true">
 
 @{
@@ -47,7 +48,7 @@
   </details>
 }
 
-<div class="tutorial-actions-container">
+<div class="button-row">
   @if (Model.TutorialPath != null)
   {
     <div>
