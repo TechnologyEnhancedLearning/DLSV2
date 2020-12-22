@@ -1,6 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
+    using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
@@ -11,6 +14,7 @@
     internal class DiagnosticAssessmentServiceTests
     {
         private DiagnosticAssessmentService diagnosticAssessmentService;
+        private DiagnosticAssessmentTestHelper diagnosticAssessmentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -18,6 +22,7 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<SectionContentService>>();
             diagnosticAssessmentService = new DiagnosticAssessmentService(connection, logger);
+            diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
         }
 
         [Test]
@@ -186,6 +191,70 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [TestCase(70093, 3452, 110, 38227)]
+        [TestCase(84238, 6062, 105, 55672)]
+        [TestCase(83361, 5263, 161, 98818)]
+        [TestCase(173505, 11347, 178, 156377)]
+        [TestCase(121301, 5903, 169, 180362)]
+        [TestCase(181938, 5263, 153, 198839)]
+        [TestCase(269044, 10059, 212, 237170)]
+        public void Get_diagnostic_assessment_should_have_same_tutorials_as_stored_procedure(
+            int candidateId,
+            int customisationId,
+            int sectionId,
+            int progressId
+        )
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                var tutorialIdsReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
+                    .TutorialsFromOldStoredProcedure(progressId, sectionId)
+                    .Select(tutorial => tutorial.TutorialId);
+
+                // When
+                var sectionIdsInCourseContent = diagnosticAssessmentService
+                    .GetDiagnosticAssessment(customisationId, candidateId, sectionId)?
+                    .Tutorials
+                    .Select(section => section.Id);
+
+                // Then
+                sectionIdsInCourseContent.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
+            }
+        }
+
+        [TestCase(70093, 3452, 110, 38227)]
+        [TestCase(84238, 6062, 105, 55672)]
+        [TestCase(83361, 5263, 161, 98818)]
+        [TestCase(173505, 11347, 178, 156377)]
+        [TestCase(121301, 5903, 169, 180362)]
+        [TestCase(181938, 5263, 153, 198839)]
+        [TestCase(269044, 10059, 212, 237170)]
+        public void Get_diagnostic_assessment_should_have_same_scores_as_stored_procedure(
+            int candidateId,
+            int customisationId,
+            int sectionId,
+            int progressId
+        )
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                var scoresReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
+                    .ScoresFromOldStoredProcedure(progressId, sectionId)
+                    .FirstOrDefault();
+
+                // When
+                var sectionInCourseContent = diagnosticAssessmentService
+                    .GetDiagnosticAssessment(customisationId, candidateId, sectionId);
+
+                // Then
+                sectionInCourseContent?.SectionScore.Should().Be(scoresReturnedFromOldStoredProcedure?.SecScore);
+                sectionInCourseContent?.MaxSectionScore.Should().Be(scoresReturnedFromOldStoredProcedure?.SecOutOf);
+                sectionInCourseContent?.DiagnosticAttempts.Should().Be(scoresReturnedFromOldStoredProcedure?.DiagAttempts);
+            }
         }
     }
 }
