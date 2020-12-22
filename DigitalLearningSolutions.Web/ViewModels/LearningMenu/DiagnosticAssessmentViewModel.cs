@@ -9,7 +9,7 @@
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string DiagnosticAssessmentPath { get; }
-        public bool SelectTutorials { get; }
+        public bool CanSelectTutorials { get; }
         public string AttemptsInformation { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
@@ -20,10 +20,15 @@
             CourseTitle = diagnosticAssessment.CourseTitle;
             SectionName = diagnosticAssessment.SectionName;
             DiagnosticAssessmentPath = diagnosticAssessment.DiagnosticAssessmentPath;
-            SelectTutorials = diagnosticAssessment.SelectTutorials;
-            AttemptsInformation = diagnosticAssessment.DiagnosticAttempts == 0
-                ? "Not attempted"
-                : $"{diagnosticAssessment.SectionScore}/{diagnosticAssessment.MaxSectionScore} - {diagnosticAssessment.DiagnosticAttempts} attempts";
+            CanSelectTutorials = diagnosticAssessment.CanSelectTutorials;
+            AttemptsInformation = diagnosticAssessment.DiagnosticAttempts switch
+            {
+                0 => "Not attempted",
+                1 => $"{diagnosticAssessment.SectionScore}/{diagnosticAssessment.MaxSectionScore} " +
+                     $"- {diagnosticAssessment.DiagnosticAttempts} attempt",
+                _ => $"{diagnosticAssessment.SectionScore}/{diagnosticAssessment.MaxSectionScore} " +
+                     $"- {diagnosticAssessment.DiagnosticAttempts} attempts"
+            };
             CustomisationId = customisationId;
             SectionId = sectionId;
             Tutorials = diagnosticAssessment.Tutorials;

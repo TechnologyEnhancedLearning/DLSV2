@@ -6,7 +6,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class DiagnosticAssessmentTest
+    public class DiagnosticAssessmentViewModelTests
     {
         private const int CustomisationId = 5;
         private const int SectionId = 5;
@@ -79,7 +79,7 @@
                 new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
 
             // Then
-            diagnosticAssessmentViewModel.SelectTutorials.Should().BeTrue();
+            diagnosticAssessmentViewModel.CanSelectTutorials.Should().BeTrue();
         }
 
         [Test]
@@ -96,7 +96,7 @@
                 new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
 
             // Then
-            diagnosticAssessmentViewModel.SelectTutorials.Should().BeFalse();
+            diagnosticAssessmentViewModel.CanSelectTutorials.Should().BeFalse();
         }
 
         [Test]
@@ -117,7 +117,7 @@
         }
 
         [Test]
-        public void Diagnostic_assessment_attempts_information_with_attempts_should_be_not_last_score()
+        public void Diagnostic_assessment_attempts_information_with_attempts_should_be_last_score()
         {
             // Given
             const int diagnosticAttempts = 3;
@@ -173,8 +173,8 @@
             // Given
             var tutorials = new[]
             {
-                new DiagnosticTutorial("Tutorial 1", 1),
-                new DiagnosticTutorial("Tutorial 2", 2)
+                new DiagnosticTutorial("Tutorial 1", 1, true),
+                new DiagnosticTutorial("Tutorial 2", 2, true)
             };
             var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
             diagnosticAssessment.Tutorials.AddRange(tutorials);

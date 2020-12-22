@@ -82,13 +82,12 @@
                         AND (Sections.ArchivedDate IS NULL)
                         AND (CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1 OR CustomisationTutorials.Status = 1)
                     ORDER BY Tutorials.OrderByNumber, Tutorials.TutorialID",
-                    (section, tutorial) =>
+                (section, tutorial) =>
                 {
                     if (sectionContent == null)
                     {
                         sectionContent = section;
                     }
-
                     else
                     {
                         sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, section.DiagnosticAttempts);

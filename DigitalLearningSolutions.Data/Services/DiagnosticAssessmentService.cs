@@ -36,18 +36,22 @@
                         COALESCE (aspProgress.DiagLast, 0) AS DiagLast,
                         Tutorials.DiagAssessOutOf,
                         Sections.DiagAssessPath,
-	                    Customisations.DiagObjSelect,
+                        Customisations.DiagObjSelect,
                         Tutorials.TutorialName,
-                        Tutorials.TutorialID AS id
-                    FROM Tutorials
-                        INNER JOIN CustomisationTutorials
-                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                        Tutorials.TutorialID AS id,
+                        CustomisationTutorials.Status
+                    FROM Sections
                         INNER JOIN Customisations
-                            ON Customisations.CustomisationID = CustomisationTutorials.CustomisationID
+                            ON Customisations.ApplicationID = Sections.ApplicationID
+                            AND Customisations.Active = 1
                         INNER JOIN Applications
-                            ON Applications.ApplicationID = Customisations.ApplicationID
-                        INNER JOIN Sections
-                            ON Sections.SectionID = Tutorials.SectionID
+                            ON Applications.ApplicationID = Sections.ApplicationID
+                        INNER JOIN CustomisationTutorials
+                            ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                        INNER JOIN Tutorials
+                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                            AND Tutorials.SectionID = Sections.SectionID
+                            AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId
@@ -57,15 +61,14 @@
                             ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
                             AND aspProgress.ProgressID = Progress.ProgressID
                     WHERE
-                        CustomisationTutorials.CustomisationID = @customisationId
+                        Customisations.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
-                        AND CustomisationTutorials.DiagStatus = 1
                         AND Sections.DiagAssessPath IS NOT NULL
                     ORDER BY
-	                    Tutorials.OrderByNumber,
-	                    Tutorials.TutorialID",
-                    (diagnostic, tutorial) =>
+                        Tutorials.OrderByNumber,
+                        Tutorials.TutorialID",
+                (diagnostic, tutorial) =>
                 {
                     if (diagnosticAssessment == null)
                     {
@@ -73,12 +76,19 @@
                     }
                     else
                     {
-                        diagnosticAssessment.DiagnosticAttempts = Math.Max(diagnosticAssessment.DiagnosticAttempts, diagnostic.DiagnosticAttempts);
+                        diagnosticAssessment.DiagnosticAttempts = Math.Max(
+                            diagnosticAssessment.DiagnosticAttempts,
+                            diagnostic.DiagnosticAttempts
+                        );
                         diagnosticAssessment.SectionScore += diagnostic.SectionScore;
                         diagnosticAssessment.MaxSectionScore += diagnostic.MaxSectionScore;
                     }
 
-                    diagnosticAssessment.Tutorials.Add(tutorial);
+                    if (tutorial.IsDisplayed)
+                    {
+                            diagnosticAssessment.Tutorials.Add(tutorial);
+                    }
+
                     return diagnosticAssessment;
                 },
                 new { customisationId, candidateId, sectionId },

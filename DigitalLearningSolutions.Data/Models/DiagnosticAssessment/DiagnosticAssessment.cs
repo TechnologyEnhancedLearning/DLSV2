@@ -10,7 +10,7 @@
         public int SectionScore { get; set; }
         public int MaxSectionScore { get; set; }
         public string DiagnosticAssessmentPath { get; }
-        public bool SelectTutorials { get; }
+        public bool CanSelectTutorials { get; }
         public List<DiagnosticTutorial> Tutorials { get; } = new List<DiagnosticTutorial>();
 
         public DiagnosticAssessment(
@@ -30,7 +30,7 @@
             SectionScore = diagLast;
             MaxSectionScore = diagAssessOutOf;
             DiagnosticAssessmentPath = diagAssessPath;
-            SelectTutorials = diagObjSelect;
+            CanSelectTutorials = diagObjSelect;
         }
     }
 }
