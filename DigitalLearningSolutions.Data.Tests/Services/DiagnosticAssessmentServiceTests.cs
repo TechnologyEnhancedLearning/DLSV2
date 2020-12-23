@@ -250,9 +250,9 @@
                     .GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
                 // Then
-                sectionInCourseContent?.SectionScore.Should().Be(scoresReturnedFromOldStoredProcedure?.SecScore);
-                sectionInCourseContent?.MaxSectionScore.Should().Be(scoresReturnedFromOldStoredProcedure?.SecOutOf);
-                sectionInCourseContent?.DiagnosticAttempts.Should().Be(scoresReturnedFromOldStoredProcedure?.DiagAttempts);
+                sectionInCourseContent.SectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecScore);
+                sectionInCourseContent.MaxSectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecOutOf);
+                sectionInCourseContent.DiagnosticAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.DiagAttempts);
             }
         }
     }
