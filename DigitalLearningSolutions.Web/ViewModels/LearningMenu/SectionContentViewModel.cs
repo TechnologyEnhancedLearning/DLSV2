@@ -16,6 +16,8 @@
         public bool ShowDiagnostic { get; }
         public string DiagnosticCompletionStatus { get; }
         public IEnumerable<TutorialCardViewModel> Tutorials { get; }
+        public bool DisplayDiagnosticSeparator { get; }
+        public bool DisplayTutorialSeparator { get; }
 
         public SectionContentViewModel(SectionContent sectionContent, int customisationId, int sectionId)
         {
@@ -29,6 +31,8 @@
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(tutorial, sectionId, customisationId));
+            DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning);
+            DisplayTutorialSeparator = sectionContent.Tutorials.Any() && ShowPostLearning;
         }
 
         private static double GetPercentComplete(SectionContent sectionContent)

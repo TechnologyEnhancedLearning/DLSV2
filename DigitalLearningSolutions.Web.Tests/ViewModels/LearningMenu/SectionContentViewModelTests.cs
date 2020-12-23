@@ -371,5 +371,109 @@
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempts");
         }
+
+        [Test]
+        public void Diagnostic_assessment_separator_is_true_if_diagnostic_assessment_and_tutorials_exist()
+        {
+            // Given
+            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html";
+            const bool diagStatus = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(),
+                SectionTutorialHelper.CreateDefaultSectionTutorial()
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: diagAssessPath,
+                diagStatus: diagStatus
+            );
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
+
+        }
+
+        [Test]
+        public void Diagnostic_assessment_separator_is_true_if_diagnostic_assessment_and_post_learning_assessment_exist_but_no_tutorials()
+        {
+            // Given
+            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html";
+            const bool diagStatus = true;
+            const string plAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/PLAssess/02-PLA-Entering-data/itspplayer.html";
+            const bool isAssessed = true;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: diagAssessPath,
+                diagStatus: diagStatus,
+                plAssessPath: plAssessPath,
+                isAssessed: isAssessed
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            
+            // Then
+            sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_separator_is_false_if_no_tutorials_or_post_learning_assessment()
+        {
+            // Given
+            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html";
+            const bool diagStatus = true;
+            const bool isAssessed = false;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: diagAssessPath,
+                diagStatus: diagStatus,
+                isAssessed: isAssessed
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_separator_is_true_if_tutorials_and_post_learning_assessment_exist()
+        {
+            // Given
+            const string plAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/PLAssess/02-PLA-Entering-data/itspplayer.html";
+            const bool isAssessed = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(),
+                SectionTutorialHelper.CreateDefaultSectionTutorial()
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                plAssessPath: plAssessPath,
+                isAssessed: isAssessed
+            );
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayTutorialSeparator.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_separator_is_false_if_no_tutorials_exist()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent();
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
+        }
     }
 }
