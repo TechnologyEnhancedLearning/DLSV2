@@ -203,19 +203,19 @@
         public void Get_section_content_should_return_content_if_only_diag_status_is_one()
         {
             // When
-            const int customisationId = 5982;
-            const int candidateId = 59561;
+            const int customisationId = 5994;
+            const int candidateId = 6;
             const int sectionId = 74;
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
             var expectedSectionContent = new SectionContent(
                 "Level 2 - Microsoft Word 2007",
-                "Level 2 - MS Word 2007 DIAGNOSTIC TESTING",
+                "Diagnostics Testing",
                 "Working with documents",
                 false,
-                0,
-                0,
+                1,
+                14,
                 18,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Diag_1.dcr",
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
@@ -348,6 +348,19 @@
                 // Then
                 tutorialIdsInSectionContent?.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
             }
+        }
+
+        [Test]
+        public void Get_section_content_returns_null_if_customisation_is_inactive()
+        {
+            // When
+            const int candidateId = 59561;
+            const int customisationId = 5982;
+            const int sectionId = 74;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }
