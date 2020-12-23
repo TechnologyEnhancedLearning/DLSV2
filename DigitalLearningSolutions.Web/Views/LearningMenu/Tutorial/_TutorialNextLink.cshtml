@@ -19,7 +19,10 @@
 else if (Model.PostLearningAssessmentPath != null)
 {
   <a class="nhsuk-back-link__link next-link"
-     href="">
+     asp-controller="LearningMenu"
+     asp-action="PostLearning"
+     asp-route-customisationId="@Model.CustomisationId"
+     asp-route-sectionId="@Model.SectionId">
 
     Go to post learning assessment
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="next-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">

@@ -18,7 +18,7 @@
             int maxScorePl,
             int attemptsPl,
             int plPasses,
-            bool PLLocked
+            bool plLocked
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -27,7 +27,7 @@
             PostLearningScore = maxScorePl;
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
-            PostLearningLocked = PLLocked;
+            PostLearningLocked = plLocked;
         }
     }
 }
