@@ -1,0 +1,26 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model CollaboratorDetail
+@{
+  switch (Model.FrameworkRole)
+  {
+    case "Owner":
+      // Use the text block below to separate html elements from code
+      <text>
+        <strong class="nhsuk-tag role-tag">
+          @Model.FrameworkRole
+        </strong></text>
+      break;  // Always break each case
+    case "Contributor":
+      <text>
+        <strong class="nhsuk-tag nhsuk-tag--blue role-tag">
+          @Model.FrameworkRole
+        </strong>
+      </text>
+      break;
+    case "Reviewer":
+      <strong class="nhsuk-tag nhsuk-tag--grey role-tag">
+        @Model.FrameworkRole
+      </strong>
+      break;
+  }
+}
