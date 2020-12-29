@@ -65,16 +65,13 @@
   }
   else
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="ViewContext.RouteData.Values[" frameworkId"]" asp-route-tabname="Details">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
       Cancel
     </a>
     <button class="nhsuk-button" type="submit">
       Save
     </button>
   }
-  <button class="nhsuk-button" type="submit">
-    Save and continue
-  </button>
 </form>
 @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {

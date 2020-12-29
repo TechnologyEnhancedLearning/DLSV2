@@ -12,31 +12,31 @@
 
   <div class="nhsuk-grid-column-full">
     <h1>
-      @Model.detailFramework.FrameworkName
+      @Model.DetailFramework.FrameworkName
     </h1>
   </div>
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
     <ol class="hee-fwservice--framework-progress-bar">
-      <li class=@(Model.detailFramework.PublishStatus == "Draft" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatus == "Draft" ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">1</div><div class="hee-fwservice--framework-progress-caption">In draft</div>
       </li>
-      <li class=@(Model.detailFramework.PublishStatus == "Review" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatus == "Review" ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">2</div><div class="hee-fwservice--framework-progress-caption">In review</div>
       </li>
-      <li class=@(Model.detailFramework.PublishStatus == "Published" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatus == "Published" ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">3</div><div class="hee-fwservice--framework-progress-caption">Published</div>
       </li>
     </ol>
   </div>
   <div class="nhsuk-grid-column-one-third">
     <a class="nhsuk-button nhsuk-button--secondary">Preview</a>
-    @if (Model.detailFramework.PublishStatus == "Review")
+    @if (Model.DetailFramework.PublishStatus == "Review")
     {
         <button type="submit" class="nhsuk-button">Publish</button>
     }
-    else if (Model.detailFramework.PublishStatus == "Published")
+    else if (Model.DetailFramework.PublishStatus == "Published")
     {
         <button type="submit" class="nhsuk-button">Unpublish</button>
     }
@@ -50,9 +50,9 @@
   <div class="nhsuk-grid-column-full">
     <div class="hee-fwservice--tabs">
       <ul role="tablist">
-        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Structure"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.detailFramework.ID" asp-route-tabname="Structure">Framework</a></li>
-        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Details"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.detailFramework.ID" asp-route-tabname="Details">Details</a></li>
-        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Comments"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.detailFramework.ID" asp-route-tabname="Comments">Comments</a></li>
+        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Structure"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework</a></li>
+        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Details"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Details</a></li>
+        <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Comments"? "active" : "")><a role="tab" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Comments">Comments</a></li>
       </ul>
     </div>
   </div>
