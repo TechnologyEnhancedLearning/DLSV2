@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using Microsoft.Extensions.Logging;
@@ -393,13 +394,13 @@
 
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
         {
-            return connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
+            var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
                 @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.Description, fc.Ordering
-                    FROM FrameworkCompetencyGroups AS fcg 
-                        INNER JOIN CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID 
-                        LEFT OUTER JOIN FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID 
-                        INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
-                    WHERE fcg.FrameworkID = @frameworkId",
+FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
+             CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
+             FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID INNER JOIN
+             Competencies AS c ON fc.CompetencyID = c.ID
+WHERE (fcg.FrameworkID = @frameworkId)",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
                     frameworkCompetencyGroup.FrameworkCompetencies.Add(frameworkCompetency);
@@ -407,6 +408,12 @@
                    },
               param: new { frameworkId }
            );
+            return result.GroupBy(frameworkCompetencyGroup => frameworkCompetencyGroup.CompetencyGroupID).Select(group =>
+            {
+                var groupedFrameworkCompetencyGroup = group.First();
+                groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Select(frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Single()).ToList();
+                return groupedFrameworkCompetencyGroup;
+            });
         }
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
         {

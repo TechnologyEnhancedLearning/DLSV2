@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model FrameworkCompetencyGroup;
+<div class="nhsuk-card nhsuk-u-margin-bottom-5">
+  <div class="nhsuk-card__content">
+        <h3>@Model.Name</h3>
+        <p>
+          <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" href="#">Edit <span class="visually-hidden"> competency group</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" href="#">Move <span class="visually-hidden"> competency group</span> up</a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" href=" #">Move <span class="visually-hidden"> competency group</span> down</a>
+          <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" href="#">Delete <span class="visually-hidden"> competency group</span></a>
+        </p>
+      @if (Model.Description != null)
+      {
+        <p class='hee-fwservice--description-paragraph'>@Model.Description</p>
+      }
+      @if (Model.FrameworkCompetencies.Any())
+      {
+        foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+        {
+          <partial name="_CompetencyCard.cshtml" model="frameworkCompetency" />
+        }
+      }
+      else
+      {
+        <p>No competencies in this group.</p>
+      }
+      <a href="#" class="nhsuk-button">Add new competency</a>
+    </div>
+    </div>

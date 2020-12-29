@@ -1,3 +1,23 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model FrameworkViewModel;
 <h2>Framework structure</h2>
+@if (Model.FrameworkCompetencyGroups.Any())
+{
+  foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
+  {
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="frameworkCompetencyGroup" />
+  }
+}
+else
+{
+  <p>No competency groups in this framework</p>
+}
+@if (Model.FrameworkCompetencies.Any())
+{
+  foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+  {
+    <partial name="../Shared/_CompetencyCard.cshtml" model="frameworkCompetency" />
+  }
+}
+<a href='#' class="nhsuk-button">Add new competency group</a>
+<a href='#' class="nhsuk-button nhsuk-button--secondary">Add new competency without a group</a>

@@ -16,7 +16,12 @@ $nhs-dark-grey: #425563;
   margin-right: 4px;
   margin-bottom: 4px;
 }
-
+.nhsuk-tag.role-tag {
+  min-width: 80px;
+  text-align: center;
+  font-size: 12px;
+  padding: 4px;
+}
 .nhsuk-details__text {
   padding-bottom: 0 !important;
 }
@@ -327,4 +332,21 @@ ol.hee-fwservice--framework-progress-bar {
 }
 ul.no-decs {
   list-style-type: none;
+}
+
+.hee-fwservice--framework-structure {
+  background-color: $color_nhsuk-white;
+  display: block;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.hee-fwservice--competency-preview {
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.hee-fwservice--description-paragraph {
+  white-space: pre-line;
 }
