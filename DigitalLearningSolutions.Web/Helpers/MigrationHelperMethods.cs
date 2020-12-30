@@ -29,7 +29,8 @@
                         typeof(AddInsertCustomisationV3sp).Assembly,
                         typeof(CandidateAssessmentSubmittedDate).Assembly,
                         typeof(AddFrameworkIdToFrameworkCompetencies).Assembly,
-                        typeof(AddCompetencyNameColumn).Assembly
+                        typeof(AddCompetencyNameColumn).Assembly,
+                        typeof(MakeCompetencyDecsriptionNullable).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

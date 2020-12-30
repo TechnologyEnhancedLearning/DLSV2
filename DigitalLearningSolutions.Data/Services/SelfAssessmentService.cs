@@ -51,6 +51,7 @@
                             AND SelfAssessmentID = @selfAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
+                                                  C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
                                                   AQ.ID         AS Id,
