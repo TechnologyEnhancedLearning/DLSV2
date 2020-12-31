@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class FrameworkViewModel
     {
