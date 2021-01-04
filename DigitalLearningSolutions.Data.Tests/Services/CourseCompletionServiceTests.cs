@@ -42,6 +42,7 @@
                 85,
                 100,
                 22,
+                1,
                 13,
                 9,
                 13
@@ -49,7 +50,7 @@
         }
 
         [Test]
-        public void Get_course_completion_of_course_should_when_all_tutorials_status_0()
+        public void Get_course_completion_of_course_should_return_when_all_tutorials_statuses_are_0()
         {
             // CustomisationTutorials.Status = 0 entries where CustomisationID = 26696
 
@@ -74,7 +75,8 @@
                 85,
                 0,
                 4,
-                null,
+                1,
+                0,
                 0,
                 9
             ));
@@ -104,6 +106,7 @@
                 85,
                 100,
                 53,
+                1,
                 4,
                 10,
                 10
@@ -134,8 +137,54 @@
                 85,
                 100,
                 29,
-                null,
+                0,
+                0,
                 6,
+                10
+            ));
+        }
+
+        [Test]
+        public void Get_course_completion_should_return_null_when_course_does_not_exist()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1000000;
+
+            // When
+            var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_course_completion_should_return_default_completion_when_candidate_not_enrolled()
+        {
+            // Given
+            const int candidateId = 100;
+            const int customisationId = 100;
+
+            // When
+            var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
+
+            // Then
+            result.Should().BeEquivalentTo(new CourseCompletion(
+                customisationId,
+                "Entry Level - Win XP, Office 2003/07 OLD",
+                "Standard",
+                false,
+                null,
+                null,
+                0,
+                true,
+                85,
+                85,
+                100,
+                null,
+                0,
+                0,
+                0,
                 10
             ));
         }

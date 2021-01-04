@@ -87,7 +87,8 @@
                          Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
                          Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
                          Progress.DiagnosticScore,
-                         LearningDone.LearningDone,
+                         COALESCE(MAX(aspProgress.DiagAttempts), 0) AS DiagnosticAttempts,
+                         COALESCE(LearningDone.LearningDone, 0) AS LearningDone,
                          PostLearningPasses.PostLearningPasses,
                          SectionCount.SectionCount
                     FROM Applications
@@ -102,6 +103,9 @@
                             AND Progress.CandidateID = @candidateId
                             AND Progress.RemovedDate IS NULL
                             AND Progress.SystemRefreshed = 0
+
+                         LEFT JOIN aspProgress
+                         ON Progress.ProgressID = aspProgress.ProgressID
 
                          LEFT JOIN LearningDone
                          ON LearningDone.ProgressID = Progress.ProgressID
