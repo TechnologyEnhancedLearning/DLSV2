@@ -47,7 +47,8 @@
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,
                         COALESCE (aspProgress.TutTime, 0) AS TutTime,
                         Tutorials.AverageTutMins,
-                        Tutorials.TutorialID AS id
+                        Tutorials.TutorialID AS id,
+                        CustomisationTutorials.Status
                     FROM Tutorials
                         INNER JOIN CustomisationTutorials
                             ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
@@ -95,7 +96,11 @@
                         sectionContent.MaxSectionScore += section.MaxSectionScore;
                     }
 
-                    sectionContent.Tutorials.Add(tutorial);
+                    if (tutorial.CustomisationTutorialStatus)
+                    {
+                        sectionContent.Tutorials.Add(tutorial);
+                    }
+                    
                     return sectionContent;
                 },
                 new { customisationId, candidateId, sectionId },

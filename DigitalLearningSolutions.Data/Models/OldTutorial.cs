@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models.DiagnosticAssessment
+﻿namespace DigitalLearningSolutions.Data.Models
 {
     public class OldTutorial
     {
