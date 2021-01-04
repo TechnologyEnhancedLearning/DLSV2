@@ -16,7 +16,7 @@
         public int TutorialsCompletionThreshold { get; }
         public int? DiagnosticScore { get; }
         public int DiagnosticAttempts { get; }
-        public int LearningDone { get; }
+        public int PercentageTutorialsCompleted { get; }
         public int PostLearningPasses { get; }
         public int SectionCount { get; }
 
@@ -34,7 +34,7 @@
             int tutorialsCompletionThreshold,
             int? diagnosticScore,
             int diagnosticAttempts,
-            int learningDone,
+            int percentageTutorialsCompleted,
             int postLearningPasses,
             int sectionCount
         )
@@ -51,7 +51,7 @@
             TutorialsCompletionThreshold = tutorialsCompletionThreshold;
             DiagnosticScore = diagnosticScore;
             DiagnosticAttempts = diagnosticAttempts;
-            LearningDone = learningDone;
+            PercentageTutorialsCompleted = percentageTutorialsCompleted;
             PostLearningPasses = postLearningPasses;
             SectionCount = sectionCount;
         }

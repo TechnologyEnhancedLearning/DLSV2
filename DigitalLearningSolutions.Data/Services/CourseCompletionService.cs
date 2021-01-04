@@ -47,9 +47,9 @@
                     ) AS PostLearningPassStatus
                    GROUP BY PostLearningPassStatus.ProgressID
                   ),
-                         LearningDone AS (
+                  PercentageTutorialsCompleted AS (
                   SELECT Progress.ProgressID,
-                         SUM(aspProgress.TutStat) * 100 / (COUNT(aspProgress.TutorialID) * 2) AS LearningDone
+                         SUM(aspProgress.TutStat) * 100 / (COUNT(aspProgress.TutorialID) * 2) AS PercentageTutorialsCompleted
                     FROM Customisations
                          INNER JOIN Sections
                          ON Sections.ApplicationID = Customisations.ApplicationID
@@ -88,7 +88,7 @@
                          Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
                          Progress.DiagnosticScore,
                          COALESCE(MAX(aspProgress.DiagAttempts), 0) AS DiagnosticAttempts,
-                         COALESCE(LearningDone.LearningDone, 0) AS LearningDone,
+                         COALESCE(PercentageTutorialsCompleted.PercentageTutorialsCompleted, 0) AS PercentageTutorialsCompleted,
                          PostLearningPasses.PostLearningPasses,
                          SectionCount.SectionCount
                     FROM Applications
@@ -107,8 +107,8 @@
                          LEFT JOIN aspProgress
                          ON Progress.ProgressID = aspProgress.ProgressID
 
-                         LEFT JOIN LearningDone
-                         ON LearningDone.ProgressID = Progress.ProgressID
+                         LEFT JOIN PercentageTutorialsCompleted
+                         ON PercentageTutorialsCompleted.ProgressID = Progress.ProgressID
 
                          LEFT JOIN PostLearningPasses
                          ON Progress.ProgressID = PostLearningPasses.ProgressID
@@ -127,7 +127,7 @@
                          Customisations.DiagCompletionThreshold,
                          Customisations.TutCompletionThreshold,
                          Progress.DiagnosticScore,
-                         LearningDone.LearningDone,
+                         PercentageTutorialsCompleted.PercentageTutorialsCompleted,
                          PostLearningPasses.PostLearningPasses,
                          SectionCount.SectionCount;",
                 new { candidateId, customisationId });
