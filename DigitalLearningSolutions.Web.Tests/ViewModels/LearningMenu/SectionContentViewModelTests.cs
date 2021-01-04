@@ -475,5 +475,25 @@
             // Then
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
         }
+
+        [Test]
+        public void Tutorial_separator_is_false_if_tutorials_exist_but_no_post_learning()
+        {
+            // Given
+            const bool isAssessed = false;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(),
+                SectionTutorialHelper.CreateDefaultSectionTutorial()
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(isAssessed: isAssessed);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
+        }
     }
 }
