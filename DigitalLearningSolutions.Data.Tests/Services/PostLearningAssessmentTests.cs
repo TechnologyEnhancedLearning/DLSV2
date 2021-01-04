@@ -163,8 +163,7 @@
         {
             // Given
             var scoresReturnedFromOldStoredProcedure = postLearningAssessmentTestHelper
-                .ScoresFromOldStoredProcedure(progressId, sectionId)
-                .FirstOrDefault();
+                .ScoresFromOldStoredProcedure(progressId, sectionId);
 
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);

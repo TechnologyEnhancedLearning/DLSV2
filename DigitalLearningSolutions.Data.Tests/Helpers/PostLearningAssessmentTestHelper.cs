@@ -16,10 +16,13 @@
             this.connection = connection;
         }
 
-        public IEnumerable<OldPostLearningAssessmentScores> ScoresFromOldStoredProcedure(int progressId, int sectionId)
+        public OldPostLearningAssessmentScores? ScoresFromOldStoredProcedure(int progressId, int sectionId)
         {
-            return connection.Query<OldPostLearningAssessmentScores>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure)
-                .Where(assessment => assessment.SectionID == sectionId);
+            return connection.Query<OldPostLearningAssessmentScores>(
+                "uspReturnSectionsForCandCust_V2",
+                new { progressId },
+                commandType: CommandType.StoredProcedure
+            ).FirstOrDefault(assessment => assessment.SectionID == sectionId);
         }
     }
 }
