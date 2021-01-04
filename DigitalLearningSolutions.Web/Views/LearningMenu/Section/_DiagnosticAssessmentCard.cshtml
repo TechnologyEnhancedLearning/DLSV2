@@ -4,7 +4,7 @@
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
-        <h3 class="nhsuk-card__heading">
+        <h3 class="nhsuk-card__heading" id="diagnostic-name">
           Diagnostic Assessment
         </h3>
       </div>
@@ -16,7 +16,11 @@
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+           aria-describedBy="diagnostic-name"
+           asp-action="Diagnostic"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-sectionId="@Model.SectionId">
           Launch assessment
         </a>
       </div>

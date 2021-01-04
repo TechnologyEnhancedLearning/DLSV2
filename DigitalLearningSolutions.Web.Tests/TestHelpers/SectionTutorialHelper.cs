@@ -10,7 +10,8 @@
             string completionStatus = "Not started",
             int tutTime = 10,
             int averageTutMins = 20,
-            int tutorialId = 1
+            int tutorialId = 1,
+            bool customisationTutorialStatus = true
         )
         {
             return new SectionTutorial(
@@ -19,7 +20,8 @@
                 completionStatus,
                 tutTime,
                 averageTutMins,
-                tutorialId
+                tutorialId,
+                customisationTutorialStatus
             );
         }
     }

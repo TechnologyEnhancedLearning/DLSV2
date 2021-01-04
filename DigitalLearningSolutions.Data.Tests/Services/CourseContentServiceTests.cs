@@ -531,7 +531,7 @@
         [TestCase(207900, 274400)]
         [TestCase(213382, 4339)]
         [TestCase(286788, 23638)]
-        public void Get_course_content_should_have_same_sections_as_stored_procedure2(
+        public void Get_course_content_should_have_same_duration_as_stored_procedure(
             int candidateId,
             int customisationId
         )

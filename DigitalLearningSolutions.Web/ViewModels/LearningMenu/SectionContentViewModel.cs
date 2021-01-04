@@ -70,6 +70,11 @@
                 return "Not Attempted";
             }
 
+            if (sectionContent.DiagnosticAttempts == 1)
+            {
+                return $"{sectionContent.SectionScore}/{sectionContent.MaxSectionScore} - {sectionContent.DiagnosticAttempts} attempt";
+            }
+
             if (sectionContent.DiagnosticAttempts > 0)
             {
                 return $"{sectionContent.SectionScore}/{sectionContent.MaxSectionScore} - {sectionContent.DiagnosticAttempts} attempts";
