@@ -52,7 +52,7 @@
         [Test]
         public void Get_course_completion_of_course_should_return_when_all_tutorials_statuses_are_0()
         {
-            // CustomisationTutorials.Status = 0 entries where CustomisationID = 26696
+            // CustomisationTutorials.Status = 0 for all CustomisationTutorial records where CustomisationID = 26696
 
             // Given
             const int candidateId = 210962;

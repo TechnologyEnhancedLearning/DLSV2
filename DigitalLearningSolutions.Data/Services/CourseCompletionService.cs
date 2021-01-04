@@ -34,7 +34,7 @@
                          AND Sections.ArchivedDate IS NULL
                    GROUP BY Customisations.CustomisationID
                   ),
-                         PostLearningPasses AS (
+                  PostLearningPasses AS (
                   SELECT PostLearningPassStatus.ProgressID,
                          SUM(PostLearningPassStatus.HasPassed) AS PostLearningPasses
                     FROM (

@@ -5,8 +5,7 @@
     public class CourseCompletion
     {
         public int Id { get; }
-        public string ApplicationName { get; }
-        public string CustomisationName { get; }
+        public string CourseTitle { get; }
         public bool IncludeCertification { get; }
         public DateTime? Completed { get; }
         public DateTime? Evaluated { get; }
@@ -41,8 +40,7 @@
         )
         {
             Id = id;
-            ApplicationName = applicationName;
-            CustomisationName = customisationName;
+            CourseTitle = $"{applicationName} - {customisationName}";
             IncludeCertification = includeCertification;
             Completed = completed;
             Evaluated = evaluated;
