@@ -10,16 +10,18 @@
     <dd class="nhsuk-summary-list__value">
       @Model.DetailFramework.FrameworkName
     </dd>
+    @if (Model.DetailFramework.UserCanModify)
+    {
+      <dd class="nhsuk-summary-list__actions">
 
-    <dd class="nhsuk-summary-list__actions">
+        <a asp-action="CreateNewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit<span class="nhsuk-u-visually-hidden"> name</span>
+        </a>
 
-      <a asp-action="CreateNewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-        Change<span class="nhsuk-u-visually-hidden"> name</span>
-      </a>
+      </dd>
+    }
 
-    </dd>
-
-  </div>
+    </div>
 
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -34,16 +36,17 @@
       @if (Model.DetailFramework.Topic != null)
       {<span>/</span><span class="framework-topic"> @Model.DetailFramework.Topic </span>}
     </dd>
+    @if (Model.DetailFramework.UserCanModify)
+    {
+      <dd class="nhsuk-summary-list__actions">
 
-    <dd class="nhsuk-summary-list__actions">
+        <a asp-action="SetNewFrameworkBrand" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit<span class="nhsuk-u-visually-hidden"> branding</span>
+        </a>
 
-      <a asp-action="SetNewFrameworkBrand" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-        Change<span class="nhsuk-u-visually-hidden"> branding</span>
-      </a>
-
-    </dd>
-
-  </div>
+      </dd>
+    }
+    </div>
 
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -83,16 +86,18 @@
           }
         </tbody>
       </table>
-
     </dd>
+    @if(Model.DetailFramework.UserCanModify)
+    {
+  <dd class="nhsuk-summary-list__actions">
 
-    <dd class="nhsuk-summary-list__actions">
+    <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+      Edit<span class="nhsuk-u-visually-hidden"> working group members</span>
+    </a>
 
-      <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-        Change<span class="nhsuk-u-visually-hidden"> working group members</span>
-      </a>
-
-    </dd>
+  </dd>
+    }
+    
 
   </div>
 

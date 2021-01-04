@@ -1,5 +1,48 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model CompetencyGroupViewModel;
 @{
+  ViewData["Title"] = "Competency Group";
+  ViewData["Application"] = "Framework Service";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<div class="nhsuk-grid-row">
+
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CompetencyGroupBase.ID > 0)
+    {
+      <h1>
+        Edit competency group
+      </h1>
+    }
+    else
+    {
+      <h1>
+        Add new competency group
+      </h1>
+
+    }
+  <form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+      <partial name="_ErrorSummary" />}
+    <nhs-form-group nhs-validation-for="CompetencyGroupBase.Name">
+      <label class="nhsuk-label" for="competency-group-name">
+        Competency group name
+      </label>
+      <span nhs-validation-for="CompetencyGroupBase.Name"></span>
+      <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="nhsuk-label">
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="CompetencyGroupBase.ID" />
+    <input name="CompetencyGroupID" type="hidden" asp-for="CompetencyGroupBase.CompetencyGroupID" />
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+      Cancel
+    </a>
+    <button class="nhsuk-button" type="submit">
+      Save
+    </button>
+  </form>
+  </div>
+</div>

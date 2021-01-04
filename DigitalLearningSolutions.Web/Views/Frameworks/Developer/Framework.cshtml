@@ -32,17 +32,20 @@
   </div>
   <div class="nhsuk-grid-column-one-third">
     <a class="nhsuk-button nhsuk-button--secondary">Preview</a>
-    @if (Model.DetailFramework.PublishStatus == "Review")
+    @if (Model.DetailFramework.UserCanModify)
     {
+      if (Model.DetailFramework.PublishStatus == "Review")
+      {
         <button type="submit" class="nhsuk-button">Publish</button>
-    }
-    else if (Model.DetailFramework.PublishStatus == "Published")
-    {
+      }
+      else if (Model.DetailFramework.PublishStatus == "Published")
+      {
         <button type="submit" class="nhsuk-button">Unpublish</button>
-    }
-    else
-    {
-    <button type="submit" class="nhsuk-button">Send for review</button>
+      }
+      else
+      {
+        <button type="submit" class="nhsuk-button">Send for review</button>
+      }
     }
     </div>
 </div>

@@ -18,19 +18,24 @@
         <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Delete <span class="visually-hidden"> competency group</span></a>
       </p>
     }
-
-    @if (Model.FrameworkCompetencyGroup.Description != null)
-    {
-      <p class='hee-fwservice--description-paragraph'>@Model.FrameworkCompetencyGroup.Description</p>
-    }
     @if (Model.FrameworkCompetencyGroup.FrameworkCompetencies.Any())
     {
-      <span class="nhsuk-caption-l nhsuk-u-font-size-16">
-        @Model.FrameworkCompetencyGroup.FrameworkCompetencies.Count() competencies...
-      </span>
-      foreach (var frameworkCompetency in Model.FrameworkCompetencyGroup.FrameworkCompetencies)
+      if (Model.FrameworkCompetencyGroup.FrameworkCompetencies[0] != null)
       {
-        <partial name="_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.CanModify, FrameworkCompetencyGroupId = Model.FrameworkCompetencyGroup.ID, FrameworkCompetency = frameworkCompetency}" />
+        <span class="nhsuk-caption-l nhsuk-u-font-size-16">
+          @Model.FrameworkCompetencyGroup.FrameworkCompetencies.Count() competencies...
+        </span>
+        foreach (var frameworkCompetency in Model.FrameworkCompetencyGroup.FrameworkCompetencies)
+        {
+          <partial name="_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.CanModify, FrameworkCompetencyGroupId = Model.FrameworkCompetencyGroup.ID, FrameworkCompetency = frameworkCompetency}" />
+        }
+
+      }
+      else
+      {
+        <p>
+          No competencies in this group.
+        </p>
       }
     }
     else
@@ -41,5 +46,5 @@
     {
       <a class="nhsuk-button nhsuk-u-margin-left-3" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Add new competency</a>
     }
-    </div>
+  </div>
 </div>
