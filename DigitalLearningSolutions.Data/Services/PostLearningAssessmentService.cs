@@ -24,7 +24,7 @@
 
         public PostLearningAssessment? GetPostLearningAssessment(int customisationId, int candidateId, int sectionId)
         {
-            return connection.Query<PostLearningAssessment>(
+            return connection.QueryFirstOrDefault<PostLearningAssessment>(
                 @"
                     SELECT
                         Applications.ApplicationName,
@@ -33,7 +33,8 @@
                         Sections.PLAssessPath,
                         COALESCE (Attempts.MaxScorePL, 0) AS MaxScorePL,
                         COALESCE (Attempts.AttemptsPL, 0) AS AttemptsPL,
-                        COALESCE (Attempts.PLPasses, 0) AS PLPasses
+                        COALESCE (Attempts.PLPasses, 0) AS PLPasses,
+                        CAST (COALESCE (Progress.PLLocked, 0) AS bit) AS PLLocked
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID
@@ -61,11 +62,9 @@
                         AND Customisations.IsAssessed = 1
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
-                        AND Sections.PLAssessPath IS NOT NULL
-                    ORDER BY
-                        Sections.SectionNumber",
+                        AND Sections.PLAssessPath IS NOT NULL",
                 new { customisationId, candidateId, sectionId }
-            ).FirstOrDefault();
+            );
         }
     }
 }

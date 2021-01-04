@@ -8,6 +8,7 @@
         public int PostLearningScore { get; }
         public int PostLearningAttempts { get; }
         public bool PostLearningPassed { get; }
+        public bool PostLearningLocked { get; }
 
         public PostLearningAssessment(
             string applicationName,
@@ -16,7 +17,8 @@
             string plAssessPath,
             int maxScorePl,
             int attemptsPl,
-            int plPasses
+            int plPasses,
+            bool PLLocked
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -25,6 +27,7 @@
             PostLearningScore = maxScorePl;
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
+            PostLearningLocked = PLLocked;
         }
     }
 }

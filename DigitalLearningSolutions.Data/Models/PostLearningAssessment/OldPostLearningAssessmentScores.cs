@@ -6,5 +6,6 @@
         public int MaxScorePL { get; set; }
         public int AttemptsPL { get; set; }
         public bool PLPassed { get; set; }
+        public bool PLLocked { get; set; }
     }
 }

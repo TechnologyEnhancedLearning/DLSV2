@@ -43,7 +43,8 @@
                 "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Post_1.dcr",
                 89,
                 1,
-                1
+                1,
+                false
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }
@@ -67,7 +68,8 @@
                 "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Post_1.dcr",
                 0,
                 0,
-                0
+                0,
+                false
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }
@@ -103,7 +105,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_return_null_if_archived_date_is_null()
+        public void Get_post_learning_assessment_should_return_null_if_archived_date_is_not_null()
         {
             // Given
             const int customisationId = 14212;
@@ -151,28 +153,27 @@
         [TestCase(172807, 9917, 112, 133084)]
         [TestCase(160541, 11698, 198, 133094)]
         [TestCase(208119, 4918, 136, 167637)]
-         public void Get_post_learning_assessment_should_have_same_scores_as_stored_procedure(
+        [TestCase(296988, 27676, 3070, 281134)]
+        public void Get_post_learning_assessment_should_have_same_scores_as_stored_procedure(
             int candidateId,
             int customisationId,
             int sectionId,
             int progressId
         )
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var scoresReturnedFromOldStoredProcedure = postLearningAssessmentTestHelper
-                    .ScoresFromOldStoredProcedure(progressId, sectionId)
-                    .FirstOrDefault();
+            // Given
+            var scoresReturnedFromOldStoredProcedure = postLearningAssessmentTestHelper
+                .ScoresFromOldStoredProcedure(progressId, sectionId)
+                .FirstOrDefault();
 
-                // When
-                var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
+            // When
+            var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-                // Then
-                result.PostLearningScore.Should().Be(scoresReturnedFromOldStoredProcedure.MaxScorePL);
-                result.PostLearningAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.AttemptsPL);
-                result.PostLearningPassed.Should().Be(scoresReturnedFromOldStoredProcedure.PLPassed);
-            }
+            // Then
+            result.PostLearningScore.Should().Be(scoresReturnedFromOldStoredProcedure.MaxScorePL);
+            result.PostLearningAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.AttemptsPL);
+            result.PostLearningPassed.Should().Be(scoresReturnedFromOldStoredProcedure.PLPassed);
+            result.PostLearningLocked.Should().Be(scoresReturnedFromOldStoredProcedure.PLLocked);
         }
     }
 }
