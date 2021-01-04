@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.SectionContent;
+    using DigitalLearningSolutions.Data.Models;
     using Microsoft.Data.SqlClient;
 
     public class SectionContentTestHelper
@@ -15,9 +15,9 @@
             this.connection = connection;
         }
 
-        public IEnumerable<OldSectionTutorial> TutorialsFromOldStoredProcedure(int progressId, int sectionId)
+        public IEnumerable<OldTutorial> TutorialsFromOldStoredProcedure(int progressId, int sectionId)
         {
-            return connection.Query<OldSectionTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
+            return connection.Query<OldTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
         }
     }
 }

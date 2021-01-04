@@ -337,7 +337,7 @@
 
                 var tutorialIdsReturnedFromOldStoredProcedure = sectionContentTestHelper
                     .TutorialsFromOldStoredProcedure(validProgressId, sectionId)
-                    .Select(tutorial => tutorial.TutorialID);
+                    .Select(tutorial => tutorial.TutorialId);
 
                 // When
                 var tutorialIdsInSectionContent = sectionContentService
@@ -346,7 +346,7 @@
                     .Select(tutorial => tutorial.Id);
 
                 // Then
-                tutorialIdsInSectionContent?.Should().BeEquivalentTo(tutorialIdsReturnedFromOldStoredProcedure);
+                tutorialIdsInSectionContent?.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
             }
         }
     }
