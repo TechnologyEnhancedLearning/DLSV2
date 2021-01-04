@@ -36,10 +36,19 @@
   <partial name="Section/_DiagnosticAssessmentCard" model="Model" />
 }
 
+@if (Model.DisplayDiagnosticSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+}
 
 @foreach (var tutorial in Model.Tutorials)
 {
   <partial name="Section/_TutorialCard" model="tutorial" />
+}
+
+@if (Model.DisplayTutorialSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
 }
 
 @if (Model.ShowPostLearning)
