@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.Models.PostLearningAssessment;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
