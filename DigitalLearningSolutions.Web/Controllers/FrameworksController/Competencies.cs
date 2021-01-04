@@ -15,14 +15,52 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/CompetencyGroup")]
         public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId = 0)
         {
-            return View("Developer/CompetencyGroup");
+            CompetencyGroupBase competencyGroupBase = new CompetencyGroupBase();
+            if(frameworkCompetencyGroupId > 0)
+            {
+                competencyGroupBase = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId);
+            }
+            var model = new CompetencyGroupViewModel()
+            {
+                FrameworkId = frameworkId,
+                CompetencyGroupBase = competencyGroupBase
+            };
+            return View("Developer/CompetencyGroup", model);
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/CompetencyGroup/{frameworkCompetencyGroupId}")]
         [Route("/Frameworks/{frameworkId}/CompetencyGroup")]
-        public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, FrameworkCompetencyGroup frameworkCompetencyGroup, int frameworkCompetencyGroupId = 0)
+        public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, CompetencyGroupBase competencyGroupBase, int frameworkCompetencyGroupId = 0)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.Remove(nameof(CompetencyGroupBase.Name));
+                ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
+                // do something
+                var model = new CompetencyGroupViewModel()
+                {
+                    FrameworkId = frameworkId,
+                    CompetencyGroupBase = competencyGroupBase
+                };
+                return View("Developer/CompetencyGroup", model);
+            }
+            else
+            {
+                var adminId = GetAdminID();
+                if (competencyGroupBase.ID > 0)
+                {
+                    frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, adminId);
+                }
+                else
+                {
+                    var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, adminId);
+                    if (newCompetencyGroupId > 0)
+                    {
+                        var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
+                    }
+                }
             return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            }
         }
         public IActionResult MoveUpFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
         {
