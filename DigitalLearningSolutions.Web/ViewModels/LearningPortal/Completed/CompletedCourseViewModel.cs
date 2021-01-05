@@ -16,7 +16,7 @@
         {
             CompletedDate = course.Completed;
             EvaluatedDate = course.Evaluated;
-            EvaluateUrl = config.GetEvaluateUrl(course.ProgressID);
+            EvaluateUrl = config.GetEvaluateUrl(course.ProgressID, true);
         }
 
         public string FinaliseButtonText()

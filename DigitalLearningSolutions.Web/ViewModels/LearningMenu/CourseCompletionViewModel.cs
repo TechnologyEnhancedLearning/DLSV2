@@ -21,6 +21,7 @@
         public string? FinaliseAriaLabel { get; }
         public string SummaryText { get; }
         public string DownloadSummaryUrl { get; }
+        public string FinaliseUrl { get; }
 
         public CourseCompletionViewModel(IConfiguration config, CourseCompletion courseCompletion, int progressId)
         {
@@ -59,6 +60,7 @@
             );
 
             DownloadSummaryUrl = config.GetDownloadSummaryUrl(progressId);
+            FinaliseUrl = config.GetEvaluateUrl(progressId, false);
         }
 
         private string? GetEvaluationOrCertificateText(DateTime? completed, DateTime? evaluated, bool isAssessed)
