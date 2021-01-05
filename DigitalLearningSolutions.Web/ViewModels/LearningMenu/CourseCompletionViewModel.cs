@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models.CourseCompletion;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.Extensions.Configuration;
 
     public class CourseCompletionViewModel
     {
@@ -19,8 +20,9 @@
         public string? FinaliseText { get; }
         public string? FinaliseAriaLabel { get; }
         public string SummaryText { get; }
+        public string DownloadSummaryUrl { get; }
 
-        public CourseCompletionViewModel(CourseCompletion courseCompletion)
+        public CourseCompletionViewModel(IConfiguration config, CourseCompletion courseCompletion, int progressId)
         {
             CustomisationId = courseCompletion.Id;
             CourseTitle = courseCompletion.CourseTitle;
@@ -55,6 +57,8 @@
                 courseCompletion.DiagnosticAssessmentCompletionThreshold,
                 courseCompletion.TutorialsCompletionThreshold
             );
+
+            DownloadSummaryUrl = config.GetDownloadSummaryUrl(progressId);
         }
 
         private string? GetEvaluationOrCertificateText(DateTime? completed, DateTime? evaluated, bool isAssessed)

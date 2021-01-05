@@ -3,11 +3,24 @@
     using System;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     class CourseCompletionViewModelTests
     {
+        private IConfiguration config;
+        private const string BaseUrl = "https://example.com";
+        private const int ProgressId = 23;
+
+        [SetUp]
+        public void SetUp()
+        {
+            config = A.Fake<IConfiguration>();
+            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+        }
+
         [Test]
         public void CourseCompletion_should_have_customisationId()
         {
@@ -16,7 +29,7 @@
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(customisationId);
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.CustomisationId.Should().Be(customisationId);
@@ -34,7 +47,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             var courseTitle = $"{applicationName} - {customisationName}";
@@ -51,7 +64,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.IsAssessed.Should().Be(isAssessed);
@@ -67,7 +80,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.DiagnosticScore.Should().Be(diagnosticScore);
@@ -83,7 +96,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.DiagnosticAttempts.Should().Be(diagnosticAttempts);
@@ -99,7 +112,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(44);
@@ -115,7 +128,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(67);
@@ -131,7 +144,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.PostLearningPasses.Should().Be(postLearningPasses);
@@ -147,7 +160,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.SectionCount.Should().Be(sectionCount);
@@ -162,7 +175,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.CompletionStatus.Should().Be("complete");
@@ -175,10 +188,24 @@
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(completed: null);
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.CompletionStatus.Should().Be("incomplete");
+        }
+
+        [Test]
+        public void CourseCompletion_should_have_DownloadSummaryUrl()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion();
+            var expectedDownloadSummaryUrl = $"{BaseUrl}/tracking/summary?ProgressID={ProgressId}";
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.DownloadSummaryUrl.Should().Be(expectedDownloadSummaryUrl);
         }
 
         [Test]
@@ -188,7 +215,7 @@
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(completed: null);
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseText.Should().BeNull();
@@ -201,7 +228,7 @@
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(completed: null);
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseAriaLabel.Should().BeNull();
@@ -217,7 +244,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseText.Should().Be("Certificate");
@@ -233,7 +260,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseAriaLabel.Should().Be("View or print certificate");
@@ -250,7 +277,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseText.Should().Be("Certificate");
@@ -267,7 +294,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseAriaLabel.Should().Be("View or print certificate");
@@ -284,7 +311,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseText.Should().Be("Evaluate");
@@ -301,7 +328,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseAriaLabel.Should().Be("Evaluate course");
@@ -318,7 +345,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseText.Should().BeNull();
@@ -335,7 +362,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.FinaliseAriaLabel.Should().BeNull();
@@ -425,7 +452,7 @@
             );
 
             // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
             courseCompletionViewModel.SummaryText.Should().Be(expectedSummary);

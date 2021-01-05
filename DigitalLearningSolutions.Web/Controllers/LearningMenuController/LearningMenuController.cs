@@ -298,7 +298,7 @@
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
-            var model = new CourseCompletionViewModel(courseCompletion);
+            var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);
             return View("Completion/Completion", model);
         }
     }

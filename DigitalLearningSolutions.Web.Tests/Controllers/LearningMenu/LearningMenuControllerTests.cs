@@ -1261,7 +1261,7 @@
             var result = controller.CompletionSummary(CustomisationId);
 
             // Then
-            var expectedModel = new CourseCompletionViewModel(expectedCourseCompletion);
+            var expectedModel = new CourseCompletionViewModel(config, expectedCourseCompletion, progressId);
 
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
