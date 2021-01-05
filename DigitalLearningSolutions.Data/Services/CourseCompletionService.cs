@@ -49,7 +49,7 @@
                   ),
                   PercentageTutorialsCompleted AS (
                   SELECT Progress.ProgressID,
-                         SUM(aspProgress.TutStat) * 100 / (COUNT(aspProgress.TutorialID) * 2) AS PercentageTutorialsCompleted
+                         CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(aspProgress.TutorialID) * 2.0) AS PercentageTutorialsCompleted
                     FROM Customisations
                          INNER JOIN Sections
                          ON Sections.ApplicationID = Customisations.ApplicationID
@@ -78,7 +78,6 @@
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         Applications.IncludeCertification,
                          Progress.Completed,
                          Progress.Evaluated,
                          Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
@@ -114,11 +113,11 @@
                          ON Progress.ProgressID = PostLearningPasses.ProgressID
 
                    WHERE Customisations.CustomisationID = @customisationId
+                         AND Applications.IncludeCertification = 1
                    GROUP BY
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         Applications.IncludeCertification,
                          Progress.Completed,
                          Progress.Evaluated,
                          Applications.AssessAttempts,

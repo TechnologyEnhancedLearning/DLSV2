@@ -97,6 +97,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISectionContentService, SectionContentService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
+            services.AddScoped<ICourseCompletionService, CourseCompletionService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

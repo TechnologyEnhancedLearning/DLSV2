@@ -50,7 +50,12 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-three-quarters">
           <h2 class="nhsuk-card__heading nhsuk-heading-m completion-card-heading">
-            <a class="nhsuk-card__link" href="#">Course Completion Summary</a>
+            <a class="nhsuk-card__link"
+               asp-action="CompletionSummary"
+               asp-controller="LearningMenu"
+               asp-route-customisationId="@Model.Id">
+              Course Completion Summary
+            </a>
           </h2>
         </div>
         <div class="nhsuk-grid-column-one-quarter">

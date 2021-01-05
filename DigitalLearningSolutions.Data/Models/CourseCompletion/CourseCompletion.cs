@@ -6,7 +6,6 @@
     {
         public int Id { get; }
         public string CourseTitle { get; }
-        public bool IncludeCertification { get; }
         public DateTime? Completed { get; }
         public DateTime? Evaluated { get; }
         public int MaxPostLearningAssessmentAttempts { get; }
@@ -16,7 +15,7 @@
         public int TutorialsCompletionThreshold { get; }
         public int? DiagnosticScore { get; }
         public int DiagnosticAttempts { get; }
-        public int PercentageTutorialsCompleted { get; }
+        public double PercentageTutorialsCompleted { get; }
         public int PostLearningPasses { get; }
         public int SectionCount { get; }
 
@@ -24,7 +23,6 @@
             int id,
             string applicationName,
             string customisationName,
-            bool includeCertification,
             DateTime? completed,
             DateTime? evaluated,
             int maxPostLearningAssessmentAttempts,
@@ -34,14 +32,13 @@
             int tutorialsCompletionThreshold,
             int? diagnosticScore,
             int diagnosticAttempts,
-            int percentageTutorialsCompleted,
+            double percentageTutorialsCompleted,
             int postLearningPasses,
             int sectionCount
         )
         {
             Id = id;
             CourseTitle = $"{applicationName} - {customisationName}";
-            IncludeCertification = includeCertification;
             Completed = completed;
             Evaluated = evaluated;
             MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;

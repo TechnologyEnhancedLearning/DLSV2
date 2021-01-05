@@ -382,7 +382,7 @@
             0,
             "There are no requirements to complete this course."
         )]
-        public void TutorialVideo_should_parse_path(
+        public void Initial_menu_should_have_formatted_completion_summary(
             string? completed,
             int maxPostLearningAssessmentAttempts,
             bool isAssessed,

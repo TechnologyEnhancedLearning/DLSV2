@@ -18,6 +18,7 @@
         private readonly ISectionContentService sectionContentService;
         private readonly ITutorialContentService tutorialContentService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
+        private readonly ICourseCompletionService courseCompletionService;
 
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
@@ -26,7 +27,8 @@
             ISectionContentService sectionContentService,
             ITutorialContentService tutorialContentService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
-            ISessionService sessionService
+            ISessionService sessionService,
+            ICourseCompletionService courseCompletionService
         )
         {
             this.logger = logger;
@@ -36,6 +38,7 @@
             this.sessionService = sessionService;
             this.sectionContentService = sectionContentService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
+            this.courseCompletionService = courseCompletionService;
         }
 
         [Route("/LearningMenu/{customisationId:int}")]
@@ -126,7 +129,7 @@
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -161,7 +164,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -195,7 +198,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -238,7 +241,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -263,6 +266,40 @@
                 tutorialId
             );
             return View("Tutorial/TutorialVideo", model);
+        }
+
+        [Route("/LearningMenu/{customisationId:int}/CompletionSummary")]
+        public IActionResult CompletionSummary(int customisationId)
+        {
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+
+            var courseCompletion = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
+
+            if (courseCompletion == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as customisation id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId?.ToString() ?? "null"}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new CourseCompletionViewModel(courseCompletion);
+            return View("Completion/Completion", model);
         }
     }
 }

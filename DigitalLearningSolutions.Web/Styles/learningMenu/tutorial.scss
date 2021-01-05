@@ -1,27 +1,6 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-.tutorial-actions-container {
-  @extend .nhsuk-u-margin-top-3;
-  @extend .nhsuk-u-margin-bottom-5;
 
-  div {
-    .nhsuk-button {
-      @extend .nhsuk-u-margin-0;
-    }
-
-    @include mq($until: large-desktop) {
-      margin-top: nhsuk-spacing(3);
-      margin-right: nhsuk-spacing(0);
-      display: block;
-    }
-
-    @include mq($from: large-desktop) {
-      margin-top: nhsuk-spacing(0);
-      margin-right: nhsuk-spacing(3);
-      display: inline;
-    }
-  }
-}
 
 .tutorial-video {
   width: 100%;
