@@ -430,8 +430,6 @@
             sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
         }
 
-        // This test will need to be changed once backend is complete and consolidation path can be changed, currently it will fail
-        /*
         [Test]
         public void Diagnostic_assessment_separator_is_false_if_no_tutorials_or_post_learning_assessment()
         {
@@ -450,7 +448,7 @@
 
             // Then
             sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeFalse();
-        } */
+        }
 
         [Test]
         public void Tutorial_separator_is_true_if_tutorials_and_post_learning_assessment_exist()
@@ -490,8 +488,6 @@
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
         }
 
-        // This test will need to be changed once backend is complete and consolidation path can be changed, currently it will fail
-        /* 
         [Test]
         public void Tutorial_separator_is_false_if_tutorials_exist_but_no_post_learning()
         {
@@ -510,7 +506,7 @@
 
             // Then
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
-        } */
+        }
 
         [Test]
         public void Diagnostic_assessment_completion_status_does_not_use_plural_if_attempts_is_one()
@@ -530,12 +526,5 @@
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempt");
         }
-
-        // Test for diagnostic separator if only diagnostic assessment and consolidation present
-        // Test for tutorial separator if tutorials and consolidation present but no post learning assessment
-        // Test for post learning separator if post learning and consolidation present
-        // Test for no diagnostic separator if tutorial, post learning and consolidation are not shown
-        // Test for no tutorial separator if post learning and consolidation are not shown
-        // Test for no post learning separator if consolidation is not shown
     }
 }
