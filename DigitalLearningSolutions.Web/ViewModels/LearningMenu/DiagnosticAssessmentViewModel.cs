@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
 
     public class DiagnosticAssessmentViewModel
@@ -20,7 +21,7 @@
             CourseTitle = diagnosticAssessment.CourseTitle;
             SectionName = diagnosticAssessment.SectionName;
             DiagnosticAssessmentPath = diagnosticAssessment.DiagnosticAssessmentPath;
-            CanSelectTutorials = diagnosticAssessment.CanSelectTutorials;
+            CanSelectTutorials = diagnosticAssessment.CanSelectTutorials && diagnosticAssessment.Tutorials.Any();
             AttemptsInformation = diagnosticAssessment.DiagnosticAttempts switch
             {
                 0 => "Not attempted",
