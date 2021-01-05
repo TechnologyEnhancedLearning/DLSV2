@@ -47,7 +47,8 @@
                 true,
                 85,
                 90,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -92,7 +93,8 @@
                 true,
                 85,
                 90,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -137,7 +139,8 @@
                 true,
                 85,
                 0,
-                100
+                100,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -179,7 +182,8 @@
                 true,
                 85,
                 0,
-                100
+                100,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -225,7 +229,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -274,7 +279,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -325,7 +331,8 @@
                     true,
                     85,
                     85,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -383,7 +390,8 @@
                 true,
                 85,
                 85,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -429,7 +437,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -479,7 +488,8 @@
                     false,
                     85,
                     0,
-                    100
+                    100,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]

@@ -18,7 +18,8 @@
             bool isAssessed = true,
             int postLearningAssessmentPassThreshold = 100,
             int diagnosticAssessmentCompletionThreshold = 85,
-            int tutorialsCompletionThreshold = 0
+            int tutorialsCompletionThreshold = 0,
+            string? courseSettings = null
         )
         {
             return new CourseContent(
@@ -34,7 +35,8 @@
                 isAssessed,
                 postLearningAssessmentPassThreshold,
                 diagnosticAssessmentCompletionThreshold,
-                tutorialsCompletionThreshold
+                tutorialsCompletionThreshold,
+                courseSettings
             );
         }
     }
