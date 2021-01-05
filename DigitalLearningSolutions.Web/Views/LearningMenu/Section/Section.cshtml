@@ -55,3 +55,14 @@
 {
   <partial name="Section/_PostLearningAssessmentCard" model="Model" />
 }
+
+@if (Model.DisplayPostLearningSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+}
+
+@if (Model.ShowConsolidation)
+{
+  <partial name="Section/_ConsolidationExerciseCard" model="Model" />
+}
+

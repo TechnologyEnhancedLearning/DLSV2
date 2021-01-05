@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SectionContent;
+    using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.Extensions.Configuration;
 
     public class SectionContentViewModel
     {
@@ -15,11 +17,14 @@
         public string PostLearningStatus { get; }
         public bool ShowDiagnostic { get; }
         public string DiagnosticCompletionStatus { get; }
+        public string? ConsolidationExercisePath { get; }
+        public bool ShowConsolidation { get; }
         public IEnumerable<TutorialCardViewModel> Tutorials { get; }
         public bool DisplayDiagnosticSeparator { get; }
         public bool DisplayTutorialSeparator { get; }
+        public bool DisplayPostLearningSeparator { get; }
 
-        public SectionContentViewModel(SectionContent sectionContent, int customisationId, int sectionId)
+        public SectionContentViewModel(IConfiguration config, SectionContent sectionContent, int customisationId, int sectionId)
         {
             CourseTitle = sectionContent.CourseTitle;
             SectionName = sectionContent.SectionName;
@@ -30,9 +35,13 @@
             PostLearningStatus = GetPostLearningStatus(sectionContent);
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
+            ConsolidationExercisePath =
+                ContentUrlHelper.GetNullableContentPath(config, "sectionContent.SupportingMaterialPath (temporary placeholder)");
+            ShowConsolidation = ConsolidationExercisePath != null;
             Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(tutorial, sectionId, customisationId));
-            DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning);
-            DisplayTutorialSeparator = sectionContent.Tutorials.Any() && ShowPostLearning;
+            DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning || ShowConsolidation);
+            DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);
+            DisplayPostLearningSeparator = ShowConsolidation && ShowPostLearning;
         }
 
         private static double GetPercentComplete(SectionContent sectionContent)

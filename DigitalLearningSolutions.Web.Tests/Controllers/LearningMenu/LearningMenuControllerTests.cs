@@ -363,7 +363,7 @@
             var result = controller.Section(CustomisationId, SectionId);
 
             // Then
-            var expectedModel = new SectionContentViewModel(defaultSectionContent, CustomisationId, SectionId);
+            var expectedModel = new SectionContentViewModel(config, defaultSectionContent, CustomisationId, SectionId);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
