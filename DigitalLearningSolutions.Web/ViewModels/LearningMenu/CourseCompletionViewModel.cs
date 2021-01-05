@@ -27,9 +27,10 @@
             IsAssessed = courseCompletion.IsAssessed;
             DiagnosticScore = courseCompletion.DiagnosticScore;
             DiagnosticAttempts = courseCompletion.DiagnosticAttempts;
-            PercentageTutorialsCompleted = courseCompletion.PercentageTutorialsCompleted;
             PostLearningPasses = courseCompletion.PostLearningPasses;
             SectionCount = courseCompletion.SectionCount;
+
+            PercentageTutorialsCompleted = Convert.ToInt32(Math.Round(courseCompletion.PercentageTutorialsCompleted));
 
             CompletionStatus = courseCompletion.Completed == null ? "incomplete" : "complete";
 

@@ -19,7 +19,7 @@
             int tutorialsCompletionThreshold = 90,
             int? diagnosticScore = 85,
             int diagnosticAttempts = 3,
-            int percentageTutorialsCompleted = 75,
+            double percentageTutorialsCompleted = 75,
             int postLearningPasses = 5,
             int sectionCount = 10
         )

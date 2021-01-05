@@ -49,7 +49,7 @@
                   ),
                   PercentageTutorialsCompleted AS (
                   SELECT Progress.ProgressID,
-                         SUM(aspProgress.TutStat) * 100 / (COUNT(aspProgress.TutorialID) * 2) AS PercentageTutorialsCompleted
+                         CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(aspProgress.TutorialID) * 2.0) AS PercentageTutorialsCompleted
                     FROM Customisations
                          INNER JOIN Sections
                          ON Sections.ApplicationID = Customisations.ApplicationID
