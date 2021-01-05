@@ -209,6 +209,20 @@
         }
 
         [Test]
+        public void CourseCompletion_should_have_FinaliseUrl()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion();
+            var expectedFinaliseUrl = $"{BaseUrl}/tracking/finalise?ProgressID={ProgressId}";
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.FinaliseUrl.Should().Be(expectedFinaliseUrl);
+        }
+
+        [Test]
         public void CourseCompletion_FinaliseText_should_be_null_when_completed_is_null()
         {
             // Given

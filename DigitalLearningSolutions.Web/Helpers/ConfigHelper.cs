@@ -32,9 +32,10 @@
             return IsNullOrEmpty(environmentName) ? "appsettings.json" : $"appsettings.{environmentName}.json";
         }
 
-        public static string GetEvaluateUrl(this IConfiguration config, int progressId)
+        public static string GetEvaluateUrl(this IConfiguration config, int progressId, bool fromLearningPortal)
         {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}&lp=1";
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}" +
+                (fromLearningPortal ? "&lp=1" : "");
         }
 
         public static string GetTrackingUrl(this IConfiguration config)
