@@ -141,7 +141,7 @@
         }
 
         [Test]
-        public void Initial_menu_should_have_not_applicable_for_null_duration()
+        public void Initial_menu_should_have_null_duration_for_null_duration()
         {
             // Given
             int? averageDuration = null;
@@ -153,7 +153,7 @@
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be("Not applicable");
+            initialMenuViewModel.AverageDuration.Should().BeNull();
         }
 
         [Test]

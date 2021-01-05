@@ -10,7 +10,7 @@
     {
         public int Id { get; }
         public string Title { get; }
-        public string AverageDuration { get; }
+        public string? AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
         public bool ShouldShowCompletionSummary { get; }
@@ -41,11 +41,11 @@
             );
         }
 
-        private static string FormatDuration(int? duration)
+        private static string? FormatDuration(int? duration)
         {
             if (duration == null)
             {
-                return "Not applicable";
+                return null;
             }
 
             if (duration < 60)
