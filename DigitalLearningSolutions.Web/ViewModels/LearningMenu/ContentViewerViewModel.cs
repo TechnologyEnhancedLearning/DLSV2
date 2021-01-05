@@ -51,6 +51,7 @@
             return $"{tutorialContent.TutorialPath}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
+                   $"&TutorialID={TutorialId}" +
                    $"&CandidateID={CandidateId}" +
                    $"&Version={tutorialContent.Version}" +
                    $"&ProgressID={ProgressId}" +
@@ -63,6 +64,7 @@
             return $"{config.GetScormPlayerUrl()}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
+                   $"&TutorialID={TutorialId}" +
                    $"&CandidateID={CandidateId}" +
                    $"&Version={tutorialContent.Version}" +
                    $"&tutpath={tutorialContent.TutorialPath}";
