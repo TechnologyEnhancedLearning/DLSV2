@@ -86,7 +86,7 @@
 
         [TestCase(true)]
         [TestCase(false)]
-        public void Diagnostic_assessment_select_tutorials_with_no_tutorials_should_be_diagObjSelect(
+        public void Diagnostic_assessment_select_tutorials_with_tutorials_should_be_diagObjSelect(
             bool selectTutorials
         )
         {
