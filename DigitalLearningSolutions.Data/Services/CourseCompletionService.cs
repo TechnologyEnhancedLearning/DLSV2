@@ -20,7 +20,7 @@
 
         public CourseCompletion? GetCourseCompletion(int candidateId, int customisationId)
         {
-            return connection.QueryFirstOrDefault<CourseCompletion?>(
+            var result = connection.QueryFirstOrDefault<CourseCompletion?>(
                 @"  WITH SectionCount AS (
                   SELECT Customisations.CustomisationID,
                          COUNT(Sections.SectionID) AS SectionCount
@@ -131,6 +131,8 @@
                          PostLearningPasses.PostLearningPasses,
                          SectionCount.SectionCount;",
                 new { candidateId, customisationId });
+
+            return result?.IncludeCertification == true ? result : null;
         }
     }
 }

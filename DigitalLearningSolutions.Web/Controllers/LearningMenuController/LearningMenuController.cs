@@ -285,15 +285,6 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            if (!courseCompletion.IncludeCertification)
-            {
-                logger.LogError(
-                    "Redirecting to 404 as customisation does not have certification." +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
-            }
-
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
 
             if (progressId == null)

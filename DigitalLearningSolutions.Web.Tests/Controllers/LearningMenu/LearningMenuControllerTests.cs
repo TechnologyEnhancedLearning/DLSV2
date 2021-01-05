@@ -1312,32 +1312,6 @@
         }
 
         [Test]
-        public void CompletionSummary_should_return_404_if_course_does_not_include_certification()
-        {
-            // Given
-            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                CustomisationId,
-                includeCertification: false
-            );
-            const int progressId = 101;
-
-            A.CallTo(() => courseCompletionService.GetCourseCompletion(CandidateId, CustomisationId))
-                .Returns(expectedCourseCompletion);
-            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
-                .Returns(progressId);
-
-            // When
-            var result = controller.CompletionSummary(CustomisationId);
-
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithControllerName("LearningSolutions")
-                .WithActionName("StatusCode")
-                .WithRouteValue("code", 404);
-        }
-
-        [Test]
         public void Close_should_close_sessions()
         {
             // When
