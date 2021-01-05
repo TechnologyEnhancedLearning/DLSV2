@@ -12,7 +12,7 @@
     {
         private IConfiguration config;
         private const string BaseUrl = "https://example.com";
-        const int ProgressId = 23;
+        private const int ProgressId = 23;
 
         [SetUp]
         public void SetUp()
