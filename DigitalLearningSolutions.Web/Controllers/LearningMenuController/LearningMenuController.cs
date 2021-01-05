@@ -129,7 +129,7 @@
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -164,7 +164,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -198,7 +198,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -241,7 +241,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -281,7 +281,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    "");
+                    $"centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -290,7 +290,7 @@
                 logger.LogError(
                     "Redirecting to 404 as customisation does not have certification." +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    "");
+                    $"centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 

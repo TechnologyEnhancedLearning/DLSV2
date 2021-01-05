@@ -224,6 +224,40 @@
         }
 
         [Test]
+        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                completed: DateTime.Now,
+                evaluated: null,
+                isAssessed: true
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+
+            // Then
+            courseCompletionViewModel.FinaliseText.Should().Be("Certificate");
+        }
+
+        [Test]
+        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                completed: DateTime.Now,
+                evaluated: null,
+                isAssessed: true
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(expectedCourseCompletion);
+
+            // Then
+            courseCompletionViewModel.FinaliseAriaLabel.Should().Be("View or print certificate");
+        }
+
+        [Test]
         public void CourseCompletion_FinaliseText_should_be_evaluate_when_course_is_not_assessed_and_not_evaluated()
         {
             // Given
