@@ -39,7 +39,6 @@
                     customisationId,
                     "TNA v0.1",
                     "RiO Mersey Care & NWBH",
-                    true,
                     DateTime.Parse("2017-07-26 07:56:15.273"),
                     null,
                     1,
@@ -76,7 +75,6 @@
                     customisationId,
                     "Recruitment and Selection",
                     "RandS",
-                    true,
                     null,
                     null,
                     2,
@@ -111,7 +109,6 @@
                     customisationId,
                     "Entry Level - Win 7, Office 2010",
                     "Basic Introductory Course",
-                    true,
                     DateTime.Parse("2014-08-26 15:23:58.620"),
                     DateTime.Parse("2014-08-26 15:26:03.260"),
                     0,
@@ -146,7 +143,6 @@
                     customisationId,
                     "Entry Level - Win XP, Office 2003/07 OLD",
                     "Standard",
-                    true,
                     null,
                     null,
                     0,
@@ -164,7 +160,7 @@
         }
 
         [Test]
-        public void Get_course_completion_should_return_null_when_course_does_not_exist()
+        public void Get_course_completion_should_return_null_when_course_does_not_have_certification()
         {
             // Given
             const int candidateId = 1;
@@ -179,7 +175,7 @@
         }
 
         [Test]
-        public void Get_course_completion_should_return_null_when_course_does_not_have_certification()
+        public void Get_course_completion_should_return_null_when_course_does_not_exist()
         {
             // Given
             const int candidateId = 1;
@@ -210,7 +206,6 @@
                     customisationId,
                     "Entry Level - Win XP, Office 2003/07 OLD",
                     "Standard",
-                    true,
                     null,
                     null,
                     0,

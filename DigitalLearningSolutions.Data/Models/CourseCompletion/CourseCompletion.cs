@@ -6,7 +6,6 @@
     {
         public int Id { get; }
         public string CourseTitle { get; }
-        public bool IncludeCertification { get; }
         public DateTime? Completed { get; }
         public DateTime? Evaluated { get; }
         public int MaxPostLearningAssessmentAttempts { get; }
@@ -24,7 +23,6 @@
             int id,
             string applicationName,
             string customisationName,
-            bool includeCertification,
             DateTime? completed,
             DateTime? evaluated,
             int maxPostLearningAssessmentAttempts,
@@ -41,7 +39,6 @@
         {
             Id = id;
             CourseTitle = $"{applicationName} - {customisationName}";
-            IncludeCertification = includeCertification;
             Completed = completed;
             Evaluated = evaluated;
             MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;

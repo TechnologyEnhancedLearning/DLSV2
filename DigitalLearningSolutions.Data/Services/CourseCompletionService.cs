@@ -20,7 +20,7 @@
 
         public CourseCompletion? GetCourseCompletion(int candidateId, int customisationId)
         {
-            var result = connection.QueryFirstOrDefault<CourseCompletion?>(
+            return connection.QueryFirstOrDefault<CourseCompletion?>(
                 @"  WITH SectionCount AS (
                   SELECT Customisations.CustomisationID,
                          COUNT(Sections.SectionID) AS SectionCount
@@ -78,7 +78,6 @@
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         Applications.IncludeCertification,
                          Progress.Completed,
                          Progress.Evaluated,
                          Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
@@ -114,11 +113,11 @@
                          ON Progress.ProgressID = PostLearningPasses.ProgressID
 
                    WHERE Customisations.CustomisationID = @customisationId
+                         AND Applications.IncludeCertification = 1
                    GROUP BY
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
-                         Applications.IncludeCertification,
                          Progress.Completed,
                          Progress.Evaluated,
                          Applications.AssessAttempts,
@@ -131,8 +130,6 @@
                          PostLearningPasses.PostLearningPasses,
                          SectionCount.SectionCount;",
                 new { candidateId, customisationId });
-
-            return result?.IncludeCertification == true ? result : null;
         }
     }
 }
