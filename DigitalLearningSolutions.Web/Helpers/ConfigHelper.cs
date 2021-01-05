@@ -46,5 +46,10 @@
         {
             return $"{config[CurrentSystemBaseUrlName]}/scoplayer/sco";
         }
+
+        public static string GetDownloadSummaryUrl(this IConfiguration config, int progressId)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/summary?ProgressID={progressId}";
+        }
     }
 }
