@@ -2,13 +2,24 @@
 {
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class SectionContentViewModelTests
     {
+        private IConfiguration config;
         private const int CustomisationId = 5;
         private const int SectionId = 5;
+        private const string BaseUrl = "https://example.com";
+
+        [SetUp]
+        public void SetUp()
+        {
+            config = A.Fake<IConfiguration>();
+            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
+        }
 
         [Test]
         public void Section_content_should_have_title()
@@ -22,7 +33,7 @@
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.CourseTitle.Should().Be($"{applicationName} - {customisationName}");
@@ -38,7 +49,7 @@
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.SectionName.Should().Be(sectionName);
@@ -59,7 +70,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be("");
@@ -81,7 +92,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
@@ -103,7 +114,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
@@ -125,7 +136,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
@@ -148,7 +159,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
@@ -170,7 +181,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% Complete");
@@ -183,7 +194,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent();
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.CustomisationId.Should().Be(CustomisationId);
@@ -226,7 +237,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(plAssessPath: null);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowPostLearning.Should().BeFalse();
@@ -239,7 +250,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(isAssessed: false);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowPostLearning.Should().BeFalse();
@@ -254,7 +265,7 @@
                 isAssessed: true);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowPostLearning.Should().BeTrue();
@@ -267,7 +278,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagAssessPath: null);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowDiagnostic.Should().BeFalse();
@@ -280,7 +291,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagStatus: false);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowDiagnostic.Should().BeFalse();
@@ -295,7 +306,7 @@
                 diagStatus: true);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.ShowDiagnostic.Should().BeTrue();
@@ -308,7 +319,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 0);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PostLearningStatus.Should().Be("Not Attempted");
@@ -321,7 +332,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 0);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PostLearningStatus.Should().Be("Failed");
@@ -334,7 +345,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 1);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.PostLearningStatus.Should().Be("Passed");
@@ -347,7 +358,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(diagAttempts: 0);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be("Not Attempted");
@@ -366,7 +377,7 @@
                 secOutOf: secOutOf);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempts");
@@ -390,7 +401,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
@@ -413,7 +424,7 @@
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
             
             // Then
             sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
@@ -433,7 +444,7 @@
             );
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeFalse();
@@ -457,12 +468,13 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeTrue();
         }
 
+        
         [Test]
         public void Tutorial_separator_is_false_if_no_tutorials_exist()
         {
@@ -470,7 +482,7 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent();
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
@@ -490,7 +502,7 @@
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DisplayTutorialSeparator.Should().BeFalse();
@@ -509,7 +521,7 @@
                 secOutOf: secOutOf);
 
             // When
-            var sectionContentViewModel = new SectionContentViewModel(sectionContent, CustomisationId, SectionId);
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempt");
