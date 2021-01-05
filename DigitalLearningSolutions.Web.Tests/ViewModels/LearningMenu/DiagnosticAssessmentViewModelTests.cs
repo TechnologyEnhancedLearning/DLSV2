@@ -65,11 +65,13 @@
             diagnosticAssessmentViewModel.DiagnosticAssessmentPath.Should().Be(diagnosticAssessmentPath);
         }
 
-        [Test]
-        public void Diagnostic_assessment_select_tutorials_can_be_true()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Diagnostic_assessment_select_tutorials_with_no_tutorials_should_always_be_false(
+            bool selectTutorials
+        )
         {
             // Given
-            const bool selectTutorials = true;
             var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
                 diagObjSelect: selectTutorials
             );
@@ -79,7 +81,32 @@
                 new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
 
             // Then
-            diagnosticAssessmentViewModel.CanSelectTutorials.Should().BeTrue();
+            diagnosticAssessmentViewModel.CanSelectTutorials.Should().BeFalse();
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Diagnostic_assessment_select_tutorials_with_no_tutorials_should_be_diagObjSelect(
+            bool selectTutorials
+        )
+        {
+            // Given
+            var tutorials = new[]
+            {
+                new DiagnosticTutorial("Tutorial 1", 1, true),
+                new DiagnosticTutorial("Tutorial 2", 2, true)
+            };
+            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
+                diagObjSelect: selectTutorials
+            );
+            diagnosticAssessment.Tutorials.AddRange(tutorials);
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.CanSelectTutorials.Should().Be(selectTutorials);
         }
 
         [Test]
