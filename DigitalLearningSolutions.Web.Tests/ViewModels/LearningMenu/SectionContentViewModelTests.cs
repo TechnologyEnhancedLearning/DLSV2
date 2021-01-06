@@ -431,7 +431,7 @@
         }
 
         [Test]
-        public void Diagnostic_assessment_separator_is_false_if_no_tutorials_or_post_learning_assessment()
+        public void Diagnostic_assessment_separator_is_false_if_no_tutorials_or_post_learning_assessment_or_consolidation_exercise()
         {
             // Given
             const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course308/Diagnostic/02-DIAG-Entering-data/itspplayer.html";
@@ -440,7 +440,8 @@
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: diagAssessPath,
                 diagStatus: diagStatus,
-                isAssessed: isAssessed
+                isAssessed: isAssessed,
+                consolidationPath: null
             );
 
             // When
@@ -489,16 +490,20 @@
         }
 
         [Test]
-        public void Tutorial_separator_is_false_if_tutorials_exist_but_no_post_learning()
+        public void Tutorial_separator_is_false_if_tutorials_exist_but_no_post_learning_or_consolidation_exercise()
         {
             // Given
             const bool isAssessed = false;
+            const string? consolidationPath = null;
+            
             var tutorials = new[]
             {
                 SectionTutorialHelper.CreateDefaultSectionTutorial(),
                 SectionTutorialHelper.CreateDefaultSectionTutorial()
             };
-            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(isAssessed: isAssessed);
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                isAssessed: isAssessed,
+                consolidationPath: consolidationPath);
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
@@ -525,6 +530,110 @@
 
             // Then
             sectionContentViewModel.DiagnosticCompletionStatus.Should().Be($"{secScore}/{secOutOf} - {diagAttempts} attempt");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_separator_is_false_if_no_diagnostic_assessment()
+        {
+            // Given
+            const bool diagStatus = false;
+
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagStatus: diagStatus);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeFalse();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_separator_is_true_if_only_diagnostic_assessment_and_consolidation_exercise_is_present()
+        {
+            // Given
+            const bool diagStatus = true;
+            const string consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
+            const bool isAssessed = false;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagStatus: diagStatus,
+                consolidationPath: consolidationPath,
+                isAssessed: isAssessed);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayDiagnosticSeparator.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_separator_is_true_if_tutorials_and_consolidation_exercise_exist_but_no_post_learning()
+        {
+            // Given
+            const string consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
+            const bool isAssessed = false;
+
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(),
+                SectionTutorialHelper.CreateDefaultSectionTutorial()
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                isAssessed: isAssessed,
+                consolidationPath: consolidationPath);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayTutorialSeparator.Should().BeTrue();
+        }
+
+        [Test]
+        public void Post_learning_separator_is_true_if_post_learning_and_consolidation_exercise_exist()
+        {
+            const string consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
+            const bool isAssessed = true;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                isAssessed: isAssessed,
+                consolidationPath: consolidationPath);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayPostLearningSeparator.Should().BeTrue();
+        }
+        [Test]
+        public void Post_learning_separator_is_false_if_post_learning_exists_but_no_consolidation()
+        {
+            const string? consolidationPath = null;
+            const bool isAssessed = true;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                isAssessed: isAssessed,
+                consolidationPath: consolidationPath);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayPostLearningSeparator.Should().BeFalse();
+        }
+
+        [Test]
+        public void Post_learning_separator_is_false_if_post_learning_does_not_exists()
+        {
+            // Given
+            const bool isAssessed = false;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(isAssessed: isAssessed);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.DisplayPostLearningSeparator.Should().BeFalse();
         }
     }
 }

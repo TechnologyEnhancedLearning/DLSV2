@@ -35,9 +35,8 @@
             PostLearningStatus = GetPostLearningStatus(sectionContent);
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
-            ConsolidationExercisePath =
-                ContentUrlHelper.GetNullableContentPath(config, "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip");
-            ShowConsolidation = false;
+            ConsolidationExercisePath = ContentUrlHelper.GetNullableContentPath(config, sectionContent.ConsolidationPath);
+            ShowConsolidation = ConsolidationExercisePath != null;
             Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(tutorial, sectionId, customisationId));
             DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning || ShowConsolidation);
             DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);

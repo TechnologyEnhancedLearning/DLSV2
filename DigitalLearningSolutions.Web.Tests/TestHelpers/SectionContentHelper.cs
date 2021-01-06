@@ -17,7 +17,8 @@
             int attemptsPl = 2,
             int plPasses = 1,
             bool diagStatus = true,
-            bool isAssessed = true
+            bool isAssessed = true,
+            string? consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
         )
         {
             return new SectionContent(
@@ -33,7 +34,8 @@
                 attemptsPl,
                 plPasses,
                 diagStatus,
-                isAssessed
+                isAssessed,
+                consolidationPath
             );
         }
     }

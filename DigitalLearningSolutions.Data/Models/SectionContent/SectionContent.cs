@@ -16,6 +16,7 @@
         public bool PostLearningPassed { get; }
         public bool DiagnosticStatus { get; }
         public bool IsAssessed { get; }
+        public string? ConsolidationPath { get; }
         public List<SectionTutorial> Tutorials { get; } = new List<SectionTutorial>();
 
         public SectionContent(
@@ -31,7 +32,8 @@
             int attemptsPl,
             int plPasses,
             bool diagStatus,
-            bool isAssessed)
+            bool isAssessed,
+            string? consolidationPath)
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
@@ -45,6 +47,7 @@
             PostLearningPassed = plPasses > 0;
             DiagnosticStatus = diagStatus;
             IsAssessed = isAssessed;
+            ConsolidationPath = consolidationPath;
         }
     }
 }

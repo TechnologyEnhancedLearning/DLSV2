@@ -42,6 +42,7 @@
                         COALESCE (Attempts.PLPasses, 0) AS PLPasses,
                         CustomisationTutorials.DiagStatus,
                         Customisations.IsAssessed,
+                        Sections.ConsolidationPath,
                         Tutorials.TutorialName,
                         COALESCE (aspProgress.TutStat, 0) AS TutStat,
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,
