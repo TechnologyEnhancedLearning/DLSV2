@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-@model DiagnosticAssessmentViewModel
+@model PostLearningAssessmentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 
@@ -19,47 +19,27 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">
-      <span class="nhsuk-caption-l">Diagnostic assessment</span>
-      @Model.SectionName
+      <span class="nhsuk-caption-l">Post learning assessment</span>
+      @Model.CourseTitle
     </h1>
     <h2 class="nhsuk-u-secondary-text-color">
-      @Model.AttemptsInformation
+      @Model.AssessmentStatus
     </h2>
   </div>
 </div>
 
 <partial name="Shared/_AssessmentPageImportantInformation" />
 
-<form class="nhsuk-form-group">
-  <fieldset class="nhsuk-fieldset">
-    @if (Model.CanSelectTutorials)
-    {
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-        Which areas do you want to assess?
-      </legend>
-
-      <div class="nhsuk-hint">
-        Select all areas that you want to test.
-      </div>
-      
-      <div class="nhsuk-u-margin-bottom-3">
-        @foreach (var tutorial in Model.Tutorials)
-        {
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="@tutorial.Id" value="@tutorial.Id">
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="@tutorial.Id">
-              @tutorial.TutorialName
-            </label>
-          </div>
-        }
-      </div>
-    }
-
-    <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
-      Start assessment
-    </button>
-  </fieldset>
-</form>
+@if (Model.PostLearningLocked)
+{
+  <p class="nhsuk-u-secondary-text-color">
+    The assessment is locked as there have been too many failed attempts.
+  </p>
+}
+else
+{
+  <button class="nhsuk-button nhsuk-u-margin-bottom-4">Start assessment</button>
+}
 
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link" asp-action="Section" asp-controller="LearningMenu" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">

@@ -31,7 +31,7 @@
                         Customisations.CustomisationName,
                         Sections.SectionName,
                         Sections.PLAssessPath,
-                        COALESCE (Attempts.MaxScorePL, 0) AS MaxScorePL,
+                        COALESCE (Attempts.BestScore, 0) AS BestScore,
                         COALESCE (Attempts.AttemptsPL, 0) AS AttemptsPL,
                         COALESCE (Attempts.PLPasses, 0) AS PLPasses,
                         CAST (COALESCE (Progress.PLLocked, 0) AS bit) AS PLLocked
@@ -50,7 +50,7 @@
                                 COUNT(AssessAttemptID) AS AttemptsPL,
                                 AssessAttempts.ProgressID,
                                 AssessAttempts.SectionNumber,
-                                MAX(AssessAttempts.Score) AS MaxScorePL,
+                                MAX(AssessAttempts.Score) AS BestScore,
                                 SUM(CAST(AssessAttempts.Status AS Integer)) AS PLPasses
                             FROM AssessAttempts
                                 GROUP BY

@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
 
     public static class DiagnosticAssessmentHelper

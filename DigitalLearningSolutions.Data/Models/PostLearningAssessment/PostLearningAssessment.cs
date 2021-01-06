@@ -15,19 +15,19 @@
             string customisationName,
             string sectionName,
             string plAssessPath,
-            int maxScorePl,
+            int bestScore,
             int attemptsPl,
             int plPasses,
-            bool PLLocked
+            bool plLocked
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
             PostLearningAssessmentPath = plAssessPath;
-            PostLearningScore = maxScorePl;
+            PostLearningScore = bestScore;
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
-            PostLearningLocked = PLLocked;
+            PostLearningLocked = plLocked;
         }
     }
 }
