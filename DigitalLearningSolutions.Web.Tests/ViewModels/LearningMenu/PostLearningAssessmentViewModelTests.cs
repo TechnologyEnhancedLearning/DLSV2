@@ -112,7 +112,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.GetAssessmentStatus().Should().Be("Not attempted");
+            postLearningAssessmentViewModel.AssessmentStatus.Should().Be("Not attempted");
         }
 
         [Test]
@@ -132,7 +132,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.GetAssessmentStatus().Should().Be("Passed (90% - 4 attempts)");
+            postLearningAssessmentViewModel.AssessmentStatus.Should().Be("Passed (90% - 4 attempts)");
         }
 
         [Test]
@@ -152,7 +152,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.GetAssessmentStatus().Should().Be("Failed (10% - 5 attempts)");
+            postLearningAssessmentViewModel.AssessmentStatus.Should().Be("Failed (10% - 5 attempts)");
         }
 
         [Test]
