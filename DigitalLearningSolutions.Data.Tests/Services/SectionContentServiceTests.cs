@@ -372,28 +372,26 @@
         [Test]
         public void Get_section_content_can_have_consolidation_path()
         {
-            // When
+            // Given
             const int customisationId = 1499;
             const int candidateId = 6;
             const int sectionId = 74;
+            const string expectedConsolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
+
+            // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
             // Then
-            const string expectedConsolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
-
             result.ConsolidationPath.Should().Be(expectedConsolidationPath);
         }
 
         [Test]
         public void Get_section_content_can_have_no_consolidation_path_but_still_return()
         {
-            // When
+            // Given
             const int customisationId = 15853;
             const int candidateId = 1;
             const int sectionId = 382;
-            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
-
-            // Then
             var expectedSectionContent = new SectionContent(
                 "Office 2013 Essentials for the Workplace",
                 "Erin Test 01",
@@ -419,6 +417,11 @@
                     new SectionTutorial("Getting help", 0, "Not started", 0, 11, 1464, true)
                 }
             );
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
     }
