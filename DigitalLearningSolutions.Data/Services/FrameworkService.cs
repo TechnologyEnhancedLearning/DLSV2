@@ -33,6 +33,8 @@
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
+        void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
+        void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
     }
@@ -404,7 +406,8 @@ FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
              CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
              FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
              Competencies AS c ON fc.CompetencyID = c.ID
-WHERE (fcg.FrameworkID = @frameworkId)",
+WHERE (fcg.FrameworkID = @frameworkId)
+                 ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
                     frameworkCompetencyGroup.FrameworkCompetencies.Add(frameworkCompetency);
@@ -426,7 +429,8 @@ WHERE (fcg.FrameworkID = @frameworkId)",
                 	FROM FrameworkCompetencies AS fc 
                 		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                 	WHERE fc.FrameworkID = @frameworkId 
-                		AND fc.FrameworkCompetencyGroupID IS NULL",
+                		AND fc.FrameworkCompetencyGroupID IS NULL
+                    ORDER BY fc.Ordering",
                 new { frameworkId }
                 );
           
@@ -529,6 +533,16 @@ WHERE (fcg.FrameworkID = @frameworkId)",
                     );
                 }
             }
+        }
+
+        public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction)
+        {
+            connection.Execute("ReorderFrameworkCompetencyGroup", new { frameworkCompetencyGroupId, direction, singleStep }, commandType: CommandType.StoredProcedure);
+        }
+
+        public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction)
+        {
+            connection.Execute("ReorderFrameworkCompetency", new { frameworkCompetencyId, direction, singleStep }, commandType: CommandType.StoredProcedure);
         }
     }
 }

@@ -86,6 +86,32 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101]
+        ///GO
+        ///
+        ////****** Object:  StoredProcedure [dbo].[ReorderTutorial]    Script Date: 04/01/2021 15:56:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/01/2021
+        ///-- Description:	Reorders the FrameworkCompetencyGroups in a given Framework - moving the given group up or down.
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[ReorderFrameworkCompete [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
+            get {
+                return ResourceManager.GetString("CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[InsertCustomisation_V3]    Script Date: 20/11/2020 14:12:52 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -208,6 +234,21 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string DropGetActiveAvailableV5 {
             get {
                 return ResourceManager.GetString("DropGetActiveAvailableV5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[ReorderTutorial]    Script Date: 04/01/2021 16:17:57 ******/
+        ///DROP PROCEDURE [dbo].[ReorderFrameworkCompetency]
+        ///GO
+        ///DROP PROCEDURE [dbo].[ReorderFrameworkCompetencyGroup]
+        ///GO
+        ///
+        ///.
+        /// </summary>
+        internal static string DropReorderFrameworkCompetenciesAndGroupsSPs {
+            get {
+                return ResourceManager.GetString("DropReorderFrameworkCompetenciesAndGroupsSPs", resourceCulture);
             }
         }
         

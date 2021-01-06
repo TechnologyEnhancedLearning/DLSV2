@@ -30,7 +30,8 @@
                         typeof(CandidateAssessmentSubmittedDate).Assembly,
                         typeof(AddFrameworkIdToFrameworkCompetencies).Assembly,
                         typeof(AddCompetencyNameColumn).Assembly,
-                        typeof(MakeCompetencyDecsriptionNullable).Assembly
+                        typeof(MakeCompetencyDecsriptionNullable).Assembly,
+                        typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

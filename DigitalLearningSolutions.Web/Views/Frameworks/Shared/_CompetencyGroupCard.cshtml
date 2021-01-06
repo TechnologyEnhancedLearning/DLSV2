@@ -3,7 +3,7 @@
 <span class="nhsuk-caption-l nhsuk-u-font-size-16">
   Competency group
 </span>
-<div class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
+<div id="fcgroup-@Model.FrameworkCompetencyGroup.ID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
   <div class="nhsuk-card__content">
     <h3>
 
@@ -13,8 +13,8 @@
     {
       <p>
         <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Edit <span class="visually-hidden"> competency group</span></a>
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveUpFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Move <span class="visually-hidden"> competency group</span> up</a>
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveDownFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Move <span class="visually-hidden"> competency group</span> down</a>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetencyGroup" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Move <span class="visually-hidden"> competency group</span> up</a>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetencyGroup" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Move <span class="visually-hidden"> competency group</span> down</a>
         <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroup.ID">Delete <span class="visually-hidden"> competency group</span></a>
       </p>
     }

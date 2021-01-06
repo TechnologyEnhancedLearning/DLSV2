@@ -59,17 +59,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
                     }
                 }
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+                return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
         }
-        public IActionResult MoveUpFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
+        public IActionResult MoveFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, bool step, string direction)
         {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            frameworkService.MoveFrameworkCompetencyGroup(frameworkCompetencyGroupId, step, direction);
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
-        public IActionResult MoveDownFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
-        {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
-        }
+
         public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
         {
             return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
@@ -87,13 +85,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
         }
-        public IActionResult MoveUpFrameworkCompetency(int frameworkId, int frameworkCompetencyId)
+        public IActionResult MoveFrameworkCompetency(int frameworkId, int frameworkCompetencyId, bool step, string direction)
         {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
-        }
-        public IActionResult MoveDownFrameworkCompetency(int frameworkId, int frameworkCompetencyId)
-        {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, step, direction);
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
         }
         public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId)
         {
