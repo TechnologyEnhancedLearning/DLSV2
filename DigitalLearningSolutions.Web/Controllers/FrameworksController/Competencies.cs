@@ -68,9 +68,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
 
-        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId)
+        public IActionResult DeleteFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, int competencyGroupId)
         {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, GetAdminID());
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]

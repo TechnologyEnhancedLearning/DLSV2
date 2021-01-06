@@ -33,10 +33,13 @@
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, int competencyId, string name, int adminId);
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
+        void DeleteFrameworkCompetency(int frameworkCompetencyId, int competencyId, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -492,6 +495,13 @@ WHERE (fcg.FrameworkID = @frameworkId)
 
         public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId)
         {
+            if (frameworkCompetencyGroupId < 1 | adminId < 1 | competencyGroupId < 1 | name.Length < 3)
+            {
+                logger.LogWarning(
+                    $"Not updating framework competency group as it failed server side validation. AdminId: {adminId}, frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}, name: {name}"
+                );
+                return;
+            }
             int usedElsewhere = (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId
@@ -543,6 +553,69 @@ WHERE (fcg.FrameworkID = @frameworkId)
         public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction)
         {
             connection.Execute("ReorderFrameworkCompetency", new { frameworkCompetencyId, direction, singleStep }, commandType: CommandType.StoredProcedure);
+        }
+
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
+        {
+            if (frameworkCompetencyGroupId < 1 | adminId < 1 | competencyGroupId < 1)
+            {
+                logger.LogWarning(
+                    $"Not deleting framework competency group as it failed server side validation. AdminId: {adminId}, frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}"
+                );
+                return;
+            }
+            connection.Execute(
+                @"UPDATE FrameworkCompetencyGroups
+                   SET UpdatedByAdminID = @adminId
+                    WHERE ID = @frameworkCompetencyGroupId", new { adminId, frameworkCompetencyGroupId }
+                );
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM FrameworkCompetencyGroups WHERE ID = @frameworkCompetencyGroupId", new { frameworkCompetencyGroupId }
+                );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not deleting framework competency group as db update failed. " +
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}, adminId: {adminId}"
+                );
+            }
+            //Check if used elsewhere and delete competency group if not:
+            int usedElsewhere = (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
+                    WHERE CompetencyGroupId = @competencyGroupId",
+                new { frameworkCompetencyGroupId, competencyGroupId }
+                );
+            if(usedElsewhere == 0)
+            {
+                usedElsewhere = (int)connection.ExecuteScalar(
+                                @"SELECT COUNT(*) FROM SelfAssessmentStructure
+                    WHERE CompetencyGroupId = @competencyGroupId",
+                                new { competencyGroupId }
+                                );
+            }
+            if (usedElsewhere == 0)
+            {
+                numberOfAffectedRows = connection.Execute(
+                    @"DELETE FROM CompetencyGroups WHERE ID = @competencyGroupId", new { competencyGroupId }
+                    );
+                if (numberOfAffectedRows < 1)
+                {
+                    logger.LogWarning(
+                        "Not deleting competency group as db update failed. " +
+                        $"competencyGroupId: {competencyGroupId}, adminId: {adminId}"
+                    );
+                }
+            }
+        }
+
+        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int competencyId, int adminId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, int competencyId, string name, int adminId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
