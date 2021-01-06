@@ -17,6 +17,8 @@
         public int SectionCount { get; }
 
         public string CompletionStatus { get; }
+        public bool ShowDiagnosticScore { get; }
+        public bool ShowPercentageTutorialsCompleted { get; }
         public string? FinaliseText { get; }
         public string? FinaliseAriaLabel { get; }
         public string SummaryText { get; }
@@ -36,6 +38,8 @@
             PercentageTutorialsCompleted = Convert.ToInt32(Math.Floor(courseCompletion.PercentageTutorialsCompleted));
 
             CompletionStatus = courseCompletion.Completed == null ? "incomplete" : "complete";
+            ShowDiagnosticScore = DiagnosticScore != null && DiagnosticAttempts > 0;
+            ShowPercentageTutorialsCompleted = PercentageTutorialsCompleted > 0;
 
             FinaliseText = GetEvaluationOrCertificateText(
                 courseCompletion.Completed,

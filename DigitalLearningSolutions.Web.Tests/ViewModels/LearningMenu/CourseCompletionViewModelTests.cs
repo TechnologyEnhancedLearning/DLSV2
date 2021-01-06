@@ -135,6 +135,83 @@
         }
 
         [Test]
+        public void CourseCompletion_should_not_show_DiagnosticScore_when_null()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: null
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_show_DiagnosticScore_when_attempts_are_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: 0,
+                diagnosticAttempts: 0
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_show_DiagnosticScore_when_attempts_are_not_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: 10,
+                diagnosticAttempts: 1
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeTrue();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_show_PercentageTutorialsCompleted_when_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                percentageTutorialsCompleted: 0
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowPercentageTutorialsCompleted.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_show_PercentageTutorialsCompleted_when_not_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                percentageTutorialsCompleted: 10
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowPercentageTutorialsCompleted.Should().BeTrue();
+        }
+
+        [Test]
         public void CourseCompletion_should_have_postLearningPasses()
         {
             // Given
