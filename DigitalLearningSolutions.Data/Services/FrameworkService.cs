@@ -595,6 +595,11 @@ WHERE (fcg.FrameworkID = @frameworkId)
             }
             if (usedElsewhere == 0)
             {
+                connection.Execute(
+               @"UPDATE CompetencyGroups
+                   SET UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyGroupId", new { adminId, competencyGroupId }
+               );
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyGroups WHERE ID = @competencyGroupId", new { competencyGroupId }
                     );
