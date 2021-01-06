@@ -87,22 +87,6 @@
         }
 
         [Test]
-        public void CourseCompletion_should_have_diagnosticAttempts()
-        {
-            // Given
-            const int diagnosticAttempts = 47;
-            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                diagnosticAttempts: diagnosticAttempts
-            );
-
-            // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
-
-            // Then
-            courseCompletionViewModel.DiagnosticAttempts.Should().Be(diagnosticAttempts);
-        }
-
-        [Test]
         public void CourseCompletion_should_round_percentageTutorialsCompleted_down()
         {
             // Given
@@ -154,7 +138,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                diagnosticScore: 0,
+                diagnosticScore: 10,
                 diagnosticAttempts: 0
             );
 

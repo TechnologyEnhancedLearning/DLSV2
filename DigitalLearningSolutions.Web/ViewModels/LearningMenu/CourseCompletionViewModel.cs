@@ -11,7 +11,6 @@
         public string CourseTitle { get; }
         public bool IsAssessed { get; }
         public int? DiagnosticScore { get; }
-        public int DiagnosticAttempts { get; }
         public int PercentageTutorialsCompleted { get; }
         public int PostLearningPasses { get; }
         public int SectionCount { get; }
@@ -31,14 +30,13 @@
             CourseTitle = courseCompletion.CourseTitle;
             IsAssessed = courseCompletion.IsAssessed;
             DiagnosticScore = courseCompletion.DiagnosticScore;
-            DiagnosticAttempts = courseCompletion.DiagnosticAttempts;
             PostLearningPasses = courseCompletion.PostLearningPasses;
             SectionCount = courseCompletion.SectionCount;
 
             PercentageTutorialsCompleted = Convert.ToInt32(Math.Floor(courseCompletion.PercentageTutorialsCompleted));
 
             CompletionStatus = courseCompletion.Completed == null ? "incomplete" : "complete";
-            ShowDiagnosticScore = DiagnosticScore != null && DiagnosticAttempts > 0;
+            ShowDiagnosticScore = DiagnosticScore != null && courseCompletion.DiagnosticAttempts > 0;
             ShowPercentageTutorialsCompleted = PercentageTutorialsCompleted > 0;
 
             FinaliseText = GetEvaluationOrCertificateText(
