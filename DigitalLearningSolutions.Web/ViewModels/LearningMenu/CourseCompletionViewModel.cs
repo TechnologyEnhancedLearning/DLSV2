@@ -11,12 +11,13 @@
         public string CourseTitle { get; }
         public bool IsAssessed { get; }
         public int? DiagnosticScore { get; }
-        public int DiagnosticAttempts { get; }
         public int PercentageTutorialsCompleted { get; }
         public int PostLearningPasses { get; }
         public int SectionCount { get; }
 
         public string CompletionStatus { get; }
+        public bool ShowDiagnosticScore { get; }
+        public bool ShowPercentageTutorialsCompleted { get; }
         public string? FinaliseText { get; }
         public string? FinaliseAriaLabel { get; }
         public string SummaryText { get; }
@@ -29,13 +30,14 @@
             CourseTitle = courseCompletion.CourseTitle;
             IsAssessed = courseCompletion.IsAssessed;
             DiagnosticScore = courseCompletion.DiagnosticScore;
-            DiagnosticAttempts = courseCompletion.DiagnosticAttempts;
             PostLearningPasses = courseCompletion.PostLearningPasses;
             SectionCount = courseCompletion.SectionCount;
 
-            PercentageTutorialsCompleted = Convert.ToInt32(Math.Round(courseCompletion.PercentageTutorialsCompleted));
+            PercentageTutorialsCompleted = Convert.ToInt32(Math.Floor(courseCompletion.PercentageTutorialsCompleted));
 
             CompletionStatus = courseCompletion.Completed == null ? "incomplete" : "complete";
+            ShowDiagnosticScore = DiagnosticScore != null && courseCompletion.DiagnosticAttempts > 0;
+            ShowPercentageTutorialsCompleted = PercentageTutorialsCompleted > 0;
 
             FinaliseText = GetEvaluationOrCertificateText(
                 courseCompletion.Completed,
@@ -70,12 +72,12 @@
                 return null;
             }
 
-            if (isAssessed)
+            if (evaluated == null)
             {
-                return "Certificate";
+                return "Evaluate";
             }
 
-            return evaluated == null ? "Evaluate" : null;
+            return isAssessed ? "Certificate" : null;
         }
     }
 }

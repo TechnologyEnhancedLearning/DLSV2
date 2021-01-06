@@ -87,23 +87,7 @@
         }
 
         [Test]
-        public void CourseCompletion_should_have_diagnosticAttempts()
-        {
-            // Given
-            const int diagnosticAttempts = 47;
-            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                diagnosticAttempts: diagnosticAttempts
-            );
-
-            // When
-            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
-
-            // Then
-            courseCompletionViewModel.DiagnosticAttempts.Should().Be(diagnosticAttempts);
-        }
-
-        [Test]
-        public void CourseCompletion_should_have_round_percentageTutorialsCompleted_down()
+        public void CourseCompletion_should_round_percentageTutorialsCompleted_down()
         {
             // Given
             const double percentageTutorialsCompleted = 44.4;
@@ -119,7 +103,7 @@
         }
 
         [Test]
-        public void CourseCompletion_should_have_round_percentageTutorialsCompleted_up()
+        public void CourseCompletion_should_floor_round_percentageTutorialsCompleted()
         {
             // Given
             const double percentageTutorialsCompleted = 66.6;
@@ -131,7 +115,84 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(67);
+            courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(66);
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_show_DiagnosticScore_when_null()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: null
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_show_DiagnosticScore_when_attempts_are_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: 10,
+                diagnosticAttempts: 0
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_show_DiagnosticScore_when_attempts_are_not_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                diagnosticScore: 10,
+                diagnosticAttempts: 1
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowDiagnosticScore.Should().BeTrue();
+        }
+
+        [Test]
+        public void CourseCompletion_should_not_show_PercentageTutorialsCompleted_when_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                percentageTutorialsCompleted: 0
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowPercentageTutorialsCompleted.Should().BeFalse();
+        }
+
+        [Test]
+        public void CourseCompletion_should_show_PercentageTutorialsCompleted_when_not_0()
+        {
+            // Given
+            var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
+                percentageTutorialsCompleted: 10
+            );
+
+            // When
+            var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
+
+            // Then
+            courseCompletionViewModel.ShowPercentageTutorialsCompleted.Should().BeTrue();
         }
 
         [Test]
@@ -249,11 +310,12 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed()
+        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed_and_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.Now,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -265,11 +327,12 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed()
+        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed_and_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.Now,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -281,7 +344,7 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        public void CourseCompletion_FinaliseText_should_be_evaluate_when_course_is_assessed_and_not_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
@@ -294,11 +357,11 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.FinaliseText.Should().Be("Certificate");
+            courseCompletionViewModel.FinaliseText.Should().Be("Evaluate");
         }
 
         [Test]
-        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        public void CourseCompletion_FinaliseAriaLabel_should_be_evaluate_when_course_is_assessed_and_not_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
@@ -311,7 +374,7 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.FinaliseAriaLabel.Should().Be("View or print certificate");
+            courseCompletionViewModel.FinaliseAriaLabel.Should().Be("Evaluate course");
         }
 
         [Test]
