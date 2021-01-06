@@ -33,7 +33,7 @@
             PostLearningPasses = courseCompletion.PostLearningPasses;
             SectionCount = courseCompletion.SectionCount;
 
-            PercentageTutorialsCompleted = Convert.ToInt32(Math.Round(courseCompletion.PercentageTutorialsCompleted));
+            PercentageTutorialsCompleted = Convert.ToInt32(Math.Floor(courseCompletion.PercentageTutorialsCompleted));
 
             CompletionStatus = courseCompletion.Completed == null ? "incomplete" : "complete";
 

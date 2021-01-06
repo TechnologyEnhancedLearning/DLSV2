@@ -103,7 +103,7 @@
         }
 
         [Test]
-        public void CourseCompletion_should_have_round_percentageTutorialsCompleted_down()
+        public void CourseCompletion_should_round_percentageTutorialsCompleted_down()
         {
             // Given
             const double percentageTutorialsCompleted = 44.4;
@@ -119,7 +119,7 @@
         }
 
         [Test]
-        public void CourseCompletion_should_have_round_percentageTutorialsCompleted_up()
+        public void CourseCompletion_should_floor_round_percentageTutorialsCompleted()
         {
             // Given
             const double percentageTutorialsCompleted = 66.6;
@@ -131,7 +131,7 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(67);
+            courseCompletionViewModel.PercentageTutorialsCompleted.Should().Be(66);
         }
 
         [Test]
