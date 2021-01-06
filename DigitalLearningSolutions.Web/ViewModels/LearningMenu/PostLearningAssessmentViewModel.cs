@@ -4,12 +4,13 @@
 
     public class PostLearningAssessmentViewModel
     {
-
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string PostLearningAssessmentPath { get; }
+        public int PostLearningScore { get; }
+        public int PostLearningAttempts { get; }
+        public bool PostLearningPassed { get; }
         public bool PostLearningLocked { get; }
-        public string AssessmentStatus { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
 
@@ -18,24 +19,30 @@
             CourseTitle = postLearningAssessment.CourseTitle;
             SectionName = postLearningAssessment.SectionName;
             PostLearningAssessmentPath = postLearningAssessment.PostLearningAssessmentPath;
+            PostLearningScore = postLearningAssessment.PostLearningScore;
+            PostLearningAttempts = postLearningAssessment.PostLearningAttempts;
+            PostLearningPassed = postLearningAssessment.PostLearningPassed;
             PostLearningLocked = postLearningAssessment.PostLearningLocked;
-
-            if (postLearningAssessment.PostLearningAttempts == 0)
-            {
-                AssessmentStatus = "Not attempted";
-            }
-            else
-            {
-                AssessmentStatus = postLearningAssessment.PostLearningPassed
-                    ? "Passed"
-                    : "Failed";
-                AssessmentStatus += postLearningAssessment.PostLearningAttempts == 1
-                    ? $" ({postLearningAssessment.PostLearningScore}% - 1 attempt)"
-                    : $" ({postLearningAssessment.PostLearningScore}% - {postLearningAssessment.PostLearningAttempts} attempts)";
-            }
-
             CustomisationId = customisationId;
             SectionId = sectionId;
         }
+
+        public string GetAssessmentStatus()
+        {
+            if (PostLearningAttempts == 0)
+            {
+                return "Not attempted";
+            }
+
+            var assessmentStatus = PostLearningPassed
+                ? "Passed"
+                : "Failed";
+            var scoreInformation = PostLearningAttempts == 1
+                ? $" ({PostLearningScore}% - 1 attempt)"
+                : $" ({PostLearningScore}% - {PostLearningAttempts} attempts)";
+
+            return assessmentStatus + scoreInformation;
+        }
+
     }
 }

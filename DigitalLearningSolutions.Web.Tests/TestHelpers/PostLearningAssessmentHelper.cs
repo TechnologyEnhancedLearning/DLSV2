@@ -9,7 +9,7 @@
             string customisationName = "customisation name",
             string sectionName = "section name",
             string plAssessPath = "https://www.dls.nhs.uk/tracking/MOST/Excel07Core/Assess/L2_Excel_2007_Post_12.dcr",
-            int maxScorePl = 50,
+            int bestScore = 50,
             int attemptsPl = 2,
             int plPasses = 1,
             bool plLocked = false
@@ -20,7 +20,7 @@
                 customisationName,
                 sectionName,
                 plAssessPath,
-                maxScorePl,
+                bestScore,
                 attemptsPl,
                 plPasses,
                 plLocked

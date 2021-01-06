@@ -166,7 +166,7 @@
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"section id: {sectionId}");
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 

@@ -23,25 +23,21 @@
       @Model.CourseTitle
     </h1>
     <h2 class="nhsuk-u-secondary-text-color">
-      @Model.AssessmentStatus
+      @Model.GetAssessmentStatus()
     </h2>
   </div>
 </div>
 
-<div class="nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
-  <h3 class="nhsuk-heading-s">Important information:</h3>
-  <ul class="nhsuk-list nhsuk-list--bullet">
-    <li>Your score will be reset for any areas that you have attempted previously and choose to attempt again.</li>
-    <li>Please allow sufficient time to complete the assessment. If you close part way through, your progress will not be stored.</li>
-    <li>Throughout most assessments, green or red indicators will appear to indicate whether you have answered correctly.</li>
-    <li>Most keyboard shortcuts will be disabled in the assessment because we are unable to capture them in the testing software. If in doubt, use the mouse.</li>
-  </ul>
-</div>
-@if (Model.PostLearningLocked) {
+<partial name="Shared/_AssessmentPageImportantInformation" />
+
+@if (Model.PostLearningLocked)
+{
   <p class="nhsuk-u-secondary-text-color">
     The assessment is locked as there have been too many failed attempts.
   </p>
-} else {
+}
+else
+{
   <button class="nhsuk-button nhsuk-u-margin-bottom-4">Start assessment</button>
 }
 
