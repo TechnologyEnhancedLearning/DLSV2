@@ -27,7 +27,7 @@
 
 <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
 
-  @if (Model.DiagnosticAttempts > 0)
+  @if (Model.DiagnosticScore != null && Model.DiagnosticAttempts > 0)
   {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">

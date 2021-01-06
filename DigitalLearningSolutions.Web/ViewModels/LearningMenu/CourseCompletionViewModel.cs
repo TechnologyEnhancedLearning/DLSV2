@@ -70,12 +70,12 @@
                 return null;
             }
 
-            if (isAssessed)
+            if (evaluated == null)
             {
-                return "Certificate";
+                return "Evaluate";
             }
 
-            return evaluated == null ? "Evaluate" : null;
+            return isAssessed ? "Certificate" : null;
         }
     }
 }

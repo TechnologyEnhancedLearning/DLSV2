@@ -249,11 +249,12 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed()
+        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed_and_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.Now,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -265,11 +266,12 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed()
+        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed_and_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.Now,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -281,7 +283,7 @@
         }
 
         [Test]
-        public void CourseCompletion_FinaliseText_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        public void CourseCompletion_FinaliseText_should_be_evaluate_when_course_is_assessed_and_not_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
@@ -294,11 +296,11 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.FinaliseText.Should().Be("Certificate");
+            courseCompletionViewModel.FinaliseText.Should().Be("Evaluate");
         }
 
         [Test]
-        public void CourseCompletion_FinaliseAriaLabel_should_be_certificate_when_course_is_assessed_and_not_evaluated()
+        public void CourseCompletion_FinaliseAriaLabel_should_be_evaluate_when_course_is_assessed_and_not_evaluated()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
@@ -311,7 +313,7 @@
             var courseCompletionViewModel = new CourseCompletionViewModel(config, expectedCourseCompletion, ProgressId);
 
             // Then
-            courseCompletionViewModel.FinaliseAriaLabel.Should().Be("View or print certificate");
+            courseCompletionViewModel.FinaliseAriaLabel.Should().Be("Evaluate course");
         }
 
         [Test]
