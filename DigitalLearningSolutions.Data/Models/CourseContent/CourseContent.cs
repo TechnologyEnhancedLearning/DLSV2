@@ -17,7 +17,7 @@
         public int PostLearningAssessmentPassThreshold { get; }
         public int DiagnosticAssessmentCompletionThreshold { get; }
         public int TutorialsCompletionThreshold { get; }
-        public string? CourseSettings { get; }
+        public CourseSettings CourseSettings { get; }
         public List<CourseSection> Sections { get; } = new List<CourseSection>();
 
         public CourseContent(
@@ -49,7 +49,7 @@
             PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;
             DiagnosticAssessmentCompletionThreshold = diagnosticAssessmentCompletionThreshold;
             TutorialsCompletionThreshold = tutorialsCompletionThreshold;
-            CourseSettings = courseSettings;
+            CourseSettings = new CourseSettings(courseSettings);
         }
     }
 }

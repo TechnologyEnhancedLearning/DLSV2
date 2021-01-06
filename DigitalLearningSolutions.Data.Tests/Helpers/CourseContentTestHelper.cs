@@ -161,5 +161,20 @@
                 new { candidateId, customisationId }
             );
         }
+
+        public void AddCourseSettings(int customisationId, string courseSettings)
+        {
+            connection.Execute(
+                @"UPDATE Applications
+                     SET CourseSettings = @courseSettings
+                    FROM Customisations
+
+                   INNER JOIN Applications
+                      ON Applications.ApplicationID = Customisations.ApplicationID
+
+                   WHERE Customisations.CustomisationID = @customisationId;",
+                new { customisationId, courseSettings }
+            );
+        }
     }
 }
