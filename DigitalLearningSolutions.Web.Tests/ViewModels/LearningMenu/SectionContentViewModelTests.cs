@@ -75,22 +75,34 @@
         }
 
         [Test]
-        public void Section_content_should_have_setting_consolidation_path_when_courseSetting_exercise_is_not_null()
+        public void Section_content_should_have_consolidationExerciseLabel_from_courseSetting()
         {
             // Given
-            const string consolidationPath = "consolidation/path";
-            const string consolidationPathFromSettings = "consolidation/path/fromsetting";
+            const string consolidationText = "Different consolidation description";
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                consolidationPath: consolidationPath,
-                courseSettings: "{\"lm:ce\":\"" + consolidationPathFromSettings + "\"}"
+                courseSettings: "{\"lm:ce\":\"" + consolidationText + "\"}"
             );
-            var expectedConsolidationPath = ContentUrlHelper.GetContentPath(config, consolidationPathFromSettings);
 
             // When
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.ConsolidationExercisePath.Should().Be(expectedConsolidationPath);
+            sectionContentViewModel.ConsolidationExerciseLabel.Should().Be(consolidationText);
+        }
+
+        [Test]
+        public void Section_content_should_have_default_consolidationExerciseLabel_when_courseSetting_is_empty()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                courseSettings: null
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ConsolidationExerciseLabel.Should().Be("Consolidation Exercise");
         }
 
         [Test]

@@ -20,6 +20,7 @@
         public string DiagnosticCompletionStatus { get; }
         public string? ConsolidationExercisePath { get; }
         public bool ShowConsolidation { get; }
+        public string ConsolidationExerciseLabel { get; }
         public IEnumerable<TutorialCardViewModel> Tutorials { get; }
         public bool DisplayDiagnosticSeparator { get; }
         public bool DisplayTutorialSeparator { get; }
@@ -37,11 +38,9 @@
             PostLearningStatus = GetPostLearningStatus(sectionContent);
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
-            ConsolidationExercisePath = ContentUrlHelper.GetNullableContentPath(
-                config,
-                sectionContent.CourseSettings.ConsolidationExercise ?? sectionContent.ConsolidationPath
-            );
+            ConsolidationExercisePath = ContentUrlHelper.GetNullableContentPath(config, sectionContent.ConsolidationPath);
             ShowConsolidation = ConsolidationExercisePath != null;
+            ConsolidationExerciseLabel = sectionContent.CourseSettings.ConsolidationExercise ?? "Consolidation Exercise";
 
             Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(
                 tutorial,
