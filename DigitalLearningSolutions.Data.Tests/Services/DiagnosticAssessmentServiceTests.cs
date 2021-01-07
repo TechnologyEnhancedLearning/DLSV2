@@ -206,22 +206,19 @@
             int progressId
         )
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var tutorialIdsReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
-                    .TutorialsFromOldStoredProcedure(progressId, sectionId)
-                    .Select(tutorial => tutorial.TutorialId);
+            // Given
+            var tutorialIdsReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
+                .TutorialsFromOldStoredProcedure(progressId, sectionId)
+                .Select(tutorial => tutorial.TutorialId);
 
-                // When
-                var sectionIdsInCourseContent = diagnosticAssessmentService
-                    .GetDiagnosticAssessment(customisationId, candidateId, sectionId)?
-                    .Tutorials
-                    .Select(section => section.Id);
+            // When
+            var sectionIdsInCourseContent = diagnosticAssessmentService
+                .GetDiagnosticAssessment(customisationId, candidateId, sectionId)?
+                .Tutorials
+                .Select(section => section.Id);
 
-                // Then
-                sectionIdsInCourseContent.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
-            }
+            // Then
+            sectionIdsInCourseContent.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
         }
 
         [TestCase(70093, 3452, 110, 38227)]
