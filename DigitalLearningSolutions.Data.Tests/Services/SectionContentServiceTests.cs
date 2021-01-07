@@ -49,7 +49,8 @@
                 1,
                 1,
                 true,
-                true
+                true,
+                null
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -112,7 +113,8 @@
                 0,
                 0,
                 true,
-                true
+                true,
+                null
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -155,7 +157,8 @@
                 0,
                 0,
                 true,
-                true
+                true,
+                null
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -222,7 +225,8 @@
                 0,
                 0,
                 true,
-                false
+                false,
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -252,7 +256,8 @@
                 0,
                 0,
                 false,
-                true
+                true,
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -282,7 +287,8 @@
                 0,
                 0,
                 false,
-                false
+                false,
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -361,6 +367,62 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_can_have_consolidation_path()
+        {
+            // Given
+            const int customisationId = 1499;
+            const int candidateId = 6;
+            const int sectionId = 74;
+            const string expectedConsolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip";
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.ConsolidationPath.Should().Be(expectedConsolidationPath);
+        }
+
+        [Test]
+        public void Get_section_content_can_have_no_consolidation_path_but_still_return()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 382;
+            var expectedSectionContent = new SectionContent(
+                "Office 2013 Essentials for the Workplace",
+                "Erin Test 01",
+                "Working with Microsoft Office applications",
+                true,
+                0,
+                0,
+                13,
+                "https://www.dls.nhs.uk/CMS/CMSContent/Course120/Diagnostic/01-Diag-Working-with-Microsoft-Office-applications/itspplayer.html",
+                "https://www.dls.nhs.uk/CMS/CMSContent/Course120/PLAssess/01-PLA-Working-with-Microsoft-Office-applications/itspplayer.html",
+                1,
+                1,
+                true,
+                true,
+                null
+            );
+            expectedSectionContent.Tutorials.AddRange(
+                new[]
+                {
+                    new SectionTutorial("Introduction to applications", 0, "Not started", 0, 17, 1461, true),
+                    new SectionTutorial("Common screen elements", 0, "Not started", 0, 11, 1462, true),
+                    new SectionTutorial("Using ribbon tabs", 0, "Not started", 0, 6, 1463, true),
+                    new SectionTutorial("Getting help", 0, "Not started", 0, 11, 1464, true)
+                }
+            );
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedSectionContent);
         }
     }
 }
