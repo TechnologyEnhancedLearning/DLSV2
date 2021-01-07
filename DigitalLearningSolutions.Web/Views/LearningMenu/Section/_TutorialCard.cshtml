@@ -3,21 +3,28 @@
 <div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-three-quarters">
+      <div class="@(Model.ShowLearnStatus ? "nhsuk-grid-column-three-quarters" : "nhsuk-grid-column-full")">
         <h3 class="nhsuk-card__heading" id="@Model.Id-name">
           @Model.TutorialName
         </h3>
-        <p class="nhsuk-u-secondary-text-color">
-          @Model.TimeSpentInformation
-          <span class="visually-hidden">on this tutorial</span>
-          @Model.AverageTimeInformation
-        </p>
+
+        @if (Model.ShowTime)
+        {
+          <p class="nhsuk-u-secondary-text-color">
+            @Model.TimeSpentInformation
+            <span class="visually-hidden">on this tutorial</span>
+            @Model.AverageTimeInformation
+          </p>
+        }
       </div>
-      <div class="nhsuk-grid-column-one-quarter">
-        <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color">
-          @Model.CompletionStatus
-        </h3>
-      </div>
+      @if (Model.ShowLearnStatus)
+      {
+        <div class="nhsuk-grid-column-one-quarter">
+          <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color">
+            @Model.CompletionStatus
+          </h3>
+        </div>
+      }
     </div>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">

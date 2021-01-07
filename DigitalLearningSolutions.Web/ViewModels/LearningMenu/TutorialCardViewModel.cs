@@ -11,8 +11,16 @@
         public string AverageTimeInformation { get; }
         public int SectionId { get; }
         public int CustomisationId { get; }
+        public bool ShowTime { get; }
+        public bool ShowLearnStatus { get; }
 
-        public TutorialCardViewModel(SectionTutorial tutorial, int sectionId, int customisationId)
+        public TutorialCardViewModel(
+            SectionTutorial tutorial,
+            bool showTime,
+            bool showLearnStatus,
+            int sectionId,
+            int customisationId
+        )
         {
             Id = tutorial.Id;
             TutorialName = tutorial.TutorialName;
@@ -23,6 +31,8 @@
             AverageTimeInformation = tutorial.AverageTutorialTime == 1
                 ? $"(average tutorial time {tutorial.AverageTutorialTime} minute)"
                 : $"(average tutorial time {tutorial.AverageTutorialTime} minutes)";
+            ShowTime = showTime && showLearnStatus;
+            ShowLearnStatus = showLearnStatus;
             SectionId = sectionId;
             CustomisationId = customisationId;
         }
