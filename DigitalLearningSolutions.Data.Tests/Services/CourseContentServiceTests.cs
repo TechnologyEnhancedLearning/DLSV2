@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -47,7 +48,8 @@
                 true,
                 85,
                 90,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -92,7 +94,8 @@
                 true,
                 85,
                 90,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -137,7 +140,8 @@
                 true,
                 85,
                 0,
-                100
+                100,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -179,7 +183,8 @@
                 true,
                 85,
                 0,
-                100
+                100,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -225,7 +230,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -274,7 +280,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -325,7 +332,8 @@
                     true,
                     85,
                     85,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -383,7 +391,8 @@
                 true,
                 85,
                 85,
-                0
+                0,
+                null
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -429,7 +438,8 @@
                     true,
                     85,
                     90,
-                    0
+                    0,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -479,7 +489,8 @@
                     false,
                     85,
                     0,
-                    100
+                    100,
+                    null
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -550,6 +561,45 @@
             formattedResult.Should().Be(durationFromOldStoredFunction);
         }
 
+        [Test]
+        public void Get_course_content_should_parse_course_settings()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 254480;
+                const int customisationId = 24224;
+                const string courseSettingsText =
+                    "{\"lm.sp\":false,\"lm.st\":false,\"lm.sl\":false,\"df.sd\":false,\"df.sm\":false,\"df.ss\":false}";
+                var expectedCourseSettings = new CourseSettings(courseSettingsText);
+
+                courseContentTestHelper.AddCourseSettings(customisationId, courseSettingsText);
+
+                // When
+                var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.CourseSettings.Should().BeEquivalentTo(expectedCourseSettings);
+            }
+        }
+
+        [Test]
+        public void Get_course_content_should_have_default_course_settings_when_json_is_null()
+        {
+            // Given
+            const int candidateId = 254480;
+            const int customisationId = 24224;
+
+            var defaultSettings = new CourseSettings(null);
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.CourseSettings.Should().BeEquivalentTo(defaultSettings);
+        }
 
         [Test]
         public void Get_or_create_progress_id_should_return_progress_id_if_exists()
