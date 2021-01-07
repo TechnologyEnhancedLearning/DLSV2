@@ -5,8 +5,8 @@
 
     public class CourseSettings
     {
-        public readonly bool ShowPercentage = true;
-        public readonly bool ShowTime = true;
+        public bool ShowPercentage { get; } = true;
+        public bool ShowTime { get; } = true;
 
         public CourseSettings(string? settingsText)
         {
