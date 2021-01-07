@@ -14,10 +14,12 @@
         {
             // Given
             const bool hasLearning = false;
+            const bool showPercentageCourseSetting = true;
+
             var section = CourseSectionHelper.CreateDefaultCourseSection(hasLearning: hasLearning);
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be("");
@@ -29,16 +31,38 @@
             // Given
             const bool hasLearning = true;
             const double percentComplete = 12.00;
+            const bool showPercentageCourseSetting = true;
+
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
+        }
+
+        [Test]
+        public void Section_should_return_empty_string_if_showPercentageCourseSetting_is_false()
+        {
+            // Given
+            const bool hasLearning = true;
+            const double percentComplete = 12.00;
+            const bool showPercentageCourseSetting = false;
+
+            var section = CourseSectionHelper.CreateDefaultCourseSection(
+                hasLearning: hasLearning,
+                percentComplete: percentComplete
+            );
+
+            // When
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
+
+            // Then
+            sectionCardViewModel.PercentComplete.Should().Be("");
         }
 
         [Test]
@@ -46,10 +70,11 @@
         {
             // Given
             const int customisationId = 10;
+            const bool showPercentageCourseSetting = true;
             var section = CourseSectionHelper.CreateDefaultCourseSection();
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, customisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, customisationId, showPercentageCourseSetting);
 
             // Then
             sectionCardViewModel.CustomisationId.Should().Be(customisationId);
@@ -62,13 +87,14 @@
             const bool hasLearning = true;
             const double percentComplete = 16.6666666667;
             const double percentCompleteRounded = 17;
+            const bool showPercentageCourseSetting = true;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
                 percentComplete: percentComplete
             );
 
             // When
-            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId);
+            var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
 
             // Then
             sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");

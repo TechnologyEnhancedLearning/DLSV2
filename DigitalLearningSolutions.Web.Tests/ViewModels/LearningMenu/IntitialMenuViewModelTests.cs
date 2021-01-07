@@ -173,6 +173,55 @@
         }
 
         [Test]
+        public void Initial_menu_should_have_true_show_time()
+        {
+            // Given
+            const string courseSettings = "{\"lm.st\":true}"; // ShowTime = true
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                courseSettings: courseSettings
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.ShowTime.Should().BeTrue();
+        }
+
+        [Test]
+        public void Initial_menu_should_have_false_show_time_if_setting_is_false()
+        {
+            // Given
+            const string courseSettings = "{\"lm.st\":false}"; // ShowTime = false
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                courseSettings: courseSettings
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.ShowTime.Should().BeFalse();
+        }
+
+        [Test]
+        public void Initial_menu_should_have_false_show_time_if_time_is_null()
+        {
+            // Given
+            const string courseSettings = "{\"lm.st\":true}"; // ShowTime = true
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: null,
+                courseSettings: courseSettings
+            );
+
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.ShowTime.Should().BeFalse();
+        }
+
+        [Test]
         public void Initial_menu_can_have_banner_text()
         {
             // Given
@@ -243,10 +292,20 @@
             const bool hasLearning = true;
             const double percentComplete = 12.00;
             const int customisationId = 1;
-            var courseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId: customisationId);
-            var section = CourseSectionHelper.CreateDefaultCourseSection(sectionName: sectionName, hasLearning: hasLearning, percentComplete: percentComplete);
+            const bool showPercentage = true;
+            const string courseSettings = "{\"lm.sp\":true}"; // ShowPercentage = true
+
+            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
+                customisationId: customisationId,
+                courseSettings: courseSettings
+            );
+            var section = CourseSectionHelper.CreateDefaultCourseSection(
+                sectionName: sectionName,
+                hasLearning: hasLearning,
+                percentComplete: percentComplete
+            );
             courseContent.Sections.Add(section);
-            var expectedSection = new SectionCardViewModel(section, customisationId);
+            var expectedSection = new SectionCardViewModel(section, customisationId, showPercentage);
             var expectedSectionList = new List<SectionCardViewModel>
             {
                 expectedSection

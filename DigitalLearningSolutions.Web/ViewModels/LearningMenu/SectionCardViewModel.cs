@@ -9,11 +9,13 @@
         public string PercentComplete { get; }
         public int CustomisationId { get; }
 
-        public SectionCardViewModel(CourseSection section, int customisationId)
+        public SectionCardViewModel(CourseSection section, int customisationId, bool showPercentageCourseSetting)
         {
             Title = section.Title;
             SectionId = section.Id;
-            PercentComplete = section.HasLearning ? $"{section.PercentComplete:f0}% Complete" : "";
+            PercentComplete = section.HasLearning && showPercentageCourseSetting
+                ? $"{section.PercentComplete:f0}% Complete"
+                : "";
             CustomisationId = customisationId;
         }
     }

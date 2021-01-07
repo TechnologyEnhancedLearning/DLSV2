@@ -18,6 +18,7 @@
         public string CompletionStatus { get; }
         public string CompletionStyling { get; }
         public string CompletionSummary { get; }
+        public bool ShowTime { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
         {
@@ -28,7 +29,12 @@
             CentreName = courseContent.CentreName;
             BannerText = courseContent.BannerText;
             ShouldShowCompletionSummary = courseContent.IncludeCertification;
-            Sections = courseContent.Sections.Select(section => new SectionCardViewModel(section, Id));
+            Sections = courseContent.Sections.Select(section => new SectionCardViewModel(
+                section,
+                Id,
+                courseContent.CourseSettings.ShowPercentage
+            ));
+
             CompletionStatus = courseContent.Completed == null ? "Incomplete" : "Complete";
             CompletionStyling = courseContent.Completed == null ? "incomplete" : "complete";
             CompletionSummary = CompletionSummaryHelper.GetCompletionSummary(
@@ -39,6 +45,7 @@
                 courseContent.DiagnosticAssessmentCompletionThreshold,
                 courseContent.TutorialsCompletionThreshold
             );
+            ShowTime = AverageDuration != null && courseContent.CourseSettings.ShowTime;
         }
 
         private static string? FormatDuration(int? duration)
