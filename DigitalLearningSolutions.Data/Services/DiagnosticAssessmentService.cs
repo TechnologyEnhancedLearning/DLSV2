@@ -95,5 +95,60 @@
                 splitOn: "TutorialName"
             ).FirstOrDefault();
         }
+
+        public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId)
+        {
+            DiagnosticContent? diagnosticContent = null;
+            return connection.Query<DiagnosticContent, int?, DiagnosticContent>(
+                @"
+                    SELECT
+                        Applications.ApplicationName,
+                        Customisations.CustomisationName,
+                        Sections.SectionName,
+                        Sections.DiagAssessPath,
+                        Customisations.DiagObjSelect,
+                        Applications.PLAPassThreshold,
+                        Customisations.CurrentVersion,
+                        CASE WHEN Tutorials.OriginalTutorialID > 0
+                            THEN Tutorials.OriginalTutorialID
+                            ELSE Tutorials.TutorialID
+                        END AS id
+                    FROM Sections
+                        INNER JOIN Customisations
+                            ON Customisations.ApplicationID = Sections.ApplicationID
+                            AND Customisations.Active = 1
+                        INNER JOIN Applications
+                            ON Applications.ApplicationID = Sections.ApplicationID
+                        INNER JOIN CustomisationTutorials
+                            ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                            AND CustomisationTutorials.DiagStatus = 1
+                        INNER JOIN Tutorials
+                            ON Tutorials.TutorialID = CustomisationTutorials.TutorialID
+                            AND Tutorials.SectionID = Sections.SectionID
+                            AND Tutorials.DiagAssessOutOf > 0
+                            AND Tutorials.ArchivedDate IS NULL
+                    WHERE
+                        Customisations.CustomisationID = @customisationId
+                        AND Sections.SectionID = @sectionId
+                        AND Sections.ArchivedDate IS NULL
+                        AND Sections.DiagAssessPath IS NOT NULL
+                    ORDER BY
+                        Tutorials.OrderByNumber,
+                        Tutorials.TutorialID",
+                (diagnostic, tutorialId) =>
+                {
+                    if (diagnosticContent == null)
+                    {
+                        diagnosticContent = diagnostic;
+                    }
+
+                    diagnosticContent.Tutorials.Add(tutorialId.Value);
+
+                    return diagnosticContent;
+                },
+                new { customisationId, sectionId },
+                splitOn: "id"
+            ).FirstOrDefault();
+        }
     }
 }
