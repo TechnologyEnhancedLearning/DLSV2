@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
@@ -56,24 +57,124 @@
         }
 
         [Test]
-        public void Section_content_without_has_learning_should_have_empty_percent_complete()
+        public void Section_content_should_have_consolidation_path_when_courseSetting_exercise_is_null()
         {
             // Given
-            const bool hasLearning = false;
+            const string consolidationPath = "consolidation/path";
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                consolidationPath: consolidationPath,
+                courseSettings: null
+            );
+            var expectedConsolidationPath = ContentUrlHelper.GetContentPath(config, consolidationPath);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ConsolidationExercisePath.Should().Be(expectedConsolidationPath);
+        }
+
+        [Test]
+        public void Section_content_should_have_consolidationExerciseLabel_from_courseSetting()
+        {
+            // Given
+            const string consolidationText = "Different consolidation description";
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                courseSettings: "{\"lm:ce\":\"" + consolidationText + "\"}"
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ConsolidationExerciseLabel.Should().Be(consolidationText);
+        }
+
+        [Test]
+        public void Section_content_should_have_default_consolidationExerciseLabel_when_courseSetting_is_empty()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                courseSettings: null
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ConsolidationExerciseLabel.Should().Be("Consolidation Exercise");
+        }
+
+        [Test]
+        public void Section_content_with_has_learning_and_courseSetting_should_show_percent_complete()
+        {
+            // Given
+            const string courseSettings = "{\"lm.sp\":true}"; // ShowPercentage = true
             var tutorials = new[]
             {
                 SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
                 SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
                 SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
             };
-            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                hasLearning: true,
+                courseSettings: courseSettings
+            );
             sectionContent.Tutorials.AddRange(tutorials);
 
             // When
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be("");
+            sectionContentViewModel.ShowPercentComplete.Should().BeTrue();
+        }
+
+        [Test]
+        public void Section_content_without_has_learning_should_not_show_percent_complete()
+        {
+            // Given
+            const string courseSettings = "{\"lm.sp\":true}"; // ShowPercentage = true
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                hasLearning: false,
+                courseSettings: courseSettings
+            );
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowPercentComplete.Should().BeFalse();
+        }
+
+        [Test]
+        public void Section_content_with_false_showPercentage_course_setting_should_not_show_percent_complete()
+        {
+            // Given
+            const string courseSettings = "{\"lm.sp\":false}"; // ShowPercentage = false
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                hasLearning: true,
+                courseSettings: courseSettings
+            );
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowPercentComplete.Should().BeFalse();
         }
 
         [Test]

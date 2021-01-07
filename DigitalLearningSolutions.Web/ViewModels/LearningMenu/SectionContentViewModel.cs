@@ -10,6 +10,7 @@
     {
         public string CourseTitle { get; }
         public string SectionName { get; }
+        public bool ShowPercentComplete { get; }
         public string PercentComplete { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
@@ -19,6 +20,7 @@
         public string DiagnosticCompletionStatus { get; }
         public string? ConsolidationExercisePath { get; }
         public bool ShowConsolidation { get; }
+        public string ConsolidationExerciseLabel { get; }
         public IEnumerable<TutorialCardViewModel> Tutorials { get; }
         public bool DisplayDiagnosticSeparator { get; }
         public bool DisplayTutorialSeparator { get; }
@@ -28,7 +30,8 @@
         {
             CourseTitle = sectionContent.CourseTitle;
             SectionName = sectionContent.SectionName;
-            PercentComplete = sectionContent.HasLearning ? $"{GetPercentComplete(sectionContent):f0}% Complete" : "";
+            PercentComplete = FormatPercentComplete(sectionContent);
+            ShowPercentComplete = sectionContent.HasLearning && sectionContent.CourseSettings.ShowPercentage;
             CustomisationId = customisationId;
             SectionId = sectionId;
             ShowPostLearning = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
@@ -37,18 +40,30 @@
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             ConsolidationExercisePath = ContentUrlHelper.GetNullableContentPath(config, sectionContent.ConsolidationPath);
             ShowConsolidation = ConsolidationExercisePath != null;
-            Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(tutorial, sectionId, customisationId));
+            ConsolidationExerciseLabel = sectionContent.CourseSettings.ConsolidationExercise ?? "Consolidation Exercise";
+
+            Tutorials = sectionContent.Tutorials.Select(tutorial => new TutorialCardViewModel(
+                tutorial,
+                sectionContent.CourseSettings.ShowTime,
+                sectionContent.CourseSettings.ShowLearnStatus,
+                sectionId,
+                customisationId
+            ));
+
             DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning || ShowConsolidation);
             DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);
             DisplayPostLearningSeparator = ShowConsolidation && ShowPostLearning;
         }
 
-        private static double GetPercentComplete(SectionContent sectionContent)
+        private static string FormatPercentComplete(SectionContent sectionContent)
         {
             var totalStatus = sectionContent.Tutorials.Sum(tutorial => tutorial.TutorialStatus);
-            return sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
-                ? 0
-                : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
+            var percentage =
+                sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
+                    ? 0
+                    : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
+
+            return $"{percentage:f0}% Complete";
         }
 
         private static string GetPostLearningStatus(SectionContent sectionContent)

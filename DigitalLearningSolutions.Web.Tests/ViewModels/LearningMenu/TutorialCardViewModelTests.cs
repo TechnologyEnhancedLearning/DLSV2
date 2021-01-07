@@ -9,6 +9,8 @@
     {
         private const int CustomisationId = 5;
         private const int SectionId = 5;
+        private const bool ShowTime = true;
+        private const bool ShowLearnStatus = true;
 
         [Test]
         public void Tutorial_card_average_time_spent_string_should_have_plural_if_value_is_not_one()
@@ -20,7 +22,13 @@
             );
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.AverageTimeInformation.Should().Be($"(average tutorial time {averageTime} minutes)");
@@ -36,7 +44,13 @@
             );
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.AverageTimeInformation.Should().Be($"(average tutorial time {averageTime} minute)");
@@ -52,7 +66,13 @@
             );
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.TimeSpentInformation.Should().Be($"{tutTime} minutes spent");
@@ -68,10 +88,111 @@
             );
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.TimeSpentInformation.Should().Be($"{tutTime} minute spent");
+        }
+
+        [Test]
+        public void Tutorial_card_should_show_time_if_courseSettings_are_true()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                showTime: true,
+                showLearnStatus: true,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialCardViewModel.ShowTime.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_time_if_showTime_courseSetting_is_false()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                showTime: false,
+                showLearnStatus: true,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialCardViewModel.ShowTime.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_time_if_showLearnStatus_is_false()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                showTime: true,
+                showLearnStatus: false,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialCardViewModel.ShowTime.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_card_should_show_learning_status_if_showLearnStatus_is_true()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                showTime: true,
+                showLearnStatus: true,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialCardViewModel.ShowLearnStatus.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_learning_status_if_showLearnStatus_is_false()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                showTime: true,
+                showLearnStatus: false,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialCardViewModel.ShowLearnStatus.Should().BeFalse();
         }
 
         [Test]
@@ -81,7 +202,13 @@
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.CustomisationId.Should().Be(CustomisationId);
@@ -94,7 +221,13 @@
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
 
             // When
-            var tutorialCardViewModel = new TutorialCardViewModel(sectionTutorial, CustomisationId, SectionId);
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId
+            );
 
             // Then
             tutorialCardViewModel.SectionId.Should().Be(SectionId);
