@@ -23,10 +23,10 @@
             return connection.Query<OldTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
         }
 
-        public IEnumerable<OldScores> ScoresFromOldStoredProcedure(int progressId, int sectionId)
+        public OldScores? ScoresFromOldStoredProcedure(int progressId, int sectionId)
         {
             return connection.Query<OldScores>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure)
-                .Where(section => section.SectionId == sectionId);
+                .FirstOrDefault(section => section.SectionId == sectionId);
         }
     }
 }

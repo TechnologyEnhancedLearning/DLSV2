@@ -237,8 +237,7 @@
         {
             // Given
             var scoresReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
-                .ScoresFromOldStoredProcedure(progressId, sectionId)
-                .FirstOrDefault();
+                .ScoresFromOldStoredProcedure(progressId, sectionId);
 
             // When
             var sectionInCourseContent = diagnosticAssessmentService
