@@ -179,7 +179,6 @@
             const string courseSettings = "{\"lm.st\":true}"; // ShowTime = true
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
                 courseSettings: courseSettings
-
             );
 
             // When
@@ -190,13 +189,29 @@
         }
 
         [Test]
-        public void Initial_menu_should_have_false_show_time()
+        public void Initial_menu_should_have_false_show_time_if_setting_is_false()
         {
             // Given
             const string courseSettings = "{\"lm.st\":false}"; // ShowTime = false
             var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
                 courseSettings: courseSettings
+            );
 
+            // When
+            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
+
+            // Then
+            initialMenuViewModel.ShowTime.Should().BeFalse();
+        }
+
+        [Test]
+        public void Initial_menu_should_have_false_show_time_if_time_is_null()
+        {
+            // Given
+            const string courseSettings = "{\"lm.st\":true}"; // ShowTime = true
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
+                averageDuration: null,
+                courseSettings: courseSettings
             );
 
             // When
