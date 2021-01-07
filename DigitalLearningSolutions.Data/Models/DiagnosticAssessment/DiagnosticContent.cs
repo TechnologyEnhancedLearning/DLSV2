@@ -5,9 +5,11 @@
     public class DiagnosticContent
     {
         public string CourseTitle { get; }
+        public int PassThreshold { get; }
+        public bool CanSelectTutorials { get; }
+        public int Version { get; }
         public string SectionName { get; }
         public string DiagnosticAssessmentPath { get; }
-        public bool CanSelectTutorials { get; }
         public List<int> Tutorials { get; } = new List<int>();
 
         public DiagnosticContent(
@@ -15,13 +17,17 @@
             string customisationName,
             string sectionName,
             string diagAssessPath,
-            bool diagObjSelect
+            bool diagObjSelect,
+            int plaPassThreshold,
+            int currentVersion
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
             DiagnosticAssessmentPath = diagAssessPath;
             CanSelectTutorials = diagObjSelect;
+            PassThreshold = plaPassThreshold;
+            Version = currentVersion;
         }
     }
 }

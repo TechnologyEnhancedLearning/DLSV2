@@ -99,7 +99,7 @@
         public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId)
         {
             DiagnosticContent? diagnosticContent = null;
-            return connection.Query<DiagnosticContent, int, DiagnosticContent>(
+            return connection.Query<DiagnosticContent, int?, DiagnosticContent>(
                 @"
                     SELECT
                         Applications.ApplicationName,
@@ -107,6 +107,8 @@
                         Sections.SectionName,
                         Sections.DiagAssessPath,
                         Customisations.DiagObjSelect,
+                        Applications.PLAPassThreshold,
+                        Customisations.CurrentVersion,
                         Tutorials.TutorialID AS id
                     FROM Sections
                         INNER JOIN Customisations
@@ -116,10 +118,10 @@
                             ON Applications.ApplicationID = Sections.ApplicationID
                         INNER JOIN CustomisationTutorials
                             ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
-                        INNER JOIN Tutorials
+                        LEFT JOIN Tutorials
                             ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
                             AND Tutorials.SectionID = Sections.SectionID
-                            AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                            AND CustomisationTutorials.Status = 1
                     WHERE
                         Customisations.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId
@@ -135,7 +137,10 @@
                         diagnosticContent = diagnostic;
                     }
 
-                    diagnosticContent.Tutorials.Add(tutorialId);
+                    if (tutorialId != null)
+                    {
+                        diagnosticContent.Tutorials.Add(tutorialId.Value);
+                    }
 
                     return diagnosticContent;
                 },

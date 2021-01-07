@@ -269,7 +269,9 @@
                 "UHL",
                 "Working with graphics and multimedia",
                 "https://www.dls.nhs.uk/tracking/MOST/PowerPoint10/Assess/L2_PowerPoint_2010_Diag_5.dcr",
-                true
+                true,
+                85,
+                2
             );
             expectedDiagnosticContent.Tutorials.AddRange(
                 new[] { 658, 659, 660, 661, 662 }
@@ -278,25 +280,24 @@
         }
 
         [Test]
-        public void Get_diagnostic_content_should_return_content_if_only_is_assessed_is_true()
+        public void Get_diagnostic_content_can_return_no_tutorials()
         {
             // Given
-            const int customisationId = 2684;
-            const int sectionId = 74;
+            const int customisationId = 5694;
+            const int sectionId = 103;
 
             // When
             var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
 
             // Then
             var expectedDiagnosticContent = new DiagnosticContent(
-                "Level 2 - Microsoft Word 2007",
-                "Styles and Working with References",
+                "Level 2 - Microsoft Word 2010",
+                "Diag Only",
                 "Working with documents",
-                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Diag_1.dcr",
-                true
-            );
-            expectedDiagnosticContent.Tutorials.AddRange(
-                new[] { 49, 50, 51, 52 }
+                "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Diag_1.dcr",
+                true,
+                85,
+                3
             );
             result.Should().BeEquivalentTo(expectedDiagnosticContent);
         }
@@ -335,20 +336,6 @@
             // When
             const int customisationId = 14212;
             const int sectionId = 261;
-            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_diagnostic_content_should_return_null_if_diag_status_and_status_and_is_assessed_are_false()
-        {
-            // Given
-            const int customisationId = 1530;
-            const int sectionId = 74;
-
-            // When
             var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
 
             // Then
