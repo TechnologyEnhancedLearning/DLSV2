@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -50,6 +51,7 @@
                 1,
                 true,
                 true,
+                null,
                 null
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -63,7 +65,7 @@
             );
             result.Should().BeEquivalentTo(expectedSectionContent);
         }
-        
+
         [Test]
         public void Get_section_content_should_return_null_if_customisation_id_is_invalid()
         {
@@ -114,6 +116,7 @@
                 0,
                 true,
                 true,
+                null,
                 null
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -158,6 +161,7 @@
                 0,
                 true,
                 true,
+                null,
                 null
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -226,7 +230,8 @@
                 0,
                 true,
                 false,
-                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
+                null
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -257,7 +262,8 @@
                 0,
                 false,
                 true,
-                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
+                null
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -288,7 +294,8 @@
                 0,
                 false,
                 false,
-                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
+                null
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -406,6 +413,7 @@
                 1,
                 true,
                 true,
+                null,
                 null
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -423,6 +431,48 @@
 
             // Then
             result.Should().BeEquivalentTo(expectedSectionContent);
+        }
+
+        [Test]
+        public void Get_section_content_should_parse_course_settings()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 15853;
+                const int candidateId = 1;
+                const int sectionId = 382;
+                const string courseSettingsText =
+                    "{\"lm.sp\":false,\"lm.st\":false,\"lm.sl\":false,\"df.sd\":false,"
+                   + "\"df.sm\":false,\"df.ss\":false,\"lm:ce\":\"consolidation/exercise\"}";
+                var expectedCourseSettings = new CourseSettings(courseSettingsText);
+
+                courseContentTestHelper.AddCourseSettings(customisationId, courseSettingsText);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.CourseSettings.Should().BeEquivalentTo(expectedCourseSettings);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_should_have_default_course_settings_when_json_is_null()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 382;
+            var defaultSettings = new CourseSettings(null);
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.CourseSettings.Should().BeEquivalentTo(defaultSettings);
         }
     }
 }
