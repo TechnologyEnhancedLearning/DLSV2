@@ -403,10 +403,21 @@
         }
 
         [TestCase(true, true, true, true, true)]
+        [TestCase(true, true, true, false, true)]
+        [TestCase(true, true, false, true, true)]
+        [TestCase(true, true, false, false, true)]
         [TestCase(true, false, true, true, true)]
+        [TestCase(true, false, true, false, true)]
         [TestCase(true, false, false, true, true)]
         [TestCase(true, false, false, false, false)]
         [TestCase(false, true, true, true, false)]
+        [TestCase(false, true, true, false, false)]
+        [TestCase(false, true, false, true, false)]
+        [TestCase(false, true, false, false, false)]
+        [TestCase(false, false, true, true, false)]
+        [TestCase(false, false, true, false, false)]
+        [TestCase(false, false, false, true, false)]
+        [TestCase(false, false, false, false, false)]
         public void Diagnostic_assessment_separator_displays_in_correct_situations(
             bool showDiagnosticAssessment,
             bool showTutorials,
@@ -443,8 +454,12 @@
 
         [TestCase(true, true, true, true)]
         [TestCase(true, false, true, true)]
+        [TestCase(true, true, false, true)]
         [TestCase(true, false, false, false)]
         [TestCase(false, true, true, false)]
+        [TestCase(false, false, true, false)]
+        [TestCase(false, true, false, false)]
+        [TestCase(false, false, false, false)]
         public void Tutorial_separator_displays_in_correct_situations(
             bool showTutorials,
             bool showPostLearningAssessment,
@@ -480,6 +495,7 @@
         [TestCase(true, true, true)]
         [TestCase(true, false, false)]
         [TestCase(false, true, false)]
+        [TestCase(false, false, false)]
         public void Post_learning_separator_displays_in_correct_situations(
             bool showPostLearningAssessment,
             bool showConsolidationExercise,
