@@ -36,13 +36,14 @@
                         COALESCE (aspProgress.DiagAttempts, 0) AS DiagAttempts,
                         COALESCE (aspProgress.DiagLast, 0) AS DiagLast,
                         Tutorials.DiagAssessOutOf,
-                        Sections.DiagAssessPath, 
+                        Sections.DiagAssessPath,
                         Sections.PLAssessPath,
                         COALESCE (Attempts.AttemptsPL, 0) AS AttemptsPL,
                         COALESCE (Attempts.PLPasses, 0) AS PLPasses,
                         CustomisationTutorials.DiagStatus,
                         Customisations.IsAssessed,
                         Sections.ConsolidationPath,
+                        Applications.CourseSettings,
                         Tutorials.TutorialName,
                         COALESCE (aspProgress.TutStat, 0) AS TutStat,
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,
@@ -102,7 +103,7 @@
                     {
                         sectionContent.Tutorials.Add(tutorial);
                     }
-                    
+
                     return sectionContent;
                 },
                 new { customisationId, candidateId, sectionId },

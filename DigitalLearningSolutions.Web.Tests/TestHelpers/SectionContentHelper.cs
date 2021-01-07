@@ -18,7 +18,8 @@
             int plPasses = 1,
             bool diagStatus = true,
             bool isAssessed = true,
-            string? consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip"
+            string? consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
+            string? courseSettings = null
         )
         {
             return new SectionContent(
@@ -35,7 +36,8 @@
                 plPasses,
                 diagStatus,
                 isAssessed,
-                consolidationPath
+                consolidationPath,
+                courseSettings
             );
         }
     }

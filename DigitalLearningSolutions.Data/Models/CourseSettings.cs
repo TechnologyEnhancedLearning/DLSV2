@@ -7,6 +7,8 @@
     {
         public bool ShowPercentage { get; } = true;
         public bool ShowTime { get; } = true;
+        public bool ShowLearnStatus { get; } = true;
+        public string? ConsolidationExercise { get; } = null;
 
         public CourseSettings(string? settingsText)
         {
@@ -19,6 +21,11 @@
             {
                 var settings = JsonConvert.DeserializeObject<Dictionary<string, object>>(settingsText);
 
+                if (settings == null)
+                {
+                    return;
+                }
+
                 if (settings.ContainsKey("lm.sp") && settings["lm.sp"] is bool)
                 {
                     ShowPercentage = (bool)settings["lm.sp"];
@@ -27,6 +34,16 @@
                 if (settings.ContainsKey("lm.st") && settings["lm.st"] is bool)
                 {
                     ShowTime = (bool)settings["lm.st"];
+                }
+
+                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool)
+                {
+                    ShowLearnStatus = (bool)settings["lm.sl"];
+                }
+
+                if (settings.ContainsKey("lm:ce") && settings["lm:ce"] is string)
+                {
+                    ConsolidationExercise = (string)settings["lm:ce"];
                 }
             }
             catch (JsonException)
