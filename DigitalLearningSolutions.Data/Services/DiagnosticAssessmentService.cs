@@ -109,7 +109,10 @@
                         Customisations.DiagObjSelect,
                         Applications.PLAPassThreshold,
                         Customisations.CurrentVersion,
-                        Tutorials.TutorialID AS id
+                        CASE WHEN Tutorials.OriginalTutorialID > 0
+		                    THEN Tutorials.OriginalTutorialID
+		                    ELSE Tutorials.TutorialID
+	                    END AS id
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID
@@ -118,10 +121,12 @@
                             ON Applications.ApplicationID = Sections.ApplicationID
                         INNER JOIN CustomisationTutorials
                             ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
-                        LEFT JOIN Tutorials
-                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+		                    AND CustomisationTutorials.DiagStatus = 1
+                        INNER JOIN Tutorials
+                            ON Tutorials.TutorialID = CustomisationTutorials.TutorialID
                             AND Tutorials.SectionID = Sections.SectionID
-                            AND CustomisationTutorials.Status = 1
+		                    AND Tutorials.DiagAssessOutOf > 0
+		                    AND Tutorials.ArchivedDate IS NULL
                     WHERE
                         Customisations.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId
@@ -137,10 +142,7 @@
                         diagnosticContent = diagnostic;
                     }
 
-                    if (tutorialId != null)
-                    {
-                        diagnosticContent.Tutorials.Add(tutorialId.Value);
-                    }
+                    diagnosticContent.Tutorials.Add(tutorialId.Value);
 
                     return diagnosticContent;
                 },

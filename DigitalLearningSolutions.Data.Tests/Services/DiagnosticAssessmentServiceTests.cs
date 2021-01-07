@@ -165,7 +165,7 @@
         }
 
         [Test]
-        public void Get_diagnostic_assessment_should_return_null_if_archived_date_is_null()
+        public void Get_diagnostic_assessment_should_return_null_if_archived_date_is_not_null()
         {
             // When
             const int customisationId = 14212;
@@ -254,47 +254,76 @@
         public void Get_diagnostic_content_should_return_diagnostic_content()
         {
             // Given
-            const int customisationId = 5032;
-            const int sectionId = 156;
+            const int customisationId = 16588;
+            const int sectionId = 172;
 
             // When
             var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
 
             // Then
             var expectedDiagnosticContent = new DiagnosticContent(
-                "Level 2 - Microsoft PowerPoint 2010",
-                "UHL",
-                "Working with graphics and multimedia",
-                "https://www.dls.nhs.uk/tracking/MOST/PowerPoint10/Assess/L2_PowerPoint_2010_Diag_5.dcr",
+                "Level 1 - Microsoft Word 2010",
+                "Beginner",
+                "Proofing and printing",
+                "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.03_Diag.dcr",
                 true,
                 85,
                 2
             );
             expectedDiagnosticContent.Tutorials.AddRange(
-                new[] { 658, 659, 660, 661, 662 }
+                new[] { 733, 734, 735, 736 }
             );
             result.Should().BeEquivalentTo(expectedDiagnosticContent);
         }
 
         [Test]
-        public void Get_diagnostic_content_can_return_no_tutorials()
+        public void Get_diagnostic_content_should_not_return_tutorials_where_diagAssess_is_zero()
         {
             // Given
-            const int customisationId = 5694;
-            const int sectionId = 103;
+            const int customisationId = 14416;
+            const int sectionId = 214;
 
             // When
             var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
 
             // Then
             var expectedDiagnosticContent = new DiagnosticContent(
-                "Level 2 - Microsoft Word 2010",
-                "Diag Only",
-                "Working with documents",
-                "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Diag_1.dcr",
+                "Entry Level - Win 7, Office 2010",
+                "ESR",
+                "Switching on and off",
+                "https://www.dls.nhs.uk/tracking/entrylevel/win7/Assess/ELW7_0.03_Diag.dcr",
                 true,
                 85,
-                3
+                1
+            );
+            expectedDiagnosticContent.Tutorials.AddRange(
+                new[] { 909, 910, 913, 914, 915, 916 }
+            );
+            result.Should().BeEquivalentTo(expectedDiagnosticContent);
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_not_return_tutorials_where_archived_date_is_null()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 249;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            var expectedDiagnosticContent = new DiagnosticContent(
+                "Combined Office Course",
+                "Word, Excel, and Outlook",
+                "Working with tables",
+                "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.06_Diag.dcr",
+                true,
+                85,
+                4
+            );
+            expectedDiagnosticContent.Tutorials.AddRange(
+                new[] { 1141, 1139, 1140 }
             );
             result.Should().BeEquivalentTo(expectedDiagnosticContent);
         }
@@ -328,7 +357,7 @@
         }
 
         [Test]
-        public void Get_diagnostic_content_should_return_null_if_archived_date_is_null()
+        public void Get_diagnostic_content_should_return_null_if_archived_date_is_not_null()
         {
             // When
             const int customisationId = 14212;
