@@ -95,5 +95,53 @@
                 splitOn: "TutorialName"
             ).FirstOrDefault();
         }
+
+        public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId)
+        {
+            DiagnosticContent? diagnosticContent = null;
+            return connection.Query<DiagnosticContent, int, DiagnosticContent>(
+                @"
+                    SELECT
+                        Applications.ApplicationName,
+                        Customisations.CustomisationName,
+                        Sections.SectionName,
+                        Sections.DiagAssessPath,
+                        Customisations.DiagObjSelect,
+                        Tutorials.TutorialID AS id
+                    FROM Sections
+                        INNER JOIN Customisations
+                            ON Customisations.ApplicationID = Sections.ApplicationID
+                            AND Customisations.Active = 1
+                        INNER JOIN Applications
+                            ON Applications.ApplicationID = Sections.ApplicationID
+                        INNER JOIN CustomisationTutorials
+                            ON CustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                        INNER JOIN Tutorials
+                            ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                            AND Tutorials.SectionID = Sections.SectionID
+                            AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                    WHERE
+                        Customisations.CustomisationID = @customisationId
+                        AND Sections.SectionID = @sectionId
+                        AND Sections.ArchivedDate IS NULL
+                        AND Sections.DiagAssessPath IS NOT NULL
+                    ORDER BY
+                        Tutorials.OrderByNumber,
+                        Tutorials.TutorialID",
+                (diagnostic, tutorialId) =>
+                {
+                    if (diagnosticContent == null)
+                    {
+                        diagnosticContent = diagnostic;
+                    }
+
+                    diagnosticContent.Tutorials.Add(tutorialId);
+
+                    return diagnosticContent;
+                },
+                new { customisationId, sectionId },
+                splitOn: "id"
+            ).FirstOrDefault();
+        }
     }
 }

@@ -95,7 +95,7 @@
         }
 
         [Test]
-        public void Get_diagnostic_assessment_returns_assessment_if_only_is_assessed_is_true()
+        public void Get_diagnostic_assessment_should_return_assessment_if_only_is_assessed_is_true()
         {
             // Given
             const int customisationId = 2684;
@@ -238,22 +238,121 @@
             int progressId
         )
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var scoresReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
-                    .ScoresFromOldStoredProcedure(progressId, sectionId)
-                    .FirstOrDefault();
+            // Given
+            var scoresReturnedFromOldStoredProcedure = diagnosticAssessmentTestHelper
+                .ScoresFromOldStoredProcedure(progressId, sectionId)
+                .FirstOrDefault();
 
-                // When
-                var sectionInCourseContent = diagnosticAssessmentService
-                    .GetDiagnosticAssessment(customisationId, candidateId, sectionId);
+            // When
+            var sectionInCourseContent = diagnosticAssessmentService
+                .GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-                // Then
-                sectionInCourseContent.SectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecScore);
-                sectionInCourseContent.MaxSectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecOutOf);
-                sectionInCourseContent.DiagnosticAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.DiagAttempts);
-            }
+            // Then
+            sectionInCourseContent.SectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecScore);
+            sectionInCourseContent.MaxSectionScore.Should().Be(scoresReturnedFromOldStoredProcedure.SecOutOf);
+            sectionInCourseContent.DiagnosticAttempts.Should().Be(scoresReturnedFromOldStoredProcedure.DiagAttempts);
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_diagnostic_content()
+        {
+            // Given
+            const int customisationId = 5032;
+            const int sectionId = 156;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            var expectedDiagnosticContent = new DiagnosticContent(
+                "Level 2 - Microsoft PowerPoint 2010",
+                "UHL",
+                "Working with graphics and multimedia",
+                "https://www.dls.nhs.uk/tracking/MOST/PowerPoint10/Assess/L2_PowerPoint_2010_Diag_5.dcr",
+                true
+            );
+            expectedDiagnosticContent.Tutorials.AddRange(
+                new[] { 658, 659, 660, 661, 662 }
+            );
+            result.Should().BeEquivalentTo(expectedDiagnosticContent);
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_content_if_only_is_assessed_is_true()
+        {
+            // Given
+            const int customisationId = 2684;
+            const int sectionId = 74;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            var expectedDiagnosticContent = new DiagnosticContent(
+                "Level 2 - Microsoft Word 2007",
+                "Styles and Working with References",
+                "Working with documents",
+                "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Diag_1.dcr",
+                true
+            );
+            expectedDiagnosticContent.Tutorials.AddRange(
+                new[] { 49, 50, 51, 52 }
+            );
+            result.Should().BeEquivalentTo(expectedDiagnosticContent);
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_null_if_customisation_id_is_invalid()
+        {
+            // Given
+            const int customisationId = 0;
+            const int sectionId = 994;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_null_if_section_id_is_invalid()
+        {
+            // Given
+            const int customisationId = 18438;
+            const int sectionId = 0;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_null_if_archived_date_is_null()
+        {
+            // When
+            const int customisationId = 14212;
+            const int sectionId = 261;
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_return_null_if_diag_status_and_status_and_is_assessed_are_false()
+        {
+            // Given
+            const int customisationId = 1530;
+            const int sectionId = 74;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }
