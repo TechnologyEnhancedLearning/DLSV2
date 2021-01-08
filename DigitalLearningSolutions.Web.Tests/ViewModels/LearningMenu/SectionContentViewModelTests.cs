@@ -65,7 +65,7 @@
                 consolidationPath: consolidationPath,
                 courseSettings: null
             );
-            var expectedConsolidationPath = ContentUrlHelper.GetContentPath(config, consolidationPath);
+            var expectedConsolidationPath = config.GetConsolidationPathUrl(consolidationPath);
 
             // When
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
