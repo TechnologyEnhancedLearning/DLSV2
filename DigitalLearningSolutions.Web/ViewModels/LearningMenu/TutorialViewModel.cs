@@ -19,7 +19,7 @@
         public bool CanShowProgress { get; }
         public string TutorialRecommendation { get; }
         public string ScoreSummary { get; }
-        public string TimeSummary { get; }
+        public TutorialTimeSummaryViewModel TimeSummary { get; }
         public string? SupportingMaterialPath { get; }
         public TutorialNextLinkViewModel NextLinkViewModel { get; }
 
@@ -46,7 +46,12 @@
             TutorialRecommendation =
                 GetTutorialRecommendation(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
             ScoreSummary = GetScoreSummary(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
-            TimeSummary = GetTimeSummary(tutorialInformation.TimeSpent, tutorialInformation.AverageTutorialDuration);
+            TimeSummary = new TutorialTimeSummaryViewModel(
+                tutorialInformation.TimeSpent,
+                tutorialInformation.AverageTutorialDuration,
+                true,
+                true
+            );
             SupportingMaterialPath =
                 ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
             NextLinkViewModel = new TutorialNextLinkViewModel(
@@ -71,21 +76,6 @@
         private string GetScoreSummary(int currentScore, int possibleScore)
         {
             return CanShowProgress ? $"(score: {currentScore} out of {possibleScore})" : "";
-        }
-
-        private string GetTimeSummary(int timeSpent, int averageTutorialDuration)
-        {
-            return $"{ParseMinutes(timeSpent)}" +
-                   $" (average time {ParseMinutes(averageTutorialDuration)})";
-        }
-
-        private static string ParseMinutes(int minutes)
-        {
-            if (minutes > 60)
-            {
-                return $"{minutes / 60}h {minutes % 60}m";
-            }
-            return $"{minutes}m";
         }
 
         private static string? ParseObjectives(string? objectives)

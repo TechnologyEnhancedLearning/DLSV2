@@ -22,7 +22,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
     <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.Status @Model.ScoreSummary</h2>
-    <p class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-4">@Model.TimeSummary</p>
+    <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
   </div>
 </div>
 
