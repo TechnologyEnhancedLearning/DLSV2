@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Web.Helpers;
+
     public class TutorialTimeSummaryViewModel
     {
         public string TimeSpentSummary { get; }
@@ -13,12 +15,8 @@
             bool showLearnStatusSetting
         )
         {
-            TimeSpentSummary = timeSpent == 1
-                ? $"{timeSpent} minute spent"
-                : $"{timeSpent} minutes spent";
-            AverageTimeSummary = averageTimeSpent == 1
-                ? $"(average tutorial time {averageTimeSpent} minute)"
-                : $"(average tutorial time {averageTimeSpent} minutes)";
+            TimeSpentSummary = DurationFormattingHelper.FormatDuration(timeSpent);
+            AverageTimeSummary = DurationFormattingHelper.FormatDuration(averageTimeSpent);
             ShowTime = showTimeSetting && showLearnStatusSetting;
         }
     }

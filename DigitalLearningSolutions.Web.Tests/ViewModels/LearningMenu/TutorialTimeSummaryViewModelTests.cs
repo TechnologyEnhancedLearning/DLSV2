@@ -9,12 +9,16 @@
         private const bool ShowTime = true;
         private const bool ShowLearnStatus = true;
 
-        [Test]
-        public void Tutorial_card_average_time_spent_string_should_have_plural_if_value_is_not_one()
+        [TestCase(0, "0 minutes")]
+        [TestCase(1, "1 minute")]
+        [TestCase(30, "30 minutes")]
+        [TestCase(120, "2 hours")]
+        [TestCase(61, "1 hour 1 minute")]
+        [TestCase(195, "3 hours 15 minutes")]
+        public void TutorialTimeSummary_formats_average_time_spent(int averageTime, string expectedFormattedTime)
         {
             // Given
             const int timeSpent = 1;
-            const int averageTime = 10;
 
             // When
             var tutorialTimeSummaryViewModel = new TutorialTimeSummaryViewModel(
@@ -25,14 +29,18 @@
             );
 
             // Then
-            tutorialTimeSummaryViewModel.AverageTimeSummary.Should().Be($"(average tutorial time {averageTime} minutes)");
+            tutorialTimeSummaryViewModel.AverageTimeSummary.Should().Be(expectedFormattedTime);
         }
 
-        [Test]
-        public void Tutorial_card_average_time_spent_string_should_not_have_plural_if_value_is_one()
+        [TestCase(0, "0 minutes")]
+        [TestCase(1, "1 minute")]
+        [TestCase(30, "30 minutes")]
+        [TestCase(120, "2 hours")]
+        [TestCase(61, "1 hour 1 minute")]
+        [TestCase(195, "3 hours 15 minutes")]
+        public void TutorialTimeSummary_formats_user_time_spent(int timeSpent, string expectedFormattedTime)
         {
             // Given
-            const int timeSpent = 10;
             const int averageTime = 1;
 
             // When
@@ -44,49 +52,11 @@
             );
 
             // Then
-            tutorialTimeSummaryViewModel.AverageTimeSummary.Should().Be($"(average tutorial time {averageTime} minute)");
+            tutorialTimeSummaryViewModel.TimeSpentSummary.Should().Be(expectedFormattedTime);
         }
 
         [Test]
-        public void Tutorial_card_time_spent_string_should_have_plural_if_value_is_not_one()
-        {
-            // Given
-            const int timeSpent = 10;
-            const int averageTime = 1;
-
-            // When
-            var tutorialTimeSummaryViewModel = new TutorialTimeSummaryViewModel(
-                timeSpent,
-                averageTime,
-                ShowTime,
-                ShowLearnStatus
-            );
-
-            // Then
-            tutorialTimeSummaryViewModel.TimeSpentSummary.Should().Be($"{timeSpent} minutes spent");
-        }
-
-        [Test]
-        public void Tutorial_card_time_spent_string_should_not_have_plural_if_value_is_one()
-        {
-            // Given
-            const int timeSpent = 1;
-            const int averageTime = 10;
-
-            // When
-            var tutorialTimeSummaryViewModel = new TutorialTimeSummaryViewModel(
-                timeSpent,
-                averageTime,
-                ShowTime,
-                ShowLearnStatus
-            );
-
-            // Then
-            tutorialTimeSummaryViewModel.TimeSpentSummary.Should().Be($"{timeSpent} minute spent");
-        }
-
-        [Test]
-        public void Tutorial_card_should_show_time_if_courseSettings_are_true()
+        public void TutorialTimeSummary_should_show_time_if_courseSettings_are_true()
         {
             // Given
             const int timeSpent = 10;
@@ -104,7 +74,7 @@
         }
 
         [Test]
-        public void Tutorial_card_should_not_show_time_if_showTime_courseSetting_is_false()
+        public void TutorialTimeSummary_should_not_show_time_if_showTime_courseSetting_is_false()
         {
             // Given
             const int timeSpent = 10;
@@ -123,7 +93,7 @@
         }
 
         [Test]
-        public void Tutorial_card_should_not_show_time_if_showLearnStatus_is_false()
+        public void TutorialTimeSummary_should_not_show_time_if_showLearnStatus_is_false()
         {
             // Given
             const int timeSpent = 10;

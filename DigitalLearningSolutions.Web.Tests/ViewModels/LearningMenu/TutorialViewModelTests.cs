@@ -244,6 +244,43 @@
             tutorialViewModel.TimeSummary.Should().BeEquivalentTo(expectedTimeSummary);
         }
 
+        [TestCase(0, 1, true, true)]
+        [TestCase(1, 30, true, true)]
+        [TestCase(30, 120, true, true)]
+        [TestCase(120, 61, true, true)]
+        [TestCase(61, 195, true, true)]
+        [TestCase(195, 0, true, true)]
+        public void Tutorial_should_have_timeSummary(
+            int timeSpent,
+            int averageTutorialDuration,
+            bool showTime,
+            bool showLearnStatus
+        )
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                timeSpent: timeSpent,
+                averageTutorialDuration: averageTutorialDuration
+            );
+            var expectedTimeSummary = new TutorialTimeSummaryViewModel(
+                timeSpent,
+                averageTutorialDuration,
+                showTime,
+                showLearnStatus
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TimeSummary.Should().BeEquivalentTo(expectedTimeSummary);
+        }
+
         [Test]
         public void Tutorial_should_summarise_score()
         {

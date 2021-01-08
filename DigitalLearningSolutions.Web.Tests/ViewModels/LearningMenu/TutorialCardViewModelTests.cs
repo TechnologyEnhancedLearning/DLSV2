@@ -12,15 +12,20 @@
         private const bool ShowTime = true;
         private const bool ShowLearnStatus = true;
 
-        [Test]
-        public void Tutorial_card_should_have_timeSummary()
+        [TestCase(0, 1, true, true)]
+        [TestCase(1, 30, true, false)]
+        [TestCase(30, 120, false, true)]
+        [TestCase(120, 61, false, false)]
+        [TestCase(61, 195, true, true)]
+        [TestCase(195, 0, true, false)]
+        public void Tutorial_card_should_have_timeSummary(
+            int timeSpent,
+            int averageTutorialDuration,
+            bool showTime,
+            bool showLearnStatus
+        )
         {
             // Given
-            const int averageTutorialDuration = 73;
-            const int timeSpent = 41;
-            const bool showTime = true;
-            const bool showLearnStatus = false;
-
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
                 tutTime: timeSpent,
                 averageTutMins: averageTutorialDuration
