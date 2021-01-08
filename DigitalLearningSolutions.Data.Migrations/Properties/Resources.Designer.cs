@@ -125,6 +125,46 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetFilteredCompetencyResponsesForCandidate]    Script Date: 22/09/2020 09:22:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/09/2020
+        ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
+        ///	-- Add t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_133_AdjustScoresForFilteredSP {
+            get {
+                return ResourceManager.GetString("DLSV2_133_AdjustScoresForFilteredSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetFilteredCompetencyResponsesForCandidate]    Script Date: 22/09/2020 09:22:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/09/2020
+        ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
+        ///	-- Add t [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
+            get {
+                return ResourceManager.GetString("DLSV2_133_UnAdjustScoresForFilteredSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table
