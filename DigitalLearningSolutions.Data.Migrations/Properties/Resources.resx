@@ -128,10 +128,10 @@
     <value>..\Scripts\DLSV2-106-DropInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_133_AdjustScoresForFilteredSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\DLSV2-133-AdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-133-AdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_133_UnAdjustScoresForFilteredSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\scripts\DLSV2-133-UnAdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Scripts\DLSV2-133-UnAdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="DLSV2_95_AddSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
