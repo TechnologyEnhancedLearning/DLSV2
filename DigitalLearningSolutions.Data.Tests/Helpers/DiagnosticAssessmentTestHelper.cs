@@ -18,15 +18,15 @@
             this.connection = connection;
         }
 
-        public IEnumerable<OldTutorial> TutorialsFromOldStoredProcedure(int progressId, int sectionId)
+        public void UpdateDiagAssessOutOf(int tutorialId, int diagAssessOutOf)
         {
-            return connection.Query<OldTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
-        }
+            connection.Execute(
+                @"UPDATE Tutorials
+                     SET DiagAssessOutOf = @diagAssessOutOf
 
-        public OldScores? ScoresFromOldStoredProcedure(int progressId, int sectionId)
-        {
-            return connection.Query<OldScores>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure)
-                .FirstOrDefault(section => section.SectionId == sectionId);
+                   WHERE Tutorials.TutorialID = @tutorialId;",
+                new { tutorialId, diagAssessOutOf }
+            );
         }
     }
 }

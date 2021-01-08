@@ -38,7 +38,10 @@
                         Sections.DiagAssessPath,
                         Customisations.DiagObjSelect,
                         Tutorials.TutorialName,
-                        Tutorials.TutorialID AS id,
+                        CASE WHEN Tutorials.OriginalTutorialID > 0
+                             THEN Tutorials.OriginalTutorialID
+                             ELSE Tutorials.TutorialID
+                        END AS id,
                         CustomisationTutorials.Status
                     FROM Sections
                         INNER JOIN Customisations
@@ -51,7 +54,6 @@
                         INNER JOIN Tutorials
                             ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
                             AND Tutorials.SectionID = Sections.SectionID
-                            AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId
@@ -65,9 +67,12 @@
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
                         AND Sections.DiagAssessPath IS NOT NULL
+                        AND CustomisationTutorials.DiagStatus = 1
+                        AND Tutorials.DiagAssessOutOf > 0
+                        AND Tutorials.ArchivedDate IS NULL
                     ORDER BY
                         Tutorials.OrderByNumber,
-                        Tutorials.TutorialID",
+                        id",
                 (diagnostic, tutorial) =>
                 {
                     if (diagnosticAssessment == null)
