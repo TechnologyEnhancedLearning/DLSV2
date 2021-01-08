@@ -31,7 +31,8 @@
                         typeof(AddFrameworkIdToFrameworkCompetencies).Assembly,
                         typeof(AddCompetencyNameColumn).Assembly,
                         typeof(MakeCompetencyDecsriptionNullable).Assembly,
-                        typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly
+                        typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly,
+                        typeof(ChangesForDigitalCapability).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
