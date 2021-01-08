@@ -52,5 +52,10 @@
         {
             return $"{config[CurrentSystemBaseUrlName]}/tracking/summary?ProgressID={progressId}";
         }
+
+        public static string GetConsolidationPathUrl(this IConfiguration config, string consolidationPath)
+        {
+            return config["CurrentSystemBaseUrl"] + "/tracking/dlconsolidation?client=" + consolidationPath;
+        }
     }
 }

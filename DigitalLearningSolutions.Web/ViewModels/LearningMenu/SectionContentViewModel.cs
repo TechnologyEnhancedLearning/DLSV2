@@ -38,7 +38,9 @@
             PostLearningStatus = GetPostLearningStatus(sectionContent);
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
-            ConsolidationExercisePath = ContentUrlHelper.GetNullableContentPath(config, sectionContent.ConsolidationPath);
+            ConsolidationExercisePath = sectionContent.ConsolidationPath == null
+                ? null
+                : config.GetConsolidationPathUrl(sectionContent.ConsolidationPath);
             ShowConsolidation = ConsolidationExercisePath != null;
             ConsolidationExerciseLabel = sectionContent.CourseSettings.ConsolidationExercise ?? "Consolidation Exercise";
 
