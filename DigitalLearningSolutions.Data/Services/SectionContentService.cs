@@ -28,6 +28,34 @@
             SectionContent? sectionContent = null;
             return connection.Query<SectionContent, SectionTutorial, SectionContent>(
                 @"
+                    WITH NextSectionIdTable AS (
+                        SELECT TOP(1) 
+                            CurrentSection.SectionID, 
+                            NextSections.SectionID AS NextSectionID
+                        FROM Sections AS CurrentSection
+                                LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
+                                    ON NextCustomisationTutorials.CustomisationID = @customisationId
+                                LEFT JOIN Customisations
+                                    ON NextCustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                                LEFT JOIN Tutorials AS NextSectionsTutorials
+                                    ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+                                LEFT JOIN Sections AS NextSections
+                                    ON NextSectionsTutorials.SectionID = NextSections.SectionID
+                                    AND CurrentSection.SectionNumber <= NextSections.SectionNumber
+                                    AND (CurrentSection.SectionNumber < NextSections.SectionNumber
+                                        OR CurrentSection.SectionID < NextSections.SectionID)
+                        WHERE CurrentSection.SectionId = @sectionId
+                            AND NextSections.SectionID IS NOT NULL
+                            AND NextSections.SectionNumber IS NOT NULL
+                            AND Customisations.Active = 1
+                            AND NextSections.ArchivedDate IS NULL
+                            AND (NextCustomisationTutorials.Status = 1 OR NextCustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                        GROUP BY 
+                            CurrentSection.SectionID, 
+                            NextSections.SectionID, 
+                            NextSections.SectionNumber
+                        ORDER BY NextSections.SectionNumber, NextSections.SectionID
+                    )
                     SELECT
                         Applications.ApplicationName,
                         Customisations.CustomisationName,
@@ -44,6 +72,7 @@
                         Customisations.IsAssessed,
                         Sections.ConsolidationPath,
                         Applications.CourseSettings,
+                        NextSectionIdTable.NextSectionId,
                         Tutorials.TutorialName,
                         COALESCE (aspProgress.TutStat, 0) AS TutStat,
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,
@@ -60,6 +89,8 @@
                             ON Applications.ApplicationID = Customisations.ApplicationID
                         INNER JOIN Sections
                             ON Sections.SectionID = Tutorials.SectionID
+                        LEFT JOIN NextSectionIdTable
+                            ON Sections.SectionID = NextSectionIdTable.SectionID
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId

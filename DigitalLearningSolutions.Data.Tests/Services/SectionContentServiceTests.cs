@@ -52,7 +52,8 @@
                 true,
                 true,
                 null,
-                null
+                null,
+                383
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -117,7 +118,8 @@
                 true,
                 true,
                 null,
-                null
+                null,
+                1012
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -162,7 +164,8 @@
                 true,
                 true,
                 null,
-                null
+                null,
+                1012
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -231,7 +234,8 @@
                 true,
                 false,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
-                null
+                null,
+                75
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -263,7 +267,8 @@
                 false,
                 true,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
-                null
+                null,
+                75
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -295,7 +300,8 @@
                 false,
                 false,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
-                null
+                null,
+                75
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -414,7 +420,8 @@
                 true,
                 true,
                 null,
-                null
+                null,
+                383
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -473,6 +480,85 @@
             // Then
             result.Should().NotBeNull();
             result!.CourseSettings.Should().BeEquivalentTo(defaultSettings);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_should_return_id_if_at_start_of_list()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 382;
+            const int expectedNextSectionId = 383;
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_should_return_id_if_in_middle_of_list()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 383;
+            const int expectedNextSectionId = 384;
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_should_return_null_if_at_end_of_list()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 386;
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_should_skip_empty_section()
+        {
+            // Given
+            const int customisationId = 18366;
+            const int candidateId = 210934;
+            const int sectionId = 974;
+
+            // The next section ID in this Application is 975, but the next section with a tutorial selected in
+            // CustomisationTutorials is 978
+            const int expectedNextSectionId = 978;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_can_have_smaller_id()
+        {
+            // Given
+            const int customisationId = 24057;
+            const int candidateId = 1;
+            const int sectionId = 2201;
+            const int expectedNextSectionId = 2193;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
         }
     }
 }
