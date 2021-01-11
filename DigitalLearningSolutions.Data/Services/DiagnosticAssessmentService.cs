@@ -41,8 +41,7 @@
                         CASE WHEN Tutorials.OriginalTutorialID > 0
                              THEN Tutorials.OriginalTutorialID
                              ELSE Tutorials.TutorialID
-                        END AS id,
-                        CustomisationTutorials.Status
+                        END AS id
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID
@@ -89,10 +88,7 @@
                         diagnosticAssessment.MaxSectionScore += diagnostic.MaxSectionScore;
                     }
 
-                    if (tutorial.IsDisplayed)
-                    {
-                            diagnosticAssessment.Tutorials.Add(tutorial);
-                    }
+                    diagnosticAssessment.Tutorials.Add(tutorial);
 
                     return diagnosticAssessment;
                 },
