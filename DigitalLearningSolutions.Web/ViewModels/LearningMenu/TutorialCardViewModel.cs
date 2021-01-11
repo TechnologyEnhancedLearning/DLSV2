@@ -7,12 +7,10 @@
         public int Id { get; }
         public string TutorialName { get; }
         public string CompletionStatus { get; }
-        public string TimeSpentInformation { get; }
-        public string AverageTimeInformation { get; }
         public int SectionId { get; }
         public int CustomisationId { get; }
-        public bool ShowTime { get; }
         public bool ShowLearnStatus { get; }
+        public TutorialTimeSummaryViewModel TimeSummary { get; }
 
         public TutorialCardViewModel(
             SectionTutorial tutorial,
@@ -25,14 +23,13 @@
             Id = tutorial.Id;
             TutorialName = tutorial.TutorialName;
             CompletionStatus = tutorial.CompletionStatus;
-            TimeSpentInformation = tutorial.TutorialTime == 1
-                ? $"{tutorial.TutorialTime} minute spent"
-                : $"{tutorial.TutorialTime} minutes spent";
-            AverageTimeInformation = tutorial.AverageTutorialTime == 1
-                ? $"(average tutorial time {tutorial.AverageTutorialTime} minute)"
-                : $"(average tutorial time {tutorial.AverageTutorialTime} minutes)";
-            ShowTime = showTime && showLearnStatus;
             ShowLearnStatus = showLearnStatus;
+            TimeSummary = new TutorialTimeSummaryViewModel(
+                tutorial.TutorialTime,
+                tutorial.AverageTutorialTime,
+                showTime,
+                showLearnStatus
+            );
             SectionId = sectionId;
             CustomisationId = customisationId;
         }

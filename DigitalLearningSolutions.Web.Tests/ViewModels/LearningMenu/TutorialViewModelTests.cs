@@ -219,12 +219,54 @@
         }
 
         [Test]
-        public void Tutorial_should_summarise_duration()
+        public void Tutorial_should_have_timeSummary()
+        {
+            // Given
+            const int averageTutorialDuration = 73;
+            const int timeSpent = 41;
+
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                timeSpent: timeSpent,
+                averageTutorialDuration: averageTutorialDuration
+            );
+            // TODO: Test different customisations settings when found as part of HEEDLS-196
+            var expectedTimeSummary = new TutorialTimeSummaryViewModel(timeSpent, averageTutorialDuration, true, true);
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TimeSummary.Should().BeEquivalentTo(expectedTimeSummary);
+        }
+
+        [TestCase(0, 1, true, true)]
+        [TestCase(1, 30, true, true)]
+        [TestCase(30, 120, true, true)]
+        [TestCase(120, 61, true, true)]
+        [TestCase(61, 195, true, true)]
+        [TestCase(195, 0, true, true)]
+        public void Tutorial_should_have_timeSummary(
+            int timeSpent,
+            int averageTutorialDuration,
+            bool showTime,
+            bool showLearnStatus
+        )
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                averageTutorialDuration: 73,
-                timeSpent: 41
+                timeSpent: timeSpent,
+                averageTutorialDuration: averageTutorialDuration
+            );
+            var expectedTimeSummary = new TutorialTimeSummaryViewModel(
+                timeSpent,
+                averageTutorialDuration,
+                showTime,
+                showLearnStatus
             );
 
             // When
@@ -236,7 +278,7 @@
             );
 
             // Then
-            tutorialViewModel.TimeSummary.Should().Be("41m (average time 1h 13m)");
+            tutorialViewModel.TimeSummary.Should().BeEquivalentTo(expectedTimeSummary);
         }
 
         [Test]

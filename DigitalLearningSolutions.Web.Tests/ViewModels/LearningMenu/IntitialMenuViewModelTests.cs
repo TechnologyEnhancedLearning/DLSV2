@@ -43,117 +43,23 @@
             initialMenuViewModel.Id.Should().Be(customisationId);
         }
 
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_0_minutes()
+        [TestCase(0, "0 minutes")]
+        [TestCase(1, "1 minute")]
+        [TestCase(30, "30 minutes")]
+        [TestCase(120, "2 hours")]
+        [TestCase(61, "1 hour 1 minute")]
+        [TestCase(195, "3 hours 15 minutes")]
+        [TestCase(null, null)]
+        public void Initial_menu_formats_average_duration(int? averageDuration, string? expectedFormattedTime)
         {
             // Given
-            const int averageDuration = 0;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(averageDuration: averageDuration);
 
             // When
             var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
 
             // Then
-            initialMenuViewModel.AverageDuration.Should().Be("0 minutes");
-        }
-
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_1_minute()
-        {
-            // Given
-            const int averageDuration = 1;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().Be("1 minute");
-        }
-
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_under_an_hour()
-        {
-            // Given
-            const int averageDuration = 30;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().Be("30 minutes");
-        }
-
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_whole_number_of_hours()
-        {
-            // Given
-            const int averageDuration = 120;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().Be("2 hours");
-        }
-
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_one_hour_one_minute()
-        {
-            // Given
-            const int averageDuration = 61;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().Be("1 hour 1 minute");
-        }
-
-
-        [Test]
-        public void Initial_menu_should_have_averageDuration_for_multiple_hours()
-        {
-            // Given
-            const int averageDuration = 195;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().Be("3 hours 15 minutes");
-        }
-
-        [Test]
-        public void Initial_menu_should_have_null_duration_for_null_duration()
-        {
-            // Given
-            int? averageDuration = null;
-            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(
-                averageDuration: averageDuration
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(expectedCourseContent);
-
-            // Then
-            initialMenuViewModel.AverageDuration.Should().BeNull();
+            initialMenuViewModel.AverageDuration.Should().Be(expectedFormattedTime);
         }
 
         [Test]

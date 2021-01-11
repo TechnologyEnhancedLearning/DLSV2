@@ -7,15 +7,7 @@
         <h3 class="nhsuk-card__heading" id="@Model.Id-name">
           @Model.TutorialName
         </h3>
-
-        @if (Model.ShowTime)
-        {
-          <p class="nhsuk-u-secondary-text-color">
-            @Model.TimeSpentInformation
-            <span class="visually-hidden">on this tutorial</span>
-            @Model.AverageTimeInformation
-          </p>
-        }
+        <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
       </div>
       @if (Model.ShowLearnStatus)
       {
