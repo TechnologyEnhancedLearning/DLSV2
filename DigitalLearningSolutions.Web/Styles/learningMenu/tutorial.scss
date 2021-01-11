@@ -1,23 +1,16 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-
-
 .tutorial-video {
   width: 100%;
   height: auto;
 }
 
-.grid-column-85 {
-  padding-left: 16px;
-  padding-right: 16px;
-  width: 85%;
-}
-
 .next-link {
-  float: right;
+  padding-left: 0px;
+  padding-right: 16px;
 }
 
 #next-arrow {
+  right: -8px;
   left: auto;
-  right: -24px
 }

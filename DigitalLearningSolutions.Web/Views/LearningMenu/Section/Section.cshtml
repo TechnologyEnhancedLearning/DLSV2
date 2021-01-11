@@ -16,6 +16,20 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.SectionName</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+    </div>
+  </nav>
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
@@ -27,14 +41,6 @@
   </div>
 </div>
 
-<div class="nhsuk-back-link nhsuk-u-padding-top-0">
-  <a class="nhsuk-back-link__link" asp-action="Index" asp-controller="LearningMenu" asp-route-customisationId="@Model.CustomisationId">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Return to course menu
-  </a>
-</div>
 @if (Model.ShowDiagnostic)
 {
   <partial name="Section/_DiagnosticAssessmentCard" model="Model" />
@@ -69,4 +75,3 @@
 {
   <partial name="Section/_ConsolidationExerciseCard" model="Model" />
 }
-
