@@ -78,6 +78,7 @@
 
                   SELECT Tutorials.TutorialID AS Id,
                          Tutorials.TutorialName AS Name,
+                         Sections.SectionName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          COALESCE(TutStatus.Status, 'Not started') AS Status,
@@ -154,6 +155,7 @@
         {
             return connection.QueryFirstOrDefault<TutorialContent>(
                 @"SELECT Tutorials.TutorialName,
+                         Sections.SectionName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          Tutorials.TutorialPath,
@@ -184,6 +186,7 @@
             {
                 return connection.QueryFirstOrDefault<TutorialVideo>(
                     @"SELECT Tutorials.TutorialName,
+                         Sections.SectionName,
                          Applications.ApplicationName,
                          Customisations.CustomisationName,
                          Tutorials.VideoPath

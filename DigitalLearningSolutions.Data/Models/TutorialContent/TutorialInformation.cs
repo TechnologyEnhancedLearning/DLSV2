@@ -4,6 +4,7 @@
     {
         public int Id { get; }
         public string Name { get; }
+        public string SectionName { get; }
         public string CourseTitle { get; }
         public string Status { get; }
         public int TimeSpent { get; }
@@ -23,6 +24,7 @@
         public TutorialInformation(
             int id,
             string name,
+            string sectionName,
             string applicationName,
             string customisationName,
             string status,
@@ -43,6 +45,7 @@
         {
             Id = id;
             Name = name;
+            SectionName = sectionName;
             CourseTitle = $"{applicationName} - {customisationName}";
             Status = status;
             TimeSpent = timeSpent;

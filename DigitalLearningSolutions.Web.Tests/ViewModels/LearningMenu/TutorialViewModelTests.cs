@@ -45,6 +45,27 @@
         }
 
         [Test]
+        public void Tutorial_should_have_sectionName()
+        {
+            // Given
+            const string sectionName = "Section Name";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                sectionName: sectionName
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.SectionName.Should().Be(sectionName);
+        }
+
+        [Test]
         public void Tutorial_should_have_courseTitle()
         {
             // Given
