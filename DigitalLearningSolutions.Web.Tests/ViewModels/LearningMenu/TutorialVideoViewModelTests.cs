@@ -103,6 +103,28 @@
         }
 
         [Test]
+        public void TutorialVideo_should_have_sectionName()
+        {
+            // Given
+            const string sectionName = "Section Name";
+            var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo(
+                sectionName: sectionName
+            );
+
+            // When
+            var tutorialVideoViewModel = new TutorialVideoViewModel(
+                config,
+                expectedTutorialVideo,
+                CustomisationId,
+                SectionId,
+                TutorialId
+            );
+
+            // Then
+            tutorialVideoViewModel.SectionName.Should().BeEquivalentTo(sectionName);
+        }
+
+        [Test]
         public void TutorialVideo_should_have_courseTitle()
         {
             // Given

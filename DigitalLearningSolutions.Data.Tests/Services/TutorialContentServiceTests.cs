@@ -33,6 +33,7 @@
             tutorial.Should().BeEquivalentTo(new TutorialInformation(
                 50,
                 "Navigate documents",
+                "Working with documents",
                 "Level 2 - Microsoft Word 2007",
                 "Testing",
                 "Complete",
@@ -318,6 +319,7 @@
             tutorial.Should().BeEquivalentTo(new TutorialInformation(
                 50,
                 "Navigate documents",
+                "Working with documents",
                 "Level 2 - Microsoft Word 2007",
                 "Testing",
                 "Not started",
@@ -384,6 +386,7 @@
             // Then
             tutorialContent.Should().BeEquivalentTo(new TutorialContent(
                 "Navigate documents",
+                "Working with documents",
                 "Level 2 - Microsoft Word 2007",
                 "Testing",
                 "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
@@ -480,6 +483,7 @@
             // Then
             tutorialVideo.Should().BeEquivalentTo(new TutorialVideo(
                 "Navigate documents",
+                "Working with documents",
                 "Level 2 - Microsoft Word 2007",
                 "Testing",
                 "/MOST/Word07Core/swf/1_1_02_Navigate_documents.swf"

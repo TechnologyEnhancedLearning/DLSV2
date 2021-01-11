@@ -161,6 +161,31 @@
         }
 
         [Test]
+        public void Content_viewer_should_have_sectionName()
+        {
+            // Given
+            const string sectionName = "Section Name";
+            var expectedTutorialContent = TutorialContentHelper.CreateDefaultTutorialContent(
+                sectionName: sectionName
+            );
+
+            // When
+            var contentViewerViewModel = new ContentViewerViewModel(
+                config,
+                expectedTutorialContent,
+                CustomisationId,
+                CentreId,
+                SectionId,
+                TutorialId,
+                CandidateId,
+                ProgressId
+            );
+
+            // Then
+            contentViewerViewModel.SectionName.Should().BeEquivalentTo(sectionName);
+        }
+
+        [Test]
         public void Content_viewer_should_have_courseTitle()
         {
             // Given

@@ -10,6 +10,7 @@
         public int SectionId { get; }
         public int TutorialId { get; }
         public string TutorialName { get; }
+        public string SectionName { get; }
         public string CourseTitle { get; }
         public string VideoPath { get; }
 
@@ -25,6 +26,7 @@
             SectionId = sectionId;
             TutorialId = tutorialId;
             TutorialName = tutorialVideo.TutorialName;
+            SectionName = tutorialVideo.SectionName;
             CourseTitle = tutorialVideo.CourseTitle;
             VideoPath = ContentUrlHelper.GetContentPath(config, tutorialVideo.VideoPath);
         }

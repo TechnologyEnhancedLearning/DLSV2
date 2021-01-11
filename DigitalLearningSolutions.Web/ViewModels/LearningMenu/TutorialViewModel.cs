@@ -8,6 +8,7 @@
     public class TutorialViewModel
     {
         public string TutorialName { get; }
+        public string SectionName { get; }
         public string CourseTitle { get; }
         public string Status { get; }
         public string? TutorialPath { get; }
@@ -31,6 +32,7 @@
         )
         {
             TutorialName = tutorialInformation.Name;
+            SectionName = tutorialInformation.SectionName;
             CourseTitle = tutorialInformation.CourseTitle;
             TutorialPath = tutorialInformation.TutorialPath;
             VideoPath = tutorialInformation.VideoPath;
