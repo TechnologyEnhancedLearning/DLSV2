@@ -1,73 +1,71 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
     using NUnit.Framework;
 
     class DurationFormattingHelperTests
     {
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_0_minutes()
+        public void FormatDuration_should_have_duration_for_0_minutes()
         {
             // Given
-            const int averageDuration = 0;
+            const int duration = 0;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("0 minutes");
         }
 
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_1_minute()
+        public void FormatDuration_should_have_duration_for_1_minute()
         {
             // Given
-            const int averageDuration = 1;
+            const int duration = 1;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("1 minute");
         }
 
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_under_an_hour()
+        public void FormatDuration_should_have_duration_for_under_an_hour()
         {
             // Given
-            const int averageDuration = 30;
+            const int duration = 30;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("30 minutes");
         }
 
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_whole_number_of_hours()
+        public void FormatDuration_should_have_duration_for_whole_number_of_hours()
         {
             // Given
-            const int averageDuration = 120;
+            const int duration = 120;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("2 hours");
         }
 
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_one_hour_one_minute()
+        public void FormatDuration_should_have_duration_for_one_hour_one_minute()
         {
             // Given
-            const int averageDuration = 61;
+            const int duration = 61;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("1 hour 1 minute");
@@ -75,13 +73,13 @@
 
 
         [Test]
-        public void FormatDuration_should_have_averageDuration_for_multiple_hours()
+        public void FormatDuration_should_have_duration_for_multiple_hours()
         {
             // Given
-            const int averageDuration = 195;
+            const int duration = 195;
 
             // When
-            var result = DurationFormattingHelper.FormatDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatDuration(duration);
 
             // Then
             result.Should().Be("3 hours 15 minutes");
@@ -94,10 +92,10 @@
         [TestCase(61, "1 hour 1 minute")]
         [TestCase(195, "3 hours 15 minutes")]
         [TestCase(null, null)]
-        public void FormatNullableDuration_should_format_durations(int? averageDuration, string? expectedResult)
+        public void FormatNullableDuration_should_format_durations(int? duration, string? expectedResult)
         {
             // When
-            var result = DurationFormattingHelper.FormatNullableDuration(averageDuration);
+            var result = DurationFormattingHelper.FormatNullableDuration(duration);
 
             // Then
             result.Should().Be(expectedResult);
