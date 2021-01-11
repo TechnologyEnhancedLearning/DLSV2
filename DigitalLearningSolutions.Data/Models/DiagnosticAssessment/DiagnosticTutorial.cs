@@ -4,13 +4,11 @@
     {
         public string TutorialName { get; }
         public int Id { get; }
-        public bool IsDisplayed { get; }
 
-        public DiagnosticTutorial(string tutorialName, int id, bool status)
+        public DiagnosticTutorial(string tutorialName, int id)
         {
             TutorialName = tutorialName;
             Id = id;
-            IsDisplayed = status;
         }
     }
 }

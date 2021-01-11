@@ -93,8 +93,8 @@
             // Given
             var tutorials = new[]
             {
-                new DiagnosticTutorial("Tutorial 1", 1, true),
-                new DiagnosticTutorial("Tutorial 2", 2, true)
+                new DiagnosticTutorial("Tutorial 1", 1),
+                new DiagnosticTutorial("Tutorial 2", 2)
             };
             var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
                 diagObjSelect: selectTutorials
@@ -200,8 +200,8 @@
             // Given
             var tutorials = new[]
             {
-                new DiagnosticTutorial("Tutorial 1", 1, true),
-                new DiagnosticTutorial("Tutorial 2", 2, true)
+                new DiagnosticTutorial("Tutorial 1", 1),
+                new DiagnosticTutorial("Tutorial 2", 2)
             };
             var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
             diagnosticAssessment.Tutorials.AddRange(tutorials);

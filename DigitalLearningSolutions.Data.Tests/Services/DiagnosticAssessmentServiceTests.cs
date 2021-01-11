@@ -49,12 +49,12 @@
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
                 {
-                    new DiagnosticTutorial("Create and edit simple formulas", 383, true),
-                    new DiagnosticTutorial("Understand and enforce simple precedence in formulas", 384, true),
-                    new DiagnosticTutorial("Nest parentheses in formulas", 385, true),
-                    new DiagnosticTutorial("Use relative and absolute cell references", 386, true),
-                    new DiagnosticTutorial("Refer to other worksheets", 387, true),
-                    new DiagnosticTutorial("Link other workbooks", 388, true)
+                    new DiagnosticTutorial("Create and edit simple formulas", 383),
+                    new DiagnosticTutorial("Understand and enforce simple precedence in formulas", 384),
+                    new DiagnosticTutorial("Nest parentheses in formulas", 385),
+                    new DiagnosticTutorial("Use relative and absolute cell references", 386),
+                    new DiagnosticTutorial("Refer to other worksheets", 387),
+                    new DiagnosticTutorial("Link other workbooks", 388)
                 }
             );
             result.Should().BeEquivalentTo(expectedDiagnosticAssessment);
@@ -85,28 +85,13 @@
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
                 {
-                    new DiagnosticTutorial("Introduction to applications", 4340, true),
-                    new DiagnosticTutorial("Common screen elements", 4341, true),
-                    new DiagnosticTutorial("Using ribbon tabs", 4342, true),
-                    new DiagnosticTutorial("Getting help", 4343, true)
+                    new DiagnosticTutorial("Introduction to applications", 4340),
+                    new DiagnosticTutorial("Common screen elements", 4341),
+                    new DiagnosticTutorial("Using ribbon tabs", 4342),
+                    new DiagnosticTutorial("Getting help", 4343)
                 }
             );
             result.Should().BeEquivalentTo(expectedDiagnosticAssessment);
-        }
-
-        [Test]
-        public void Get_diagnostic_assessment_can_return_no_tutorials()
-        {
-            // Given
-            const int customisationId = 9850;
-            const int candidateId = 254480;
-            const int sectionId = 170;
-
-            // When
-            var result = diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
-
-            // Then
-            result.Tutorials.Should().BeEmpty();
         }
 
         [Test]
@@ -196,6 +181,24 @@
             var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
             tutorialIds.Should().NotContain(541); // Tutorial with DiagStatus 0
             tutorialIds.Should().Equal(535, 536, 537, 538, 539, 540, 542);
+        }
+
+
+        [Test]
+        public void Get_diagnostic_assessment_can_have_tutorials_with_false_status()
+        {
+            // Given
+            const int customisationId = 5694;
+            const int candidateId = 1;
+            const int sectionId = 103;
+
+            // When
+            var result = diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
+            tutorialIds.Should().Equal(319, 320, 322, 323, 321, 324); // All have CustomisationTutorials.Status = 0
         }
 
         [Test]
