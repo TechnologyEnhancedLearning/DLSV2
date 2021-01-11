@@ -10,6 +10,7 @@
     public interface IDiagnosticAssessmentService
     {
         public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
+        public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId);
     }
 
     public class DiagnosticAssessmentService : IDiagnosticAssessmentService

@@ -26,5 +26,26 @@
                 diagObjSelect
             );
         }
+
+        public static DiagnosticContent CreateDefaultDiagnosticContent(
+            string applicationName = "application name",
+            string customisationName = "customisation name",
+            string sectionName = "section name",
+            string diagAssessPath = "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Diag_1.dcr",
+            bool diagObjSelect = true,
+            int plaPassThreshold = 50,
+            int currentVersion = 1
+        )
+        {
+            return new DiagnosticContent(
+                applicationName,
+                customisationName,
+                sectionName,
+                diagAssessPath,
+                diagObjSelect,
+                plaPassThreshold,
+                currentVersion
+            );
+        }
     }
 }

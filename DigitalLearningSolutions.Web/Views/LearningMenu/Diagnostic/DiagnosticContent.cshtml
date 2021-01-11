@@ -1,0 +1,56 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model DiagnosticContentViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
+  ViewData["CustomisationId"] = Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.CourseTitle;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="LearningPortal" asp-action="Current">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Diagnostic assessment</a></li>
+        <li class="nhsuk-breadcrumb__item">Content</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+    </div>
+  </nav>
+}
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningMenu/contentViewer.js")" asp-append-version="true"></script>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
+    <div class="nhsuk-error-summary non-js-only" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+      <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="nhsuk-error-summary__body">
+        <p class="nhsuk-u-margin-0">
+          JavaScript is required to view this tutorial.
+        </p>
+      </div>
+    </div>
+
+    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
+    </iframe>
+  </div>
+</div>
