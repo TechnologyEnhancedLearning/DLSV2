@@ -55,7 +55,7 @@
 
         public static string GetConsolidationPathUrl(this IConfiguration config, string consolidationPath)
         {
-            return config["CurrentSystemBaseUrl"] + "/tracking/dlconsolidation?client=" + consolidationPath;
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/dlconsolidation?client={consolidationPath}";
         }
     }
 }
