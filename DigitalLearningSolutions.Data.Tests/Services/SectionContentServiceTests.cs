@@ -490,6 +490,7 @@
             const int candidateId = 1;
             const int sectionId = 382;
             const int expectedNextSectionId = 383;
+
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -505,6 +506,7 @@
             const int candidateId = 1;
             const int sectionId = 383;
             const int expectedNextSectionId = 384;
+
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -519,6 +521,7 @@
             const int customisationId = 15853;
             const int candidateId = 1;
             const int sectionId = 386;
+
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -559,6 +562,90 @@
 
             //Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_returns_section_with_only_diagnostic_assessment()
+        {
+            // Given
+            const int customisationId = 5694;
+            const int candidateId = 1;
+            const int sectionId = 103;
+            const int expectedNextSectionId = 104;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_returns_section_with_only_post_learning_assessment()
+        {
+            // Given
+            const int customisationId = 10820;
+            const int candidateId = 1;
+            const int sectionId = 104;
+            const int expectedNextSectionId = 105;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            //Then
+            result.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [TestCase(2087, 2195)]
+        [TestCase(2195, 2199)]
+        [TestCase(2199, 2086)]
+        public void Get_section_content_next_section_id_has_correct_ids_when_shared_section_number(
+            int sectionId,
+            int expectedNextSectionId
+        )
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 24057;
+                const int candidateId = 1;
+                sectionContentTestHelper.UpdateSectionNumber(2195, 10);
+                // Doing this should result in the following sequence:
+                // SectionID: 2087, SectionNumber: 6
+                // SectionID: 2195, SectionNumber: 10
+                // SectionID: 2199, SectionNumber: 10
+                // SectionID: 2086, SectionNumber: 11
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_returns_null_when_shared_section_numbers_are_last_in_sequence()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 24057;
+                const int candidateId = 1;
+                const int sectionId = 2202;
+                sectionContentTestHelper.UpdateSectionNumber(2092, 21);
+
+                // Doing this should result in the following sequence:
+                // SectionID: 2092, SectionNumber: 21
+                // SectionID: 2202, SectionNumber: 21
+                // NULL
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.NextSectionId.Should().BeNull();
+            }
         }
     }
 }
