@@ -57,15 +57,14 @@
         }
 
         [Test]
-        public void Section_content_should_have_consolidation_path_when_courseSetting_exercise_is_null()
+        public void Section_content_view_model_should_properly_convert_consolidation_path()
         {
             // Given
             const string consolidationPath = "consolidation/path";
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                consolidationPath: consolidationPath,
-                courseSettings: null
+                consolidationPath: consolidationPath
             );
-            var expectedConsolidationPath = ContentUrlHelper.GetContentPath(config, consolidationPath);
+            var expectedConsolidationPath = $"{BaseUrl}/tracking/dlconsolidation?client={consolidationPath}";
 
             // When
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
