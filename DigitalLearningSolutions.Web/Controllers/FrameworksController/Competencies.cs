@@ -50,6 +50,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 if (competencyGroupBase.ID > 0)
                 {
                     frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, adminId);
+                    return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
                 }
                 else
                 {
@@ -57,9 +58,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     if (newCompetencyGroupId > 0)
                     {
                         var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
+                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + newFrameworkCompetencyGroupId.ToString());
                     }
                 }
-                return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+                logger.LogWarning($"Attempt to add framework competency group failed for admin {adminId}.");
+                return StatusCode(403);
             }
         }
         public IActionResult MoveFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId, bool step, string direction)
@@ -77,14 +80,57 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
         public IActionResult AddEditFrameworkCompetency(int frameworkId, int frameworkCompetencyGroupId = 0, int frameworkCompetencyId = 0)
         {
-            return View("Developer/Competency");
+            FrameworkCompetency frameworkCompetency = new FrameworkCompetency();
+            if (frameworkCompetencyId > 0)
+            {
+                frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
+            }
+            var model = new FrameworkCompetencyViewModel()
+            {
+                FrameworkId = frameworkId,
+                FrameworkCompetencyGroupId = frameworkCompetencyGroupId,
+                FrameworkCompetency = frameworkCompetency
+            };
+            return View("Developer/Competency", model);
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
         public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
         {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            if (!ModelState.IsValid)
+            {
+                ModelState.Remove(nameof(FrameworkCompetency.Name));
+                ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency name (between 3 and 500 characters)");
+                // do something
+                var model = new FrameworkCompetencyViewModel()
+                {
+                    FrameworkId = frameworkId,
+                    FrameworkCompetencyGroupId = frameworkCompetencyId,
+                    FrameworkCompetency = frameworkCompetency
+                };
+                return View("Developer/CompetencyGroup", model);
+            }
+            else
+            {
+                var adminId = GetAdminID();
+                if (frameworkCompetency.Id > 0)
+                {
+                    frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
+                    return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
+                }
+                else
+                {
+                    var newCompetencyId = frameworkService.InsertCompetency(frameworkCompetency.Name, frameworkCompetency.Description, adminId);
+                    if (newCompetencyId > 0)
+                    {
+                        var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId);
+                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + newFrameworkCompetencyId.ToString());
+                    }
+                }
+                logger.LogWarning($"Attempt to add framework competency failed for admin {adminId}.");
+                return StatusCode(403);
+            }
         }
         public IActionResult MoveFrameworkCompetency(int frameworkId, int frameworkCompetencyId, bool step, string direction)
         {

@@ -26,14 +26,14 @@
         //Insert data
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
-        int InsertCompetency(string description, int competencyGroupId, int adminId);
-        int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId);
+        int InsertCompetency(string name, string description, int adminId);
+        int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
         //Update data
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, int competencyId, string name, string description, int adminId);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string description, int adminId);
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
         //Delete data
@@ -243,7 +243,7 @@
                 return -2;
             }
             int existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE ((SELECT CompetencyGroupID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
+                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                  new { groupId, frameworkId });
             if (existingId > 0)
             {
@@ -256,7 +256,7 @@
                     VALUES (@groupId, @adminId, COALESCE
                              ((SELECT        MAX(Ordering)
                                  FROM            [FrameworkCompetencyGroups]
-                                 WHERE        ([FrameworkID] = @frameworkId)) + 1, 1), @frameworkId)",
+                                 WHERE        ([FrameworkID] = @frameworkId)), 0)+1, @frameworkId)",
                              new { groupId, adminId, frameworkId });
                 if (numberOfAffectedRows < 1)
                 {
@@ -267,7 +267,7 @@
                     return -1;
                 }
                 existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE ((SELECT CompetencyGroupID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
+                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                  new { groupId, frameworkId });
                 return existingId;
             }
@@ -281,9 +281,19 @@
                 );
                 return -2;
             }
-            int existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
-                new { name, description});
+            int existingId = 0;
+            if (description == null)
+            {
+                existingId = (int)connection.ExecuteScalar(
+                                @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
+                                new { name, description });
+            }
+            else
+            {
+                existingId = (int)connection.ExecuteScalar(
+                                @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
+                                new { name, description });
+            }
             if (existingId > 0)
             {
                 return existingId;
@@ -301,24 +311,33 @@
                     );
                     return -1;
                 }
-                existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE ((SELECT ID FROM Competencies WHERE [Name] = @name, [Description] = @description), 0) AS CompetencyID",
-                 new { name, description, adminId });
+                if (description == null)
+                {
+                    existingId = (int)connection.ExecuteScalar(
+                                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] IS NULL), 0) AS CompetencyID",
+                                    new { name, description });
+                }
+                else
+                {
+                    existingId = (int)connection.ExecuteScalar(
+                                    @"SELECT COALESCE ((SELECT TOP(1) ID FROM Competencies WHERE [Name] = @name AND [Description] = @description), 0) AS CompetencyID",
+                                    new { name, description });
+                }
                 return existingId;
             }
         }
-        public int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId)
+        public int InsertFrameworkCompetency(int competencyId, int frameworkCompetencyGroupID, int adminId, int frameworkId)
         {
-            if (frameworkCompetencyGroupID < 1 | competencyId < 1 | adminId < 1)
+            if (frameworkCompetencyGroupID < 1 | competencyId < 1 | adminId < 1 | frameworkId < 1)
             {
                 logger.LogWarning(
-                    $"Not inserting competency as it failed server side valiidation. AdminId: {adminId}, frameworkCompetencyGroupID: {frameworkCompetencyGroupID}, competencyId:{competencyId}"
+                    $"Not inserting framework competency as it failed server side valiidation. AdminId: {adminId}, frameworkCompetencyGroupID: {frameworkCompetencyGroupID}, competencyId:{competencyId}, frameworkId:{frameworkId}"
                 );
                 return -2;
             }
             int existingId = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE (SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
-               new { competencyId, frameworkCompetencyGroupID });
+               @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID AND FrameworkID = @frameworkId), 0) AS FrameworkCompetencyID",
+               new { competencyId, frameworkCompetencyGroupID, frameworkId });
             if (existingId > 0)
             {
                 return existingId;
@@ -326,12 +345,12 @@
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                             @"INSERT INTO FrameworkCompetencies ([CompetencyID], FrameworkCompetencyGroupID, AdminID, Ordering)
-                    VALUES (@competencyId, @frameworkCompetencyGroupID, @adminId, , COALESCE
+                             @"INSERT INTO FrameworkCompetencies ([CompetencyID], FrameworkCompetencyGroupID, UpdatedByAdminID, Ordering, FrameworkID)
+                    VALUES (@competencyId, @frameworkCompetencyGroupID, @adminId, COALESCE
                              ((SELECT        MAX(Ordering) AS OrderNum
                                  FROM            [FrameworkCompetencies]
-                                 WHERE        ([FrameworkCompetencyGroupID] = @frameworkCompetencyGroupID)) + 1, 1)))",
-                            new { competencyId, frameworkCompetencyGroupID, adminId });
+                                 WHERE        ([FrameworkCompetencyGroupID] = @frameworkCompetencyGroupID)), 0)+1, @frameworkId)",
+                            new { competencyId, frameworkCompetencyGroupID, adminId, frameworkId });
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(
@@ -340,7 +359,7 @@
                     return -1;
                 }
                 existingId = (int)connection.ExecuteScalar(
-                 @"SELECT COALESCE (SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
+                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                new { competencyId, frameworkCompetencyGroupID });
                 return existingId;
             }
@@ -485,7 +504,7 @@
         public FrameworkCompetency GetFrameworkCompetencyById(int Id)
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
-                 @"SELECT fc.ID, c.Description, fc.Ordering
+                 @"SELECT fc.ID, c.Name, c.Description, fc.Ordering
                 	FROM FrameworkCompetencies AS fc 
                 		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                 	WHERE fc.ID = @Id",
@@ -544,28 +563,30 @@
                 }
             }
         }
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, int competencyId, string name, string description, int adminId)
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string description, int adminId)
         {
-            if (frameworkCompetencyId < 1 | adminId < 1 | competencyId < 1 | name.Length < 3)
+            if (frameworkCompetencyId < 1 | adminId < 1 | name.Length < 3)
             {
                 logger.LogWarning(
-                    $"Not updating framework competency as it failed server side validation. AdminId: {adminId}, frameworkCompetencyId: {frameworkCompetencyId}, competencyId: {competencyId}, name: {name}, description: {description}"
+                    $"Not updating framework competency as it failed server side validation. AdminId: {adminId}, frameworkCompetencyId: {frameworkCompetencyId}, name: {name}, description: {description}"
                 );
                 return;
             }
             //DO WE NEED SOMETHING IN HERE TO CHECK WHETHER IT IS USED ELSEWHERE AND WARN THE USER?
-                var numberOfAffectedRows = connection.Execute(
-               @"UPDATE Competenciess SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
-                    WHERE ID = @competencyId",
-              new { name, description, adminId, competencyId }
-          );
-                if (numberOfAffectedRows < 1)
-                {
-                    logger.LogWarning(
-                        "Not updating competency group name as db update failed. " +
-                        $"Name: {name}, admin id: {adminId}, competencyId: {competencyId}"
-                    );
-                }
+            var numberOfAffectedRows = connection.Execute(
+           @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
+                    FROM   Competencies INNER JOIN
+             FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
+WHERE (fc.Id = @frameworkCompetencyId)",
+          new { name, description, adminId, frameworkCompetencyId }
+      );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating competency group name as db update failed. " +
+                    $"Name: {name}, admin id: {adminId}, frameworkCompetencyId: {frameworkCompetencyId}"
+                );
+            }
         }
         public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction)
         {

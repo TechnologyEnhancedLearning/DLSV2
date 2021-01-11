@@ -1,5 +1,59 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model FrameworkCompetencyViewModel;
 @{
+  ViewData["Title"] = "Competency";
+  ViewData["Application"] = "Framework Service";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<div class="nhsuk-grid-row">
+
+  <div class="nhsuk-grid-column-full">
+    @if (Model.FrameworkCompetency.Id > 0)
+    {
+      <h1>
+        Edit competency
+      </h1>
+    }
+    else
+    {
+      <h1>
+        Add new competency
+      </h1>
+    }
+    <form method="post">
+      @if (!ViewData.ModelState.IsValid)
+      {
+        <partial name="_ErrorSummary" />
+      }
+      <nhs-form-group nhs-validation-for="FrameworkCompetency.Name">
+        <label class="nhsuk-label" id="competency-name-label" for="competency-name">
+          Competency statement
+        </label>
+        <span nhs-validation-for="FrameworkCompetency.Name"></span>
+        <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="competency-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
+      </nhs-form-group>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" id="competency-description-label" for="competency-description">
+          Competency description
+        </label>
+        <textarea class="nhsuk-input" asp-for="FrameworkCompetency.Description" id="competency-description" name="Description" type="text" aria-describedby="competency-description-label"></textarea>
+      </div>
+      <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />
+      <input name="Ordering" type="hidden" asp-for="FrameworkCompetency.Ordering" />
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+        Cancel
+      </a>
+      <button class="nhsuk-button" type="submit">
+        Save
+      </button>
+    </form>
+  </div>
+</div>
+@section scripts {
+  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}
+
