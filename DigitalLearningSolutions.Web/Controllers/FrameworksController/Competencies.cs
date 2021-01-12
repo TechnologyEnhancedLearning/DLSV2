@@ -78,7 +78,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
-        public IActionResult AddEditFrameworkCompetency(int frameworkId, int frameworkCompetencyGroupId = 0, int frameworkCompetencyId = 0)
+        [Route("/Frameworks/{frameworkId}/Competency/")]
+        public IActionResult AddEditFrameworkCompetency(int frameworkId, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
         {
             FrameworkCompetency frameworkCompetency = new FrameworkCompetency();
             if (frameworkCompetencyId > 0)
@@ -96,7 +97,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
-        public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
+        [Route("/Frameworks/{frameworkId}/Competency/")]
+        public IActionResult AddEditFrameworkCompetency(int frameworkId, FrameworkCompetency frameworkCompetency, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
         {
             if (!ModelState.IsValid)
             {
@@ -139,7 +141,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId)
         {
-            return RedirectToAction("ViewFramework", new { tabname = "Structure", frameworkId });
+            frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminID());
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
         }
     }
 }
