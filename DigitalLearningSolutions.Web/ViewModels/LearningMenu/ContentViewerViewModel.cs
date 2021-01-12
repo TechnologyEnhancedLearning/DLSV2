@@ -14,6 +14,7 @@
         public int CandidateId { get; }
         public int ProgressId { get; }
         public string TutorialName { get; }
+        public string SectionName { get; }
         public string CourseTitle { get; }
         public string ContentSource { get; }
 
@@ -38,6 +39,7 @@
             ProgressId = progressId;
 
             TutorialName = tutorialContent.TutorialName;
+            SectionName = tutorialContent.SectionName;
             CourseTitle = tutorialContent.CourseTitle;
 
             ContentSource = IsScormPath(tutorialContent.TutorialPath!) ? GetScormSource(config, tutorialContent)
