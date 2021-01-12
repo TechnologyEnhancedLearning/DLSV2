@@ -186,7 +186,7 @@ To view the logs in the database connect to the local db in SQL Server Managemen
 
 ### Get all the logs for today
 ```
-SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE DAY([TimeStamp]) = DAY(GETDATE())
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE CAST([TimeStamp] as DATE) = CAST(GETDATE() as DATE)
 ```
 
 ### Get all the logs for a session
