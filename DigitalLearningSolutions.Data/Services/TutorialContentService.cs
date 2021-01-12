@@ -54,6 +54,7 @@
 
                          LEFT JOIN Tutorials AS NextTutorials
                          ON NextTutorials.SectionID = Tutorials.SectionID
+                            AND NextTutorials.ArchivedDate IS NULL
                             AND Tutorials.OrderByNumber <= NextTutorials.OrderByNumber
                             AND (
                                  Tutorials.OrderByNumber < NextTutorials.OrderByNumber
@@ -147,6 +148,7 @@
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
                      AND CustomisationTutorials.Status = 1
+                     AND Tutorials.ArchivedDate IS NULL
                    ORDER BY NextTutorial.TutorialID, NextSection.SectionID;",
             new { candidateId, customisationId, sectionId, tutorialId });
         }
@@ -176,7 +178,8 @@
                          AND Sections.SectionID = @sectionId
                          AND Tutorials.TutorialId = @tutorialId
                          AND Customisations.Active = 1
-                         AND CustomisationTutorials.Status = 1;",
+                         AND CustomisationTutorials.Status = 1
+                         AND Tutorials.ArchivedDate IS NULL;",
                 new { customisationId, sectionId, tutorialId });
         }
 
@@ -206,7 +209,8 @@
                          AND Sections.SectionID = @sectionId
                          AND Tutorials.TutorialId = @tutorialId
                          AND Customisations.Active = 1
-                         AND CustomisationTutorials.Status = 1;",
+                         AND CustomisationTutorials.Status = 1
+                         AND Tutorials.ArchivedDate IS NULL;",
                     new { customisationId, sectionId, tutorialId });
             }
             catch (DataException e)

@@ -47,6 +47,7 @@
                             INNER JOIN Tutorials ON CustomisationTutorials.TutorialID = Tutorials.TutorialID
                             WHERE CustomisationTutorials.CustomisationID = @customisationId
                                   AND CustomisationTutorials.Status = 1
+                                  AND Tutorials.ArchivedDate IS NULL
                        ) AS TutorialDurations
                    GROUP BY CustomisationID
                   )
@@ -86,6 +87,7 @@
                    WHERE Customisations.CustomisationID = @customisationId
                      AND Customisations.Active = 1
                      AND Sections.ArchivedDate IS NULL
+                     AND Tutorials.ArchivedDate IS NULL
                      AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
                    GROUP BY
                          Sections.SectionID,

@@ -398,7 +398,7 @@
         }
 
         [Test]
-        public void Get_diagnostic_content_should_not_return_tutorials_where_archived_date_is_null()
+        public void Get_diagnostic_content_should_not_return_archived_tutorials()
         {
             // Given
             const int customisationId = 14212;
