@@ -19,5 +19,15 @@
         {
             return connection.Query<OldTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
         }
+
+        public void UpdateSectionNumber(int sectionId, int sectionNumber)
+        {
+            connection.Execute(
+                @"UPDATE Sections
+                        SET SectionNumber = @sectionNumber
+                        WHERE SectionID = @sectionId",
+                new { sectionId, sectionNumber }
+            );
+        }
     }
 }
