@@ -11,20 +11,18 @@
     public class DiagnosticContentViewModelTests
     {
         private IConfiguration config;
-        private List<int> SelectedTutorials;
         private const string BaseUrl = "https://example.com";
         private const int CustomisationId = 5;
-        private const int CentreId = 5;
-        private const int SectionId = 5;
-        private const int CandidateId = 5;
-        private const int ProgressId = 5;
+        private const int CentreId = 6;
+        private const int SectionId = 7;
+        private const int CandidateId = 8;
+        private const int ProgressId = 9;
 
         [SetUp]
         public void SetUp()
         {
             config = A.Fake<IConfiguration>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
-            SelectedTutorials = new List<int>();
         }
 
         [Test]
@@ -33,6 +31,7 @@
             // Given
             const string applicationName = "Application name";
             const string customisationName = "Customisation name";
+            var emptySelectedTutorials = new List<int>();
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
                 applicationName: applicationName,
                 customisationName: customisationName
@@ -42,7 +41,7 @@
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
-                SelectedTutorials,
+                emptySelectedTutorials,
                 CustomisationId,
                 CentreId,
                 SectionId,
@@ -59,6 +58,7 @@
         {
             // Given
             const string sectionName = "Section name";
+            var emptySelectedTutorials = new List<int>();
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
                 sectionName: sectionName
             );
@@ -67,7 +67,7 @@
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
-                SelectedTutorials,
+                emptySelectedTutorials,
                 CustomisationId,
                 CentreId,
                 SectionId,
@@ -84,13 +84,14 @@
         {
             // Given
             const int customisationId = 11;
+            var emptySelectedTutorials = new List<int>();
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
-                SelectedTutorials,
+                emptySelectedTutorials,
                 customisationId,
                 CentreId,
                 SectionId,
@@ -107,13 +108,14 @@
         {
             // Given
             const int sectionId = 22;
+            var emptySelectedTutorials = new List<int>();
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
-                SelectedTutorials,
+                emptySelectedTutorials,
                 CustomisationId,
                 CentreId,
                 sectionId,
@@ -129,14 +131,9 @@
         public void Diagnostic_content_should_parse_html_url()
         {
             // Given
-            const int centreId = 11;
-            const int customisationId = 22;
-            const int candidateId = 33;
-            const int sectionId = 44;
             const int currentVersion = 55;
-            const int progressId = 66;
             const int plaPassThreshold = 77;
-            const string diagAssessPath = "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.03_Diag.dcr";
+            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DiagnosticTesting/itspplayer.html";
             var selectedTutorials = new List<int>(new[] { 1, 2, 3 });
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
                 diagAssessPath: diagAssessPath,
@@ -149,17 +146,17 @@
                 config,
                 diagnosticContent,
                 selectedTutorials,
-                customisationId,
-                centreId,
-                sectionId,
-                progressId,
-                candidateId
+                CustomisationId,
+                CentreId,
+                SectionId,
+                ProgressId,
+                CandidateId
             );
 
             // Then
             diagnosticContentViewModel.ContentSource.Should().Be(
-                "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.03_Diag.dcr" +
-                "?CentreID=11&CustomisationID=22&CandidateID=33&SectionID=44&Version=55&ProgressID=66" +
+                "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DiagnosticTesting/itspplayer.html" +
+                "?CentreID=6&CustomisationID=5&CandidateID=8&SectionID=7&Version=55&ProgressID=9" +
                 $"&type=diag&TrackURL={BaseUrl}/tracking/tracker&objlist=[1,2,3]&plathresh=77"
             );
         }
@@ -168,50 +165,31 @@
         public void Diagnostic_content_should_have_tutorials()
         {
             // Given
-            const int centreId = 11;
-            const int customisationId = 22;
-            const int candidateId = 33;
-            const int sectionId = 44;
-            const int currentVersion = 55;
-            const int progressId = 66;
-            const int plaPassThreshold = 77;
-            const string diagAssessPath = "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.03_Diag.dcr";
             var selectedTutorials = new List<int>(new[] { 4, 5, 6 });
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
-                diagAssessPath: diagAssessPath,
-                plaPassThreshold: plaPassThreshold,
-                currentVersion: currentVersion
-            );
+            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
                 selectedTutorials,
-                customisationId,
-                centreId,
-                sectionId,
-                progressId,
-                candidateId
+                CustomisationId,
+                CentreId,
+                SectionId,
+                ProgressId,
+                CandidateId
             );
 
             // Then
-            diagnosticContentViewModel.ContentSource.Should().Be(
-                "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.03_Diag.dcr" +
-                "?CentreID=11&CustomisationID=22&CandidateID=33&SectionID=44&Version=55&ProgressID=66" +
-                $"&type=diag&TrackURL={BaseUrl}/tracking/tracker&objlist=[4,5,6]&plathresh=77"
-            );
+            diagnosticContentViewModel.Tutorials.Should().BeEquivalentTo(selectedTutorials);
         }
 
         [Test]
         public void Diagnostic_content_should_parse_scorm_url()
-        {
+        { 
             // Given
-            const int centreId = 11;
-            const int customisationId = 22;
-            const int candidateId = 33;
-            const int sectionId = 44;
             const int currentVersion = 55;
+            var emptySelectedTutorials = new List<int>();
             const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/Diagnostic/03_Digital_Literacy_Diag/imsmanifest.xml";
             var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
                 diagAssessPath: diagAssessPath,
@@ -222,17 +200,17 @@
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
                 config,
                 diagnosticContent,
-                SelectedTutorials,
-                customisationId,
-                centreId,
-                sectionId,
+                emptySelectedTutorials,
+                CustomisationId,
+                CentreId,
+                SectionId,
                 ProgressId,
-                candidateId
+                CandidateId
             );
 
             // Then
             diagnosticContentViewModel.ContentSource.Should().Be(
-                $"{BaseUrl}/scoplayer/sco?CentreID=11&CustomisationID=22&CandidateID=33&SectionID=44&Version=55" +
+                $"{BaseUrl}/scoplayer/sco?CentreID=6&CustomisationID=5&CandidateID=8&SectionID=7&Version=55" +
                 "&tutpath=https://www.dls.nhs.uk/CMS/CMSContent/Course38/Diagnostic/03_Digital_Literacy_Diag/imsmanifest.xml&type=diag"
             );
         }

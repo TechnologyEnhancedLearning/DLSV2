@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
     using System.Collections.Generic;
-    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
@@ -14,8 +13,6 @@
         public string SectionName { get; }
         public string ContentSource { get; }
         public List<int> Tutorials { get; }
-        private static readonly Regex ScormRegex = new Regex(@".*imsmanifest\.xml$");
-        private static bool IsScormPath(string path) => ScormRegex.IsMatch(path);
         private int CentreId { get; }
         private int CandidateId { get; }
         private int ProgressId { get; }
@@ -40,7 +37,7 @@
             CourseTitle = diagnosticContent.CourseTitle;
             Tutorials = selectedTutorials;
 
-            ContentSource = IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
+            ContentSource = ContentViewerHelper.IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
                 ? GetScormSource(config, diagnosticContent)
                 : GetHtmlSource(config, diagnosticContent);
         }

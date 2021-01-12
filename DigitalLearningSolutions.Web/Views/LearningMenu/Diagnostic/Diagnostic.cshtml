@@ -45,7 +45,12 @@
 
 <partial name="Shared/_AssessmentPageImportantInformation" />
 
-<form class="nhsuk-form-group" method="get" asp-action="DiagnosticContent" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">
+<form
+  class="nhsuk-form-group"
+  method="get"
+  asp-action="DiagnosticContent"
+  asp-route-customisationId="@Model.CustomisationId"
+  asp-route-sectionId="@Model.SectionId">
   <fieldset class="nhsuk-fieldset">
     @if (Model.CanSelectTutorials)
     {

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningMenuController
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -19,6 +18,7 @@
         private readonly ISessionService sessionService;
         private readonly ISectionContentService sectionContentService;
         private readonly ITutorialContentService tutorialContentService;
+        private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
@@ -29,6 +29,7 @@
             ICourseContentService courseContentService,
             ISectionContentService sectionContentService,
             ITutorialContentService tutorialContentService,
+            IDiagnosticAssessmentDataService diagnosticAssessmentDataService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
@@ -41,6 +42,7 @@
             this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
             this.sectionContentService = sectionContentService;
+            this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
@@ -160,24 +162,14 @@
         {
             var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
-            var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId);
+            var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId, checkedTutorials);
 
             if (diagnosticContent == null || centreId == null)
             {
                 logger.LogError(
-                    "Redirecting to 404 as section/centre id was not found. " +
+                    "Redirecting to 404 as customisation/section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
                     $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
-            }
-
-            if (checkedTutorials.Except(diagnosticContent.Tutorials).Any())
-            {
-                logger.LogError(
-                    "Redirecting to 404 as tutorial id was not found. " +
-                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}, " +
-                    $"tutorial ids: [{string.Join(",", checkedTutorials)}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 

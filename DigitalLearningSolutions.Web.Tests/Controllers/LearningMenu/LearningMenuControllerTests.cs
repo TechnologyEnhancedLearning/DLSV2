@@ -23,6 +23,7 @@
         private ITutorialContentService tutorialContentService;
         private ISessionService sessionService;
         private ISectionContentService sectionContentService;
+        private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private IDiagnosticAssessmentService diagnosticAssessmentService;
         private IPostLearningAssessmentService postLearningAssessmentService;
         private ICourseCompletionService courseCompletionService;
@@ -33,7 +34,6 @@
         private const int CustomisationId = 12;
         private const int SectionId = 199;
         private const int TutorialId = 842;
-        private List<int> EmptyTutorialSelection = new List<int>();
 
         [SetUp]
         public void SetUp()
@@ -44,6 +44,7 @@
             tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
             sectionContentService = A.Fake<ISectionContentService>();
+            diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
@@ -61,6 +62,7 @@
                 courseContentService,
                 sectionContentService,
                 tutorialContentService,
+                diagnosticAssessmentDataService,
                 diagnosticAssessmentService,
                 postLearningAssessmentService,
                 sessionService,
@@ -581,14 +583,15 @@
         {
             // Given
             const int progressId = 299;
+            var emptySelectedTutorials = new List<int>();
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
@@ -602,11 +605,12 @@
         public void Diagnostic_content_should_not_StartOrUpdate_course_sessions_if_diagnostic_content_not_found()
         {
             // Given
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(null);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
@@ -616,14 +620,15 @@
         public void Diagnostic_content_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
         {
             // Given
+            var emptySelectedTutorials = new List<int>();
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
@@ -633,15 +638,16 @@
         public void Diagnostic_content_should_UpdateProgress_if_valid_diagnostic_content()
         {
             // Given
+            var emptySelectedTutorials = new List<int>();
             const int progressId = 299;
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(progressId);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
@@ -651,11 +657,12 @@
         public void Diagnostic_content_should_not_UpdateProgress_if_invalid_diagnostic_content()
         {
             // Given
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(null);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
@@ -665,14 +672,15 @@
         public void Diagnostic_content_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
+            var emptySelectedTutorials = new List<int>();
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
                 .Returns(null);
 
             // When
-            controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
@@ -683,18 +691,27 @@
         {
             // Given
             const int progressId = 299;
+            var emptySelectedTutorials = new List<int>();
             var selectedTutorials = new List<int>();
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
                 Returns(progressId);
 
             // When
-            var result = controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
-            var expectedModel = new DiagnosticContentViewModel(config, defaultDiagnosticContent, selectedTutorials, CustomisationId, CentreId, SectionId, progressId, CandidateId);
+            var expectedModel = new DiagnosticContentViewModel(
+                config,
+                defaultDiagnosticContent,
+                selectedTutorials,
+                CustomisationId,
+                CentreId,
+                SectionId,
+                progressId,
+                CandidateId);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
@@ -703,11 +720,12 @@
         public void Diagnostic_content_should_404_if_diagnostic_content_not_found()
         {
             // Given
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(null);
 
             // When
-            var result = controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
@@ -722,38 +740,14 @@
         public void Diagnostic_content_should_404_if_failed_to_enrol()
         {
             // Given
+            var emptySelectedTutorials = new List<int>();
             var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
             // When
-            var result = controller.DiagnosticContent(CustomisationId, SectionId, EmptyTutorialSelection);
-
-            // Then
-            result.Should()
-                .BeRedirectToActionResult()
-                .WithControllerName("LearningSolutions")
-                .WithActionName("StatusCode")
-                .WithRouteValue("code", 404);
-        }
-
-        [Test]
-        public void Diagnostic_content_should_404_if_tutorial_id_not_found()
-        {
-            // Given
-            const int progressId = 299;
-            var availableTutorials = new List<int>(new[] { 1, 2, 3 });
-            var selectedTutorials = new List<int>(new[] { 4, 5, 6 });
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
-            defaultDiagnosticContent.Tutorials.AddRange(availableTutorials);
-            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId))
-                .Returns(defaultDiagnosticContent);
-            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
-                Returns(progressId);
-
-            // When
-            var result = controller.DiagnosticContent(CustomisationId, SectionId, selectedTutorials);
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             result.Should()
