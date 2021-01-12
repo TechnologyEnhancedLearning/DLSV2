@@ -9,6 +9,18 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks dashboard</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Competency</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+    </div>
+  </nav>
+}
 <div class="nhsuk-grid-row">
 
   <div class="nhsuk-grid-column-full">
@@ -44,7 +56,7 @@
       </div>
       <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />
       <input name="Ordering" type="hidden" asp-for="FrameworkCompetency.Ordering" />
-      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
         Cancel
       </a>
       <button class="nhsuk-button" type="submit">
