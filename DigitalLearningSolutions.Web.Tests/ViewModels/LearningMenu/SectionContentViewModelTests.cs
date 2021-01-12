@@ -619,7 +619,7 @@
         }
 
         [Test]
-        public void Section_content_should_have_next_section_id_if_there_is_one()
+        public void Should_have_next_section_id_if_there_is_one()
         {
             // Given
             const int nextSectionId = 2;
@@ -635,7 +635,7 @@
         }
 
         [Test]
-        public void Section_content_should_have_null_next_section_id_if_there_is_no_next_section()
+        public void Should_have_null_next_section_id_if_there_is_no_next_section()
         {
             // Given
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
