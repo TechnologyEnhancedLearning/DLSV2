@@ -25,6 +25,7 @@
         public bool DisplayDiagnosticSeparator { get; }
         public bool DisplayTutorialSeparator { get; }
         public bool DisplayPostLearningSeparator { get; }
+        public int? NextSectionId { get; }
 
         public SectionContentViewModel(IConfiguration config, SectionContent sectionContent, int customisationId, int sectionId)
         {
@@ -55,6 +56,7 @@
             DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning || ShowConsolidation);
             DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);
             DisplayPostLearningSeparator = ShowConsolidation && ShowPostLearning;
+            NextSectionId = sectionContent.NextSectionId;
         }
 
         private static string FormatPercentComplete(SectionContent sectionContent)
