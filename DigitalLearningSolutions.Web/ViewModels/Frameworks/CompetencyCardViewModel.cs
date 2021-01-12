@@ -5,6 +5,6 @@
     {
         public FrameworkCompetency FrameworkCompetency { get; set; }
         public bool CanModify { get; set; }
-        public int FrameworkCompetencyGroupId { get; set; }
+        public int? FrameworkCompetencyGroupId { get; set; }
     }
 }

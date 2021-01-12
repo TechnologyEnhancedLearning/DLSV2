@@ -139,10 +139,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, step, direction);
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
         }
-        public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId)
+        public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminID());
-            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
+            if(frameworkCompetencyGroupId != null)
+            {
+return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+            }
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }
     }
 }

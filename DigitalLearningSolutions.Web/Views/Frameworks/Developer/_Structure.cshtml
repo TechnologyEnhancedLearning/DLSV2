@@ -12,13 +12,17 @@ else
 {
   <p>No competency groups in this framework</p>
 }
-@if (Model.FrameworkCompetencies.Any())
-{
-  foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+<div id="fc-ungrouped">
+  @if (Model.FrameworkCompetencies.Any())
   {
-    <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserCanModify, FrameworkCompetencyGroupId = 0, FrameworkCompetency = frameworkCompetency}" />
+
+    foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+    {
+      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserCanModify, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" />
+    }
+
   }
-}
+</div>
 @if (Model.DetailFramework.UserCanModify)
 {
   <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new competency group</a>
