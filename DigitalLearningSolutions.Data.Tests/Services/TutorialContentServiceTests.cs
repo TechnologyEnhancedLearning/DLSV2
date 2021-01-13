@@ -243,14 +243,14 @@
             const int sectionId = 150;
             const int tutorialId = 634;
 
-            const int nextSectionId = 151; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
+            const int expectedNextSectionId = 151; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
 
             // When
             var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
-            tutorial!.NextSectionId.Should().Be(nextSectionId);
+            tutorial!.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
         [Test]
@@ -262,8 +262,8 @@
             const int sectionId = 104;
             const int tutorialId = 331;
 
-            const int expectedNextSectionId = 105;
-
+            const int expectedNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
+                                                   // Customisations.IsAssessed = 1 and Sections.PLAssessPath is not null
             // When
             var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
@@ -272,7 +272,7 @@
         }
 
         [Test]
-        public void Get_tutorial_information_nextSection_skips_section_with_only_post_learning_assessment_but_no_path()
+        public void Get_tutorial_information_nextSection_skips_assessed_section_with_no_assessment_path()
         {
             using (new TransactionScope())
             {
@@ -282,7 +282,8 @@
                 const int sectionId = 104;
                 const int tutorialId = 331;
 
-                const int originalNextSectionId = 105;
+                const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
+                                                       // Customisations.IsAssessed = 1
                 tutorialContentTestHelper.UpdatePLAssessPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
