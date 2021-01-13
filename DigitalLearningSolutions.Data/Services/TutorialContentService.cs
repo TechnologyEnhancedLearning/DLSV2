@@ -64,10 +64,12 @@
 
                          LEFT JOIN Tutorials AS NextSectionsTutorials
                          ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+                            AND NextSectionsTutorials.ArchivedDate IS NULL
 
                          LEFT JOIN Sections AS NextSections
                          ON NextSectionsTutorials.SectionID = NextSections.SectionID
                             AND CurrentSection.SectionNumber <= NextSections.SectionNumber
+                            AND NextSections.ArchivedDate IS NULL
                             AND (
                                  CurrentSection.SectionNumber < NextSections.SectionNumber
                                  OR CurrentSection.SectionID < NextSections.SectionID
@@ -148,6 +150,7 @@
                      AND Tutorials.TutorialID = @tutorialId
                      AND Customisations.Active = 1
                      AND CustomisationTutorials.Status = 1
+                     AND Sections.ArchivedDate IS NULL
                      AND Tutorials.ArchivedDate IS NULL
                    ORDER BY NextTutorial.TutorialID, NextSection.SectionID;",
             new { candidateId, customisationId, sectionId, tutorialId });
@@ -179,6 +182,7 @@
                          AND Tutorials.TutorialId = @tutorialId
                          AND Customisations.Active = 1
                          AND CustomisationTutorials.Status = 1
+                         AND Sections.ArchivedDate IS NULL
                          AND Tutorials.ArchivedDate IS NULL;",
                 new { customisationId, sectionId, tutorialId });
         }
@@ -209,6 +213,7 @@
                          AND Sections.SectionID = @sectionId
                          AND Tutorials.TutorialId = @tutorialId
                          AND Customisations.Active = 1
+                         AND Sections.ArchivedDate IS NULL
                          AND CustomisationTutorials.Status = 1
                          AND Tutorials.ArchivedDate IS NULL;",
                     new { customisationId, sectionId, tutorialId });

@@ -101,11 +101,14 @@
                 const int customisationId = 15937;
                 courseCompletionTestHelper.AddCertificationToCourse(customisationId);
 
+                const int tutorialsComplete = 36;
+                const int tutorialsAvailable = 196;
+
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
 
                 // Then
-                result.PercentageTutorialsCompleted.Should().Be(100.0 * 36 / 196);
+                result.PercentageTutorialsCompleted.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
             }
         }
 

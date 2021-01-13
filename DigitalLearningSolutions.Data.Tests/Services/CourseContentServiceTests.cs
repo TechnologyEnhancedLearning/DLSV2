@@ -589,13 +589,16 @@
             const int candidateId = 11;
             const int customisationId = 15937;
 
+            const int tutorialsComplete = 3;
+            const int tutorialsAvailable = 14;
+
             // When
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
             result.Should().NotBeNull();
             result!.Sections.First(section => section.Id == 392)
-                .PercentComplete.Should().Be(100.0 * 3 / 14);
+                .PercentComplete.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
         }
 
         [Test]
@@ -620,13 +623,16 @@
             const int candidateId = 22966;
             const int customisationId = 7669;
 
+            const int tutorialsComplete = 2;
+            const int tutorialsAvailable = 12;
+
             // When
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
             result.Should().NotBeNull();
             result!.Sections.First(section => section.Id == 96)
-                .PercentComplete.Should().Be(100.0 * 2 / 12);
+                .PercentComplete.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
         }
 
         [Test]
