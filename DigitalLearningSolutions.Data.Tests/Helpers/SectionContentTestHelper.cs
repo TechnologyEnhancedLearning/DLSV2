@@ -34,5 +34,15 @@
                 new { tutorialId, progressId, diagAttempts }
             );
         }
+
+        public void UpdateDiagScore(int tutorialId, int progressId, int score)
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                        SET DiagLast = @score
+                        WHERE TutorialID = @tutorialId AND ProgressID = @progressId",
+                new { tutorialId, progressId, score }
+            );
+        }
     }
 }

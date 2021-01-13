@@ -274,7 +274,7 @@
                 false,
                 0,
                 0,
-                18,
+                0,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Diag_1.dcr",
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
                 0,
@@ -307,7 +307,7 @@
                 true,
                 0,
                 0,
-                18,
+                0,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Diag_1.dcr",
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
                 0,
@@ -813,6 +813,69 @@
                 // Then
                 result.Should().NotBeNull();
                 result!.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_ignores_tutorials_with_diag_status_0_when_calculating_max_score()
+        {
+            // Given
+            const int customisationId = 23271;
+            const int candidateId = 1;
+            const int sectionId = 137;
+            // Adding all scores is 49, adding only ones with diagStatus=1 is 41
+            const int expectedMaxScore = 41;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.MaxSectionScore.Should().Be(expectedMaxScore);
+        }
+
+        [Test]
+        public void Get_section_content_ignores_tutorials_with_diag_status_0_when_calculating_candidate_score()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 12036;
+                const int candidateId = 162301;
+                const int sectionId = 214;
+                const int progressId = 129600;
+                const int expectedSectionScore = 6;
+
+                // Tutorial 910 has DiagStatus=0 so the section score should be 6 and not 7
+                sectionContentTestHelper.UpdateDiagScore(910, progressId, 1);
+                
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.SectionScore.Should().Be(expectedSectionScore);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_ignores_tutorials_with_diag_status_0_when_calculating_candidate_attempts()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 12036;
+                const int candidateId = 162301;
+                const int sectionId = 214;
+                const int progressId = 129600;
+                const int expectedDiagAttempts = 2;
+
+                // Tutorial 910 has DiagStatus=0 so attempts should be 2 and not 4
+                sectionContentTestHelper.UpdateDiagAttempts(910, progressId, 4);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.DiagnosticAttempts.Should().Be(expectedDiagAttempts);
             }
         }
     }

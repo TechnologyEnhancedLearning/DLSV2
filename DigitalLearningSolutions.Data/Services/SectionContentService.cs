@@ -128,8 +128,14 @@
                     if (sectionContent == null)
                     {
                         sectionContent = section;
+                        if (!section.DiagnosticStatus)
+                        {
+                            sectionContent.DiagnosticAttempts = 0;
+                            sectionContent.SectionScore = 0;
+                            section.MaxSectionScore = 0;
+                        }
                     }
-                    else
+                    else if (section.DiagnosticStatus)
                     {
                         sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, section.DiagnosticAttempts);
                         sectionContent.SectionScore += section.SectionScore;
