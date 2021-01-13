@@ -38,16 +38,8 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
 
-    <div class="nhsuk-error-summary non-js-only" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-      <h2 class="nhsuk-error-summary__title" id="error-summary-title">
-        There is a problem
-      </h2>
-      <div class="nhsuk-error-summary__body">
-        <p class="nhsuk-u-margin-0">
-          JavaScript is required to view this tutorial.
-        </p>
-      </div>
-    </div>
+    @{ var contentType = "tutorial"; }
+    <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
     <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
     </iframe>

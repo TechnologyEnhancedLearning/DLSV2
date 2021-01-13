@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
+    using System.Collections.Generic;
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -22,6 +23,7 @@
         private ITutorialContentService tutorialContentService;
         private ISessionService sessionService;
         private ISectionContentService sectionContentService;
+        private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private IDiagnosticAssessmentService diagnosticAssessmentService;
         private IPostLearningAssessmentService postLearningAssessmentService;
         private ICourseCompletionService courseCompletionService;
@@ -42,6 +44,7 @@
             tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
             sectionContentService = A.Fake<ISectionContentService>();
+            diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
             courseCompletionService = A.Fake<ICourseCompletionService>();
@@ -59,6 +62,7 @@
                 courseContentService,
                 sectionContentService,
                 tutorialContentService,
+                diagnosticAssessmentDataService,
                 diagnosticAssessmentService,
                 postLearningAssessmentService,
                 sessionService,
@@ -418,7 +422,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -453,7 +457,7 @@
         public void Diagnostic_assessment_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -471,7 +475,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -499,10 +503,10 @@
         }
 
         [Test]
-        public void Diagnostic_assessment_should_UpdateProgress_if_unable_to_enrol()
+        public void Diagnostic_assessment_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -520,7 +524,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
@@ -558,13 +562,192 @@
         public void Diagnostic_assessment_should_404_if_failed_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
 
             // When
             var result = controller.Diagnostic(CustomisationId, SectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Diagnostic_content_should_StartOrUpdate_course_sessions_if_valid_diagnostic_content()
+        {
+            // Given
+            const int progressId = 299;
+            var emptySelectedTutorials = new List<int>();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+                .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
+                    candidateId != CandidateId || customisationId != CustomisationId)
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_not_StartOrUpdate_course_sessions_if_diagnostic_content_not_found()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(null);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_UpdateProgress_if_valid_diagnostic_content()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            const int progressId = 299;
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(progressId);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(progressId)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_not_UpdateProgress_if_invalid_diagnostic_content()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(null);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_not_UpdateProgress_if_unable_to_enrol()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
+                .Returns(null);
+
+            // When
+            controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => courseContentService.UpdateProgress(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Diagnostic_content_should_render_view()
+        {
+            // Given
+            const int progressId = 299;
+            var emptySelectedTutorials = new List<int>();
+            var selectedTutorials = new List<int>();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
+                Returns(progressId);
+
+            // When
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            var expectedModel = new DiagnosticContentViewModel(
+                config,
+                defaultDiagnosticContent,
+                selectedTutorials,
+                CustomisationId,
+                CentreId,
+                SectionId,
+                progressId,
+                CandidateId);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Diagnostic_content_should_404_if_diagnostic_content_not_found()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(null);
+
+            // When
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
+
+            // Then
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(A<int>._, A<int>._, A<int>._)).MustNotHaveHappened();
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningSolutions")
+                .WithActionName("StatusCode")
+                .WithRouteValue("code", 404);
+        }
+
+        [Test]
+        public void Diagnostic_content_should_404_if_failed_to_enrol()
+        {
+            // Given
+            var emptySelectedTutorials = new List<int>();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
+            A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
+                .Returns(defaultDiagnosticContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
+
+            // When
+            var result = controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
             result.Should()
@@ -660,7 +843,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_UpdateProgress_if_unable_to_enrol()
+        public void Post_learning_assessment_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
             var defaultPostLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment();

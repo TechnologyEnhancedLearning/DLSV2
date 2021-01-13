@@ -96,6 +96,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISectionContentService, SectionContentService>();
+            services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();

@@ -45,7 +45,12 @@
 
 <partial name="Shared/_AssessmentPageImportantInformation" />
 
-<form class="nhsuk-form-group">
+<form
+  class="nhsuk-form-group"
+  method="get"
+  asp-action="DiagnosticContent"
+  asp-route-customisationId="@Model.CustomisationId"
+  asp-route-sectionId="@Model.SectionId">
   <fieldset class="nhsuk-fieldset">
     @if (Model.CanSelectTutorials)
     {
@@ -61,7 +66,7 @@
         @foreach (var tutorial in Model.Tutorials)
         {
           <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" type="checkbox" checked="checked" id="@tutorial.Id" value="@tutorial.Id">
+            <input class="nhsuk-checkboxes__input" type="checkbox" name="checkedTutorials" checked="checked" id="@tutorial.Id" value="@tutorial.Id">
             <label class="nhsuk-label nhsuk-checkboxes__label" for="@tutorial.Id">
               @tutorial.TutorialName
             </label>

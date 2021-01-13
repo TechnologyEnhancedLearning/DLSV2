@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningMenuController
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -17,6 +18,7 @@
         private readonly ISessionService sessionService;
         private readonly ISectionContentService sectionContentService;
         private readonly ITutorialContentService tutorialContentService;
+        private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
         private readonly ICourseCompletionService courseCompletionService;
@@ -27,6 +29,7 @@
             ICourseContentService courseContentService,
             ISectionContentService sectionContentService,
             ITutorialContentService tutorialContentService,
+            IDiagnosticAssessmentDataService diagnosticAssessmentDataService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
             ISessionService sessionService,
@@ -39,6 +42,7 @@
             this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
             this.sectionContentService = sectionContentService;
+            this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
             this.courseCompletionService = courseCompletionService;
@@ -151,6 +155,48 @@
 
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
             return View("Diagnostic/Diagnostic", model);
+        }
+
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/Diagnostic/Content")]
+        public IActionResult DiagnosticContent(int customisationId, int sectionId, List<int> checkedTutorials)
+        {
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+            var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId, checkedTutorials);
+
+            if (diagnosticContent == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new DiagnosticContentViewModel(
+                config,
+                diagnosticContent,
+                checkedTutorials,
+                customisationId,
+                centreId.Value,
+                sectionId,
+                progressId.Value,
+                candidateId
+            );
+            return View("Diagnostic/DiagnosticContent", model);
         }
 
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/PostLearning")]
