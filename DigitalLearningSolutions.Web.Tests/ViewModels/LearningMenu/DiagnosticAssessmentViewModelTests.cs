@@ -11,11 +11,6 @@
         private const int CustomisationId = 5;
         private const int SectionId = 5;
 
-        [SetUp]
-        public void SetUp()
-        {
-        }
-
         [Test]
         public void Diagnostic_assessment_should_have_title()
         {
