@@ -235,6 +235,66 @@
         }
 
         [Test]
+        public void Get_tutorial_information_nextSection_returns_section_with_only_diagnostic_assessment()
+        {
+            // Given
+            const int candidateId = 74411;
+            const int customisationId = 5852;
+            const int sectionId = 150;
+            const int tutorialId = 634;
+
+            const int nextSectionId = 151; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_returns_section_with_only_post_learning_assessment()
+        {
+            // Given
+            const int customisationId = 10820;
+            const int candidateId = 1;
+            const int sectionId = 104;
+            const int tutorialId = 331;
+
+            const int expectedNextSectionId = 105;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            //Then
+            tutorial.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_skips_section_with_only_post_learning_assessment_but_no_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 10820;
+                const int candidateId = 1;
+                const int sectionId = 104;
+                const int tutorialId = 331;
+
+                const int originalNextSectionId = 105;
+                tutorialContentTestHelper.UpdatePLAssessPath(originalNextSectionId, null);
+                const int expectedNextSectionId = 106;
+
+                // When
+                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+                //Then
+                tutorial.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
+        [Test]
         public void Get_tutorial_information_nextTutorial_returns_smaller_tutorialId_for_shared_orderByNumber()
         {
             // Given
