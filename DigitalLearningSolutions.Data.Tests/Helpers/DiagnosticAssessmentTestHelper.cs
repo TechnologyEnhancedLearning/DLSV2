@@ -1,12 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
-    using DigitalLearningSolutions.Data.Models.TutorialContent;
     using Microsoft.Data.SqlClient;
 
     public class DiagnosticAssessmentTestHelper
@@ -29,14 +24,14 @@
             );
         }
 
-        public DiagnosticAssessment CreateDefaultDiagnosticAssessment(
+        public static DiagnosticAssessment CreateDefaultDiagnosticAssessment(
             string applicationName = "application name",
             string customisationName = "customisation name",
             string sectionName = "section name",
             int diagnosticAttempts = 1,
             int sectionScore = 2,
             int maxSectionScore = 3,
-            string diagnosticAssessmentPath = "https://www.dls.nhs.uk/tracking/MOST/Word10Core/Assess/L2_Word_2010_Diag_1.dcr",
+            string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DIAGNEW/itspplayer.html",
             bool canSelectTutorials = true
         )
         {
@@ -52,7 +47,7 @@
             );
         }
 
-        public DiagnosticContent CreateDefaultDiagnosticContent(
+        public static DiagnosticContent CreateDefaultDiagnosticContent(
             string applicationName = "application name",
             string customisationName = "customisation name",
             string sectionName = "section name",

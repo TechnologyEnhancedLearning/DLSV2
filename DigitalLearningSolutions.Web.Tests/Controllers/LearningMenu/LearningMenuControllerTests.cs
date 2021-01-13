@@ -422,7 +422,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -457,7 +457,7 @@
         public void Diagnostic_assessment_should_not_StartOrUpdate_course_sessions_if_unable_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -475,7 +475,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -506,7 +506,7 @@
         public void Diagnostic_assessment_should_not_UpdateProgress_if_unable_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -524,7 +524,7 @@
         {
             // Given
             const int progressId = 299;
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
@@ -562,7 +562,7 @@
         public void Diagnostic_assessment_should_404_if_failed_to_enrol()
         {
             // Given
-            var defaultDiagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var defaultDiagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(defaultDiagnosticAssessment);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);
@@ -584,7 +584,7 @@
             // Given
             const int progressId = 299;
             var emptySelectedTutorials = new List<int>();
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -621,7 +621,7 @@
         {
             // Given
             var emptySelectedTutorials = new List<int>();
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -640,7 +640,7 @@
             // Given
             var emptySelectedTutorials = new List<int>();
             const int progressId = 299;
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -673,7 +673,7 @@
         {
             // Given
             var emptySelectedTutorials = new List<int>();
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId))
@@ -693,7 +693,7 @@
             const int progressId = 299;
             var emptySelectedTutorials = new List<int>();
             var selectedTutorials = new List<int>();
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).
@@ -741,7 +741,7 @@
         {
             // Given
             var emptySelectedTutorials = new List<int>();
-            var defaultDiagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var defaultDiagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
             A.CallTo(() => diagnosticAssessmentService.GetDiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials))
                 .Returns(defaultDiagnosticContent);
             A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, CustomisationId, CentreId)).Returns(null);

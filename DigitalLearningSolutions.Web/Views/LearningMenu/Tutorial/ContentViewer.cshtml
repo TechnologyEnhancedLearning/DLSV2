@@ -10,7 +10,6 @@
   ViewData["CustomisationId"] = Model.CustomisationId;
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
   ViewData["HeaderPathName"] = Model.CourseTitle;
-  const string contentType = "tutorial";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -39,6 +38,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
 
+    @{ var contentType = "tutorial"; }
     <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
     <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">

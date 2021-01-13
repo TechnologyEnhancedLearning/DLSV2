@@ -31,7 +31,7 @@
         public void Get_diagnostic_assessment_should_return_diagnostic_assessment_from_data_service()
         {
             // Given
-            var diagnosticAssessment = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             A.CallTo(() => diagnosticAssessmentDataService.GetDiagnosticAssessment(CustomisationId, CandidateId, SectionId))
                 .Returns(diagnosticAssessment);
 
@@ -76,7 +76,7 @@
         {
             // Given
             var emptySelectedTutorials = new List<int>();
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: false);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: false);
             A.CallTo(() => diagnosticAssessmentDataService.GetDiagnosticContent(CustomisationId, SectionId))
                 .Returns(diagnosticContent);
 
@@ -91,7 +91,7 @@
         public void Get_diagnostic_content_should_return_diagnostic_content_from_data_service_if_selected_tutorials_are_invalid_but_selection_is_disabled()
         {
             // Given
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: false);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: false);
             diagnosticContent.Tutorials.AddRange(new[] {
                 1, 2, 3
             });
@@ -113,7 +113,7 @@
         public void Get_diagnostic_content_should_return_diagnostic_content_from_data_service_if_selected_tutorials_equal_valid_tutorials()
         {
             // Given
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
             diagnosticContent.Tutorials.AddRange(new[] {
                 1, 2, 3
             });
@@ -135,7 +135,7 @@
         public void Get_diagnostic_content_should_return_diagnostic_content_from_data_service_if_no_selected_tutorials_are_invalid()
         {
             // Given
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
             diagnosticContent.Tutorials.AddRange(new[] {
                 1, 2, 3
             });
@@ -157,7 +157,7 @@
         public void Get_diagnostic_content_should_return_null_if_all_selected_tutorials_are_invalid()
         {
             // Given
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
             diagnosticContent.Tutorials.AddRange(new[] {
                 1, 2, 3
             });
@@ -179,7 +179,7 @@
         public void Get_diagnostic_content_should_return_null_if_some_selected_tutorials_are_invalid()
         {
             // Given
-            var diagnosticContent = diagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(canSelectTutorials: true);
             diagnosticContent.Tutorials.AddRange(new[] {
                 1, 2, 3
             });

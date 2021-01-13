@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FluentAssertions;
     using NUnit.Framework;
@@ -11,13 +11,18 @@
         private const int CustomisationId = 5;
         private const int SectionId = 5;
 
+        [SetUp]
+        public void SetUp()
+        {
+        }
+
         [Test]
         public void Diagnostic_assessment_should_have_title()
         {
             // Given
             const string applicationName = "Application name";
             const string customisationName = "Customisation name";
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
                 applicationName: applicationName,
                 customisationName: customisationName
             );
@@ -35,7 +40,7 @@
         {
             // Given
             const string sectionName = "Section name";
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
                 sectionName: sectionName
             );
 
@@ -53,8 +58,8 @@
             // Given
             const string diagnosticAssessmentPath =
                 "https://www.dls.nhs.uk/tracking/MOST/Excel07Core/Assess/L2_Excel_2007_Diag_7.dcr";
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagAssessPath: diagnosticAssessmentPath
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAssessmentPath: diagnosticAssessmentPath
             );
 
             // When
@@ -72,8 +77,8 @@
         )
         {
             // Given
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagObjSelect: selectTutorials
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                canSelectTutorials: selectTutorials
             );
 
             // When
@@ -86,7 +91,7 @@
 
         [TestCase(true)]
         [TestCase(false)]
-        public void Diagnostic_assessment_select_tutorials_with_tutorials_should_be_diagObjSelect(
+        public void Diagnostic_assessment_select_tutorials_with_tutorials_should_be_canSelectTutorials(
             bool selectTutorials
         )
         {
@@ -96,8 +101,8 @@
                 new DiagnosticTutorial("Tutorial 1", 1),
                 new DiagnosticTutorial("Tutorial 2", 2)
             };
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagObjSelect: selectTutorials
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                canSelectTutorials: selectTutorials
             );
             diagnosticAssessment.Tutorials.AddRange(tutorials);
 
@@ -114,8 +119,8 @@
         {
             // Given
             const bool selectTutorials = false;
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagObjSelect: selectTutorials
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                canSelectTutorials: selectTutorials
             );
 
             // When
@@ -131,8 +136,8 @@
         {
             // Given
             const int diagnosticAttempts = 0;
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagAttempts: diagnosticAttempts
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: diagnosticAttempts
             );
 
             // When
@@ -150,10 +155,10 @@
             const int diagnosticAttempts = 3;
             const int sectionScore = 10;
             const int maxSectionScore = 20;
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment(
-                diagAttempts: diagnosticAttempts,
-                diagLast: sectionScore,
-                diagAssessOutOf: maxSectionScore
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: diagnosticAttempts,
+                sectionScore: sectionScore,
+                maxSectionScore: maxSectionScore
             );
 
             // When
@@ -169,7 +174,7 @@
         {
             // Given
             const int customisationId = 11;
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
 
             // When
             var diagnosticAssessmentViewModel =
@@ -184,7 +189,7 @@
         {
             // Given
             const int sectionId = 22;
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
 
             // When
             var diagnosticAssessmentViewModel =
@@ -203,7 +208,7 @@
                 new DiagnosticTutorial("Tutorial 1", 1),
                 new DiagnosticTutorial("Tutorial 2", 2)
             };
-            var diagnosticAssessment = DiagnosticAssessmentHelper.CreateDefaultDiagnosticAssessment();
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment();
             diagnosticAssessment.Tutorials.AddRange(tutorials);
 
             // When

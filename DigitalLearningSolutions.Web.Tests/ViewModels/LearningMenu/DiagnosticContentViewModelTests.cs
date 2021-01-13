@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
     using FluentAssertions;
@@ -32,7 +32,7 @@
             const string applicationName = "Application name";
             const string customisationName = "Customisation name";
             var emptySelectedTutorials = new List<int>();
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(
                 applicationName: applicationName,
                 customisationName: customisationName
             );
@@ -59,7 +59,7 @@
             // Given
             const string sectionName = "Section name";
             var emptySelectedTutorials = new List<int>();
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(
                 sectionName: sectionName
             );
 
@@ -85,7 +85,7 @@
             // Given
             const int customisationId = 11;
             var emptySelectedTutorials = new List<int>();
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
@@ -109,7 +109,7 @@
             // Given
             const int sectionId = 22;
             var emptySelectedTutorials = new List<int>();
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
@@ -132,12 +132,12 @@
         {
             // Given
             const int currentVersion = 55;
-            const int plaPassThreshold = 77;
-            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DiagnosticTesting/itspplayer.html";
+            const int postLearningPassThreshold = 77;
+            const string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DiagnosticTesting/itspplayer.html";
             var selectedTutorials = new List<int>(new[] { 1, 2, 3 });
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
-                diagAssessPath: diagAssessPath,
-                plaPassThreshold: plaPassThreshold,
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(
+                diagnosticAssessmentPath: diagnosticAssessmentPath,
+                postLearningPassThreshold: postLearningPassThreshold,
                 currentVersion: currentVersion
             );
 
@@ -166,7 +166,7 @@
         {
             // Given
             var selectedTutorials = new List<int>(new[] { 4, 5, 6 });
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent();
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
@@ -190,9 +190,9 @@
             // Given
             const int currentVersion = 55;
             var emptySelectedTutorials = new List<int>();
-            const string diagAssessPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/Diagnostic/03_Digital_Literacy_Diag/imsmanifest.xml";
-            var diagnosticContent = DiagnosticAssessmentHelper.CreateDefaultDiagnosticContent(
-                diagAssessPath: diagAssessPath,
+            const string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/Diagnostic/03_Digital_Literacy_Diag/imsmanifest.xml";
+            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent(
+                diagnosticAssessmentPath: diagnosticAssessmentPath,
                 currentVersion: currentVersion
             );
 
