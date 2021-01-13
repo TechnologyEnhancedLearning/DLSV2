@@ -317,35 +317,6 @@
         }
 
         [Test]
-        public void Get_diagnostic_assessment_should_get_tutorialIds_ordered_by_orderBy_then_tutorialId()
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                const int candidateId = 1;
-                const int customisationId = 8194;
-                const int sectionId = 216;
-
-                diagnosticAssessmentTestHelper.UpdateDiagAssessOutOf(928, 1);
-
-                // ...
-                // Tutorial: 927  OrderByNumber 34
-                // Tutorial: 928  OrderByNumber 35
-                // Tutorial: 929  OrderByNumber 35
-                // ...
-
-                // When
-                var result = diagnosticAssessmentDataService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
-
-                // Then
-                result.Should().NotBeNull();
-                var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
-                tutorialIds.Should()
-                    .Equal(923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940);
-            }
-        }
-
-        [Test]
         public void Get_diagnostic_content_should_return_diagnostic_content()
         {
             // Given
@@ -461,6 +432,61 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_diagnostic_assessment_should_get_tutorialIds_ordered_by_orderBy_then_tutorialId()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 1;
+                const int customisationId = 8194;
+                const int sectionId = 216;
+
+                diagnosticAssessmentTestHelper.UpdateDiagAssessOutOf(928, 1);
+
+                // ...
+                // Tutorial: 927  OrderByNumber 34
+                // Tutorial: 928  OrderByNumber 35
+                // Tutorial: 929  OrderByNumber 35
+                // ...
+
+                // When
+                var result = diagnosticAssessmentDataService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
+                tutorialIds.Should()
+                    .Equal(923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940);
+            }
+        }
+
+        [Test]
+        public void Get_diagnostic_content_should_not_return_archived_tutorials()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 249;
+
+            // When
+            var result = diagnosticAssessmentDataService.GetDiagnosticContent(customisationId, sectionId);
+
+            // Then
+            var expectedDiagnosticContent = new DiagnosticContent(
+                "Combined Office Course",
+                "Word, Excel, and Outlook",
+                "Working with tables",
+                "https://www.dls.nhs.uk/tracking/RFM/L1_Word10/Assess/L1_2.06_Diag.dcr",
+                true,
+                85,
+                4
+            );
+            expectedDiagnosticContent.Tutorials.AddRange(
+                new[] { 1141, 1139, 1140 }
+            );
+            result.Should().BeEquivalentTo(expectedDiagnosticContent);
         }
     }
 }
