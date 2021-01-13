@@ -6,7 +6,6 @@
     {
         public string CourseTitle { get; }
         public string SectionName { get; }
-        public string PostLearningAssessmentPath { get; }
         public string AssessmentStatus { get; }
         public bool PostLearningLocked { get; }
         public int CustomisationId { get; }
@@ -16,7 +15,6 @@
         {
             CourseTitle = postLearningAssessment.CourseTitle;
             SectionName = postLearningAssessment.SectionName;
-            PostLearningAssessmentPath = postLearningAssessment.PostLearningAssessmentPath;
             AssessmentStatus = GetAssessmentStatus(postLearningAssessment);
             PostLearningLocked = postLearningAssessment.PostLearningLocked;
             CustomisationId = customisationId;

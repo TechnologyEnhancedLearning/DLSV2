@@ -101,7 +101,7 @@
         public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId)
         {
             DiagnosticContent? diagnosticContent = null;
-            return connection.Query<DiagnosticContent, int?, DiagnosticContent>(
+            return connection.Query<DiagnosticContent, int, DiagnosticContent>(
                 @"
                     SELECT
                         Applications.ApplicationName,
@@ -144,7 +144,7 @@
                         diagnosticContent = diagnostic;
                     }
 
-                    diagnosticContent.Tutorials.Add(tutorialId.Value);
+                    diagnosticContent.Tutorials.Add(tutorialId);
 
                     return diagnosticContent;
                 },

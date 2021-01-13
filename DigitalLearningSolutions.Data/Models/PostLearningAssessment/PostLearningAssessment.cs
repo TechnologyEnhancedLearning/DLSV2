@@ -4,7 +4,6 @@
     {
         public string CourseTitle { get; }
         public string SectionName { get; }
-        public string PostLearningAssessmentPath { get; }
         public int PostLearningScore { get; }
         public int PostLearningAttempts { get; }
         public bool PostLearningPassed { get; }
@@ -14,7 +13,6 @@
             string applicationName,
             string customisationName,
             string sectionName,
-            string plAssessPath,
             int bestScore,
             int attemptsPl,
             int plPasses,
@@ -23,7 +21,6 @@
         {
             CourseTitle = $"{applicationName} - {customisationName}";
             SectionName = sectionName;
-            PostLearningAssessmentPath = plAssessPath;
             PostLearningScore = bestScore;
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
