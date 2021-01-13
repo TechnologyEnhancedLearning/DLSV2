@@ -29,8 +29,8 @@
             return connection.Query<SectionContent, SectionTutorial, SectionContent>(
                 @"
                     WITH NextSectionIdTable AS (
-                        SELECT TOP(1) 
-                            CurrentSection.SectionID, 
+                        SELECT TOP(1)
+                            CurrentSection.SectionID,
                             NextSections.SectionID AS NextSectionID
                         FROM Sections AS CurrentSection
                                 LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
@@ -39,6 +39,7 @@
                                     ON NextCustomisationTutorials.CustomisationID = Customisations.CustomisationID
                                 LEFT JOIN Tutorials AS NextSectionsTutorials
                                     ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+                                    AND NextSectionsTutorials.ArchivedDate IS NULL
                                 LEFT JOIN Sections AS NextSections
                                     ON NextSectionsTutorials.SectionID = NextSections.SectionID
                                     AND CurrentSection.SectionNumber <= NextSections.SectionNumber
@@ -50,9 +51,9 @@
                             AND Customisations.Active = 1
                             AND NextSections.ArchivedDate IS NULL
                             AND (NextCustomisationTutorials.Status = 1 OR NextCustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
-                        GROUP BY 
-                            CurrentSection.SectionID, 
-                            NextSections.SectionID, 
+                        GROUP BY
+                            CurrentSection.SectionID,
+                            NextSections.SectionID,
                             NextSections.SectionNumber
                         ORDER BY NextSections.SectionNumber, NextSections.SectionID
                     )
@@ -113,9 +114,10 @@
                     WHERE
                         CustomisationTutorials.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId
-                        AND (Sections.ArchivedDate IS NULL)
+                        AND Sections.ArchivedDate IS NULL
                         AND (CustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1 OR CustomisationTutorials.Status = 1)
                         AND Customisations.Active = 1
+                        AND Tutorials.ArchivedDate IS NULL
                         ORDER BY Tutorials.OrderByNumber, Tutorials.TutorialID",
                     (section, tutorial) =>
                         {

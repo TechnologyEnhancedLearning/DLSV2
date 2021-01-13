@@ -16,6 +16,7 @@
         private SectionContentService sectionContentService;
         private SectionContentTestHelper sectionContentTestHelper;
         private CourseContentTestHelper courseContentTestHelper;
+        private TutorialContentTestHelper tutorialContentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -25,6 +26,7 @@
             sectionContentService = new SectionContentService(connection, logger);
             sectionContentTestHelper = new SectionContentTestHelper(connection);
             courseContentTestHelper = new CourseContentTestHelper(connection);
+            tutorialContentTestHelper = new TutorialContentTestHelper(connection);
         }
 
         [Test]
@@ -81,7 +83,20 @@
         }
 
         [Test]
-        public void Get_section_content_should_return_null_if_section_id_is_invalid()
+        public void Get_section_content_should_return_null_if_section_id_does_not_exist()
+        {
+            //When
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 1;
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_should_return_null_if_section_is_not_in_this_course()
         {
             //When
             const int customisationId = 15853;
@@ -184,7 +199,7 @@
         }
 
         [Test]
-        public void Get_section_content_should_return_null_if_archived_date_is_null()
+        public void Get_section_content_should_return_null_if_archived_date_is_not_null()
         {
             // When
             const int customisationId = 14212;
@@ -337,36 +352,41 @@
             result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
         }
 
-        [TestCase(46, 353, 50, 45633, 103)]
-        [TestCase(262288, 22400, 386, 392, 225371)]
-        [TestCase(1, 9850, 101, 170, 284965)]
-        [TestCase(254480, 24224, 101, 1, null)]
-        public void Get_section_content_should_have_same_tutorials_as_stored_procedure(
-            int candidateId,
-            int customisationId,
-            int centreId,
-            int sectionId,
-            int? progressId
-        )
+        [Test]
+        public void Get_section_content_should_sort_using_orderByNumber()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var validProgressId = progressId ?? courseContentTestHelper.CreateProgressId(customisationId, candidateId, centreId);
+            // When
+            const int candidateId = 210934;
+            const int customisationId = 17731;
+            const int sectionId = 801;
 
-                var tutorialIdsReturnedFromOldStoredProcedure = sectionContentTestHelper
-                    .TutorialsFromOldStoredProcedure(validProgressId, sectionId)
-                    .Select(tutorial => tutorial.TutorialId);
+            // All in section 801
+            // Tutorial: 3330  OrderByNumber 1
+            // Tutorial: 3331  OrderByNumber 2
+            // Tutorial: 3332  OrderByNumber 3
+            // Tutorial: 3333  OrderByNumber 5
+            // Tutorial: 3334  OrderByNumber 4
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
-                // When
-                var tutorialIdsInSectionContent = sectionContentService
-                    .GetSectionContent(customisationId, candidateId, sectionId)?
-                    .Tutorials
-                    .Select(tutorial => tutorial.Id);
+            // Then
+            var expectedTutorialOrder = new[] { 3330, 3331, 3332, 3334, 3333 };
 
-                // Then
-                tutorialIdsInSectionContent?.Should().Equal(tutorialIdsReturnedFromOldStoredProcedure);
-            }
+            result.Tutorials.Select(tutorial => tutorial.Id).Should().Equal(expectedTutorialOrder);
+        }
+
+        [Test]
+        public void Get_section_content_returns_null_when_there_are_no_customisationTutorials()
+        {
+            // Given
+            const int customisationId = 58;
+            const int candidateId = 4;
+            const int sectionId = 1;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().BeNull();
         }
 
         [Test]
@@ -380,6 +400,62 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_section_content_should_not_use_archived_tutorials_in_scores()
+        {
+            // Given
+            const int customisationId = 22416;
+            const int candidateId = 118178;
+            const int sectionId = 1955;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.SectionScore.Should().Be(0);
+            result!.MaxSectionScore.Should().Be(2); // Not 3 as uspReturnSectionsForCandCust_V2 returns because
+                                                    // it counts archived tutorial 9366
+            result!.DiagnosticAttempts.Should().Be(1);
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_archived_tutorials()
+        {
+            // Given
+            const int customisationId = 22416;
+            const int candidateId = 118178;
+            const int sectionId = 1955;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
+            tutorialIds.Should().NotContain(9366); // Archived tutorial
+            tutorialIds.Should().Equal(9332, 9333);
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_tutorials_with_status_0()
+        {
+            // Given
+            const int customisationId = 7669;
+            const int candidateId = 22966;
+            const int sectionId = 96;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            var tutorialIds = result!.Tutorials.Select(tutorial => tutorial.Id).ToList();
+            tutorialIds.Should().NotContain(267); // Status 0 tutorial
+            tutorialIds.Should().NotContain(268); // Status 0 tutorial
+            tutorialIds.Should().Equal(261, 262, 263, 264, 265, 266);
         }
 
         [Test]
@@ -645,6 +721,49 @@
 
                 // Then
                 result.NextSectionId.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void Get_section_content_next_section_id_skips_archived_sections()
+        {
+            // Given
+            const int candidateId = 118178;
+            const int customisationId = 22416;
+            const int sectionId = 1958;
+
+            const int nextSectionId = 1960; // Skips archived section 1959
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_skips_sections_full_of_archived_tutorials()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 210962;
+                const int customisationId = 24057;
+                const int sectionId = 2201;
+
+                // The tutorials of what would be the next section, 2193;
+                tutorialContentTestHelper.ArchiveTutorial(10161);
+                tutorialContentTestHelper.ArchiveTutorial(10195);
+
+                const int expectedNextSectionId = 2088;
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
     }
