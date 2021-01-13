@@ -72,6 +72,7 @@
 
                    WHERE Customisations.CustomisationID = @customisationId
                          AND Sections.ArchivedDate IS NULL
+                         AND Tutorials.ArchivedDate IS NULL
                    GROUP BY Progress.ProgressID
                   )
 

@@ -92,6 +92,27 @@
         }
 
         [Test]
+        public void Get_course_completion_should_not_use_archived_tutorials_in_percentageTutorialsCompleted()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 11;
+                const int customisationId = 15937;
+                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+
+                const int tutorialsComplete = 36;
+                const int tutorialsAvailable = 196;
+
+                // When
+                var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
+
+                // Then
+                result.PercentageTutorialsCompleted.Should().Be(100.0 * tutorialsComplete / tutorialsAvailable);
+            }
+        }
+
+        [Test]
         public void Get_course_completion_of_evaluated_course_should_return_course_completion()
         {
             using (new TransactionScope())

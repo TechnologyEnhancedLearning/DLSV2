@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -9,12 +10,14 @@
     internal class TutorialContentServiceTests
     {
         private TutorialContentService tutorialContentService;
+        private TutorialContentTestHelper tutorialContentTestHelper;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
             tutorialContentService = new TutorialContentService(connection);
+            tutorialContentTestHelper = new TutorialContentTestHelper(connection);
         }
 
         [Test]
@@ -149,6 +152,25 @@
         }
 
         [Test]
+        public void Get_tutorial_information_nextTutorial_skips_archived_tutorial()
+        {
+            // Given
+            const int candidateId = 11;
+            const int customisationId = 15937;
+            const int sectionId = 392;
+            const int tutorialId = 1535;
+
+            const int nextTutorialId = 1583; // Skipping over archived 1536, 1537, 1581
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
         public void Get_tutorial_information_nextSection_can_return_smaller_sectionId()
         {
             // Given
@@ -165,6 +187,51 @@
             // Then
             tutorial.Should().NotBeNull();
             tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_skips_archived_sections()
+        {
+            // Given
+            const int candidateId = 118178;
+            const int customisationId = 22416;
+            const int sectionId = 1958;
+            const int tutorialId = 9349;
+
+            const int nextSectionId = 1960; // Skips archived section 1959
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_skips_sections_full_of_archived_tutorials()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 210962;
+                const int customisationId = 24057;
+                const int sectionId = 2201;
+                const int tutorialId = 10184;
+
+                // The tutorials of what would be the next section, 2193;
+                tutorialContentTestHelper.ArchiveTutorial(10161);
+                tutorialContentTestHelper.ArchiveTutorial(10195);
+
+                const int expectedNextSectionId = 2088;
+
+                // When
+                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+                // Then
+                tutorial.Should().NotBeNull();
+                tutorial!.NextSectionId.Should().Be(expectedNextSectionId);
+            }
         }
 
         [Test]
@@ -373,6 +440,38 @@
         }
 
         [Test]
+        public void Get_tutorial_information_should_return_null_if_tutorial_is_archived()
+        {
+            // Given
+            const int candidateId = 23031;
+            const int customisationId = 14212;
+            const int sectionId = 249;
+            const int tutorialId = 1142;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_information_should_return_null_if_section_is_archived()
+        {
+            // Given
+            const int candidateId = 23031;
+            const int customisationId = 14212;
+            const int sectionId = 261;
+            const int tutorialId = 1197;
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().BeNull();
+        }
+
+        [Test]
         public void Get_tutorial_content_should_return_tutorial_content()
         {
             // Given
@@ -461,6 +560,36 @@
             const int customisationId = 1530;
             const int sectionId = 74;
             const int tutorialId = 49;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_tutorial_is_archived()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 249;
+            const int tutorialId = 1142;
+
+            // When
+            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialContent.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_content_should_return_null_if_section_is_archived()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 261;
+            const int tutorialId = 1197;
 
             // When
             var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
@@ -572,6 +701,36 @@
             const int customisationId = 4207;
             const int sectionId = 152;
             const int tutorialId = 642;
+
+            // When
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialVideo.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_video_should_return_null_if_tutorial_is_archived()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 249;
+            const int tutorialId = 1142;
+
+            // When
+            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorialVideo.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_video_should_return_null_if_section_is_archived()
+        {
+            // Given
+            const int customisationId = 14212;
+            const int sectionId = 261;
+            const int tutorialId = 1197;
 
             // When
             var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
