@@ -443,7 +443,6 @@
                 // Then
                 result.Should().NotBeNull();
                 result!.SectionScore.Should().Be(7);
-                result!.MaxSectionScore.Should().Be(10);
                 result!.DiagnosticAttempts.Should().Be(1);
             }
         }
