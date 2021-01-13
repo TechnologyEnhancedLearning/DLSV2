@@ -47,24 +47,6 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_have_path()
-        {
-            // Given
-            const string postLearningAssessmentPath =
-                "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_2.dcr";
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                plAssessPath: postLearningAssessmentPath
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.PostLearningAssessmentPath.Should().Be(postLearningAssessmentPath);
-        }
-
-        [Test]
         public void Post_learning_assessment_can_be_locked()
         {
             // Given

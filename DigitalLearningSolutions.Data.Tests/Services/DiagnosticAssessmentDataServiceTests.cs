@@ -423,7 +423,7 @@
         }
 
         [Test]
-        public void Get_diagnostic_content_should_return_null_if_archived_date_is_not_null()
+        public void Get_diagnostic_content_should_return_null_if_section_archived_date_is_not_null()
         {
             // When
             const int customisationId = 14212;
