@@ -403,7 +403,7 @@
         }
 
         [Test]
-        public void Get_section_content_should_not_use_archived_tutorials_in_scores()
+        public void Get_section_content_should_not_use_archived_tutorials_in_maxScore()
         {
             // Given
             const int customisationId = 22416;
@@ -415,10 +415,37 @@
 
             // Then
             result.Should().NotBeNull();
-            result!.SectionScore.Should().Be(0);
             result!.MaxSectionScore.Should().Be(2); // Not 3 as uspReturnSectionsForCandCust_V2 returns because
                                                     // it counts archived tutorial 9366
-            result!.DiagnosticAttempts.Should().Be(1);
+        }
+
+        [Test]
+        public void Get_section_content_should_not_use_archived_tutorials_in_scores()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 3698;
+                const int candidateId = 4407;
+                const int sectionId = 112;
+                const int progressId = 32832;
+
+                const int tutorialToArchive = 372;
+
+                tutorialContentTestHelper.ArchiveTutorial(tutorialToArchive);
+
+                // This will should not change the overall DiagnosticAttempts because the tutorial has now been archived
+                sectionContentTestHelper.UpdateDiagAttempts(tutorialToArchive, progressId, 2);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.SectionScore.Should().Be(7);
+                result!.MaxSectionScore.Should().Be(10);
+                result!.DiagnosticAttempts.Should().Be(1);
+            }
         }
 
         [Test]

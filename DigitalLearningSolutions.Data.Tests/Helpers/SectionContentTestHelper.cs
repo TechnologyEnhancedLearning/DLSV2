@@ -15,11 +15,6 @@
             this.connection = connection;
         }
 
-        public IEnumerable<OldTutorial> TutorialsFromOldStoredProcedure(int progressId, int sectionId)
-        {
-            return connection.Query<OldTutorial>("uspReturnProgressDetail_V3", new { progressId, sectionId }, commandType: CommandType.StoredProcedure);
-        }
-
         public void UpdateSectionNumber(int sectionId, int sectionNumber)
         {
             connection.Execute(
@@ -27,6 +22,16 @@
                         SET SectionNumber = @sectionNumber
                         WHERE SectionID = @sectionId",
                 new { sectionId, sectionNumber }
+            );
+        }
+
+        public void UpdateDiagAttempts(int tutorialId, int progressId, int diagAttempts)
+        {
+            connection.Execute(
+                @"UPDATE aspProgress
+                        SET DiagAttempts = @diagAttempts
+                        WHERE TutorialID = @tutorialId AND ProgressID = @progressId",
+                new { tutorialId, progressId, diagAttempts }
             );
         }
     }
