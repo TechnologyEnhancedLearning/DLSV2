@@ -171,7 +171,7 @@
             );
 
             // Then
-            postLearningContentViewModel.Tutorials.Should().BeEquivalentTo(tutorials);
+            postLearningContentViewModel.Tutorials.Should().Equal(tutorials);
         }
 
         [Test]
