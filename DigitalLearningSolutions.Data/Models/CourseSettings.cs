@@ -9,6 +9,7 @@
         public bool ShowTime { get; } = true;
         public bool ShowLearnStatus { get; } = true;
         public string? ConsolidationExercise { get; } = null;
+        public string? SupportingInformation { get; } = null;
 
         public CourseSettings(string? settingsText)
         {
@@ -44,6 +45,11 @@
                 if (settings.ContainsKey("lm:ce") && settings["lm:ce"] is string)
                 {
                     ConsolidationExercise = (string)settings["lm:ce"];
+                }
+
+                if (settings.ContainsKey("lm:si") && settings["lm:si"] is string)
+                {
+                    SupportingInformation = (string)settings["lm:si"];
                 }
             }
             catch (JsonException)

@@ -190,5 +190,34 @@
             // Then
             courseSettings.ConsolidationExercise.Should().BeNull();
         }
+        [Test]
+        public void CourseSettings_should_take_SupportingInformation_from_json()
+        {
+            // When
+            var courseSettings = new CourseSettings("{\"lm:si\":\"Supporting information\"}");
+
+            // Then
+            courseSettings.SupportingInformation.Should().Be("Supporting information");
+        }
+
+        [Test]
+        public void CourseSettings_should_have_default_SupportingInformation_when_not_in_json()
+        {
+            // When
+            var courseSettings = new CourseSettings(null);
+
+            // Then
+            courseSettings.SupportingInformation.Should().BeNull();
+        }
+
+        [Test]
+        public void CourseSettings_should_have_default_SupportingInformation_when_wrong_type()
+        {
+            // When
+            var courseSettings = new CourseSettings("{\"lm:si\":false}");
+
+            // Then
+            courseSettings.SupportingInformation.Should().BeNull();
+        }
     }
 }
