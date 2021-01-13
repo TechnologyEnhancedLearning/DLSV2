@@ -4,17 +4,18 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
 
-    public interface IUnlockDataService
+    public interface INotificationDataService
     {
         UnlockData? GetUnlockData(int progressId);
     }
 
-    public class UnlockDataService : IUnlockDataService
+    public class NotificationDataService : INotificationDataService
     {
         private readonly IDbConnection connection;
 
-        public UnlockDataService(IDbConnection connection)
+        public NotificationDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

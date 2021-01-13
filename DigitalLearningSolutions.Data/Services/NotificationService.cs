@@ -5,50 +5,39 @@
     using DigitalLearningSolutions.Data.Models;
     using MimeKit;
 
-    public interface IUnlockService
+    public interface INotificationService
     {
         void SendUnlockRequest(int progressId);
     }
 
-    public class UnlockService : IUnlockService
+    public class NotificationService : INotificationService
     {
-        private readonly IUnlockDataService unlockDataService;
+        private readonly INotificationDataService notificationDataService;
         private readonly IConfigService configService;
         private readonly ISmtpClientFactory smtpClientFactory;
-        public UnlockService(
-            IUnlockDataService unlockDataService,
+        public NotificationService(
+            INotificationDataService notificationDataService,
             IConfigService configService,
             ISmtpClientFactory smtpClientFactory
             )
         {
-            this.unlockDataService = unlockDataService;
+            this.notificationDataService = notificationDataService;
             this.configService = configService;
             this.smtpClientFactory = smtpClientFactory;
         }
-
-        public void SendUnlockRequest(int progressId)
+        public void SendSMTPMessage(string to, string? cc, string subject, BodyBuilder body)
         {
-            var unlockData = unlockDataService.GetUnlockData(progressId);
-            if (unlockData == null)
-            {
-                throw new UnlockDataMissingException($"No record found when trying to fetch Unlock Data. Progress ID: {progressId}");
-            }
-
-            unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
-
-            var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername);
+var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername);
             var mailServerPassword = configService.GetConfigValue(ConfigService.MailPassword);
             var mailServerAddress = configService.GetConfigValue(ConfigService.MailServer);
             var mailServerPortString = configService.GetConfigValue(ConfigService.MailPort);
             var mailSenderAddress = configService.GetConfigValue(ConfigService.MailFromAddress);
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl);
             if (
                 mailServerUsername == null
                 || mailServerPassword == null
                 || mailServerAddress == null
                 || mailServerPortString == null
                 || mailSenderAddress == null
-                || trackingSystemBaseUrl == null
             )
             {
                 var errorMessage = GenerateConfigValueMissingMessage(
@@ -62,16 +51,39 @@
             }
 
             var mailServerPort = int.Parse(mailServerPortString);
+            var message = new MimeMessage();
+            message.From.Add(MailboxAddress.Parse(mailSenderAddress));
+            message.To.Add(MailboxAddress.Parse(to));
+            if (cc != null)
+            {
+                message.Cc.Add(MailboxAddress.Parse(cc));
+            }
+            message.Subject = subject;
+            message.Body = body.ToMessageBody();
+            using var client = smtpClientFactory.GetSmtpClient();
+            client.Timeout = 10000;
+            client.Connect(mailServerAddress, mailServerPort);
+
+            client.Authenticate(mailServerUsername, mailServerPassword);
+
+            client.Send(message);
+            client.Disconnect(true);
+        }
+        public void SendUnlockRequest(int progressId)
+        {
+            var unlockData = notificationDataService.GetUnlockData(progressId);
+            if (unlockData == null)
+            {
+                throw new UnlockDataMissingException($"No record found when trying to fetch Unlock Data. Progress ID: {progressId}");
+            }
+
+            unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
+
+
+            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl);
             var unlockUrl = new UriBuilder(trackingSystemBaseUrl);
             unlockUrl.Path += "coursedelegates";
             unlockUrl.Query = $"CustomisationID={unlockData.CustomisationId}";
-
-            var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(mailSenderAddress));
-            message.To.Add(MailboxAddress.Parse(unlockData.ContactEmail));
-            message.Cc.Add(MailboxAddress.Parse(unlockData.DelegateEmail));
-            message.Subject = "Digital Learning Solutions Progress Unlock Request";
-
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {unlockData?.ContactForename}
@@ -84,18 +96,7 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
                                     <p>They have reached the maximum number of assessment attempt allowed without passing.</p><p>To review and unlock their progress, <a href='{unlockUrl}'>click here</a>.</p>
                                 </body>"
             };
-
-
-            message.Body = builder.ToMessageBody();
-
-            using var client = smtpClientFactory.GetSmtpClient();
-            client.Timeout = 10000;
-            client.Connect(mailServerAddress, mailServerPort);
-
-            client.Authenticate(mailServerUsername, mailServerPassword);
-
-            client.Send(message);
-            client.Disconnect(true);
+            SendSMTPMessage(unlockData.ContactEmail, unlockData.DelegateEmail, "Digital Learning Solutions Progress Unlock Request", builder);
         }
 
         private static string GenerateConfigValueMissingMessage(

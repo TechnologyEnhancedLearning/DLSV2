@@ -8,13 +8,13 @@
 
     public class UnlockDataServiceTests
     {
-        private UnlockDataService unlockDataService;
+        private NotificationDataService unlockDataService;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            unlockDataService = new UnlockDataService(connection);
+            unlockDataService = new NotificationDataService(connection);
         }
 
         [Test]

@@ -24,7 +24,7 @@
         {
             return new BaseFramework()
             {
-                Id = id,
+                ID = id,
                 FrameworkName = frameworkName,
                 OwnerAdminID = ownerAdminId,
                 Owner = owner,

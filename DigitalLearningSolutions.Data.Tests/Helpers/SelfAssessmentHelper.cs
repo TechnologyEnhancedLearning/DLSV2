@@ -35,7 +35,8 @@
 
         public static Competency CreateDefaultCompetency(
             int id = 1,
-            string description = "description",
+            string name = "name",
+            string? description = "description",
             string competencyGroup = "competencyGroup",
             List<AssessmentQuestion> assessmentQuestions = null
         )
@@ -43,6 +44,7 @@
             return new Competency()
             {
                 Id = id,
+                Name = name,
                 Description = description,
                 CompetencyGroup = competencyGroup,
                 AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()
