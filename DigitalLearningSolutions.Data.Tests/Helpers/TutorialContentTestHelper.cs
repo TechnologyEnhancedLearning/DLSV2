@@ -22,5 +22,16 @@
                 new { tutorialId }
             );
         }
+
+        public void UpdatePLAssessPath(int sectionId, string? newPath)
+        {
+            connection.Execute(
+                @"UPDATE Sections
+                     SET PLAssessPath = @newPath
+
+                   WHERE SectionID = @sectionId;",
+                new { sectionId, newPath }
+            );
+        }
     }
 }
