@@ -502,63 +502,146 @@
             }
         }
 
-        [TestCase(254480, 12589, 101, 285054)]
-        [TestCase(1, 15853, 101, 173218)]
-        [TestCase(254480, 24224, 101, null)]
-        [TestCase(22044, 10059, 121, 100467)]
-        [TestCase(11, 6226, 101, 89490)]
-        public void Get_course_content_should_have_same_sections_as_stored_procedure(
-            int candidateId,
-            int customisationId,
-            int centreId,
-            int? progressId
-        )
-        {
-            using (new TransactionScope())
-            {
-                // Given
-                var validProgressId = progressId ?? courseContentTestHelper.CreateProgressId(customisationId, candidateId, centreId);
-
-                var sectionIdsReturnedFromOldStoredProcedure = courseContentTestHelper
-                    .SectionsFromOldStoredProcedure(validProgressId)
-                    .Select(section => section.SectionID);
-
-                // When
-                var sectionIdsInCourseContent = courseContentService
-                    .GetCourseContent(candidateId, customisationId)?
-                    .Sections
-                    .Select(section => section.Id);
-
-                // Then
-                sectionIdsInCourseContent.Should().BeEquivalentTo(sectionIdsReturnedFromOldStoredProcedure);
-            }
-        }
-
-        [TestCase(254480, 12589)]
-        [TestCase(1, 15853)]
-        [TestCase(254480, 24224)]
-        [TestCase(22044, 10059)]
-        [TestCase(11, 6226)]
-        [TestCase(207900, 274400)]
-        [TestCase(213382, 4339)]
-        [TestCase(286788, 23638)]
-        public void Get_course_content_should_have_same_duration_as_stored_procedure(
-            int candidateId,
-            int customisationId
-        )
+        [Test]
+        public void Get_course_content_should_not_return_archived_sections()
         {
             // Given
-            var durationFromOldStoredFunction =
-                courseContentTestHelper.GetCustomisationDurationFromOldProcedure(customisationId);
+            const int candidateId = 23031;
+            const int customisationId = 14212;
+
+            // When
+            var sectionIdsInCourseContent = courseContentService
+                .GetCourseContent(candidateId, customisationId)?
+                .Sections
+                .Select(section => section.Id);
+
+            // Then
+            sectionIdsInCourseContent.Should().Equal(249, 250, 251, 252);
+        }
+
+        [Test]
+        public void Get_course_content_should_only_return_sections_with_tutorials_with_status_or_diagStatus_1_when_not_assessed()
+        {
+            // Given
+            const int candidateId = 22044;
+            const int customisationId = 10059;
+
+            // When
+            var sectionIdsInCourseContent = courseContentService
+                .GetCourseContent(candidateId, customisationId)?
+                .Sections
+                .Select(section => section.Id);
+
+            // Then
+            sectionIdsInCourseContent.Should().Equal(212, 213, 215, 219, 221);
+        }
+
+        [Test]
+        public void Get_course_content_returns_null_when_there_are_no_customisationTutorials()
+        {
+            // Given
+            const int customisationId = 58;
+            const int candidateId = 4;
 
             // When
             var result = courseContentService.GetCourseContent(candidateId, customisationId);
 
             // Then
-            var formattedResult = courseContentTestHelper.FormatDurationLikeOldProcedure(
-                result?.AverageDuration
-            );
-            formattedResult.Should().Be(durationFromOldStoredFunction);
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_course_content_returns_section_when_all_tutorial_status_are_0_but_isAssessed()
+        {
+            // Given
+            const int customisationId = 9736;
+            const int candidateId = 2;
+
+            // When
+            var sectionIdsInCourseContent = courseContentService
+                .GetCourseContent(candidateId, customisationId)?
+                .Sections
+                .Select(section => section.Id);
+
+            // Then
+            sectionIdsInCourseContent.Should().Contain(103);
+        }
+
+        [Test]
+        public void Get_course_content_uses_overrideTutorialMins_when_calculating_duration()
+        {
+            // Given
+            const int customisationId = 23638;
+            const int candidateId = 286788;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.AverageDuration.Should().Be(75);
+        }
+
+        [Test]
+        public void Get_course_content_should_not_use_archived_tutorials_in_percentComplete()
+        {
+            // Given
+            const int candidateId = 11;
+            const int customisationId = 15937;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.Sections.First(section => section.Id == 392)
+                .PercentComplete.Should().Be(100.0 * 3 / 14);
+        }
+
+        [Test]
+        public void Get_course_content_should_not_use_archived_tutorials_in_averageDuration()
+        {
+            // Given
+            const int candidateId = 210962;
+            const int customisationId = 22158;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.AverageDuration.Should().Be(1);
+        }
+
+        [Test]
+        public void Get_course_content_should_not_use_status_0_tutorials_in_percentComplete()
+        {
+            // Given
+            const int candidateId = 22966;
+            const int customisationId = 7669;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.Sections.First(section => section.Id == 96)
+                .PercentComplete.Should().Be(100.0 * 2 / 12);
+        }
+
+        [Test]
+        public void Get_course_content_should_not_use_status_0_tutorials_in_averageDuration()
+        {
+            // Given
+            const int candidateId = 22966;
+            const int customisationId = 7669;
+
+            // When
+            var result = courseContentService.GetCourseContent(candidateId, customisationId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.AverageDuration.Should().Be(83);
         }
 
         [Test]
