@@ -23,6 +23,7 @@
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\learningMenu\contentViewer.ts" />
+    <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
@@ -60,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
