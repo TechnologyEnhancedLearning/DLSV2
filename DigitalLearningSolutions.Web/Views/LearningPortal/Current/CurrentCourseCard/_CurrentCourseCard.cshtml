@@ -20,9 +20,12 @@
         <partial name="Shared/_Scores" model="@Model" />
         <partial name="Current/CurrentCourseCard/_Unlock" model="@Model" />
       </div>
-      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
-        Remove course
-      </a>
+      @if (Model.SelfEnrolled)
+      {
+        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
+          Remove course
+        </a>
+      }
     </div>
   </details>
 
