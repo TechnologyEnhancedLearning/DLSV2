@@ -698,6 +698,29 @@
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
+        [Test]
+        public void Get_section_content_next_section_id_skips_assessed_section_with_no_assessment_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 10820;
+                const int candidateId = 1;
+                const int sectionId = 104;
+
+                const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
+                                                       // Customisations.IsAssessed = 1
+                tutorialContentTestHelper.UpdatePLAssessPath(originalNextSectionId, null);
+                const int expectedNextSectionId = 106;
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
         [TestCase(2087, 2195)]
         [TestCase(2195, 2199)]
         [TestCase(2199, 2086)]
