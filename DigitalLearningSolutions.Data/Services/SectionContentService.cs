@@ -50,7 +50,11 @@
                             AND NextSections.SectionNumber IS NOT NULL
                             AND Customisations.Active = 1
                             AND NextSections.ArchivedDate IS NULL
-                            AND (NextCustomisationTutorials.Status = 1 OR NextCustomisationTutorials.DiagStatus = 1 OR Customisations.IsAssessed = 1)
+                            AND (
+                                 NextCustomisationTutorials.Status = 1
+                                 OR NextCustomisationTutorials.DiagStatus = 1
+                                 OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
+                            )
                         GROUP BY
                             CurrentSection.SectionID,
                             NextSections.SectionID,
