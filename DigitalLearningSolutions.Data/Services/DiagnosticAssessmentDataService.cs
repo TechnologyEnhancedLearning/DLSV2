@@ -139,10 +139,7 @@
                         Tutorials.TutorialID",
                 (diagnostic, tutorialId) =>
                 {
-                    if (diagnosticContent == null)
-                    {
-                        diagnosticContent = diagnostic;
-                    }
+                    diagnosticContent ??= diagnostic;
 
                     diagnosticContent.Tutorials.Add(tutorialId);
 

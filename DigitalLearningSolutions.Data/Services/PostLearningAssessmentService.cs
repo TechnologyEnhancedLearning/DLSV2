@@ -105,10 +105,7 @@
                         Tutorials.TutorialID",
                 (postLearning, tutorialId) =>
                 {
-                    if (postLearningContent == null)
-                    {
-                        postLearningContent = postLearning;
-                    }
+                    postLearningContent ??= postLearning;
 
                     postLearningContent.Tutorials.Add(tutorialId);
 
