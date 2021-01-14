@@ -32,10 +32,14 @@
   </nav>
 }
 
+@section scripts {
+  <script src="@Url.Content("~/js/learningMenu/postLearningContentViewer.js")" asp-append-version="true"></script>
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
-    
+
     @{ var contentType = "assessment"; }
     <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
