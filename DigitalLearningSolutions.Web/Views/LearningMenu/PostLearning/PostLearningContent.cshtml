@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-@model PostLearningAssessmentViewModel
+@model PostLearningContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
 
@@ -13,7 +13,6 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
   ViewData["HeaderPathName"] = Model.CourseTitle;
 }
-
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -25,40 +24,22 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
-        <li class="nhsuk-breadcrumb__item">Post learning assessment</li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="PostLearning" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Post learning assessment</a></li>
+        <li class="nhsuk-breadcrumb__item">Content</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="PostLearning" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to post learning assessment</a></p>
     </div>
   </nav>
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">
-      <span class="nhsuk-caption-l">Post learning assessment</span>
-      @Model.SectionName
-    </h1>
-    <h2 class="nhsuk-u-secondary-text-color">
-      @Model.AssessmentStatus
-    </h2>
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
+    
+    @{ var contentType = "assessment"; }
+    <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
+
+    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
+    </iframe>
   </div>
 </div>
-
-<partial name="Shared/_AssessmentPageImportantInformation" />
-
-@if (Model.PostLearningLocked)
-{
-  <p class="nhsuk-u-secondary-text-color">
-    The assessment is locked as there have been too many failed attempts.
-  </p>
-}
-else
-{
-  <a
-    class="nhsuk-button nhsuk-u-margin-bottom-4"
-    asp-action="PostLearningContent"
-    asp-route-customisationId="@Model.CustomisationId"
-    asp-route-sectionId="@Model.SectionId">
-    Start assessment
-  </a>
-}
