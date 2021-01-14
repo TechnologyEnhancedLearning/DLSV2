@@ -128,12 +128,9 @@
                     if (sectionContent == null)
                     {
                         sectionContent = section;
-                        if (!section.DiagnosticStatus)
-                        {
-                            sectionContent.DiagnosticAttempts = 0;
-                            sectionContent.SectionScore = 0;
-                            section.MaxSectionScore = 0;
-                        }
+                        sectionContent.DiagnosticAttempts = section.DiagnosticStatus ? sectionContent.DiagnosticAttempts : 0;
+                        sectionContent.SectionScore = section.DiagnosticStatus ? sectionContent.SectionScore : 0;
+                        sectionContent.MaxSectionScore = section.DiagnosticStatus ? sectionContent.MaxSectionScore : 0;
                     }
                     else if (section.DiagnosticStatus)
                     {

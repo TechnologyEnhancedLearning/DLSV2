@@ -435,7 +435,7 @@
                 tutorialContentTestHelper.ArchiveTutorial(tutorialToArchive);
 
                 // This will should not change the overall DiagnosticAttempts because the tutorial has now been archived
-                sectionContentTestHelper.UpdateDiagAttempts(tutorialToArchive, progressId, 2);
+                sectionContentTestHelper.UpdateDiagnosticAttempts(tutorialToArchive, progressId, 2);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -821,7 +821,7 @@
         {
             // Given
             const int customisationId = 23271;
-            const int candidateId = 1;
+            const int candidateId = 1128;
             const int sectionId = 137;
             // Adding all scores is 49, adding only ones with diagStatus=1 is 41
             const int expectedMaxScore = 41;
@@ -839,15 +839,14 @@
             using (new TransactionScope())
             {
                 // Given
-                const int customisationId = 12036;
-                const int candidateId = 162301;
-                const int sectionId = 214;
-                const int progressId = 129600;
-                const int expectedSectionScore = 6;
+                const int customisationId = 23271;
+                const int candidateId = 1128;
+                const int sectionId = 137;
+                const int progressId = 232814;
+                const int expectedSectionScore = 0;
+                // Tutorial 561 has DiagStatus=0 so it shouldn't be counted meaning the section score is 0 not 1
+                sectionContentTestHelper.UpdateDiagnosticScore(561, progressId, 1);
 
-                // Tutorial 910 has DiagStatus=0 so the section score should be 6 and not 7
-                sectionContentTestHelper.UpdateDiagScore(910, progressId, 1);
-                
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -862,6 +861,68 @@
             using (new TransactionScope())
             {
                 // Given
+                const int customisationId = 23271;
+                const int candidateId = 1128;
+                const int sectionId = 137;
+                const int progressId = 232814;
+                const int expectedDiagnosticAttempts = 0;
+                // Tutorial 561 has DiagStatus=0 so it shouldn't be counted meaning the diagnostic attempts is 0 not 1
+                sectionContentTestHelper.UpdateDiagnosticAttempts(561, progressId, 1);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.DiagnosticAttempts.Should().Be(expectedDiagnosticAttempts);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_ignores_first_tutorial_when_calculating_max_score_if_tutorial_diag_status_is_0()
+        {
+            // Given
+            const int customisationId = 12036;
+            const int candidateId = 162301;
+            const int sectionId = 214;
+            // Adding all scores is 8 but first tutorial has diagStatus=0 so score should be 7
+            const int expectedMaxScore = 7;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.MaxSectionScore.Should().Be(expectedMaxScore);
+        }
+
+        [Test]
+        public void Get_section_content_ignores_first_tutorial_when_calculating_candidate_score_if_tutorial_diag_status_is_0()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 12036;
+                const int candidateId = 162301;
+                const int sectionId = 214;
+                const int progressId = 129600;
+                const int expectedSectionScore = 6;
+
+                // Tutorial 910 has DiagStatus=0 so the section score should be 6 and not 7
+                sectionContentTestHelper.UpdateDiagnosticScore(910, progressId, 1);
+                
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.SectionScore.Should().Be(expectedSectionScore);
+            }
+        }
+
+        [Test]
+        public void Get_section_content_ignores_first_tutorial_when_calculating_candidate_attempts_if_tutorial_diag_status_is_0()
+        {
+            using (new TransactionScope())
+            {
+                // Given
                 const int customisationId = 12036;
                 const int candidateId = 162301;
                 const int sectionId = 214;
@@ -869,7 +930,7 @@
                 const int expectedDiagAttempts = 2;
 
                 // Tutorial 910 has DiagStatus=0 so attempts should be 2 and not 4
-                sectionContentTestHelper.UpdateDiagAttempts(910, progressId, 4);
+                sectionContentTestHelper.UpdateDiagnosticAttempts(910, progressId, 4);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);

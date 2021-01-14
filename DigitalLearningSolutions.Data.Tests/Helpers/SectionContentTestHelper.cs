@@ -25,7 +25,7 @@
             );
         }
 
-        public void UpdateDiagAttempts(int tutorialId, int progressId, int diagAttempts)
+        public void UpdateDiagnosticAttempts(int tutorialId, int progressId, int diagAttempts)
         {
             connection.Execute(
                 @"UPDATE aspProgress
@@ -35,7 +35,7 @@
             );
         }
 
-        public void UpdateDiagScore(int tutorialId, int progressId, int score)
+        public void UpdateDiagnosticScore(int tutorialId, int progressId, int score)
         {
             connection.Execute(
                 @"UPDATE aspProgress
