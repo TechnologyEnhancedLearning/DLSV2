@@ -152,29 +152,6 @@
         }
 
         [Test]
-        public void Post_learning_content_should_have_tutorials()
-        {
-            // Given
-            var postLearningContent = PostLearningAssessmentTestHelper.CreateDefaultPostLearningContent();
-            var tutorials = new[] { 1, 2, 3 };
-            postLearningContent.Tutorials.AddRange(tutorials);
-
-            // When
-            var postLearningContentViewModel = new PostLearningContentViewModel(
-                config,
-                postLearningContent,
-                CustomisationId,
-                CentreId,
-                SectionId,
-                ProgressId,
-                CandidateId
-            );
-
-            // Then
-            postLearningContentViewModel.Tutorials.Should().Equal(tutorials);
-        }
-
-        [Test]
         public void Post_learning_content_should_parse_scorm_url()
         { 
             // Given

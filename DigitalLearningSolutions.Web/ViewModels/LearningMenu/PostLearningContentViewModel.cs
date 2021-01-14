@@ -12,7 +12,7 @@
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string ContentSource { get; }
-        public List<int> Tutorials { get; }
+        private const string type = "pl";
         private int CentreId { get; }
         private int CandidateId { get; }
         private int ProgressId { get; }
@@ -34,7 +34,6 @@
             CandidateId = candidateId;
             ProgressId = progressId;
             CourseTitle = postLearningContent.CourseTitle;
-            Tutorials = postLearningContent.Tutorials;
 
             ContentSource = ContentViewerHelper.IsScormPath(postLearningContent.PostLearningAssessmentPath)
                 ? GetScormSource(config, postLearningContent)
@@ -45,31 +44,35 @@
             IConfiguration config,
             PostLearningContent postLearningContent)
         {
-            return $"{postLearningContent.PostLearningAssessmentPath}" +
-                   $"?CentreID={CentreId}" +
-                   $"&CustomisationID={CustomisationId}" +
-                   $"&CandidateID={CandidateId}" +
-                   $"&SectionID={SectionId}" +
-                   $"&Version={postLearningContent.Version}" +
-                   $"&ProgressID={ProgressId}" +
-                   "&type=pl" +
-                   $"&TrackURL={config.GetTrackingUrl()}" +
-                   $"&objlist=[{string.Join(",", Tutorials)}]" +
-                   $"&plathresh={postLearningContent.PassThreshold}";
+            return ContentViewerHelper.GetHtmlAssessmentSource(
+                postLearningContent.PostLearningAssessmentPath,
+                CentreId,
+                CustomisationId,
+                CandidateId,
+                SectionId,
+                postLearningContent.Version,
+                ProgressId,
+                type,
+                config.GetTrackingUrl(),
+                postLearningContent.Tutorials,
+                postLearningContent.PassThreshold
+            );
         }
 
         private string GetScormSource(
             IConfiguration config,
             PostLearningContent postLearningContent)
         {
-            return $"{config.GetScormPlayerUrl()}" +
-                   $"?CentreID={CentreId}" +
-                   $"&CustomisationID={CustomisationId}" +
-                   $"&CandidateID={CandidateId}" +
-                   $"&SectionID={SectionId}" +
-                   $"&Version={postLearningContent.Version}" +
-                   $"&tutpath={postLearningContent.PostLearningAssessmentPath}" +
-                   "&type=pl";
+            return ContentViewerHelper.GetScormAssessmentSource(
+                config.GetScormPlayerUrl(),
+                CentreId,
+                CustomisationId,
+                CandidateId,
+                SectionId,
+                postLearningContent.Version,
+                postLearningContent.PostLearningAssessmentPath,
+                type
+            );
         }
     }
 }

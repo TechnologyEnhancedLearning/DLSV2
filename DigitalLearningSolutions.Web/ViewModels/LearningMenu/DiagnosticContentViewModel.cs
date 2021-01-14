@@ -12,7 +12,8 @@
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string ContentSource { get; }
-        public List<int> Tutorials { get; }
+        private const string type = "diag";
+        private List<int> Tutorials { get; }
         private int CentreId { get; }
         private int CandidateId { get; }
         private int ProgressId { get; }
@@ -46,31 +47,35 @@
             IConfiguration config,
             DiagnosticContent diagnosticContent)
         {
-            return $"{diagnosticContent.DiagnosticAssessmentPath}" +
-                   $"?CentreID={CentreId}" +
-                   $"&CustomisationID={CustomisationId}" +
-                   $"&CandidateID={CandidateId}" +
-                   $"&SectionID={SectionId}" +
-                   $"&Version={diagnosticContent.Version}" +
-                   $"&ProgressID={ProgressId}" +
-                   "&type=diag" +
-                   $"&TrackURL={config.GetTrackingUrl()}" +
-                   $"&objlist=[{string.Join(",", Tutorials)}]" +
-                   $"&plathresh={diagnosticContent.PassThreshold}";
+            return ContentViewerHelper.GetHtmlAssessmentSource(
+                diagnosticContent.DiagnosticAssessmentPath,
+                CentreId,
+                CustomisationId,
+                CandidateId,
+                SectionId,
+                diagnosticContent.Version,
+                ProgressId,
+                type,
+                config.GetTrackingUrl(),
+                Tutorials,
+                diagnosticContent.PassThreshold
+            );
         }
 
         private string GetScormSource(
             IConfiguration config,
             DiagnosticContent diagnosticContent)
         {
-            return $"{config.GetScormPlayerUrl()}" +
-                   $"?CentreID={CentreId}" +
-                   $"&CustomisationID={CustomisationId}" +
-                   $"&CandidateID={CandidateId}" +
-                   $"&SectionID={SectionId}" +
-                   $"&Version={diagnosticContent.Version}" +
-                   $"&tutpath={diagnosticContent.DiagnosticAssessmentPath}" +
-                   "&type=diag";
+            return ContentViewerHelper.GetScormAssessmentSource(
+                config.GetScormPlayerUrl(),
+                CentreId,
+                CustomisationId,
+                CandidateId,
+                SectionId,
+                diagnosticContent.Version,
+                diagnosticContent.DiagnosticAssessmentPath,
+                type
+            );
         }
     }
 }
