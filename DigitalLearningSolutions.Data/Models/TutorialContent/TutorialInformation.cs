@@ -18,6 +18,7 @@
         public string? TutorialPath { get; }
         public string? SupportingMaterialPath { get; }
         public string? PostLearningAssessmentPath { get; }
+        public CourseSettings CourseSettings { get; }
         public int? NextTutorialId { get; }
         public int? NextSectionId { get; }
 
@@ -39,6 +40,7 @@
             string? tutorialPath,
             string? supportingMaterialPath,
             string? postLearningAssessmentPath,
+            string? courseSettings,
             int? nextTutorialId,
             int? nextSectionId
         )
@@ -59,6 +61,7 @@
             TutorialPath = tutorialPath;
             SupportingMaterialPath = supportingMaterialPath;
             PostLearningAssessmentPath = postLearningAssessmentPath;
+            CourseSettings = new CourseSettings(courseSettings);
             NextTutorialId = nextTutorialId;
             NextSectionId = nextSectionId;
         }

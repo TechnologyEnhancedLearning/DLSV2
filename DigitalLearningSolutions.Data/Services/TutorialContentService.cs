@@ -48,6 +48,9 @@
                          INNER JOIN Sections AS CurrentSection
                          ON Tutorials.SectionID = CurrentSection.SectionID
 
+                         INNER JOIN Customisations
+                         ON Customisations.CustomisationID = @customisationId
+
                          LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
                          ON NextCustomisationTutorials.CustomisationID = @customisationId
                             AND NextCustomisationTutorials.Status = 1
@@ -62,8 +65,16 @@
                             )
                             AND NextCustomisationTutorials.TutorialID = NextTutorials.TutorialID
 
+                         LEFT JOIN CustomisationTutorials AS NextSectionCustomisationTutorials
+                         ON NextSectionCustomisationTutorials.CustomisationID = @customisationId
+                            AND (
+                                 NextSectionCustomisationTutorials.Status = 1
+                                 OR NextSectionCustomisationTutorials.DiagStatus = 1
+                                 OR Customisations.IsAssessed = 1
+                            )
+
                          LEFT JOIN Tutorials AS NextSectionsTutorials
-                         ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+                         ON NextSectionCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
                             AND NextSectionsTutorials.ArchivedDate IS NULL
 
                          LEFT JOIN Sections AS NextSections
@@ -74,6 +85,12 @@
                                  CurrentSection.SectionNumber < NextSections.SectionNumber
                                  OR CurrentSection.SectionID < NextSections.SectionID
                             )
+                            AND (
+                                 NextSectionCustomisationTutorials.Status = 1
+                                 OR NextSectionCustomisationTutorials.DiagStatus = 1
+                                 OR NextSections.PLAssessPath IS NOT NULL
+                            )
+
                    WHERE Tutorials.SectionId = @sectionId
                      AND Tutorials.TutorialID = @tutorialId
                    GROUP BY Tutorials.TutorialID
@@ -99,6 +116,7 @@
                               WHEN Customisations.IsAssessed = 0 THEN NULL
                               ELSE Sections.PLAssessPath
                          END AS PostLearningAssessmentPath,
+                         Applications.CourseSettings,
                          NextTutorial.TutorialID AS NextTutorialID,
                          NextSection.SectionID AS NextSectionID
                     FROM Tutorials

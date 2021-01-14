@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Transactions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -11,6 +12,7 @@
     {
         private TutorialContentService tutorialContentService;
         private TutorialContentTestHelper tutorialContentTestHelper;
+        private CourseContentTestHelper courseContentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -18,6 +20,7 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             tutorialContentService = new TutorialContentService(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
+            courseContentTestHelper = new CourseContentTestHelper(connection);
         }
 
         [Test]
@@ -52,6 +55,7 @@
                 "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
                 "/MOST/Word07Core/support.html?popup=1&item=navigateDocs",
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
+                null,
                 51,
                 75
             ));
@@ -235,6 +239,67 @@
         }
 
         [Test]
+        public void Get_tutorial_information_nextSection_returns_section_with_only_diagnostic_assessment()
+        {
+            // Given
+            const int candidateId = 74411;
+            const int customisationId = 5852;
+            const int sectionId = 150;
+            const int tutorialId = 634;
+
+            const int expectedNextSectionId = 151; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_returns_section_with_only_post_learning_assessment()
+        {
+            // Given
+            const int customisationId = 10820;
+            const int candidateId = 1;
+            const int sectionId = 104;
+            const int tutorialId = 331;
+
+            const int expectedNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
+                                                   // Customisations.IsAssessed = 1 and Sections.PLAssessPath is not null
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            //Then
+            tutorial.NextSectionId.Should().Be(expectedNextSectionId);
+        }
+
+        [Test]
+        public void Get_tutorial_information_nextSection_skips_assessed_section_with_no_assessment_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 10820;
+                const int candidateId = 1;
+                const int sectionId = 104;
+                const int tutorialId = 331;
+
+                const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
+                                                       // Customisations.IsAssessed = 1
+                tutorialContentTestHelper.UpdatePLAssessPath(originalNextSectionId, null);
+                const int expectedNextSectionId = 106;
+
+                // When
+                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+                //Then
+                tutorial.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
+        [Test]
         public void Get_tutorial_information_nextTutorial_returns_smaller_tutorialId_for_shared_orderByNumber()
         {
             // Given
@@ -402,6 +467,7 @@
                 "/MOST/Word07Core/MOST_Word07_1_1_02.dcr",
                 "/MOST/Word07Core/support.html?popup=1&item=navigateDocs",
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr",
+                null,
                 51,
                 75
             ));
@@ -469,6 +535,51 @@
 
             // Then
             tutorial.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_tutorial_information_should_parse_course_settings()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int candidateId = 1;
+                const int customisationId = 1379;
+                const int sectionId = 74;
+                const int tutorialId = 50;
+                const string courseSettingsText =
+                    "{\"lm.sp\":false,\"lm.st\":false,\"lm.sl\":false,\"df.sd\":false,"
+                    + "\"df.sm\":false,\"df.ss\":false,\"lm:ce\":\"consolidation/exercise\","
+                    + "\"lm:si\":\"supporting/information\"}";
+                var expectedCourseSettings = new CourseSettings(courseSettingsText);
+
+                courseContentTestHelper.AddCourseSettings(customisationId, courseSettingsText);
+
+                // When
+                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+                // Then
+                tutorial.Should().NotBeNull();
+                tutorial!.CourseSettings.Should().BeEquivalentTo(expectedCourseSettings);
+            }
+        }
+
+        [Test]
+        public void Get_tutorial_information_should_have_default_course_settings_when_json_is_null()
+        {
+            // Given
+            const int candidateId = 1;
+            const int customisationId = 1379;
+            const int sectionId = 74;
+            const int tutorialId = 50;
+            var defaultSettings = new CourseSettings(null);
+
+            // When
+            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+
+            // Then
+            tutorial.Should().NotBeNull();
+            tutorial!.CourseSettings.Should().BeEquivalentTo(defaultSettings);
         }
 
         [Test]

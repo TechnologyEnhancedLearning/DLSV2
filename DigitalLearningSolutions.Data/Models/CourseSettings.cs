@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
+    using System;
     using System.Collections.Generic;
     using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@
         public bool ShowTime { get; } = true;
         public bool ShowLearnStatus { get; } = true;
         public string? ConsolidationExercise { get; } = null;
+        public string? SupportingInformation { get; } = null;
 
         public CourseSettings(string? settingsText)
         {
@@ -43,7 +45,18 @@
 
                 if (settings.ContainsKey("lm:ce") && settings["lm:ce"] is string)
                 {
-                    ConsolidationExercise = (string)settings["lm:ce"];
+                    var consolidationExercise = (string)settings["lm:ce"];
+                    ConsolidationExercise = string.IsNullOrWhiteSpace(consolidationExercise)
+                        ? null
+                        : consolidationExercise;
+                }
+
+                if (settings.ContainsKey("lm:si") && settings["lm:si"] is string)
+                {
+                    var supportingInformation = (string)settings["lm:si"];
+                    SupportingInformation = string.IsNullOrWhiteSpace(supportingInformation)
+                        ? null
+                        : supportingInformation;
                 }
             }
             catch (JsonException)

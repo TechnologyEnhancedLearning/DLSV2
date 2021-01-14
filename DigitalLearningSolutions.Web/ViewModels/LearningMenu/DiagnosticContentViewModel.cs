@@ -36,7 +36,9 @@
             CandidateId = candidateId;
             ProgressId = progressId;
             CourseTitle = diagnosticContent.CourseTitle;
-            Tutorials = selectedTutorials;
+            Tutorials = diagnosticContent.CanSelectTutorials
+                ? selectedTutorials
+                : diagnosticContent.Tutorials;
 
             ContentSource = ContentViewerHelper.IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
                 ? GetScormSource(config, diagnosticContent)
