@@ -27,6 +27,39 @@
         {
             return connection.QueryFirstOrDefault<PostLearningAssessment>(
                 @"
+                    WITH NextSectionIdTable AS (
+                        SELECT TOP(1)
+                            CurrentSection.SectionID,
+                            NextSections.SectionID AS NextSectionID
+                        FROM Sections AS CurrentSection
+                                LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
+                                    ON NextCustomisationTutorials.CustomisationID = @customisationId
+                                LEFT JOIN Customisations
+                                    ON NextCustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                                LEFT JOIN Tutorials AS NextSectionsTutorials
+                                    ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
+                                    AND NextSectionsTutorials.ArchivedDate IS NULL
+                                LEFT JOIN Sections AS NextSections
+                                    ON NextSectionsTutorials.SectionID = NextSections.SectionID
+                                    AND CurrentSection.SectionNumber <= NextSections.SectionNumber
+                                    AND (CurrentSection.SectionNumber < NextSections.SectionNumber
+                                        OR CurrentSection.SectionID < NextSections.SectionID)
+                        WHERE CurrentSection.SectionId = @sectionId
+                            AND NextSections.SectionID IS NOT NULL
+                            AND NextSections.SectionNumber IS NOT NULL
+                            AND Customisations.Active = 1
+                            AND NextSections.ArchivedDate IS NULL
+                            AND (
+                                 NextCustomisationTutorials.Status = 1
+                                 OR NextCustomisationTutorials.DiagStatus = 1
+                                 OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
+                            )
+                        GROUP BY
+                            CurrentSection.SectionID,
+                            NextSections.SectionID,
+                            NextSections.SectionNumber
+                        ORDER BY NextSections.SectionNumber, NextSections.SectionID
+                    )
                     SELECT
                         Applications.ApplicationName,
                         Customisations.CustomisationName,
@@ -34,12 +67,15 @@
                         COALESCE (Attempts.BestScore, 0) AS BestScore,
                         COALESCE (Attempts.AttemptsPL, 0) AS AttemptsPL,
                         COALESCE (Attempts.PLPasses, 0) AS PLPasses,
-                        CAST (COALESCE (Progress.PLLocked, 0) AS bit) AS PLLocked
+                        CAST (COALESCE (Progress.PLLocked, 0) AS bit) AS PLLocked,
+                        NextSectionIdTable.NextSectionId
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID
                         INNER JOIN Applications
                             ON Applications.ApplicationID = Sections.ApplicationID
+                        LEFT JOIN NextSectionIdTable
+                            ON Sections.SectionID = NextSectionIdTable.SectionID
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId

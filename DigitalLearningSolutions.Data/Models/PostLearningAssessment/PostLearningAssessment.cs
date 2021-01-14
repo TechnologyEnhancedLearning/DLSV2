@@ -8,6 +8,7 @@
         public int PostLearningAttempts { get; }
         public bool PostLearningPassed { get; }
         public bool PostLearningLocked { get; }
+        public int? NextSectionId { get; }
 
         public PostLearningAssessment(
             string applicationName,
@@ -16,7 +17,8 @@
             int bestScore,
             int attemptsPl,
             int plPasses,
-            bool plLocked
+            bool plLocked,
+            int? nextSectionId
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -25,6 +27,7 @@
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
             PostLearningLocked = plLocked;
+            NextSectionId = nextSectionId;
         }
     }
 }
