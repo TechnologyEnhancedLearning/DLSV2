@@ -233,6 +233,47 @@
             return View("PostLearning/PostLearning", model);
         }
 
+        [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/PostLearning/Content")]
+        public IActionResult PostLearningContent(int customisationId, int sectionId)
+        {
+            var candidateId = User.GetCandidateId();
+            var centreId = User.GetCentreId();
+            var postLearningContent = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            if (postLearningContent == null || centreId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as customisation/section/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+
+            if (progressId == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as no progress id was returned. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            courseContentService.UpdateProgress(progressId.Value);
+
+            var model = new PostLearningContentViewModel(
+                config,
+                postLearningContent,
+                customisationId,
+                centreId.Value,
+                sectionId,
+                progressId.Value,
+                candidateId
+            );
+            return View("PostLearning/PostLearningContent", model);
+        }
+
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]
         public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
         {

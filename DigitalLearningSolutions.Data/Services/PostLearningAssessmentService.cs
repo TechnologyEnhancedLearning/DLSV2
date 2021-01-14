@@ -9,6 +9,7 @@
     public interface IPostLearningAssessmentService
     {
         PostLearningAssessment? GetPostLearningAssessment(int customisationId, int candidateId, int sectionId);
+        PostLearningContent? GetPostLearningContent(int customisationId, int sectionId);
     }
 
     public class PostLearningAssessmentService : IPostLearningAssessmentService
