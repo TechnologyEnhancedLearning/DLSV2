@@ -15,7 +15,7 @@ beforeAll(() => {
 });
 
 describe('closeMpe', () => {
-  it('should redirect to diagnostic assessment with no checked tutorials',
+  it('should redirect to post learning assessment',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/PostLearning/Content';
