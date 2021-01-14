@@ -103,65 +103,6 @@
             );
         }
 
-        public IEnumerable<OldCourseSection> SectionsFromOldStoredProcedure(int progressId)
-        {
-            return connection.Query<OldCourseSection>("uspReturnSectionsForCandCust_V2", new { progressId }, commandType: CommandType.StoredProcedure);
-        }
-
-        public string GetCustomisationDurationFromOldProcedure(int customisationId)
-        {
-            return connection.QueryFirstOrDefault<string>(
-                "SELECT dbo.GetMinsForCustomisation(@customisationId);",
-                new { customisationId }
-            );
-        }
-
-        public string FormatDurationLikeOldProcedure(int? duration)
-        {
-            if (duration == null)
-            {
-                return "N/A";
-            }
-
-            if (duration < 60)
-            {
-                return $"{duration}m";
-            }
-
-            var durationMinutes = duration % 60;
-            if (durationMinutes == 0)
-            {
-                return $"{duration / 60}h";
-            }
-
-            return $"{duration / 60}h {durationMinutes}m";
-        }
-
-        public int CreateProgressId(int customisationId, int candidateId, int centreId)
-        {
-            connection.Execute(
-                @"uspCreateProgressRecord_V3",
-                new
-                {
-                    candidateId,
-                    customisationId,
-                    centreId,
-                    EnrollmentMethodID = 1,
-                    EnrolledByAdminID = 0
-                },
-                commandType: CommandType.StoredProcedure
-            );
-            return connection.QueryFirst<int>(
-                @"SELECT ProgressId
-                    FROM Progress
-                    WHERE CandidateID = @candidateId
-                      AND CustomisationID = @customisationId
-                      AND SystemRefreshed = 0
-                      AND RemovedDate IS NULL",
-                new { candidateId, customisationId }
-            );
-        }
-
         public void AddCourseSettings(int customisationId, string courseSettings)
         {
             connection.Execute(
