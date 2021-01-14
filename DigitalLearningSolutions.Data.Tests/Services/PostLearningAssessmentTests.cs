@@ -179,113 +179,6 @@
         }
 
         [Test]
-        public void Get_post_learning_content_should_return_post_learning_content()
-        {
-            // Given
-            const int customisationId = 24996;
-            const int sectionId = 847;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            var expectedPostLearningContent = new PostLearningContent(
-                "Outlook 2013 for the Workplace",
-                "Full Course",
-                "Introducing email",
-                "https://www.dls.nhs.uk/CMS/CMSContent/Course257/PLAssess/01-PLA-Introducing-email/itspplayer.html",
-                85,
-                2
-            );
-            expectedPostLearningContent.Tutorials.AddRange(new[] { 3545, 3546 });
-            result.Should().BeEquivalentTo(expectedPostLearningContent);
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_not_return_tutorials_where_archived_date_is_not_null()
-        {
-            // Given
-            const int customisationId = 18113;
-            const int sectionId = 909;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Tutorials.Should().NotContain(3899);
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_return_null_if_customisation_id_is_invalid()
-        {
-            // Given
-            const int customisationId = 0;
-            const int sectionId = 847;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_return_null_if_section_id_is_invalid()
-        {
-            // Given
-            const int customisationId = 24996;
-            const int sectionId = 0;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_return_null_if_section_archived_date_is_not_null()
-        {
-            // Given
-            const int customisationId = 18885;
-            const int sectionId = 1024;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_return_null_if_plAssessPath_is_null()
-        {
-            // Given
-            const int customisationId = 21605;
-            const int sectionId = 1762;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void Get_post_learning_content_should_return_null_if_isAssessed_is_null()
-        {
-            // Given
-            const int customisationId = 16368;
-            const int sectionId = 407;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
         public void Get_post_learning_assessment_next_section_id_should_return_id_if_at_start_of_list()
         {
             // Given
@@ -503,7 +396,7 @@
         }
 
         [Test]
-        public void Get_tutorial_information_nextSection_skips_sections_full_of_archived_tutorials()
+        public void Get_post_learning_assessment_next_section_skips_sections_full_of_archived_tutorials()
         {
             using (new TransactionScope())
             {
@@ -526,6 +419,113 @@
                 result.Should().NotBeNull();
                 result!.NextSectionId.Should().Be(expectedNextSectionId);
             }
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_post_learning_content()
+        {
+            // Given
+            const int customisationId = 24996;
+            const int sectionId = 847;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            var expectedPostLearningContent = new PostLearningContent(
+                "Outlook 2013 for the Workplace",
+                "Full Course",
+                "Introducing email",
+                "https://www.dls.nhs.uk/CMS/CMSContent/Course257/PLAssess/01-PLA-Introducing-email/itspplayer.html",
+                85,
+                2
+            );
+            expectedPostLearningContent.Tutorials.AddRange(new[] { 3545, 3546 });
+            result.Should().BeEquivalentTo(expectedPostLearningContent);
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_not_return_tutorials_where_archived_date_is_not_null()
+        {
+            // Given
+            const int customisationId = 18113;
+            const int sectionId = 909;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Tutorials.Should().NotContain(3899);
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_null_if_customisation_id_is_invalid()
+        {
+            // Given
+            const int customisationId = 0;
+            const int sectionId = 847;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_null_if_section_id_is_invalid()
+        {
+            // Given
+            const int customisationId = 24996;
+            const int sectionId = 0;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_null_if_section_archived_date_is_not_null()
+        {
+            // Given
+            const int customisationId = 18885;
+            const int sectionId = 1024;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_null_if_plAssessPath_is_null()
+        {
+            // Given
+            const int customisationId = 21605;
+            const int sectionId = 1762;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Get_post_learning_content_should_return_null_if_isAssessed_is_null()
+        {
+            // Given
+            const int customisationId = 16368;
+            const int sectionId = 407;
+
+            // When
+            var result = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }
