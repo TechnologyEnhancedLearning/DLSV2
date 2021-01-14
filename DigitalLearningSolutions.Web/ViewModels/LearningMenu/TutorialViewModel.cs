@@ -14,6 +14,8 @@
         public string? TutorialPath { get; }
         public string? VideoPath { get; }
         public string? Objectives { get; }
+        public bool ShowLearnStatus { get; }
+        public string SupportingMaterialsLabel { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
         public int TutorialId { get; }
@@ -37,22 +39,28 @@
             TutorialPath = tutorialInformation.TutorialPath;
             VideoPath = tutorialInformation.VideoPath;
             Status = tutorialInformation.Status;
+            ShowLearnStatus = tutorialInformation.CourseSettings.ShowLearnStatus;
+            SupportingMaterialsLabel =
+                tutorialInformation.CourseSettings.SupportingInformation ?? "Download supporting materials";
 
             CustomisationId = customisationId;
             SectionId = sectionId;
             TutorialId = tutorialInformation.Id;
             Objectives = ParseObjectives(tutorialInformation.Objectives);
 
-            CanShowProgress =
-                GetCanShowProgress(tutorialInformation.CanShowDiagnosticStatus, tutorialInformation.AttemptCount);
+            CanShowProgress = GetCanShowProgress(
+                tutorialInformation.CourseSettings.ShowLearnStatus,
+                tutorialInformation.CanShowDiagnosticStatus,
+                tutorialInformation.AttemptCount
+            );
             TutorialRecommendation =
                 GetTutorialRecommendation(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
             ScoreSummary = GetScoreSummary(tutorialInformation.CurrentScore, tutorialInformation.PossibleScore);
             TimeSummary = new TutorialTimeSummaryViewModel(
                 tutorialInformation.TimeSpent,
                 tutorialInformation.AverageTutorialDuration,
-                true,
-                true
+                tutorialInformation.CourseSettings.ShowTime,
+                tutorialInformation.CourseSettings.ShowLearnStatus
             );
             SupportingMaterialPath =
                 ContentUrlHelper.GetNullableContentPath(config, tutorialInformation.SupportingMaterialPath);
@@ -65,9 +73,9 @@
             );
         }
 
-        private bool GetCanShowProgress(bool canShowDiagnosticStatus, int attemptCount)
+        private bool GetCanShowProgress(bool showLearnStatus, bool canShowDiagnosticStatus, int attemptCount)
         {
-            return canShowDiagnosticStatus && attemptCount > 0;
+            return showLearnStatus && canShowDiagnosticStatus && attemptCount > 0;
         }
 
         private string GetTutorialRecommendation(int currentScore, int possibleScore)
