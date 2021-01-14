@@ -13,10 +13,6 @@
         public string SectionName { get; }
         public string ContentSource { get; }
         private const string type = "diag";
-        private List<int> Tutorials { get; }
-        private int CentreId { get; }
-        private int CandidateId { get; }
-        private int ProgressId { get; }
 
         public DiagnosticContentViewModel(
             IConfiguration config,
@@ -30,54 +26,36 @@
         )
         {
             CustomisationId = customisationId;
-            CentreId = centreId;
             SectionId = sectionId;
             SectionName = diagnosticContent.SectionName;
-            CandidateId = candidateId;
-            ProgressId = progressId;
             CourseTitle = diagnosticContent.CourseTitle;
-            Tutorials = diagnosticContent.CanSelectTutorials
+
+            var tutorials = diagnosticContent.CanSelectTutorials
                 ? selectedTutorials
                 : diagnosticContent.Tutorials;
 
             ContentSource = ContentViewerHelper.IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
-                ? GetScormSource(config, diagnosticContent)
-                : GetHtmlSource(config, diagnosticContent);
-        }
-
-        private string GetHtmlSource(
-            IConfiguration config,
-            DiagnosticContent diagnosticContent)
-        {
-            return ContentViewerHelper.GetHtmlAssessmentSource(
-                diagnosticContent.DiagnosticAssessmentPath,
-                CentreId,
-                CustomisationId,
-                CandidateId,
-                SectionId,
-                diagnosticContent.Version,
-                ProgressId,
-                type,
-                config.GetTrackingUrl(),
-                Tutorials,
-                diagnosticContent.PassThreshold
-            );
-        }
-
-        private string GetScormSource(
-            IConfiguration config,
-            DiagnosticContent diagnosticContent)
-        {
-            return ContentViewerHelper.GetScormAssessmentSource(
-                config.GetScormPlayerUrl(),
-                CentreId,
-                CustomisationId,
-                CandidateId,
-                SectionId,
-                diagnosticContent.Version,
-                diagnosticContent.DiagnosticAssessmentPath,
-                type
-            );
+                ? ContentViewerHelper.GetScormAssessmentSource(
+                    config.GetScormPlayerUrl(),
+                    centreId,
+                    customisationId,
+                    candidateId,
+                    sectionId,
+                    diagnosticContent.Version,
+                    diagnosticContent.DiagnosticAssessmentPath,
+                    type)
+                : ContentViewerHelper.GetHtmlAssessmentSource(
+                    diagnosticContent.DiagnosticAssessmentPath,
+                    centreId,
+                    customisationId,
+                    candidateId,
+                    sectionId,
+                    diagnosticContent.Version,
+                    progressId,
+                    type,
+                    config.GetTrackingUrl(),
+                    tutorials,
+                    diagnosticContent.PassThreshold);
         }
     }
 }
