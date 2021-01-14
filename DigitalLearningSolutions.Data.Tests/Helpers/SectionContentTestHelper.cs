@@ -41,5 +41,15 @@
                 new { tutorialId, progressId, score }
             );
         }
+
+        public void UpdateDiagnosticStatus(int tutorialId, int customisationId, int status)
+        {
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                        SET DiagStatus = @status
+                        WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
+                new { tutorialId, customisationId, status }
+            );
+        }
     }
 }
