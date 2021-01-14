@@ -7,7 +7,9 @@
         <h3 class="nhsuk-card__heading" id="@Model.Id-name">
           @Model.TutorialName
         </h3>
-        <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
+        <div class="nhsuk-u-margin-bottom-4">
+          <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
+        </div>
       </div>
       @if (Model.ShowLearnStatus)
       {

@@ -154,6 +154,88 @@
         }
 
         [Test]
+        public void Tutorial_should_have_supportingMaterialsLabel_from_courseSetting()
+        {
+            // Given
+            const string supportingMaterialsText = "Different supporting information description";
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                courseSettings: "{\"lm:si\":\"" + supportingMaterialsText + "\"}"
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.SupportingMaterialsLabel.Should().Be(supportingMaterialsText);
+        }
+
+        [Test]
+        public void Tutorial_should_have_default_supportingMaterialsLabel_when_courseSetting_is_empty()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                courseSettings: null
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.SupportingMaterialsLabel.Should().Be("Download supporting materials");
+        }
+
+        [Test]
+        public void Tutorial_should_have_showLearnStatus_from_courseSetting()
+        {
+            // Given
+            const bool showLearnStatus = false;
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                courseSettings: "{\"lm.sl\":" + showLearnStatus.ToString().ToLower() + "}"
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowLearnStatus.Should().Be(showLearnStatus);
+        }
+
+        [Test]
+        public void Tutorial_should_have_default_showLearnStatus_when_courseSetting_is_empty()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                courseSettings: null
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowLearnStatus.Should().Be(true);
+        }
+
+        [Test]
         public void Tutorial_should_have_customisationId()
         {
             // Given
@@ -239,38 +321,12 @@
             tutorialViewModel.NextLinkViewModel.Should().BeEquivalentTo(expectedNextLinkViewModel);
         }
 
-        [Test]
-        public void Tutorial_should_have_timeSummary()
-        {
-            // Given
-            const int averageTutorialDuration = 73;
-            const int timeSpent = 41;
-
-            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                timeSpent: timeSpent,
-                averageTutorialDuration: averageTutorialDuration
-            );
-            // TODO: Test different customisations settings when found as part of HEEDLS-196
-            var expectedTimeSummary = new TutorialTimeSummaryViewModel(timeSpent, averageTutorialDuration, true, true);
-
-            // When
-            var tutorialViewModel = new TutorialViewModel(
-                config,
-                expectedTutorialInformation,
-                CustomisationId,
-                SectionId
-            );
-
-            // Then
-            tutorialViewModel.TimeSummary.Should().BeEquivalentTo(expectedTimeSummary);
-        }
-
         [TestCase(0, 1, true, true)]
-        [TestCase(1, 30, true, true)]
-        [TestCase(30, 120, true, true)]
-        [TestCase(120, 61, true, true)]
+        [TestCase(1, 30, true, false)]
+        [TestCase(30, 120, false, true)]
+        [TestCase(120, 61, false, false)]
         [TestCase(61, 195, true, true)]
-        [TestCase(195, 0, true, true)]
+        [TestCase(195, 0, true, false)]
         public void Tutorial_should_have_timeSummary(
             int timeSpent,
             int averageTutorialDuration,
@@ -281,7 +337,10 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 timeSpent: timeSpent,
-                averageTutorialDuration: averageTutorialDuration
+                averageTutorialDuration: averageTutorialDuration,
+                courseSettings: "{\"lm.st\":" + showTime.ToString().ToLower()
+                             + ", \"lm.sl\":" + showLearnStatus.ToString().ToLower() + "}"
+
             );
             var expectedTimeSummary = new TutorialTimeSummaryViewModel(
                 timeSpent,
@@ -329,7 +388,8 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: true,
-                attemptCount: 1
+                attemptCount: 1,
+                courseSettings: null
             );
 
             // When
@@ -350,7 +410,8 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: true,
-                attemptCount: 0
+                attemptCount: 0,
+                courseSettings: null
             );
 
             // When
@@ -371,7 +432,30 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: false,
-                attemptCount: 1
+                attemptCount: 1,
+                courseSettings: null
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.CanShowProgress.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_should_not_decide_to_show_progress_when_showLearnStatus_courseSetting_is_false()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                canShowDiagnosticStatus: true,
+                attemptCount: 1,
+                courseSettings: "{\"lm.sl\":false}"
             );
 
             // When
