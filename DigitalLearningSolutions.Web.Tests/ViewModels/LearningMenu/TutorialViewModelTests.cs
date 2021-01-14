@@ -387,8 +387,7 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: true,
-                attemptCount: 1,
-                courseSettings: null
+                attemptCount: 1
             );
 
             // When
@@ -409,8 +408,7 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: true,
-                attemptCount: 0,
-                courseSettings: null
+                attemptCount: 0
             );
 
             // When
@@ -431,8 +429,7 @@
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
                 canShowDiagnosticStatus: false,
-                attemptCount: 1,
-                courseSettings: null
+                attemptCount: 1
             );
 
             // When
