@@ -198,9 +198,8 @@
         public void Tutorial_should_have_showLearnStatus_from_courseSetting()
         {
             // Given
-            const bool showLearnStatus = false;
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                courseSettings: "{\"lm.sl\":" + showLearnStatus.ToString().ToLower() + "}"
+                courseSettings: "{\"lm.sl\":false}"
             );
 
             // When
@@ -212,7 +211,7 @@
             );
 
             // Then
-            tutorialViewModel.ShowLearnStatus.Should().Be(showLearnStatus);
+            tutorialViewModel.ShowLearnStatus.Should().BeFalse();
         }
 
         [Test]
@@ -232,7 +231,7 @@
             );
 
             // Then
-            tutorialViewModel.ShowLearnStatus.Should().Be(true);
+            tutorialViewModel.ShowLearnStatus.Should().BeTrue();
         }
 
         [Test]
