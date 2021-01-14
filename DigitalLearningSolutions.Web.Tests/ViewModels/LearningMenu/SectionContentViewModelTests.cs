@@ -195,7 +195,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% learning complete");
         }
 
         [Test]
@@ -217,7 +217,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% learning complete");
         }
 
         [Test]
@@ -239,7 +239,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% learning complete");
         }
 
         [Test]
@@ -262,7 +262,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be($"{expectedPercentComplete}% learning complete");
         }
 
         [Test]
@@ -284,7 +284,7 @@
             var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
 
             // Then
-            sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% Complete");
+            sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% learning complete");
         }
 
         [Test]
