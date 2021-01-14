@@ -939,5 +939,71 @@
                 result.DiagnosticAttempts.Should().Be(expectedDiagAttempts);
             }
         }
+
+        [Test]
+        public void Get_section_content_diagnostic_status_is_true_if_only_first_tutorial_has_diag_status_0()
+        {
+            // Given
+            const int customisationId = 12036;
+            const int candidateId = 162301;
+            const int sectionId = 214;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.DiagnosticStatus.Should().BeTrue();
+        }
+
+        [Test]
+        public void Get_section_content_diagnostic_status_is_true_if_at_least_one_tutorial_has_diag_status_1()
+        {
+            // Given
+            const int customisationId = 23271;
+            const int candidateId = 1128;
+            const int sectionId = 137;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.DiagnosticStatus.Should().BeTrue();
+        }
+
+        [Test]
+        public void Get_section_content_diagnostic_status_is_false_if_all_tutorials_have_diag_status_0()
+        {
+            // Given
+            const int customisationId = 2684;
+            const int candidateId = 196;
+            const int sectionId = 74;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.DiagnosticStatus.Should().BeFalse();
+        }
+
+        [Test]
+        public void Get_section_content_diagnostic_status_is_true_if_one_tutorial_has_diag_status_1()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 2684;
+                const int candidateId = 196;
+                const int sectionId = 74;
+                // Set the second tutorial to have DiagStatus=1
+                sectionContentTestHelper.UpdateDiagnosticStatus(50, customisationId, 1);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.DiagnosticStatus.Should().BeTrue();
+            }
+            
+        }
     }
 }

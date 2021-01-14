@@ -14,7 +14,7 @@
         public string? PostLearningAssessmentPath { get; }
         public int PostLearningAttempts { get; }
         public bool PostLearningPassed { get; }
-        public bool DiagnosticStatus { get; }
+        public bool DiagnosticStatus { get; set; }
         public bool IsAssessed { get; }
         public string? ConsolidationPath { get; }
         public CourseSettings CourseSettings { get; }

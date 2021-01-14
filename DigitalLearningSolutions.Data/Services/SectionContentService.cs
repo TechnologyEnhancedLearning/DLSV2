@@ -134,6 +134,7 @@
                     }
                     else if (section.DiagnosticStatus)
                     {
+                        sectionContent.DiagnosticStatus = section.DiagnosticStatus;
                         sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, section.DiagnosticAttempts);
                         sectionContent.SectionScore += section.SectionScore;
                         sectionContent.MaxSectionScore += section.MaxSectionScore;
