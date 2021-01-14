@@ -177,7 +177,7 @@
                 currentVersion: currentVersion,
                 canSelectTutorials: false
             );
-            diagnosticContent.Tutorials.AddRange(new[] { 3, 4, 5 });
+            diagnosticContent.Tutorials.AddRange(new[] { 1, 2, 3, 4 });
 
             // When
             var diagnosticContentViewModel = new DiagnosticContentViewModel(
@@ -195,7 +195,7 @@
             diagnosticContentViewModel.ContentSource.Should().Be(
                 "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DiagnosticTesting/itspplayer.html" +
                 "?CentreID=6&CustomisationID=5&CandidateID=8&SectionID=7&Version=55&ProgressID=9" +
-                $"&type=diag&TrackURL={BaseUrl}/tracking/tracker&objlist=[3,4,5]&plathresh=77"
+                $"&type=diag&TrackURL={BaseUrl}/tracking/tracker&objlist=[1,2,3,4]&plathresh=77"
             );
         }
 
