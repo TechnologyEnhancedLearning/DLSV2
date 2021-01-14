@@ -22,6 +22,7 @@
             string? tutorialPath = "tutorial",
             string? supportingMaterialPath = "material",
             string? postLearningAssessmentPath = "/postLearningAssessment",
+            string? courseSettings = null,
             int? nextTutorialId = 2,
             int? nextSectionId = 45
         )
@@ -44,6 +45,7 @@
                 tutorialPath,
                 supportingMaterialPath,
                 postLearningAssessmentPath,
+                courseSettings,
                 nextTutorialId,
                 nextSectionId
             );

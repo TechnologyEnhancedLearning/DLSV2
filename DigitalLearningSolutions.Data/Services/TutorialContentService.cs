@@ -116,6 +116,7 @@
                               WHEN Customisations.IsAssessed = 0 THEN NULL
                               ELSE Sections.PLAssessPath
                          END AS PostLearningAssessmentPath,
+                         Applications.CourseSettings,
                          NextTutorial.TutorialID AS NextTutorialID,
                          NextSection.SectionID AS NextSectionID
                     FROM Tutorials
