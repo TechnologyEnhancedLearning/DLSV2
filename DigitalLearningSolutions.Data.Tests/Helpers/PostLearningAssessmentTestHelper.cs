@@ -23,5 +23,24 @@
                 commandType: CommandType.StoredProcedure
             ).FirstOrDefault(assessment => assessment.SectionID == sectionId);
         }
+
+        public static PostLearningContent CreateDefaultPostLearningContent(
+            string applicationName = "application name",
+            string customisationName = "customisation name",
+            string sectionName = "section name",
+            string postLearningAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course125/PLAssess/MC077_CL_MedChart_(P)_Prescriber_ASSESSMENT/imsmanifest.xml",
+            int postLearningPassThreshold = 50,
+            int currentVersion = 1
+        )
+        {
+            return new PostLearningContent(
+                applicationName,
+                customisationName,
+                sectionName,
+                postLearningAssessmentPath,
+                postLearningPassThreshold,
+                currentVersion
+            );
+        }
     }
 }

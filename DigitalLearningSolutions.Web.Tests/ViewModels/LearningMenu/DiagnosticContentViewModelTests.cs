@@ -200,31 +200,8 @@
         }
 
         [Test]
-        public void Diagnostic_content_should_have_tutorials()
-        {
-            // Given
-            var selectedTutorials = new List<int>(new[] { 4, 5, 6 });
-            var diagnosticContent = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticContent();
-
-            // When
-            var diagnosticContentViewModel = new DiagnosticContentViewModel(
-                config,
-                diagnosticContent,
-                selectedTutorials,
-                CustomisationId,
-                CentreId,
-                SectionId,
-                ProgressId,
-                CandidateId
-            );
-
-            // Then
-            diagnosticContentViewModel.Tutorials.Should().BeEquivalentTo(selectedTutorials);
-        }
-
-        [Test]
         public void Diagnostic_content_should_parse_scorm_url()
-        { 
+        {
             // Given
             const int currentVersion = 55;
             var emptySelectedTutorials = new List<int>();
