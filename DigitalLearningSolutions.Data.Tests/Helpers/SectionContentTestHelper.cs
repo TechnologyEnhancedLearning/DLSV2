@@ -1,9 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
-    using System.Collections.Generic;
-    using System.Data;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
     using Microsoft.Data.SqlClient;
 
     public class SectionContentTestHelper
