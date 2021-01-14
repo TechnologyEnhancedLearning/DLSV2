@@ -67,7 +67,7 @@
                     ? 0
                     : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
 
-            return $"{percentage:f0}% Complete";
+            return $"{percentage:f0}% learning complete";
         }
 
         private static string GetPostLearningStatus(SectionContent sectionContent)

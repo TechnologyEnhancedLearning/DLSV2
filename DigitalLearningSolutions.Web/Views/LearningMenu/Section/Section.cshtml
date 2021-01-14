@@ -38,6 +38,11 @@
     {
       <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-3">@Model.PercentComplete</h2>
     }
+
+    @if (Model.ShowPostLearning)
+    {
+      <h3 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-3">Post learning assessment @Model.PostLearningStatus.ToLower()</h3>
+    }
   </div>
 </div>
 
