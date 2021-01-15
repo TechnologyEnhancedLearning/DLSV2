@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.SectionContent;
 
     public static class SectionContentHelper
@@ -20,6 +21,12 @@
             bool isAssessed = true,
             string? consolidationPath = "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
             string? courseSettings = null,
+            DateTime? completed = null,
+            int maxPostLearningAssessmentAttempts = 0,
+            int postLearningAssessmentPassThreshold = 100,
+            int diagnosticAssessmentCompletionThreshold = 85,
+            int tutorialsCompletionThreshold = 0,
+            bool otherSectionsExist = true,
             int? nextSectionId = null
         )
         {
@@ -39,6 +46,12 @@
                 isAssessed,
                 consolidationPath,
                 courseSettings,
+                completed,
+                maxPostLearningAssessmentAttempts,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold,
+                otherSectionsExist,
                 nextSectionId
             );
         }
