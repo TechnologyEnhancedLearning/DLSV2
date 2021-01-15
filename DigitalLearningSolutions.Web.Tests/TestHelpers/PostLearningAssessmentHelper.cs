@@ -11,7 +11,8 @@
             int bestScore = 50,
             int attemptsPl = 2,
             int plPasses = 1,
-            bool plLocked = false
+            bool plLocked = false,
+            int? nextSectionId = 101
         )
         {
             return new PostLearningAssessment(
@@ -21,7 +22,8 @@
                 bestScore,
                 attemptsPl,
                 plPasses,
-                plLocked
+                plLocked,
+                nextSectionId
             );
         }
     }
