@@ -166,5 +166,38 @@
             // Then
             postLearningAssessmentViewModel.SectionId.Should().Be(sectionId);
         }
+
+        [Test]
+        public void Post_learning_assessment_can_have_next_section()
+        {
+            // Given
+            const int nextSectionId = 200;
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                nextSectionId: nextSectionId
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.NextSectionId.Should().Be(200);
+        }
+
+        [Test]
+        public void Post_learning_assessment_can_have_no_next_section()
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                nextSectionId: null
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.NextSectionId.Should().BeNull();
+        }
     }
 }
