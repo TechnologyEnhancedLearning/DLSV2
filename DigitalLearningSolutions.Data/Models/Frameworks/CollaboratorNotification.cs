@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
+    using System;
+
     public class CollaboratorNotification : CollaboratorDetail
     {
         public string InvitedByEmail { get; set; }

@@ -12,9 +12,9 @@
         public int CustomisationId { get; set; }
     }
 
-    public class UnlockDataMissingException : Exception
+    public class NotificationDataException : Exception
     {
-        public UnlockDataMissingException(string message)
+        public NotificationDataException(string message)
             : base(message)
         {
         }

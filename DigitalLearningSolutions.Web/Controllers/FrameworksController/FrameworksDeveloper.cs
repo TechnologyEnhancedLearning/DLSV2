@@ -67,21 +67,21 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             BaseFramework? baseFramework;
-            if(frameworkId > 0)
+            if (frameworkId > 0)
             {
                 baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             }
             else
             {
                 baseFramework = new BaseFramework()
-            {
-                BrandID = 6,
-                OwnerAdminID = adminId,
-                UpdatedByAdminID = adminId,
-                TopicID = 1,
-                CategoryID = 1,
-                PublishStatusID = 1
-            };
+                {
+                    BrandID = 6,
+                    OwnerAdminID = adminId,
+                    UpdatedByAdminID = adminId,
+                    TopicID = 1,
+                    CategoryID = 1,
+                    PublishStatusID = 1
+                };
             }
             return View("Developer/Name", baseFramework);
         }
@@ -99,15 +99,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                if(actionname == "New")
+                if (actionname == "New")
                 {
                     return RedirectToAction("SetNewFrameworkName", new { frameworkname = baseFramework.FrameworkName, actionname });
                 }
                 else
                 {
                     var adminId = GetAdminID();
-                    var isUpdated =  frameworkService.UpdateFrameworkName(baseFramework.ID, adminId, baseFramework.FrameworkName);
-                    if(isUpdated)
+                    var isUpdated = frameworkService.UpdateFrameworkName(baseFramework.ID, adminId, baseFramework.FrameworkName);
+                    if (isUpdated)
                     {
                         return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
                     }
@@ -118,7 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         return View("Developer/Name", baseFramework);
                     }
                 }
-                
+
             }
         }
         [Route("/Frameworks/{actionname}/Similar")]
@@ -257,7 +257,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var adminList = commonService.GetOtherAdministratorsForCentre((int)centreId, adminId).Select(a => new { a.AdminID, a.Email}).ToList();
+            var adminList = commonService.GetOtherAdministratorsForCentre((int)centreId, adminId).Select(a => new { a.AdminID, a.Email }).ToList();
             var adminSelectList = new SelectList(adminList, "AdminID", "Email");
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
@@ -275,6 +275,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCollaborator(int frameworkId, string actionname, int adminId, bool canModify)
         {
             frameworkService.AddCollaboratorToFramework(frameworkId, adminId, canModify);
+            notificationService.SendFrameworkCollaboratorInvite(adminId, frameworkId, GetAdminID());
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int adminId)

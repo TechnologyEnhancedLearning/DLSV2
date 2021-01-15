@@ -9,6 +9,7 @@
     public interface INotificationDataService
     {
         UnlockData? GetUnlockData(int progressId);
+        CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId);
     }
 
     public class NotificationDataService : INotificationDataService
@@ -20,6 +21,24 @@
             this.connection = connection;
         }
 
+        public CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId)
+        {
+            return connection.Query<CollaboratorNotification>(
+
+                @"SELECT fc.FrameworkID, fc.AdminID, fc.CanModify, au.Email, au.Forename, au.Surname, CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole, f.FrameworkName,
+                    (SELECT Forename + ' ' + Surname AS Expr1
+                         FROM    AdminUsers AS au1
+                         WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
+                    (SELECT Email
+                        FROM    AdminUsers AS au2
+                        WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
+                    FROM   FrameworkCollaborators AS fc INNER JOIN
+                        AdminUsers AS au ON fc.AdminID = au.AdminID INNER JOIN
+                        Frameworks AS f ON fc.FrameworkID = f.ID
+                    WHERE (fc.FrameworkID = @frameworkId) AND (fc.AdminID = @adminId)",
+                new { invitedByAdminId, frameworkId, adminId }
+                ).FirstOrDefault();
+        }
         public UnlockData? GetUnlockData(int progressId)
         {
             return connection.Query<UnlockData?>(

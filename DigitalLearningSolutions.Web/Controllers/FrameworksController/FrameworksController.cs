@@ -14,6 +14,7 @@
         private readonly IFrameworkService frameworkService;
         private readonly ICommonService commonService;
         private readonly ICentresService centresService;
+        private readonly INotificationService notificationService;
         private readonly IConfigService configService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
@@ -21,6 +22,7 @@
             IFrameworkService frameworkService,
             ICommonService commonService,
            ICentresService centresService,
+            INotificationService notificationService,
            IConfigService configService,
             ILogger<FrameworksController> logger,
             IConfiguration config)
@@ -28,11 +30,12 @@
             this.frameworkService = frameworkService;
             this.commonService = commonService;
             this.centresService = centresService;
+            this.notificationService = notificationService;
             this.configService = configService;
             this.logger = logger;
             this.config = config;
         }
-       
+
         private int? GetCentreId()
         {
             return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
@@ -44,6 +47,6 @@
         private bool? GetIsFrameworkDeveloper()
         {
             return User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
-        }      
+        }
     }
 }
