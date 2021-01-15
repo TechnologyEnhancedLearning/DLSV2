@@ -224,142 +224,29 @@
             initialMenuViewModel.Sections.Should().BeEquivalentTo(expectedSectionList);
         }
 
-        [Test]
-        public void Get_completion_status_for_completed_should_return_complete()
-        {
-            // Given
-            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: DateTime.Now
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
-
-            // Then
-            initialMenuViewModel.CompletionStatus.Should().Be("Complete");
-        }
-
-        [Test]
-        public void Get_completion_status_for_null_completed_should_return_incomplete()
-        {
-            // Given
-            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: null
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
-
-            // Then
-            initialMenuViewModel.CompletionStatus.Should().Be("Incomplete");
-        }
-
-        [Test]
-        public void Get_completion_styling_for_completed_should_return_complete()
-        {
-            // Given
-            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: DateTime.Now
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
-
-            // Then
-            initialMenuViewModel.CompletionStyling.Should().Be("complete");
-        }
-
-        [Test]
-        public void Get_completion_styling_for_null_completed_should_return_incomplete()
-        {
-            // Given
-            var courseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: null
-            );
-
-            // When
-            var initialMenuViewModel = new InitialMenuViewModel(courseContent);
-
-            // Then
-            initialMenuViewModel.CompletionStyling.Should().Be("incomplete");
-        }
-
-        [TestCase(
-            "2020-12-25T15:00:00Z",
-            1,
-            true,
-            75,
-            80,
-            85,
-            "You completed this course on 25 December 2020."
-        )]
-        [TestCase(
-            null,
-            0,
-            true,
-            75,
-            80,
-            85,
-            "To complete this course, you must pass all post learning assessments with a score of 75% or higher."
-        )]
-        [TestCase(
-            null,
-            3,
-            true,
-            75,
-            80,
-            85,
-            "To complete this course, you must pass all post learning assessments with a score of 75% or higher. Failing an assessment 3 times will lock your progress."
-        )]
-        [TestCase(
-            null,
-            3,
-            false,
-            75,
-            80,
-            85,
-            "To complete this course, you must achieve 80% in the diagnostic assessment and complete 85% of the learning material."
-        )]
-        [TestCase(
-            null,
-            3,
-            false,
-            75,
-            80,
-            0,
-            "To complete this course, you must achieve 80% in the diagnostic assessment."
-        )]
-        [TestCase(
-            null,
-            3,
-            false,
-            75,
-            0,
-            85,
-            "To complete this course, you must complete 85% of the learning material."
-        )]
-        [TestCase(
-            null,
-            3,
-            false,
-            75,
-            0,
-            0,
-            "There are no requirements to complete this course."
-        )]
-        public void Initial_menu_should_have_formatted_completion_summary(
+        [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
+        [TestCase(3, null, 0, true, 75, 80, 85)]
+        [TestCase(4, null, 3, true, 75, 80, 85)]
+        [TestCase(5, null, 3, false, 75, 80, 85)]
+        [TestCase(6, null, 3, false, 75, 80, 0)]
+        [TestCase(7, null, 3, false, 75, 0, 85)]
+        [TestCase(8, null, 3, false, 75, 0, 0)]
+        public void Initial_menu_should_have_completion_summary_card_view_model(
+            int customisationId,
             string? completed,
             int maxPostLearningAssessmentAttempts,
             bool isAssessed,
             int postLearningAssessmentPassThreshold,
             int diagnosticAssessmentCompletionThreshold,
-            int tutorialsCompletionThreshold,
-            string expectedSummary
+            int tutorialsCompletionThreshold
         )
         {
             // Given
+            var completedDateTime = completed != null ? DateTime.Parse(completed) : (DateTime?)null;
+
             var courseContent = CourseContentHelper.CreateDefaultCourseContent(
-                completed: completed != null ? DateTime.Parse(completed) : (DateTime?) null,
+                customisationId: customisationId,
+                completed: completedDateTime,
                 maxPostLearningAssessmentAttempts: maxPostLearningAssessmentAttempts,
                 isAssessed: isAssessed,
                 postLearningAssessmentPassThreshold: postLearningAssessmentPassThreshold,
@@ -367,11 +254,22 @@
                 tutorialsCompletionThreshold: tutorialsCompletionThreshold
             );
 
+            var expectedCompletionSummaryViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                completedDateTime,
+                maxPostLearningAssessmentAttempts,
+                isAssessed,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold
+            );
+
             // When
             var initialMenuViewModel = new InitialMenuViewModel(courseContent);
 
             // Then
-            initialMenuViewModel.CompletionSummary.Should().Be(expectedSummary);
+            initialMenuViewModel.CompletionSummaryCardViewModel
+                .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
     }
 }
