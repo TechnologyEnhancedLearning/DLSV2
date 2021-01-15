@@ -10,6 +10,7 @@
         public bool PostLearningLocked { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
+        public int? NextSectionId { get; }
 
         public PostLearningAssessmentViewModel(PostLearningAssessment postLearningAssessment, int customisationId, int sectionId)
         {
@@ -19,6 +20,7 @@
             PostLearningLocked = postLearningAssessment.PostLearningLocked;
             CustomisationId = customisationId;
             SectionId = sectionId;
+            NextSectionId = postLearningAssessment.NextSectionId;
         }
 
         private string GetAssessmentStatus(PostLearningAssessment postLearningAssessment)
@@ -37,6 +39,5 @@
 
             return assessmentStatus + scoreInformation;
         }
-
     }
 }

@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
-@model SectionContentViewModel
+@model PostLearningAssessmentViewModel
 @if (Model.NextSectionId != null)
 {
-  <a class="nhsuk-back-link__link next-link nhsuk-u-margin-bottom-3"
+  <a class="nhsuk-back-link__link next-link"
      asp-controller="LearningMenu"
      asp-action="Section"
      asp-route-customisationId="@Model.CustomisationId"
@@ -16,7 +16,7 @@
 }
 else
 {
-  <a class="nhsuk-back-link__link next-link nhsuk-u-margin-bottom-3"
+  <a class="nhsuk-back-link__link next-link"
      asp-controller="LearningMenu"
      asp-action="Index"
      asp-route-customisationId="@Model.CustomisationId">
