@@ -32,21 +32,6 @@
             );
         }
 
-        public void UpdateCustomisationTutorialStatuses(
-            int customisationId,
-            int tutorialId,
-            int status,
-            int diagnosticStatus
-        )
-        {
-            connection.Execute(
-                @"UPDATE CustomisationTutorials
-                        SET Status = @status, DiagStatus = @diagnosticStatus
-                        WHERE CustomisationID = @customisationId AND TutorialID = @tutorialId",
-                new { customisationId, tutorialId, status, diagnosticStatus }
-            );
-        }
-
         public void UpdateDiagnosticScore(int tutorialId, int progressId, int score)
         {
             connection.Execute(

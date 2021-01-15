@@ -1204,52 +1204,17 @@
         [Test]
         public void Get_section_content_should_have_otherSectionsExist_when_other_section_only_has_diagnostic_assessment()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                const int customisationId = 17456;
-                const int candidateId = 210934;
-                const int sectionId = 664;
+            // Given
+            const int customisationId = 5694;
+            const int candidateId = 1;
+            const int sectionId = 103;
 
-                const int hiddenTutorialStatus = 0;
-                const int activeDiagnosticTutorialStatus = 1;
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
-                // The hide but keep the diagnostic assessment of the tutorials in the next section, 668
-                // This is the only other section on this course
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2713,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2714,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2715,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2716,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                // Remove the post learning assessment for this section
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(668, null);
-
-                // When
-                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
-
-                // Then
-                result.Should().NotBeNull();
-                result!.OtherSectionsExist.Should().BeTrue();
-            }
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeTrue();
         }
 
         [Test]
@@ -1258,43 +1223,15 @@
             using (new TransactionScope())
             {
                 // Given
-                const int customisationId = 17456;
-                const int candidateId = 210934;
-                const int sectionId = 664;
+                const int customisationId = 5694;
+                const int candidateId = 1;
+                const int sectionId = 103;
 
-                const int hiddenTutorialStatus = 0;
-                const int activeDiagnosticTutorialStatus = 1;
-
-                // The hide but keep the diagnostic assessment of the tutorials in the next section, 668
-                // This is the only other section on this course
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2713,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
+                // Remove diagnostic assessment paths from other sections
+                int[] otherSections = { 104, 105, 106, 107, 108, 109, 110, 111 };
+                otherSections.ToList().ForEach(section =>
+                    tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
                 );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2714,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2715,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2716,
-                    hiddenTutorialStatus,
-                    activeDiagnosticTutorialStatus
-                );
-                // Remove the post learning assessment for this section
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(668, null);
-                // Remove the diagnostic assessment for this section
-                tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(668, null);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -1306,52 +1243,19 @@
         }
 
         [Test]
-        public void Get_section_content_should_have_otherSectionsExist_when_other_section_only_has_post_learning_assessment()
+        public void Get_section_content_should_have_otherSectionsExist_when_other_sections_only_have_post_learning_assessment()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                const int customisationId = 17456;
-                const int candidateId = 210934;
-                const int sectionId = 664;
+            // Given
+            const int customisationId = 10820;
+            const int candidateId = 1;
+            const int sectionId = 104;
 
-                const int hiddenTutorialStatus = 0;
-                const int inactiveDiagnosticTutorialStatus = 0;
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
-                // The hide and remove diagnostic assessment of the tutorials in the next section, 668
-                // This is the only other section on this course, it has a post learning assessment
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2713,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2714,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2715,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2716,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-
-                // When
-                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
-
-                // Then
-                result.Should().NotBeNull();
-                result!.OtherSectionsExist.Should().BeTrue();
-            }
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeTrue();
         }
 
         [Test]
@@ -1360,42 +1264,15 @@
             using (new TransactionScope())
             {
                 // Given
-                const int customisationId = 17456;
-                const int candidateId = 210934;
-                const int sectionId = 664;
+                const int customisationId = 10820;
+                const int candidateId = 1;
+                const int sectionId = 104;
 
-                const int hiddenTutorialStatus = 0;
-                const int inactiveDiagnosticTutorialStatus = 0;
-
-                // The hide and remove diagnostic assessment of the tutorials in the next section, 668
-                // This is the only other section on this course, it has a post learning assessment
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2713,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
+                // Remove post learning assessment paths from other sections
+                int[] otherSections = { 103, 105, 106, 107, 108, 109, 110, 111 };
+                otherSections.ToList().ForEach(section =>
+                    tutorialContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
                 );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2714,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2715,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-                sectionContentTestHelper.UpdateCustomisationTutorialStatuses(
-                    customisationId,
-                    2716,
-                    hiddenTutorialStatus,
-                    inactiveDiagnosticTutorialStatus
-                );
-
-                // Remove the post learning assessment for this section
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(668, null);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);

@@ -93,7 +93,10 @@
                         Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
                         Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
                         Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
-                        CAST (OtherSectionsExistTable.OtherSectionsExist AS BIT) AS OtherSectionsExist,
+                        CAST (CASE
+                                    WHEN EXISTS(SELECT 1 FROM OtherSections) THEN 1
+                                    ELSE 0
+                              END AS BIT) AS OtherSectionsExist,
                         NextSectionIdTable.NextSectionId,
                         Tutorials.TutorialName,
                         COALESCE (aspProgress.TutStat, 0) AS TutStat,
@@ -111,7 +114,6 @@
                             ON Applications.ApplicationID = Customisations.ApplicationID
                         INNER JOIN Sections
                             ON Sections.SectionID = Tutorials.SectionID
-                        CROSS JOIN OtherSectionsExistTable
                         LEFT JOIN NextSectionIdTable
                             ON Sections.SectionID = NextSectionIdTable.CurrentSectionID
                         LEFT JOIN Progress
