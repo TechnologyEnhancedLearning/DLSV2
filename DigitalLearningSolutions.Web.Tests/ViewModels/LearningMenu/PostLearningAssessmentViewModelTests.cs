@@ -181,7 +181,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.NextSectionId.Should().Be(200);
+            postLearningAssessmentViewModel.NextSectionId.Should().Be(nextSectionId);
         }
 
         [Test]
