@@ -53,12 +53,6 @@
                                  OR (Customisations.IsAssessed = 1 AND OtherSections.PLAssessPath IS NOT NULL)
                             )
                     ),
-                    OtherSectionsExistTable AS (
-                        SELECT CASE
-                                    WHEN EXISTS(SELECT 1 FROM OtherSections) THEN 1
-                                    ELSE 0
-                               END AS OtherSectionsExist
-                    ),
                     NextSectionIdTable AS (
                         SELECT TOP (1)
                             CurrentSectionID,
