@@ -8,8 +8,8 @@
 
     public interface IDiagnosticAssessmentService
     {
-        public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
-        public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId, List<int> checkedTutorials);
+        DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
+        DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId, List<int> checkedTutorials);
     }
 
     public class DiagnosticAssessmentService : IDiagnosticAssessmentService
