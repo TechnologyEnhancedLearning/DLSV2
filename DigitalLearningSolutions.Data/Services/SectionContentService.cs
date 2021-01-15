@@ -82,6 +82,7 @@
                         Customisations.IsAssessed,
                         Sections.ConsolidationPath,
                         Applications.CourseSettings,
+                        Applications.IncludeCertification,
                         Progress.Completed,
                         Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
                         Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,

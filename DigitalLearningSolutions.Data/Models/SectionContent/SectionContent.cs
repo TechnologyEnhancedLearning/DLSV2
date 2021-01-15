@@ -19,6 +19,7 @@
         public bool IsAssessed { get; }
         public string? ConsolidationPath { get; }
         public CourseSettings CourseSettings { get; }
+        public bool IncludeCertification { get; }
         public DateTime? Completed { get; }
         public int MaxPostLearningAssessmentAttempts { get; }
         public int PostLearningAssessmentPassThreshold { get; }
@@ -45,6 +46,7 @@
             bool isAssessed,
             string? consolidationPath,
             string? courseSettings,
+            bool includeCertification,
             DateTime? completed,
             int maxPostLearningAssessmentAttempts,
             int postLearningAssessmentPassThreshold,
@@ -68,6 +70,7 @@
             IsAssessed = isAssessed;
             ConsolidationPath = consolidationPath;
             CourseSettings = new CourseSettings(courseSettings);
+            IncludeCertification = includeCertification;
             Completed = completed;
             MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;
             PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;
