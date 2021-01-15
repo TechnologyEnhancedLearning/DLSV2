@@ -25,7 +25,7 @@
             postLearningAssessmentTestHelper = new PostLearningAssessmentTestHelper(connection);
             sectionContentTestHelper = new SectionContentTestHelper(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
-    }
+        }
 
         [Test]
         public void Get_post_learning_assessment_should_return_assessment_if_enrolled()
@@ -179,7 +179,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_next_section_id_should_return_id_if_at_start_of_list()
+        public void Get_post_learning_assessment_for_first_section_in_course_has_next_section()
         {
             // Given
             const int customisationId = 15853;
@@ -195,7 +195,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_next_section_id_should_return_id_if_in_middle_of_list()
+        public void Get_post_learning_assessment_for_middle_section_in_course_has_next_section()
         {
             // Given
             const int customisationId = 15853;
@@ -211,7 +211,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_next_section_id_should_return_null_if_at_end_of_list()
+        public void Get_post_learning_assessment_for_last_section_in_course_has_no_next_section()
         {
             // Given
             const int customisationId = 15853;
