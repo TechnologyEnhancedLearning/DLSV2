@@ -9,8 +9,8 @@
 
     public interface IDiagnosticAssessmentDataService
     {
-        public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
-        public DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId);
+        DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId);
+        DiagnosticContent? GetDiagnosticContent(int customisationId, int sectionId);
     }
 
     public class DiagnosticAssessmentDataService : IDiagnosticAssessmentDataService

@@ -4,7 +4,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     public interface ITutorialContentService
     {
