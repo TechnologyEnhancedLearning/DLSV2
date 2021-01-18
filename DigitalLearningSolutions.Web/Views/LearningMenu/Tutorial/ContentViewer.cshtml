@@ -15,6 +15,8 @@
   <partial name="Shared/_NavMenuItems" />
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/contentViewer.css")" asp-append-version="true">
+
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
@@ -41,7 +43,19 @@
     @{ var contentType = "tutorial"; }
     <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
-    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
+    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800" id="content-viewer_iframe">
     </iframe>
+
+    <a class="nhsuk-button js-only-inline"
+       id="content-viewer_enter-fullscreen-button"
+       href="#">
+      Fullscreen
+    </a>
   </div>
 </div>
+
+<a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden"
+   id="content-viewer_exit-fullscreen-button"
+   href="#">
+  Exit fullscreen
+</a>

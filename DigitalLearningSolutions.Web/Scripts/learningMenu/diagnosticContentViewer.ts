@@ -9,4 +9,5 @@ function diagnosticCloseMpe(): void {
   window.location.href = `${matches[1]}/LearningMenu/${matches[2]}/${matches[3]}/Diagnostic`;
 }
 
-window.closeMpe = diagnosticCloseMpe;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).closeMpe = diagnosticCloseMpe;
