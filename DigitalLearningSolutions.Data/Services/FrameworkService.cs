@@ -10,26 +10,34 @@
 
     public interface IFrameworkService
     {
-        //Retrieve data
+        //GET DATA
+        //  Frameworks:
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
         BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId);
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
-        BrandedFramework CreateFramework(string frameworkName, int adminId);
+        //  Collaborators:
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
+        //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
         CompetencyGroupBase GetCompetencyGroupBaseById(int Id);
         FrameworkCompetency GetFrameworkCompetencyById(int Id);
-        //Insert data
+        //  Assessment questions:
+        IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions();
+        IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId);
+        IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId);
+        //INSERT DATA
+        BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
         int InsertCompetency(string name, string description, int adminId);
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
-        //Update data
+        void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
+        //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
@@ -40,6 +48,7 @@
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
+        void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -732,6 +741,99 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                         $"competencyId: {competencyId}, adminId: {adminId}"
                     );
                 }
+            }
+        }
+        public IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions()
+        {
+            return connection.Query<AssessmentQuestion>(
+                 @"SELECT ID, Question, MinValue, MaxValue
+                    FROM AssessmentQuestions
+                     ORDER BY [Question]");
+        }
+        public IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId)
+        {
+            return connection.Query<AssessmentQuestion>(
+                 @"SELECT ID, Question, MinValue, MaxValue
+                    FROM AssessmentQuestions AS AQ
+                    INNER JOIN FrameworkDefaultQuestions AS FDQ ON AQ.ID = FDQ.AssessmentQuestionID
+                    WHERE FDQ.FrameworkId = @frameworkId
+                     ORDER BY [Question]"
+                    , new { frameworkId });
+        }
+        public IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId)
+        {
+            return connection.Query<AssessmentQuestion>(
+                 @"SELECT ID, Question, MinValue, MaxValue
+                    FROM AssessmentQuestions AS AQ
+                     INNER JOIN CompetencyAssessmentQuestions AS CAQ ON AQ.ID = CAQ.AssessmentQuestionID
+                     WHERE CAQ.CompetencyID = @competencyId
+                     ORDER BY [Question]"
+                    , new { competencyId });
+        }
+
+        public void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting)
+        {
+            if (frameworkId < 1 | adminId < 1 | assessmentQuestionId < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting framework default question as it failed server side validation. AdminId: {adminId}, frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
+                );
+                return;
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO FrameworkDefaultQuestions (FrameworkId, AssessmentQuestionID)
+                      VALUES (@frameworkId, @assessmentQuestionId)"
+                    , new { frameworkId, assessmentQuestionId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting framework default question as db update failed. " +
+                    $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
+                );
+            }
+            else if(addToExisting)
+            {
+                numberOfAffectedRows = connection.Execute(
+                    @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
+                        SELECT CompetencyID, @assessmentQuestionId
+                        FROM FrameworkCompetencies
+                        WHERE FrameworkID = @frameworkId
+                        EXCEPT
+                        SELECT CompetencyID, AssessmentQuestionID
+                        FROM FrameworkCompetencies",
+                    new { assessmentQuestionId, frameworkId });
+            }
+        }
+
+        public void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting)
+        {
+            if (frameworkId < 1 | adminId < 1 | assessmentQuestionId < 1)
+            {
+                logger.LogWarning(
+                    $"Not deleting framework default question as it failed server side validation. AdminId: {adminId}, frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
+                );
+                return;
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM FrameworkDefaultQuestions
+                    WHERE FrameworkId = @frameworkId AND AssessmentQuestionID = @assessmentQuestionId",
+                new { frameworkId, assessmentQuestionId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not deleting framework default question as db update failed. " +
+                    $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
+                );
+            }
+            else if(deleteFromExisting)
+            {
+                numberOfAffectedRows = connection.Execute(
+                    @"DELETE FROM CompetencyAssessmentQuestions
+                        WHERE AssessmentQuestionID = @assessmentQuestionId
+                        AND CompetencyID IN (
+                            SELECT CompetencyID FROM FrameworkCompetencies
+                            WHERE FrameworkID = @frameworkId
+                        )", new { frameworkId, assessmentQuestionId });
             }
         }
     }

@@ -8,7 +8,7 @@
         {
             Create.Table("FrameworkDefaultQuestions")
                 .WithColumn("FrameworkId").AsInt32().NotNullable().PrimaryKey().ForeignKey("Frameworks", "ID")
-                .WithColumn("QuestionId").AsInt32().NotNullable().PrimaryKey().ForeignKey("AssessmentQuestions", "ID");
+                .WithColumn("AssessmentQuestionId").AsInt32().NotNullable().PrimaryKey().ForeignKey("AssessmentQuestions", "ID");
         }
 
         public override void Down()
