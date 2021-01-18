@@ -832,8 +832,8 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                         WHERE AssessmentQuestionID = @assessmentQuestionId
                         AND CompetencyID IN (
                             SELECT CompetencyID FROM FrameworkCompetencies
-                            WHERE FrameworkID = @frameworkId
-                        )", new { frameworkId, assessmentQuestionId });
+                            WHERE FrameworkID = @frameworkId)",
+                    new { frameworkId, assessmentQuestionId });
             }
         }
     }

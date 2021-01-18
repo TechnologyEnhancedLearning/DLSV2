@@ -9,5 +9,6 @@
         public IEnumerable<CollaboratorDetail> Collaborators {get; set;}
         public List<FrameworkCompetencyGroup> FrameworkCompetencyGroups { get; set; }
         public IEnumerable<FrameworkCompetency> FrameworkCompetencies { get; set; }
+        public IEnumerable<AssessmentQuestion> FrameworkDefaultQuestions { get; set; }
     }
 }
