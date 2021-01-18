@@ -15,9 +15,7 @@
         public string? BannerText { get; }
         public bool ShouldShowCompletionSummary { get; }
         public IEnumerable<SectionCardViewModel> Sections { get; }
-        public string CompletionStatus { get; }
-        public string CompletionStyling { get; }
-        public string CompletionSummary { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
         public bool ShowTime { get; }
 
         public InitialMenuViewModel(CourseContent courseContent)
@@ -34,10 +32,8 @@
                 Id,
                 courseContent.CourseSettings.ShowPercentage
             ));
-
-            CompletionStatus = courseContent.Completed == null ? "Incomplete" : "Complete";
-            CompletionStyling = courseContent.Completed == null ? "incomplete" : "complete";
-            CompletionSummary = CompletionSummaryHelper.GetCompletionSummary(
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                courseContent.Id,
                 courseContent.Completed,
                 courseContent.MaxPostLearningAssessmentAttempts,
                 courseContent.IsAssessed,

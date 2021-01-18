@@ -46,19 +46,23 @@
 
 <partial name="Shared/_AssessmentPageImportantInformation" />
 
-@if (Model.PostLearningLocked)
-{
-  <p class="nhsuk-u-secondary-text-color">
-    The assessment is locked as there have been too many failed attempts.
-  </p>
-}
-else
-{
-  <a
-    class="nhsuk-button nhsuk-u-margin-bottom-4"
-    asp-action="PostLearningContent"
-    asp-route-customisationId="@Model.CustomisationId"
-    asp-route-sectionId="@Model.SectionId">
-    Start assessment
-  </a>
-}
+<div class="nhsuk-u-margin-bottom-5">
+  @if (Model.PostLearningLocked)
+  {
+    <p class="nhsuk-u-secondary-text-color">
+      The assessment is locked as there have been too many failed attempts.
+    </p>
+  }
+  else
+  {
+      <a
+        class="nhsuk-button nhsuk-u-margin-bottom-0"
+        asp-action="PostLearningContent"
+        asp-route-customisationId="@Model.CustomisationId"
+        asp-route-sectionId="@Model.SectionId">
+        Start assessment
+      </a>
+  }
+</div>
+
+<partial name="PostLearning/_PostLearningNextLink" model="Model"/>

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SectionContent;
@@ -26,6 +27,9 @@
         public bool DisplayTutorialSeparator { get; }
         public bool DisplayPostLearningSeparator { get; }
         public int? NextSectionId { get; }
+        public bool ShowCompletionSummary { get; }
+        public bool OtherSectionsExist { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
         public SectionContentViewModel(IConfiguration config, SectionContent sectionContent, int customisationId, int sectionId)
         {
@@ -57,17 +61,28 @@
             DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);
             DisplayPostLearningSeparator = ShowConsolidation && ShowPostLearning;
             NextSectionId = sectionContent.NextSectionId;
+            ShowCompletionSummary = sectionContent.IncludeCertification && !sectionContent.OtherSectionsExist;
+            OtherSectionsExist = sectionContent.OtherSectionsExist;
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                sectionContent.Completed,
+                sectionContent.MaxPostLearningAssessmentAttempts,
+                sectionContent.IsAssessed,
+                sectionContent.PostLearningAssessmentPassThreshold,
+                sectionContent.DiagnosticAssessmentCompletionThreshold,
+                sectionContent.TutorialsCompletionThreshold
+            );
         }
 
         private static string FormatPercentComplete(SectionContent sectionContent)
         {
             var totalStatus = sectionContent.Tutorials.Sum(tutorial => tutorial.TutorialStatus);
-            var percentage =
+            double percentage =
                 sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
                     ? 0
                     : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
 
-            return $"{percentage:f0}% learning complete";
+            return $"{Convert.ToInt32(Math.Floor(percentage))}% learning complete";
         }
 
         private static string GetPostLearningStatus(SectionContent sectionContent)

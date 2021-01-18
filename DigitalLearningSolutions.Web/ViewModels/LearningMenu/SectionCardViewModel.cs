@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.CourseContent;
 
     public class SectionCardViewModel
@@ -14,7 +15,7 @@
             Title = section.Title;
             SectionId = section.Id;
             PercentComplete = section.HasLearning && showPercentageCourseSetting
-                ? $"{section.PercentComplete:f0}% Complete"
+                ? $"{Convert.ToInt32(Math.Floor(section.PercentComplete))}% Complete"
                 : "";
             CustomisationId = customisationId;
         }

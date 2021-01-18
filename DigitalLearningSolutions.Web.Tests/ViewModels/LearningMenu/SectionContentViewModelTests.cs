@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -277,6 +278,29 @@
                 SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
             };
             const int roundedPercentComplete = 33;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% learning complete");
+        }
+
+        [Test]
+        public void Percent_complete_should_correctly_be_floored()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            // Percent complete will be 66.666667 which when floored should be 66
+            const int roundedPercentComplete = 66;
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
             sectionContent.Tutorials.AddRange(tutorials);
 
@@ -647,6 +671,131 @@
 
             // Then
             sectionContentViewModel.NextSectionId.Should().BeNull();
+        }
+
+        [Test]
+        public void Section_content_should_have_otherSectionsExist_when_other_sections_exist()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                otherSectionsExist: true
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.OtherSectionsExist.Should().BeTrue();
+        }
+
+        [Test]
+        public void Section_content_should_not_have_otherSectionsExist_when_no_other_sections_exist()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                otherSectionsExist: false
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.OtherSectionsExist.Should().BeFalse();
+        }
+
+        [Test]
+        public void Section_content_should_show_completion_summary_when_include_certification_and_only_section()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                otherSectionsExist: false,
+                includeCertification: true
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowCompletionSummary.Should().BeTrue();
+        }
+
+        [Test]
+        public void Section_content_should_not_show_completion_summary_when_include_certification_is_false()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                otherSectionsExist: false,
+                includeCertification: false
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowCompletionSummary.Should().BeFalse();
+        }
+
+        [Test]
+        public void Section_content_should_not_show_completion_summary_when_other_sections_exist()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                otherSectionsExist: true,
+                includeCertification: true
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.ShowCompletionSummary.Should().BeFalse();
+        }
+
+        [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
+        [TestCase(3, null, 0, true, 75, 80, 85)]
+        [TestCase(4, null, 3, true, 75, 80, 85)]
+        [TestCase(5, null, 3, false, 75, 80, 85)]
+        [TestCase(6, null, 3, false, 75, 80, 0)]
+        [TestCase(7, null, 3, false, 75, 0, 85)]
+        [TestCase(8, null, 3, false, 75, 0, 0)]
+        public void Section_content_should_have_completion_summary_card_view_model(
+            int customisationId,
+            string? completed,
+            int maxPostLearningAssessmentAttempts,
+            bool isAssessed,
+            int postLearningAssessmentPassThreshold,
+            int diagnosticAssessmentCompletionThreshold,
+            int tutorialsCompletionThreshold
+        )
+        {
+            // Given
+            var completedDateTime = completed != null ? DateTime.Parse(completed) : (DateTime?)null;
+
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                completed: completedDateTime,
+                maxPostLearningAssessmentAttempts: maxPostLearningAssessmentAttempts,
+                isAssessed: isAssessed,
+                postLearningAssessmentPassThreshold: postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold: diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold: tutorialsCompletionThreshold
+            );
+
+            var expectedCompletionSummaryViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                completedDateTime,
+                maxPostLearningAssessmentAttempts,
+                isAssessed,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold
+            );
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, customisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.CompletionSummaryCardViewModel
+                .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
     }
 }
