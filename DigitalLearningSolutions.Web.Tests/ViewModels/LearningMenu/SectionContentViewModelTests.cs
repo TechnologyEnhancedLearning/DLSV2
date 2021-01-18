@@ -648,5 +648,28 @@
             // Then
             sectionContentViewModel.NextSectionId.Should().BeNull();
         }
+
+        [Test]
+        public void Percent_complete_should_correctly_be_floored()
+        {
+            // Given
+            const bool hasLearning = true;
+            var tutorials = new[]
+            {
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 2),
+                SectionTutorialHelper.CreateDefaultSectionTutorial(tutStat: 0)
+            };
+            // Percent complete will be 66.666667 which when floored should be 66
+            const int roundedPercentComplete = 66;
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(hasLearning: hasLearning);
+            sectionContent.Tutorials.AddRange(tutorials);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PercentComplete.Should().Be($"{roundedPercentComplete}% learning complete");
+        }
     }
 }
