@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models;
@@ -55,6 +56,13 @@
                 true,
                 null,
                 null,
+                false,
+                null,
+                0,
+                85,
+                85,
+                100,
+                true,
                 383
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -134,6 +142,13 @@
                 true,
                 null,
                 null,
+                false,
+                null,
+                0,
+                85,
+                85,
+                100,
+                true,
                 1012
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -180,6 +195,13 @@
                 true,
                 null,
                 null,
+                false,
+                null,
+                0,
+                85,
+                85,
+                100,
+                true,
                 1012
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -250,6 +272,13 @@
                 false,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
                 null,
+                false,
+                DateTime.Parse("2013-07-30 09:10:54.440"),
+                0,
+                85,
+                0,
+                100,
+                true,
                 75
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
@@ -283,6 +312,13 @@
                 true,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
                 null,
+                false,
+                null,
+                0,
+                85,
+                0,
+                100,
+                true,
                 75
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
@@ -316,6 +352,13 @@
                 false,
                 "https://www.dls.nhs.uk/tracking/MOST/Word07Core/cons/WC07-Exercise_1.zip",
                 null,
+                false,
+                null,
+                0,
+                85,
+                0,
+                100,
+                true,
                 75
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -523,6 +566,13 @@
                 true,
                 null,
                 null,
+                false,
+                null,
+                0,
+                85,
+                85,
+                100,
+                true,
                 383
             );
             expectedSectionContent.Tutorials.AddRange(
@@ -627,7 +677,7 @@
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().BeNull();
         }
 
@@ -683,6 +733,28 @@
         }
 
         [Test]
+        public void Get_section_content_next_section_id_skips_section_with_no_diagnostic_assessment_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 5694;
+                const int candidateId = 1;
+                const int sectionId = 103;
+                const int originalNextSectionId = 104;
+                tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(originalNextSectionId, null);
+
+                const int expectedNextSectionId = 105;
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                //Then
+                result.NextSectionId.Should().Be(expectedNextSectionId);
+            }
+        }
+
+        [Test]
         public void Get_section_content_next_section_id_returns_section_with_only_post_learning_assessment()
         {
             // Given
@@ -710,7 +782,7 @@
 
                 const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                        // Customisations.IsAssessed = 1
-                tutorialContentTestHelper.UpdatePLAssessPath(originalNextSectionId, null);
+                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
                 // When
@@ -792,7 +864,7 @@
         }
 
         [Test]
-        public void Get_tutorial_information_nextSection_skips_sections_full_of_archived_tutorials()
+        public void Get_section_content_nextSection_skips_sections_full_of_archived_tutorials()
         {
             using (new TransactionScope())
             {
@@ -908,7 +980,7 @@
 
                 // Tutorial 910 has DiagStatus=0 so the section score should be 6 and not 7
                 sectionContentTestHelper.UpdateDiagnosticScore(910, progressId, 1);
-                
+
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -1003,7 +1075,219 @@
                 // Then
                 result.DiagnosticStatus.Should().BeTrue();
             }
-            
+        }
+
+        [Test]
+        public void Get_section_content_should_have_otherSectionsExist_if_in_middle_of_list()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 383;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.OtherSectionsExist.Should().BeTrue();
+        }
+
+        [Test]
+        public void Get_section_content_should_have_otherSectionsExist_if_at_end_of_list()
+        {
+            // Given
+            const int customisationId = 15853;
+            const int candidateId = 1;
+            const int sectionId = 386;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.OtherSectionsExist.Should().BeTrue();
+        }
+
+        [TestCase(2087)]
+        [TestCase(2195)]
+        [TestCase(2199)]
+        public void Get_section_content_should_have_otherSectionsExist_when_shared_section_number(int sectionId)
+        {
+            using (new TransactionScope())
+            {
+
+                // Given
+                const int customisationId = 24057;
+                const int candidateId = 1;
+                sectionContentTestHelper.UpdateSectionNumber(2195, 10);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.OtherSectionsExist.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void Get_section_content_should_have_otherSectionsExist_when_only_other_section_shares_section_number()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 17456;
+                const int candidateId = 210934;
+                const int sectionId = 664;
+
+                sectionContentTestHelper.UpdateSectionNumber(668, 1); // Section 664 also has SectionNumber 1, and is
+                // the only other section on the course
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.OtherSectionsExist.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_otherSectionsExist_when_only_section_in_application()
+        {
+            // Given
+            const int customisationId = 7967;
+            const int candidateId = 11;
+            const int sectionId = 210;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeFalse();
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_otherSectionsExist_when_only_section_not_archived_in_course()
+        {
+            // Given
+            const int customisationId = 21727;
+            const int candidateId = 21727;
+            const int sectionId = 1806;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeFalse();
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_otherSectionsExist_when_other_section_is_full_of_archived_tutorials()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 17456;
+                const int candidateId = 210934;
+                const int sectionId = 664;
+
+                // The tutorials of what would be the next section, 668
+                // This is the only other section on this course
+                tutorialContentTestHelper.ArchiveTutorial(2713);
+                tutorialContentTestHelper.ArchiveTutorial(2714);
+                tutorialContentTestHelper.ArchiveTutorial(2715);
+                tutorialContentTestHelper.ArchiveTutorial(2716);
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.OtherSectionsExist.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void Get_section_content_should_have_otherSectionsExist_when_other_section_only_has_diagnostic_assessment()
+        {
+            // Given
+            const int customisationId = 5694;
+            const int candidateId = 1;
+            const int sectionId = 103;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeTrue();
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_otherSectionsExist_when_other_section_has_no_diagnostic_assessment_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 5694;
+                const int candidateId = 1;
+                const int sectionId = 103;
+
+                // Remove diagnostic assessment paths from other sections
+                int[] otherSections = { 104, 105, 106, 107, 108, 109, 110, 111 };
+                otherSections.ToList().ForEach(section =>
+                    tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
+                );
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.OtherSectionsExist.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void Get_section_content_should_have_otherSectionsExist_when_other_sections_only_have_post_learning_assessment()
+        {
+            // Given
+            const int customisationId = 10820;
+            const int candidateId = 1;
+            const int sectionId = 104;
+
+            // When
+            var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+            // Then
+            result.Should().NotBeNull();
+            result!.OtherSectionsExist.Should().BeTrue();
+        }
+
+        [Test]
+        public void Get_section_content_should_not_have_otherSectionsExist_when_other_section_has_no_post_learning_assessment_path()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int customisationId = 10820;
+                const int candidateId = 1;
+                const int sectionId = 104;
+
+                // Remove post learning assessment paths from other sections
+                int[] otherSections = { 103, 105, 106, 107, 108, 109, 110, 111 };
+                otherSections.ToList().ForEach(section =>
+                    tutorialContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
+                );
+
+                // When
+                var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+
+                // Then
+                result.Should().NotBeNull();
+                result!.OtherSectionsExist.Should().BeFalse();
+            }
         }
     }
 }
