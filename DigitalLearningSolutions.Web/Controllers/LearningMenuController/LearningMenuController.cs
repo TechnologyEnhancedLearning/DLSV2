@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningMenuController
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -62,6 +63,12 @@
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
                     $"centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            if (courseContent.Sections.Count == 1)
+            {
+                var sectionId = courseContent.Sections.First().Id;
+                return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
 
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);

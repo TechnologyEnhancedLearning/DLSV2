@@ -27,6 +27,9 @@
         public bool DisplayTutorialSeparator { get; }
         public bool DisplayPostLearningSeparator { get; }
         public int? NextSectionId { get; }
+        public bool ShowCompletionSummary { get; }
+        public bool OtherSectionsExist { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
         public SectionContentViewModel(IConfiguration config, SectionContent sectionContent, int customisationId, int sectionId)
         {
@@ -58,6 +61,17 @@
             DisplayTutorialSeparator = sectionContent.Tutorials.Any() && (ShowPostLearning || ShowConsolidation);
             DisplayPostLearningSeparator = ShowConsolidation && ShowPostLearning;
             NextSectionId = sectionContent.NextSectionId;
+            ShowCompletionSummary = sectionContent.IncludeCertification && !sectionContent.OtherSectionsExist;
+            OtherSectionsExist = sectionContent.OtherSectionsExist;
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                sectionContent.Completed,
+                sectionContent.MaxPostLearningAssessmentAttempts,
+                sectionContent.IsAssessed,
+                sectionContent.PostLearningAssessmentPassThreshold,
+                sectionContent.DiagnosticAssessmentCompletionThreshold,
+                sectionContent.TutorialsCompletionThreshold
+            );
         }
 
         private static string FormatPercentComplete(SectionContent sectionContent)

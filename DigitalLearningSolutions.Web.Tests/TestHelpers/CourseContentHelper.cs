@@ -39,5 +39,20 @@
                 courseSettings
             );
         }
+
+        public static CourseSection CreateDefaultCourseSection(
+            string sectionName = "Section",
+            int id = 1,
+            bool hasLearning = true,
+            double percentComplete = 25
+        )
+        {
+            return new CourseSection(
+                sectionName,
+                id,
+                hasLearning,
+                percentComplete
+            );
+        }
     }
 }

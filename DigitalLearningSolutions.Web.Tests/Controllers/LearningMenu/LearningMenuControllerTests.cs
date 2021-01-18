@@ -99,6 +99,58 @@
         }
 
         [Test]
+        public void Index_should_redirect_to_section_page_if_one_section_in_course()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var section = CourseContentHelper.CreateDefaultCourseSection(id: sectionId);
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId);
+            expectedCourseContent.Sections.Add(section);
+
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId))
+                .Returns(expectedCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Index(customisationId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Section")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId);
+        }
+
+        [Test]
+        public void Index_should_not_redirect_to_section_page_if_more_than_one_section_in_course()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var section1 = CourseContentHelper.CreateDefaultCourseSection(id: sectionId + 1);
+            var section2 = CourseContentHelper.CreateDefaultCourseSection(id: sectionId + 2);
+            var section3 = CourseContentHelper.CreateDefaultCourseSection(id: sectionId + 3);
+
+            var expectedCourseContent = CourseContentHelper.CreateDefaultCourseContent(customisationId);
+            expectedCourseContent.Sections.AddRange(new[] { section1, section2, section3 });
+
+            A.CallTo(() => courseContentService.GetCourseContent(CandidateId, customisationId))
+                .Returns(expectedCourseContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Index(customisationId);
+
+            // Then
+            var expectedModel = new InitialMenuViewModel(expectedCourseContent);
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
         public void Index_should_return_404_if_unknown_course()
         {
             // Given

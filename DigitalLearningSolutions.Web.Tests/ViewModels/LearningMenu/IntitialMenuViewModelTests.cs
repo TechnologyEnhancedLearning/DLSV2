@@ -159,7 +159,7 @@
         }
 
         [Test]
-        public void Initial_menu_show_completion_summary_should_be_include_certification_when_true()
+        public void Initial_menu_should_show_completion_summary_when_include_certification_is_true()
         {
             // Given
             const bool includeCertification = true;
@@ -175,7 +175,7 @@
         }
 
         [Test]
-        public void Initial_menu_show_completion_summary_should_be_include_certification_when_false()
+        public void Initial_menu_should_not_show_completion_summary_when_include_certification_is_false()
         {
             // Given
             const bool includeCertification = false;

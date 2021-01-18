@@ -46,7 +46,10 @@
   </div>
 </div>
 
-<partial name="Section/_SectionNextLink" model="Model" />
+@if (Model.OtherSectionsExist)
+{
+  <partial name="Section/_SectionNextLink" model="Model" />
+}
 
 @if (Model.ShowDiagnostic)
 {
@@ -81,4 +84,11 @@
 @if (Model.ShowConsolidation)
 {
   <partial name="Section/_ConsolidationExerciseCard" model="Model" />
+}
+
+@if (Model.ShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="Model.CompletionSummaryCardViewModel" />
 }
