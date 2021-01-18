@@ -42,5 +42,30 @@
                 currentVersion
             );
         }
+
+        public void EnablePostLearning(int customisationId, int sectionId)
+        {
+            connection.Execute(
+                @"
+                    UPDATE
+                        Sections
+                    SET
+                        PLAssessPath = 'https://www.dls.nhs.uk/CMS/CMSContent/Course125/PLAssess/MC077_CL_MedChart_(P)_Prescriber_ASSESSMENT/imsmanifest.xml'
+                    WHERE
+                        SectionID = @sectionId",
+                new { sectionId }
+            );
+
+            connection.Execute(
+                @"
+                    UPDATE
+                        Customisations
+                    SET
+                        IsAssessed = 1
+                    WHERE
+                        CustomisationID = @customisationId",
+                new { customisationId }
+            );
+        }
     }
 }
