@@ -21,7 +21,7 @@
       </dd>
     }
 
-    </div>
+  </div>
 
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -46,7 +46,7 @@
 
       </dd>
     }
-    </div>
+  </div>
 
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -87,17 +87,77 @@
         </tbody>
       </table>
     </dd>
-    @if(Model.DetailFramework.UserCanModify)
+    @if (Model.DetailFramework.UserCanModify)
     {
-  <dd class="nhsuk-summary-list__actions">
+      <dd class="nhsuk-summary-list__actions">
 
-    <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-      Edit<span class="nhsuk-u-visually-hidden"> working group members</span>
-    </a>
+        <a asp-action="AddCollaborators" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit<span class="nhsuk-u-visually-hidden"> working group members</span>
+        </a>
 
-  </dd>
+      </dd>
     }
-    
+
+
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+     Default questions
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @if (Model.FrameworkDefaultQuestions.Any())
+      {
+      <table role="presentation" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head nhsuk-u-visually-hidden">
+          <tr role="row" class="nhsuk-u-visually-hidden">
+            <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
+              Question
+            </th>
+            <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
+              Range
+            </th>
+
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+
+          @foreach (var question in Model.FrameworkDefaultQuestions)
+          {
+            <tr role="row" class="nhsuk-table__row collaborator-row">
+              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                <span class="nhsuk-table-responsive__heading">Question </span>
+                <span class="framework-default-question">
+                  @question.Question
+                </span>
+              </td>
+              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                <span class="nhsuk-table-responsive__heading">Range </span>
+                <span class="framework-default-question-range">
+                  @question.MinValue - @question.MaxValue
+                </span>
+              </td>
+            </tr>
+          }
+
+        </tbody> 
+      </table>
+      }
+      else
+      {
+        <span>No default assessment questions have been set for this framework</span>
+      }
+      </dd>
+    @if (Model.DetailFramework.UserCanModify)
+    {
+      <dd class="nhsuk-summary-list__actions">
+
+        <a asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit<span class="nhsuk-u-visually-hidden"> framework default questions</span>
+        </a>
+
+      </dd>
+    }
+
 
   </div>
 
