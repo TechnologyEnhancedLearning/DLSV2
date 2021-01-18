@@ -291,12 +291,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
             var frameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            var frameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId);
             var model = new FrameworkViewModel()
             {
                 DetailFramework = detailFramework,
                 Collaborators = collaborators,
                 FrameworkCompetencyGroups = frameworkCompetencyGroups,
-                FrameworkCompetencies = frameworkCompetencies
+                FrameworkCompetencies = frameworkCompetencies,
+                FrameworkDefaultQuestions = frameworkDefaultQuestions
             };
             return View("Developer/Framework", model);
         }

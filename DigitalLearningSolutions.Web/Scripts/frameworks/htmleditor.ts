@@ -1,4 +1,5 @@
-﻿import * as jodit from "jodit";
+import * as jodit from 'jodit';
+
 new jodit.Jodit('#competency-description', {
   buttons: [
     'source', '|',
@@ -13,7 +14,7 @@ new jodit.Jodit('#competency-description', {
     'right',
     'justify', '|',
     'undo', 'redo', '|',
-    'hr'
+    'hr',
   ],
   buttonsMD: [
     'source', '|',
@@ -28,7 +29,7 @@ new jodit.Jodit('#competency-description', {
     'right',
     'justify', '|',
     'undo', 'redo', '|',
-    'hr'
+    'hr',
   ],
   buttonsSM: [
     'bold',
@@ -42,12 +43,13 @@ new jodit.Jodit('#competency-description', {
     'right',
     'justify', '|',
     'undo', 'redo', '|',
-    'hr'
+    'hr',
   ],
   buttonsXS: [
     'bold',
     'italic', '|',
     'ul',
     'ol', '|',
-    'undo', 'redo'
-  ]});
+    'undo', 'redo',
+  ],
+});
