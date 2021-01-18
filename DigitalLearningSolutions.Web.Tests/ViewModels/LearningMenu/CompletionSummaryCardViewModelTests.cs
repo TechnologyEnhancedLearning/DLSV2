@@ -8,7 +8,6 @@
     class CompletionSummaryCardViewModelTests
     {
         private const int CustomisationId = 1;
-        private readonly DateTime? Completed = null;
         private const int MaxPostLearningAssessmentAttempts = 0;
         private const bool IsAssessed = true;
         private const int PostLearningAssessmentPassThreshold = 100;
@@ -24,7 +23,7 @@
             // When
             var completionSummaryCardViewModel = new CompletionSummaryCardViewModel(
                 customisationId,
-                Completed,
+                null,
                 MaxPostLearningAssessmentAttempts,
                 IsAssessed,
                 PostLearningAssessmentPassThreshold,
