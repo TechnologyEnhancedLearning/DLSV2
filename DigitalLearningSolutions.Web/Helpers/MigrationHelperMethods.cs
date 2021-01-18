@@ -32,7 +32,8 @@
                         typeof(AddCompetencyNameColumn).Assembly,
                         typeof(MakeCompetencyDecsriptionNullable).Assembly,
                         typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly,
-                        typeof(ChangesForDigitalCapability).Assembly
+                        typeof(ChangesForDigitalCapability).Assembly,
+                        typeof(AddFrameworkDefaultQuestionsTable).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
