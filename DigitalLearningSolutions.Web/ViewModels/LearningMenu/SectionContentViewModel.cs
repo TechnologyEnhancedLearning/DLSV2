@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SectionContent;
@@ -62,12 +63,12 @@
         private static string FormatPercentComplete(SectionContent sectionContent)
         {
             var totalStatus = sectionContent.Tutorials.Sum(tutorial => tutorial.TutorialStatus);
-            var percentage =
+            double percentage =
                 sectionContent.Tutorials.Count == 0 || !sectionContent.HasLearning
                     ? 0
                     : (totalStatus * 100) / (sectionContent.Tutorials.Count * 2);
 
-            return $"{percentage:f0}% learning complete";
+            return $"{Convert.ToInt32(Math.Floor(percentage))}% learning complete";
         }
 
         private static string GetPostLearningStatus(SectionContent sectionContent)

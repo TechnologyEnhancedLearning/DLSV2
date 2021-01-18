@@ -81,12 +81,12 @@
         }
 
         [Test]
-        public void Section_should_round_percent_complete()
+        public void Section_should_floor_percent_complete()
         {
             // Given
             const bool hasLearning = true;
             const double percentComplete = 16.6666666667;
-            const double percentCompleteRounded = 17;
+            const double percentCompleteRounded = 16;
             const bool showPercentageCourseSetting = true;
             var section = CourseSectionHelper.CreateDefaultCourseSection(
                 hasLearning: hasLearning,
