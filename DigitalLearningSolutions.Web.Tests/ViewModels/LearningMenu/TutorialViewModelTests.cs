@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -606,6 +607,209 @@
 
             // Then
             tutorialViewModel.SupportingMaterialPath.Should().Be(expectedParsedPath);
+        }
+
+        [Test]
+        public void Tutorial_should_show_next_button_when_other_sections_exist()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: true,
+                otherItemsInSectionExist: false
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowNextButton.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_should_show_next_button_when_other_items_in_section_exist()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: false,
+                otherItemsInSectionExist: true
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowNextButton.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_should_not_show_next_button_when_only_tutorial_and_section()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: false,
+                otherItemsInSectionExist: false
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowNextButton.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_should_show_completion_summary_when_include_certification_and_only_tutorial_and_section()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: false,
+                otherItemsInSectionExist: false,
+                includeCertification: true
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowCompletionSummary.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_should_not_show_completion_summary_when_include_certification_is_false()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: false,
+                otherItemsInSectionExist: false,
+                includeCertification: false
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowCompletionSummary.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_should_not_show_completion_summary_when_other_sections_exist()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: true,
+                otherItemsInSectionExist: false,
+                includeCertification: true
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowCompletionSummary.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_should_not_show_completion_summary_when_other_items_in_section_exist()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                otherSectionsExist: false,
+                otherItemsInSectionExist: true,
+                includeCertification: true
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowCompletionSummary.Should().BeFalse();
+        }
+
+        [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
+        [TestCase(3, null, 0, true, 75, 80, 85)]
+        [TestCase(4, null, 3, true, 75, 80, 85)]
+        [TestCase(5, null, 3, false, 75, 80, 85)]
+        [TestCase(6, null, 3, false, 75, 80, 0)]
+        [TestCase(7, null, 3, false, 75, 0, 85)]
+        [TestCase(8, null, 3, false, 75, 0, 0)]
+        public void Tutorial_should_have_completion_summary_card_view_model(
+            int customisationId,
+            string? completed,
+            int maxPostLearningAssessmentAttempts,
+            bool isAssessed,
+            int postLearningAssessmentPassThreshold,
+            int diagnosticAssessmentCompletionThreshold,
+            int tutorialsCompletionThreshold
+        )
+        {
+            // Given
+            var completedDateTime = completed != null ? DateTime.Parse(completed) : (DateTime?)null;
+
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                completed: completedDateTime,
+                maxPostLearningAssessmentAttempts: maxPostLearningAssessmentAttempts,
+                isAssessed: isAssessed,
+                postLearningAssessmentPassThreshold: postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold: diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold: tutorialsCompletionThreshold
+            );
+
+            var expectedCompletionSummaryViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                completedDateTime,
+                maxPostLearningAssessmentAttempts,
+                isAssessed,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                customisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.CompletionSummaryCardViewModel
+                .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
     }
 }

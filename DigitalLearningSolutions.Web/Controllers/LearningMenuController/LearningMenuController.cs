@@ -112,6 +112,17 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
+
+            if (sectionContent.Tutorials.Count == 1
+                && (sectionContent.DiagnosticAssessmentPath == null || !sectionContent.DiagnosticStatus)
+                && (sectionContent.PostLearningAssessmentPath == null || !sectionContent.IsAssessed)
+                && sectionContent.ConsolidationPath == null
+            )
+            {
+                var tutorialId = sectionContent.Tutorials.First().Id;
+                return RedirectToAction("Tutorial", "LearningMenu", new { customisationId, sectionId, tutorialId });
+            }
+
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
 
             if (progressId == null)

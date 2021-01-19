@@ -431,6 +431,300 @@
         }
 
         [Test]
+        public void Sections_should_redirect_to_section_page_if_one_tutorial_in_section()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Tutorial")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId)
+                .WithRouteValue("tutorialId", tutorialId);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_has_no_diagnostic_tutorials()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.DiagnosticStatus = false;
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Tutorial")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId)
+                .WithRouteValue("tutorialId", tutorialId);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_has_diagnostic_but_no_path()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.DiagnosticStatus = true;
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Tutorial")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId)
+                .WithRouteValue("tutorialId", tutorialId);
+        }
+
+        [Test]
+        public void Sections_should_not_redirect_to_section_page_if_there_is_diagnostic()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.DiagnosticStatus = true;
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_not_redirect_to_section_page_if_there_is_post_learning_assessment()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: "some/post-learning/path.html",
+                isAssessed: true,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_is_not_assessed()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: "some/post-learning/path.html",
+                isAssessed: false,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Tutorial")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId)
+                .WithRouteValue("tutorialId", tutorialId);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_is_assessed_but_has_no_path()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: null,
+                isAssessed: true,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Tutorial")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId)
+                .WithRouteValue("tutorialId", tutorialId);
+        }
+
+        [Test]
+        public void Sections_should_not_redirect_to_section_page_if_there_is_consolidation()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: null,
+                consolidationPath: "some/consolidation/path.pdf",
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_not_redirect_to_section_page_if_more_than_one_tutorial_in_section()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            const int tutorialId = 789;
+            var tutorial1 = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId + 1);
+            var tutorial2 = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId + 2);
+            var tutorial3 = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId + 3);
+
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            expectedSectionContent.Tutorials.AddRange(new[] { tutorial1, tutorial2, tutorial3 });
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
         public void Sections_should_404_if_section_not_found()
         {
             // Given

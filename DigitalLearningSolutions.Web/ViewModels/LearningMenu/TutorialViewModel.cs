@@ -25,6 +25,9 @@
         public TutorialTimeSummaryViewModel TimeSummary { get; }
         public string? SupportingMaterialPath { get; }
         public TutorialNextLinkViewModel NextLinkViewModel { get; }
+        public bool ShowNextButton { get; }
+        public bool ShowCompletionSummary { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
         public TutorialViewModel(
             IConfiguration config,
@@ -70,6 +73,19 @@
                 tutorialInformation.PostLearningAssessmentPath,
                 tutorialInformation.NextTutorialId,
                 tutorialInformation.NextSectionId
+            );
+
+            ShowNextButton = tutorialInformation.OtherItemsInSectionExist || tutorialInformation.OtherSectionsExist;
+            ShowCompletionSummary = !ShowNextButton && tutorialInformation.IncludeCertification;
+
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                tutorialInformation.Completed,
+                tutorialInformation.MaxPostLearningAssessmentAttempts,
+                tutorialInformation.IsAssessed,
+                tutorialInformation.PostLearningAssessmentPassThreshold,
+                tutorialInformation.DiagnosticAssessmentCompletionThreshold,
+                tutorialInformation.TutorialsCompletionThreshold
             );
         }
 
