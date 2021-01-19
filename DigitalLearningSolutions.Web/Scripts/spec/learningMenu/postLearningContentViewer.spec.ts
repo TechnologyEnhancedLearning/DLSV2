@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import '../learningMenu/postLearningContentViewer';
+import '../../learningMenu/postLearningContentViewer';
 
 beforeAll(() => {
   global.window = Object.create(window);

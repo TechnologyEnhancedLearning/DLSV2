@@ -29,6 +29,7 @@
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
+    <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
   </ItemGroup>
 
@@ -79,6 +80,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\spec\getCourseCards.ts" />
+    <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCourses.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
