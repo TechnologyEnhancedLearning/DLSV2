@@ -11,6 +11,8 @@
         private const int SectionId = 5;
         private const bool ShowTime = true;
         private const bool ShowLearnStatus = true;
+        private const bool DiagnosticStatus = true;
+        private const int DiagnosticAttempts = 1;
 
         [TestCase(0, 1, true, true)]
         [TestCase(1, 30, true, false)]
@@ -43,7 +45,9 @@
                 showTime,
                 showLearnStatus,
                 CustomisationId,
-                SectionId
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
             );
 
             // Then
@@ -62,7 +66,9 @@
                 showTime: true,
                 showLearnStatus: true,
                 CustomisationId,
-                SectionId
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
             );
 
             // Then
@@ -81,7 +87,9 @@
                 showTime: true,
                 showLearnStatus: false,
                 CustomisationId,
-                SectionId
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
             );
 
             // Then
@@ -100,7 +108,9 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
             );
 
             // Then
@@ -119,11 +129,193 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
             );
 
             // Then
             tutorialCardViewModel.SectionId.Should().Be(SectionId);
+        }
+
+        [Test]
+        public void Tutorial_card_should_show_recommendation_status_if_all_conditions_are_met()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                showLearnStatus: true,
+                CustomisationId,
+                SectionId,
+                diagnosticStatus: true,
+                diagnosticAttempts: 2
+            );
+
+            // Then
+            tutorialCardViewModel.ShowRecommendationStatus.Should().BeTrue();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_recommendation_status_if_diagnostic_status_is_false()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                diagnosticStatus: false,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.ShowRecommendationStatus.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_recommendation_status_if_show_learn_status_is_false()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                showLearnStatus: false,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.ShowRecommendationStatus.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_card_should_not_show_recommendation_status_if_diagnostic_attempts_is_zero()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                diagnosticAttempts: 0
+            );
+
+            // Then
+            tutorialCardViewModel.ShowRecommendationStatus.Should().BeFalse();
+        }
+
+        [Test]
+        public void Tutorial_card_recommendation_status_should_be_optional_if_current_score_equals_possible_score()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                currentScore: 10,
+                possibleScore: 10
+                );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.RecommendationStatus.Should().Be("Optional");
+        }
+
+        [Test]
+        public void Tutorial_card_recommendation_status_should_be_recommended_if_current_score_is_less_than_possible_score()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                currentScore: 7,
+                possibleScore: 10
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.RecommendationStatus.Should().Be("Recommended");
+        }
+
+        [Test]
+        public void Tutorial_card__status_tag_colour_should_be_green_if_current_score_equals_possible_score()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                currentScore: 10,
+                possibleScore: 10
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.StatusTagColour.Should().Be("nhsuk-tag--green");
+        }
+
+        [Test]
+        public void Tutorial_card_status_tag_colour_should_be_orange_if_current_score_is_less_than_possible_score()
+        {
+            // Given
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                currentScore: 7,
+                possibleScore: 10
+            );
+
+            // When
+            var tutorialCardViewModel = new TutorialCardViewModel(
+                sectionTutorial,
+                ShowTime,
+                ShowLearnStatus,
+                CustomisationId,
+                SectionId,
+                DiagnosticStatus,
+                DiagnosticAttempts
+            );
+
+            // Then
+            tutorialCardViewModel.StatusTagColour.Should().Be("nhsuk-tag--orange");
         }
     }
 }

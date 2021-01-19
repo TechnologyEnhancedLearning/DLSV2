@@ -54,7 +54,9 @@
                 sectionContent.CourseSettings.ShowTime,
                 sectionContent.CourseSettings.ShowLearnStatus,
                 sectionId,
-                customisationId
+                customisationId,
+                sectionContent.DiagnosticStatus,
+                sectionContent.DiagnosticAttempts
             ));
 
             DisplayDiagnosticSeparator = ShowDiagnostic && (sectionContent.Tutorials.Any() || ShowPostLearning || ShowConsolidation);

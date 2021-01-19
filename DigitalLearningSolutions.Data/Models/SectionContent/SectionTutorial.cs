@@ -9,8 +9,20 @@
         public int AverageTutorialTime { get; }
         public int Id { get; }
         public bool CustomisationTutorialStatus { get; }
+        public int CurrentScore { get; }
+        public int PossibleScore { get; }
 
-        public SectionTutorial(string tutorialName, int tutStat, string completionStatus, int tutTime, int averageTutMins, int id, bool status)
+        public SectionTutorial(
+            string tutorialName,
+            int tutStat,
+            string completionStatus,
+            int tutTime,
+            int averageTutMins,
+            int id,
+            bool status,
+            int currentScore,
+            int possibleScore
+        )
         {
             TutorialName = tutorialName;
             TutorialStatus = tutStat;
@@ -19,6 +31,8 @@
             AverageTutorialTime = averageTutMins;
             Id = id;
             CustomisationTutorialStatus = status;
+            CurrentScore = currentScore;
+            PossibleScore = possibleScore;
         }
     }
 }
