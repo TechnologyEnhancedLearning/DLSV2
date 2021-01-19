@@ -11,6 +11,8 @@
         public int MaxSectionScore { get; set; }
         public string DiagnosticAssessmentPath { get; }
         public bool CanSelectTutorials { get; }
+        public string? PostLearningAssessmentPath { get; }
+        public bool IsAssessed { get; }
         public int? NextTutorialId { get; }
         public int? NextSectionId { get; }
         public List<DiagnosticTutorial> Tutorials { get; } = new List<DiagnosticTutorial>();
@@ -24,6 +26,8 @@
             int diagAssessOutOf,
             string diagAssessPath,
             bool diagObjSelect,
+            string? plAssessPath,
+            bool isAssessed,
             int? nextTutorialId,
             int? nextSectionId
         )
@@ -35,6 +39,8 @@
             MaxSectionScore = diagAssessOutOf;
             DiagnosticAssessmentPath = diagAssessPath;
             CanSelectTutorials = diagObjSelect;
+            PostLearningAssessmentPath = plAssessPath;
+            IsAssessed = isAssessed;
             NextTutorialId = nextTutorialId;
             NextSectionId = nextSectionId;
         }

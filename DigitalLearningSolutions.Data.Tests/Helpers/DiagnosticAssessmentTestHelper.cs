@@ -33,6 +33,8 @@
             int maxSectionScore = 3,
             string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DIAGNEW/itspplayer.html",
             bool canSelectTutorials = true,
+            string? postLearningAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/PLAssess/01_Digital_Literacy_PL/imsmanifest.xml",
+            bool isAssessed = true,
             int? nextTutorialId = 100,
             int? nextSectionId = 200
         )
@@ -46,6 +48,8 @@
                 maxSectionScore,
                 diagnosticAssessmentPath,
                 canSelectTutorials,
+                postLearningAssessmentPath,
+                isAssessed,
                 nextTutorialId,
                 nextSectionId
             );

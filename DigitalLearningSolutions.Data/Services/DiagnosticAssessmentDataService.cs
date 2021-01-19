@@ -73,15 +73,15 @@
                             NextTutorials.OrderByNumber, NextSections.SectionNumber
                         ORDER BY
                             CASE
-		                        WHEN NextTutorials.OrderByNumber IS NULL THEN 1
+                                WHEN NextTutorials.OrderByNumber IS NULL THEN 1
                                 ELSE 0
                             END,
-	                        NextTutorials.OrderByNumber,
+                            NextTutorials.OrderByNumber,
                             CASE
-		                        WHEN NextSections.SectionNumber IS NULL THEN 1
+                                WHEN NextSections.SectionNumber IS NULL THEN 1
                                 ELSE 0
                             END,
-	                        NextSections.SectionNumber
+                            NextSections.SectionNumber
                     )
                     SELECT
                         Applications.ApplicationName,
@@ -92,6 +92,8 @@
                         Tutorials.DiagAssessOutOf,
                         Sections.DiagAssessPath,
                         Customisations.DiagObjSelect,
+                        Sections.PLAssessPath,
+                        Customisations.IsAssessed,
                         NextTutorialAndSectionNumbers.NextTutorialId,
                         NextTutorialAndSectionNumbers.NextSectionId,
                         Tutorials.TutorialName,
