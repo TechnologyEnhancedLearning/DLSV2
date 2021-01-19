@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.TutorialContent
 {
+    using System;
+
     public class TutorialInformation
     {
         public int Id { get; }
@@ -19,8 +21,17 @@
         public string? SupportingMaterialPath { get; }
         public string? PostLearningAssessmentPath { get; }
         public CourseSettings CourseSettings { get; }
+        public bool IncludeCertification { get; }
+        public bool IsAssessed { get; }
+        public DateTime? Completed { get; }
+        public int MaxPostLearningAssessmentAttempts { get; }
+        public int PostLearningAssessmentPassThreshold { get; }
+        public int DiagnosticAssessmentCompletionThreshold { get; }
+        public int TutorialsCompletionThreshold { get; }
         public int? NextTutorialId { get; }
         public int? NextSectionId { get; }
+        public bool OtherSectionsExist { get; }
+        public bool OtherItemsInSectionExist { get; }
 
         public TutorialInformation(
             int id,
@@ -41,8 +52,17 @@
             string? supportingMaterialPath,
             string? postLearningAssessmentPath,
             string? courseSettings,
+            bool includeCertification,
+            bool isAssessed,
+            DateTime? completed,
+            int maxPostLearningAssessmentAttempts,
+            int postLearningAssessmentPassThreshold,
+            int diagnosticAssessmentCompletionThreshold,
+            int tutorialsCompletionThreshold,
             int? nextTutorialId,
-            int? nextSectionId
+            int? nextSectionId,
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist
         )
         {
             Id = id;
@@ -62,8 +82,17 @@
             SupportingMaterialPath = supportingMaterialPath;
             PostLearningAssessmentPath = postLearningAssessmentPath;
             CourseSettings = new CourseSettings(courseSettings);
+            IncludeCertification = includeCertification;
+            IsAssessed = isAssessed;
+            Completed = completed;
+            MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;
+            PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;
+            DiagnosticAssessmentCompletionThreshold = diagnosticAssessmentCompletionThreshold;
+            TutorialsCompletionThreshold = tutorialsCompletionThreshold;
             NextTutorialId = nextTutorialId;
             NextSectionId = nextSectionId;
+            OtherSectionsExist = otherSectionsExist;
+            OtherItemsInSectionExist = otherItemsInSectionExist;
         }
     }
 }

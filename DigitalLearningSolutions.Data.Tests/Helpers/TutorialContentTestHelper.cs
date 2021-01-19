@@ -55,5 +55,15 @@
                 new { customisationId, tutorialId }
             );
         }
+
+        public void UpdateTutorialStatus(int tutorialId, int customisationId, int status)
+        {
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                        SET Status = @status
+                        WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
+                new { tutorialId, customisationId, status }
+            );
+        }
     }
 }
