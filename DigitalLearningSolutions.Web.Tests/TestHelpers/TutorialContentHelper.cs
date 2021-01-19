@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
     internal class TutorialContentHelper
@@ -23,8 +24,17 @@
             string? supportingMaterialPath = "material",
             string? postLearningAssessmentPath = "/postLearningAssessment",
             string? courseSettings = null,
+            bool includeCertification = true,
+            bool isAssessed = true,
+            DateTime? completed = null,
+            int maxPostLearningAssessmentAttempts = 0,
+            int postLearningAssessmentPassThreshold = 100,
+            int diagnosticAssessmentCompletionThreshold = 85,
+            int tutorialsCompletionThreshold = 0,
             int? nextTutorialId = 2,
-            int? nextSectionId = 45
+            int? nextSectionId = 42,
+            bool otherSectionsExist = true,
+            bool otherItemsInSectionExist = true
         )
         {
             return new TutorialInformation(
@@ -46,8 +56,17 @@
                 supportingMaterialPath,
                 postLearningAssessmentPath,
                 courseSettings,
+                includeCertification,
+                isAssessed,
+                completed,
+                maxPostLearningAssessmentAttempts,
+                diagnosticAssessmentCompletionThreshold,
+                postLearningAssessmentPassThreshold,
+                tutorialsCompletionThreshold,
                 nextTutorialId,
-                nextSectionId
+                nextSectionId,
+                otherSectionsExist,
+                otherItemsInSectionExist
             );
         }
 

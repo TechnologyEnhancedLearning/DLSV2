@@ -1171,7 +1171,7 @@
         {
             // Given
             const int customisationId = 21727;
-            const int candidateId = 21727;
+            const int candidateId = 210934;
             const int sectionId = 1806;
 
             // When
