@@ -22,6 +22,7 @@
         public string? PostLearningAssessmentPath { get; }
         public CourseSettings CourseSettings { get; }
         public bool IncludeCertification { get; }
+        public bool IsAssessed { get; }
         public DateTime? Completed { get; }
         public int MaxPostLearningAssessmentAttempts { get; }
         public int PostLearningAssessmentPassThreshold { get; }
@@ -52,6 +53,7 @@
             string? postLearningAssessmentPath,
             string? courseSettings,
             bool includeCertification,
+            bool isAssessed,
             DateTime? completed,
             int maxPostLearningAssessmentAttempts,
             int postLearningAssessmentPassThreshold,
@@ -81,6 +83,7 @@
             PostLearningAssessmentPath = postLearningAssessmentPath;
             CourseSettings = new CourseSettings(courseSettings);
             IncludeCertification = includeCertification;
+            IsAssessed = isAssessed;
             Completed = completed;
             MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;
             PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;

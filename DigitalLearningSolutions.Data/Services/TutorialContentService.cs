@@ -123,6 +123,7 @@
                          END AS PostLearningAssessmentPath,
                          Applications.CourseSettings,
                          Applications.IncludeCertification,
+                         Customisations.IsAssessed,
                          Progress.Completed,
                          Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
                          Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
