@@ -50,7 +50,7 @@
                 "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr",
                 false,
                 383,
-                116
+                null
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]

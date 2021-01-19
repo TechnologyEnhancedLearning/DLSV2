@@ -38,7 +38,7 @@
                                 ON Customisations.ApplicationID = Sections.ApplicationID
                             INNER JOIN Applications
                                 ON Applications.ApplicationID = Sections.ApplicationID
-                                                    
+                                
                             LEFT JOIN CustomisationTutorials AS NextSectionCustomisationTutorials
                                 ON NextSectionCustomisationTutorials.CustomisationID = Customisations.CustomisationID
                             LEFT JOIN Tutorials AS NextSectionTutorials
@@ -53,9 +53,10 @@
                                 )
                                 AND (
                                     NextSectionCustomisationTutorials.Status = 1
-                                    OR NextSectionCustomisationTutorials.DiagStatus = 1
-                                    OR NextSections.PLAssessPath IS NOT NULL
+                                    OR (NextSectionCustomisationTutorials.DiagStatus = 1 AND NextSections.DiagAssessPath IS NOT NULL)
+                                    OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
                                 )
+                                
                             LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
                                 ON NextCustomisationTutorials.CustomisationID = @customisationId
                                 AND NextCustomisationTutorials.Status = 1
