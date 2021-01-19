@@ -32,7 +32,9 @@
             int sectionScore = 2,
             int maxSectionScore = 3,
             string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DIAGNEW/itspplayer.html",
-            bool canSelectTutorials = true
+            bool canSelectTutorials = true,
+            int? nextTutorialId = 100,
+            int? nextSectionId = 200
         )
         {
             return new DiagnosticAssessment(
@@ -43,7 +45,9 @@
                 sectionScore,
                 maxSectionScore,
                 diagnosticAssessmentPath,
-                canSelectTutorials
+                canSelectTutorials,
+                nextTutorialId,
+                nextSectionId
             );
         }
 

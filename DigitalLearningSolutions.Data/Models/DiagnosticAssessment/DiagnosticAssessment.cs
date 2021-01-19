@@ -11,6 +11,8 @@
         public int MaxSectionScore { get; set; }
         public string DiagnosticAssessmentPath { get; }
         public bool CanSelectTutorials { get; }
+        public int? NextTutorialId { get; }
+        public int? NextSectionId { get; }
         public List<DiagnosticTutorial> Tutorials { get; } = new List<DiagnosticTutorial>();
 
         public DiagnosticAssessment(
@@ -21,7 +23,9 @@
             int diagLast,
             int diagAssessOutOf,
             string diagAssessPath,
-            bool diagObjSelect
+            bool diagObjSelect,
+            int? nextTutorialId,
+            int? nextSectionId
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -31,6 +35,8 @@
             MaxSectionScore = diagAssessOutOf;
             DiagnosticAssessmentPath = diagAssessPath;
             CanSelectTutorials = diagObjSelect;
+            NextTutorialId = nextTutorialId;
+            NextSectionId = nextSectionId;
         }
     }
 }

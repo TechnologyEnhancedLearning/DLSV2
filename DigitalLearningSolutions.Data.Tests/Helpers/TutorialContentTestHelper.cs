@@ -44,5 +44,16 @@
                 new { sectionId, newPath }
             );
         }
+
+        public void RemoveCustomisationTutorial(int customisationId, int tutorialId)
+        {
+            connection.Execute(
+                @"
+                    DELETE CustomisationTutorials
+                        WHERE CustomisationID = @customisationId
+                            AND TutorialID = @tutorialID;",
+                new { customisationId, tutorialId }
+            );
+        }
     }
 }
