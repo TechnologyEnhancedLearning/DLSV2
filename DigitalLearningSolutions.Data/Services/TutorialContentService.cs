@@ -44,7 +44,11 @@
                          Tutorials.OrderByNumber,
                          CustomisationTutorials.Status,
                          Sections.SectionID,
-                         Sections.SectionNumber
+                         Sections.SectionNumber,
+                         CAST (CASE WHEN CustomisationTutorials.DiagStatus = 1 AND Sections.DiagAssessPath IS NOT NULL
+                                         THEN 1
+                                    ELSE 0
+                               END AS BIT) AS HasDiagnostic
                     FROM Tutorials
                          INNER JOIN Customisations
                          ON Customisations.CustomisationID = @customisationId
@@ -89,10 +93,9 @@
                          CurrentSection.SectionID AS CurrentSectionID,
                          OtherTutorials.SectionID AS NextSectionID
                     FROM Sections AS CurrentSection
-                         CROSS JOIN OtherTutorials
+                         INNER JOIN OtherTutorials ON OtherTutorials.SectionID <> CurrentSection.SectionID
 
                    WHERE CurrentSection.SectionID = @sectionId
-                         AND OtherTutorials.SectionID <> @sectionId
                          AND CurrentSection.SectionNumber <= OtherTutorials.SectionNumber
                          AND (
                               CurrentSection.SectionNumber < OtherTutorials.SectionNumber
@@ -143,7 +146,9 @@
                                          THEN 1
                                     WHEN EXISTS(SELECT 1
                                                   FROM OtherTutorials
-                                                 WHERE SectionID = @sectionId AND Status = 1)
+                                                 WHERE SectionID = @sectionId
+                                                       AND (Status = 1 OR HasDiagnostic = 1)
+                                               )
                                          THEN 1
                                     ELSE 0
                                END AS BIT) AS OtherItemsInSectionExist

@@ -276,7 +276,7 @@
         }
 
         [Test]
-        public void Get_tutorial_information_nextSection_skips_section_with_no_diagnostic_assessment_path()
+        public void Get_tutorial_information_nextSection_skips_section_with_just_diagnostic_assessment_but_no_path()
         {
             using (new TransactionScope())
             {
@@ -800,7 +800,7 @@
 
                 // Then
                 tutorial.Should().NotBeNull();
-                tutorial!.OtherItemsInSectionExist.Should().BeFalse();
+                tutorial!.OtherItemsInSectionExist.Should().BeTrue();
             }
         }
 
