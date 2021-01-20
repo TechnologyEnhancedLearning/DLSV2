@@ -38,9 +38,9 @@
                     ShowTime = (bool)settings["lm.st"];
                 }
 
-                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool showLearningStatus)
+                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool showLearnStatus)
                 {
-                    ShowLearnStatus = showLearningStatus;
+                    ShowLearnStatus = showLearnStatus;
                 }
 
                 if (settings.ContainsKey("lm.ce") && settings["lm.ce"] is string)
