@@ -64,6 +64,7 @@
                 new { tutorialId, progressId, score }
             );
         }
+
         public void UpdateDiagAssessOutOf(int tutorialId, int diagAssessOutOf)
         {
             connection.Execute(
@@ -75,14 +76,13 @@
             );
         }
 
-        public void RemoveCustomisationTutorial(int customisationId, int tutorialId)
+        public void UpdateDiagnosticStatus(int tutorialId, int customisationId, int status)
         {
             connection.Execute(
-                @"
-                    DELETE CustomisationTutorials
-                        WHERE CustomisationID = @customisationId
-                            AND TutorialID = @tutorialID;",
-                new { customisationId, tutorialId }
+                @"UPDATE CustomisationTutorials
+                        SET DiagStatus = @status
+                        WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
+                new { tutorialId, customisationId, status }
             );
         }
 
@@ -95,13 +95,15 @@
                 new { tutorialId, customisationId, status }
             );
         }
-        public void UpdateDiagnosticStatus(int tutorialId, int customisationId, int status)
+
+        public void RemoveCustomisationTutorial(int customisationId, int tutorialId)
         {
             connection.Execute(
-                @"UPDATE CustomisationTutorials
-                        SET DiagStatus = @status
-                        WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
-                new { tutorialId, customisationId, status }
+                @"
+                    DELETE CustomisationTutorials
+                        WHERE CustomisationID = @customisationId
+                            AND TutorialID = @tutorialID;",
+                new { customisationId, tutorialId }
             );
         }
     }
