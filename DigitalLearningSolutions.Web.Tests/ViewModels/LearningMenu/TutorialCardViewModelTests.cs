@@ -229,7 +229,7 @@
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
                 currentScore: 10,
                 possibleScore: 10
-                );
+            );
 
             // When
             var tutorialCardViewModel = new TutorialCardViewModel(

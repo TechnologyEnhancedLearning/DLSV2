@@ -1294,10 +1294,10 @@
         public void Get_section_content_tutorials_should_have_current_score()
         {
             // Given
-            const int customisationId = 19262;
-            const int candidateId = 2;
-            const int sectionId = 1010;
-            int[] expectedCurrentScores = { 5, 5, 2, 2, 5 };
+            const int customisationId = 6698;
+            const int candidateId = 22966;
+            const int sectionId = 74;
+            int[] expectedCurrentScores = { 3, 1, 0, 0 };
 
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -1310,10 +1310,10 @@
         public void Get_section_content_tutorials_should_have_possible_score()
         {
             // Given
-            const int customisationId = 19262;
-            const int candidateId = 2;
-            const int sectionId = 1010;
-            int[] expectedPossibleScores = { 5, 5, 2, 2, 5 };
+            const int customisationId = 6698;
+            const int candidateId = 22966;
+            const int sectionId = 74;
+            int[] expectedPossibleScores = { 10, 3, 2, 3 };
 
             // When
             var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
