@@ -165,7 +165,7 @@
         public void CourseSettings_should_take_ConsolidationExercise_from_json()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:ce\":\"Consolidation exercise\"}");
+            var courseSettings = new CourseSettings("{\"lm.ce\":\"Consolidation exercise\"}");
 
             // Then
             courseSettings.ConsolidationExercise.Should().Be("Consolidation exercise");
@@ -185,7 +185,7 @@
         public void CourseSettings_should_have_default_ConsolidationExercise_when_wrong_type()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:ce\":false}");
+            var courseSettings = new CourseSettings("{\"lm.ce\":false}");
 
             // Then
             courseSettings.ConsolidationExercise.Should().BeNull();
@@ -195,7 +195,7 @@
         public void CourseSettings_should_have_default_ConsolidationExercise_when_empty()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:ce\":\"\"}");
+            var courseSettings = new CourseSettings("{\"lm.ce\":\"\"}");
 
             // Then
             courseSettings.ConsolidationExercise.Should().BeNull();
@@ -205,7 +205,7 @@
         public void CourseSettings_should_have_default_ConsolidationExercise_when_whitespace()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:ce\":\"   \"}");
+            var courseSettings = new CourseSettings("{\"lm.ce\":\"   \"}");
 
             // Then
             courseSettings.ConsolidationExercise.Should().BeNull();
@@ -215,7 +215,7 @@
         public void CourseSettings_should_take_SupportingInformation_from_json()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:si\":\"Supporting information\"}");
+            var courseSettings = new CourseSettings("{\"lm.si\":\"Supporting information\"}");
 
             // Then
             courseSettings.SupportingInformation.Should().Be("Supporting information");
@@ -235,7 +235,7 @@
         public void CourseSettings_should_have_default_SupportingInformation_when_wrong_type()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:si\":false}");
+            var courseSettings = new CourseSettings("{\"lm.si\":false}");
 
             // Then
             courseSettings.SupportingInformation.Should().BeNull();
@@ -245,7 +245,7 @@
         public void CourseSettings_should_have_default_SupportingInformation_when_empty()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:si\":\"\"}");
+            var courseSettings = new CourseSettings("{\"lm.si\":\"\"}");
 
             // Then
             courseSettings.SupportingInformation.Should().BeNull();
@@ -255,7 +255,7 @@
         public void CourseSettings_should_have_default_SupportingInformation_when_whitespace()
         {
             // When
-            var courseSettings = new CourseSettings("{\"lm:si\":\"   \"}");
+            var courseSettings = new CourseSettings("{\"lm.si\":\"   \"}");
 
             // Then
             courseSettings.SupportingInformation.Should().BeNull();

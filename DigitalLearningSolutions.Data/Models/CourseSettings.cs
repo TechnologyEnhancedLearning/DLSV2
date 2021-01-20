@@ -38,22 +38,22 @@
                     ShowTime = (bool)settings["lm.st"];
                 }
 
-                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool)
+                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool showLearningStatus)
                 {
-                    ShowLearnStatus = (bool)settings["lm.sl"];
+                    ShowLearnStatus = showLearningStatus;
                 }
 
-                if (settings.ContainsKey("lm:ce") && settings["lm:ce"] is string)
+                if (settings.ContainsKey("lm.ce") && settings["lm.ce"] is string)
                 {
-                    var consolidationExercise = (string)settings["lm:ce"];
+                    var consolidationExercise = (string)settings["lm.ce"];
                     ConsolidationExercise = string.IsNullOrWhiteSpace(consolidationExercise)
                         ? null
                         : consolidationExercise;
                 }
 
-                if (settings.ContainsKey("lm:si") && settings["lm:si"] is string)
+                if (settings.ContainsKey("lm.si") && settings["lm.si"] is string)
                 {
-                    var supportingInformation = (string)settings["lm:si"];
+                    var supportingInformation = (string)settings["lm.si"];
                     SupportingInformation = string.IsNullOrWhiteSpace(supportingInformation)
                         ? null
                         : supportingInformation;

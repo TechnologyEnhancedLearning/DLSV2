@@ -80,7 +80,7 @@
             // Given
             const string consolidationText = "Different consolidation description";
             var sectionContent = SectionContentHelper.CreateDefaultSectionContent(
-                courseSettings: "{\"lm:ce\":\"" + consolidationText + "\"}"
+                courseSettings: "{\"lm.ce\":\"" + consolidationText + "\"}"
             );
 
             // When

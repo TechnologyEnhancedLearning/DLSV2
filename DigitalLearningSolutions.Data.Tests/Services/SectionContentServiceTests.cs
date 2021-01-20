@@ -603,7 +603,7 @@
                 const int sectionId = 382;
                 const string courseSettingsText =
                     "{\"lm.sp\":false,\"lm.st\":false,\"lm.sl\":false,\"df.sd\":false,"
-                   + "\"df.sm\":false,\"df.ss\":false,\"lm:ce\":\"consolidation/exercise\"}";
+                   + "\"df.sm\":false,\"df.ss\":false,\"lm.ce\":\"consolidation/exercise\"}";
                 var expectedCourseSettings = new CourseSettings(courseSettingsText);
 
                 courseContentTestHelper.AddCourseSettings(customisationId, courseSettingsText);
