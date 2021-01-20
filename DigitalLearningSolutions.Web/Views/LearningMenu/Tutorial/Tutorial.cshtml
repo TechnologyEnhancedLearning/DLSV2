@@ -103,4 +103,14 @@
   }
 </div>
 
-<partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
+@if (Model.ShowNextButton)
+{
+  <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
+}
+
+@if (Model.ShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="Model.CompletionSummaryCardViewModel" />
+}

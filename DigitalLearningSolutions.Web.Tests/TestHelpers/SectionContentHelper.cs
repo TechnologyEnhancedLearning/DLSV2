@@ -57,5 +57,30 @@
                 nextSectionId
             );
         }
+
+        public static SectionTutorial CreateDefaultSectionTutorial(
+            string tutorialName = "tutorial name",
+            int tutStat = 2,
+            string completionStatus = "Completed",
+            int tutTime = 30,
+            int averageTutMins = 45,
+            int id = 1,
+            bool status = true,
+            int currentScore = 5,
+            int possibleScore = 7
+        )
+        {
+            return new SectionTutorial(
+                tutorialName,
+                tutStat,
+                completionStatus,
+                tutTime,
+                averageTutMins,
+                id,
+                status,
+                currentScore,
+                possibleScore
+            );
+        }
     }
 }
