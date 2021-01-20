@@ -47,6 +47,7 @@
                             LEFT JOIN Sections AS NextSections
                                 ON NextSections.SectionID = NextSectionTutorials.SectionID
                                 AND NextSections.ArchivedDate IS NULL
+                                AND Sections.SectionNumber <= NextSections.SectionNumber
                                 AND (
                                     Sections.SectionNumber < NextSections.SectionNumber
                                     OR Sections.SectionID < NextSections.SectionID
