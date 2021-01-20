@@ -39,7 +39,13 @@
       @Model.SectionName
     </h1>
     <h2 class="nhsuk-u-secondary-text-color">
+      <span class="nhsuk-u-visually-hidden">Your status: </span>
       @Model.AssessmentStatus
+      @if (Model.ScoreInformation != null)
+      {
+        <span class="nhsuk-u-visually-hidden">, your score: </span>
+        @Model.ScoreInformation
+      }
     </h2>
   </div>
 </div>
