@@ -3,13 +3,10 @@
 <div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
-      <div class="@(Model.ShowRecommendationStatus || Model.ShowLearnStatus ? "nhsuk-grid-column-two-thirds" : "nhsuk-grid-full")">
+      <div class="@(Model.ShowRecommendationStatus ? "nhsuk-grid-column-two-thirds" : "nhsuk-grid-full")">
         <h3 class="nhsuk-card__heading card-with-status-heading" id="@Model.Id-name">
           @Model.TutorialName
         </h3>
-        <div class="nhsuk-u-margin-bottom-4">
-          <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
-        </div>
       </div>
       <div class="nhsuk-grid-column-one-third">
         @if (Model.ShowRecommendationStatus)
@@ -18,6 +15,15 @@
             @Model.RecommendationStatus
           </strong>
         }
+      </div>
+    </div>
+    <div class="nhsuk-grid-row">
+      <div class="@(Model.ShowLearnStatus ? "nhsuk-grid-column-two-thirds" : "nhsuk-grid-full")">
+        <div class="nhsuk-u-margin-bottom-4">
+          <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary" />
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-one-third">
         @if (Model.ShowLearnStatus)
         {
           <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color float-right-additional-information">
