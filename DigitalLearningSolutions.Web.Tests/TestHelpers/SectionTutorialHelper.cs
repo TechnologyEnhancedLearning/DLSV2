@@ -11,7 +11,9 @@
             int tutTime = 10,
             int averageTutMins = 20,
             int tutorialId = 1,
-            bool customisationTutorialStatus = true
+            bool customisationTutorialStatus = true,
+            int currentScore = 3,
+            int possibleScore = 5
         )
         {
             return new SectionTutorial(
@@ -21,7 +23,9 @@
                 tutTime,
                 averageTutMins,
                 tutorialId,
-                customisationTutorialStatus
+                customisationTutorialStatus,
+                currentScore,
+                possibleScore
             );
         }
     }

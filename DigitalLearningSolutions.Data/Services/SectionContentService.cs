@@ -99,7 +99,9 @@
                         COALESCE (aspProgress.TutTime, 0) AS TutTime,
                         Tutorials.AverageTutMins,
                         Tutorials.TutorialID AS id,
-                        CustomisationTutorials.Status
+                        CustomisationTutorials.Status,
+                        COALESCE (aspProgress.DiagLast, 0) AS CurrentScore,
+                        Tutorials.DiagAssessOutOf AS PossibleScore
                     FROM Tutorials
                         INNER JOIN CustomisationTutorials
                             ON CustomisationTutorials.TutorialID = Tutorials.TutorialID

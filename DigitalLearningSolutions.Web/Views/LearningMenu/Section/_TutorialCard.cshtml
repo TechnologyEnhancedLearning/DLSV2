@@ -3,7 +3,7 @@
 <div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
   <div class="nhsuk-card__content">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
+      <div class="@(Model.ShowRecommendationStatus || Model.ShowLearnStatus ? "nhsuk-grid-column-two-thirds" : "nhsuk-grid-full")">
         <h3 class="nhsuk-card__heading card-with-status-heading" id="@Model.Id-name">
           @Model.TutorialName
         </h3>
@@ -12,9 +12,12 @@
         </div>
       </div>
       <div class="nhsuk-grid-column-one-third">
-        <strong class="status-tag nhsuk-tag--orange float-right-additional-information">
-          Recommended
-        </strong>
+        @if (Model.ShowRecommendationStatus)
+        {
+          <strong class="status-tag @Model.StatusTagColour float-right-additional-information">
+            @Model.RecommendationStatus
+          </strong>
+        }
         @if (Model.ShowLearnStatus)
         {
           <h3 class="nhsuk-heading-xs nhsuk-u-secondary-text-color float-right-additional-information">

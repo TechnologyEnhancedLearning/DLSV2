@@ -11,13 +11,18 @@
         public int CustomisationId { get; }
         public bool ShowLearnStatus { get; }
         public TutorialTimeSummaryViewModel TimeSummary { get; }
+        public string RecommendationStatus { get; }
+        public string StatusTagColour { get; }
+        public bool ShowRecommendationStatus { get; }
 
         public TutorialCardViewModel(
             SectionTutorial tutorial,
             bool showTime,
             bool showLearnStatus,
             int sectionId,
-            int customisationId
+            int customisationId,
+            bool diagnosticStatus,
+            int diagnosticAttempts
         )
         {
             Id = tutorial.Id;
@@ -32,6 +37,9 @@
             );
             SectionId = sectionId;
             CustomisationId = customisationId;
+            RecommendationStatus = tutorial.CurrentScore < tutorial.PossibleScore ? "Recommended" : "Optional";
+            StatusTagColour = tutorial.CurrentScore < tutorial.PossibleScore ? "nhsuk-tag--orange" : "nhsuk-tag--green";
+            ShowRecommendationStatus = diagnosticAttempts > 0 && showLearnStatus && diagnosticStatus;
         }
     }
 }
