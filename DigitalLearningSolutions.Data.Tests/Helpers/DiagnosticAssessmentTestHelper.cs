@@ -13,17 +13,6 @@
             this.connection = connection;
         }
 
-        public void UpdateDiagAssessOutOf(int tutorialId, int diagAssessOutOf)
-        {
-            connection.Execute(
-                @"UPDATE Tutorials
-                     SET DiagAssessOutOf = @diagAssessOutOf
-
-                   WHERE Tutorials.TutorialID = @tutorialId;",
-                new { tutorialId, diagAssessOutOf }
-            );
-        }
-
         public static DiagnosticAssessment CreateDefaultDiagnosticAssessment(
             string applicationName = "application name",
             string customisationName = "customisation name",

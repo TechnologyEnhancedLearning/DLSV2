@@ -128,7 +128,7 @@
                 const int tutorialId = 316;
 
                 // Remove diagnostic from this tutorial
-                sectionContentTestHelper.UpdateDiagnosticStatus(tutorialId, customisationId, 0);
+                tutorialContentTestHelper.UpdateDiagnosticStatus(tutorialId, customisationId, 0);
 
                 // Make other tutorials in this section inaccessible, but they still have a diagnostic status 1
                 tutorialContentTestHelper.UpdateTutorialStatus(317, customisationId, 0);

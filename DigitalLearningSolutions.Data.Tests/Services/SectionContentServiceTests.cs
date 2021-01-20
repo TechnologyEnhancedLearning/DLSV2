@@ -478,7 +478,7 @@
                 tutorialContentTestHelper.ArchiveTutorial(tutorialToArchive);
 
                 // This will should not change the overall DiagnosticAttempts because the tutorial has now been archived
-                sectionContentTestHelper.UpdateDiagnosticAttempts(tutorialToArchive, progressId, 2);
+                tutorialContentTestHelper.UpdateDiagnosticAttempts(tutorialToArchive, progressId, 2);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -917,7 +917,7 @@
                 const int progressId = 232814;
                 const int expectedSectionScore = 0;
                 // Tutorial 561 has DiagStatus=0 so it shouldn't be counted meaning the section score is 0 not 1
-                sectionContentTestHelper.UpdateDiagnosticScore(561, progressId, 1);
+                tutorialContentTestHelper.UpdateDiagnosticScore(561, progressId, 1);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -939,7 +939,7 @@
                 const int progressId = 232814;
                 const int expectedDiagnosticAttempts = 0;
                 // Tutorial 561 has DiagStatus=0 so it shouldn't be counted meaning the diagnostic attempts is 0 not 1
-                sectionContentTestHelper.UpdateDiagnosticAttempts(561, progressId, 1);
+                tutorialContentTestHelper.UpdateDiagnosticAttempts(561, progressId, 1);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -979,7 +979,7 @@
                 const int expectedSectionScore = 6;
 
                 // Tutorial 910 has DiagStatus=0 so the section score should be 6 and not 7
-                sectionContentTestHelper.UpdateDiagnosticScore(910, progressId, 1);
+                tutorialContentTestHelper.UpdateDiagnosticScore(910, progressId, 1);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -1002,7 +1002,7 @@
                 const int expectedDiagAttempts = 2;
 
                 // Tutorial 910 has DiagStatus=0 so attempts should be 2 and not 4
-                sectionContentTestHelper.UpdateDiagnosticAttempts(910, progressId, 4);
+                tutorialContentTestHelper.UpdateDiagnosticAttempts(910, progressId, 4);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
@@ -1067,7 +1067,7 @@
                 const int candidateId = 196;
                 const int sectionId = 74;
                 // Set the second tutorial to have DiagStatus=1
-                sectionContentTestHelper.UpdateDiagnosticStatus(50, customisationId, 1);
+                tutorialContentTestHelper.UpdateDiagnosticStatus(50, customisationId, 1);
 
                 // When
                 var result = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
