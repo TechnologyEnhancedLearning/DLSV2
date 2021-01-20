@@ -10,18 +10,20 @@
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    internal class DiagnosticAssessmentDataServiceTests
+    internal partial class DiagnosticAssessmentDataServiceTests
     {
         private DiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private DiagnosticAssessmentTestHelper diagnosticAssessmentTestHelper;
+        private TutorialContentTestHelper tutorialContentTestHelper;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            var logger = A.Fake<ILogger<DiagnosticAssessmentService>>();
+            var logger = A.Fake<ILogger<DiagnosticAssessmentDataService>>();
             diagnosticAssessmentDataService = new DiagnosticAssessmentDataService(connection, logger);
             diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
+            tutorialContentTestHelper = new TutorialContentTestHelper(connection);
         }
 
         [Test]
@@ -44,7 +46,11 @@
                 7,
                 10,
                 "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Diag_4.dcr",
-                true
+                true,
+                "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr",
+                false,
+                383,
+                null
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
@@ -80,7 +86,11 @@
                 0,
                 13,
                 "https://www.dls.nhs.uk/CMS/CMSContent/Course120/Diagnostic/01-Diag-Working-with-Microsoft-Office-applications/itspplayer.html",
-                true
+                true,
+                "https://www.dls.nhs.uk/CMS/CMSContent/Course120/PLAssess/01-PLA-Working-with-Microsoft-Office-applications/itspplayer.html",
+                true,
+                4340,
+                994
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]

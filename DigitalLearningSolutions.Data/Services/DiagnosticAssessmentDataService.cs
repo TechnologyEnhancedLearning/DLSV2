@@ -16,9 +16,9 @@
     public class DiagnosticAssessmentDataService : IDiagnosticAssessmentDataService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<DiagnosticAssessmentService> logger;
+        private readonly ILogger<DiagnosticAssessmentDataService> logger;
 
-        public DiagnosticAssessmentDataService(IDbConnection connection, ILogger<DiagnosticAssessmentService> logger)
+        public DiagnosticAssessmentDataService(IDbConnection connection, ILogger<DiagnosticAssessmentDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -29,6 +29,62 @@
             DiagnosticAssessment? diagnosticAssessment = null;
             return connection.Query<DiagnosticAssessment, DiagnosticTutorial, DiagnosticAssessment>(
                 @"
+                    WITH NextTutorialAndSectionNumbers AS (
+                        SELECT TOP (1)
+                            MIN(NextTutorials.TutorialID) AS NextTutorialId,
+                            MIN(NextSections.SectionID) AS NextSectionId
+                        FROM Sections
+                            INNER JOIN Customisations
+                                ON Customisations.ApplicationID = Sections.ApplicationID
+                            INNER JOIN Applications
+                                ON Applications.ApplicationID = Sections.ApplicationID
+                                
+                            LEFT JOIN CustomisationTutorials AS NextSectionCustomisationTutorials
+                                ON NextSectionCustomisationTutorials.CustomisationID = Customisations.CustomisationID
+                            LEFT JOIN Tutorials AS NextSectionTutorials
+                                ON NextSectionTutorials.TutorialID = NextSectionCustomisationTutorials.TutorialID
+                                AND NextSectionTutorials.ArchivedDate IS NULL
+                            LEFT JOIN Sections AS NextSections
+                                ON NextSections.SectionID = NextSectionTutorials.SectionID
+                                AND NextSections.ArchivedDate IS NULL
+                                AND Sections.SectionNumber <= NextSections.SectionNumber
+                                AND (
+                                    Sections.SectionNumber < NextSections.SectionNumber
+                                    OR Sections.SectionID < NextSections.SectionID
+                                )
+                                AND (
+                                    NextSectionCustomisationTutorials.Status = 1
+                                    OR (NextSectionCustomisationTutorials.DiagStatus = 1 AND NextSections.DiagAssessPath IS NOT NULL)
+                                    OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
+                                )
+                                
+                            LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
+                                ON NextCustomisationTutorials.CustomisationID = @customisationId
+                                AND NextCustomisationTutorials.Status = 1
+                            LEFT JOIN Tutorials AS NextTutorials
+                                ON NextTutorials.TutorialID = NextCustomisationTutorials.TutorialID
+                                AND NextTutorials.ArchivedDate IS NULL
+                                AND NextTutorials.SectionID = @sectionId
+                        WHERE
+                            Customisations.CustomisationID = @customisationId
+                            AND Customisations.Active = 1
+                            AND Sections.SectionID = @sectionId
+                            AND Sections.ArchivedDate IS NULL
+                            AND Sections.DiagAssessPath IS NOT NULL
+                        GROUP BY
+                            NextTutorials.OrderByNumber, NextSections.SectionNumber
+                        ORDER BY
+                            CASE
+                                WHEN NextTutorials.OrderByNumber IS NULL THEN 1
+                                ELSE 0
+                            END,
+                            NextTutorials.OrderByNumber,
+                            CASE
+                                WHEN NextSections.SectionNumber IS NULL THEN 1
+                                ELSE 0
+                            END,
+                            NextSections.SectionNumber
+                    )
                     SELECT
                         Applications.ApplicationName,
                         Customisations.CustomisationName,
@@ -38,6 +94,10 @@
                         Tutorials.DiagAssessOutOf,
                         Sections.DiagAssessPath,
                         Customisations.DiagObjSelect,
+                        Sections.PLAssessPath,
+                        Customisations.IsAssessed,
+                        NextTutorialAndSectionNumbers.NextTutorialId,
+                        NextTutorialAndSectionNumbers.NextSectionId,
                         Tutorials.TutorialName,
                         CASE WHEN Tutorials.OriginalTutorialID > 0
                              THEN Tutorials.OriginalTutorialID
@@ -62,6 +122,9 @@
                         LEFT JOIN aspProgress
                             ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
                             AND aspProgress.ProgressID = Progress.ProgressID
+                        LEFT JOIN NextTutorialAndSectionNumbers
+                            ON NextTutorialAndSectionNumbers.NextTutorialId IS NOT NULL
+                            OR NextTutorialAndSectionNumbers.NextSectionId IS NOT NULL
                     WHERE
                         Customisations.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId

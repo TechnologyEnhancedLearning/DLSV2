@@ -45,6 +45,17 @@
             );
         }
 
+        public void RemoveCustomisationTutorial(int customisationId, int tutorialId)
+        {
+            connection.Execute(
+                @"
+                    DELETE CustomisationTutorials
+                        WHERE CustomisationID = @customisationId
+                            AND TutorialID = @tutorialID;",
+                new { customisationId, tutorialId }
+            );
+        }
+
         public void UpdateTutorialStatus(int tutorialId, int customisationId, int status)
         {
             connection.Execute(
