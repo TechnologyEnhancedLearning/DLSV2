@@ -165,6 +165,111 @@
         }
 
         [Test]
+        public void Diagnostic_assessment_can_have_next_tutorial_id()
+        {
+            // Given
+            const int nextTutorialId = 501;
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                nextTutorialId: nextTutorialId
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.NextTutorialId.Should().Be(nextTutorialId);
+        }
+
+        [Test]
+        public void Diagnostic_assessment_can_have_no_next_tutorial_id()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                nextTutorialId: null
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.NextTutorialId.Should().BeNull();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_can_have_next_section_id()
+        {
+            // Given
+            const int nextSectionId = 103;
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                nextSectionId: nextSectionId
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.NextSectionId.Should().Be(nextSectionId);
+        }
+
+        [Test]
+        public void Diagnostic_assessment_can_have_no_next_section_id()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                nextSectionId: null
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.NextSectionId.Should().BeNull();
+        }
+
+        [Test]
+        public void Diagnostic_assessment_can_have_post_learning()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                postLearningAssessmentPath: "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr",
+                isAssessed: true
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.HasPostLearningAssessment.Should().BeTrue();
+        }
+
+        [TestCase("https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr", false)]
+        [TestCase(null, true)]
+        [TestCase(null, false)]
+        public void Diagnostic_assessment_can_have_no_post_learning(
+            string? postLearningAssessmentPath,
+            bool isAssessed
+        )
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                postLearningAssessmentPath: postLearningAssessmentPath,
+                isAssessed: isAssessed
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.HasPostLearningAssessment.Should().BeFalse();
+        }
+
+        [Test]
         public void Diagnostic_assessment_should_have_customisation_id()
         {
             // Given

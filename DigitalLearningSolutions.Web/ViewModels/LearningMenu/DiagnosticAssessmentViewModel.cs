@@ -12,6 +12,9 @@
         public string DiagnosticAssessmentPath { get; }
         public bool CanSelectTutorials { get; }
         public string AttemptsInformation { get; }
+        public bool HasPostLearningAssessment { get; }
+        public int? NextTutorialId { get; }
+        public int? NextSectionId { get; }
         public int CustomisationId { get; }
         public int SectionId { get; }
         public IEnumerable<DiagnosticTutorial> Tutorials { get; }
@@ -30,6 +33,10 @@
                 _ => $"{diagnosticAssessment.SectionScore}/{diagnosticAssessment.MaxSectionScore} " +
                      $"- {diagnosticAssessment.DiagnosticAttempts} attempts"
             };
+            HasPostLearningAssessment =
+                diagnosticAssessment.PostLearningAssessmentPath != null && diagnosticAssessment.IsAssessed;
+            NextTutorialId = diagnosticAssessment.NextTutorialId;
+            NextSectionId = diagnosticAssessment.NextSectionId;
             CustomisationId = customisationId;
             SectionId = sectionId;
             Tutorials = diagnosticAssessment.Tutorials;
