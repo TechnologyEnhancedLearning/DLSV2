@@ -11,6 +11,12 @@
         public bool ShowLearnStatus { get; } = true;
         public string? ConsolidationExercise { get; } = null;
         public string? SupportingInformation { get; } = null;
+        private const string BaseKey = "lm.";
+        private readonly string ShowPercentageKey = $"{BaseKey}sp";
+        private readonly string ShowTimeKey = $"{BaseKey}st";
+        private readonly string ShowLearnStatusKey = $"{BaseKey}sl";
+        private readonly string ShowConsolidationExerciseKey = $"{BaseKey}ce";
+        private readonly string ShowSupportingInformationKey = $"{BaseKey}si";
 
         public CourseSettings(string? settingsText)
         {
@@ -28,32 +34,30 @@
                     return;
                 }
 
-                if (settings.ContainsKey("lm.sp") && settings["lm.sp"] is bool)
+                if (settings.ContainsKey(ShowPercentageKey) && settings[ShowPercentageKey] is bool showPercentage)
                 {
-                    ShowPercentage = (bool)settings["lm.sp"];
+                    ShowPercentage = showPercentage;
                 }
 
-                if (settings.ContainsKey("lm.st") && settings["lm.st"] is bool)
+                if (settings.ContainsKey(ShowTimeKey) && settings[ShowTimeKey] is bool showTime)
                 {
-                    ShowTime = (bool)settings["lm.st"];
+                    ShowTime = showTime;
                 }
 
-                if (settings.ContainsKey("lm.sl") && settings["lm.sl"] is bool)
+                if (settings.ContainsKey(ShowLearnStatusKey) && settings[ShowLearnStatusKey] is bool showLearnStatus)
                 {
-                    ShowLearnStatus = (bool)settings["lm.sl"];
+                    ShowLearnStatus = showLearnStatus;
                 }
 
-                if (settings.ContainsKey("lm:ce") && settings["lm:ce"] is string)
+                if (settings.ContainsKey(ShowConsolidationExerciseKey) && settings[ShowConsolidationExerciseKey] is string consolidationExercise)
                 {
-                    var consolidationExercise = (string)settings["lm:ce"];
                     ConsolidationExercise = string.IsNullOrWhiteSpace(consolidationExercise)
                         ? null
                         : consolidationExercise;
                 }
 
-                if (settings.ContainsKey("lm:si") && settings["lm:si"] is string)
+                if (settings.ContainsKey(ShowSupportingInformationKey) && settings[ShowSupportingInformationKey] is string supportingInformation)
                 {
-                    var supportingInformation = (string)settings["lm:si"];
                     SupportingInformation = string.IsNullOrWhiteSpace(supportingInformation)
                         ? null
                         : supportingInformation;

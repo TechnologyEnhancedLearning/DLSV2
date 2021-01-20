@@ -160,7 +160,7 @@
             // Given
             const string supportingMaterialsText = "Different supporting information description";
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                courseSettings: "{\"lm:si\":\"" + supportingMaterialsText + "\"}"
+                courseSettings: "{\"lm.si\":\"" + supportingMaterialsText + "\"}"
             );
 
             // When
