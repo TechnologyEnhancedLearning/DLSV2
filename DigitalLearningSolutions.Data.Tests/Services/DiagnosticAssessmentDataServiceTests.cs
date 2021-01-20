@@ -13,7 +13,6 @@
     internal partial class DiagnosticAssessmentDataServiceTests
     {
         private DiagnosticAssessmentDataService diagnosticAssessmentDataService;
-        private DiagnosticAssessmentTestHelper diagnosticAssessmentTestHelper;
         private TutorialContentTestHelper tutorialContentTestHelper;
 
         [SetUp]
@@ -22,7 +21,6 @@
             var connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<DiagnosticAssessmentDataService>>();
             diagnosticAssessmentDataService = new DiagnosticAssessmentDataService(connection, logger);
-            diagnosticAssessmentTestHelper = new DiagnosticAssessmentTestHelper(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
         }
 
@@ -454,7 +452,7 @@
                 const int customisationId = 8194;
                 const int sectionId = 216;
 
-                diagnosticAssessmentTestHelper.UpdateDiagAssessOutOf(928, 1);
+                tutorialContentTestHelper.UpdateDiagAssessOutOf(928, 1);
 
                 // ...
                 // Tutorial: 927  OrderByNumber 34

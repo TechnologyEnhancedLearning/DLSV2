@@ -11,14 +11,14 @@
     internal class CourseCompletionServiceTests
     {
         private CourseCompletionService courseCompletionService;
-        private CourseCompletionTestHelper courseCompletionTestHelper;
+        private CourseContentTestHelper courseContentTestHelper;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
             courseCompletionService = new CourseCompletionService(connection);
-            courseCompletionTestHelper = new CourseCompletionTestHelper(connection);
+            courseContentTestHelper = new CourseContentTestHelper(connection);
         }
 
         [Test]
@@ -29,7 +29,7 @@
                 // Given
                 const int candidateId = 252646;
                 const int customisationId = 21452;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
@@ -65,7 +65,7 @@
                 // Given
                 const int candidateId = 210962;
                 const int customisationId = 26696;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
@@ -99,7 +99,7 @@
                 // Given
                 const int candidateId = 11;
                 const int customisationId = 15937;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 const int tutorialsComplete = 36;
                 const int tutorialsAvailable = 196;
@@ -120,7 +120,7 @@
                 // Given
                 const int candidateId = 118938;
                 const int customisationId = 9117;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
@@ -154,7 +154,7 @@
                 // Given
                 const int candidateId = 1;
                 const int customisationId = 100;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
@@ -217,7 +217,7 @@
                 // Given
                 const int candidateId = 100;
                 const int customisationId = 100;
-                courseCompletionTestHelper.AddCertificationToCourse(customisationId);
+                courseContentTestHelper.UpdateIncludeCertification(customisationId, true);
 
                 // When
                 var result = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
