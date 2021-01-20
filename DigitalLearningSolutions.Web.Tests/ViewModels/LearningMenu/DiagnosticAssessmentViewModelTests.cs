@@ -249,6 +249,7 @@
 
         [TestCase("https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr", false)]
         [TestCase(null, true)]
+        [TestCase(null, false)]
         public void Diagnostic_assessment_can_have_no_post_learning(
             string? postLearningAssessmentPath,
             bool isAssessed
