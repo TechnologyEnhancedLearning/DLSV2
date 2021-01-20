@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.PostLearningAssessment;
 
     public static class PostLearningAssessmentHelper
@@ -12,7 +13,16 @@
             int attemptsPl = 2,
             int plPasses = 1,
             bool plLocked = false,
-            int? nextSectionId = 101
+            bool includeCertification = true,
+            bool isAssessed = true,
+            DateTime? completed = null,
+            int maxPostLearningAssessmentAttempts = 0,
+            int postLearningAssessmentPassThreshold = 100,
+            int diagnosticAssessmentCompletionThreshold = 85,
+            int tutorialsCompletionThreshold = 0,
+            int? nextSectionId = 101,
+            bool otherSectionsExist = true,
+            bool otherItemsInSectionExist = true
         )
         {
             return new PostLearningAssessment(
@@ -23,7 +33,16 @@
                 attemptsPl,
                 plPasses,
                 plLocked,
-                nextSectionId
+                includeCertification,
+                isAssessed,
+                completed,
+                maxPostLearningAssessmentAttempts,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold,
+                nextSectionId,
+                otherSectionsExist,
+                otherItemsInSectionExist
             );
         }
     }

@@ -103,6 +103,16 @@
             );
         }
 
+        public void UpdateIsAssessed(int customisationId, bool isAssessed)
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                     SET IsAssessed = @isAssessed
+                   WHERE Customisations.CustomisationID = @customisationId",
+                new { customisationId, isAssessed }
+            );
+        }
+
         public void AddCourseSettings(int customisationId, string courseSettings)
         {
             connection.Execute(
