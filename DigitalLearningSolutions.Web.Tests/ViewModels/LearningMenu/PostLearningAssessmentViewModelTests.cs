@@ -98,23 +98,6 @@
         }
 
         [Test]
-        public void Post_learning_assessment_assessment_status_with_no_attempts_should_have_no_score_information()
-        {
-            // Given
-            const int postLearningAttempts = 0;
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                attemptsPl: postLearningAttempts
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.ScoreInformation.Should().BeNull();
-        }
-
-        [Test]
         public void Post_learning_assessment_assessment_status_with_attempts_can_be_passed()
         {
             // Given
@@ -150,6 +133,23 @@
 
             // Then
             postLearningAssessmentViewModel.AssessmentStatus.Should().Be("Failed");
+        }
+
+        [Test]
+        public void Post_learning_assessment_assessment_status_with_no_attempts_should_have_no_score_information()
+        {
+            // Given
+            const int postLearningAttempts = 0;
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: postLearningAttempts
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.ScoreInformation.Should().BeNull();
         }
 
         [Test]
