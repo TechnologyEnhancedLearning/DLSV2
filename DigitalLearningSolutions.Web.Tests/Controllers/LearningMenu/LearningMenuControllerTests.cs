@@ -431,7 +431,7 @@
         }
 
         [Test]
-        public void Sections_should_redirect_to_section_page_if_one_tutorial_in_section()
+        public void Sections_should_redirect_to_tutorial_page_if_one_tutorial_in_section()
         {
             // Given
             const int customisationId = 123;
@@ -464,7 +464,7 @@
         }
 
         [Test]
-        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_has_no_diagnostic_tutorials()
+        public void Sections_should_redirect_to_tutorial_page_if_one_tutorial_and_has_no_diagnostic_tutorials()
         {
             // Given
             const int customisationId = 123;
@@ -498,7 +498,7 @@
         }
 
         [Test]
-        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_has_diagnostic_but_no_path()
+        public void Sections_should_redirect_to_tutorial_page_if_one_tutorial_and_has_diagnostic_but_no_path()
         {
             // Given
             const int customisationId = 123;
@@ -532,7 +532,7 @@
         }
 
         [Test]
-        public void Sections_should_not_redirect_to_section_page_if_there_is_diagnostic()
+        public void Sections_should_not_redirect_to_tutorial_page_if_there_is_diagnostic()
         {
             // Given
             const int customisationId = 123;
@@ -563,7 +563,7 @@
         }
 
         [Test]
-        public void Sections_should_not_redirect_to_section_page_if_there_is_post_learning_assessment()
+        public void Sections_should_not_redirect_to_tutorial_page_if_there_is_post_learning_assessment()
         {
             // Given
             const int customisationId = 123;
@@ -594,7 +594,7 @@
         }
 
         [Test]
-        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_is_not_assessed()
+        public void Sections_should_redirect_to_tutorial_page_if_one_tutorial_and_is_not_assessed()
         {
             // Given
             const int customisationId = 123;
@@ -628,7 +628,7 @@
         }
 
         [Test]
-        public void Sections_should_redirect_to_section_page_if_one_tutorial_and_is_assessed_but_has_no_path()
+        public void Sections_should_redirect_to_tutorial_page_if_one_tutorial_and_is_assessed_but_has_no_path()
         {
             // Given
             const int customisationId = 123;
@@ -662,7 +662,7 @@
         }
 
         [Test]
-        public void Sections_should_not_redirect_to_section_page_if_there_is_consolidation()
+        public void Sections_should_not_redirect_to_tutorial_page_if_there_is_consolidation()
         {
             // Given
             const int customisationId = 123;
@@ -692,7 +692,7 @@
         }
 
         [Test]
-        public void Sections_should_not_redirect_to_section_page_if_more_than_one_tutorial_in_section()
+        public void Sections_should_not_redirect_to_tutorial_page_if_more_than_one_tutorial_in_section()
         {
             // Given
             const int customisationId = 123;
