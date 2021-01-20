@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import '../learningMenu/diagnosticContentViewer';
+import '../../learningMenu/diagnosticContentViewer';
 
 beforeAll(() => {
   global.window = Object.create(window);

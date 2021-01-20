@@ -24,10 +24,12 @@
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\learningMenu\contentViewer.ts" />
     <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
+    <None Remove="Scripts\learningMenu\fullscreen.ts" />
     <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
+    <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
   </ItemGroup>
 
@@ -62,6 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />
@@ -77,6 +80,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\spec\getCourseCards.ts" />
+    <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCourses.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
