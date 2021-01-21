@@ -473,11 +473,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: false,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = false;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -507,11 +507,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: null,
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -570,12 +570,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: false,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = false;
             // expectedSectionContent.Tutorials is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -602,12 +602,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: null,
+                diagStatus: true,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -634,11 +634,11 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -665,12 +665,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: false,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -697,12 +697,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: null,
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -731,11 +731,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -760,12 +760,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -948,11 +948,11 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: "some/consolidation/path.pdf",
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
