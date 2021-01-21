@@ -253,7 +253,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_not_have_onlyItemInOnlyCourse_when_other_sections_exist()
+        public void Post_learning_assessment_should_not_be_only_item_in_only_section_when_other_sections_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -266,11 +266,11 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlyCourse.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
         }
 
         [Test]
-        public void Post_learning_assessment_should_not_have_onlyItemInOnlyCourse_when_other_items_in_section_exist()
+        public void Post_learning_assessment_should_not_be_only_item_in_only_section_when_other_items_in_section_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -283,31 +283,15 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlyCourse.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
         }
 
         [Test]
-        public void Post_learning_assessment_should_have_onlyItemInOnlyCourse()
+        public void Post_learning_assessment_should_have_be_only_item_in_only_section()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
                 otherSectionsExist: false,
-                otherItemsInSectionExist: false
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlyCourse.Should().BeTrue();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_be_only_item_in_only_section_when_no_other_sections_exist()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
                 otherItemsInSectionExist: false
             );
 
@@ -320,7 +304,23 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_be_only_item_in_only_section_when_other_sections_exist()
+        public void Post_learning_assessment_should_be_only_item_in_this_section_when_no_other_sections_exist()
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                otherItemsInSectionExist: false
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().BeTrue();
+        }
+
+        [Test]
+        public void Post_learning_assessment_should_be_only_item_in_this_section_when_other_sections_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -332,7 +332,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().BeFalse();
         }
 
         [Test]

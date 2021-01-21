@@ -28,11 +28,11 @@
         <li class="nhsuk-breadcrumb__item">Post learning assessment</li>
       </ol>
 
-      @if (Model.OnlyItemInOnlyCourse)
+      @if (Model.OnlyItemInOnlySection)
       {
         <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
       }
-      else if (Model.OnlyItemInOnlySection)
+      else if (Model.OnlyItemInThisSection)
       {
         <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
       }
@@ -83,7 +83,7 @@
   }
 </div>
 
-@if (!Model.OnlyItemInOnlyCourse)
+@if (!Model.OnlyItemInOnlySection)
 {
   <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
 }
