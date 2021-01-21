@@ -36,8 +36,8 @@
         private string GetScoreInformation(PostLearningAssessment postLearningAssessment)
         {
             return postLearningAssessment.PostLearningAttempts == 1
-                ? $"({postLearningAssessment.PostLearningScore}% - 1 attempt)"
-                : $"({postLearningAssessment.PostLearningScore}% - {postLearningAssessment.PostLearningAttempts} attempts)";
+                ? $"{postLearningAssessment.PostLearningScore}% - 1 attempt"
+                : $"{postLearningAssessment.PostLearningScore}% - {postLearningAssessment.PostLearningAttempts} attempts";
         }
 
         private string GetPassStatus(PostLearningAssessment postLearningAssessment)
