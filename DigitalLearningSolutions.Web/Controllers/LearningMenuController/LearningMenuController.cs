@@ -112,15 +112,27 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
+            var hasDiagnosticAssessment = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
+            var hasPostLearningAssessment = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
+            var hasConsolidationMaterial = sectionContent.ConsolidationPath != null;
 
             if (sectionContent.Tutorials.Count == 1
-                && (sectionContent.DiagnosticAssessmentPath == null || !sectionContent.DiagnosticStatus)
-                && (sectionContent.PostLearningAssessmentPath == null || !sectionContent.IsAssessed)
-                && sectionContent.ConsolidationPath == null
+                && !hasDiagnosticAssessment
+                && !hasPostLearningAssessment
+                && !hasConsolidationMaterial
             )
             {
                 var tutorialId = sectionContent.Tutorials.First().Id;
                 return RedirectToAction("Tutorial", "LearningMenu", new { customisationId, sectionId, tutorialId });
+            }
+
+            if (sectionContent.Tutorials.Count == 0
+                && !hasDiagnosticAssessment
+                && hasPostLearningAssessment
+                && !hasConsolidationMaterial
+            )
+            {
+                return RedirectToAction("PostLearning", "LearningMenu", new { customisationId, sectionId });
             }
 
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
