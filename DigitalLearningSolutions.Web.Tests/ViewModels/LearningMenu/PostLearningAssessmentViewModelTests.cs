@@ -287,7 +287,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_have_be_only_item_in_only_section()
+        public void Post_learning_assessment_should_be_only_item_in_only_section()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -320,7 +320,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_be_only_item_in_this_section_when_other_sections_exist()
+        public void Post_learning_assessment_should_not_be_only_item_in_this_section_when_other_sections_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -336,7 +336,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_show_completion_summary_when_include_certification_and_only_tutorial_and_section()
+        public void Post_learning_assessment_should_show_completion_summary_when_include_certification_and_only_item_and_section()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
