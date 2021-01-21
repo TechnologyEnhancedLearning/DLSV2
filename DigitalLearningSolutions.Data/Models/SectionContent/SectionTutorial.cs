@@ -11,6 +11,8 @@
         public bool CustomisationTutorialStatus { get; }
         public int CurrentScore { get; }
         public int PossibleScore { get; }
+        public bool TutorialDiagnosticStatus { get; }
+        public int TutorialDiagnosticAttempts { get; }
 
         public SectionTutorial(
             string tutorialName,
@@ -21,7 +23,9 @@
             int id,
             bool status,
             int currentScore,
-            int possibleScore
+            int possibleScore,
+            bool tutorialDiagnosticStatus,
+            int tutorialDiagnosticAttempts
         )
         {
             TutorialName = tutorialName;
@@ -33,6 +37,8 @@
             CustomisationTutorialStatus = status;
             CurrentScore = currentScore;
             PossibleScore = possibleScore;
+            TutorialDiagnosticStatus = tutorialDiagnosticStatus;
+            TutorialDiagnosticAttempts = tutorialDiagnosticAttempts;
         }
     }
 }
