@@ -304,7 +304,7 @@
         }
 
         [Test]
-        public void Post_learning_assessment_should_have_noOtherItemsInSectionExist_when_no_other_sections_exist()
+        public void Post_learning_assessment_should_be_only_item_in_only_section_when_no_other_sections_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -316,11 +316,11 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.NoOtherItemsInSectionExist.Should().BeTrue();
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeTrue();
         }
 
         [Test]
-        public void Post_learning_assessment_should_not_have_noOtherItemsInSectionExist_when_other_sections_exist()
+        public void Post_learning_assessment_should_be_only_item_in_only_section_when_other_sections_exist()
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
@@ -332,7 +332,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.NoOtherItemsInSectionExist.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
         }
 
         [Test]

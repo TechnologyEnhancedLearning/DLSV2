@@ -13,7 +13,7 @@
         public int SectionId { get; }
         public int? NextSectionId { get; }
         public bool OnlyItemInOnlyCourse { get; }
-        public bool NoOtherItemsInSectionExist { get; }
+        public bool OnlyItemInOnlySection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
@@ -37,7 +37,7 @@
             }
 
             OnlyItemInOnlyCourse = !postLearningAssessment.OtherItemsInSectionExist && !postLearningAssessment.OtherSectionsExist;
-            NoOtherItemsInSectionExist = !postLearningAssessment.OtherItemsInSectionExist;
+            OnlyItemInOnlySection = !postLearningAssessment.OtherItemsInSectionExist;
             ShowCompletionSummary = OnlyItemInOnlyCourse && postLearningAssessment.IncludeCertification;
 
             CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(

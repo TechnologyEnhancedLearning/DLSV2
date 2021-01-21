@@ -32,7 +32,7 @@
       {
         <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
       }
-      else if (Model.NoOtherItemsInSectionExist)
+      else if (Model.OnlyItemInOnlySection)
       {
         <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
       }
