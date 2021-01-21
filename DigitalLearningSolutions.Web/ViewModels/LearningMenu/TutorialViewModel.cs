@@ -25,7 +25,8 @@
         public TutorialTimeSummaryViewModel TimeSummary { get; }
         public string? SupportingMaterialPath { get; }
         public TutorialNextLinkViewModel NextLinkViewModel { get; }
-        public bool ShowNextButton { get; }
+        public bool OnlyItemInOnlySection { get; }
+        public bool OnlyItemInThisSection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
@@ -75,8 +76,9 @@
                 tutorialInformation.NextSectionId
             );
 
-            ShowNextButton = tutorialInformation.OtherItemsInSectionExist || tutorialInformation.OtherSectionsExist;
-            ShowCompletionSummary = !ShowNextButton && tutorialInformation.IncludeCertification;
+            OnlyItemInOnlySection = !tutorialInformation.OtherItemsInSectionExist && !tutorialInformation.OtherSectionsExist;
+            OnlyItemInThisSection = !tutorialInformation.OtherItemsInSectionExist;
+            ShowCompletionSummary = OnlyItemInOnlySection && tutorialInformation.IncludeCertification;
 
             CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
                 customisationId,

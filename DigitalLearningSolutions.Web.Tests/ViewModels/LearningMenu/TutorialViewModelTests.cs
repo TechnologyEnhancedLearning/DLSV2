@@ -609,13 +609,20 @@
             tutorialViewModel.SupportingMaterialPath.Should().Be(expectedParsedPath);
         }
 
-        [Test]
-        public void Tutorial_should_show_next_button_when_other_sections_exist()
+        [TestCase(false, false, true)]
+        [TestCase(false, true, false)]
+        [TestCase(true, false, false)]
+        [TestCase(true, true, false)]
+        public void Tutorial_should_have_onlyItemInOnlySection(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool expectedOnlyItemInOnlySection
+        )
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                otherSectionsExist: true,
-                otherItemsInSectionExist: false
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist
             );
 
             // When
@@ -627,16 +634,19 @@
             );
 
             // Then
-            tutorialViewModel.ShowNextButton.Should().BeTrue();
+            tutorialViewModel.OnlyItemInOnlySection.Should().Be(expectedOnlyItemInOnlySection);
         }
 
-        [Test]
-        public void Tutorial_should_show_next_button_when_other_items_in_section_exist()
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public void Tutorial_should_have_onlyItemInThisSection(
+            bool otherItemsInSectionExist,
+            bool expectedOnlyItemInThisSection
+        )
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: true
+                otherItemsInSectionExist: otherItemsInSectionExist
             );
 
             // When
@@ -648,16 +658,29 @@
             );
 
             // Then
-            tutorialViewModel.ShowNextButton.Should().BeTrue();
+            tutorialViewModel.OnlyItemInThisSection.Should().Be(expectedOnlyItemInThisSection);
         }
 
-        [Test]
-        public void Tutorial_should_not_show_next_button_when_only_tutorial_and_section()
+        [TestCase(false, false, false, false)]
+        [TestCase(false, false, true, true)]
+        [TestCase(false, true, false, false)]
+        [TestCase(false, true, true, false)]
+        [TestCase(true, false, false, false)]
+        [TestCase(true, false, true, false)]
+        [TestCase(true, true, false, false)]
+        [TestCase(true, true, true, false)]
+        public void tutorial_should_have_showCompletionSummary(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool includeCertification,
+            bool expectedShowCompletionSummary
+        )
         {
             // Given
             var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: false
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist,
+                includeCertification: includeCertification
             );
 
             // When
@@ -669,7 +692,7 @@
             );
 
             // Then
-            tutorialViewModel.ShowNextButton.Should().BeFalse();
+            tutorialViewModel.ShowCompletionSummary.Should().Be(expectedShowCompletionSummary);
         }
 
         [Test]
