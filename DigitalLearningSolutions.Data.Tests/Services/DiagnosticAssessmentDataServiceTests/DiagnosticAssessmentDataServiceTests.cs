@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services.DiagnosticAssessmentDataServiceTests
 {
+    using System;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
@@ -49,8 +50,16 @@
                 true,
                 "https://www.dls.nhs.uk/tracking/MOST/Excel10Core/Assess/L2_Excel_2010_Post_4.dcr",
                 false,
+                false,
+                DateTime.Parse("2014-01-07 15:18:51.033"),
+                0,
+                85,
+                85,
+                0,
                 383,
-                null
+                null,
+                false,
+                true
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
@@ -89,8 +98,16 @@
                 true,
                 "https://www.dls.nhs.uk/CMS/CMSContent/Course120/PLAssess/01-PLA-Working-with-Microsoft-Office-applications/itspplayer.html",
                 true,
+                false,
+                null,
+                0,
+                0,
+                85,
+                100,
                 4340,
-                994
+                994,
+                true,
+                true
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]

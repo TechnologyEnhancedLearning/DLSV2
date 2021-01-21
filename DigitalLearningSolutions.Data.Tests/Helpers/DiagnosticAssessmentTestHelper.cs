@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
+    using System;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using Microsoft.Data.SqlClient;
@@ -24,8 +25,16 @@
             bool canSelectTutorials = true,
             string? postLearningAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/PLAssess/01_Digital_Literacy_PL/imsmanifest.xml",
             bool isAssessed = true,
+            bool includeCertification = true,
+            DateTime? completed = null,
+            int maxPostLearningAssessmentAttempts = 0,
+            int postLearningAssessmentPassThreshold = 100,
+            int diagnosticAssessmentCompletionThreshold = 85,
+            int tutorialsCompletionThreshold = 0,
             int? nextTutorialId = 100,
-            int? nextSectionId = 200
+            int? nextSectionId = 200,
+            bool otherSectionsExist = true,
+            bool otherItemsInSectionExist = true
         )
         {
             return new DiagnosticAssessment(
@@ -39,8 +48,16 @@
                 canSelectTutorials,
                 postLearningAssessmentPath,
                 isAssessed,
+                includeCertification,
+                completed,
+                maxPostLearningAssessmentAttempts,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold,
                 nextTutorialId,
-                nextSectionId
+                nextSectionId,
+                otherSectionsExist,
+                otherItemsInSectionExist
             );
         }
 

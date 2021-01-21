@@ -28,62 +28,53 @@
         {
             DiagnosticAssessment? diagnosticAssessment = null;
             return connection.Query<DiagnosticAssessment, DiagnosticTutorial, DiagnosticAssessment>(
-                @"
-                    WITH NextTutorialAndSectionNumbers AS (
-                        SELECT TOP (1)
-                            MIN(NextTutorials.TutorialID) AS NextTutorialId,
-                            MIN(NextSections.SectionID) AS NextSectionId
-                        FROM Sections
-                            INNER JOIN Customisations
-                                ON Customisations.ApplicationID = Sections.ApplicationID
-                            INNER JOIN Applications
-                                ON Applications.ApplicationID = Sections.ApplicationID
-                                
-                            LEFT JOIN CustomisationTutorials AS NextSectionCustomisationTutorials
-                                ON NextSectionCustomisationTutorials.CustomisationID = Customisations.CustomisationID
-                            LEFT JOIN Tutorials AS NextSectionTutorials
-                                ON NextSectionTutorials.TutorialID = NextSectionCustomisationTutorials.TutorialID
-                                AND NextSectionTutorials.ArchivedDate IS NULL
-                            LEFT JOIN Sections AS NextSections
-                                ON NextSections.SectionID = NextSectionTutorials.SectionID
-                                AND NextSections.ArchivedDate IS NULL
-                                AND Sections.SectionNumber <= NextSections.SectionNumber
-                                AND (
-                                    Sections.SectionNumber < NextSections.SectionNumber
-                                    OR Sections.SectionID < NextSections.SectionID
-                                )
-                                AND (
-                                    NextSectionCustomisationTutorials.Status = 1
-                                    OR (NextSectionCustomisationTutorials.DiagStatus = 1 AND NextSections.DiagAssessPath IS NOT NULL)
-                                    OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
-                                )
-                                
-                            LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
-                                ON NextCustomisationTutorials.CustomisationID = @customisationId
-                                AND NextCustomisationTutorials.Status = 1
-                            LEFT JOIN Tutorials AS NextTutorials
-                                ON NextTutorials.TutorialID = NextCustomisationTutorials.TutorialID
-                                AND NextTutorials.ArchivedDate IS NULL
-                                AND NextTutorials.SectionID = @sectionId
-                        WHERE
-                            Customisations.CustomisationID = @customisationId
-                            AND Customisations.Active = 1
-                            AND Sections.SectionID = @sectionId
-                            AND Sections.ArchivedDate IS NULL
-                            AND Sections.DiagAssessPath IS NOT NULL
-                        GROUP BY
-                            NextTutorials.OrderByNumber, NextSections.SectionNumber
-                        ORDER BY
-                            CASE
-                                WHEN NextTutorials.OrderByNumber IS NULL THEN 1
-                                ELSE 0
-                            END,
-                            NextTutorials.OrderByNumber,
-                            CASE
-                                WHEN NextSections.SectionNumber IS NULL THEN 1
-                                ELSE 0
-                            END,
-                            NextSections.SectionNumber
+                @"  WITH CourseTutorials AS (
+                    SELECT Tutorials.TutorialID,
+                           Tutorials.OrderByNumber,
+                           CustomisationTutorials.Status,
+                           Sections.SectionID,
+                           Sections.SectionNumber
+                      FROM Tutorials
+                           INNER JOIN Customisations
+                               ON Customisations.CustomisationID = @customisationId
+                           INNER JOIN Sections
+                               ON Tutorials.SectionID = Sections.SectionID
+                               AND Sections.ArchivedDate IS NULL
+                           INNER JOIN CustomisationTutorials
+                               ON CustomisationTutorials.CustomisationID = @customisationId
+                               AND CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                               AND Tutorials.ArchivedDate IS NULL
+                               AND (
+                                    CustomisationTutorials.Status = 1
+                                    OR (CustomisationTutorials.DiagStatus = 1 AND Sections.DiagAssessPath IS NOT NULL AND Tutorials.DiagAssessOutOf > 0)
+                                    OR (Customisations.IsAssessed = 1 AND Sections.PLAssessPath IS NOT NULL)
+                               )
+                    ),
+                    NextSection AS (
+                    SELECT TOP 1
+                           CurrentSection.SectionID AS CurrentSectionID,
+                           CourseTutorials.SectionID AS NextSectionID
+                      FROM Sections AS CurrentSection
+                           INNER JOIN CourseTutorials
+                               ON CourseTutorials.SectionID <> CurrentSection.SectionID
+                     WHERE CurrentSection.SectionID = @sectionId
+                           AND CurrentSection.SectionNumber <= CourseTutorials.SectionNumber
+                           AND (
+                                CurrentSection.SectionNumber < CourseTutorials.SectionNumber
+                                OR CurrentSection.SectionID < CourseTutorials.SectionID
+                           )
+                     ORDER BY CourseTutorials.SectionNumber, CourseTutorials.SectionID
+                    ),
+                    NextTutorial AS (
+                    SELECT TOP 1
+                           CourseTutorials.SectionID AS CurrentSectionID,
+                           CourseTutorials.TutorialID AS NextTutorialID
+                      FROM CourseTutorials
+                           INNER JOIN CustomisationTutorials AS OtherCustomisationTutorials
+                              ON OtherCustomisationTutorials.CustomisationID = @customisationId
+                              AND OtherCustomisationTutorials.Status = 1
+                     WHERE CourseTutorials.SectionID = @sectionId
+                     ORDER BY CourseTutorials.OrderByNumber, CourseTutorials.TutorialID
                     )
                     SELECT
                         Applications.ApplicationName,
@@ -96,8 +87,31 @@
                         Customisations.DiagObjSelect,
                         Sections.PLAssessPath,
                         Customisations.IsAssessed,
-                        NextTutorialAndSectionNumbers.NextTutorialId,
-                        NextTutorialAndSectionNumbers.NextSectionId,
+                        Applications.IncludeCertification,
+                        Progress.Completed,
+                        Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
+                        Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
+                        Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
+                        Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
+                        NextTutorial.NextTutorialId,
+                        NextSection.NextSectionId,
+                        CAST (CASE WHEN EXISTS(SELECT 1
+                                                 FROM CourseTutorials
+                                                WHERE SectionID <> @sectionId)
+                                        THEN 1
+                                   ELSE 0
+                              END AS BIT) AS OtherSectionsExist,
+                        CAST (CASE WHEN (Customisations.IsAssessed = 1 AND Sections.PLAssessPath IS NOT NULL)
+                                        OR Sections.ConsolidationPath IS NOT NULL
+                                        THEN 1
+                                   WHEN EXISTS(SELECT 1
+                                                 FROM CourseTutorials
+                                                WHERE SectionID = @sectionId
+                                                      AND Status = 1
+                                              )
+                                        THEN 1
+                                   ELSE 0
+                              END AS BIT) AS OtherItemsInSectionExist,
                         Tutorials.TutorialName,
                         CASE WHEN Tutorials.OriginalTutorialID > 0
                              THEN Tutorials.OriginalTutorialID
@@ -122,9 +136,10 @@
                         LEFT JOIN aspProgress
                             ON aspProgress.TutorialID = CustomisationTutorials.TutorialID
                             AND aspProgress.ProgressID = Progress.ProgressID
-                        LEFT JOIN NextTutorialAndSectionNumbers
-                            ON NextTutorialAndSectionNumbers.NextTutorialId IS NOT NULL
-                            OR NextTutorialAndSectionNumbers.NextSectionId IS NOT NULL
+                        LEFT JOIN NextSection
+                            ON Sections.SectionID = NextSection.CurrentSectionID
+                        LEFT JOIN NextTutorial
+                            ON Sections.SectionID = NextTutorial.CurrentSectionID
                     WHERE
                         Customisations.CustomisationID = @customisationId
                         AND Sections.SectionID = @sectionId
@@ -135,7 +150,7 @@
                         AND Tutorials.ArchivedDate IS NULL
                     ORDER BY
                         Tutorials.OrderByNumber,
-                        id",
+                        id;",
                 (diagnostic, tutorial) =>
                 {
                     if (diagnosticAssessment == null)
