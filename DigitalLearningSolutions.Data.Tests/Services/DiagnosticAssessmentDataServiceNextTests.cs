@@ -215,7 +215,7 @@
 
                 const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                        // Customisations.IsAssessed = 1
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
                 // When

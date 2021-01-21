@@ -348,7 +348,7 @@
                 // Remove diagnostic assessment paths from other sections
                 int[] otherSections = { 104, 105, 106, 107, 108, 109, 110, 111 };
                 otherSections.ToList().ForEach(section =>
-                    tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
+                    sectionContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
                 );
 
                 // When
@@ -391,7 +391,7 @@
                 // Remove post learning assessment paths from other sections
                 int[] otherSections = { 103, 105, 106, 107, 108, 109, 110, 111 };
                 otherSections.ToList().ForEach(section =>
-                    tutorialContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
+                    sectionContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
                 );
 
                 // When

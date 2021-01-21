@@ -742,7 +742,7 @@
                 const int candidateId = 1;
                 const int sectionId = 103;
                 const int originalNextSectionId = 104;
-                tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdateDiagnosticAssessmentPath(originalNextSectionId, null);
 
                 const int expectedNextSectionId = 105;
 
@@ -782,7 +782,7 @@
 
                 const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                        // Customisations.IsAssessed = 1
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
                 // When
@@ -1237,7 +1237,7 @@
                 // Remove diagnostic assessment paths from other sections
                 int[] otherSections = { 104, 105, 106, 107, 108, 109, 110, 111 };
                 otherSections.ToList().ForEach(section =>
-                    tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
+                    sectionContentTestHelper.UpdateDiagnosticAssessmentPath(section, null)
                 );
 
                 // When
@@ -1278,7 +1278,7 @@
                 // Remove post learning assessment paths from other sections
                 int[] otherSections = { 103, 105, 106, 107, 108, 109, 110, 111 };
                 otherSections.ToList().ForEach(section =>
-                    tutorialContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
+                    sectionContentTestHelper.UpdatePostLearningAssessmentPath(section, null)
                 );
 
                 // When
