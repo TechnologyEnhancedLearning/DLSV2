@@ -473,11 +473,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: false,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = false;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -507,11 +507,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: null,
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -570,12 +570,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: false,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = false;
             // expectedSectionContent.Tutorials is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -602,12 +602,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: null,
+                diagStatus: true,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -627,6 +627,101 @@
         }
 
         [Test]
+        public void Sections_should_redirect_to_diagnostic_assessment_if_only_diagnostic_in_section()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
+                plAssessPath: null,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            // expectedSectionContent.Tutorials is empty
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Diagnostic")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_diagnostic_assessment_if_there_is_post_learning_path_but_is_not_assessed()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
+                plAssessPath: "some/post-learning/path.html",
+                isAssessed: false,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            // expectedSectionContent.Tutorials is empty
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Diagnostic")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId);
+        }
+
+        [Test]
+        public void Sections_should_redirect_to_diagnostic_assessment_if_is_assessed_but_there_is_no_post_learning_path()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
+                plAssessPath: null,
+                isAssessed: true,
+                consolidationPath: null,
+                otherSectionsExist: true
+            );
+            // expectedSectionContent.Tutorials; viewable tutorials, is empty
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should()
+                .BeRedirectToActionResult()
+                .WithControllerName("LearningMenu")
+                .WithActionName("Diagnostic")
+                .WithRouteValue("customisationId", customisationId)
+                .WithRouteValue("sectionId", sectionId);
+        }
+
+        [Test]
         public void Sections_should_return_section_page_if_there_is_diagnostic_and_tutorial()
         {
             // Given
@@ -636,11 +731,11 @@
             var tutorial = SectionContentHelper.CreateDefaultSectionTutorial(id: tutorialId);
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: null,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             expectedSectionContent.Tutorials.Add(tutorial);
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -665,12 +760,12 @@
             const int sectionId = 456;
             var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
                 diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
                 plAssessPath: "some/post-learning/path.html",
                 isAssessed: true,
                 consolidationPath: null,
                 otherSectionsExist: true
             );
-            expectedSectionContent.DiagnosticStatus = true;
             // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
@@ -787,7 +882,7 @@
         }
 
         [Test]
-        public void Sections_should_return_section_page_if_there_is_consolidation()
+        public void Sections_should_return_section_page_if_there_is_one_tutorial_and_consolidation()
         {
             // Given
             const int customisationId = 123;
@@ -801,6 +896,64 @@
                 otherSectionsExist: true
             );
             expectedSectionContent.Tutorials.Add(tutorial);
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_return_section_page_if_there_is_post_learning_assessment_and_consolidation()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: null,
+                plAssessPath: "some/post-learning/path.html",
+                isAssessed: true,
+                consolidationPath: "some/consolidation/path.pdf",
+                otherSectionsExist: true
+            );
+            // expectedSectionContent.Tutorials; viewable tutorials, is empty
+
+            A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
+                .Returns(expectedSectionContent);
+            A.CallTo(() => courseContentService.GetOrCreateProgressId(CandidateId, customisationId, CentreId)).Returns(10);
+
+            var expectedModel = new SectionContentViewModel(config, expectedSectionContent, customisationId, sectionId);
+
+            // When
+            var result = controller.Section(customisationId, sectionId);
+
+            // Then
+            result.Should().BeViewResult()
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void Sections_should_return_section_page_if_there_is_diagnostic_assessment_and_consolidation()
+        {
+            // Given
+            const int customisationId = 123;
+            const int sectionId = 456;
+            var expectedSectionContent = SectionContentHelper.CreateDefaultSectionContent(
+                diagAssessPath: "some/diagnostic/path.html",
+                diagStatus: true,
+                plAssessPath: null,
+                consolidationPath: "some/consolidation/path.pdf",
+                otherSectionsExist: true
+            );
+            // expectedSectionContent.Tutorials; viewable tutorials, is empty
 
             A.CallTo(() => sectionContentService.GetSectionContent(customisationId, CandidateId, sectionId))
                 .Returns(expectedSectionContent);
