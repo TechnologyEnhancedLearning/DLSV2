@@ -18,6 +18,10 @@
         public int CustomisationId { get; }
         public int SectionId { get; }
         public IEnumerable<DiagnosticTutorial> Tutorials { get; }
+        public bool OnlyItemInOnlySection { get; }
+        public bool OnlyItemInThisSection { get; }
+        public bool ShowCompletionSummary { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
         public DiagnosticAssessmentViewModel(DiagnosticAssessment diagnosticAssessment, int customisationId, int sectionId)
         {
@@ -40,6 +44,18 @@
             CustomisationId = customisationId;
             SectionId = sectionId;
             Tutorials = diagnosticAssessment.Tutorials;
+            OnlyItemInOnlySection = !diagnosticAssessment.OtherItemsInSectionExist && !diagnosticAssessment.OtherSectionsExist;
+            OnlyItemInThisSection = !diagnosticAssessment.OtherItemsInSectionExist;
+            ShowCompletionSummary = OnlyItemInOnlySection && diagnosticAssessment.IncludeCertification;
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                diagnosticAssessment.Completed,
+                diagnosticAssessment.MaxPostLearningAssessmentAttempts,
+                diagnosticAssessment.IsAssessed,
+                diagnosticAssessment.PostLearningAssessmentPassThreshold,
+                diagnosticAssessment.DiagnosticAssessmentCompletionThreshold,
+                diagnosticAssessment.TutorialsCompletionThreshold
+            );
         }
     }
 }

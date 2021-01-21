@@ -26,7 +26,19 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
         <li class="nhsuk-breadcrumb__item">Diagnostic assessment</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+
+      @if (Model.OnlyItemInOnlySection)
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+      }
+      else if (Model.OnlyItemInThisSection)
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+      }
+      else
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+      }
     </div>
   </nav>
 }
@@ -82,4 +94,14 @@
   </fieldset>
 </form>
 
-<partial name="Diagnostic/_DiagnosticNextLink" model="Model" />
+@if (!Model.OnlyItemInOnlySection)
+{
+  <partial name="Diagnostic/_DiagnosticNextLink" model="Model" />
+}
+
+@if (Model.ShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="Model.CompletionSummaryCardViewModel" />
+}

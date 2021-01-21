@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -317,6 +318,128 @@
 
             // Then
             diagnosticAssessmentViewModel.Tutorials.Should().BeEquivalentTo<DiagnosticTutorial>(tutorials);
+        }
+
+        [TestCase(false, false, true)]
+        [TestCase(false, true, false)]
+        [TestCase(true, false, false)]
+        [TestCase(true, true, false)]
+        public void Diagnostic_assessment_should_have_onlyItemInOnlySection(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool expectedOnlyItemInOnlySection
+        )
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.OnlyItemInOnlySection.Should().Be(expectedOnlyItemInOnlySection);
+        }
+
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public void Diagnostic_assessment_should_have_onlyItemInThisSection(
+            bool otherItemsInSectionExist,
+            bool expectedOnlyItemInThisSection
+        )
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                otherItemsInSectionExist: otherItemsInSectionExist
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.OnlyItemInThisSection.Should().Be(expectedOnlyItemInThisSection);
+        }
+
+        [TestCase(false, false, false, false)]
+        [TestCase(false, false, true, true)]
+        [TestCase(false, true, false, false)]
+        [TestCase(false, true, true, false)]
+        [TestCase(true, false, false, false)]
+        [TestCase(true, false, true, false)]
+        [TestCase(true, true, false, false)]
+        [TestCase(true, true, true, false)]
+        public void Diagnostic_assessment_should_have_showCompletionSummary(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool includeCertification,
+            bool expectedShowCompletionSummary
+        )
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist,
+                includeCertification: includeCertification
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.ShowCompletionSummary.Should().Be(expectedShowCompletionSummary);
+        }
+
+        [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
+        [TestCase(3, null, 0, true, 75, 80, 85)]
+        [TestCase(4, null, 3, true, 75, 80, 85)]
+        [TestCase(5, null, 3, false, 75, 80, 85)]
+        [TestCase(6, null, 3, false, 75, 80, 0)]
+        [TestCase(7, null, 3, false, 75, 0, 85)]
+        [TestCase(8, null, 3, false, 75, 0, 0)]
+        public void Diagnostic_assessment_should_have_completion_summary_card_view_model(
+            int customisationId,
+            string? completed,
+            int maxPostLearningAssessmentAttempts,
+            bool isAssessed,
+            int postLearningAssessmentPassThreshold,
+            int diagnosticAssessmentCompletionThreshold,
+            int tutorialsCompletionThreshold
+        )
+        {
+            // Given
+            var completedDateTime = completed != null ? DateTime.Parse(completed) : (DateTime?)null;
+
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                completed: completedDateTime,
+                maxPostLearningAssessmentAttempts: maxPostLearningAssessmentAttempts,
+                isAssessed: isAssessed,
+                postLearningAssessmentPassThreshold: postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold: diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold: tutorialsCompletionThreshold
+            );
+
+            var expectedCompletionSummaryViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                completedDateTime,
+                maxPostLearningAssessmentAttempts,
+                isAssessed,
+                postLearningAssessmentPassThreshold,
+                diagnosticAssessmentCompletionThreshold,
+                tutorialsCompletionThreshold
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.CompletionSummaryCardViewModel
+                .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
     }
 }

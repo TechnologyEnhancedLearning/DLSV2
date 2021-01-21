@@ -126,13 +126,18 @@
                 return RedirectToAction("Tutorial", "LearningMenu", new { customisationId, sectionId, tutorialId });
             }
 
-            if (sectionContent.Tutorials.Count == 0
-                && !hasDiagnosticAssessment
-                && hasPostLearningAssessment
-                && !hasConsolidationMaterial
-            )
+            var justHasAssessments = sectionContent.Tutorials.Count == 0
+                                     && !hasConsolidationMaterial
+                                     && (hasDiagnosticAssessment || hasPostLearningAssessment);
+
+            if (justHasAssessments && !hasDiagnosticAssessment)
             {
                 return RedirectToAction("PostLearning", "LearningMenu", new { customisationId, sectionId });
+            }
+
+            if (justHasAssessments && !hasPostLearningAssessment)
+            {
+                return RedirectToAction("Diagnostic", "LearningMenu", new { customisationId, sectionId });
             }
 
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
