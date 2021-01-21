@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.Services.DiagnosticAssessmentDataServiceTests
 {
     using System.Transactions;
     using FluentAssertions;
     using NUnit.Framework;
 
-    partial class DiagnosticAssessmentDataServiceTests
+    internal partial class DiagnosticAssessmentDataServiceTests
     {
         [Test]
         public void Get_diagnostic_assessment_should_return_null_nextTutorial_if_no_tutorials_in_section()
@@ -71,7 +71,7 @@
             const int candidateId = 210934;
             const int customisationId = 18366;
             const int sectionId = 974;
-            
+
             // The next section ID in this Application is 975, but the next section with a tutorial selected in
             // CustomisationTutorials is 978
             const int nextSectionId = 978;
