@@ -259,7 +259,7 @@
         public void Post_learning_assessment_should_have_onlyItemInOnlySection(
             bool otherSectionsExist,
             bool otherItemsInSectionExist,
-            bool onlyItemInOnlySection
+            bool expectedOnlyItemInOnlySection
         )
         {
             // Given
@@ -273,14 +273,14 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().Be(onlyItemInOnlySection);
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().Be(expectedOnlyItemInOnlySection);
         }
 
         [TestCase(false, true)]
         [TestCase(true, false)]
         public void Post_learning_assessment_should_have_onlyItemInThisSection(
             bool otherItemsInSectionExist,
-            bool onlyItemInThisSection
+            bool expectedOnlyItemInThisSection
         )
         {
             // Given
@@ -293,18 +293,22 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().Be(onlyItemInThisSection);
+            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().Be(expectedOnlyItemInThisSection);
         }
 
-        [TestCase(false, false, true, true)]
         [TestCase(false, false, false, false)]
-        [TestCase(true, false, true, false)]
+        [TestCase(false, false, true, true)]
+        [TestCase(false, true, false, false)]
         [TestCase(false, true, true, false)]
+        [TestCase(true, false, false, false)]
+        [TestCase(true, false, true, false)]
+        [TestCase(true, true, false, false)]
+        [TestCase(true, true, true, false)]
         public void Post_learning_assessment_should_have_showCompletionSummary(
             bool otherSectionsExist,
             bool otherItemsInSectionExist,
             bool includeCertification,
-            bool showCompletionSummary
+            bool expectedShowCompletionSummary
         )
         {
             // Given
@@ -319,7 +323,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.ShowCompletionSummary.Should().Be(showCompletionSummary);
+            postLearningAssessmentViewModel.ShowCompletionSummary.Should().Be(expectedShowCompletionSummary);
         }
 
         [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
