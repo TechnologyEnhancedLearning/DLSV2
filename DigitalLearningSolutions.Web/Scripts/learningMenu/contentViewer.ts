@@ -2,7 +2,7 @@ import { setupFullscreen } from './fullscreen';
 
 function closeMpe(): void {
   // Extract the current domain, customisationId, sectionId and tutorialId out of the URL
-  const matches = window.location.href.match(/^(.*)\/LearningMenu\/(\d+)\/(\d+)\/(\d+)\/Tutorial$/);
+  const matches = window.location.href.match(/^(.*)\/LearningMenu\/(\d+)\/(\d+)\/(\d+)\/Tutorial#?$/);
 
   if (!matches || matches.length < 5) {
     return;
