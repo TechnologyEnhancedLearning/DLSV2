@@ -459,23 +459,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_has_no_other_items_in_section_if_single_tutorial_just_has_diagnostic_but_no_path()
-        {
-            // Given
-            const int candidateId = 1;
-            const int customisationId = 15073;
-            const int sectionId = 366;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
-
-            // Then
-            result.Should().NotBeNull();
-            result!.OtherItemsInSectionExist.Should().BeFalse();
-        }
-
-        [Test]
-        public void Get_post_learning_assessment_has_no_other_items_in_section_if_single_tutorial_just_has_diagnostic()
+        public void Get_post_learning_assessment_has_no_other_items_in_section_if_just_has_diagnostic_but_no_path()
         {
             using (new TransactionScope())
             {
@@ -513,23 +497,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_has_no_other_items_in_section_if_single_tutorial_just_has_post_learning()
-        {
-            // Given
-            const int candidateId = 273836;
-            const int customisationId = 27088;
-            const int sectionId = 2002;
-
-            // When
-            var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
-
-            // Then
-            result.Should().NotBeNull();
-            result!.OtherItemsInSectionExist.Should().BeFalse();
-        }
-
-        [Test]
-        public void Get_post_learning_assessment_has_other_items_in_section_if_single_tutorial_just_has_section_consolidation()
+        public void Get_post_learning_assessment_has_other_items_in_section_if_just_has_section_consolidation()
         {
             using (new TransactionScope())
             {
@@ -594,7 +562,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_if_in_middle_of_list()
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_if_in_middle_of_list()
         {
             // Given
             const int customisationId = 15853;
@@ -610,7 +578,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_if_at_end_of_list()
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_if_at_end_of_list()
         {
             // Given
             const int customisationId = 15853;
@@ -628,7 +596,7 @@
         [TestCase(3000)]
         [TestCase(3001)]
         [TestCase(3002)]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_when_shared_section_number(int sectionId)
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_when_shared_section_number(int sectionId)
         {
             using (new TransactionScope())
             {
@@ -647,7 +615,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_when_only_other_section_shares_section_number()
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_when_only_other_section_shares_section_number()
         {
             using (new TransactionScope())
             {
@@ -669,7 +637,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_not_have_otherSectionsExist_when_only_section_in_application()
+        public void Get_post_learning_assessment_should_not_have_other_sections_in_course_when_only_section_in_application()
         {
             // Given
             const int customisationId = 7967;
@@ -685,7 +653,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_not_have_otherSectionsExist_when_only_section_not_archived_in_course()
+        public void Get_post_learning_assessment_should_not_have_other_sections_in_course_when_only_section_not_archived_in_course()
         {
             using (new TransactionScope())
             {
@@ -707,7 +675,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_not_have_otherSectionsExist_when_other_section_is_full_of_archived_tutorials()
+        public void Get_post_learning_assessment_should_not_have_other_sections_in_course_when_other_section_is_full_of_archived_tutorials()
         {
             using (new TransactionScope())
             {
@@ -733,7 +701,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_when_other_section_only_has_diagnostic_assessment()
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_when_other_section_only_has_diagnostic_assessment()
         {
             using (new TransactionScope())
             {
@@ -755,7 +723,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_not_have_otherSectionsExist_when_other_section_has_no_diagnostic_assessment_path()
+        public void Get_post_learning_assessment_should_not_have_other_sections_in_course_when_other_section_has_no_diagnostic_assessment_path()
         {
             using (new TransactionScope())
             {
@@ -785,7 +753,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_have_otherSectionsExist_when_other_sections_only_have_post_learning_assessment()
+        public void Get_post_learning_assessment_should_have_other_sections_in_course_when_other_sections_only_have_post_learning_assessment()
         {
             // Given
             const int customisationId = 10820;
@@ -801,7 +769,7 @@
         }
 
         [Test]
-        public void Get_post_learning_assessment_should_not_have_otherSectionsExist_when_other_section_has_no_post_learning_assessment_path()
+        public void Get_post_learning_assessment_should_not_have_other_sections_in_course_when_other_section_has_no_post_learning_assessment_path()
         {
             using (new TransactionScope())
             {

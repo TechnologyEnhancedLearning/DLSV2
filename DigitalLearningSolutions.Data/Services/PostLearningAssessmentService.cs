@@ -108,7 +108,7 @@
                             ON Customisations.ApplicationID = Sections.ApplicationID
                         INNER JOIN Applications
                             ON Applications.ApplicationID = Sections.ApplicationID
-                        LEFT JOIN NextSection AS NextSection
+                        LEFT JOIN NextSection
                             ON Sections.SectionID = NextSection.CurrentSectionID
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
