@@ -252,13 +252,20 @@
             postLearningAssessmentViewModel.NextSectionId.Should().BeNull();
         }
 
-        [Test]
-        public void Post_learning_assessment_should_not_be_only_item_in_only_section_when_other_sections_exist()
+        [TestCase(false, false, true)]
+        [TestCase(false, true, false)]
+        [TestCase(true, false, false)]
+        [TestCase(true, true, false)]
+        public void Post_learning_assessment_should_have_onlyItemInOnlySection(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool onlyItemInOnlySection
+        )
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: true,
-                otherItemsInSectionExist: false
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist
             );
 
             // When
@@ -266,16 +273,19 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().Be(onlyItemInOnlySection);
         }
 
-        [Test]
-        public void Post_learning_assessment_should_not_be_only_item_in_only_section_when_other_items_in_section_exist()
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public void Post_learning_assessment_should_have_onlyItemInThisSection(
+            bool otherItemsInSectionExist,
+            bool onlyItemInThisSection
+        )
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: true
+                otherItemsInSectionExist: otherItemsInSectionExist
             );
 
             // When
@@ -283,16 +293,25 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeFalse();
+            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().Be(onlyItemInThisSection);
         }
 
-        [Test]
-        public void Post_learning_assessment_should_be_only_item_in_only_section()
+        [TestCase(false, false, true, true)]
+        [TestCase(false, false, false, false)]
+        [TestCase(true, false, true, false)]
+        [TestCase(false, true, true, false)]
+        public void Post_learning_assessment_should_have_showCompletionSummary(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool includeCertification,
+            bool showCompletionSummary
+        )
         {
             // Given
             var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: false
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist,
+                includeCertification: includeCertification
             );
 
             // When
@@ -300,112 +319,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.OnlyItemInOnlySection.Should().BeTrue();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_be_only_item_in_this_section_when_no_other_sections_exist()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherItemsInSectionExist: false
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().BeTrue();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_not_be_only_item_in_this_section_when_other_sections_exist()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherItemsInSectionExist: true
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.OnlyItemInThisSection.Should().BeFalse();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_show_completion_summary_when_include_certification_and_only_item_and_section()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: false,
-                includeCertification: true
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.ShowCompletionSummary.Should().BeTrue();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_not_show_completion_summary_when_include_certification_is_false()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: false,
-                includeCertification: false
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.ShowCompletionSummary.Should().BeFalse();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_not_show_completion_summary_when_other_sections_exist()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: true,
-                otherItemsInSectionExist: false,
-                includeCertification: true
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-            // Then
-            postLearningAssessmentViewModel.ShowCompletionSummary.Should().BeFalse();
-        }
-
-        [Test]
-        public void Post_learning_assessment_should_not_show_completion_summary_when_other_items_in_section_exist()
-        {
-            // Given
-            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
-                otherSectionsExist: false,
-                otherItemsInSectionExist: true,
-                includeCertification: true
-            );
-
-            // When
-            var postLearningAssessmentViewModel =
-                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
-
-
-            // Then
-            postLearningAssessmentViewModel.ShowCompletionSummary.Should().BeFalse();
+            postLearningAssessmentViewModel.ShowCompletionSummary.Should().Be(showCompletionSummary);
         }
 
         [TestCase(2, "2020-12-25T15:00:00Z", 1, true, 75, 80, 85)]
