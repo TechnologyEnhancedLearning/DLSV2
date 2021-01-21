@@ -167,7 +167,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.ScoreInformation.Should().Be("(10% - 1 attempt)");
+            postLearningAssessmentViewModel.ScoreInformation.Should().Be("10% - 1 attempt");
         }
 
         [Test]
@@ -185,7 +185,7 @@
                 new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
 
             // Then
-            postLearningAssessmentViewModel.ScoreInformation.Should().Be("(10% - 5 attempts)");
+            postLearningAssessmentViewModel.ScoreInformation.Should().Be("10% - 5 attempts");
         }
 
         [Test]
