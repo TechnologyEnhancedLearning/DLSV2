@@ -27,6 +27,18 @@ describe('closeMpe', () => {
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/789');
     });
 
+  it('should redirect to tutorial overview after accessing fullscreen',
+    () => {
+      // Given
+      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/789/Tutorial#';
+
+      // When
+      window.closeMpe();
+
+      // Then
+      expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/789');
+    });
+
   it('should do nothing on unexpected page',
     () => {
       // Given
