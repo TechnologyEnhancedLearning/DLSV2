@@ -12,6 +12,10 @@
         public int CustomisationId { get; }
         public int SectionId { get; }
         public int? NextSectionId { get; }
+        public bool OnlyItemInOnlyCourse { get; }
+        public bool NoOtherItemsInSectionExist { get; }
+        public bool ShowCompletionSummary { get; }
+        public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
 
         public PostLearningAssessmentViewModel(PostLearningAssessment postLearningAssessment, int customisationId, int sectionId)
         {
@@ -31,6 +35,20 @@
                 AssessmentStatus = GetPassStatus(postLearningAssessment);
                 ScoreInformation = GetScoreInformation(postLearningAssessment);
             }
+
+            OnlyItemInOnlyCourse = !postLearningAssessment.OtherItemsInSectionExist && !postLearningAssessment.OtherSectionsExist;
+            NoOtherItemsInSectionExist = !postLearningAssessment.OtherItemsInSectionExist;
+            ShowCompletionSummary = OnlyItemInOnlyCourse && postLearningAssessment.IncludeCertification;
+
+            CompletionSummaryCardViewModel = new CompletionSummaryCardViewModel(
+                customisationId,
+                postLearningAssessment.Completed,
+                postLearningAssessment.MaxPostLearningAssessmentAttempts,
+                postLearningAssessment.IsAssessed,
+                postLearningAssessment.PostLearningAssessmentPassThreshold,
+                postLearningAssessment.DiagnosticAssessmentCompletionThreshold,
+                postLearningAssessment.TutorialsCompletionThreshold
+            );
         }
 
         private string GetScoreInformation(PostLearningAssessment postLearningAssessment)
