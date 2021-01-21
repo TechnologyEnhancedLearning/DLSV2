@@ -197,7 +197,7 @@
 
                 const int expectedNextSectionId = 151; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
                 // Remove post learning assessment
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(expectedNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(expectedNextSectionId, null);
 
                 // When
                 var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
@@ -221,8 +221,8 @@
 
                 const int originalNextSectionId = 149; // All tutorials are CustomisationTutorials.Status = 0, though some DiagStatus = 1
                 // Remove diagnostic and post learning paths
-                tutorialContentTestHelper.UpdateDiagnosticAssessmentPath(originalNextSectionId, null);
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdateDiagnosticAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
 
                 const int expectedNextSectionId = 150;
 
@@ -267,7 +267,7 @@
 
                 const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                        // Customisations.IsAssessed = 1
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
                 // When

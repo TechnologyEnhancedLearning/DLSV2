@@ -14,6 +14,7 @@
     {
         private DiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private TutorialContentTestHelper tutorialContentTestHelper;
+        private SectionContentTestHelper sectionContentTestHelper;
 
         [SetUp]
         public void Setup()
@@ -22,6 +23,7 @@
             var logger = A.Fake<ILogger<DiagnosticAssessmentDataService>>();
             diagnosticAssessmentDataService = new DiagnosticAssessmentDataService(connection, logger);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
+            sectionContentTestHelper = new SectionContentTestHelper(connection);
         }
 
         [Test]

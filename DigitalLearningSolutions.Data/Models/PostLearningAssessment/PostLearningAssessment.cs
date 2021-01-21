@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.PostLearningAssessment
 {
+    using System;
+
     public class PostLearningAssessment
     {
         public string CourseTitle { get; }
@@ -8,7 +10,16 @@
         public int PostLearningAttempts { get; }
         public bool PostLearningPassed { get; }
         public bool PostLearningLocked { get; }
+        public bool IncludeCertification { get; }
+        public bool IsAssessed { get; }
+        public DateTime? Completed { get; }
+        public int MaxPostLearningAssessmentAttempts { get; }
+        public int PostLearningAssessmentPassThreshold { get; }
+        public int DiagnosticAssessmentCompletionThreshold { get; }
+        public int TutorialsCompletionThreshold { get; }
         public int? NextSectionId { get; }
+        public bool OtherSectionsExist { get; }
+        public bool OtherItemsInSectionExist { get; }
 
         public PostLearningAssessment(
             string applicationName,
@@ -18,7 +29,16 @@
             int attemptsPl,
             int plPasses,
             bool plLocked,
-            int? nextSectionId
+            bool includeCertification,
+            bool isAssessed,
+            DateTime? completed,
+            int maxPostLearningAssessmentAttempts,
+            int postLearningAssessmentPassThreshold,
+            int diagnosticAssessmentCompletionThreshold,
+            int tutorialsCompletionThreshold,
+            int? nextSectionId,
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -27,7 +47,16 @@
             PostLearningAttempts = attemptsPl;
             PostLearningPassed = plPasses > 0;
             PostLearningLocked = plLocked;
+            IncludeCertification = includeCertification;
+            IsAssessed = isAssessed;
+            Completed = completed;
+            MaxPostLearningAssessmentAttempts = maxPostLearningAssessmentAttempts;
+            PostLearningAssessmentPassThreshold = postLearningAssessmentPassThreshold;
+            DiagnosticAssessmentCompletionThreshold = diagnosticAssessmentCompletionThreshold;
+            TutorialsCompletionThreshold = tutorialsCompletionThreshold;
             NextSectionId = nextSectionId;
+            OtherSectionsExist = otherSectionsExist;
+            OtherItemsInSectionExist = otherItemsInSectionExist;
         }
     }
 }

@@ -26,39 +26,50 @@
         public PostLearningAssessment? GetPostLearningAssessment(int customisationId, int candidateId, int sectionId)
         {
             return connection.QueryFirstOrDefault<PostLearningAssessment>(
-                @"
-                    WITH NextSectionIdTable AS (
-                        SELECT TOP(1)
-                            CurrentSection.SectionID,
-                            NextSections.SectionID AS NextSectionID
-                        FROM Sections AS CurrentSection
-                                LEFT JOIN CustomisationTutorials AS NextCustomisationTutorials
-                                    ON NextCustomisationTutorials.CustomisationID = @customisationId
-                                LEFT JOIN Customisations
-                                    ON NextCustomisationTutorials.CustomisationID = Customisations.CustomisationID
-                                LEFT JOIN Tutorials AS NextSectionsTutorials
-                                    ON NextCustomisationTutorials.TutorialID = NextSectionsTutorials.TutorialID
-                                    AND NextSectionsTutorials.ArchivedDate IS NULL
-                                LEFT JOIN Sections AS NextSections
-                                    ON NextSectionsTutorials.SectionID = NextSections.SectionID
-                                    AND CurrentSection.SectionNumber <= NextSections.SectionNumber
-                                    AND (CurrentSection.SectionNumber < NextSections.SectionNumber
-                                        OR CurrentSection.SectionID < NextSections.SectionID)
-                        WHERE CurrentSection.SectionId = @sectionId
-                            AND NextSections.SectionID IS NOT NULL
-                            AND NextSections.SectionNumber IS NOT NULL
-                            AND Customisations.Active = 1
-                            AND NextSections.ArchivedDate IS NULL
-                            AND (
-                                 NextCustomisationTutorials.Status = 1
-                                 OR NextCustomisationTutorials.DiagStatus = 1
-                                 OR (Customisations.IsAssessed = 1 AND NextSections.PLAssessPath IS NOT NULL)
-                            )
-                        GROUP BY
-                            CurrentSection.SectionID,
-                            NextSections.SectionID,
-                            NextSections.SectionNumber
-                        ORDER BY NextSections.SectionNumber, NextSections.SectionID
+                @"  WITH CourseTutorials AS (
+                    SELECT Tutorials.TutorialID,
+                           Tutorials.OrderByNumber,
+                           CustomisationTutorials.Status,
+                           Sections.SectionID,
+                           Sections.SectionNumber,
+                           CAST (CASE WHEN CustomisationTutorials.DiagStatus = 1 AND Sections.DiagAssessPath IS NOT NULL
+                                           THEN 1
+                                      ELSE 0
+                                 END AS BIT) AS HasDiagnostic
+                      FROM Tutorials
+                           INNER JOIN Customisations
+                               ON Customisations.CustomisationID = @customisationId
+
+                           INNER JOIN Sections
+                               ON Tutorials.SectionID = Sections.SectionID
+                               AND Sections.ArchivedDate IS NULL
+
+                           INNER JOIN CustomisationTutorials
+                               ON CustomisationTutorials.CustomisationID = @customisationId
+                               AND CustomisationTutorials.TutorialID = Tutorials.TutorialID
+                               AND Tutorials.ArchivedDate IS NULL
+                               AND (
+                                    CustomisationTutorials.Status = 1
+                                    OR (CustomisationTutorials.DiagStatus = 1 AND Sections.DiagAssessPath IS NOT NULL AND Tutorials.DiagAssessOutOf > 0)
+                                    OR (Customisations.IsAssessed = 1 AND Sections.PLAssessPath IS NOT NULL)
+                               )
+                    ),
+                    NextSection AS (
+                    SELECT TOP 1
+                           CurrentSection.SectionID AS CurrentSectionID,
+                           CourseTutorials.SectionID AS NextSectionID
+                      FROM Sections AS CurrentSection
+                           INNER JOIN CourseTutorials
+                               ON CourseTutorials.SectionID <> CurrentSection.SectionID
+
+                     WHERE CurrentSection.SectionID = @sectionId
+                           AND CurrentSection.SectionNumber <= CourseTutorials.SectionNumber
+                           AND (
+                                CurrentSection.SectionNumber < CourseTutorials.SectionNumber
+                                OR CurrentSection.SectionID < CourseTutorials.SectionID
+                           )
+
+                     ORDER BY CourseTutorials.SectionNumber, CourseTutorials.SectionID
                     )
                     SELECT
                         Applications.ApplicationName,
@@ -68,14 +79,37 @@
                         COALESCE (Attempts.AttemptsPL, 0) AS AttemptsPL,
                         COALESCE (Attempts.PLPasses, 0) AS PLPasses,
                         CAST (COALESCE (Progress.PLLocked, 0) AS bit) AS PLLocked,
-                        NextSectionIdTable.NextSectionId
+                        Applications.IncludeCertification,
+                        Customisations.IsAssessed,
+                        Progress.Completed,
+                        Applications.AssessAttempts AS MaxPostLearningAssessmentAttempts,
+                        Applications.PLAPassThreshold AS PostLearningAssessmentPassThreshold,
+                        Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
+                        Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
+                        NextSection.NextSectionID,
+                        CAST (CASE WHEN EXISTS(SELECT 1
+                                                 FROM CourseTutorials
+                                                WHERE SectionID <> @sectionId)
+                                        THEN 1
+                                   ELSE 0
+                              END AS BIT) AS OtherSectionsExist,
+                        CAST (CASE WHEN Sections.ConsolidationPath IS NOT NULL
+                                        THEN 1
+                                   WHEN EXISTS(SELECT 1
+                                                 FROM CourseTutorials
+                                                WHERE SectionID = @sectionId
+                                                      AND (Status = 1 OR HasDiagnostic = 1)
+                                              )
+                                        THEN 1
+                                   ELSE 0
+                              END AS BIT) AS OtherItemsInSectionExist
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID
                         INNER JOIN Applications
                             ON Applications.ApplicationID = Sections.ApplicationID
-                        LEFT JOIN NextSectionIdTable
-                            ON Sections.SectionID = NextSectionIdTable.SectionID
+                        LEFT JOIN NextSection
+                            ON Sections.SectionID = NextSection.CurrentSectionID
                         LEFT JOIN Progress
                             ON Progress.CustomisationID = Customisations.CustomisationID
                             AND Progress.CandidateID = @candidateId
@@ -98,7 +132,7 @@
                         AND Customisations.IsAssessed = 1
                         AND Sections.SectionID = @sectionId
                         AND Sections.ArchivedDate IS NULL
-                        AND Sections.PLAssessPath IS NOT NULL",
+                        AND Sections.PLAssessPath IS NOT NULL;",
                 new { customisationId, candidateId, sectionId }
             );
         }

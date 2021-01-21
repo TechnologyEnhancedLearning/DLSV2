@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.PostLearningAssessment;
     using DigitalLearningSolutions.Data.Services;
@@ -9,10 +10,11 @@
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    internal class PostLearningAssessmentTests
+    internal partial class PostLearningAssessmentTests
     {
         private PostLearningAssessmentService postLearningAssessmentService;
         private PostLearningAssessmentTestHelper postLearningAssessmentTestHelper;
+        private CourseContentTestHelper courseContentTestHelper;
         private SectionContentTestHelper sectionContentTestHelper;
         private TutorialContentTestHelper tutorialContentTestHelper;
 
@@ -23,6 +25,7 @@
             var logger = A.Fake<ILogger<PostLearningAssessmentService>>();
             postLearningAssessmentService = new PostLearningAssessmentService(connection, logger);
             postLearningAssessmentTestHelper = new PostLearningAssessmentTestHelper(connection);
+            courseContentTestHelper = new CourseContentTestHelper(connection);
             sectionContentTestHelper = new SectionContentTestHelper(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
         }
@@ -47,7 +50,16 @@
                 1,
                 1,
                 false,
-                104
+                false,
+                true,
+                null,
+                0,
+                85,
+                88,
+                90,
+                104,
+                true,
+                true
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }
@@ -72,7 +84,16 @@
                 0,
                 0,
                 false,
-                104
+                false,
+                true,
+                null,
+                0,
+                85,
+                88,
+                90,
+                104,
+                true,
+                true
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }
@@ -312,7 +333,7 @@
 
                 const int originalNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                        // Customisations.IsAssessed = 1
-                tutorialContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
+                sectionContentTestHelper.UpdatePostLearningAssessmentPath(originalNextSectionId, null);
                 const int expectedNextSectionId = 106;
 
                 // When

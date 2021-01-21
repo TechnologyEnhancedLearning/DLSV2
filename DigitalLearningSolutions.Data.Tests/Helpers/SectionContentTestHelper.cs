@@ -21,5 +21,38 @@
                 new { sectionId, sectionNumber }
             );
         }
+
+        public void UpdateConsolidationPath(int sectionId, string? newPath)
+        {
+            connection.Execute(
+                @"UPDATE Sections
+                     SET ConsolidationPath = @newPath
+
+                   WHERE SectionID = @sectionId;",
+                new { sectionId, newPath }
+            );
+        }
+
+        public void UpdatePostLearningAssessmentPath(int sectionId, string? newPath)
+        {
+            connection.Execute(
+                @"UPDATE Sections
+                     SET PLAssessPath = @newPath
+
+                   WHERE SectionID = @sectionId;",
+                new { sectionId, newPath }
+            );
+        }
+
+        public void UpdateDiagnosticAssessmentPath(int sectionId, string? newPath)
+        {
+            connection.Execute(
+                @"UPDATE Sections
+                     SET DiagAssessPath = @newPath
+
+                   WHERE SectionID = @sectionId;",
+                new { sectionId, newPath }
+            );
+        }
     }
 }
