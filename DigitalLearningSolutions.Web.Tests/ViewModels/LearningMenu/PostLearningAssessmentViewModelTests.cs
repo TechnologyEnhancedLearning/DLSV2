@@ -137,6 +137,61 @@
         }
 
         [Test]
+        public void Post_learning_assessment_assessment_status_with_no_attempts_should_have_not_passed_styling()
+        {
+            // Given
+            const int postLearningAttempts = 0;
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: postLearningAttempts
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.AssessmentStatusStyling.Should().Be("not-passed-text");
+        }
+
+        [Test]
+        public void Post_learning_assessment_assessment_status_with_passes_should_have_passed_styling()
+        {
+            // Given
+            const int postLearningAttempts = 4;
+            const int postLearningPasses = 2;
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: postLearningAttempts,
+                plPasses: postLearningPasses
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.AssessmentStatusStyling.Should().Be("passed-text");
+        }
+
+        [Test]
+        public void Post_learning_assessment_assessment_status_with_attempts_but_no_passes_should_have_not_passed_styling()
+        {
+            // Given
+            const int postLearningAttempts = 5;
+            const int postLearningPasses = 0;
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: postLearningAttempts,
+                plPasses: postLearningPasses
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.AssessmentStatusStyling.Should().Be("not-passed-text");
+        }
+
+        [Test]
         public void Post_learning_assessment_assessment_status_with_no_attempts_should_have_no_score_information()
         {
             // Given

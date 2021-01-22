@@ -63,3 +63,11 @@ hr.thick {
   right: -8px;
   left: auto;
 }
+
+.passed-text {
+  color: $color_nhsuk-green;
+}
+
+.not-passed-text {
+  @extend .nhsuk-u-secondary-text-color;
+}
