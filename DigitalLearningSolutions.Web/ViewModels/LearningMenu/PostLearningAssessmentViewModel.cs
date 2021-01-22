@@ -30,14 +30,13 @@
             if (postLearningAssessment.PostLearningAttempts == 0)
             {
                 AssessmentStatus = "Not attempted";
-                AssessmentStatusStyling = "not-passed-text";
             }
             else
             {
                 AssessmentStatus = GetPassStatus(postLearningAssessment);
-                AssessmentStatusStyling = GetPassStatusStyling(postLearningAssessment);
                 ScoreInformation = GetScoreInformation(postLearningAssessment);
             }
+            AssessmentStatusStyling = GetPassStatusStyling(postLearningAssessment);
 
             OnlyItemInOnlySection = !postLearningAssessment.OtherItemsInSectionExist && !postLearningAssessment.OtherSectionsExist;
             OnlyItemInThisSection = !postLearningAssessment.OtherItemsInSectionExist;
@@ -70,7 +69,7 @@
 
         private string GetPassStatusStyling(PostLearningAssessment postLearningAssessment)
         {
-             return postLearningAssessment.PostLearningPassed
+             return postLearningAssessment.PostLearningAttempts > 0 && postLearningAssessment.PostLearningPassed
                 ? "passed-text"
                 : "not-passed-text";
         }
