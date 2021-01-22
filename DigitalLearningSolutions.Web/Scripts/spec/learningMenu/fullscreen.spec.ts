@@ -105,18 +105,16 @@ describe('enterFullscreen', () => {
     expect(breadcrumbs!.classList).toContain('hidden');
   });
 
-  it('should make iframe fullscreen', () => {
+  it('should make wrapper fullscreen', () => {
     // Given
     global.document = new JSDOM(`
       <html>
       <head></head>
       <body>
-        <iframe
-          src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker"
-          class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block"
-          height="800"
-          id="content-viewer_iframe">
-        </iframe>
+        <div class="nhsuk-u-margin-bottom-6 content-viewer_wrapper" id="content-viewer_wrapper">
+          <iframe src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker" class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe" id="content-viewer_iframe">
+          </iframe>
+        </div>
       </body>
       </html>
     `).window.document;
@@ -125,8 +123,8 @@ describe('enterFullscreen', () => {
     enterFullscreen();
 
     // Then
-    const iframe = document.getElementById('content-viewer_iframe');
-    expect(iframe!.classList).toContain('fullscreen');
+    const wrapper = document.getElementById('content-viewer_wrapper');
+    expect(wrapper!.classList).toContain('fullscreen');
   });
 });
 
@@ -239,12 +237,10 @@ describe('exitFullscreen', () => {
       <html>
       <head></head>
       <body>
-        <iframe
-          src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker"
-          class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block fullscreen"
-          height="800"
-          id="content-viewer_iframe">
-        </iframe>
+        <div class="nhsuk-u-margin-bottom-6 content-viewer_wrapper" id="content-viewer_wrapper">
+          <iframe src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker" class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe" id="content-viewer_iframe">
+          </iframe>
+        </div>
       </body>
       </html>
     `).window.document;
@@ -253,7 +249,7 @@ describe('exitFullscreen', () => {
     exitFullscreen();
 
     // Then
-    const iframe = document.getElementById('content-viewer_iframe');
-    expect(iframe!.classList).not.toContain('fullscreen');
+    const wrapper = document.getElementById('content-viewer_wrapper');
+    expect(wrapper!.classList).not.toContain('fullscreen');
   });
 });
