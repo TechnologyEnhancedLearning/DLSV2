@@ -31,7 +31,7 @@
             // Find these by making a list of other sections in the course. A section is valid if it is not archived
             // and has one of the following:
 
-            // A tutorial can be viewed; if it has CustomisationTutorials.Status 1.
+            // A tutorial which can be viewed; if it has CustomisationTutorials.Status 1.
 
             // A diagnostic assessment; if DiagAssessPath != null, and it contains a tutorial with
             // CustomisationTutorials.DiagStatus = 1. NB: this doesn't need to have Status = 1

@@ -29,7 +29,8 @@
             // or null if the last in the course.
 
             // Find these by making a list of other tutorials in the course, to find other sections (because a section
-            // must contain at least one tutorial), using a similar approach to the one used in the TutorialContentService
+            // must contain at least one tutorial), using a similar approach to the one used in the
+            // TutorialContentService. See the SectionContentService for the definition of a valid section.
 
             return connection.QueryFirstOrDefault<PostLearningAssessment>(
                 @"  WITH CourseTutorials AS (
