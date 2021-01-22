@@ -80,13 +80,13 @@
   @if (Model.TutorialPath != null)
   {
     <div>
-      <a class="nhsuk-button"
+      <a class="nhsuk-button @Model.TutorialStartButtonColour"
          asp-action="ContentViewer"
          asp-controller="LearningMenu"
          asp-route-customisationId="@Model.CustomisationId"
          asp-route-sectionId="@Model.SectionId"
          asp-route-tutorialId="@Model.TutorialId">
-        Start tutorial
+        @Model.TutorialStartButtonText
       </a>
     </div>
   }

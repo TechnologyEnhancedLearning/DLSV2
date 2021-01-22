@@ -29,6 +29,8 @@
         public bool OnlyItemInThisSection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
+        public string TutorialStartButtonColour { get; }
+        public string TutorialStartButtonText { get; }
 
         public TutorialViewModel(
             IConfiguration config,
@@ -89,6 +91,8 @@
                 tutorialInformation.DiagnosticAssessmentCompletionThreshold,
                 tutorialInformation.TutorialsCompletionThreshold
             );
+            TutorialStartButtonColour = tutorialInformation.Status == "Complete" ? "nhsuk-button--secondary" : "";
+            TutorialStartButtonText = tutorialInformation.Status == "Complete" ? "Restart tutorial" : "Start tutorial";
         }
 
         private bool GetCanShowProgress(bool showLearnStatus, bool canShowDiagnosticStatus, int attemptCount)
