@@ -39,7 +39,6 @@
             // A post learning assessment; if PLAssessPath != null and Customisations.IsAssessed = 1
             // Consolidation material; if ConsolidationPath != null
 
-
             SectionContent? sectionContent = null;
             return connection.Query<SectionContent, SectionTutorial, SectionContent>(
                 @"WITH OtherSections AS (

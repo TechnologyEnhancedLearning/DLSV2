@@ -42,11 +42,10 @@
 
                 // A tutorial can be viewed (ie can be a NextTutorial) if it has CustomisationTutorials.Status 1.
 
-                // A section has a diagnostic assessment if DiagAssessPath != null, and it contains a tutorial with
-                // CustomisationTutorials.DiagStatus = 1. NB: this doesn't need to have Status = 1
-
-                // A section has a post learning assessment if PLAssessPath != null and Customisations.IsAssessed = 1
-                // A section has consolidation material if ConsolidationPath != null
+                // Using this list of other tutorials in the course we can work out if there is another item in the
+                // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
+                // and if there are other sections (valid tutorials with a different tutorial ID, or with assessments or
+                // consolidation material. See the SectionContentService for the definition of a valid section.
 
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,
