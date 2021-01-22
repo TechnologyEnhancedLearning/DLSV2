@@ -50,7 +50,7 @@
       <span class="nhsuk-caption-l">Post learning assessment</span>
       @Model.SectionName
     </h1>
-    <h2 class="nhsuk-u-secondary-text-color">
+    <h2 class="@Model.AssessmentStatusStyling">
       <span class="nhsuk-u-visually-hidden">Your status: </span>
       @Model.AssessmentStatus
       @if (Model.ScoreInformation != null)

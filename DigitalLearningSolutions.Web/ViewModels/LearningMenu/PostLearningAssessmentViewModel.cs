@@ -7,6 +7,7 @@
         public string CourseTitle { get; }
         public string SectionName { get; }
         public string AssessmentStatus { get; }
+        public string AssessmentStatusStyling { get; }
         public string? ScoreInformation { get; }
         public bool PostLearningLocked { get; }
         public int CustomisationId { get; }
@@ -29,10 +30,12 @@
             if (postLearningAssessment.PostLearningAttempts == 0)
             {
                 AssessmentStatus = "Not attempted";
+                AssessmentStatusStyling = "not-passed-text";
             }
             else
             {
                 AssessmentStatus = GetPassStatus(postLearningAssessment);
+                AssessmentStatusStyling = GetPassStatusStyling(postLearningAssessment);
                 ScoreInformation = GetScoreInformation(postLearningAssessment);
             }
 
@@ -63,6 +66,13 @@
              return postLearningAssessment.PostLearningPassed
                 ? "Passed"
                 : "Failed";
+        }
+
+        private string GetPassStatusStyling(PostLearningAssessment postLearningAssessment)
+        {
+             return postLearningAssessment.PostLearningPassed
+                ? "passed-text"
+                : "not-passed-text";
         }
     }
 }
