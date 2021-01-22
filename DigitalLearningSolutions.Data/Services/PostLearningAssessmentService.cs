@@ -25,6 +25,12 @@
 
         public PostLearningAssessment? GetPostLearningAssessment(int customisationId, int candidateId, int sectionId)
         {
+            // NextSectionID is the ID of the next section in the course, according to SectionNumber
+            // or null if the last in the course.
+
+            // Find these by making a list of other tutorials in the course, to find other sections (because a section
+            // must contain at least one tutorial), using a similar approach to the one used in the TutorialContentService
+
             return connection.QueryFirstOrDefault<PostLearningAssessment>(
                 @"  WITH CourseTutorials AS (
                     SELECT Tutorials.TutorialID,

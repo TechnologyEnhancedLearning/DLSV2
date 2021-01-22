@@ -33,6 +33,9 @@
             // percentage completion set to 0.
             // This is achieved using LEFT JOINs on Progress, so we get the candidates progress details or some nulls.
 
+            // This query starts by getting a record per tutorial (with progress for that tutorial from aspProgress)
+            // and then aggregates them into a list of sections with tutorial percentage completion of each section.
+
             CourseContent? courseContent = null;
             return connection.Query<CourseContent, CourseSection, CourseContent>(
                 @"  WITH CustomisationDurations AS (

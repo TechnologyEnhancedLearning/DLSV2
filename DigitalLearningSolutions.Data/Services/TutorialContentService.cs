@@ -35,9 +35,18 @@
         {
             return connection.QueryFirstOrDefault<TutorialInformation>(
                 // NextTutorialID is the ID of the next tutorial in the section, according to Tutorials.OrderBy
-                // or null if the last in the section.
+                // or null if the last in the section. Similar for NextSectionID, using SectionID and SectionNumber
 
-                // Similar for sections, using Sections.SectionNumber
+                // Find these by making a list of other tutorials in the course, to then find next tutorials in
+                // this section, and other sections (because a section must contain at least one tutorial).
+
+                // A tutorial can be viewed (ie can be a NextTutorial) if it has CustomisationTutorials.Status 1.
+
+                // A section has a diagnostic assessment if DiagAssessPath != null, and it contains a tutorial with
+                // CustomisationTutorials.DiagStatus = 1. NB: this doesn't need to have Status = 1
+
+                // A section has a post learning assessment if PLAssessPath != null and Customisations.IsAssessed = 1
+                // A section has consolidation material if ConsolidationPath != null
 
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,

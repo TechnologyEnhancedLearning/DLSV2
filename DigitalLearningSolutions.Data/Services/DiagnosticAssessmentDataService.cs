@@ -26,6 +26,13 @@
 
         public DiagnosticAssessment? GetDiagnosticAssessment(int customisationId, int candidateId, int sectionId)
         {
+            // NextTutorialID is the ID of the first tutorial in the section, according to Tutorials.OrderBy
+            // or null if the last in the section. Similar for NextSectionID, using SectionID and SectionNumber
+
+            // Find these by making a list of other tutorials in the course, to then find tutorials in this section,
+            // and other sections (because a section must contain at least one tutorial), using a similar approach to
+            // the one used in the TutorialContentService
+
             DiagnosticAssessment? diagnosticAssessment = null;
             return connection.Query<DiagnosticAssessment, DiagnosticTutorial, DiagnosticAssessment>(
                 @"  WITH CourseTutorials AS (
