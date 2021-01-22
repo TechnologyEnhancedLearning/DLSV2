@@ -35,9 +35,17 @@
         {
             return connection.QueryFirstOrDefault<TutorialInformation>(
                 // NextTutorialID is the ID of the next tutorial in the section, according to Tutorials.OrderBy
-                // or null if the last in the section.
+                // or null if the last in the section. Similar for NextSectionID, using SectionID and SectionNumber
 
-                // Similar for sections, using Sections.SectionNumber
+                // Find these by making a list of other tutorials in the course, to then find next tutorials in
+                // this section, and other sections (because a section must contain at least one tutorial).
+
+                // A tutorial can be viewed (ie can be a NextTutorial) if it has CustomisationTutorials.Status 1.
+
+                // Using this list of other tutorials in the course we can work out if there is another item in the
+                // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
+                // and if there are other sections (valid tutorials with a different tutorial ID, or with assessments or
+                // consolidation material. See the SectionContentService for the definition of a valid section.
 
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,
