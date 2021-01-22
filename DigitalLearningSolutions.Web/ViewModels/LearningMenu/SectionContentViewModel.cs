@@ -17,6 +17,7 @@
         public int SectionId { get; }
         public bool ShowPostLearning { get; }
         public string PostLearningStatus { get; }
+        public string PostLearningStatusStyling { get; }
         public bool ShowDiagnostic { get; }
         public string DiagnosticCompletionStatus { get; }
         public string? ConsolidationExercisePath { get; }
@@ -41,6 +42,7 @@
             SectionId = sectionId;
             ShowPostLearning = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
             PostLearningStatus = GetPostLearningStatus(sectionContent);
+            PostLearningStatusStyling = GetPostLearningStatusStyling(sectionContent);
             ShowDiagnostic = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             ConsolidationExercisePath = sectionContent.ConsolidationPath == null
@@ -103,6 +105,13 @@
             }
 
             return "";
+        }
+
+        private static string GetPostLearningStatusStyling(SectionContent sectionContent)
+        {
+            return sectionContent.PostLearningAttempts > 0 && sectionContent.PostLearningPassed
+                ? "passed-text"
+                : "not-passed-text";
         }
 
         private static string GetDiagnosticCompletionStatus(SectionContent sectionContent)

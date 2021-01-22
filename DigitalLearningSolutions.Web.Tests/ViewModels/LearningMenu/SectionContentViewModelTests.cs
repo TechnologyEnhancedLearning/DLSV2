@@ -476,6 +476,45 @@
         }
 
         [Test]
+        public void Post_learning_status_styling_should_have_not_passed_styling_if_pl_attempts_is_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 0);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatusStyling.Should().Be("not-passed-text");
+        }
+
+        [Test]
+        public void Post_learning_status_should_have_not_passed_styling_if_pl_attempts_is_more_than_zero_and_pl_passes_is_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 0);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatusStyling.Should().Be("not-passed-text");
+        }
+
+        [Test]
+        public void Post_learning_status_should_have_passed_styling_if_pl_attempts_is_more_than_zero_and_pl_passes_is_more_than_zero()
+        {
+            // Given
+            var sectionContent = SectionContentHelper.CreateDefaultSectionContent(attemptsPl: 3, plPasses: 1);
+
+            // When
+            var sectionContentViewModel = new SectionContentViewModel(config, sectionContent, CustomisationId, SectionId);
+
+            // Then
+            sectionContentViewModel.PostLearningStatusStyling.Should().Be("passed-text");
+        }
+
+        [Test]
         public void Diagnostic_assessment_completion_status_is_not_attempted_if_diag_attempts_is_zero()
         {
             // Given
