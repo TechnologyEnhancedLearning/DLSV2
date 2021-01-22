@@ -101,7 +101,9 @@
                         Tutorials.TutorialID AS id,
                         CustomisationTutorials.Status,
                         COALESCE (aspProgress.DiagLast, 0) AS CurrentScore,
-                        Tutorials.DiagAssessOutOf AS PossibleScore
+                        Tutorials.DiagAssessOutOf AS PossibleScore,
+                        CustomisationTutorials.DiagStatus AS TutorialDiagnosticStatus,
+                        COALESCE (aspProgress.DiagAttempts, 0) AS TutorialDiagnosticAttempts
                     FROM Tutorials
                         INNER JOIN CustomisationTutorials
                             ON CustomisationTutorials.TutorialID = Tutorials.TutorialID

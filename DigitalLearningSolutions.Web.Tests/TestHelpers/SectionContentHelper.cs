@@ -67,7 +67,9 @@
             int id = 1,
             bool status = true,
             int currentScore = 5,
-            int possibleScore = 7
+            int possibleScore = 7,
+            bool tutorialDiagnosticStatus = true,
+            int tutorialDiagnosticAttempts = 1
         )
         {
             return new SectionTutorial(
@@ -79,7 +81,9 @@
                 id,
                 status,
                 currentScore,
-                possibleScore
+                possibleScore,
+                tutorialDiagnosticStatus,
+                tutorialDiagnosticAttempts
             );
         }
     }

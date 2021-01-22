@@ -20,9 +20,7 @@
             bool showTime,
             bool showLearnStatus,
             int sectionId,
-            int customisationId,
-            bool diagnosticStatus,
-            int diagnosticAttempts
+            int customisationId
         )
         {
             Id = tutorial.Id;
@@ -39,7 +37,7 @@
             CustomisationId = customisationId;
             RecommendationStatus = tutorial.CurrentScore < tutorial.PossibleScore ? "Recommended" : "Optional";
             StatusTagColour = tutorial.CurrentScore < tutorial.PossibleScore ? "nhsuk-tag--orange" : "nhsuk-tag--green";
-            ShowRecommendationStatus = diagnosticAttempts > 0 && showLearnStatus && diagnosticStatus;
+            ShowRecommendationStatus = tutorial.TutorialDiagnosticAttempts > 0 && showLearnStatus && tutorial.TutorialDiagnosticStatus;
         }
     }
 }

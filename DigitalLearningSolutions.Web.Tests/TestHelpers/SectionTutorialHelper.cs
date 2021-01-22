@@ -13,7 +13,9 @@
             int tutorialId = 1,
             bool customisationTutorialStatus = true,
             int currentScore = 3,
-            int possibleScore = 5
+            int possibleScore = 5,
+            bool tutorialDiagnosticStatus = true,
+            int tutorialDiagnosticAttempts = 1
         )
         {
             return new SectionTutorial(
@@ -25,7 +27,9 @@
                 tutorialId,
                 customisationTutorialStatus,
                 currentScore,
-                possibleScore
+                possibleScore,
+                tutorialDiagnosticStatus,
+                tutorialDiagnosticAttempts
             );
         }
     }

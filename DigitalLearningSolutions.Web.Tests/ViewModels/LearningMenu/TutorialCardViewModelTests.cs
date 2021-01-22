@@ -45,9 +45,7 @@
                 showTime,
                 showLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -66,9 +64,7 @@
                 showTime: true,
                 showLearnStatus: true,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -87,9 +83,7 @@
                 showTime: true,
                 showLearnStatus: false,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -108,9 +102,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -129,9 +121,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -142,7 +132,10 @@
         public void Tutorial_card_should_show_recommendation_status_if_all_conditions_are_met()
         {
             // Given
-            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                tutorialDiagnosticStatus: true,
+                tutorialDiagnosticAttempts: 2
+            );
 
             // When
             var tutorialCardViewModel = new TutorialCardViewModel(
@@ -150,9 +143,7 @@
                 ShowTime,
                 showLearnStatus: true,
                 CustomisationId,
-                SectionId,
-                diagnosticStatus: true,
-                diagnosticAttempts: 2
+                SectionId
             );
 
             // Then
@@ -163,7 +154,10 @@
         public void Tutorial_card_should_not_show_recommendation_status_if_diagnostic_status_is_false()
         {
             // Given
-            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                tutorialDiagnosticStatus: false,
+                tutorialDiagnosticAttempts: 2
+            );
 
             // When
             var tutorialCardViewModel = new TutorialCardViewModel(
@@ -171,9 +165,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                diagnosticStatus: false,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -192,9 +184,7 @@
                 ShowTime,
                 showLearnStatus: false,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -205,7 +195,10 @@
         public void Tutorial_card_should_not_show_recommendation_status_if_diagnostic_attempts_is_zero()
         {
             // Given
-            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial();
+            var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
+                tutorialDiagnosticAttempts: 0,
+                tutorialDiagnosticStatus: true
+            );
 
             // When
             var tutorialCardViewModel = new TutorialCardViewModel(
@@ -213,9 +206,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                diagnosticAttempts: 0
+                SectionId
             );
 
             // Then
@@ -237,9 +228,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -261,9 +250,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -285,9 +272,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
@@ -309,9 +294,7 @@
                 ShowTime,
                 ShowLearnStatus,
                 CustomisationId,
-                SectionId,
-                DiagnosticStatus,
-                DiagnosticAttempts
+                SectionId
             );
 
             // Then
