@@ -155,7 +155,8 @@
         {
             // Given
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
-                tutorialDiagnosticStatus: false
+                tutorialDiagnosticStatus: false,
+                tutorialDiagnosticAttempts: 2
             );
 
             // When
@@ -195,7 +196,8 @@
         {
             // Given
             var sectionTutorial = SectionTutorialHelper.CreateDefaultSectionTutorial(
-                tutorialDiagnosticAttempts: 0
+                tutorialDiagnosticAttempts: 0,
+                tutorialDiagnosticStatus: true
             );
 
             // When
