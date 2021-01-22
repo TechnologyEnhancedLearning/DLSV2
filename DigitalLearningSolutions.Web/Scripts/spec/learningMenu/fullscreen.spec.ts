@@ -231,7 +231,7 @@ describe('exitFullscreen', () => {
     expect(breadcrumbs!.classList).not.toContain('hidden');
   });
 
-  it('should make iframe not fullscreen', () => {
+  it('should make wrapper not fullscreen', () => {
     // Given
     global.document = new JSDOM(`
       <html>
