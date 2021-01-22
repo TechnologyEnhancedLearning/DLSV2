@@ -852,7 +852,7 @@
             );
 
             // Then
-            tutorialViewModel.TutorialStartButtonColour.Should().Be("nhsuk-button--secondary");
+            tutorialViewModel.TutorialStartButtonAdditionalStyling.Should().Be("nhsuk-button--secondary");
         }
 
         [TestCase("Started")]
@@ -873,7 +873,7 @@
             );
 
             // Then
-            tutorialViewModel.TutorialStartButtonColour.Should().Be("");
+            tutorialViewModel.TutorialStartButtonAdditionalStyling.Should().Be("");
         }
 
         [Test]
