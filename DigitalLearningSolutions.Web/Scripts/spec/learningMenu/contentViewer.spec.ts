@@ -27,7 +27,7 @@ describe('closeMpe', () => {
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/789');
     });
 
-  it('should redirect to tutorial overview after accessing fullscreen',
+  it('should redirect to tutorial overview after entering fullscreen',
     () => {
       // Given
       window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/789/Tutorial#';

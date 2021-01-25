@@ -441,5 +441,69 @@
             diagnosticAssessmentViewModel.CompletionSummaryCardViewModel
                 .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
+
+        [Test]
+        public void Diagnostic_assessment_start_button_colour_should_be_grey_if_attempts_is_more_than_zero()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: 2
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.DiagnosticStartButtonAdditionalStyling.Should().Be("nhsuk-button--secondary");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_start_button_should_have_no_colour_if_attempts_is_zero()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: 0
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.DiagnosticStartButtonAdditionalStyling.Should().Be("");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_start_button_should_say_restart_if_attempts_is_more_than_zero()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: 2
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.DiagnosticStartButtonText.Should().Be("Restart assessment");
+        }
+
+        [Test]
+        public void Diagnostic_assessment_start_button_should_say_start_if_attempts_is_zero()
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                diagnosticAttempts: 0
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.DiagnosticStartButtonText.Should().Be("Start assessment");
+        }
     }
 }

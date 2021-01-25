@@ -8,6 +8,8 @@
         public string SectionName { get; }
         public string AssessmentStatus { get; }
         public string AssessmentStatusStyling { get; }
+        public string StartButtonText { get; }
+        public string StartButtonAdditionalStyling { get; }
         public string? ScoreInformation { get; }
         public bool PostLearningLocked { get; }
         public int CustomisationId { get; }
@@ -37,6 +39,14 @@
                 ScoreInformation = GetScoreInformation(postLearningAssessment);
             }
             AssessmentStatusStyling = GetPassStatusStyling(postLearningAssessment);
+
+            StartButtonText = postLearningAssessment.PostLearningAttempts == 0
+                ? "Start assessment"
+                : "Restart assessment";
+            StartButtonAdditionalStyling = postLearningAssessment.PostLearningAttempts == 0
+                ? ""
+                : "nhsuk-button--secondary";
+
 
             OnlyItemInOnlySection = !postLearningAssessment.OtherItemsInSectionExist && !postLearningAssessment.OtherSectionsExist;
             OnlyItemInThisSection = !postLearningAssessment.OtherItemsInSectionExist;

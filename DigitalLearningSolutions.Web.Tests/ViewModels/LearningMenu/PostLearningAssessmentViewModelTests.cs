@@ -191,6 +191,74 @@
             postLearningAssessmentViewModel.AssessmentStatusStyling.Should().Be("not-passed-text");
         }
 
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Post_learning_assessment_start_button_should_be_grey_if_it_has_been_attempted(int postLearningPasses)
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: 1,
+                plPasses: postLearningPasses
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.StartButtonAdditionalStyling.Should().Be("nhsuk-button--secondary");
+        }
+
+        [Test]
+        public void Post_learning_assessment_start_button_should_have_no_extra_colour_if_it_has_not_been_attempted()
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: 0
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.StartButtonAdditionalStyling.Should().Be("");
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Post_learning_assessment_start_button_should_say_restart_if_it_has_been_attempted(int postLearningPasses)
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: 1,
+                plPasses: postLearningPasses
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.StartButtonText.Should().Be("Restart assessment");
+        }
+
+        [Test]
+        public void Post_learning_assessment_start_button_should_say_start_if_it_has_not_been_attempted()
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                attemptsPl: 0
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.StartButtonText.Should().Be("Start assessment");
+        }
+
         [Test]
         public void Post_learning_assessment_assessment_status_with_no_attempts_should_have_no_score_information()
         {
