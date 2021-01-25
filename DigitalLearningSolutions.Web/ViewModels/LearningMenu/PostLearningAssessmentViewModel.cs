@@ -32,17 +32,21 @@
             if (postLearningAssessment.PostLearningAttempts == 0)
             {
                 AssessmentStatus = "Not attempted";
-                StartButtonText = "Start assessment";
-                StartButtonAdditionalStyling = "";
             }
             else
             {
                 AssessmentStatus = GetPassStatus(postLearningAssessment);
                 ScoreInformation = GetScoreInformation(postLearningAssessment);
-                StartButtonText = "Restart assessment";
-                StartButtonAdditionalStyling = "nhsuk-button--secondary";
             }
             AssessmentStatusStyling = GetPassStatusStyling(postLearningAssessment);
+
+            StartButtonText = postLearningAssessment.PostLearningAttempts == 0
+                ? "Start assessment"
+                : "Restart assessment";
+            StartButtonAdditionalStyling = postLearningAssessment.PostLearningAttempts == 0
+                ? ""
+                : "nhsuk-button--secondary";
+
 
             OnlyItemInOnlySection = !postLearningAssessment.OtherItemsInSectionExist && !postLearningAssessment.OtherSectionsExist;
             OnlyItemInThisSection = !postLearningAssessment.OtherItemsInSectionExist;
