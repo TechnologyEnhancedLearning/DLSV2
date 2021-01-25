@@ -22,6 +22,8 @@
         public bool OnlyItemInThisSection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
+        public string DiagnosticStartButtonAdditionalStyling { get; }
+        public string DiagnosticStartButtonText { get; }
 
         public DiagnosticAssessmentViewModel(DiagnosticAssessment diagnosticAssessment, int customisationId, int sectionId)
         {
@@ -56,6 +58,8 @@
                 diagnosticAssessment.DiagnosticAssessmentCompletionThreshold,
                 diagnosticAssessment.TutorialsCompletionThreshold
             );
+            DiagnosticStartButtonAdditionalStyling = diagnosticAssessment.DiagnosticAttempts > 0 ? "nhsuk-button--secondary" : "";
+            DiagnosticStartButtonText = diagnosticAssessment.DiagnosticAttempts > 0 ? "Restart assessment" : "Start assessment";
         }
     }
 }
