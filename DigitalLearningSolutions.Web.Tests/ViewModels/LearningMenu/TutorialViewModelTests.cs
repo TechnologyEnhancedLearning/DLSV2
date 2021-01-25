@@ -834,5 +834,87 @@
             tutorialViewModel.CompletionSummaryCardViewModel
                 .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
+
+        [Test]
+        public void Tutorial_start_button_should_be_grey_if_tutorial_status_is_complete()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: "Complete"
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TutorialStartButtonAdditionalStyling.Should().Be("nhsuk-button--secondary");
+        }
+
+        [TestCase("Started")]
+        [TestCase("Not started")]
+        public void Tutorial_start_button_should_have_no_extra_colour_if_tutorial_status_is_not_complete(string status)
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: status
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TutorialStartButtonAdditionalStyling.Should().Be("");
+        }
+
+        [Test]
+        public void Tutorial_start_button_should_say_restart_tutorial_if_tutorial_status_is_complete()
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: "Complete"
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TutorialStartButtonText.Should().Be("Restart tutorial");
+        }
+
+        [TestCase("Started")]
+        [TestCase("Not started")]
+        public void Tutorial_start_button_should_say_start_tutorial_if_tutorial_status_is_not_complete(string status)
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: status
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.TutorialStartButtonText.Should().Be("Start tutorial");
+        }
     }
 }
