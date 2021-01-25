@@ -128,6 +128,30 @@ describe('enterFullscreen', () => {
     const wrapper = document.getElementById('content-viewer_iframe-wrapper');
     expect(wrapper!.classList).toContain('fullscreen');
   });
+
+  it('should remove the wrapper class', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper" id="content-viewer_iframe-wrapper">
+          <iframe
+            src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker"
+            class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe">
+          </iframe>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    enterFullscreen();
+
+    // Then
+    const wrapper = document.getElementById('content-viewer_iframe-wrapper');
+    expect(wrapper!.classList).not.toContain('content-viewer_iframe-wrapper');
+  });
 });
 
 describe('exitFullscreen', () => {
@@ -239,7 +263,7 @@ describe('exitFullscreen', () => {
       <html>
       <head></head>
       <body>
-        <div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper" id="content-viewer_iframe-wrapper">
+        <div class="nhsuk-u-margin-bottom-6 fullscreen" id="content-viewer_iframe-wrapper">
           <iframe
             src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker"
             class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe">
@@ -255,5 +279,29 @@ describe('exitFullscreen', () => {
     // Then
     const wrapper = document.getElementById('content-viewer_iframe-wrapper');
     expect(wrapper!.classList).not.toContain('fullscreen');
+  });
+
+  it('should add the wrapper class', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <div class="nhsuk-u-margin-bottom-6 fullscreen" id="content-viewer_iframe-wrapper">
+          <iframe
+            src="https://www.dls.nhs.uk/CMS/CMSContent/Course324/Section1058/Tutorials/01-01-CreateaPresentation/itspplayer.html?CentreID=101&amp;CustomisationID=19068&amp;TutorialID=4671&amp;CandidateID=254480&amp;Version=2&amp;ProgressID=285049&amp;type=learn&amp;TrackURL=https://localhost:44367/tracking/tracker"
+            class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe">
+          </iframe>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    exitFullscreen();
+
+    // Then
+    const wrapper = document.getElementById('content-viewer_iframe-wrapper');
+    expect(wrapper!.classList).toContain('content-viewer_iframe-wrapper');
   });
 });
