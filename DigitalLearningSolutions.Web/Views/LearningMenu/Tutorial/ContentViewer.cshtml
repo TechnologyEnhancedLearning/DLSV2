@@ -45,19 +45,4 @@
 @{ var contentType = "tutorial"; }
 <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
-<div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper js-only-block" id="content-viewer_iframe-wrapper">
-  <iframe src="@Model.ContentSource" class="nhsuk-u-margin-bottom-6 content-viewer_iframe">
-  </iframe>
-</div>
-
-<a class="nhsuk-button js-only-inline"
-   id="content-viewer_enter-fullscreen-button"
-   href="#">
-  Fullscreen
-</a>
-
-<a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden"
-   id="content-viewer_exit-fullscreen-button"
-   href="#">
-  Exit fullscreen
-</a>
+<partial name="Shared/_IFrameWithFullscreen" model="@Model.ContentSource" />
