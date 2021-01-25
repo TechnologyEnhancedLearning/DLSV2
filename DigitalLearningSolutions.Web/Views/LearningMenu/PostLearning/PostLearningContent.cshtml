@@ -4,6 +4,7 @@
 @model PostLearningContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/contentViewer.css")" asp-append-version="true">
 
 @{
   ViewData["HeaderPrefix"] = "";
@@ -39,11 +40,25 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
-
-    @{ var contentType = "assessment"; }
-    <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
-
-    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
-    </iframe>
   </div>
 </div>
+
+@{ var contentType = "assessment"; }
+<partial name="Shared/_JavaScriptDisabledError" model="contentType" />
+
+<div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper js-only-block" id="content-viewer_iframe-wrapper">
+  <iframe src="@Model.ContentSource" class="nhsuk-u-margin-bottom-6 content-viewer_iframe">
+  </iframe>
+</div>
+
+<a class="nhsuk-button js-only-inline"
+   id="content-viewer_enter-fullscreen-button"
+   href="#">
+  Fullscreen
+</a>
+
+<a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden"
+   id="content-viewer_exit-fullscreen-button"
+   href="#">
+  Exit fullscreen
+</a>

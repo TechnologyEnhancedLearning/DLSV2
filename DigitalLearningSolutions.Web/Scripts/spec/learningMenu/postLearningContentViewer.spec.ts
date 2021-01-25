@@ -27,6 +27,18 @@ describe('closeMpe', () => {
       expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/PostLearning');
     });
 
+  it('should redirect to post learning assessment after entering fullscreen',
+    () => {
+      // Given
+      window.location.href = 'https://localhost:44363/test/LearningMenu/123/456/PostLearning/Content#';
+
+      // When
+      window.closeMpe();
+
+      // Then
+      expect(window.location.href).toBe('https://localhost:44363/test/LearningMenu/123/456/PostLearning');
+    });
+
   it('should do nothing on unexpected page',
     () => {
       // Given
