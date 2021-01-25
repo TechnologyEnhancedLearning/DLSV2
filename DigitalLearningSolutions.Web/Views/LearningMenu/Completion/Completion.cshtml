@@ -1,0 +1,94 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@model CourseCompletionViewModel
+@inject IConfiguration Configuration
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
+  ViewData["CustomisationId"] = Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.CourseTitle;
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__item">Completion summary</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+    </div>
+  </nav>
+}
+
+<h1 id="page-heading" class="nhsuk-heading-xl">Course @Model.CompletionStatus</h1>
+
+<div class="nhsuk-inset-text nhsuk-u-margin-top-5 nhsuk-u-margin-bottom-3">
+  <span class="nhsuk-u-visually-hidden">Information: </span>
+  <p>@Model.SummaryText</p>
+</div>
+
+<dl class="nhsuk-summary-list nhsuk-u-margin-bottom-4">
+
+  @if (Model.ShowDiagnosticScore)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Diagnostic Score
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.DiagnosticScore%
+      </dd>
+    </div>
+  }
+
+  @if (Model.ShowPercentageTutorialsCompleted)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Learning Completed
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.PercentageTutorialsCompleted%
+      </dd>
+    </div>
+  }
+
+  @if (Model.IsAssessed)
+  {
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Assessments Passed
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.PostLearningPasses out of @Model.SectionCount
+      </dd>
+    </div>
+  }
+</dl>
+
+<div class="button-row">
+  @if (Model.FinaliseText != null)
+  {
+    <div>
+      <a class="nhsuk-button nhsuk-button" target="_blank" href="@Model.FinaliseUrl" aria-label="@Model.FinaliseAriaLabel">
+        @Model.FinaliseText
+      </a>
+    </div>
+  }
+  <div>
+    <a class="nhsuk-button nhsuk-button--secondary" target="_blank" href="@Model.DownloadSummaryUrl">
+      Download summary
+    </a>
+  </div>
+</div>

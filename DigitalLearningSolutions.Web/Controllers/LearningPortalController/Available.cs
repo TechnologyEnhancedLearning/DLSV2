@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,6 @@
             var bannerText = GetBannerText();
             var model = new AvailablePageViewModel(
                 availableCourses,
-                config,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -32,14 +32,14 @@
         public IActionResult AllAvailableItems()
         {
             var availableCourses = courseService.GetAvailableCourses(User.GetCandidateId(), User.GetCentreId());
-            var model = new AllAvailableItemsPageViewModel(availableCourses, config);
+            var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
             courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateId());
-            return RedirectToAction("SelfAssessment", new { selfAssessmentId = selfAssessmentId});
+            return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }
 }

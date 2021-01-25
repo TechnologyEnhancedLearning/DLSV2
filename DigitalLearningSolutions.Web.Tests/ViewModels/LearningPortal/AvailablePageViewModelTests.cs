@@ -10,13 +10,11 @@
 
     public class AvailablePageViewModelTests
     {
-        private readonly IConfiguration config = A.Fake<IConfiguration>();
         private AvailablePageViewModel model;
 
         [SetUp]
         public void SetUp()
         {
-            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns("http://www.dls.nhs.uk");
             var courses = new[] {
                 AvailableCourseHelper.CreateDefaultAvailableCourse(courseName: "First course"),
                 AvailableCourseHelper.CreateDefaultAvailableCourse(courseName: "Second course")
@@ -24,7 +22,6 @@
 
             model = new AvailablePageViewModel(
                 courses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",
@@ -62,7 +59,6 @@
 
             model = new AvailablePageViewModel(
                 courses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",
@@ -93,7 +89,6 @@
 
             model = new AvailablePageViewModel(
                 courses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",

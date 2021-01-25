@@ -1,34 +1,24 @@
-﻿namespace DigitalLearningSolutions.Web.ViewComponents
+namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
-    using System.Security.Claims;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class LogoViewComponent : ViewComponent
     {
-        private readonly ICentresService centresService;
+        private readonly ILogoService logoService;
 
-        public LogoViewComponent(ICentresService centresService)
+        public LogoViewComponent(ILogoService logoService)
         {
-            this.centresService = centresService;
+            this.logoService = logoService;
         }
 
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(int? customisationId)
         {
-            var centreId = UserClaimsPrincipal.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
-            if (centreId == null)
-            {
-                return View(new LogoViewModel(null));
-            }
-
-            var customLogo = centresService.GetCentreLogo(centreId.Value);
-            if (customLogo.LogoUrl == null)
-            {
-                return View(new LogoViewModel(null));
-            }
+            var centreId = ((ClaimsPrincipal) User).GetCentreId();
+            var customLogo = logoService.GetLogo(centreId, customisationId);
 
             var model = new LogoViewModel(customLogo);
             return View(model);

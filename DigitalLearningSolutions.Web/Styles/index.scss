@@ -28,6 +28,15 @@ a.delete-button:hover {
 a.delete-button:active {
   background-color: #6b140e;
 }
+
+.js-only-block {
+  display: none;
+}
+
+.js-enabled .js-only-block {
+  display: block;
+}
+
 .small-edit-button, a.small-edit-button {
     margin-bottom: nhsuk-spacing(2);
     margin-top: nhsuk-spacing(0);

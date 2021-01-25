@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Deploy to test') {
             when {
-                allOf { branch 'learning-menu-master'; not { expression { params.DeployToUAT } } }
+                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {

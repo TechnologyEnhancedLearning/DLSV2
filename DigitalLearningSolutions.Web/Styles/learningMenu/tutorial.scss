@@ -1,0 +1,10 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.objectives-card {
+  @include nhsuk-typography-responsive(19);
+}
+
+.tutorial-video {
+  width: 100%;
+  height: auto;
+}

@@ -3,21 +3,11 @@
     using System;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
-    using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CurrentCourseViewModelTests
     {
-        private IConfiguration config;
-
-        [SetUp]
-        public void SetUp()
-        {
-            config = A.Fake<IConfiguration>();
-        }
-
         [Test]
         public void Current_course_should_be_overdue_when_complete_by_date_is_in_the_past()
         {
@@ -25,7 +15,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today - TimeSpan.FromDays(1));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
             // Then
             currentCourseViewModel.DateStyle().Should().Be("overdue");
@@ -39,7 +29,7 @@
 
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
             // Then
@@ -53,7 +43,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(completeByDate: DateTime.Today + TimeSpan.FromDays(100));
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
 
@@ -68,7 +58,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(hasDiagnostic: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
             // Then
@@ -82,7 +72,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(diagnosticScore: null);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
             // Then
@@ -96,7 +86,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
             // Then
@@ -110,7 +100,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(isAssessed: false);
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
             // Then
             currentCourseViewModel.HasPassedSections().Should().BeFalse();
@@ -123,7 +113,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse();
 
             // When
-            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse, config);
+            var currentCourseViewModel = new CurrentCourseViewModel(currentCourse);
 
 
             // Then

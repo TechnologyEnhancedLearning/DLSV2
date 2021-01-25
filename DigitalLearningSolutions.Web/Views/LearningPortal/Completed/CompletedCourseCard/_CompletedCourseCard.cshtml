@@ -23,7 +23,9 @@
     <a
       class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
       aria-describedby="@Model.Id-name"
-      href="@Model.LaunchUrl">
+      asp-controller="LearningMenu"
+      asp-action="Index"
+      asp-route-customisationId="@Model.Id">
       Launch course
     </a>
     @if (Model.HasFinaliseButton())

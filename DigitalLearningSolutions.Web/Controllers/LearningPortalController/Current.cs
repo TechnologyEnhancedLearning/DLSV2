@@ -24,7 +24,6 @@
             var selfAssessments = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateId());
             var model = new CurrentPageViewModel(
                 currentCourses,
-                config,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -39,7 +38,7 @@
         {
             var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
             var selfAssessment = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateId());
-            var model = new AllCurrentItemsPageViewModel(currentCourses, config, selfAssessment);
+            var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment);
             return View("Current/AllCurrentItems", model);
         }
 
@@ -75,7 +74,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var model = new CurrentCourseViewModel(course, config);
+            var model = new CurrentCourseViewModel(course);
             if (model.CompleteByDate != null && !model.SelfEnrolled)
             {
                 logger.LogWarning(
@@ -104,7 +103,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var model = new CurrentCourseViewModel(course, config);
+            var model = new CurrentCourseViewModel(course);
             return View("Current/RemoveCurrentCourseConfirmation", model);
         }
 

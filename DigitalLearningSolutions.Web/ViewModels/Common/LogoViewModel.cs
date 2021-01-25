@@ -4,17 +4,11 @@
 
     public class LogoViewModel
     {
-        public readonly string? CustomLogoDataUrl;
-        public readonly int Height;
-        public readonly int Width;
-        public readonly string AltText;
+        public readonly Logo? Logo;
 
-        public LogoViewModel(CentreLogo? customLogo)
+        public LogoViewModel(Logo? logo)
         {
-            CustomLogoDataUrl = customLogo?.LogoUrl;
-            Height = customLogo?.Height ?? 0 ;
-            Width = customLogo?.Width ?? 0;
-            AltText = customLogo?.CentreName ?? "";
+            Logo = logo;
         }
     }
 }

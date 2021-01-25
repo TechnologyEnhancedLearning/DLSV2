@@ -1,0 +1,105 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model SectionContentViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/section.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
+  ViewData["CustomisationId"] = Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.CourseTitle;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.SectionName</li>
+      </ol>
+
+      @if (Model.OtherSectionsExist)
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+      }
+      else
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+      }
+    </div>
+  </nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
+
+    @if (Model.ShowPercentComplete)
+    {
+      <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-3">@Model.PercentComplete</h2>
+    }
+
+    @if (Model.ShowPostLearning)
+    {
+      <h3 class="nhsuk-u-margin-bottom-3 @Model.PostLearningStatusStyling">
+        Post learning assessment @Model.PostLearningStatus.ToLower()
+      </h3>
+    }
+  </div>
+</div>
+
+@if (Model.OtherSectionsExist)
+{
+  <partial name="Section/_SectionNextLink" model="Model" />
+}
+
+@if (Model.ShowDiagnostic)
+{
+  <partial name="Section/_DiagnosticAssessmentCard" model="Model" />
+}
+
+@if (Model.DisplayDiagnosticSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+}
+
+@foreach (var tutorial in Model.Tutorials)
+{
+  <partial name="Section/_TutorialCard" model="tutorial" />
+}
+
+@if (Model.DisplayTutorialSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+}
+
+@if (Model.ShowPostLearning)
+{
+  <partial name="Section/_PostLearningAssessmentCard" model="Model" />
+}
+
+@if (Model.DisplayPostLearningSeparator)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+}
+
+@if (Model.ShowConsolidation)
+{
+  <partial name="Section/_ConsolidationExerciseCard" model="Model" />
+}
+
+@if (Model.ShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="Model.CompletionSummaryCardViewModel" />
+}
