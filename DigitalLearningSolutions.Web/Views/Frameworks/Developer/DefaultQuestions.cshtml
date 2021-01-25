@@ -1,0 +1,102 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model DefaultQuestionsViewModel;
+@{
+  ViewData["Title"] = "Framework Default Questions";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<h1>Framework default questions</h1>
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h2 class="nhsuk-table__heading-tab">Self assessment questions for framework competencies</h2>
+  @if (Model.AssessmentQuestions.Any())
+  {
+    <table role="presentation" class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Question
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Input type/Range
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Actions
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="nhsuk-table__body">
+        @foreach (var question in Model.AssessmentQuestions)
+        {
+          <tr role="row" class="nhsuk-table__row collaborator-row">
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Question </span>
+              <span class="framework-collaborator-user">
+                @question.Question
+              </span>
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Input type/Range </span>
+              <span class="framework-collaborator-role">
+                @question.InputTypeName (@question.MinValue - @question.MaxValue)
+              </span>
+            </td>
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Actions </span>
+              <a asp-action="RemoveDefaultQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-questionId="@question.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                Remove
+              </a>
+              @if (question.UserIsOwner)
+              {
+                <span>&nbsp;</span>
+                <a asp-action="EditAssessmentQuestion" asp-route-questionId="@question.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="FrameworkDefaultQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                  Edit
+                </a>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+  else
+  {
+    <p>No default assessment questions have been set for this framework.</p>
+  }
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <form method="post">
+        <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
+          <h2>Add question</h2>
+        </label>
+        <div class="nhsuk-hint" id="add-user-hint">
+          Choose a default question to add to the framework
+        </div>
+        <select class="nhsuk-select" asp-items="Model.QuestionSelectList" asp-for="AssessmentQuestionId" aria-label="Question"></select>
+        @if ((string)ViewContext.RouteData.Values["actionname"] == "Edit")
+        {
+            <button class="nhsuk-button button-small" title="Add and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkId="@Model.FrameworkId">
+              Add and apply <span class="visually-hidden"> to existing competencies</span>
+            </button>
+
+            <button class="nhsuk-button nhsuk-button--secondary button-small" title="Add without applying to existing competencies" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
+              Add
+            </button>
+        }
+        else
+        {
+            <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
+              Add
+            </button>
+        }
+      </form>
+      </div>
+    </div>
+      <div class=" nhsuk-u-margin-top-6">
+        <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
+          Done
+        </a>
+      </div>

@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
 
     public interface IFrameworkService
@@ -26,9 +26,11 @@
         CompetencyGroupBase GetCompetencyGroupBaseById(int Id);
         FrameworkCompetency GetFrameworkCompetencyById(int Id);
         //  Assessment questions:
-        IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions();
-        IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId);
-        IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId);
+        IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
+        IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId);
+        IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId, int adminId);
+        IEnumerable<AssessmentQuestionInputType> GetAssessmentQuestionInputTypes();
+        IEnumerable<GenericSelectList> GetAssessmentQuestions(int adminId);
         //INSERT DATA
         BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -83,6 +85,10 @@
               ,FW.FrameworkConfig";
         private const string FrameworkTables =
             @"Frameworks AS FW";
+        private const string AssessmentQuestionFields =
+            @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner";
+        private const string AssessmentQuestionTables =
+            @"FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID ";
         public FrameworkService(IDbConnection connection, ILogger<FrameworkService> logger)
         {
             this.connection = connection;
@@ -743,32 +749,33 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                 }
             }
         }
-        public IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions()
+        public IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId)
         {
             return connection.Query<AssessmentQuestion>(
-                 @"SELECT ID, Question, MinValue, MaxValue
-                    FROM AssessmentQuestions
-                     ORDER BY [Question]");
+                 $@"{AssessmentQuestionFields}
+                    {AssessmentQuestionTables}
+                     ORDER BY [Question]",
+                 new { adminId });
         }
-        public IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId)
+        public IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId)
         {
             return connection.Query<AssessmentQuestion>(
-                 @"SELECT ID, Question, MinValue, MaxValue
-                    FROM AssessmentQuestions AS AQ
+                 $@"{AssessmentQuestionFields}
+                    {AssessmentQuestionTables}
                     INNER JOIN FrameworkDefaultQuestions AS FDQ ON AQ.ID = FDQ.AssessmentQuestionID
                     WHERE FDQ.FrameworkId = @frameworkId
                      ORDER BY [Question]"
-                    , new { frameworkId });
+                    , new { frameworkId, adminId });
         }
-        public IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId)
+        public IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId, int adminId)
         {
             return connection.Query<AssessmentQuestion>(
-                 @"SELECT ID, Question, MinValue, MaxValue
-                    FROM AssessmentQuestions AS AQ
+                 $@"{AssessmentQuestionFields}
+                    {AssessmentQuestionTables}
                      INNER JOIN CompetencyAssessmentQuestions AS CAQ ON AQ.ID = CAQ.AssessmentQuestionID
                      WHERE CAQ.CompetencyID = @competencyId
                      ORDER BY [Question]"
-                    , new { competencyId });
+                    , new { competencyId, adminId });
         }
 
         public void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting)
@@ -835,6 +842,20 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                             WHERE FrameworkID = @frameworkId)",
                     new { frameworkId, assessmentQuestionId });
             }
+        }
+        public IEnumerable<GenericSelectList> GetAssessmentQuestions(int adminId)
+        {
+            return connection.Query<GenericSelectList>(
+                @"SELECT AQ.ID, CASE WHEN AddedByAdminId = @adminId THEN '* ' ELSE '' END + Question + ' (' + InputTypeName + ' ' + CAST(MinValue AS nvarchar) + ' to ' + CAST(MaxValue As nvarchar) + ')' AS Label
+                    FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID", new {adminId}
+                );
+        }
+        public IEnumerable<AssessmentQuestionInputType> GetAssessmentQuestionInputTypes()
+        {
+            return connection.Query<AssessmentQuestionInputType>(
+                @"SELECT ID, InputTypeName
+                    FROM AssessmentQuestionInputTypes"
+                );
         }
     }
 }

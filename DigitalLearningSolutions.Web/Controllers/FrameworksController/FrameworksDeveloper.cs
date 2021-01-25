@@ -291,7 +291,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
             var frameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
-            var frameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId);
+            var frameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
             var model = new FrameworkViewModel()
             {
                 DetailFramework = detailFramework,
@@ -301,6 +301,23 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 FrameworkDefaultQuestions = frameworkDefaultQuestions
             };
             return View("Developer/Framework", model);
+        }
+        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions")]
+        public IActionResult FrameworkDefaultQuestions( int frameworkId, string actionname)
+        {
+            var adminId = GetAdminID();
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            var assessmentQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
+            var questionList = frameworkService.GetAssessmentQuestions(adminId).ToList();
+            var questionSelectList = new SelectList(questionList, "ID", "Label");
+            var model = new DefaultQuestionsViewModel()
+            {
+                FrameworkId = frameworkId,
+                FrameworkName = (string)framework.FrameworkName,
+                AssessmentQuestions = assessmentQuestions,
+                QuestionSelectList = questionSelectList
+            };
+            return View("Developer/DefaultQuestions", model);
         }
     }
 }
