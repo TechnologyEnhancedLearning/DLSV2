@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@model SectionContentViewModel
+@if (Model.NextSectionId != null)
+{
+  <a class="nhsuk-back-link__link next-link nhsuk-u-margin-bottom-3"
+     asp-controller="LearningMenu"
+     asp-action="Section"
+     asp-route-customisationId="@Model.CustomisationId"
+     asp-route-sectionId="@Model.NextSectionId">
+
+    Go to next section
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="next-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+    </svg>
+  </a>
+}
+else
+{
+  <a class="nhsuk-back-link__link next-link nhsuk-u-margin-bottom-3"
+     asp-controller="LearningMenu"
+     asp-action="Index"
+     asp-route-customisationId="@Model.CustomisationId">
+
+    Finish
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="next-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+    </svg>
+  </a>
+}

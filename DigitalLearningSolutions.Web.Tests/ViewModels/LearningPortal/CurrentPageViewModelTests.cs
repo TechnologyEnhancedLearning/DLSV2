@@ -6,22 +6,18 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
-    using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CurrentPageViewModelTests
     {
-        private readonly IConfiguration config = A.Fake<IConfiguration>();
         private CurrentPageViewModel model;
         private CurrentCourse[] currentCourses;
         private SelfAssessment[] selfAssessments;
+
         [SetUp]
         public void SetUp()
         {
-            A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns("http://www.dls.nhs.uk");
-
             currentCourses = new[]
             {
                 new CurrentCourse
@@ -90,7 +86,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             };
             model = new CurrentPageViewModel(
                 currentCourses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",
@@ -114,8 +109,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             0,
             06,
             false,
-            false,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=73&lp=1"
+            false
         )]
         [TestCase(
             1,
@@ -131,8 +125,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             4,
             6,
             false,
-            false,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=71&lp=1"
+            false
         )]
         [TestCase(
             2,
@@ -148,8 +141,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             14,
             16,
             true,
-            true,
-            "http://www.dls.nhs.uk/tracking/learn?CustomisationID=72&lp=1"
+            true
         )]
         public void Current_courses_should_map_to_view_models_in_the_correct_order(
             int index,
@@ -165,8 +157,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             int expectedPasses,
             int expectedSections,
             bool expectedIsSupervisor,
-            bool expectedIsGroup,
-            string expectedLaunchUrl)
+            bool expectedIsGroup)
         {
             var course = model.CurrentCourses.ElementAt(index) as CurrentCourseViewModel;
             course.Id.Should().Be(expectedId);
@@ -182,7 +173,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             course.Sections.Should().Be(expectedSections);
             course.UserIsSupervisor.Should().Be(expectedIsSupervisor);
             course.IsEnrolledWithGroup.Should().Be(expectedIsGroup);
-            course.LaunchUrl.Should().Be(expectedLaunchUrl);
         }
 
         [Test]
@@ -202,14 +192,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
-            var selfAssessments = new[]
-           {
+            selfAssessments = new SelfAssessment[]
+            {
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
             model = new CurrentPageViewModel(
                 courses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",
@@ -239,7 +228,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
-            var selfAssessments = new[]
+            selfAssessments = new SelfAssessment[]
             {
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
@@ -247,7 +236,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 
             model = new CurrentPageViewModel(
                 courses,
-                config,
                 null,
                 "Activity Name",
                 "Ascending",
@@ -277,14 +265,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "j course 10"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(courseName: "k course 11"),
             };
-            var selfAssessments = new[]
-          {
+            selfAssessments = new SelfAssessment[]
+            {
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
             model = new CurrentPageViewModel(
                 courses,
-                config,
                 "Course",
                 "Activity Name",
                 "Ascending",

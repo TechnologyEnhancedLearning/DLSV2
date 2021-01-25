@@ -1,0 +1,11 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.float-right-additional-information {
+  @include mq($until: desktop) {
+    float: none;
+  }
+
+  @include mq($from: desktop) {
+    float: right;
+  }
+}

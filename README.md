@@ -31,9 +31,15 @@ Get a database backup `.bak` file from the current system.
 
 You should now see the `mbdbx101` database in your *Databases* folder on the `localhost` server.
 
+## Apply the migrations by running the code
+
+We need to add the missing tables in the database, using the fluent migrator.
+To do this: run the DigitalLearningSolutions.Web project.
+This will throw an exception because data is missing from the table, but it applies the migrations needed first.
+
 ## Add the self assessment data
 
-We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored database:
+We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored and migrated database:
 1. Open SQL Server Management Studio
 2. Select File -> Open -> File -> Choose AddDigitalCapabilitiesSelfAssessment.sql from the SQLScripts folder in the root of this repo.
 3. Add `USE [mbdbx101]` to the top of the script. This will ensure it runs on the mbdbx101 database
@@ -80,7 +86,11 @@ If the migration has already been deployed and therefore has run on any other da
 
 # Setting up the old code
 
-For testing the integration with the old system (for example launching a course will redirect to the old system) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+For testing the integration with the old system (for example logout or showing SCORM content) when running locally we assume you have the old code running at https://localhost:44367. To change this change the CurrentSystemBaseUrl setting in appsettings.Development.json.
+
+To allow loading pages from the old code in an iframe (which is necessary for tutorials/assessments) you need to make a small tweak to the old code:
+1. Open Web.config in the old code.
+2. On line 150 change `<add name="X-Frame-Options" value="ALLOW-FROM https://future.nhs.uk/" />` to `<add name="X-Frame-Options" value="ALLOWALL" />`
 
 # Running the app
 
@@ -112,7 +122,8 @@ These tests are in the DigitalLearningSolutions.Web.Tests project. No setup is r
 ## Running the data tests
 These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
 
-You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details. Make sure you've added the self assessment data to the test database as well and enrolled the test user on the self assessment, using the same process as for the main database.
+You need to copy the local db you've setup so that you can use the copy for testing, make sure you name the copy `mbdbx101_test`. You can copy the db either by restoring the backup file again but making sure you change the file names, or using the SQL server copy database wizard. See https://stackoverflow.com/questions/3829271/how-can-i-clone-an-sql-server-database-on-the-same-server-in-sql-server-2008-exp for details.
+Make sure you've applied the migrations, added the self assessment data to the test database as well and enrolled the test user on the self assessment, using the same process as for the main database if you build it from the same backup file.
 
 See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
@@ -153,6 +164,10 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
 2. Search for 'External Web Tools'.
 3. In the list select `$(PATH)` and use the up arrow button to move it to the top of the list.
 4. Restart Visual Studio or double click the build command in the Task Runner Explorer to rerun the npm build.
+5. This might cause the build to fail, if tools such as SASS can no longer be found. If this occurs:
+    1. Delete the `node_modules` folder in `DigitalLearningSolutions.Web`
+    2. Run the install command in the Task Runner Explorer to reinstall the `node_modules`
+    3. Run the build command, it should now work as normal
 
 # Logging
 We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
@@ -171,7 +186,7 @@ To view the logs in the database connect to the local db in SQL Server Managemen
 
 ### Get all the logs for today
 ```
-SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE DAY([TimeStamp]) = DAY(GETDATE())
+SELECT * FROM [mbdbx101].[dbo].[V2LogEvents] WHERE CAST([TimeStamp] as DATE) = CAST(GETDATE() as DATE)
 ```
 
 ### Get all the logs for a session

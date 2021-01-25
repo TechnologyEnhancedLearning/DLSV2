@@ -1,0 +1,73 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "~nhsuk-frontend/packages/components/tag/_tag";
+
+.learning-menu-card {
+  border: none;
+}
+
+.card-with-status-heading {
+  @extend .nhsuk-u-margin-bottom-3;
+
+  // Add padding to match border and padding of status tag
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.status-tag {
+  @extend .nhsuk-tag;
+  @extend .nhsuk-u-font-size-24;
+  @extend .nhsuk-u-margin-bottom-3;
+
+  &.incomplete {
+    @extend .nhsuk-tag--orange;
+  }
+
+  &.complete {
+    @extend .nhsuk-tag--green;
+  }
+}
+
+hr.thick {
+  border-bottom-width: 6pt;
+}
+
+.button-row {
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-5;
+
+  div {
+    .nhsuk-button {
+      @extend .nhsuk-u-margin-0;
+    }
+
+    @include mq($until: large-desktop) {
+      margin-top: nhsuk-spacing(3);
+      margin-right: nhsuk-spacing(0);
+      display: block;
+    }
+
+    @include mq($from: large-desktop) {
+      margin-top: nhsuk-spacing(0);
+      margin-right: nhsuk-spacing(3);
+      display: inline;
+    }
+  }
+}
+
+.next-link {
+  padding-left: 0px;
+  padding-right: 16px;
+}
+
+#next-arrow {
+  right: -8px;
+  left: auto;
+}
+
+.passed-text {
+  color: $color_nhsuk-green;
+}
+
+.not-passed-text {
+  @extend .nhsuk-u-secondary-text-color;
+}

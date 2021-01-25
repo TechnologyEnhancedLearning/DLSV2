@@ -31,7 +31,12 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" aria-describedby="@Model.Id-name" href="@Model.LaunchUrl">
+      <a
+        class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+        aria-describedby="@Model.Id-name"
+        asp-controller="LearningMenu"
+        asp-action="Index"
+        asp-route-customisationId="@Model.Id">
         Launch course
       </a>
     </div>

@@ -22,9 +22,14 @@
   <ItemGroup>
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
+    <None Remove="Scripts\learningMenu\contentViewer.ts" />
+    <None Remove="Scripts\learningMenu\diagnosticContentViewer.ts" />
+    <None Remove="Scripts\learningMenu\fullscreen.ts" />
+    <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
+    <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
   </ItemGroup>
 
@@ -33,6 +38,7 @@
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
     <PackageReference Include="Microsoft.FeatureManagement" Version="2.0.0" />
@@ -58,6 +64,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
+    <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
+    <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
+    <TypeScriptCompile Include="Scripts\learningMenu\contentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\available.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\completed.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
@@ -70,6 +80,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\spec\getCourseCards.ts" />
+    <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCourses.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />

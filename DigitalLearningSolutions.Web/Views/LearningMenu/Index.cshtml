@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@model InitialMenuViewModel
+@inject IConfiguration Configuration
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.Title;
+  ViewData["Title"] = Model.Title;
+  ViewData["CustomisationId"] = Model.Id;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.Id}";
+  ViewData["HeaderPathName"] = Model.Title;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.Title</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Close">Return to current activities</a></p>
+    </div>
+  </nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.Title</h1>
+
+    @if (Model.ShowTime)
+    {
+      <h2 class="nhsuk-u-secondary-text-color nhsuk-heading-l">Average Course Time: @Model.AverageDuration</h2>
+    }
+
+    <p class="nhsuk-u-margin-bottom-0">@Model.CentreName</p>
+    <p class="nhsuk-u-secondary-text-color">@Model.BannerText</p>
+  </div>
+</div>
+
+<div>
+  @foreach (var section in Model.Sections)
+  {
+    <partial name="_SectionCard" model="section" />
+  }
+</div>
+
+@if (Model.ShouldShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="@Model.CompletionSummaryCardViewModel" />
+}

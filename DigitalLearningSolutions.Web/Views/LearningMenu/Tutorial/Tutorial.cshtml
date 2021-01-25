@@ -1,0 +1,128 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model TutorialViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/tutorial.css")" asp-append-version="true">
+
+@{
+  ViewData["HeaderPrefix"] = "";
+  ViewData["Application"] = Model.CourseTitle;
+  ViewData["Title"] = Model.CourseTitle;
+  ViewData["CustomisationId"] = @Model.CustomisationId;
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningMenu/{Model.CustomisationId}";
+  ViewData["HeaderPathName"] = Model.CourseTitle;
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close">Current activities</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.TutorialName</li>
+      </ol>
+
+      @if (Model.OnlyItemInOnlySection)
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close">Return to current activities</a></p>
+      }
+      else if (Model.OnlyItemInThisSection)
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+      }
+      else
+      {
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+      }
+    </div>
+  </nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+    @if (Model.ShowLearnStatus)
+    {
+      <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.Status @Model.ScoreSummary</h2>
+    }
+    <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
+  </div>
+</div>
+
+@if (Model.CanShowProgress)
+{
+  <div class="nhsuk-inset-text nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
+    <span class="nhsuk-u-visually-hidden">Information: </span>
+    <p>Based on your diagnostic assessment outcome, this tutorial is <b>@Model.TutorialRecommendation</b>.</p>
+  </div>
+}
+
+@if (Model.Objectives != null)
+{
+  <div class="nhsuk-care-card nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0 objectives-card">
+    <div class="nhsuk-care-card__heading-container">
+      <h3 class="nhsuk-care-card__heading"><span role="text">Objectives</span></h3>
+      <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
+    </div>
+    <div class="nhsuk-care-card__content">
+      @Html.Raw(Model.Objectives)
+    </div>
+  </div>
+}
+
+<div class="button-row nhsuk-u-margin-top-4">
+  @if (Model.TutorialPath != null)
+  {
+    <div>
+      <a class="nhsuk-button @Model.TutorialStartButtonAdditionalStyling"
+         asp-action="ContentViewer"
+         asp-controller="LearningMenu"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId"
+         asp-route-tutorialId="@Model.TutorialId">
+        @Model.TutorialStartButtonText
+      </a>
+    </div>
+  }
+
+  @if (Model.VideoPath != null)
+  {
+    <div>
+      <a class="nhsuk-button nhsuk-button--secondary"
+         asp-controller="LearningMenu"
+         asp-action="TutorialVideo"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-sectionId="@Model.SectionId"
+         asp-route-tutorialId="@Model.TutorialId">
+        Watch video
+      </a>
+    </div>
+  }
+
+  @if (Model.SupportingMaterialPath != null)
+  {
+    <div>
+      <a class="nhsuk-button nhsuk-button--secondary" href="@Model.SupportingMaterialPath" download>
+        @Model.SupportingMaterialsLabel
+      </a>
+    </div>
+  }
+</div>
+
+@if (!Model.OnlyItemInOnlySection)
+{
+  <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
+}
+
+@if (Model.ShowCompletionSummary)
+{
+  <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible thick">
+
+  <partial name="Shared/_CompletionSummaryCard" model="Model.CompletionSummaryCardViewModel" />
+}

@@ -56,6 +56,14 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.Name = ".AspNet.SharedCookie";
             });
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
             mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -77,11 +85,21 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<IUnlockDataService, UnlockDataService>();
             services.AddScoped<IUnlockService, UnlockService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
+            services.AddScoped<ICourseContentService, CourseContentService>();
+            services.AddScoped<ITutorialContentService, TutorialContentService>();
+            services.AddScoped<ISessionDataService, SessionDataService>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISectionContentService, SectionContentService>();
+            services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
+            services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
+            services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<ICourseCompletionService, CourseCompletionService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
@@ -99,6 +117,9 @@ namespace DigitalLearningSolutions.Web
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
+
             app.UseEndpoints(async (endpoints) => await ConfigureEndPointsAsync(endpoints, featureManager));
 
             migrationRunner.MigrateUp();

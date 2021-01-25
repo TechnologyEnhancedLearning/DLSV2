@@ -17,3 +17,7 @@ declare module 'nhsuk-frontend/packages/components/radios/radios' {
 declare module 'nhsuk-frontend/packages/components/checkboxes/checkboxes' {
   export default function Checkboxes(): void;
 }
+
+declare module 'nhsuk-frontend/packages/components/card/card' {
+  export default function Card(): void;
+}

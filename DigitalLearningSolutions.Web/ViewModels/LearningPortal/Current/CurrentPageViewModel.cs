@@ -27,7 +27,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 
         public CurrentPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
-            IConfiguration config,
             string? searchString,
             string sortBy,
             string sortDirection,
@@ -55,7 +54,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             {
                 if (course is CurrentCourse currentCourse)
                 {
-                    return new CurrentCourseViewModel(currentCourse, config);
+                    return new CurrentCourseViewModel(currentCourse);
                 }
 
                 return new SelfAssessmentCardViewModel((SelfAssessment)course);

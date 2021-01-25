@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningMenu
+@model SectionContentViewModel
+<div class="nhsuk-card nhsuk-u-margin-bottom-3 learning-menu-card">
+  <div class="nhsuk-card__content">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        <h3 class="nhsuk-card__heading" id="post-learning-name">
+          Post Learning Assessment
+        </h3>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <h3 class="@Model.PostLearningStatusStyling float-right-additional-information">
+          @Model.PostLearningStatus
+        </h3>
+      </div>
+    </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+           asp-action="PostLearning" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId"
+           aria-describedby="post-learning-name">
+          View assessment
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

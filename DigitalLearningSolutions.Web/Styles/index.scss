@@ -16,6 +16,14 @@ ul > li > ul > li {
   display: none;
 }
 
+.js-only-block {
+  display: none;
+}
+
+.js-enabled .js-only-block {
+  display: block;
+}
+
 .small-edit-button, a.small-edit-button {
     margin-bottom: nhsuk-spacing(2);
     margin-top: nhsuk-spacing(0);

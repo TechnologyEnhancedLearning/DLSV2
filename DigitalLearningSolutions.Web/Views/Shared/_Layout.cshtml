@@ -14,8 +14,8 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/index.css")" asp-append-version="true">
-  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/layout.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/index.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/layout.css")" asp-append-version="true">
   @await RenderSectionAsync("styles", false)
 
   <!-- Scripts -->
@@ -52,7 +52,7 @@
               <image src="https://assets.nhs.uk/images/nhs-logo.png" xlink:href=""></image>
             </svg>
 
-            <span class="nhsuk-header__service-name">Digital Learning Solutions @(ViewData["Application"] ?? "")</span>
+            <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(ViewData["Application"] ?? "")</span>
           </a>
         </div>
 
@@ -61,7 +61,7 @@
             <button class="nhsuk-header__menu-toggle" id="toggle-menu" aria-controls="header-navigation" aria-label="Open menu">Menu</button>
           </div>
         </div>
-        <vc:logo></vc:logo>
+        <vc:logo customisation-id="@((int?) ViewData["CustomisationId"])" />
       </div>
 
       <nav class="nhsuk-header__navigation" id="header-navigation" role="navigation" aria-label="Primary navigation" aria-labelledby="label-navigation">

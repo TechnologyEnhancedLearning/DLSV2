@@ -45,39 +45,5 @@
             // Then
             result.Should().BeNull();
         }
-
-        [Test]
-        public void GetCentreLogo_Returns_Correct_Information()
-        {
-            // When
-            var result = centresService.GetCentreLogo(25);
-
-            // Then
-            result.Width.Should().Be(121);
-            result.Height.Should().Be(55);
-            result.LogoUrl.Should().NotBeNullOrEmpty();
-            result.CentreName.Should().Be("Royal Cornwall Hospitals NHS Trust");
-        }
-
-        [Test]
-        public void GetCentreLogo_Scales_Logo_Dimensions()
-        {
-            // When
-            var result = centresService.GetCentreLogo(5);
-
-            // Then
-            result.Width.Should().Be(174);
-            result.Height.Should().Be(75);
-        }
-
-        [Test]
-        public void GetCentreLogo_Should_Return_Null_LogoUrl_When_No_Logo()
-        {
-            // When
-            var result = centresService.GetCentreLogo(3);
-
-            // Then
-            result.LogoUrl.Should().BeNull();
-        }
     }
 }

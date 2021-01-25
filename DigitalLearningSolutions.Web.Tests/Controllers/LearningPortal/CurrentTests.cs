@@ -37,7 +37,6 @@
             // Then
             var expectedModel = new CurrentPageViewModel(
                 currentCourses,
-                config,
                 null,
                 "Last Accessed Date",
                 "Descending",
@@ -188,7 +187,7 @@
             var result = controller.RemoveCurrentCourseConfirmation(customisationId);
 
             // Then
-            var expectedModel = new CurrentCourseViewModel(currentCourse, config);
+            var expectedModel = new CurrentCourseViewModel(currentCourse);
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
