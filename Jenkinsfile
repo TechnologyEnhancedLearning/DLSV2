@@ -3,7 +3,7 @@ pipeline {
         label 'windows'
     }
     environment {
-        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string-learning-menu')
+        DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string')
     }
     parameters {
         booleanParam(name: 'DeployToUAT', defaultValue: false, description: 'Deploy changes to UAT after build? NB will not deploy to test if this is set')
@@ -53,7 +53,7 @@ pipeline {
         }
         stage('Deploy to test') {
             when {
-                allOf { branch 'learning-menu-master'; not { expression { params.DeployToUAT } } }
+                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {
