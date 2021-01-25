@@ -4,6 +4,7 @@
 @model PostLearningContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningMenu/index.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/learningMenu/contentViewer.css")" asp-append-version="true">
 
 @{
   ViewData["HeaderPrefix"] = "";
@@ -39,11 +40,10 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
-
-    @{ var contentType = "assessment"; }
-    <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
-
-    <iframe src="@Model.ContentSource" class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6 js-only-block" height="800">
-    </iframe>
   </div>
 </div>
+
+@{ var contentType = "assessment"; }
+<partial name="Shared/_JavaScriptDisabledError" model="contentType" />
+
+<partial name="Shared/_IFrameWithFullscreen" model="@Model.ContentSource" />
