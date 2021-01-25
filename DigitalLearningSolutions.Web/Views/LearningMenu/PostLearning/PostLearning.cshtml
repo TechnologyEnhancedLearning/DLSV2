@@ -73,11 +73,11 @@
   else
   {
       <a
-        class="nhsuk-button nhsuk-u-margin-bottom-0"
+        class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
         asp-action="PostLearningContent"
         asp-route-customisationId="@Model.CustomisationId"
         asp-route-sectionId="@Model.SectionId">
-        Start assessment
+        @Model.StartButtonText
       </a>
   }
 </div>
