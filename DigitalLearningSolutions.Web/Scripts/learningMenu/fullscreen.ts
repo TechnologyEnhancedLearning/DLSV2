@@ -10,7 +10,8 @@ export function setupFullscreen(): void {
 }
 
 export function exitFullscreen(): void {
-  getIFrame()?.classList.remove('fullscreen');
+  getIFrameWrapper()?.classList.remove('fullscreen');
+  getIFrameWrapper()?.classList.add('content-viewer_iframe-wrapper');
   getExitFullscreenButton()?.classList.add('hidden');
   getEnterFullscreenButton()?.classList.remove('hidden');
   getHeader()?.classList.remove('hidden');
@@ -19,7 +20,8 @@ export function exitFullscreen(): void {
 }
 
 export function enterFullscreen(): void {
-  getIFrame()?.classList.add('fullscreen');
+  getIFrameWrapper()?.classList.remove('content-viewer_iframe-wrapper');
+  getIFrameWrapper()?.classList.add('fullscreen');
   getExitFullscreenButton()?.classList.remove('hidden');
   getEnterFullscreenButton()?.classList.add('hidden');
   getHeader()?.classList.add('hidden');
@@ -35,8 +37,8 @@ function getExitFullscreenButton(): HTMLElement | undefined {
   return <HTMLElement>document.getElementById('content-viewer_exit-fullscreen-button');
 }
 
-function getIFrame(): HTMLElement | undefined {
-  return <HTMLElement>document.getElementById('content-viewer_iframe');
+function getIFrameWrapper(): HTMLElement | undefined {
+  return <HTMLElement>document.getElementById('content-viewer_iframe-wrapper');
 }
 
 function getHeader(): HTMLElement | undefined {
