@@ -41,12 +41,12 @@
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
   </div>
 </div>
-  
+
 @{ var contentType = "tutorial"; }
 <partial name="Shared/_JavaScriptDisabledError" model="contentType" />
 
-<div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper" id="content-viewer_iframe-wrapper">
-  <iframe src="@Model.ContentSource" class="nhsuk-u-margin-bottom-6 js-only-block content-viewer_iframe">
+<div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper js-only-block" id="content-viewer_iframe-wrapper">
+  <iframe src="@Model.ContentSource" class="nhsuk-u-margin-bottom-6 content-viewer_iframe">
   </iframe>
 </div>
 
