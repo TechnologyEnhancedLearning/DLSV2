@@ -67,6 +67,8 @@
                         
                         INNER JOIN CompetencyAssessmentQuestions AS CAQ
                             ON CAQ.CompetencyID = C.ID
+                        INNER JOIN CompetencyGroups AS CG
+                            ON C.CompetencyGroupID = CG.ID
                         INNER JOIN AssessmentQuestions AS AQ
                             ON AQ.ID = CAQ.AssessmentQuestionID
                         INNER JOIN CandidateAssessments AS CA
@@ -78,9 +80,7 @@
                         INNER JOIN SelfAssessmentStructure AS SAS
                             ON C.ID = SAS.CompetencyID
 
-                                    AND SAS.SelfAssessmentID = @selfAssessmentId
-INNER JOIN CompetencyGroups AS CG
-                            ON SAS.CompetencyGroupID = CG.ID";
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
