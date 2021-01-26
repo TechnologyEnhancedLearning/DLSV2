@@ -14,7 +14,7 @@
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
-        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
+        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments, int minValue, int maxValue);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -168,9 +168,9 @@ CA.LaunchCount, CA.SubmittedDate
             ).FirstOrDefault();
         }
 
-        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
+        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments, int minValue, int maxValue)
         {
-            if (result < 0 || result > 10)
+            if (result < minValue || result > maxValue)
             {
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +

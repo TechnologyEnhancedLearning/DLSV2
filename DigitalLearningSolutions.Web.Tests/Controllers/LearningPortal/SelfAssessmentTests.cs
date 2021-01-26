@@ -165,12 +165,16 @@
             const int competencyId = 3;
             const int assessmentQuestionId = 2;
             const int assessmentQuestionResult = 4;
+            const int minValue = 0;
+            const int maxValue = 10;
             var assessmentQuestions = new Collection<AssessmentQuestion>()
             {
                 new AssessmentQuestion()
                 {
                     Id = assessmentQuestionId,
-                    Result = assessmentQuestionResult
+                    Result = assessmentQuestionResult,
+                    MinValue = minValue,
+                    MaxValue = maxValue
                 }
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
@@ -185,7 +189,9 @@
                 CandidateId,
                 assessmentQuestionId,
                 assessmentQuestionResult,
-                null
+                null,
+                minValue,
+                maxValue
             )).MustHaveHappened();
         }
 
