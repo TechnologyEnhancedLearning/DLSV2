@@ -165,6 +165,8 @@
             const int competencyId = 3;
             const int assessmentQuestionId = 2;
             const int assessmentQuestionResult = 4;
+            const int minValue = 0;
+            const int maxValue = 10;
             var assessmentQuestions = new Collection<AssessmentQuestion>()
             {
                 new AssessmentQuestion()
@@ -185,7 +187,9 @@
                 CandidateId,
                 assessmentQuestionId,
                 assessmentQuestionResult,
-                null
+                null,
+                minValue,
+                maxValue
             )).MustHaveHappened();
         }
 
