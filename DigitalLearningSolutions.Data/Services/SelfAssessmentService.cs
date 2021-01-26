@@ -178,6 +178,14 @@ CA.LaunchCount, CA.SubmittedDate
                     WHERE ID = @assessmentQuestionId",
                 new { assessmentQuestionId }
                 );
+            if(assessmentQuestion == null)
+            {
+                logger.LogWarning(
+                   "Not saving self assessment result as assessment question Id is invalid. " +
+                   $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+               );
+                return;
+            }
             int minValue = assessmentQuestion.MinValue;
             int maxValue = assessmentQuestion.MaxValue;
 
