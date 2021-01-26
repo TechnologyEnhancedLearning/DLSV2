@@ -172,7 +172,9 @@
                 new AssessmentQuestion()
                 {
                     Id = assessmentQuestionId,
-                    Result = assessmentQuestionResult
+                    Result = assessmentQuestionResult,
+                    MinValue = minValue,
+                    MaxValue = maxValue
                 }
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
