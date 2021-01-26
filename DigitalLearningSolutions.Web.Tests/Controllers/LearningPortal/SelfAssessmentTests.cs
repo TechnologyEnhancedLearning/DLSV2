@@ -189,9 +189,7 @@
                 CandidateId,
                 assessmentQuestionId,
                 assessmentQuestionResult,
-                null,
-                minValue,
-                maxValue
+                null
             )).MustHaveHappened();
         }
 
