@@ -52,18 +52,18 @@
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
-            if (config.GetValue<bool>("LegacyLearningMenu"))
+            if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
-                string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
-                string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
-                return Redirect(url);
+                if (config.GetValue<bool>("LegacyLearningMenu"))
+                {
+                    string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
+                    string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
+                    return Redirect(url);
+                }
             }
-            else
-            { 
             var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
-
             if (courseContent == null || centreId == null)
             {
                 logger.LogError(
@@ -72,15 +72,12 @@
                     $"centre id: {centreId?.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
             if (courseContent.Sections.Count == 1)
             {
                 var sectionId = courseContent.Sections.First().Id;
                 return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
-
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
-
             if (progressId == null)
             {
                 logger.LogError(
@@ -88,13 +85,10 @@
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
             sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
-
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
-            }
         }
 
         [Route("/LearningMenu/Close")]
