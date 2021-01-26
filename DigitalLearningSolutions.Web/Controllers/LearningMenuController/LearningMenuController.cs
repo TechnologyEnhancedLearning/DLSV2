@@ -52,6 +52,14 @@
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
+            if (config.GetValue<bool>("LegacyLearningMenu"))
+            {
+                string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
+                string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
+                return Redirect(url);
+            }
+            else
+            { 
             var candidateId = User.GetCandidateId();
             var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
@@ -86,6 +94,7 @@
 
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
+            }
         }
 
         [Route("/LearningMenu/Close")]
