@@ -14,7 +14,7 @@
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
-        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments, int minValue, int maxValue);
+        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -64,8 +64,7 @@
 
         private const string CompetencyTables =
             @"Competencies AS C
-                        INNER JOIN CompetencyGroups AS CG
-                            ON C.CompetencyGroupID = CG.ID
+                        
                         INNER JOIN CompetencyAssessmentQuestions AS CAQ
                             ON CAQ.CompetencyID = C.ID
                         INNER JOIN AssessmentQuestions AS AQ
@@ -78,7 +77,10 @@
                                    AND LAR.AssessmentQuestionID = AQ.ID
                         INNER JOIN SelfAssessmentStructure AS SAS
                             ON C.ID = SAS.CompetencyID
-                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
+
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
@@ -168,8 +170,17 @@ CA.LaunchCount, CA.SubmittedDate
             ).FirstOrDefault();
         }
 
-        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments, int minValue, int maxValue)
+        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
         {
+            var assessmentQuestion = connection.QueryFirstOrDefault<AssessmentQuestion>(
+                @"SELECT ID, MinValue, MaxValue
+                    FROM AssessmentQuestions
+                    WHERE ID = @assessmentQuestionId",
+                new { assessmentQuestionId }
+                );
+            int minValue = assessmentQuestion.MinValue;
+            int maxValue = assessmentQuestion.MaxValue;
+
             if (result < minValue || result > maxValue)
             {
                 logger.LogWarning(

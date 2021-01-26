@@ -73,9 +73,7 @@
                     User.GetCandidateId(),
                     assessmentQuestion.Id,
                     assessmentQuestion.Result.Value,
-                    null,
-                    assessmentQuestion.MinValue,
-                    assessmentQuestion.MaxValue
+                    null
                 );
             }
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);
