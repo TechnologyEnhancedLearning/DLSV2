@@ -79,7 +79,8 @@
                             ON C.ID = SAS.CompetencyID
                                     AND SAS.SelfAssessmentID = @selfAssessmentId
                         INNER JOIN CompetencyGroups AS CG
-                            ON SAS.CompetencyGroupID = CG.ID";
+                            ON SAS.CompetencyGroupID = CG.ID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
@@ -171,7 +172,24 @@ CA.LaunchCount, CA.SubmittedDate
 
         public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
         {
-            if (result < 0 || result > 10)
+            var assessmentQuestion = connection.QueryFirstOrDefault<AssessmentQuestion>(
+                @"SELECT ID, MinValue, MaxValue
+                    FROM AssessmentQuestions
+                    WHERE ID = @assessmentQuestionId",
+                new { assessmentQuestionId }
+                );
+            if(assessmentQuestion == null)
+            {
+                logger.LogWarning(
+                   "Not saving self assessment result as assessment question Id is invalid. " +
+                   $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+               );
+                return;
+            }
+            int minValue = assessmentQuestion.MinValue;
+            int maxValue = assessmentQuestion.MaxValue;
+
+            if (result < minValue || result > maxValue)
             {
                 logger.LogWarning(
                     "Not saving self assessment result as result is invalid. " +

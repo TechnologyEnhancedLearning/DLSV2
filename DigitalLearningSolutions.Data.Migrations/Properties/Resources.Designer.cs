@@ -191,6 +191,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ///
+        ////****** Object:  StoredProcedure [dbo].[GetFilteredCompetencyResponsesForCandidate]    Script Date: 27/01/2021 16:01:15 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/09/2020
+        ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
+        ///-- =============================================
+        ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_153_DropFilteredSPFixes {
+            get {
+                return ResourceManager.GetString("DLSV2_153_DropFilteredSPFixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetFilteredCompetencyResponsesForCandidate]    Script Date: 27/01/2021 15:29:35 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 22/09/2020
+        ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
+        ///-- =============================================
+        ///CREATE OR ALTER   PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
+        ///	-- Add [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_153_FilteredSPFixes {
+            get {
+                return ResourceManager.GetString("DLSV2_153_FilteredSPFixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table

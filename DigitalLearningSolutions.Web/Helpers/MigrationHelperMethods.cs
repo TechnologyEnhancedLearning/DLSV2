@@ -34,7 +34,9 @@
                         typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
                         typeof(AddFrameworkDefaultQuestionsTable).Assembly,
-                        typeof(AddAssessmentQuestionAdminIDColumn).Assembly
+                        typeof(AddAssessmentQuestionAdminIDColumn).Assembly,
+                        typeof(ChangesForDigitalCapability).Assembly,
+                        typeof(FixFilteredSPs).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
