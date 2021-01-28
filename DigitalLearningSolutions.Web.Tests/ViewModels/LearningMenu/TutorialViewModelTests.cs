@@ -733,7 +733,7 @@
             tutorialViewModel.ShowNextButton.Should().Be(expectedShowNextButton);
         }
 
-    [Test]
+        [Test]
         public void Tutorial_should_show_completion_summary_when_include_certification_and_only_tutorial_and_section()
         {
             // Given
