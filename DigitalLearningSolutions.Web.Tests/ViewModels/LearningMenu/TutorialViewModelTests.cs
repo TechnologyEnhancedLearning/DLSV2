@@ -669,7 +669,7 @@
         [TestCase(true, false, true, false)]
         [TestCase(true, true, false, false)]
         [TestCase(true, true, true, false)]
-        public void tutorial_should_have_showCompletionSummary(
+        public void Tutorial_should_have_showCompletionSummary(
             bool otherSectionsExist,
             bool otherItemsInSectionExist,
             bool includeCertification,
@@ -693,6 +693,44 @@
 
             // Then
             tutorialViewModel.ShowCompletionSummary.Should().Be(expectedShowCompletionSummary);
+        }
+
+        [TestCase("Not started", false, false, false)]
+        [TestCase("Not started", false, true, false)]
+        [TestCase("Not started", true, false, false)]
+        [TestCase("Not started", true, true, false)]
+        [TestCase("Started", false, false, false)]
+        [TestCase("Started", false, true, false)]
+        [TestCase("Started", true, false, false)]
+        [TestCase("Started", true, true, false)]
+        [TestCase("Complete", false, false, false)]
+        [TestCase("Complete", false, true, true)]
+        [TestCase("Complete", true, false, true)]
+        [TestCase("Complete", true, true, true)]
+        public void Tutorial_should_have_showNextButton(
+            string status,
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            bool expectedShowNextButton
+        )
+        {
+            // Given
+            var expectedTutorialInformation = TutorialContentHelper.CreateDefaultTutorialInformation(
+                status: status,
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist
+            );
+
+            // When
+            var tutorialViewModel = new TutorialViewModel(
+                config,
+                expectedTutorialInformation,
+                CustomisationId,
+                SectionId
+            );
+
+            // Then
+            tutorialViewModel.ShowNextButton.Should().Be(expectedShowNextButton);
         }
 
         [Test]

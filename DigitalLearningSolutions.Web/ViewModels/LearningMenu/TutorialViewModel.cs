@@ -31,6 +31,7 @@
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
         public string TutorialStartButtonAdditionalStyling { get; }
         public string TutorialStartButtonText { get; }
+        public bool ShowNextButton { get; }
 
         public TutorialViewModel(
             IConfiguration config,
@@ -93,6 +94,7 @@
             );
             TutorialStartButtonAdditionalStyling = tutorialInformation.Status == "Complete" ? "nhsuk-button--secondary" : "";
             TutorialStartButtonText = tutorialInformation.Status == "Complete" ? "Restart tutorial" : "Start tutorial";
+            ShowNextButton = tutorialInformation.Status == "Complete" && !OnlyItemInOnlySection;
         }
 
         private bool GetCanShowProgress(bool showLearnStatus, bool canShowDiagnosticStatus, int attemptCount)

@@ -113,12 +113,13 @@
       </a>
     </div>
   }
-</div>
 
-@if (!Model.OnlyItemInOnlySection)
-{
-  <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
-}
+  @if (Model.ShowNextButton) {
+    <div>
+      <partial name="Tutorial/_TutorialNextLink" model="Model.NextLinkViewModel" />
+    </div>
+  }
+</div>
 
 @if (Model.ShowCompletionSummary)
 {
