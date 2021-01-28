@@ -88,16 +88,21 @@
       </div>
     }
 
-    <button class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.DiagnosticStartButtonAdditionalStyling" type="submit">
-      @Model.DiagnosticStartButtonText
-    </button>
+    <div class="button-row">
+      <div>
+        <button class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.DiagnosticStartButtonAdditionalStyling" type="submit">
+          @Model.DiagnosticStartButtonText
+        </button>
+      </div>
+
+      @if (Model.ShowNextButton) {
+        <div>
+          <partial name="Diagnostic/_DiagnosticNextLink" model="Model"/>
+        </div>
+      }
+    </div>
   </fieldset>
 </form>
-
-@if (!Model.OnlyItemInOnlySection)
-{
-  <partial name="Diagnostic/_DiagnosticNextLink" model="Model" />
-}
 
 @if (Model.ShowCompletionSummary)
 {
