@@ -15,7 +15,7 @@
             Title = section.Title;
             SectionId = section.Id;
             PercentComplete = section.HasLearning && showPercentageCourseSetting
-                ? $"{Convert.ToInt32(Math.Floor(section.PercentComplete))}% Complete"
+                ? $"{Convert.ToInt32(Math.Floor(section.PercentComplete))}% learning complete"
                 : "";
             CustomisationId = customisationId;
         }
