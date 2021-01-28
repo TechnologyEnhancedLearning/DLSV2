@@ -19,6 +19,7 @@
         public bool OnlyItemInThisSection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
+        public bool ShowNextButton { get; }
 
         public PostLearningAssessmentViewModel(PostLearningAssessment postLearningAssessment, int customisationId, int sectionId)
         {
@@ -61,6 +62,8 @@
                 postLearningAssessment.DiagnosticAssessmentCompletionThreshold,
                 postLearningAssessment.TutorialsCompletionThreshold
             );
+
+            ShowNextButton = postLearningAssessment.PostLearningAttempts > 0 && !OnlyItemInOnlySection;
         }
 
         private string GetScoreInformation(PostLearningAssessment postLearningAssessment)

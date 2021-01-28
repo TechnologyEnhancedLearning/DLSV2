@@ -72,20 +72,25 @@
   }
   else
   {
-      <a
-        class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
-        asp-action="PostLearningContent"
-        asp-route-customisationId="@Model.CustomisationId"
-        asp-route-sectionId="@Model.SectionId">
-        @Model.StartButtonText
-      </a>
+    <div class="button-row">
+      <div>
+        <a
+          class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
+          asp-action="PostLearningContent"
+          asp-route-customisationId="@Model.CustomisationId"
+          asp-route-sectionId="@Model.SectionId">
+          @Model.StartButtonText
+        </a>
+      </div>
+
+      @if (Model.ShowNextButton) {
+        <div>
+          <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+        </div>
+      }
+    </div>
   }
 </div>
-
-@if (!Model.OnlyItemInOnlySection)
-{
-  <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
-}
 
 @if (Model.ShowCompletionSummary)
 {

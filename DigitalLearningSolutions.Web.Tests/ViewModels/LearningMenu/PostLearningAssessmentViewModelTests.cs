@@ -496,5 +496,35 @@
             postLearningAssessmentViewModel.CompletionSummaryCardViewModel
                 .Should().BeEquivalentTo(expectedCompletionSummaryViewModel);
         }
+
+        [TestCase(false, false, 0, false)]
+        [TestCase(false, true, 0, false)]
+        [TestCase(true, false, 0, false)]
+        [TestCase(true, true, 0, false)]
+        [TestCase(false, false, 1, false)]
+        [TestCase(false, true, 1, true)]
+        [TestCase(true, false, 1, true)]
+        [TestCase(true, true, 1, true)]
+        public void Post_learning_assessment_should_have_showNextButton(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            int attemptsPl,
+            bool expectedShowNextButton
+        )
+        {
+            // Given
+            var postLearningAssessment = PostLearningAssessmentHelper.CreateDefaultPostLearningAssessment(
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist,
+                attemptsPl: attemptsPl
+            );
+
+            // When
+            var postLearningAssessmentViewModel =
+                new PostLearningAssessmentViewModel(postLearningAssessment, CustomisationId, SectionId);
+
+            // Then
+            postLearningAssessmentViewModel.ShowNextButton.Should().Be(expectedShowNextButton);
+        } 
     }
 }
