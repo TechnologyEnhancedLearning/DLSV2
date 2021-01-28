@@ -30,7 +30,7 @@
         IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId);
         IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId, int adminId);
         IEnumerable<AssessmentQuestionInputType> GetAssessmentQuestionInputTypes();
-        IEnumerable<GenericSelectList> GetAssessmentQuestions(int adminId);
+        IEnumerable<GenericSelectList> GetAssessmentQuestions(int frameworkId, int adminId);
         //INSERT DATA
         BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -807,7 +807,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                         WHERE FrameworkID = @frameworkId
                         EXCEPT
                         SELECT CompetencyID, AssessmentQuestionID
-                        FROM FrameworkCompetencies",
+                        FROM CompetencyAssessmentQuestions",
                     new { assessmentQuestionId, frameworkId });
             }
         }
@@ -843,11 +843,12 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     new { frameworkId, assessmentQuestionId });
             }
         }
-        public IEnumerable<GenericSelectList> GetAssessmentQuestions(int adminId)
+        public IEnumerable<GenericSelectList> GetAssessmentQuestions(int frameworkId, int adminId)
         {
             return connection.Query<GenericSelectList>(
                 @"SELECT AQ.ID, CASE WHEN AddedByAdminId = @adminId THEN '* ' ELSE '' END + Question + ' (' + InputTypeName + ' ' + CAST(MinValue AS nvarchar) + ' to ' + CAST(MaxValue As nvarchar) + ')' AS Label
-                    FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID", new {adminId}
+                    FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
+                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM FrameworkDefaultQuestions WHERE FrameworkId = @frameworkId)", new {frameworkId, adminId}
                 );
         }
         public IEnumerable<AssessmentQuestionInputType> GetAssessmentQuestionInputTypes()

@@ -308,7 +308,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminID();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var assessmentQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
-            var questionList = frameworkService.GetAssessmentQuestions(adminId).ToList();
+            var questionList = frameworkService.GetAssessmentQuestions(frameworkId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
             var model = new DefaultQuestionsViewModel()
             {
@@ -318,6 +318,20 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 QuestionSelectList = questionSelectList
             };
             return View("Developer/DefaultQuestions", model);
+        }
+        [HttpPost]
+        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions")]
+        public IActionResult AddDefaultQuestion(int frameworkId, string actionname, bool addToExisting, int assessmentQuestionID)
+        {
+            var adminId = GetAdminID();
+            frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, addToExisting);
+            return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
+        }
+        public IActionResult RemoveDefaultQuestion(int frameworkId, string actionname, bool deleteFromExisting, int assessmentQuestionID)
+        {
+            var adminId = GetAdminID();
+            frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, deleteFromExisting);
+            return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
         }
     }
 }
