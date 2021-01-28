@@ -42,7 +42,7 @@
             var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
 
             // Then
-            sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% Complete");
+            sectionCardViewModel.PercentComplete.Should().Be($"{percentComplete}% learning complete");
         }
 
         [Test]
@@ -97,7 +97,7 @@
             var sectionCardViewModel = new SectionCardViewModel(section, CustomisationId, showPercentageCourseSetting);
 
             // Then
-            sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% Complete");
+            sectionCardViewModel.PercentComplete.Should().Be($"{percentCompleteRounded}% learning complete");
         }
     }
 }
