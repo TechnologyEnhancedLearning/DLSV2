@@ -24,6 +24,7 @@
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
         public string DiagnosticStartButtonAdditionalStyling { get; }
         public string DiagnosticStartButtonText { get; }
+        public bool ShowNextButton { get; }
 
         public DiagnosticAssessmentViewModel(DiagnosticAssessment diagnosticAssessment, int customisationId, int sectionId)
         {
@@ -60,6 +61,7 @@
             );
             DiagnosticStartButtonAdditionalStyling = diagnosticAssessment.DiagnosticAttempts > 0 ? "nhsuk-button--secondary" : "";
             DiagnosticStartButtonText = diagnosticAssessment.DiagnosticAttempts > 0 ? "Restart assessment" : "Start assessment";
+            ShowNextButton = diagnosticAssessment.DiagnosticAttempts > 0 && !OnlyItemInOnlySection;
         }
     }
 }
