@@ -36,7 +36,8 @@
                         typeof(AddFrameworkDefaultQuestionsTable).Assembly,
                         typeof(AddAssessmentQuestionAdminIDColumn).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
-                        typeof(FixFilteredSPs).Assembly
+                        typeof(FixFilteredSPs).Assembly,
+                        typeof(FilteredFunctionTweak).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

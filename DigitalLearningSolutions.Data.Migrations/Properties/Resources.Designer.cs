@@ -192,6 +192,39 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to 
+        ////****** Object:  UserDefinedFunction [dbo].[GetSelfAssessmentSummaryForCandidate]    Script Date: 28/01/2021 07:45:22 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///CREATE OR ALTER FUNCTION [dbo].[GetSelfAssessmentSummaryForCandidate]
+        ///(
+        ///	@CandidateID int,
+        ///	@SelfAssessmentID int
+        ///)
+        ///RETURNS @ResTable TABLE 
+        ///(
+        ///	CompetencyGroupID int,
+        ///	Confidence float,
+        ///	Relevance float
+        ///)
+        ///
+        ///AS	  
+        ///BEGIN
+        ///INSERT INTO @ResTable
+        ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
+        ///FROM    [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_153_DropFilteredFunctionTweak {
+            get {
+                return ResourceManager.GetString("DLSV2_153_DropFilteredFunctionTweak", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
         ///
         ////****** Object:  StoredProcedure [dbo].[GetFilteredCompetencyResponsesForCandidate]    Script Date: 27/01/2021 16:01:15 ******/
         ///SET ANSI_NULLS ON
@@ -211,6 +244,36 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string DLSV2_153_DropFilteredSPFixes {
             get {
                 return ResourceManager.GetString("DLSV2_153_DropFilteredSPFixes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetSelfAssessmentSummaryForCandidate]    Script Date: 28/01/2021 07:43:39 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///CREATE OR ALTER FUNCTION [dbo].[GetSelfAssessmentSummaryForCandidate]
+        ///(
+        ///	@CandidateID int,
+        ///	@SelfAssessmentID int
+        ///)
+        ///RETURNS @ResTable TABLE 
+        ///(
+        ///	CompetencyGroupID int,
+        ///	Confidence float,
+        ///	Relevance float
+        ///)
+        ///
+        ///AS	  
+        ///BEGIN
+        ///INSERT INTO @ResTable
+        ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
+        ///FROM   (SELEC [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_153_FilteredFunctionTweak {
+            get {
+                return ResourceManager.GetString("DLSV2_153_FilteredFunctionTweak", resourceCulture);
             }
         }
         
