@@ -69,6 +69,12 @@
     <p class="nhsuk-u-secondary-text-color">
       The assessment is locked as there have been too many failed attempts.
     </p>
+
+    @if (Model.ShowNextButton) {
+      <div>
+        <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+      </div>
+    }
   }
   else
   {
