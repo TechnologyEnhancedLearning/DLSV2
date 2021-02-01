@@ -31,6 +31,7 @@
         IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId, int adminId);
         IEnumerable<AssessmentQuestionInputType> GetAssessmentQuestionInputTypes();
         IEnumerable<GenericSelectList> GetAssessmentQuestions(int frameworkId, int adminId);
+        FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId);
         //INSERT DATA
         BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -802,7 +803,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             {
                 numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
-                        SELECT CompetencyID, @assessmentQuestionId
+                        SELECT CompetencyID, @assessmentQuestionId AS AssessmentQuestionID
                         FROM FrameworkCompetencies
                         WHERE FrameworkID = @frameworkId
                         EXCEPT
@@ -856,6 +857,24 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return connection.Query<AssessmentQuestionInputType>(
                 @"SELECT ID, InputTypeName
                     FROM AssessmentQuestionInputTypes"
+                );
+        }
+        public FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId)
+        {
+            return connection.QueryFirstOrDefault<FrameworkDefaultQuestionUsage>(
+                @"SELECT @assessmentQuestionId AS ID,
+                 (SELECT AQ.Question + ' (' + AQI.InputTypeName + ' ' + CAST(AQ.MinValue AS nvarchar) + ' to ' + CAST(AQ.MaxValue AS nvarchar) + ')' AS Expr1
+                 FROM    AssessmentQuestions AS AQ LEFT OUTER JOIN
+                              AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
+                 WHERE (AQ.ID = @assessmentQuestionId)) AS Question, COUNT(CompetencyID) AS Competencies,
+                 (SELECT COUNT(CompetencyID) AS Expr1
+                 FROM    CompetencyAssessmentQuestions
+                 WHERE (AssessmentQuestionID = @assessmentQuestionId) AND (CompetencyID IN
+                                  (SELECT CompetencyID
+                                  FROM    FrameworkCompetencies
+                                  WHERE (FrameworkID = @frameworkId)))) AS CompetencyAssessmentQuestions
+FROM   FrameworkCompetencies AS FC
+WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
         }
     }

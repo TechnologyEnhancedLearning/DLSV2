@@ -327,10 +327,32 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, addToExisting);
             return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
         }
-        public IActionResult RemoveDefaultQuestion(int frameworkId, string actionname, bool deleteFromExisting, int assessmentQuestionID)
+        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions/Remove/{assessmentQuestionId}")]
+        public IActionResult RemoveDefaultQuestion(int frameworkId, string actionname, int assessmentQuestionId)
         {
             var adminId = GetAdminID();
-            frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, deleteFromExisting);
+           var frameworkDefaultQuestionUsage = frameworkService.GetFrameworkDefaultQuestionUsage(frameworkId, assessmentQuestionId);
+            if (frameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == 0)
+            {
+                frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, false);
+                return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
+            }
+            else
+            {
+                var model = new RemoveDefaultQuestionViewModel()
+                {
+                    FrameworkId = frameworkId,
+                    AssessmentQuestionId = assessmentQuestionId,
+                    FrameworkDefaultQuestionUsage = frameworkDefaultQuestionUsage
+                };
+                return View("Developer/RemoveDefaultQuestion", model);
+            }
+            
+        }
+        public IActionResult ConfirmRemoveDefaultQuestion(int frameworkId, string actionname, int assessmentQuestionId, bool deleteFromExisting)
+        {
+            var adminId = GetAdminID();
+            frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, deleteFromExisting);
             return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
         }
     }
