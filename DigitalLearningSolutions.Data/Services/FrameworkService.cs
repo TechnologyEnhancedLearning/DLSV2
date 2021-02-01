@@ -342,6 +342,16 @@
                 return existingId;
             }
         }
+        public void AddDefaultQuestionsToCompetency (int competencyId, int frameworkId)
+        {
+            connection.Execute(
+                @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
+                        SELECT @competencyId AS Expr1, AssessmentQuestionId
+                    FROM   FrameworkDefaultQuestions
+                    WHERE (FrameworkId = @frameworkId)",
+                new {competencyId, frameworkId}
+                );
+        }
         public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId)
         {
             if (competencyId < 1 | adminId < 1 | frameworkId < 1)
@@ -547,7 +557,6 @@
                 new { Id }
                 );
         }
-
         public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId)
         {
             if (frameworkCompetencyGroupId < 1 | adminId < 1 | competencyGroupId < 1 | name.Length < 3)
