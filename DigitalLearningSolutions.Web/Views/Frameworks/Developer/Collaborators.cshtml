@@ -8,6 +8,35 @@
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item">Create framework</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="FrameworksDashboard">Back to frameworks</a></p>
+      </div>
+    </nav>
+  }
+}
+else
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item">Collaborators</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Back to framework detail</a></p>
+      </div>
+    </nav>
+  }
+}
 <h1>Choose working group members</h1>
 <div class="nhsuk-table__panel-with-heading-tab">
   <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>
@@ -62,7 +91,7 @@
       }
     </tbody>
   </table>
-  </div>
+</div>
 <form method="post">
   <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
     <h2>Add a user to the working group</h2>
@@ -103,4 +132,4 @@
     </a>
   }
 </div>
- 
+
