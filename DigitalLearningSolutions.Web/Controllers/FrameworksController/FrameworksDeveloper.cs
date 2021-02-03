@@ -355,5 +355,38 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, deleteFromExisting);
             return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
         }
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
+        public IActionResult EditCompetencyAssessmentQuestions(int frameworkId, int frameworkCompetencyId)
+        {
+            var adminId = GetAdminID();
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            var assessmentQuestions = frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId);
+            var questionList = frameworkService.GetAssessmentQuestionsForCompetency(frameworkCompetencyId, adminId).ToList();
+            var questionSelectList = new SelectList(questionList, "ID", "Label");
+            var model = new CompetencyAssessmentQuestionsViewModel()
+            {
+                FrameworkId = frameworkId,
+                FrameworkCompetencyId = frameworkCompetencyId,
+                FrameworkName = (string)framework.FrameworkName,
+                AssessmentQuestions = assessmentQuestions,
+                QuestionSelectList = questionSelectList
+            };
+            return View("Developer/CompetencyAssessmentQuestions", model);
+        }
+        [HttpPost]
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
+        public IActionResult AddCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionID)
+        {
+            var adminId = GetAdminID();
+            frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionID, adminId);
+            return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
+        }
+        public IActionResult RemoveCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
+        {
+            var adminId = GetAdminID();
+                frameworkService.DeleteCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
+            return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
+
+        }
     }
 }

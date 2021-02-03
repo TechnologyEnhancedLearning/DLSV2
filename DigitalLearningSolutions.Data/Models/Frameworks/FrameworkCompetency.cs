@@ -9,5 +9,6 @@
         public string Name { get; set; }
         public string? Description { get; set; }
         public int Ordering { get; set; }
+        public int AssessmentQuestions { get; set; }
     }
 }

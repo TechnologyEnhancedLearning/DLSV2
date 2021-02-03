@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
-@model DefaultQuestionsViewModel;
+@model CompetencyAssessmentQuestionsViewModel;
 @{
-  ViewData["Title"] = "Framework Default Questions";
+  ViewData["Title"] = "Competency Assessment Questions";
   ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -13,17 +13,17 @@
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
-        <li class="nhsuk-breadcrumb__item">Default Questions</li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Competency Assessment Questions</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Back to Framework Details</a></p>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to Framework Structure</a></p>
     </div>
   </nav>
 }
-<h1>Framework default assessment questions</h1>
-<p class="nhsuk-body-l">Default assessment questions listed here will be applied to any new competencies added to this framework. You will be able to remove default questions from competencies where appropriate and add bespoke (non-default) questions to a competency, if required.</p>
+<h1>Competency assessment questions</h1>
+<p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this competency.</p>
 <div class="nhsuk-table__panel-with-heading-tab">
-  <h2 class="nhsuk-table__heading-tab">Default assessment questions for framework competencies</h2>
+  <h2 class="nhsuk-table__heading-tab">Assessment questions for competency</h2>
 
   @if (Model.AssessmentQuestions.Any())
   {
@@ -60,13 +60,13 @@
             </td>
             <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
               <span class="nhsuk-table-responsive__heading">Actions </span>
-              <a title="Remove question from framework" asp-action="RemoveDefaultQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-assessmentQuestionId="@question.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+              <a title="Remove question from competency" asp-action="RemoveCompetencyAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-assessmentQuestionId="@question.ID">
                 Remove
               </a>
               @if (question.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="FrameworkDefaultQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
                   Edit
                 </a>
               }
@@ -78,7 +78,7 @@
   }
   else
   {
-    <p>No default assessment questions have been set for this framework.</p>
+    <p>No assessment questions have been added to this competency.</p>
   }
 </div>
 
@@ -87,28 +87,15 @@
     <h3>Add a question</h3>
   </label>
   <div class="nhsuk-hint" id="add-user-hint">
-    Choose a default question to add to the framework
+    Choose a question to add to the competency
   </div>
   <select class="nhsuk-select" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId" aria-label="Question"></select>
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "Edit")
-  {
-    <button class="nhsuk-button button-small nhsuk-button--secondary button-small" title="Add and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkId="@Model.FrameworkId">
-      Add and apply <span class="visually-hidden"> to existing competencies</span>
-    </button>
-
-    <button class="nhsuk-button nhsuk-button--secondary button-small" title="Add without applying to existing competencies" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
-      Add
-    </button>
-  }
-  else
-  {
     <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
       Add
     </button>
-  }
 </form>
 <div class=" nhsuk-u-margin-top-6">
-  <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
+  <a class="nhsuk-button" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
     Done
   </a>
 </div>

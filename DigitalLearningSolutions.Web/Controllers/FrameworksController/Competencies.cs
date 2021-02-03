@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId = 0)
         {
             CompetencyGroupBase competencyGroupBase = new CompetencyGroupBase();
-            if(frameworkCompetencyGroupId > 0)
+            if (frameworkCompetencyGroupId > 0)
             {
                 competencyGroupBase = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId);
             }
@@ -142,9 +142,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminID());
-            if(frameworkCompetencyGroupId != null)
+            if (frameworkCompetencyGroupId != null)
             {
-return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+                return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }

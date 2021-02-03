@@ -12,6 +12,7 @@
               @Model.FrameworkCompetency.Name
             </span>
           </h4>
+
         </summary>
         <div class="nhsuk-details__text">
           @(Html.Raw(Model.FrameworkCompetency.Description))
@@ -24,6 +25,8 @@
         @Model.FrameworkCompetency.Name
       </h4>
     }
+    <p class="nhsuk-u-secondary-text-color"><a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id" asp-route-actionname="Edit">
+  Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)</a></p>
     @if (Model.CanModify)
     {
       <p>
