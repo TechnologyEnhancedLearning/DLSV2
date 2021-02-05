@@ -1,0 +1,66 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model AssessmentQuestionViewModel;
+@{
+  ViewData["Title"] = "Framework Default Questions";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+        @if ((string)(ViewContext.RouteData.Values["source"]) == "FrameworkDefaultQuestions")
+        {
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item">Default Questions</li>
+        }
+        else
+        {
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Competency Assessment Questions</a></li>
+          <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
+        }
+
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Back to Framework Details</a></p>
+    </div>
+  </nav>
+}
+<form method="post">
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <h1 class="nhsuk-fieldset__heading">
+        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
+      </h1>
+    </legend>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="tb-question">
+        Question
+      </label>
+      <div class="nhsuk-hint" id="tb-question-hint">
+        What question will the user be asked? Try to choose a generic question that can be asked about multiple competencies.
+      </div>
+      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" type="text">
+    </div>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="select-input-type">
+        Input type
+      </label>
+      <div class="nhsuk-hint" id="select-input-type-hint">
+        How will the user answer?
+      </div>
+      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
+    </div>
+
+  </fieldset>
+  <a class="nhsuk-button" asp-action="EditAssessmentQuestion">
+    Next
+  </a>
+  <a class="nhsuk-button nhsuk-button--secondary">
+    Cancel
+  </a>
+</form>

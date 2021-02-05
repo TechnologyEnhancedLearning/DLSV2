@@ -20,14 +20,15 @@
     </div>
   </nav>
 }
-<h1>Competency assessment questions</h1>
+<h1 class="truncate-overflow">@Model.CompetencyName</h1>
+<h2>Competency assessment questions</h2>
 <p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this competency.</p>
 <div class="nhsuk-table__panel-with-heading-tab">
-  <h2 class="nhsuk-table__heading-tab">Assessment questions for competency</h2>
+  <h3 class="nhsuk-table__heading-tab">Assessment questions for competency</h3>
 
   @if (Model.AssessmentQuestions.Any())
   {
-    <table role="presentation" class="nhsuk-table-responsive">
+    <table class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
         <tr role="row">
           <th role="columnheader" class="" scope="col">
@@ -60,13 +61,13 @@
             </td>
             <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
               <span class="nhsuk-table-responsive__heading">Actions </span>
-              <a title="Remove question from competency" asp-action="RemoveCompetencyAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-assessmentQuestionId="@question.ID">
+              <a asp-action="RemoveCompetencyAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-assessmentQuestionId="@question.ID">
                 Remove
               </a>
               @if (question.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions">
                   Edit
                 </a>
               }
@@ -81,21 +82,25 @@
     <p>No assessment questions have been added to this competency.</p>
   }
 </div>
-
-<form method="post">
-  <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-    <h3>Add a question</h3>
-  </label>
-  <div class="nhsuk-hint" id="add-user-hint">
-    Choose a question to add to the competency
-  </div>
-  <select class="nhsuk-select" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId" aria-label="Question"></select>
-    <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
-      Add
-    </button>
-</form>
-<div class=" nhsuk-u-margin-top-6">
-  <a class="nhsuk-button" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
-    Done
-  </a>
-</div>
+  <h3>Add a question</h3>
+  <form method="post">
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="select-question">
+        Add an existing assessment question to the competency
+      </label>
+      <select class="nhsuk-select" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
+      <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
+        Add
+      </button>
+    </div>
+  </form>
+  <div class="nhsuk-form-group">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions">
+      Add a new question
+    </a>
+    </div>
+    <div class=" nhsuk-u-margin-top-6">
+      <a class="nhsuk-button" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+        Done
+      </a>
+    </div>

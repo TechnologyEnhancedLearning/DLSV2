@@ -353,3 +353,20 @@ ul.no-decs {
 .nhsuk-details__summary-text {
   text-decoration: none;
 }
+
+h1.truncate-overflow {
+  position: relative;
+  height: 112px;
+  overflow: hidden;
+}
+
+h1.truncate-overflow::after {
+  content: "";
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30%;
+  height: 56px;
+  background: linear-gradient(to right, rgba(240, 244, 245, 0), rgba(240, 244, 245, 1) 50%);
+}

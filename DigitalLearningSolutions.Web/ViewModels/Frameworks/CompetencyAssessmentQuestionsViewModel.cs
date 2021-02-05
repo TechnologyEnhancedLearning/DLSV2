@@ -7,7 +7,7 @@
     {
         public int FrameworkId { get; set; }
         public int FrameworkCompetencyId { get; set; }
-        public string? FrameworkName { get; set; }
+        public string? CompetencyName { get; set; }
         public SelectList? QuestionSelectList { get; set; }
         public IEnumerable<AssessmentQuestion>? AssessmentQuestions { get; set; }
         public int assessmentQuestionId { get; set; }
