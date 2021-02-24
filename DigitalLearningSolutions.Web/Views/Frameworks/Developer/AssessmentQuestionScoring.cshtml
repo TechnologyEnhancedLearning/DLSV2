@@ -38,46 +38,81 @@
     </div>
   </nav>
 }
+
 <form method="post">
-  @if (!ViewData.ModelState.IsValid)
-  {
-    <partial name="_ErrorSummary" />
-  }
   <fieldset class="nhsuk-fieldset">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <h1 class="nhsuk-fieldset__heading">
-        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
-      </h1>
-    </legend>
-    <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
-      <label class="nhsuk-label" for="tb-question">
-        Question
-      </label>
-      <div class="nhsuk-hint" id="tb-question-hint">
-        What question will the user be asked? Try to choose a generic question that can be asked about multiple competencies.
+    @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 2)
+    {
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+        <h1 class="nhsuk-fieldset__heading">
+          @Model.AssessmentQuestionDetail.Question - @Model.AssessmentQuestionDetail.Question - Scoring range
+        </h1>
+      </legend>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-minValue">
+          Minimum value
+        </label>
+        <div class="nhsuk-hint" id="tb-minValue-hint">
+          What is the minimum score a user will be able to choose against this question?
+        </div>
+        <input class="nhsuk-input nhsuk-input--width-5" id="tb-minValue" asp-for="AssessmentQuestionDetail.MinValue" name="MinValue" inputmode="numeric" type="number">
       </div>
-      <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
-      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
-    </nhs-form-group>
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="select-input-type">
-        Input type
-      </label>
-      <div class="nhsuk-hint" id="select-input-type-hint">
-        How will the user answer?
+
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-minValueDescription">
+          Minimum value label
+        </label>
+        <div class="nhsuk-hint" id="tb-minValueDescription-hint">
+          What text should appear at the low end of the rating slider?
+        </div>
+        <input class="nhsuk-input" id="tb-minValueDescription" asp-for="AssessmentQuestionDetail.MinValueDescription" name="MinValueDescription" type="text">
       </div>
-      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
-    </div>
-    <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
-    <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-maxValue">
+          Maximum value
+        </label>
+        <div class="nhsuk-hint" id="tb-question-hint">
+          What is the maximum score a user will be able to choose against this question?
+        </div>
+        <input class="nhsuk-input nhsuk-input--width-5" id="tb-maxValue" asp-for="AssessmentQuestionDetail.MaxValue" name="MaxValue" inputmode="numeric" type="number">
+      </div>
+
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-maxValueDescription">
+          Maximum value label
+        </label>
+        <div class="nhsuk-hint" id="tb-maxValueDescription-hint">
+          What text should appear at the high end of the rating slider?
+        </div>
+        <input class="nhsuk-input" id="tb-maxValueDescription" asp-for="AssessmentQuestionDetail.MaxValueDescription" name="MaxValueDescription" type="text">
+      </div>
+    }
+    else
+    {
+      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+        <h1 class="nhsuk-fieldset__heading">
+          @Model.AssessmentQuestionDetail.Question - Radio button options
+        </h1>
+      </legend>
+      <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" value="1" />
+      <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
+      <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-maxValue">
+          How many radio button options will be presented to the user?
+        </label>
+        <input class="nhsuk-input nhsuk-input--width-5" id="tb-maxValue" asp-for="AssessmentQuestionDetail.MaxValue" name="MaxValue" inputmode="numeric" type="number">
+      </div>
+    }
+    <input name="Question" type="hidden" asp-for="AssessmentQuestionDetail.Question" />
+    <input name="AssessmentQuestionInputTypeID" type="hidden" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" />
     <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
     <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
     <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
     <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
     <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
   </fieldset>
+
   <button class="nhsuk-button" type="submit">
     Next
   </button>

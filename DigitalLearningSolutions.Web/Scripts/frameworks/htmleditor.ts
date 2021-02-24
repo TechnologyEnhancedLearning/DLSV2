@@ -1,6 +1,6 @@
 import * as jodit from 'jodit';
 
-const editor = new jodit.Jodit('#competency-description', {
+const editor = new jodit.Jodit('.html-editor', {
   buttons: [
     'source', '|',
     'bold',

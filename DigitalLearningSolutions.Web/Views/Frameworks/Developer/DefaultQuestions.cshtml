@@ -67,7 +67,7 @@
               @if (question.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="FrameworkDefaultQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="0" asp-route-frameworkId="@Model.FrameworkId" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
                   Edit
                 </a>
               }
@@ -90,25 +90,15 @@
   <div class="nhsuk-hint" id="add-user-hint">
     Add an existing default assessment question to the framework
   </div>
-  <select class="nhsuk-select" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId" aria-label="Question"></select>
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "Edit")
-  {
+  <select class="nhsuk-select nhsuk-u-width-three-quarters" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId" aria-label="Question"></select>
     <button class="nhsuk-button button-small nhsuk-button--secondary button-small" title="Add and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkId="@Model.FrameworkId">
       Add and apply <span class="visually-hidden"> to existing competencies</span>
     </button>
-
     <button class="nhsuk-button nhsuk-button--secondary button-small" title="Add without applying to existing competencies" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
       Add
     </button>
-  }
-  else
-  {
-    <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
-      Add
-    </button>
-  }
 </form>
-<a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+<a class="nhsuk-button nhsuk-button--secondary" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.FrameworkId"  asp-route-frameworkCompetencyId="0" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
   Add a new question
 </a>
 <div class=" nhsuk-u-margin-top-6">

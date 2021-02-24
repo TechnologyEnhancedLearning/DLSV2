@@ -67,7 +67,7 @@
               @if (question.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="EditAssessmentQuestion" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions">
+                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
                   Edit
                 </a>
               }
@@ -88,14 +88,14 @@
       <label class="nhsuk-label" for="select-question">
         Add an existing assessment question to the competency
       </label>
-      <select class="nhsuk-select" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
+      <select class="nhsuk-select nhsuk-u-width-three-quarters" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
       <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">
         Add
       </button>
     </div>
   </form>
   <div class="nhsuk-form-group">
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.FrameworkId" asp-route-source="CompetencyAssessmentQuestions">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.FrameworkId"  asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
       Add a new question
     </a>
     </div>

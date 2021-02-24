@@ -6,11 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using DigitalLearningSolutions.Web.Extensions;
+using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
+        private const string CookieName = "DLSFrameworkService";
         [Route("/Frameworks/MyFrameworks/{page=1:int}")]
         public IActionResult FrameworksDashboard(string? searchString = null,
             string sortBy = FrameworkSortByOptionTexts.FrameworkCreatedDate,
@@ -301,127 +306,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 FrameworkDefaultQuestions = frameworkDefaultQuestions
             };
             return View("Developer/Framework", model);
-        }
-        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions")]
-        public IActionResult FrameworkDefaultQuestions( int frameworkId, string actionname)
-        {
-            var adminId = GetAdminID();
-            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-            var assessmentQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
-            var questionList = frameworkService.GetAssessmentQuestions(frameworkId, adminId).ToList();
-            var questionSelectList = new SelectList(questionList, "ID", "Label");
-            var model = new DefaultQuestionsViewModel()
-            {
-                FrameworkId = frameworkId,
-                FrameworkName = (string)framework.FrameworkName,
-                AssessmentQuestions = assessmentQuestions,
-                QuestionSelectList = questionSelectList
-            };
-            return View("Developer/DefaultQuestions", model);
-        }
-        [HttpPost]
-        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions")]
-        public IActionResult AddDefaultQuestion(int frameworkId, string actionname, bool addToExisting, int assessmentQuestionID)
-        {
-            var adminId = GetAdminID();
-            frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, addToExisting);
-            return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
-        }
-        [Route("/Framework/{actionname}/{frameworkId}/DefaultQuestions/Remove/{assessmentQuestionId}")]
-        public IActionResult RemoveDefaultQuestion(int frameworkId, string actionname, int assessmentQuestionId)
-        {
-            var adminId = GetAdminID();
-           var frameworkDefaultQuestionUsage = frameworkService.GetFrameworkDefaultQuestionUsage(frameworkId, assessmentQuestionId);
-            if (frameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == 0)
-            {
-                frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, false);
-                return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
-            }
-            else
-            {
-                var model = new RemoveDefaultQuestionViewModel()
-                {
-                    FrameworkId = frameworkId,
-                    AssessmentQuestionId = assessmentQuestionId,
-                    FrameworkDefaultQuestionUsage = frameworkDefaultQuestionUsage
-                };
-                return View("Developer/RemoveDefaultQuestion", model);
-            }
-            
-        }
-        public IActionResult ConfirmRemoveDefaultQuestion(int frameworkId, string actionname, int assessmentQuestionId, bool deleteFromExisting)
-        {
-            var adminId = GetAdminID();
-            frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, deleteFromExisting);
-            return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId, actionname });
-        }
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
-        public IActionResult EditCompetencyAssessmentQuestions(int frameworkId, int frameworkCompetencyId)
-        {
-            var adminId = GetAdminID();
-            var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-            var assessmentQuestions = frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId);
-            var questionList = frameworkService.GetAssessmentQuestionsForCompetency(frameworkCompetencyId, adminId).ToList();
-            var questionSelectList = new SelectList(questionList, "ID", "Label");
-            var model = new CompetencyAssessmentQuestionsViewModel()
-            {
-                FrameworkId = frameworkId,
-                FrameworkCompetencyId = frameworkCompetencyId,
-                CompetencyName = (string)competency.Name,
-                AssessmentQuestions = assessmentQuestions,
-                QuestionSelectList = questionSelectList
-            };
-            return View("Developer/CompetencyAssessmentQuestions", model);
-        }
-        [HttpPost]
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
-        public IActionResult AddCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionID)
-        {
-            var adminId = GetAdminID();
-            frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionID, adminId);
-            return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
-        }
-        public IActionResult RemoveCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
-        {
-            var adminId = GetAdminID();
-                frameworkService.DeleteCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
-            return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
-
-        }
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question")]
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}")]
-        [Route("/Frameworks/{frameworkId}/DefaultQuestions/Question")]
-        [Route("/Frameworks/{frameworkId}/DefaultQuestions/Question/{assessmentQuestionId}")]
-        public IActionResult EditAssessmentQuestion(int frameworkId, string source, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
-        {
-            var adminId = GetAdminID();
-            AssessmentQuestionDetail assessmentQuestionDetail = new AssessmentQuestionDetail();
-            if(assessmentQuestionId > 0)
-            {
-                assessmentQuestionDetail = frameworkService.GetAssessmentQuestionDetailById(assessmentQuestionId, adminId);
-            }
-            string name = "";
-            if(frameworkCompetencyId > 0)
-            {
-                var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-                name = competency.Name;
-            }
-            else
-            {
-                var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-                name = framework.FrameworkName;
-            }
-            var inputTypes = frameworkService.GetAssessmentQuestionInputTypes();
-            var inputTypeSelectList = new SelectList(inputTypes, "ID", "Label");
-            var model = new AssessmentQuestionViewModel()
-            {
-                FrameworkId = frameworkId,
-                FrameworkCompetencyId = frameworkCompetencyId,
-                Name = name,
-                AssessmentQuestionDetail = assessmentQuestionDetail,
-                InputTypeSelectList = inputTypeSelectList
-            };
-            return View("Developer/AssessmentQuestion", model);
         }
     }
 }

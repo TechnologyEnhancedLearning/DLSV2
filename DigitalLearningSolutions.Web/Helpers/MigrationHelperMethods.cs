@@ -37,7 +37,8 @@
                         typeof(AddAssessmentQuestionAdminIDColumn).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
                         typeof(FixFilteredSPs).Assembly,
-                        typeof(FilteredFunctionTweak).Assembly
+                        typeof(FilteredFunctionTweak).Assembly,
+                        typeof(AssessmentQuestionMaxMinDescriptionNullable).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

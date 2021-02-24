@@ -5,6 +5,7 @@
   ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -39,44 +40,56 @@
   </nav>
 }
 <form method="post">
-  @if (!ViewData.ModelState.IsValid)
-  {
-    <partial name="_ErrorSummary" />
-  }
   <fieldset class="nhsuk-fieldset">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
       <h1 class="nhsuk-fieldset__heading">
-        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
+        @Model.AssessmentQuestionDetail.Question - Options
       </h1>
     </legend>
-    <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
-      <label class="nhsuk-label" for="tb-question">
-        Question
-      </label>
-      <div class="nhsuk-hint" id="tb-question-hint">
-        What question will the user be asked? Try to choose a generic question that can be asked about multiple competencies.
-      </div>
-      <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
-      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
-    </nhs-form-group>
     <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="select-input-type">
-        Input type
+      <label class="nhsuk-label" for="tb-scoringInstructions">
+        Scoring instructions
       </label>
-      <div class="nhsuk-hint" id="select-input-type-hint">
-        How will the user answer?
+      <div class="nhsuk-hint" id="tb-scoringInstructions-hint">
+        When this question is presented to the user, what instructions (if any) should be presented to assist them in answering?
       </div>
-      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
+      <textarea class="nhsuk-input html-editor" placeholder="Optional" id="tb-scoringInstructions" asp-for="AssessmentQuestionDetail.ScoringInstructions" name="ScoringInstructions" type="text"></textarea>
     </div>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" asp-for="AssessmentQuestionDetail.IncludeComments">
+        Comments field
+      </label>
+      <div class="nhsuk-hint" id="includeComments-hint">
+        When this question is presented, should the user be prompted for supporting comments by default?
+      </div>
+      <div class="nhsuk-checkboxes">
+        <div class="nhsuk-radios">
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true">
+            <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
+              Yes
+            </label>
+          </div>
+          <div class="nhsuk-radios__item">
+            <input class="nhsuk-radios__input" id="rb-includeComments-no" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="false">
+            <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-no">
+              No
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    @*<input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
+    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />*@
     <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
     <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
+    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
+    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
+    <input name="Question" type="hidden" asp-for="AssessmentQuestionDetail.Question" />
+    <input name="AssessmentQuestionInputTypeID" type="hidden" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" />
     <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
     <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
     <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
-    <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
-    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
   </fieldset>
   <button class="nhsuk-button" type="submit">
     Next
@@ -94,3 +107,6 @@
     </a>
   }
 </form>
+@section scripts {
+  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}

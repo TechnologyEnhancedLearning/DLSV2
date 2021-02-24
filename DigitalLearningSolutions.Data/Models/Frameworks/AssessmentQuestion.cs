@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
         public int AssessmentQuestionInputTypeID { get; set;}
-        public string InputTypeName { get; set; }
+        public string? InputTypeName { get; set; }
         public int AddedByAdminId { get; set; }
         public bool UserIsOwner { get; set; }
     }

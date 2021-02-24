@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
-                ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency name (between 3 and 500 characters)");
+                ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
                 // do something
                 var model = new FrameworkCompetencyViewModel()
                 {
@@ -111,7 +111,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     FrameworkCompetencyGroupId = frameworkCompetencyId,
                     FrameworkCompetency = frameworkCompetency
                 };
-                return View("Developer/CompetencyGroup", model);
+                return View("Developer/Competency", model);
             }
             else
             {

@@ -35,22 +35,28 @@
         FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId);
         IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId);
         AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
+        LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
+        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue);
         //INSERT DATA
         BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
-        int InsertCompetency(string name, string description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId);
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
+        int InsertAssessmentQuestion(string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
+        void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string description, int adminId);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
+        void UpdateAssessmentQuestion(int id, string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
+        void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -296,7 +302,7 @@
                 return existingId;
             }
         }
-        public int InsertCompetency(string name, string description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId)
         {
             if (name.Length == 0 | adminId < 1)
             {
@@ -618,7 +624,7 @@
                 }
             }
         }
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string description, int adminId)
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId)
         {
             if (frameworkCompetencyId < 1 | adminId < 1 | name.Length < 3)
             {
@@ -974,6 +980,133 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                     WHERE AQ.ID = @assessmentQuestionId
                      ORDER BY [Question]", new { adminId, assessmentQuestionId }
                 );
+        }
+
+        public LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level)
+        {
+            return connection.QueryFirstOrDefault<LevelDescriptor>(
+                @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, COALESCE(UpdatedByAdminID, @adminId) AS UpdatedByAdminID
+                    FROM
+                    (SELECT TOP (@level) n = ROW_NUMBER() OVER (ORDER BY number)
+                    FROM [master]..spt_values) AS q1
+                    LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
+                    WHERE (q1.n = @level)", new { assessmentQuestionId, adminId, level }
+                );
+        }
+
+        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue)
+        {
+            return connection.Query<LevelDescriptor>(
+               @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, COALESCE(UpdatedByAdminID, @adminId) AS UpdatedByAdminID
+                    FROM
+                    (SELECT TOP (@maxValue) n = ROW_NUMBER() OVER (ORDER BY number)
+                    FROM [master]..spt_values) AS q1
+                    LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
+                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, adminId, minValue, maxValue }
+               );
+        }
+
+        public int InsertAssessmentQuestion(string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
+        {
+            if (question == null | adminId < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting assessment question as it failed server side validation. AdminId: {adminId}, question: {question}"
+                );
+                return 0;
+            }
+            var id = connection.QuerySingle<int>(
+               @"INSERT INTO AssessmentQuestions (Question, MaxValueDescription, MinValueDescription, ScoringInstructions, MinValue, MaxValue, IncludeComments, AddedByAdminId)
+                      OUTPUT INSERTED.Id
+                      VALUES (@question, @maxValueDescription, @minValueDescription, @scoringInstructions, @minValue, @maxValue, @includeComments, @adminId)"
+                   , new { question, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
+            if (id < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting assessment question as db update failed. " +
+                    $"question: {question}, adminId: {adminId}"
+                );
+                return 0;
+            }
+            return id;
+        }
+
+        public void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId)
+        {
+            if (assessmentQuestionId < 1 | adminId < 1 | levelValue < 0)
+            {
+                logger.LogWarning(
+                    $"Not inserting assessment question level descriptor as it failed server side validation. AdminId: {adminId}, assessmentQuestionId: {assessmentQuestionId}, levelValue: {levelValue}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+               @"INSERT INTO AssessmentQuestionLevels
+                    (AssessmentQuestionID
+                      ,LevelValue
+                      ,LevelLabel
+                      ,LevelDescription
+                      ,UpdatedByAdminID)
+                      VALUES (@assessmentQuestionId, @levelValue, @levelLabel, @levelDescription, @adminId)"
+                   , new { assessmentQuestionId, levelValue, levelLabel, levelDescription, adminId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting assessment question level descriptor as db update failed. " +
+                    $"AdminId: {adminId}, assessmentQuestionId: {assessmentQuestionId}, levelValue: {levelValue}"
+                );
+            }
+        }
+
+        public void UpdateAssessmentQuestion(int id, string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
+        {
+            if (id < 1 | question == null | adminId < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating assessment question as it failed server side validation. Id: {id}, AdminId: {adminId}, question: {question}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE AssessmentQuestions
+                    SET Question = @question
+                        ,MaxValueDescription = @maxValueDescription
+                        ,MinValueDescription = @minValueDescription
+                        ,ScoringInstructions = @scoringInstructions
+                        ,MinValue = @minValue
+                        ,MaxValue = @maxValue
+                        ,IncludeComments = @includeComments
+                        ,AddedByAdminId = @adminId
+                    WHERE ID = @id", new {id, question, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating assessment question as db update failed. " +
+                    $"Id: {id}, AdminId: {adminId}, question: {question}"
+                );
+            }
+        }
+
+        public void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId)
+        {
+            if (id < 1 | adminId < 1 | levelValue < 0)
+            {
+                logger.LogWarning(
+                    $"Not updating assessment question level descriptor as it failed server side validation. Id: {id}, AdminId: {adminId}, levelValue: {levelValue}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE AssessmentQuestionLevels
+                    SET LevelValue = @levelValue
+                        ,LevelLabel = @levelLabel
+                        ,LevelDescription = @levelDescription
+                        ,UpdatedByAdminID = @adminId
+                    WHERE ID = @id", new {id, levelValue, levelLabel, levelDescription, adminId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating assessment question level descriptor as db update failed. " +
+                    $"Id: {id}, AdminId: {adminId}, levelValue: {levelValue}"
+                );
+            }
         }
     }
 }

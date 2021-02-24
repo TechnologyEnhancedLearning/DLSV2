@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
-@model AssessmentQuestionViewModel;
+@model AssessmentQuestionLevelDescriptorViewModel;
 @{
   ViewData["Title"] = "Assessment Question";
   ViewData["Application"] = "Framework Service";
@@ -45,39 +45,34 @@
   }
   <fieldset class="nhsuk-fieldset">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <h1 class="nhsuk-fieldset__heading">
-        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
-      </h1>
+      <p class="nhsuk-fieldset__heading">
+        @Model.AssessmentQuestionDetail.Question
+      </p>
+      <p class="nhsuk-fieldset__heading">Radio button option @Model.LevelDescriptor.LevelValue</p>
     </legend>
-    <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
-      <label class="nhsuk-label" for="tb-question">
-        Question
+    <nhs-form-group nhs-validation-for="LevelDescriptor.LevelLabel">
+      <label class="nhsuk-label" for="tb-levelLabel-@Model.LevelDescriptor.LevelValue">
+        Option @Model.LevelDescriptor.LevelValue label
       </label>
-      <div class="nhsuk-hint" id="tb-question-hint">
-        What question will the user be asked? Try to choose a generic question that can be asked about multiple competencies.
+      <div class="nhsuk-hint" id="tb-levelLabel-@Model.LevelDescriptor.LevelValue-hint">
+        How will this radio button option be labelled?
       </div>
-      <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
-      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
+      <span nhs-validation-for="LevelDescriptor.LevelLabel"></span>
+      <input class="nhsuk-input" id="tb-levelLabel-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelLabel" error-class-toggle="nhsuk-input--error" name="LevelLabel" type="text">
     </nhs-form-group>
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="select-input-type">
-        Input type
-      </label>
-      <div class="nhsuk-hint" id="select-input-type-hint">
-        How will the user answer?
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="tb-levelDescription-@Model.LevelDescriptor.LevelValue">
+          Option @Model.LevelDescriptor.LevelValue description
+        </label>
+        <div class="nhsuk-hint" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue-hint">
+          What additional description (if any) should be provided for this radio button option?
+        </div>
+        <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelDescription" name="LevelDescription" type="text"></textarea>
       </div>
-      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
-    </div>
-    <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
-    <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
-    <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
-    <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
-    <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
-    <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
-    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
-  </fieldset>
+      <input name="ID" type="hidden" asp-for="@Model.LevelDescriptor.ID" />
+      <input name="LevelValue" type="hidden" asp-for="@Model.LevelDescriptor.LevelValue" />
+      <input name="UpdatedByAdminID" type="hidden" asp-for="@Model.LevelDescriptor.UpdatedByAdminID" />
+</fieldset>
   <button class="nhsuk-button" type="submit">
     Next
   </button>
