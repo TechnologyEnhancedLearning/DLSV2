@@ -15,6 +15,7 @@
     {
         private readonly ILogger<LearningMenuController> logger;
         private readonly IConfiguration config;
+        private readonly IConfigService configService;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
         private readonly ISectionContentService sectionContentService;
@@ -27,6 +28,7 @@
         public LearningMenuController(
             ILogger<LearningMenuController> logger,
             IConfiguration config,
+            IConfigService configService,
             ICourseContentService courseContentService,
             ISectionContentService sectionContentService,
             ITutorialContentService tutorialContentService,
@@ -39,6 +41,7 @@
         {
             this.logger = logger;
             this.config = config;
+            this.configService = configService;
             this.courseContentService = courseContentService;
             this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
@@ -52,9 +55,10 @@
         [Route("/LearningMenu/{customisationId:int}")]
         public IActionResult Index(int customisationId)
         {
+            var centreId = User.GetCentreId();
             if (config.GetValue<string>("LegacyLearningMenu") != "")
             {
-                if (config.GetValue<bool>("LegacyLearningMenu"))
+                if ((config.GetValue<bool>("LegacyLearningMenu") && !configService.GetCentreBetaTesting(centreId))|(!config.GetValue<bool>("LegacyLearningMenu") && configService.GetCentreBetaTesting(centreId)))
                 {
                     string baseUrl = config.GetValue<string>("CurrentSystemBaseUrl");
                     string url = $"{baseUrl}/tracking/learn?customisationid={customisationId}&lp=1";
@@ -62,14 +66,13 @@
                 }
             }
             var candidateId = User.GetCandidateId();
-            var centreId = User.GetCentreId();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
-            if (courseContent == null || centreId == null)
+            if (courseContent == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as course/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}");
+                    $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
             if (courseContent.Sections.Count == 1)
@@ -77,7 +80,7 @@
                 var sectionId = courseContent.Sections.First().Id;
                 return RedirectToAction("Section", "LearningMenu", new { customisationId, sectionId });
             }
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
             if (progressId == null)
             {
                 logger.LogError(
@@ -106,12 +109,12 @@
             var centreId = User.GetCentreId();
             var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            if (sectionContent == null || centreId == null)
+            if (sectionContent == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -143,7 +146,7 @@
                 return RedirectToAction("Diagnostic", "LearningMenu", new { customisationId, sectionId });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -169,16 +172,16 @@
             var diagnosticAssessment =
                 diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-            if (diagnosticAssessment == null || centreId == null)
+            if (diagnosticAssessment == null )
             {
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -202,16 +205,16 @@
             var centreId = User.GetCentreId();
             var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId, checkedTutorials);
 
-            if (diagnosticContent == null || centreId == null)
+            if (diagnosticContent == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -229,7 +232,7 @@
                 diagnosticContent,
                 checkedTutorials,
                 customisationId,
-                centreId.Value,
+                centreId,
                 sectionId,
                 progressId.Value,
                 candidateId
@@ -245,16 +248,16 @@
             var postLearningAssessment =
                 postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            if (postLearningAssessment == null || centreId == null)
+            if (postLearningAssessment == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -278,16 +281,16 @@
             var centreId = User.GetCentreId();
             var postLearningContent = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
 
-            if (postLearningContent == null || centreId == null)
+            if (postLearningContent == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/centre id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -304,7 +307,7 @@
                 config,
                 postLearningContent,
                 customisationId,
-                centreId.Value,
+                centreId,
                 sectionId,
                 progressId.Value,
                 candidateId
@@ -321,16 +324,16 @@
             var tutorialInformation =
                 tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
-            if (tutorialInformation == null || centreId == null)
+            if (tutorialInformation == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -355,16 +358,16 @@
 
             var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
-            if (tutorialContent?.TutorialPath == null || centreId == null)
+            if (tutorialContent?.TutorialPath == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -381,7 +384,7 @@
                 config,
                 tutorialContent,
                 customisationId,
-                centreId.Value,
+                centreId,
                 sectionId,
                 tutorialId,
                 candidateId,
@@ -398,16 +401,16 @@
 
             var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
 
-            if (tutorialVideo == null || centreId == null)
+            if (tutorialVideo == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation/section/tutorial id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
+                    $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {
@@ -438,16 +441,16 @@
 
             var courseCompletion = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
 
-            if (courseCompletion == null || centreId == null)
+            if (courseCompletion == null)
             {
                 logger.LogError(
                     "Redirecting to 404 as customisation id was not found. " +
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
-                    $"centre id: {centreId?.ToString() ?? "null"}");
+                    $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId.Value);
+            var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
             {

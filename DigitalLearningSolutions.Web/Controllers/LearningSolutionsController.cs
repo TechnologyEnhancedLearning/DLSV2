@@ -89,9 +89,7 @@
         private string? GetBannerText()
         {
             var centreId = User.GetCentreId();
-            var bannerText = centreId == null
-                ? null
-                : centresService.GetBannerText(centreId.Value);
+            var bannerText = centresService.GetBannerText(centreId);
             return bannerText;
         }
     }

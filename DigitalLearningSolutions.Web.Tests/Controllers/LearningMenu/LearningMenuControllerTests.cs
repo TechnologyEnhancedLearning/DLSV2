@@ -24,6 +24,7 @@
         private ICourseCompletionService courseCompletionService;
         private ISession httpContextSession;
         private IConfiguration config;
+        private IConfigService configService;
         private const int CandidateId = 11;
         private const int CentreId = 2;
         private const int CustomisationId = 12;
@@ -35,6 +36,7 @@
         {
             var logger = A.Fake<ILogger<LearningMenuController>>();
             config = A.Fake<IConfiguration>();
+            configService = A.Fake<IConfigService>();
             courseContentService = A.Fake<ICourseContentService>();
             tutorialContentService = A.Fake<ITutorialContentService>();
             sessionService = A.Fake<ISessionService>();
@@ -54,6 +56,7 @@
             controller = new LearningMenuController(
                 logger,
                 config,
+                configService,
                 courseContentService,
                 sectionContentService,
                 tutorialContentService,
