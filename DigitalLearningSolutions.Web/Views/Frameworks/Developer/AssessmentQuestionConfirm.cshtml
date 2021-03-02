@@ -47,77 +47,36 @@
 </legend>
 <p class="nhsuk-label">Use this preview to confirm the assessment question appears as expected before submitting.</p>
 <div class="nhsuk-card nhsuk-u-padding-4">
-  <div class="nhsuk-form-group">
-    @if (Model.AssessmentQuestionInputTypeID == 1)
-    {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="Model.AssessmentQuestion" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.AssessmentQuestion.MinValue } })" />
-    }
-    else
-    {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="Model.AssessmentQuestion" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.AssessmentQuestion.MinValue } })" />
-    }
+  <partial name="../Shared/_AssessmentQuestionPreview.cshtml" model="Model.AssessmentQuestion" />
   </div>
-  @if (Model.AssessmentQuestion.IncludeComments)
+  @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
   {
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="tb-supportingComments-@Model.AssessmentQuestion.Id">
-        Supporting comments:
-      </label>
-      <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@Model.AssessmentQuestion.Id" asp-for="@Model.AssessmentQuestion.SupportingComments" name="SupportingComments" type="text"></textarea>
-    </div>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+      Submit and apply <span class="nhsuk-u-visually-hidden">to existing competencies</span>
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+      Submit <span class="nhsuk-u-visually-hidden">without applying to existing competencies</span>
+    </a>
+  }
+  else
+  {
+    <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+      Submit
+    </a>
   }
 
-  <div class="nhsuk-u-margin-top-4">
-    Question 1 of 1
-  </div>
-  <button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-1" disabled>
-    Save and continue
-  </button>
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-back-link grid-column-85">
-      <span class="nhsuk-back-link__link">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-        </svg>
-        Previous question
-      </span>
-      <span class="nhsuk-back-link__link skip-link">
-        Skip
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-        </svg>
-      </span>
-    </div>
-  </div>
-</div>
-@if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
-{
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-    Submit and apply <span class="nhsuk-u-visually-hidden">to existing competencies</span>
-  </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-    Submit <span class="nhsuk-u-visually-hidden">without applying to existing competencies</span>
-  </a>
-}
-else
-{
-  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-    Submit
-  </a>
-}
-
-@if (Model.FrameworkCompetencyId == 0)
-{
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-    Cancel
-  </a>
-}
-else
-{
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-    Cancel
-  </a>
-}
-@section scripts {
-  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-}
+  @if (Model.FrameworkCompetencyId == 0)
+  {
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+      Cancel
+    </a>
+  }
+  else
+  {
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+      Cancel
+    </a>
+  }
+  @section scripts {
+    <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+  }

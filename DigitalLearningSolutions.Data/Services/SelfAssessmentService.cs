@@ -61,6 +61,7 @@
                                                   AQ.ScoringInstructions,
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
+                                                  AQ.AssessmentQuestionInputTypeID,
                                                   LAR.Result";
 
         private const string CompetencyTables =

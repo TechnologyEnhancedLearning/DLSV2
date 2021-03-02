@@ -58,7 +58,8 @@
             string minValueDescription = "Beginner",
             int? result = null,
             int minValue = 0,
-            int maxValue = 10)
+            int maxValue = 10,
+            int assessmentQuestionInputTypeID = 1)
         {
             return new AssessmentQuestion()
             {
@@ -68,7 +69,8 @@
                 MinValueDescription = minValueDescription,
                 Result = result,
                 MinValue = minValue,
-                MaxValue = maxValue
+                MaxValue = maxValue,
+                AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID
             };
         }
 
