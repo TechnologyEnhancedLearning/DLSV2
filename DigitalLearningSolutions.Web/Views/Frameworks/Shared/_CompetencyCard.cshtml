@@ -25,16 +25,24 @@
         @Model.FrameworkCompetency.Name
       </h4>
     }
-    <p class="nhsuk-u-secondary-text-color"><a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-  Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)</a></p>
-    @if (Model.CanModify)
-    {
-      <p>
-        <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Edit <span class="visually-hidden">competency</span></a>
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">competency</span></a>
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">competency</span></a>
-        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Delete <span class="visually-hidden">competency</span></a>
-      </p>
-    }
+    <p class="nhsuk-u-secondary-text-color">
+      <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+        Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
+      </a>
+    </p>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters">
+        @if (Model.CanModify)
+        {
+          <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Edit <span class="visually-hidden">competency</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">competency</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">competency</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Delete <span class="visually-hidden">competency</span></a>
+        }
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" target="_blank" asp-action="PreviewCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Preview <span class="visually-hidden">competency</span></a>
+      </div>
+      </div>
+    </div>
   </div>
-</div>
