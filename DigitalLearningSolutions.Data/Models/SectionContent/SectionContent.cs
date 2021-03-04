@@ -6,6 +6,7 @@
     public class SectionContent
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public bool HasLearning { get; }
         public int DiagnosticAttempts { get; set; }
@@ -32,6 +33,7 @@
 
         public SectionContent(
             string applicationName,
+            string? applicationInfo,
             string customisationName,
             string sectionName,
             bool hasLearning,
@@ -57,6 +59,7 @@
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
+            CourseDescription = applicationInfo;
             SectionName = sectionName;
             HasLearning = hasLearning;
             DiagnosticAttempts = diagAttempts;

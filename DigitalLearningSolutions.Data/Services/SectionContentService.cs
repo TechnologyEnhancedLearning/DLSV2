@@ -82,6 +82,7 @@
                     )
                     SELECT
                         Applications.ApplicationName,
+                        Applications.ApplicationInfo,
                         Customisations.CustomisationName,
                         Sections.SectionName,
                         dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,

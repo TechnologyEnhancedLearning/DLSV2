@@ -9,6 +9,7 @@
             int customisationId = 1,
             string customisationName = "Customisation",
             string applicationName = "Application",
+            string? applicationInfo = null,
             int? averageDuration = 45,
             string centreName = "Centre",
             string? bannerText = "Banner",
@@ -25,6 +26,7 @@
             return new CourseContent(
                 customisationId,
                 applicationName,
+                applicationInfo,
                 customisationName,
                 averageDuration,
                 centreName,

@@ -90,6 +90,7 @@
                     )
                     SELECT
                         Applications.ApplicationName,
+                        Applications.ApplicationInfo,
                         Customisations.CustomisationName,
                         Sections.SectionName,
                         COALESCE (aspProgress.DiagAttempts, 0) AS DiagAttempts,

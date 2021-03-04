@@ -10,6 +10,7 @@
         public string TutorialName { get; }
         public string SectionName { get; }
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string Status { get; }
         public string? TutorialPath { get; }
         public string? VideoPath { get; }
@@ -43,6 +44,7 @@
             TutorialName = tutorialInformation.Name;
             SectionName = tutorialInformation.SectionName;
             CourseTitle = tutorialInformation.CourseTitle;
+            CourseDescription = tutorialInformation.CourseDescription;
             TutorialPath = tutorialInformation.TutorialPath;
             VideoPath = tutorialInformation.VideoPath;
             Status = tutorialInformation.Status;

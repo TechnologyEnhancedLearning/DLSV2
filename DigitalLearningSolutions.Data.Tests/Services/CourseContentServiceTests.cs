@@ -38,6 +38,7 @@
             var expectedCourse = new CourseContent(
                 4169,
                 "Level 2 - Microsoft Excel 2010",
+                null,
                 "MOS Excel 2010 CORE",
                 349,
                 "Northumbria Healthcare NHS Foundation Trust",
@@ -84,6 +85,7 @@
             var expectedCourse = new CourseContent(
                 4169,
                 "Level 2 - Microsoft Excel 2010",
+                null,
                 "MOS Excel 2010 CORE",
                 349,
                 "Northumbria Healthcare NHS Foundation Trust",
@@ -130,6 +132,7 @@
             var expectedCourse = new CourseContent(
                 4339,
                 "Level 2 - Microsoft PowerPoint 2007",
+                null,
                 "Working with Graphics and Multimedia",
                 20,
                 "NHS Highland",
@@ -173,6 +176,7 @@
             var expectedCourse = new CourseContent(
                 4339,
                 "Level 2 - Microsoft PowerPoint 2007",
+                null,
                 "Working with Graphics and Multimedia",
                 20,
                 "NHS Highland",
@@ -220,6 +224,7 @@
                 var expectedCourse = new CourseContent(
                     4169,
                     "Level 2 - Microsoft Excel 2010",
+                    null,
                     "MOS Excel 2010 CORE",
                     349,
                     "Northumbria Healthcare NHS Foundation Trust",
@@ -270,6 +275,7 @@
                 var expectedCourse = new CourseContent(
                     4169,
                     "Level 2 - Microsoft Excel 2010",
+                    null,
                     "MOS Excel 2010 CORE",
                     349,
                     "Northumbria Healthcare NHS Foundation Trust",
@@ -322,6 +328,7 @@
                 var expectedCourse = new CourseContent(
                     8950,
                     "Level 2 - Microsoft Word 2010",
+                    null,
                     "BSMHFT",
                     230,
                     "Birmingham & Solihull Mental Health Foundation Trust",
@@ -381,6 +388,7 @@
             var expectedCourse = new CourseContent(
                 8950,
                 "Level 2 - Microsoft Word 2010",
+                null,
                 "BSMHFT",
                 230,
                 "Birmingham & Solihull Mental Health Foundation Trust",
@@ -428,6 +436,7 @@
                 var expectedCourse = new CourseContent(
                     4169,
                     "Level 2 - Microsoft Excel 2010",
+                    null,
                     "MOS Excel 2010 CORE",
                     349,
                     "Northumbria Healthcare NHS Foundation Trust",
@@ -479,6 +488,7 @@
                 var expectedCourse = new CourseContent(
                     24224,
                     "CMS Demonstration Course",
+                    "This course was developed to demonstrate the use of the IT Skills Pathway Content Management System.",
                     "Captivate Test",
                     13,
                     "Test Centre NHSD",

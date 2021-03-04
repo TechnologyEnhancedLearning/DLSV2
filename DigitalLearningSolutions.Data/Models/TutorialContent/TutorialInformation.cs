@@ -8,6 +8,7 @@
         public string Name { get; }
         public string SectionName { get; }
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string Status { get; }
         public int TimeSpent { get; }
         public int AverageTutorialDuration { get; }
@@ -38,6 +39,7 @@
             string name,
             string sectionName,
             string applicationName,
+            string? applicationInfo,
             string customisationName,
             string status,
             int timeSpent,
@@ -69,6 +71,7 @@
             Name = name;
             SectionName = sectionName;
             CourseTitle = $"{applicationName} - {customisationName}";
+            CourseDescription = applicationInfo;
             Status = status;
             TimeSpent = timeSpent;
             AverageTutorialDuration = averageTutorialDuration;

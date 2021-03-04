@@ -6,6 +6,7 @@
     public class DiagnosticAssessment
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public int DiagnosticAttempts { get; set; }
         public int SectionScore { get; set; }
@@ -28,6 +29,7 @@
 
         public DiagnosticAssessment(
             string applicationName,
+            string? applicationInfo,
             string customisationName,
             string sectionName,
             int diagAttempts,
@@ -50,6 +52,7 @@
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
+            CourseDescription = applicationInfo;
             SectionName = sectionName;
             DiagnosticAttempts = diagAttempts;
             SectionScore = diagLast;

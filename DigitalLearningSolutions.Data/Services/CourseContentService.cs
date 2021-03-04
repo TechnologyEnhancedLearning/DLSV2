@@ -59,6 +59,7 @@
                   )
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
+						 Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,
@@ -99,6 +100,7 @@
                          Sections.SectionID,
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
+						 Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,

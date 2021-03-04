@@ -42,6 +42,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Office 2013 Essentials for the Workplace",
+                null,
                 "Erin Test 01",
                 "Working with Microsoft Office applications",
                 true,
@@ -128,6 +129,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Excel 2013 for the Workplace",
+                null,
                 "Testing",
                 "Entering data",
                 true,
@@ -181,6 +183,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Excel 2013 for the Workplace",
+                null,
                 "Testing",
                 "Entering data",
                 true,
@@ -258,6 +261,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Level 2 - Microsoft Word 2007",
+                null,
                 "Diagnostics Testing",
                 "Working with documents",
                 false,
@@ -298,6 +302,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Level 2 - Microsoft Word 2007",
+                null,
                 "Styles and Working with References",
                 "Working with documents",
                 false,
@@ -338,6 +343,7 @@
             // Then
             var expectedSectionContent = new SectionContent(
                 "Level 2 - Microsoft Word 2007",
+                null,
                 "Test",
                 "Working with documents",
                 true,
@@ -552,6 +558,7 @@
             const int sectionId = 382;
             var expectedSectionContent = new SectionContent(
                 "Office 2013 Essentials for the Workplace",
+                null,
                 "Erin Test 01",
                 "Working with Microsoft Office applications",
                 true,

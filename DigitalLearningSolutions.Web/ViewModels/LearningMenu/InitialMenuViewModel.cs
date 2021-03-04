@@ -10,6 +10,7 @@
     {
         public int Id { get; }
         public string Title { get; }
+        public string Description { get; }
         public string? AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
@@ -22,6 +23,7 @@
         {
             Id = courseContent.Id;
             Title = courseContent.Title;
+            Description = courseContent.Description;
             AverageDuration = DurationFormattingHelper.FormatNullableDuration(courseContent.AverageDuration);
 
             CentreName = courseContent.CentreName;

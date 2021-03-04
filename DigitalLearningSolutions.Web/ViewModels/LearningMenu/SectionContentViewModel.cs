@@ -10,6 +10,7 @@
     public class SectionContentViewModel
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public bool ShowPercentComplete { get; }
         public string PercentComplete { get; }
@@ -35,6 +36,7 @@
         public SectionContentViewModel(IConfiguration config, SectionContent sectionContent, int customisationId, int sectionId)
         {
             CourseTitle = sectionContent.CourseTitle;
+            CourseDescription = sectionContent.CourseDescription;
             SectionName = sectionContent.SectionName;
             PercentComplete = FormatPercentComplete(sectionContent);
             ShowPercentComplete = sectionContent.HasLearning && sectionContent.CourseSettings.ShowPercentage;

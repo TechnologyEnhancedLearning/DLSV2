@@ -116,6 +116,7 @@
                          Tutorials.TutorialName AS Name,
                          Sections.SectionName,
                          Applications.ApplicationName,
+                         Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          COALESCE(TutStatus.Status, 'Not started') AS Status,
                          COALESCE(aspProgress.TutTime, 0) AS TimeSpent,

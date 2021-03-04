@@ -8,6 +8,7 @@
     {
 
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public string DiagnosticAssessmentPath { get; }
         public bool CanSelectTutorials { get; }
@@ -29,6 +30,7 @@
         public DiagnosticAssessmentViewModel(DiagnosticAssessment diagnosticAssessment, int customisationId, int sectionId)
         {
             CourseTitle = diagnosticAssessment.CourseTitle;
+            CourseDescription = diagnosticAssessment.CourseDescription;
             SectionName = diagnosticAssessment.SectionName;
             DiagnosticAssessmentPath = diagnosticAssessment.DiagnosticAssessmentPath;
             CanSelectTutorials = diagnosticAssessment.CanSelectTutorials && diagnosticAssessment.Tutorials.Any();

@@ -5,6 +5,7 @@
     public class PostLearningAssessmentViewModel
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public string AssessmentStatus { get; }
         public string AssessmentStatusStyling { get; }
@@ -24,6 +25,7 @@
         public PostLearningAssessmentViewModel(PostLearningAssessment postLearningAssessment, int customisationId, int sectionId)
         {
             CourseTitle = postLearningAssessment.CourseTitle;
+            CourseDescription = postLearningAssessment.CourseDescription;
             SectionName = postLearningAssessment.SectionName;
             PostLearningLocked = postLearningAssessment.PostLearningLocked;
             CustomisationId = customisationId;
