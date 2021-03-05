@@ -46,14 +46,16 @@
             string sectionName = "Section",
             int id = 1,
             bool hasLearning = true,
-            double percentComplete = 25
+            double percentComplete = 25,
+            int postLearningAssessmentsPassed = 0
         )
         {
             return new CourseSection(
                 sectionName,
                 id,
                 hasLearning,
-                percentComplete
+                percentComplete,
+                postLearningAssessmentsPassed
             );
         }
     }
