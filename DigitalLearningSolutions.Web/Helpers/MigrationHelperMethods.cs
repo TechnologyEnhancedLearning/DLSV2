@@ -39,6 +39,8 @@
                         typeof(FixFilteredSPs).Assembly,
                         typeof(FilteredFunctionTweak).Assembly,
                         typeof(AssessmentQuestionMaxMinDescriptionNullable).Assembly
+                        typeof(FixFilteredSPs).Assembly,
+                        typeof(AddAssessAttemptsIndex).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

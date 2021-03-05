@@ -50,13 +50,16 @@
       <span class="nhsuk-caption-l">Post learning assessment</span>
       @Model.SectionName
     </h1>
+    @if (Model.OnlyItemInOnlySection)
+    {
+  <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>}
     <h2 class="@Model.AssessmentStatusStyling">
       <span class="nhsuk-u-visually-hidden">Your status: </span>
       @Model.AssessmentStatus
       @if (Model.ScoreInformation != null)
       {
-        @:(<span class="nhsuk-u-visually-hidden">Your score: </span>@Model.ScoreInformation)
-      }
+  @:(<span class="nhsuk-u-visually-hidden">Your score: </span>@Model.ScoreInformation)
+}
     </h2>
   </div>
 </div>
@@ -69,23 +72,34 @@
     <p class="nhsuk-u-secondary-text-color">
       The assessment is locked as there have been too many failed attempts.
     </p>
+
+    @if (Model.ShowNextButton) {
+      <div>
+        <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+      </div>
+    }
   }
   else
   {
-      <a
-        class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
-        asp-action="PostLearningContent"
-        asp-route-customisationId="@Model.CustomisationId"
-        asp-route-sectionId="@Model.SectionId">
-        @Model.StartButtonText
-      </a>
+    <div class="button-row">
+      <div>
+        <a
+          class="nhsuk-button nhsuk-u-margin-bottom-0 @Model.StartButtonAdditionalStyling"
+          asp-action="PostLearningContent"
+          asp-route-customisationId="@Model.CustomisationId"
+          asp-route-sectionId="@Model.SectionId">
+          @Model.StartButtonText
+        </a>
+      </div>
+
+      @if (Model.ShowNextButton) {
+        <div>
+          <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
+        </div>
+      }
+    </div>
   }
 </div>
-
-@if (!Model.OnlyItemInOnlySection)
-{
-  <partial name="PostLearning/_PostLearningNextLink" model="Model"/>
-}
 
 @if (Model.ShowCompletionSummary)
 {

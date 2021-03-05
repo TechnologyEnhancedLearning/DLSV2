@@ -10,6 +10,7 @@
         public string TutorialName { get; }
         public string SectionName { get; }
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string Status { get; }
         public string? TutorialPath { get; }
         public string? VideoPath { get; }
@@ -31,6 +32,7 @@
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
         public string TutorialStartButtonAdditionalStyling { get; }
         public string TutorialStartButtonText { get; }
+        public bool ShowNextButton { get; }
 
         public TutorialViewModel(
             IConfiguration config,
@@ -42,6 +44,7 @@
             TutorialName = tutorialInformation.Name;
             SectionName = tutorialInformation.SectionName;
             CourseTitle = tutorialInformation.CourseTitle;
+            CourseDescription = tutorialInformation.CourseDescription;
             TutorialPath = tutorialInformation.TutorialPath;
             VideoPath = tutorialInformation.VideoPath;
             Status = tutorialInformation.Status;
@@ -93,6 +96,7 @@
             );
             TutorialStartButtonAdditionalStyling = tutorialInformation.Status == "Complete" ? "nhsuk-button--secondary" : "";
             TutorialStartButtonText = tutorialInformation.Status == "Complete" ? "Restart tutorial" : "Start tutorial";
+            ShowNextButton = tutorialInformation.Status == "Complete" && !OnlyItemInOnlySection;
         }
 
         private bool GetCanShowProgress(bool showLearnStatus, bool canShowDiagnosticStatus, int attemptCount)

@@ -9,9 +9,9 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }
 
-        public static int? GetCentreId(this ClaimsPrincipal user)
+        public static int GetCentreId(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
 
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)

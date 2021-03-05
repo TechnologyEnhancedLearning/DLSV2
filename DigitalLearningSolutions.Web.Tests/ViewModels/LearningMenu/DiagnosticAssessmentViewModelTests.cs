@@ -505,5 +505,35 @@
             // Then
             diagnosticAssessmentViewModel.DiagnosticStartButtonText.Should().Be("Start assessment");
         }
+
+        [TestCase(false, false, 0, false)]
+        [TestCase(false, true, 0, false)]
+        [TestCase(true, false, 0, false)]
+        [TestCase(true, true, 0, false)]
+        [TestCase(false, false, 1, false)]
+        [TestCase(false, true, 1, true)]
+        [TestCase(true, false, 1, true)]
+        [TestCase(true, true, 1, true)]
+        public void Diagnostic_assessment_should_have_showNextButton(
+            bool otherSectionsExist,
+            bool otherItemsInSectionExist,
+            int diagnosticAttempts,
+            bool expectedShowNextButton
+        )
+        {
+            // Given
+            var diagnosticAssessment = DiagnosticAssessmentTestHelper.CreateDefaultDiagnosticAssessment(
+                otherSectionsExist: otherSectionsExist,
+                otherItemsInSectionExist: otherItemsInSectionExist,
+                diagnosticAttempts: diagnosticAttempts
+            );
+
+            // When
+            var diagnosticAssessmentViewModel =
+                new DiagnosticAssessmentViewModel(diagnosticAssessment, CustomisationId, SectionId);
+
+            // Then
+            diagnosticAssessmentViewModel.ShowNextButton.Should().Be(expectedShowNextButton);
+        }
     }
 }

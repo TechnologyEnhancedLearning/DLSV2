@@ -42,7 +42,10 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.SectionName</h1>
-
+    @if (!Model.OtherSectionsExist)
+    {
+  <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
+    }
     @if (Model.ShowPercentComplete)
     {
       <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-3">@Model.PercentComplete</h2>

@@ -8,6 +8,7 @@
     {
 
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public string DiagnosticAssessmentPath { get; }
         public bool CanSelectTutorials { get; }
@@ -24,10 +25,12 @@
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
         public string DiagnosticStartButtonAdditionalStyling { get; }
         public string DiagnosticStartButtonText { get; }
+        public bool ShowNextButton { get; }
 
         public DiagnosticAssessmentViewModel(DiagnosticAssessment diagnosticAssessment, int customisationId, int sectionId)
         {
             CourseTitle = diagnosticAssessment.CourseTitle;
+            CourseDescription = diagnosticAssessment.CourseDescription;
             SectionName = diagnosticAssessment.SectionName;
             DiagnosticAssessmentPath = diagnosticAssessment.DiagnosticAssessmentPath;
             CanSelectTutorials = diagnosticAssessment.CanSelectTutorials && diagnosticAssessment.Tutorials.Any();
@@ -60,6 +63,7 @@
             );
             DiagnosticStartButtonAdditionalStyling = diagnosticAssessment.DiagnosticAttempts > 0 ? "nhsuk-button--secondary" : "";
             DiagnosticStartButtonText = diagnosticAssessment.DiagnosticAttempts > 0 ? "Restart assessment" : "Start assessment";
+            ShowNextButton = diagnosticAssessment.DiagnosticAttempts > 0 && !OnlyItemInOnlySection;
         }
     }
 }

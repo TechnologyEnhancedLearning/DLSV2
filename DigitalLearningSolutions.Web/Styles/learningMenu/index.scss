@@ -33,22 +33,21 @@ hr.thick {
 
 .button-row {
   @extend .nhsuk-u-margin-top-3;
-  @extend .nhsuk-u-margin-bottom-5;
 
   div {
     .nhsuk-button {
       @extend .nhsuk-u-margin-0;
     }
 
-    @include mq($until: large-desktop) {
+    @include mq($until: 1030px) {
       margin-top: nhsuk-spacing(3);
       margin-right: nhsuk-spacing(0);
       display: block;
     }
 
-    @include mq($from: large-desktop) {
+    @include mq($from: 1030px) {
       margin-top: nhsuk-spacing(0);
-      margin-right: nhsuk-spacing(3);
+      margin-right: nhsuk-spacing(2);
       display: inline;
     }
   }

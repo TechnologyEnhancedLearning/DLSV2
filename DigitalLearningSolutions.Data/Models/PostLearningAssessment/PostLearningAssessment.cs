@@ -5,6 +5,7 @@
     public class PostLearningAssessment
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public int PostLearningScore { get; }
         public int PostLearningAttempts { get; }
@@ -23,6 +24,7 @@
 
         public PostLearningAssessment(
             string applicationName,
+            string? applicationInfo,
             string customisationName,
             string sectionName,
             int bestScore,
@@ -42,6 +44,7 @@
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
+            CourseDescription = applicationInfo;
             SectionName = sectionName;
             PostLearningScore = bestScore;
             PostLearningAttempts = attemptsPl;

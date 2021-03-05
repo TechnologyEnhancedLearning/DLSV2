@@ -81,6 +81,7 @@
                     )
                     SELECT
                         Applications.ApplicationName,
+                        Applications.ApplicationInfo,
                         Customisations.CustomisationName,
                         Sections.SectionName,
                         COALESCE (Attempts.BestScore, 0) AS BestScore,

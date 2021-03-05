@@ -5,6 +5,7 @@
     public class PostLearningAssessmentViewModel
     {
         public string CourseTitle { get; }
+        public string? CourseDescription { get; }
         public string SectionName { get; }
         public string AssessmentStatus { get; }
         public string AssessmentStatusStyling { get; }
@@ -19,10 +20,12 @@
         public bool OnlyItemInThisSection { get; }
         public bool ShowCompletionSummary { get; }
         public CompletionSummaryCardViewModel CompletionSummaryCardViewModel { get; }
+        public bool ShowNextButton { get; }
 
         public PostLearningAssessmentViewModel(PostLearningAssessment postLearningAssessment, int customisationId, int sectionId)
         {
             CourseTitle = postLearningAssessment.CourseTitle;
+            CourseDescription = postLearningAssessment.CourseDescription;
             SectionName = postLearningAssessment.SectionName;
             PostLearningLocked = postLearningAssessment.PostLearningLocked;
             CustomisationId = customisationId;
@@ -61,6 +64,8 @@
                 postLearningAssessment.DiagnosticAssessmentCompletionThreshold,
                 postLearningAssessment.TutorialsCompletionThreshold
             );
+
+            ShowNextButton = postLearningAssessment.PostLearningAttempts > 0 && !OnlyItemInOnlySection;
         }
 
         private string GetScoreInformation(PostLearningAssessment postLearningAssessment)

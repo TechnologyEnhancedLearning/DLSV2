@@ -17,6 +17,7 @@ export function exitFullscreen(): void {
   getHeader()?.classList.remove('hidden');
   getFooter()?.classList.remove('hidden');
   getBreadcrumbs()?.classList.remove('hidden');
+  getHeading()?.classList.remove('hidden');
 }
 
 export function enterFullscreen(): void {
@@ -27,6 +28,7 @@ export function enterFullscreen(): void {
   getHeader()?.classList.add('hidden');
   getFooter()?.classList.add('hidden');
   getBreadcrumbs()?.classList.add('hidden');
+  getHeading()?.classList.add('hidden');
 }
 
 function getEnterFullscreenButton(): HTMLElement | undefined {
@@ -51,4 +53,7 @@ function getFooter(): HTMLElement | undefined {
 
 function getBreadcrumbs(): HTMLElement | undefined {
   return <HTMLElement>document.getElementsByClassName('nhsuk-breadcrumb')[0];
+}
+function getHeading(): HTMLElement | undefined {
+  return <HTMLElement>document.getElementById('page-heading');
 }

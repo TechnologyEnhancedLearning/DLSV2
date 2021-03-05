@@ -7,6 +7,7 @@
     {
         public static PostLearningAssessment CreateDefaultPostLearningAssessment(
             string applicationName = "application name",
+            string? applicationInfo = null,
             string customisationName = "customisation name",
             string sectionName = "section name",
             int bestScore = 50,
@@ -27,6 +28,7 @@
         {
             return new PostLearningAssessment(
                 applicationName,
+                applicationInfo,
                 customisationName,
                 sectionName,
                 bestScore,

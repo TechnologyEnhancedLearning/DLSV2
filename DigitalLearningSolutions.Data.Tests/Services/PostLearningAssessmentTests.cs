@@ -44,6 +44,7 @@
             // Then
             var expectedPostLearningAssessmentService = new PostLearningAssessment(
                 "Level 2 - Microsoft Word 2010",
+                null,
                 "All Modules and Assessments",
                 "Working with documents",
                 89,
@@ -78,6 +79,7 @@
             // Then
             var expectedPostLearningAssessmentService = new PostLearningAssessment(
                 "Level 2 - Microsoft Word 2010",
+                null,
                 "All Modules and Assessments",
                 "Working with documents",
                 0,
