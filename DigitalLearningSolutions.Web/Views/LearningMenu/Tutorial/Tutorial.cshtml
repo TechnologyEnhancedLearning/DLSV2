@@ -47,11 +47,15 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">@Model.TutorialName</h1>
+    @if (Model.OnlyItemInOnlySection)
+    {
+      <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
+    }
     @if (Model.ShowLearnStatus)
     {
       <h2 class="nhsuk-u-secondary-text-color nhsuk-u-margin-bottom-0">@Model.Status @Model.ScoreSummary</h2>
     }
-    <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary"/>
+    <partial name="Shared/_TutorialTimeSummary" model="@Model.TimeSummary" />
   </div>
 </div>
 

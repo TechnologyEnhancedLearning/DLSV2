@@ -8,6 +8,7 @@
         public static SectionContent CreateDefaultSectionContent(
             string customisationName = "customisation name",
             string applicationName = "application name",
+            string? applicationInfo = null,
             string sectionName = "section name",
             bool hasLearning = true,
             int diagAttempts = 5,
@@ -33,6 +34,7 @@
         {
             return new SectionContent(
                 applicationName,
+                applicationInfo,
                 customisationName,
                 sectionName,
                 hasLearning,

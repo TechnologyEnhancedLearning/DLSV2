@@ -16,6 +16,7 @@
 
         public static DiagnosticAssessment CreateDefaultDiagnosticAssessment(
             string applicationName = "application name",
+            string? applicationInfo = null,
             string customisationName = "customisation name",
             string sectionName = "section name",
             int diagnosticAttempts = 1,
@@ -39,6 +40,7 @@
         {
             return new DiagnosticAssessment(
                 applicationName,
+                applicationInfo,
                 customisationName,
                 sectionName,
                 diagnosticAttempts,
@@ -63,6 +65,7 @@
 
         public static DiagnosticContent CreateDefaultDiagnosticContent(
             string applicationName = "application name",
+            string? applicationInfo = null,
             string customisationName = "customisation name",
             string sectionName = "section name",
             string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course119/Diagnostic/07DIAGNEW/itspplayer.html",

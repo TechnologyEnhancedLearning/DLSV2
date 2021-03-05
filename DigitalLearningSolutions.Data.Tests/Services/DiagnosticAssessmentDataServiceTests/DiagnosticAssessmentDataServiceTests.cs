@@ -41,6 +41,7 @@
             // Then
             var expectedDiagnosticAssessment = new DiagnosticAssessment(
                 "Level 2 - Microsoft Excel 2010",
+                null,
                 "Using Formulas",
                 "Using formulas",
                 4,
@@ -89,6 +90,7 @@
             // Then
             var expectedDiagnosticAssessment = new DiagnosticAssessment(
                 "5 Jan Test",
+                null,
                 "New",
                 "Working with Microsoft Office applications",
                 0,

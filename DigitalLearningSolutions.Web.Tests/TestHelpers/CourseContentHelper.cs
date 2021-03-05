@@ -9,6 +9,7 @@
             int customisationId = 1,
             string customisationName = "Customisation",
             string applicationName = "Application",
+            string? applicationInfo = null,
             int? averageDuration = 45,
             string centreName = "Centre",
             string? bannerText = "Banner",
@@ -25,6 +26,7 @@
             return new CourseContent(
                 customisationId,
                 applicationName,
+                applicationInfo,
                 customisationName,
                 averageDuration,
                 centreName,
@@ -44,14 +46,16 @@
             string sectionName = "Section",
             int id = 1,
             bool hasLearning = true,
-            double percentComplete = 25
+            double percentComplete = 25,
+            int postLearningAssessmentsPassed = 0
         )
         {
             return new CourseSection(
                 sectionName,
                 id,
                 hasLearning,
-                percentComplete
+                percentComplete,
+                postLearningAssessmentsPassed
             );
         }
     }

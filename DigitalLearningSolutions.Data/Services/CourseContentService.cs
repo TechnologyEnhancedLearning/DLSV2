@@ -41,7 +41,7 @@
 
             CourseContent? courseContent = null;
             return connection.Query<CourseContent, CourseSection, CourseContent>(
-                @"  WITH CustomisationDurations AS (
+                @" WITH CustomisationDurations AS (
                   SELECT CustomisationId,
                          SUM(AverageDuration) AS AverageDuration
                     FROM (SELECT Customisations.CustomisationID,
@@ -59,6 +59,7 @@
                   )
                   SELECT Customisations.CustomisationID AS id,
                          Applications.ApplicationName,
+						 Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,
@@ -79,7 +80,8 @@
                                  OR dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) = 0
                             THEN 0
                             ELSE CAST(SUM(aspProgress.TutStat) * 100 AS FLOAT) / (COUNT(Tutorials.TutorialID) * 2)
-                         END) AS PercentComplete
+                         END) AS PercentComplete,
+						 COALESCE (Attempts.PLPasses, 0) AS PLPasses
                     FROM Applications
                    INNER JOIN Customisations ON Applications.ApplicationID = Customisations.ApplicationID
                    INNER JOIN Sections ON Sections.ApplicationID = Applications.ApplicationID
@@ -90,6 +92,14 @@
                     LEFT JOIN CustomisationDurations ON CustomisationDurations.CustomisationID = Customisations.CustomisationID
                     LEFT JOIN Progress ON Customisations.CustomisationID = Progress.CustomisationID AND Progress.CandidateID = @candidateId AND Progress.RemovedDate IS NULL AND Progress.SystemRefreshed = 0
                     LEFT JOIN aspProgress ON aspProgress.ProgressID = Progress.ProgressID AND aspProgress.TutorialID = Tutorials.TutorialID
+					LEFT JOIN (SELECT AssessAttempts.ProgressID,
+                            AssessAttempts.SectionNumber,
+                            SUM(CAST(AssessAttempts.Status AS Integer)) AS PLPasses
+                            FROM AssessAttempts
+                            GROUP BY
+                                AssessAttempts.ProgressID,
+                                AssessAttempts.SectionNumber
+                        ) AS Attempts ON (Progress.ProgressID = Attempts.ProgressID) AND (Attempts.SectionNumber = Sections.SectionNumber)
                    WHERE Customisations.CustomisationID = @customisationId
                      AND Customisations.Active = 1
                      AND Sections.ArchivedDate IS NULL
@@ -99,6 +109,7 @@
                          Sections.SectionID,
                          Customisations.CustomisationID,
                          Applications.ApplicationName,
+						 Applications.ApplicationInfo,
                          Customisations.CustomisationName,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,
@@ -106,6 +117,7 @@
                          Applications.IncludeCertification,
                          Progress.Completed,
                          Applications.AssessAttempts,
+						 Attempts.PLPasses,
                          Customisations.IsAssessed,
                          Applications.PLAPassThreshold,
                          Customisations.DiagCompletionThreshold,

@@ -29,7 +29,8 @@
                         typeof(AddInsertCustomisationV3sp).Assembly,
                         typeof(CandidateAssessmentSubmittedDate).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
-                        typeof(FixFilteredSPs).Assembly
+                        typeof(FixFilteredSPs).Assembly,
+                        typeof(AddAssessAttemptsIndex).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

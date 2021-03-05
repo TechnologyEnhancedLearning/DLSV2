@@ -7,6 +7,7 @@
     {
         public int Id { get; }
         public string Title { get; }
+        public string? Description { get; }
         public int? AverageDuration { get; }
         public string CentreName { get; }
         public string? BannerText { get; }
@@ -23,6 +24,7 @@
         public CourseContent(
             int id,
             string applicationName,
+            string? applicationInfo,
             string customisationName,
             int? averageDuration,
             string centreName,
@@ -39,6 +41,7 @@
         {
             Id = id;
             Title = $"{applicationName} - {customisationName}";
+            Description = applicationInfo;
             AverageDuration = averageDuration;
             CentreName = centreName;
             BannerText = bannerText;
