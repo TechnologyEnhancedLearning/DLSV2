@@ -38,7 +38,7 @@
                         typeof(ChangesForDigitalCapability).Assembly,
                         typeof(FixFilteredSPs).Assembly,
                         typeof(FilteredFunctionTweak).Assembly,
-                        typeof(AssessmentQuestionMaxMinDescriptionNullable).Assembly
+                        typeof(AssessmentQuestionMaxMinDescriptionNullable).Assembly,
                         typeof(FixFilteredSPs).Assembly,
                         typeof(AddAssessAttemptsIndex).Assembly
                     ).For.Migrations()

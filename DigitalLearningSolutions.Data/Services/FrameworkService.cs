@@ -37,6 +37,7 @@
         AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
         LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue);
+        Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //INSERT DATA
         BrandedFramework CreateFramework(string frameworkName, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -1107,6 +1108,44 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                     $"Id: {id}, AdminId: {adminId}, levelValue: {levelValue}"
                 );
             }
+        }
+
+        public Models.SelfAssessments.Competency GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
+        {
+            Models.SelfAssessments.Competency? competencyResult = null;
+            return connection.Query<Models.SelfAssessments.Competency, Models.SelfAssessments.AssessmentQuestion, Models.SelfAssessments.Competency>(
+                $@"SELECT C.ID       AS Id,
+                                                  C.Name AS Name,
+                                                  C.Description AS Description,
+                                                  CG.Name       AS CompetencyGroup,
+                                                  AQ.ID         AS Id,
+                                                  AQ.Question,
+                                                  AQ.MaxValueDescription,
+                                                  AQ.MinValueDescription,
+                                                  AQ.ScoringInstructions,
+                                                  AQ.MinValue,
+                                                  AQ.MaxValue,
+                                                  AQ.AssessmentQuestionInputTypeID,
+                                                  AQ.MinValue AS Result
+												  FROM   Competencies AS C INNER JOIN
+             FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID INNER JOIN
+             FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
+             CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
+             CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
+             AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
+WHERE (FC.ID = @frameworkCompetencyId)",
+                (competency, assessmentQuestion) =>
+                {
+                    if (competencyResult == null)
+                    {
+                        competencyResult = competency;
+                    }
+
+                    competencyResult.AssessmentQuestions.Add(assessmentQuestion);
+                    return competencyResult;
+                },
+                param: new { frameworkCompetencyId }
+            ).FirstOrDefault();
         }
     }
 }

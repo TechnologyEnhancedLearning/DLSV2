@@ -1,7 +1,9 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
+using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
@@ -147,6 +149,28 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
+        }
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}/Preview")]
+        public IActionResult PreviewCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
+        {
+            var adminId = GetAdminID();
+            var assessment = new CurrentSelfAssessment()
+            {
+                LaunchCount = 0,
+                UnprocessedUpdates = false
+            };
+            var competency = frameworkService.GetFrameworkCompetencyForPreview(frameworkCompetencyId);
+            if (competency != null)
+            {
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    assessmentQuestion.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestion.Id, adminId, assessmentQuestion.MinValue, assessmentQuestion.MaxValue).ToList();
+                }
+                var model = new SelfAssessmentCompetencyViewModel(assessment, competency, 1, 1);
+                return View("Developer/CompetencyPreview", model);
+            }
+            logger.LogWarning($"Attempt to preview competency failed for frameworkCompetencyId {frameworkCompetencyId}.");
+            return StatusCode(500);
         }
     }
 }
