@@ -1,3 +1,11 @@
+SET IDENTITY_INSERT [dbo].[Frameworks] ON 
+GO
+INSERT [dbo].[Frameworks] ([ID], [BrandID], [CategoryID], [TopicID], [FrameworkName], [Description], [FrameworkConfig], [OwnerAdminID], [CreatedDate], [PublishStatusID], [UpdatedByAdminID]) VALUES (2, 6, 1, 1, N'Digital Capability Framework', NULL, NULL, 1, CAST(N'2020-12-10T11:58:52.590' AS DateTime), 1, 1)
+GO
+SET IDENTITY_INSERT [dbo].[Frameworks] OFF
+GO
+
+
 INSERT INTO [FrameworkCompetencyGroups]
   ([CompetencyGroupID]
       ,[Ordering]
