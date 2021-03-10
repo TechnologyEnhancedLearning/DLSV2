@@ -168,6 +168,7 @@
             var adminId = GetAdminID();
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
+            TempData.Set(sessionAssessmentQuestion);
             string name = "";
             if (frameworkCompetencyId > 0)
             {
@@ -405,7 +406,7 @@
             int newId = assessmentQuestion.ID;
             if (newId > 0)
             {
-                frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
+                frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
                 if(assessmentQuestion.AssessmentQuestionInputTypeID == 1)
                 {
                     foreach(var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
@@ -423,7 +424,7 @@
             }
             else
             {
-                newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
+                newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
                 if(newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID == 1)
                 {
                     foreach (var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)

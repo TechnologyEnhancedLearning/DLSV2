@@ -47,7 +47,7 @@
         int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-        int InsertAssessmentQuestion(string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
+        int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
@@ -56,7 +56,7 @@
         void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
-        void UpdateAssessmentQuestion(int id, string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
+        void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
@@ -1007,7 +1007,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                );
         }
 
-        public int InsertAssessmentQuestion(string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
+        public int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
         {
             if (question == null | adminId < 1)
             {
@@ -1017,10 +1017,10 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 return 0;
             }
             var id = connection.QuerySingle<int>(
-               @"INSERT INTO AssessmentQuestions (Question, MaxValueDescription, MinValueDescription, ScoringInstructions, MinValue, MaxValue, IncludeComments, AddedByAdminId)
+               @"INSERT INTO AssessmentQuestions (Question, AssessmentQuestionInputTypeID, MaxValueDescription, MinValueDescription, ScoringInstructions, MinValue, MaxValue, IncludeComments, AddedByAdminId)
                       OUTPUT INSERTED.Id
-                      VALUES (@question, @maxValueDescription, @minValueDescription, @scoringInstructions, @minValue, @maxValue, @includeComments, @adminId)"
-                   , new { question, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
+                      VALUES (@question, @assessmentQuestionInputTypeId, @maxValueDescription, @minValueDescription, @scoringInstructions, @minValue, @maxValue, @includeComments, @adminId)"
+                   , new { question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
             if (id < 1)
             {
                 logger.LogWarning(
@@ -1058,7 +1058,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
             }
         }
 
-        public void UpdateAssessmentQuestion(int id, string question, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
+        public void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
         {
             if (id < 1 | question == null | adminId < 1)
             {
@@ -1069,6 +1069,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE AssessmentQuestions
                     SET Question = @question
+                        ,AssessmentQuestionInputTypeID = @assessmentQuestionInputTypeId
                         ,MaxValueDescription = @maxValueDescription
                         ,MinValueDescription = @minValueDescription
                         ,ScoringInstructions = @scoringInstructions
@@ -1076,7 +1077,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                         ,MaxValue = @maxValue
                         ,IncludeComments = @includeComments
                         ,AddedByAdminId = @adminId
-                    WHERE ID = @id", new {id, question, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
+                    WHERE ID = @id", new {id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
