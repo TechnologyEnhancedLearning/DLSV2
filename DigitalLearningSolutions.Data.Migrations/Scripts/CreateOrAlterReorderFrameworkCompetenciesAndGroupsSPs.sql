@@ -1,15 +1,3 @@
-USE [mbdbx101]
-GO
-
-/****** Object:  StoredProcedure [dbo].[ReorderTutorial]    Script Date: 04/01/2021 15:56:11 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
 -- =============================================
 -- Author:		Kevin Whittaker
 -- Create date: 04/01/2021
@@ -56,13 +44,6 @@ UPDATE FrameworkCompetencyGroups SET Ordering = Ordering - 1 WHERE (FrameworkID 
 UPDATE FrameworkCompetencyGroups SET Ordering = @MaxPos WHERE ID = @FrameworkCompetencyGroupID
 END
 END
-GO
-
-/****** Object:  StoredProcedure [dbo].[ReorderTutorial]    Script Date: 04/01/2021 15:56:11 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
 GO
 
 

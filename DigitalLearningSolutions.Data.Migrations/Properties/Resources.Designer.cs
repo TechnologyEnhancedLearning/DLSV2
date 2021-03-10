@@ -86,24 +86,19 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to USE [mbdbx101]
-        ///GO
-        ///
-        ////****** Object:  StoredProcedure [dbo].[ReorderTutorial]    Script Date: 04/01/2021 15:56:11 ******/
-        ///SET ANSI_NULLS ON
-        ///GO
-        ///
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///
-        ///
-        ///
-        ///-- =============================================
+        ///   Looks up a localized string similar to -- =============================================
         ///-- Author:		Kevin Whittaker
         ///-- Create date: 04/01/2021
         ///-- Description:	Reorders the FrameworkCompetencyGroups in a given Framework - moving the given group up or down.
         ///-- =============================================
-        ///CREATE OR ALTER PROCEDURE [dbo].[ReorderFrameworkCompete [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER PROCEDURE [dbo].[ReorderFrameworkCompetencyGroup]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@FrameworkCompetencyGroupID int,
+        ///	@Direction nvarchar(4) = &apos;&apos;,
+        ///	@SingleStep bit
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {

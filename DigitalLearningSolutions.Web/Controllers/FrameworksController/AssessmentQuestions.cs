@@ -234,6 +234,7 @@
         {
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
+            TempData.Set(sessionAssessmentQuestion);
             var model = new AssessmentQuestionViewModel()
             {
                 FrameworkId = frameworkId,
@@ -269,6 +270,7 @@
         {
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
+            TempData.Set(sessionAssessmentQuestion);
             var model = new AssessmentQuestionViewModel()
             {
                 FrameworkId = frameworkId,
@@ -296,7 +298,8 @@
         {
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            if(level < assessmentQuestionDetail.MinValue)
+            TempData.Set(sessionAssessmentQuestion);
+            if (level < assessmentQuestionDetail.MinValue)
             {
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
@@ -374,6 +377,7 @@
             {
                 Id = assessmentQuestionDetail.ID,
                 Question = assessmentQuestionDetail.Question,
+                AssessmentQuestionInputTypeID = assessmentQuestionDetail.AssessmentQuestionInputTypeID,
                 MaxValueDescription = assessmentQuestionDetail.MaxValueDescription,
                 MinValueDescription = assessmentQuestionDetail.MinValueDescription,
                 ScoringInstructions = assessmentQuestionDetail.ScoringInstructions,
@@ -427,17 +431,23 @@
                             frameworkService.InsertLevelDescriptor(newId, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
                     }
                 }
+                if (frameworkCompetencyId > 0)
+                {
+                    //Add the question to the competency:
+                    frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, newId, adminId);
+                }
+                else
+                {
+                    //Add the question to the framework default questions:
+                    frameworkService.AddFrameworkDefaultQuestion(frameworkId, newId, adminId, addToExisting);
+                }
             }
             if(frameworkCompetencyId > 0)
             {
-                //Add the question to the competency:
-                frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, newId, adminId);
                 return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId});
             }
             else
             {
-                //Add the question to the framework default questions:
-                frameworkService.AddFrameworkDefaultQuestion(frameworkId, newId, adminId, addToExisting);
                 return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId});
             }
         }
