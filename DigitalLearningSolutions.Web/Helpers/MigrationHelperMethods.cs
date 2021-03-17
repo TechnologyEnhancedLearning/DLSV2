@@ -30,7 +30,8 @@
                         typeof(CandidateAssessmentSubmittedDate).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
                         typeof(FixFilteredSPs).Assembly,
-                        typeof(AddAssessAttemptsIndex).Assembly
+                        typeof(AddAssessAttemptsIndex).Assembly,
+                        typeof(AddResetPasswordTable).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
