@@ -10,7 +10,7 @@
     <dd class="nhsuk-summary-list__value">
       @Model.DetailFramework.FrameworkName
     </dd>
-    @if (Model.DetailFramework.UserCanModify)
+    @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
 
@@ -36,7 +36,7 @@
       @if (Model.DetailFramework.Topic != null)
       {<span>/</span><span class="framework-topic"> @Model.DetailFramework.Topic </span>}
     </dd>
-    @if (Model.DetailFramework.UserCanModify)
+    @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
 
@@ -87,7 +87,7 @@
         </tbody>
       </table>
     </dd>
-    @if (Model.DetailFramework.UserCanModify)
+    @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
 
@@ -147,7 +147,7 @@
         <span>No default assessment questions have been set for this framework</span>
       }
       </dd>
-    @if (Model.DetailFramework.UserCanModify)
+    @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
 

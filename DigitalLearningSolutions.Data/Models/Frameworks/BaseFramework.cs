@@ -19,6 +19,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public string? PublishStatus { get; set; }
         public int UpdatedByAdminID { get; set; }
         public string? UpdatedBy { get; set; }
-        public bool UserCanModify { get; set; }
+        public int UserRole { get; set; }
     }
 }

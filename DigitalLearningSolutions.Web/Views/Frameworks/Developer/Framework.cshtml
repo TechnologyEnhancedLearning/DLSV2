@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model FrameworkViewModel;
 @{
-  ViewData["Title"] = "New Framework";
+  ViewData["Title"] = Model.DetailFramework.FrameworkName;
   ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -42,8 +42,8 @@
     </ol>
   </div>
   <div class="nhsuk-grid-column-one-third">
-    <a class="nhsuk-button nhsuk-button--secondary">Preview</a>
-    @if (Model.DetailFramework.UserCanModify)
+    @*<a class="nhsuk-button nhsuk-button--secondary">Preview</a>*@
+    @if (Model.DetailFramework.UserRole > 1)
     {
       if (Model.DetailFramework.PublishStatus == "Review")
       {

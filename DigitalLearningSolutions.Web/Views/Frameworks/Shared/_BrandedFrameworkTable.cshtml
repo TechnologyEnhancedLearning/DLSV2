@@ -58,9 +58,9 @@
         </td>
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
           <span class="nhsuk-table-responsive__heading">Actions </span>
-          @if (framework.UserCanModify)
+          @if (framework.UserRole > 1)
           {
-            <a href="#">
+            <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
               View/Edit
             </a>
           }

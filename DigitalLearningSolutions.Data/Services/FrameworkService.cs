@@ -80,10 +80,7 @@
                  WHERE (ID = FW.PublishStatusID)) AS PublishStatus, UpdatedByAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers AS AdminUsers_1
-                 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = 1 THEN 1 ELSE COALESCE
-                 ((SELECT CanModify
-                  FROM    FrameworkCollaborators
-                  WHERE FrameworkID = FW.ID AND AdminID = @AdminID), 0) END AS UserCanModify";
+                 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
                                  FROM    Brands
@@ -98,7 +95,8 @@
             @",FW.Description
               ,FW.FrameworkConfig";
         private const string FrameworkTables =
-            @"Frameworks AS FW";
+            @"Frameworks AS FW LEFT OUTER JOIN
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId";
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner";
         private const string AssessmentQuestionDetailFields =

@@ -19,7 +19,7 @@
            string publishStatus = "Draft",
            int updatedByAdminId = 1,
            string updatedBy = "owner",
-           bool userCanModify = true
+           int userRole = 3
        )
         {
             return new BaseFramework()
@@ -36,7 +36,7 @@
                 PublishStatus = publishStatus,
                 UpdatedByAdminID = updatedByAdminId,
                 UpdatedBy = updatedBy,
-                UserCanModify = userCanModify
+                UserRole = userRole
             };
         }
     }

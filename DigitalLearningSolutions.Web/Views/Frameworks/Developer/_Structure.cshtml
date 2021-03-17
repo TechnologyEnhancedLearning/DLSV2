@@ -5,7 +5,7 @@
 {
   foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
   {
-    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserCanModify, FrameworkCompetencyGroup =frameworkCompetencyGroup }" />
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" />
   }
 }
 else
@@ -18,12 +18,12 @@ else
 
     foreach (var frameworkCompetency in Model.FrameworkCompetencies)
     {
-      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserCanModify, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" />
+      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" />
     }
 
   }
 </div>
-@if (Model.DetailFramework.UserCanModify)
+@if (Model.DetailFramework.UserRole > 1)
 {
   <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new competency group</a>
   <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new competency without a group</a>
