@@ -80,7 +80,7 @@ The migration should now get applied the next time you run the app or when you r
 
 ### Reversing a migration
 If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
-* Remove it from the `ScanIn` statement in Startup.cs
+* Remove it from the `ScanIn` statement in MigrationHelperMethods.cs
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
