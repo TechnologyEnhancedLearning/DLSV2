@@ -17,6 +17,11 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 
         public IViewComponentResult Invoke(int? customisationId)
         {
+            // If the user is not logged in, render nothing for the logo
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return View(new LogoViewModel(null));
+            }
             var centreId = ((ClaimsPrincipal) User).GetCentreId();
             var customLogo = logoService.GetLogo(centreId, customisationId);
 
