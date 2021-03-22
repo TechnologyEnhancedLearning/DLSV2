@@ -1,0 +1,23 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.ForgotPassword
+@model ForgotPasswordViewModel
+@{
+  ViewData["Title"] = "Digital Learning Solutions - Reset Your Password";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-u-margin-bottom-6">Reset your password</h1>
+
+    <form method="post" asp-action="RecoverEmail" novalidate>
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="emailAddress">
+          Enter your email address and we will send you password reset instructions.
+        </label>
+        <input class="nhsuk-input nhsuk-u-width-one-half" type="email" id="emailAddress" asp-for="EmailAddress" value="@Model.EmailAddress"/>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Reset</button>
+    </form>
+
+  </div>
+</div>
