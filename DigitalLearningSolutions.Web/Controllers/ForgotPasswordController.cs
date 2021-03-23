@@ -13,7 +13,7 @@
         }
 
         [HttpPost]
-        public IActionResult RecoverEmail(string emailAddress)
+        public IActionResult RecoverPassword(string emailAddress)
         {
             // TODO: HEEDLS-354 - form submission logic
 
