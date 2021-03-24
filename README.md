@@ -37,7 +37,7 @@ We need to add the missing tables in the database, using the fluent migrator.
 To do this: run the DigitalLearningSolutions.Web project.
 This will throw an exception because data is missing from the table, but it applies the migrations needed first.
 
-## Add the self assessment data
+## Add the framework and self assessment data
 
 We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored and migrated database:
 1. Open SQL Server Management Studio
@@ -45,6 +45,7 @@ We've added data for the Digital Capabilities self assessment to the database. T
 3. Add `USE [mbdbx101]` to the top of the script. This will ensure it runs on the mbdbx101 database
 4. Press the Execute button to run the script.
 5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
+6. Do the same to populate the [digital capability framework](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/SQLScripts/PopulateDigitalCapabilityFCandFCGs.sql). This will turn the self assessment into a framework.
 
 ## Fix inconsistencies with live
 
