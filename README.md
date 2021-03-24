@@ -45,7 +45,7 @@ We've added data for the Digital Capabilities self assessment to the database. T
 3. Add `USE [mbdbx101]` to the top of the script. This will ensure it runs on the mbdbx101 database
 4. Press the Execute button to run the script.
 5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
-6. Do the same to populate the [digital capability framework](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/SQLScripts/PopulateDigitalCapabilityFCandFCGs.sql). This will turn the self assessment into a framework.
+6. Do the same for the [PopulateDigitalCapabilityFCandFCGs.sql](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/SQLScripts/PopulateDigitalCapabilityFCandFCGs.sql) script. This will turn the self assessment into a framework.
 
 ## Fix inconsistencies with live
 
