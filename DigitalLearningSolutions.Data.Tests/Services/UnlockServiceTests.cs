@@ -12,21 +12,21 @@
 
     public class UnlockServiceTests
     {
-        private UnlockService unlockService;
-        private IUnlockDataService unlockDataService;
+        private NotificationService notificationService;
+        private INotificationDataService notificationDataService;
         private IConfigService configService;
         private ISmtpClient smtpClient;
 
         [SetUp]
         public void Setup()
         {
-            unlockDataService = A.Fake<IUnlockDataService>();
+            notificationDataService = A.Fake<INotificationDataService>();
             configService = A.Fake<IConfigService>();
             var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
             A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
 
-            A.CallTo(() => unlockDataService.GetUnlockData(A<int>._)).Returns(new UnlockData
+            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(new UnlockData
             {
                 ContactEmail = "recipient@example.com",
                 ContactForename = "Forename",
@@ -43,7 +43,7 @@
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailServer)).Returns("smtp.example.com");
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
 
-            unlockService = new UnlockService(unlockDataService, configService, smtpClientFactory);
+            notificationService = new NotificationService(notificationDataService, configService, smtpClientFactory);
         }
 
         [Test]
@@ -53,14 +53,14 @@
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailPassword)).Returns(null);
 
             // Then
-            Assert.Throws<ConfigValueMissingException>(() => unlockService.SendUnlockRequest(1));
+            Assert.Throws<ConfigValueMissingException>(() => notificationService.SendUnlockRequest(1));
         }
 
         [Test]
         public void The_sender_email_address_is_correct()
         {
             // When
-            unlockService.SendUnlockRequest(1);
+            notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>
@@ -79,7 +79,7 @@
         public void The_recipient_email_address_is_correct()
         {
             // When
-            unlockService.SendUnlockRequest(1);
+            notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>
@@ -98,7 +98,7 @@
         public void The_cc_email_address_is_correct()
         {
             // When
-            unlockService.SendUnlockRequest(1);
+            notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>
@@ -117,7 +117,7 @@
         public void The_server_credentials_are_correct()
         {
             // When
-            unlockService.SendUnlockRequest(1);
+            notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>
@@ -130,7 +130,7 @@
         public void The_server_details_are_correct()
         {
             // When
-            unlockService.SendUnlockRequest(1);
+            notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>

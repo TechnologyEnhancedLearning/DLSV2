@@ -65,6 +65,7 @@
             // Given
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 competencyGroup: "Data, information and content",
+                name: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 description: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {
@@ -87,6 +88,7 @@
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
+                name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {

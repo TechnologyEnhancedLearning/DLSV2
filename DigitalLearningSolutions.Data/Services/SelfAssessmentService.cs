@@ -51,6 +51,7 @@
                             AND SelfAssessmentID = @selfAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
+                                                  C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
                                                   AQ.ID         AS Id,
@@ -60,15 +61,13 @@
                                                   AQ.ScoringInstructions,
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
+                                                  AQ.AssessmentQuestionInputTypeID,
                                                   LAR.Result";
 
         private const string CompetencyTables =
             @"Competencies AS C
-                        
                         INNER JOIN CompetencyAssessmentQuestions AS CAQ
                             ON CAQ.CompetencyID = C.ID
-                        INNER JOIN CompetencyGroups AS CG
-                            ON C.CompetencyGroupID = CG.ID
                         INNER JOIN AssessmentQuestions AS AQ
                             ON AQ.ID = CAQ.AssessmentQuestionID
                         INNER JOIN CandidateAssessments AS CA
@@ -79,7 +78,9 @@
                                    AND LAR.AssessmentQuestionID = AQ.ID
                         INNER JOIN SelfAssessmentStructure AS SAS
                             ON C.ID = SAS.CompetencyID
-
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID
                                     AND SAS.SelfAssessmentID = @selfAssessmentId";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)

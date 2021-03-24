@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model FrameworkViewModel;
+<h2>Framework structure</h2>
+@if (Model.FrameworkCompetencyGroups.Any())
+{
+  foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
+  {
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" />
+  }
+}
+else
+{
+  <p>No competency groups in this framework</p>
+}
+<div id="fc-ungrouped">
+  @if (Model.FrameworkCompetencies.Any())
+  {
+
+    foreach (var frameworkCompetency in Model.FrameworkCompetencies)
+    {
+      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" />
+    }
+
+  }
+</div>
+@if (Model.DetailFramework.UserRole > 1)
+{
+  <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new competency group</a>
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new competency without a group</a>
+}
+

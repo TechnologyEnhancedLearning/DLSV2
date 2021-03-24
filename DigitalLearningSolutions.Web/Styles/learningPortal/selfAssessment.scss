@@ -50,7 +50,9 @@ details.nhsuk-details {
     padding-bottom: 0;
   }
 }
-
+.nhsuk-details__summary-text {
+  text-decoration: none;
+}
 .score {
   margin-left: 48px;
   color: $color_nhsuk-black;

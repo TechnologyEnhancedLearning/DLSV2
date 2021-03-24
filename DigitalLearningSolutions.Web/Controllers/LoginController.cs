@@ -29,6 +29,7 @@
                 new Claim(CustomClaimTypes.AdminCategoryId, "0"),
                 new Claim(CustomClaimTypes.IsSupervisor, "True"),
                 new Claim(CustomClaimTypes.IsTrainer, "False"),
+                new Claim(CustomClaimTypes.IsFrameworkDeveloper, "True"),
                 new Claim(CustomClaimTypes.LearnCandidateNumber, "KW1205"),
                 new Claim(CustomClaimTypes.UserForename, "Kevin"),
                 new Claim(CustomClaimTypes.UserSurname, "Whittaker(Developer)"),
