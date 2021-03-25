@@ -9,8 +9,10 @@
         {
             Id = new Guid();
             DetailFramework = new DetailFramework();
+            Collaborators = new List<Collaborator>();
         }
         public Guid Id { get; set; }
         public DetailFramework DetailFramework { get; set; }
+        public List<Collaborator> Collaborators { get; set; }
     }
 }

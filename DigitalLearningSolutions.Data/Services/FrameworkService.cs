@@ -15,6 +15,7 @@
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
         BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId);
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
+        DetailFramework? GetDetailFrameworkByFrameworkId(int frameworkId, int adminId);
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
@@ -39,7 +40,7 @@
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue);
         Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //INSERT DATA
-        BrandedFramework CreateFramework(string frameworkName, int adminId);
+        BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
         int InsertCompetency(string name, string? description, int adminId);
@@ -52,6 +53,8 @@
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
+        void UpdateFrameworkDescription(int frameworkId, int adminId, string? frameworkDescription);
+        void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig);
         void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, int adminId);
         void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
@@ -135,6 +138,15 @@
                new { frameworkId, adminId }
            );
         }
+        public DetailFramework? GetDetailFrameworkByFrameworkId(int frameworkId, int adminId)
+        {
+            return connection.QueryFirstOrDefault<DetailFramework>(
+               $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields} {DetailFrameworkFields}
+                      FROM {FrameworkTables}
+                      WHERE FW.ID = @frameworkId",
+               new { frameworkId, adminId }
+           );
+        }
         public IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId)
         {
             return connection.Query<BrandedFramework>(
@@ -165,9 +177,15 @@
            );
         }
 
-        public BrandedFramework CreateFramework(string frameworkName, int adminId)
+        public BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId)
         {
-            if (frameworkName.Length == 0 | adminId < 1)
+            string frameworkName = detailFramework.FrameworkName;
+            string? description = detailFramework.Description;
+            string? frameworkConfig = detailFramework.FrameworkConfig;
+            int? brandId = detailFramework.BrandID;
+            int? categoryId = detailFramework.CategoryID;
+            int? topicId = detailFramework.TopicID;
+            if (detailFramework.FrameworkName.Length == 0 | adminId < 1)
             {
                 logger.LogWarning(
                     $"Not inserting framework as it failed server side validation. AdminId: {adminId}, frameworkName: {frameworkName}"
@@ -182,9 +200,18 @@
                 return new BrandedFramework();
             }
             var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO Frameworks (FrameworkName, OwnerAdminID, PublishStatusID, UpdatedByAdminID)
-                    VALUES (@frameworkName, @adminId, 1, @adminId)",
-               new { frameworkName, adminId }
+                @"INSERT INTO Frameworks (
+                    BrandID
+                    ,CategoryID
+                    ,TopicID
+                    ,FrameworkName
+                    ,Description
+                    ,FrameworkConfig
+                    ,OwnerAdminID
+                    ,PublishStatusID
+                    ,UpdatedByAdminID)
+                    VALUES (@brandId, @categoryId, @topicId, @frameworkName, @description, @frameworkConfig, @adminId, 1, @adminId)",
+               new { brandId, categoryId, topicId, frameworkName, description, frameworkConfig, adminId }
            );
             if (numberOfAffectedRows < 1)
             {
@@ -552,6 +579,35 @@
             {
                 return true;
             }
+        }
+
+
+        public void UpdateFrameworkDescription(int frameworkId, int adminId, string? frameworkDescription)
+        {
+            if (adminId < 1 | frameworkId < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating framework description as it failed server side validation. AdminId: {adminId}, frameworkDescription: {frameworkDescription}, frameworkId: {frameworkId}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE Frameworks SET Description = @frameworkDescription, UpdatedByAdminID = @adminId
+                    WHERE ID = @frameworkId",
+               new { frameworkDescription, adminId, frameworkId });
+        }
+
+        public void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig)
+        {
+            if (adminId < 1 | frameworkId < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating framework config as it failed server side validation. AdminId: {adminId}, frameworkConfig: {frameworkConfig}, frameworkId: {frameworkId}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE Frameworks SET FrameworkConfig = @frameworkConfig, UpdatedByAdminID = @adminId
+                    WHERE ID = @frameworkId",
+               new { frameworkConfig, adminId, frameworkId });
         }
         public CompetencyGroupBase GetCompetencyGroupBaseById(int Id)
         {

@@ -7,6 +7,6 @@
         public SelectList BrandSelectList { get; set; }
         public SelectList CategorySelectList { get; set; }
         public SelectList TopicSelectList { get; set; }
-        public BrandedFramework BrandedFramework { get; set; }
+        public DetailFramework DetailFramework { get; set; }
     }
 }
