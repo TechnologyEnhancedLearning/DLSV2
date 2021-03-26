@@ -37,7 +37,7 @@ We need to add the missing tables in the database, using the fluent migrator.
 To do this: run the DigitalLearningSolutions.Web project.
 This will throw an exception because data is missing from the table, but it applies the migrations needed first.
 
-## Add the self assessment data
+## Add the framework and self assessment data
 
 We've added data for the Digital Capabilities self assessment to the database. To add this data to the restored and migrated database:
 1. Open SQL Server Management Studio
@@ -45,6 +45,7 @@ We've added data for the Digital Capabilities self assessment to the database. T
 3. Add `USE [mbdbx101]` to the top of the script. This will ensure it runs on the mbdbx101 database
 4. Press the Execute button to run the script.
 5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
+6. Do the same for the [PopulateDigitalCapabilityFCandFCGs.sql](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/SQLScripts/PopulateDigitalCapabilityFCandFCGs.sql) script. This will turn the self assessment into a framework.
 
 ## Fix inconsistencies with live
 
@@ -80,7 +81,7 @@ The migration should now get applied the next time you run the app or when you r
 
 ### Reversing a migration
 If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
-* Remove it from the `ScanIn` statement in Startup.cs
+* Remove it from the `ScanIn` statement in MigrationHelperMethods.cs
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
