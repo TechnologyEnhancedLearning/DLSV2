@@ -102,6 +102,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
+            services.AddScoped<IPasswordResetService, PasswordResetService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

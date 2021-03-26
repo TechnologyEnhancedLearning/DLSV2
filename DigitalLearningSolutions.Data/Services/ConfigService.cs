@@ -21,6 +21,7 @@
         public const string TrackingSystemBaseUrl = "TrackingSystemBaseURL";
         public const string AccessibilityHelpText = "AccessibilityNotice";
         public const string TermsText = "TermsAndConditions";
+        public const string BaseUrl = "BaseURL";
 
         private readonly IDbConnection connection;
 

@@ -1,21 +1,45 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Services;
     using Microsoft.AspNetCore.Mvc;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
-    using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
 
     public class ForgotPasswordController : Controller
     {
-        public IActionResult Index()
+
+        private readonly IPasswordResetService passwordResetService;
+
+        public ForgotPasswordController(IPasswordResetService passwordResetService)
         {
-            var model = new ForgotPasswordViewModel();
+            this.passwordResetService = passwordResetService;
+        }
+
+        [HttpGet]
+        public IActionResult Index(ForgotPasswordViewModel? model)
+        {
+            model ??= new ForgotPasswordViewModel();
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult RecoverPassword(string emailAddress)
+        public IActionResult Index(string? emailAddress)
         {
-            // TODO: HEEDLS-354 - form submission logic
+            if (emailAddress?.Contains('@') != true)
+            {
+                ForgotPasswordViewModel model = GetEmailInvalidErrorModel(emailAddress ?? string.Empty);
+                return Index(model);
+            }
+
+            try
+            {
+                this.passwordResetService.SendResetPasswordEmail(emailAddress);
+            }
+            catch (EmailAddressNotFoundException)
+            {
+                ForgotPasswordViewModel model = GetEmailNotFoundErrorModel(emailAddress);
+                return Index(model);
+            }
 
             return RedirectToAction("Confirm");
         }
@@ -23,6 +47,26 @@
         public IActionResult Confirm()
         {
             return View();
+        }
+
+        private ForgotPasswordViewModel GetEmailInvalidErrorModel(string emailAddress)
+        {
+            return new ForgotPasswordViewModel
+            (
+                emailAddress,
+                true,
+                "The email address needs to be a valid email address, such as example@domain.com"
+            );
+        }
+
+        private ForgotPasswordViewModel GetEmailNotFoundErrorModel(string emailAddress)
+        {
+            return new ForgotPasswordViewModel
+            (
+                emailAddress,
+                true,
+                "User with this email address does not exist. Please try again"
+            );
         }
     }
 }
