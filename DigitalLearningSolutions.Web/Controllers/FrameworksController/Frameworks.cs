@@ -428,39 +428,33 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if (detailFramework.Brand != null)
                 {
-                    //create brand and set brand id
                     detailFramework.BrandID = commonService.InsertBrandAndReturnId(detailFramework.Brand, (int)centreId);
                 }
                 else
                 {
                     return null;
-                    //return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
                 }
             }
             if (detailFramework.CategoryID == 0)
             {
                 if (detailFramework.Category != null)
                 {
-                    //create category and set category id to new category
                     detailFramework.CategoryID = commonService.InsertCategoryAndReturnId(detailFramework.Category, (int)centreId);
                 }
                 else
                 {
                     return null;
-                    //return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
                 }
             }
             if (detailFramework.TopicID == 0)
             {
                 if (detailFramework.Topic != null)
                 {
-                    //create topic and set topic id to new topic
                     detailFramework.TopicID = commonService.InsertTopicAndReturnId(detailFramework.Topic, (int)centreId);
                 }
                 else
                 {
                     return null;
-                    //return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
                 }
             }
             return detailFramework;
@@ -469,6 +463,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult FrameworkSummary()
         {
             SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+            if(sessionNewFramework == null)
+            {
+                return RedirectToAction("FrameworksDashboard");
+            }
             TempData.Set(sessionNewFramework);
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
         }
@@ -540,6 +538,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(500);
             }
             var newFramework = frameworkService.CreateFramework(detailFramework, adminId);
+            TempData.Clear();
             return RedirectToAction("AddCollaborators", "Frameworks", new { actionname = "New", frameworkId = newFramework.ID });
         }
 
