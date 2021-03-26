@@ -48,5 +48,17 @@
         {
             return User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
         }
+        private string? GetUserEmail()
+        {
+            return User.GetEmail();
+        }
+        private string? GetUserFirstName()
+        {
+            return User.GetCustomClaim(CustomClaimTypes.UserForename);
+        }
+        private string? GetUserLastName()
+        {
+            return User.GetCustomClaim(CustomClaimTypes.UserSurname);
+        }
     }
 }

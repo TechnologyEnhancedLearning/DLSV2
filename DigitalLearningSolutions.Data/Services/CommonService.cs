@@ -9,13 +9,19 @@
     using Microsoft.Extensions.Logging;
     public interface ICommonService
     {
+        //GET DATA
         IEnumerable<Brand> GetBrandListForCentre(int centreId);
         IEnumerable<Category> GetCategoryListForCentre(int centreId);
         IEnumerable<Topic> GetTopicListForCentre(int centreId);
+        string? GetBrandNameById(int brandId);
+        string? GetCategoryNameById(int categoryId);
+        string? GetTopicNameById(int topicId);
+        IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId);
+        //INSERT DATA
         int InsertBrandAndReturnId(string brandName, int centreId);
         int InsertCategoryAndReturnId(string categoryName, int centreId);
         int InsertTopicAndReturnId(string topicName, int centreId);
-        IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId);
+
     }
     public class CommonService : ICommonService
     {
@@ -103,7 +109,7 @@
                 );
                 return -2;
             }
-           
+
             int existingId = (int)connection.ExecuteScalar(GetCategoryID,
                 new { categoryName });
             if (existingId > 0)
@@ -164,19 +170,44 @@
                 return newTopicId;
             }
         }
-
-    
-    public IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId)
-    {
+        public IEnumerable<Administrator> GetOtherAdministratorsForCentre(int centreId, int adminId)
         {
-            return connection.Query<Administrator>(
-                @"SELECT        AdminID, CentreID, Email, Forename, Surname, IsFrameworkDeveloper
+            {
+                return connection.Query<Administrator>(
+                    @"SELECT        AdminID, CentreID, Email, Forename, Surname, IsFrameworkDeveloper
                     FROM            AdminUsers
                     WHERE           (Active = 1) AND (CentreID = @centreId) AND (Approved = 1) AND (AdminID <> @adminID)
                     ORDER BY Surname, Forename",
-               new { centreId, adminId }
+                   new { centreId, adminId }
+               );
+            }
+        }
+        public string? GetBrandNameById(int brandId)
+        {
+            return (string?)connection.ExecuteScalar(
+               @"SELECT       BrandName
+                    FROM            Brands
+                    WHERE        BrandID = @brandId",
+              new { brandId }
+          );
+        }
+        public string? GetCategoryNameById(int categoryId)
+        {
+            return (string?)connection.ExecuteScalar(
+                @"SELECT         CategoryName
+                    FROM            CourseCategories
+                    WHERE        CourseCategoryID = @categoryId",
+               new { categoryId }
+           );
+        }
+        public string? GetTopicNameById(int topicId)
+        {
+            return (string?)connection.ExecuteScalar(
+                @"SELECT        CourseTopic
+                    FROM            CourseTopics
+                    WHERE        CourseTopicID = @topicId",
+               new { topicId }
            );
         }
     }
-}
 }

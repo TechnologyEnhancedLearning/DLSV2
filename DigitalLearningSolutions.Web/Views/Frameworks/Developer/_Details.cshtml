@@ -22,7 +22,38 @@
     }
 
   </div>
-
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Description
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Html.Raw(Model.DetailFramework.Description)
+    </dd>
+    @if (Model.DetailFramework.UserRole > 1)
+    {
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkDescription" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit
+        </a>
+      </dd>
+    }
+    </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Vocabulary
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.DetailFramework.FrameworkConfig
+    </dd>
+    @if (Model.DetailFramework.UserRole > 1)
+    {
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkType" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit
+        </a>
+      </dd>
+    }
+    </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Branding
@@ -102,51 +133,51 @@
   </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-     Default questions
+      Default questions
     </dt>
     <dd class="nhsuk-summary-list__value">
       @if (Model.FrameworkDefaultQuestions.Any())
       {
-      <table role="presentation" class="nhsuk-table-responsive">
-        <thead role="rowgroup" class="nhsuk-table__head nhsuk-u-visually-hidden">
-          <tr role="row" class="nhsuk-u-visually-hidden">
-            <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
-              Question
-            </th>
-            <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
-              Tyoe/Range
-            </th>
+        <table role="presentation" class="nhsuk-table-responsive">
+          <thead role="rowgroup" class="nhsuk-table__head nhsuk-u-visually-hidden">
+            <tr role="row" class="nhsuk-u-visually-hidden">
+              <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
+                Question
+              </th>
+              <th role="columnheader" class="nhsuk-u-font-size-16" scope="col">
+                Tyoe/Range
+              </th>
 
-          </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-
-          @foreach (var question in Model.FrameworkDefaultQuestions)
-          {
-            <tr role="row" class="nhsuk-table__row collaborator-row">
-              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">Question </span>
-                <span class="framework-default-question">
-                  @question.Question
-                </span>
-              </td>
-              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">Type/range </span>
-                <span class="framework-default-question-range">
-                 @question.InputTypeName (@question.MinValue - @question.MaxValue)
-                </span>
-              </td>
             </tr>
-          }
+          </thead>
+          <tbody class="nhsuk-table__body">
 
-        </tbody> 
-      </table>
+            @foreach (var question in Model.FrameworkDefaultQuestions)
+            {
+              <tr role="row" class="nhsuk-table__row collaborator-row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Question </span>
+                  <span class="framework-default-question">
+                    @question.Question
+                  </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Type/range </span>
+                  <span class="framework-default-question-range">
+                    @question.InputTypeName (@question.MinValue - @question.MaxValue)
+                  </span>
+                </td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
       }
       else
       {
         <span>No default assessment questions have been set for this framework</span>
       }
-      </dd>
+    </dd>
     @if (Model.DetailFramework.UserRole > 1)
     {
       <dd class="nhsuk-summary-list__actions">
