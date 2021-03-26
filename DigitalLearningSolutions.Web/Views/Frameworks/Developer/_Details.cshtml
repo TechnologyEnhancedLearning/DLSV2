@@ -29,12 +29,15 @@
     <dd class="nhsuk-summary-list__value">
       @Html.Raw(Model.DetailFramework.Description)
     </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="FrameworkDescription" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-        Edit
-      </a>
-    </dd>
-  </div>
+    @if (Model.DetailFramework.UserRole > 1)
+    {
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkDescription" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit
+        </a>
+      </dd>
+    }
+    </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Vocabulary
@@ -42,12 +45,15 @@
     <dd class="nhsuk-summary-list__value">
       @Model.DetailFramework.FrameworkConfig
     </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="FrameworkType" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
-        Edit
-      </a>
-    </dd>
-  </div>
+    @if (Model.DetailFramework.UserRole > 1)
+    {
+      <dd class="nhsuk-summary-list__actions">
+        <a asp-action="FrameworkType" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-actionname="Edit">
+          Edit
+        </a>
+      </dd>
+    }
+    </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Branding

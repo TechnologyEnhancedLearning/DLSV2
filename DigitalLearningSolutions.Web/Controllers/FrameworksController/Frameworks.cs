@@ -113,14 +113,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 UpdatedByAdminID = adminId,
                 TopicID = 1,
                 CategoryID = 1,
-                PublishStatusID = 1
+                PublishStatusID = 1,
+                UserRole = 3
             };
             sessionNewFramework.DetailFramework = detailFramework;
             TempData.Set(sessionNewFramework);
             return RedirectToAction("CreateNewFramework", "Frameworks", new { actionname = "New" });
         }
-        [Route("/Frameworks/{frameworkId}/{actionname}/Name")]
-        [Route("/Frameworks/{actionname}/Name")]
+        [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
+        [Route("/Frameworks/Name/{actionname}")]
         public IActionResult CreateNewFramework(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -136,13 +137,17 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 detailFramework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
             }
+            if (detailFramework.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
             return View("Developer/Name", detailFramework);
         }
         [HttpPost]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Name")]
-        [Route("/Frameworks/{actionname}/Name")]
+        [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
+        [Route("/Frameworks/Name/{actionname}")]
         public IActionResult CreateNewFramework(DetailFramework detailFramework, string actionname, int frameworkId = 0)
-        {
+        {            
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(BaseFramework.FrameworkName));
@@ -177,7 +182,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
             }
         }
-        [Route("/Frameworks/{actionname}/Similar")]
+        [Route("/Frameworks/Similar/{actionname}")]
         public IActionResult SetNewFrameworkName(string frameworkname, string actionname)
         {
             if (actionname == "New")
@@ -227,8 +232,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(500);
             }
         }
-        [Route("/Frameworks/{actionname}/Description/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Description/")]
+        [Route("/Frameworks/Description/{actionname}/")]
+        [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkDescription(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -248,12 +253,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     logger.LogWarning($"Failed to load description page for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                     return StatusCode(500);
                 }
+                if (framework.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
             }
             return View("Developer/Description", framework);
         }
         [HttpPost]
-        [Route("/Frameworks/{actionname}/Description/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Description/")]
+        [Route("/Frameworks/Description/{actionname}/")]
+        [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkDescription(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (actionname == "New")
@@ -270,8 +279,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
 
         }
-        [Route("/Frameworks/{actionname}/Type/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Type/")]
+        [Route("/Frameworks/Type/{actionname}/")]
+        [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkType(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -291,12 +300,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     logger.LogWarning($"Failed to load branding page for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                     return StatusCode(500);
                 }
+                if (framework.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
             }
             return View("Developer/Type", framework);
         }
         [HttpPost]
-        [Route("/Frameworks/{actionname}/Type/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Type/")]
+        [Route("/Frameworks/Type/{actionname}/")]
+        [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkType(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (actionname == "New")
@@ -312,8 +325,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
             }
         }
-            [Route("/Frameworks/{actionname}/Brand/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Brand/")]
+        [Route("/Frameworks/Brand/{actionname}/")]
+        [Route("/Frameworks/Brand/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -333,6 +346,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     logger.LogWarning($"Failed to load branding page for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
                     return StatusCode(500);
                 }
+                if (framework.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
             }
             var brandsList = commonService.GetBrandListForCentre((int)centreId).Select(b => new { b.BrandID, b.BrandName }).ToList();
             var categoryList = commonService.GetCategoryListForCentre((int)centreId).Select(c => new { c.CourseCategoryID, c.CategoryName }).ToList();
@@ -350,8 +367,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Branding", model);
         }
         [HttpPost]
-        [Route("/Frameworks/{actionname}/Brand/")]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Brand/")]
+        [Route("/Frameworks/Brand/{actionname}/")]
+        [Route("/Frameworks/Brand/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(DetailFramework? detailFramework, string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -363,7 +380,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 {
                     return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { frameworkId });
                 }
-                 var updatedFramework = frameworkService.UpdateFrameworkBranding(frameworkId, (int)detailFramework.BrandID, (int)detailFramework.CategoryID, (int)detailFramework.TopicID, adminId);
+                var updatedFramework = frameworkService.UpdateFrameworkBranding(frameworkId, (int)detailFramework.BrandID, (int)detailFramework.CategoryID, (int)detailFramework.TopicID, adminId);
                 if (updatedFramework == null)
                 {
                     logger.LogWarning($"Failed to update branding for frameworkID: {frameworkId} adminId: {adminId}, centreId: {centreId}");
@@ -398,6 +415,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         public DetailFramework? InsertBrandingCategoryTopicIfRequired(DetailFramework? detailFramework)
         {
+            if (detailFramework == null)
+            {
+                return null;
+            }
             var centreId = GetCentreId();
             if (detailFramework.BrandID == null | detailFramework.CategoryID == null | detailFramework.TopicID == null)
             {
@@ -451,7 +472,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Set(sessionNewFramework);
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
         }
-        [Route("/Frameworks/{frameworkId}/{actionname}/Collaborators")]
+        [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborators(string actionname, int frameworkId)
         {
             var adminId = GetAdminID();
@@ -461,6 +482,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             string frameworkName = "";
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
             frameworkName = (string)framework.FrameworkName;
             var model = new CollaboratorsViewModel()
             {
@@ -472,7 +497,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Collaborators", model);
         }
         [HttpPost]
-        [Route("/Frameworks/{frameworkId}/{actionname}/Collaborators")]
+        [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborator(string actionname, int adminId, bool canModify, int frameworkId)
         {
             frameworkService.AddCollaboratorToFramework(frameworkId, adminId, canModify);
@@ -515,7 +540,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(500);
             }
             var newFramework = frameworkService.CreateFramework(detailFramework, adminId);
-             return RedirectToAction("AddCollaborators", "Frameworks", new { actionname = "New", frameworkId = newFramework.ID });
+            return RedirectToAction("AddCollaborators", "Frameworks", new { actionname = "New", frameworkId = newFramework.ID });
         }
 
     }

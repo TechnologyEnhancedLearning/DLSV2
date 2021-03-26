@@ -19,6 +19,7 @@
         IEnumerable<BrandedFramework> GetFrameworkByFrameworkName(string frameworkName, int adminId);
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
+        int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId);
         //  Collaborators:
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
         //  Competencies/groups:
@@ -1201,6 +1202,17 @@ WHERE (FC.ID = @frameworkCompetencyId)",
                 },
                 param: new { frameworkCompetencyId }
             ).FirstOrDefault();
+        }
+
+        public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
+        {
+            return (int)connection.ExecuteScalar(
+               @"SELECT  CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
+FROM Frameworks AS FW LEFT OUTER JOIN
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+WHERE FW.ID = @frameworkId",
+              new { adminId, frameworkId }
+          );
         }
     }
 }
