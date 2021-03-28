@@ -16,6 +16,8 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
         [Theory]
         [InlineData("/Home")]
         [InlineData("/ForgotPassword")]
+        [InlineData("/LearningSolutions/AccessibilityHelp")]
+        [InlineData("/LearningSolutions/Terms")]
         public async Task EndpointIsUnauthenticated(string url)
         {
             // Arrange
