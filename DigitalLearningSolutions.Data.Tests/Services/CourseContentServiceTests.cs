@@ -885,7 +885,7 @@
 
                 // Then
                 const int twoMinutesInMilliseconds = 120000;
-                result.Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
+                result.Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
             }
         }
     }
