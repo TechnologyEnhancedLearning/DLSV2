@@ -85,12 +85,6 @@
     <TypeScriptCompile Include="Scripts\spec\sortCourses.spec.ts" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="tsconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />
