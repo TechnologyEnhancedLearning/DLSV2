@@ -7,7 +7,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LearningSolutionsController : Controller
     {
         private readonly IConfigService configService;
