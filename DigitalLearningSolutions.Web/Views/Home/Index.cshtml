@@ -2,4 +2,15 @@
   ViewData["Title"] = "Home";
 }
 
-<h1>Home</h1>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading">Home</h1>
+
+    <a class="nhsuk-button" asp-controller="Login" asp-action="Index">
+      Login
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="Index">
+      Register
+    </a>
+  </div>
+</div>
