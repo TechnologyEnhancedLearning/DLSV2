@@ -13,6 +13,18 @@
     {
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
+
+        public IActionResult SignIn()
+        {
+            // TODO: HEEDLS-364 - Overwrite this old code for automatic sign in with new code that signs in the user
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, "kevin.whittaker1@nhs.net"),
@@ -44,7 +56,7 @@
                 IssuedUtc = DateTime.UtcNow
             };
             HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
-            return RedirectToAction("Current", "LearningPortal");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
