@@ -511,19 +511,30 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult ViewFramework(string tabname, int frameworkId)
         {
             var adminId = GetAdminID();
-            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
-            var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
-            var frameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
-            var frameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
-            var frameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
+            IEnumerable<CollaboratorDetail> collaboratorDetails;
+            List<FrameworkCompetencyGroup>? frameworkCompetencyGroups;
+            IEnumerable<FrameworkCompetency>? frameworkCompetencies;
+            IEnumerable<AssessmentQuestion>? frameworkDefaultQuestions;
+            IEnumerable<CommentReplies>? commentReplies;
+var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var model = new FrameworkViewModel()
             {
-                DetailFramework = detailFramework,
-                Collaborators = collaborators,
-                FrameworkCompetencyGroups = frameworkCompetencyGroups,
-                FrameworkCompetencies = frameworkCompetencies,
-                FrameworkDefaultQuestions = frameworkDefaultQuestions
+                DetailFramework = detailFramework
             };
+            if (tabname == "Details")
+            {
+                model.Collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
+                model.FrameworkDefaultQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
+            }
+            if (tabname == "Structure")
+            {
+                model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+                model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            }
+            if (tabname == "Comments")
+            {
+                model.CommentReplies = frameworkService.GetCommentsForFrameworkId(frameworkId, adminId);
+            }
             return View("Developer/Framework", model);
         }
         public IActionResult InsertFramework()

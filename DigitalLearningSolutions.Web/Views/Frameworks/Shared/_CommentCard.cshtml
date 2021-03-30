@@ -1,0 +1,45 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model CommentReplies;
+<div class="nhsuk-card nhsuk-u-margin-bottom-3">
+  <div class="nhsuk-card__content nhsuk-u-padding-4">
+    <div class="nhsuk-grid-row">
+      <div class="@(Model.UserIsCommenter ? "nhsuk-card comment comment-mine nhsuk-u-margin-bottom-2" : "nhsuk-card comment comment-other nhsuk-u-margin-bottom-3")">
+        <div class="nhsuk-card__content nhsuk-u-padding-4">
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full">
+              <h3 class="nhsuk-card__heading nhsuk-heading-xs heading-xxs" id="@Model.ID-header">
+                @Model.Commenter <span class="heading-light">@Model.AddedDate.ToString("dddd dd MMMM yyyy h:mm tt")</span>
+              </h3>
+              <p class="nhsuk-body-s">
+                @Html.Raw(Model.Comments)
+              </p>
+            </div>
+            </div>
+          </div>
+        </div>
+      <div class="grid-column-ninety">
+        @if (Model.Replies.Any())
+        {
+          @foreach (Comment reply in Model.Replies)
+          {
+            <partial name="_ReplyCard.cshtml" model="reply" />
+          }
+        }
+      </div>
+      @if (@ViewContext.RouteData.Values["commentId"] == null)
+      {
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button button-small nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+             aria-describedby="@Model.ID-header"
+             asp-action="ViewThread"
+             asp-controller="Frameworks"
+             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+             asp-route-commentId="@Model.ID">
+            Reply
+          </a>
+        </div>
+      }
+    </div>
+      
+    </div>
+</div>
