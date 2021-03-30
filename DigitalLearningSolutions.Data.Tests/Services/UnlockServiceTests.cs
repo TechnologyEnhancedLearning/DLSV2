@@ -1,30 +1,24 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System.Threading;
-    using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
-    using MailKit.Net.Smtp;
-    using MailKit.Security;
-    using MimeKit;
     using NUnit.Framework;
 
     public class UnlockServiceTests
     {
-        private NotificationService notificationService;
-        private INotificationDataService notificationDataService;
         private IConfigService configService;
-        private ISmtpClient smtpClient;
+        private IEmailService emailService;
+        private INotificationDataService notificationDataService;
+        private NotificationService notificationService;
 
         [SetUp]
         public void Setup()
         {
             notificationDataService = A.Fake<INotificationDataService>();
             configService = A.Fake<IConfigService>();
-            var smtpClientFactory = A.Fake<ISmtpClientFactory>();
-            smtpClient = A.Fake<ISmtpClient>();
-            A.CallTo(() => smtpClientFactory.GetSmtpClient()).Returns(smtpClient);
+            emailService = A.Fake<IEmailService>();
 
             A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(new UnlockData
             {
@@ -37,109 +31,39 @@
             });
 
             A.CallTo(() => configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)).Returns("https://example.com");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailPort)).Returns("25");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailUsername)).Returns("username");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailPassword)).Returns("password");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailServer)).Returns("smtp.example.com");
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
 
-            notificationService = new NotificationService(notificationDataService, configService, smtpClientFactory);
+            notificationService = new NotificationService(notificationDataService, configService, emailService);
         }
 
         [Test]
-        public void Trying_to_send_mail_with_null_config_values_should_throw_an_exception()
+        public void Trying_to_send_unlock_request_with_null_unlock_data_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => configService.GetConfigValue(ConfigService.MailPassword)).Returns(null);
+            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(null);
+
+            // Then
+            Assert.Throws<NotificationDataException>(() => notificationService.SendUnlockRequest(1));
+        }
+
+        [Test]
+        public void Throws_an_exception_when_tracking_system_base_url_is_null()
+        {
+            // Given
+            A.CallTo(() => configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)).Returns(null);
 
             // Then
             Assert.Throws<ConfigValueMissingException>(() => notificationService.SendUnlockRequest(1));
         }
 
         [Test]
-        public void The_sender_email_address_is_correct()
+        public void Trying_to_send_unlock_request_sends_email()
         {
             // When
             notificationService.SendUnlockRequest(1);
 
             // Then
             A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.From.ToString() == "test@example.com"
-                        ),
-                        default(CancellationToken),
-                        null
-                    )
-                )
-                .MustHaveHappened();
-        }
-
-        [Test]
-        public void The_recipient_email_address_is_correct()
-        {
-            // When
-            notificationService.SendUnlockRequest(1);
-
-            // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.To.ToString() == "recipient@example.com"
-                        ),
-                        default(CancellationToken),
-                        null
-                    )
-                )
-                .MustHaveHappened();
-        }
-
-        [Test]
-        public void The_cc_email_address_is_correct()
-        {
-            // When
-            notificationService.SendUnlockRequest(1);
-
-            // Then
-            A.CallTo(() =>
-                    smtpClient.Send(
-                        A<MimeMessage>.That.Matches(m =>
-                            m.Cc.ToString() == "cc@example.com"
-                        ),
-                        default(CancellationToken),
-                        null
-                    )
-                )
-                .MustHaveHappened();
-        }
-
-        [Test]
-        public void The_server_credentials_are_correct()
-        {
-            // When
-            notificationService.SendUnlockRequest(1);
-
-            // Then
-            A.CallTo(() =>
-                    smtpClient.Authenticate("username", "password", default(CancellationToken))
-                )
-                .MustHaveHappened();
-        }
-
-        [Test]
-        public void The_server_details_are_correct()
-        {
-            // When
-            notificationService.SendUnlockRequest(1);
-
-            // Then
-            A.CallTo(() =>
-                    smtpClient.Connect(
-                        "smtp.example.com",
-                        25,
-                        SecureSocketOptions.Auto,
-                        default(CancellationToken)
-                    )
+                    emailService.SendEmail(A<Email>._)
                 )
                 .MustHaveHappened();
         }
