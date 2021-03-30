@@ -30,7 +30,7 @@
 
         private List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress)
         {
-            List<AdminUser> user = connection.Query<AdminUser>(
+            List<AdminUser> users = connection.Query<AdminUser>(
                 @"SELECT
                         AdminID,
                         Forename,
@@ -42,12 +42,12 @@
                 new { emailAddress }
             ).ToList();
 
-            return user;
+            return users;
         }
 
         private List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            List<DelegateUser> user = connection.Query<DelegateUser>(
+            List<DelegateUser> users = connection.Query<DelegateUser>(
                 @"SELECT
                         CandidateID,
                         FirstName,
@@ -59,7 +59,7 @@
                 new { emailAddress }
             ).ToList();
 
-            return user;
+            return users;
         }
     }
 }

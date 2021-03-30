@@ -5,9 +5,9 @@
 
     public static class EmailTestHelper
     {
-        public const string DefaultHtmlBody = "<body style= 'font - family: Calibri; font - size: small;'>\r\n" +
-                                              "                                    <p>Test Body</p>\r\n" +
-                                              "                                </body>";
+        public const string DefaultHtmlBody = "<body style= 'font - family: Calibri; font - size: small;'\r\n>" +
+                                              "   <p>Test Body</p>\r\n" +
+                                              "</body>";
 
         public static Email GetDefaultEmail
         (
@@ -27,9 +27,7 @@
                 body: body ?? new BodyBuilder
                 {
                     TextBody = "Test body",
-                    HtmlBody = @"<body style= 'font - family: Calibri; font - size: small;'>
-                                    <p>Test Body</p>
-                                </body>"
+                    HtmlBody = DefaultHtmlBody
                 }
             );
         }
