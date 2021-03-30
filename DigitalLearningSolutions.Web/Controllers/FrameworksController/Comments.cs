@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
+﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     public partial class FrameworksController
     {
         [HttpPost]
@@ -20,6 +16,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult ViewThread(int frameworkId, int commentId)
         {
             var commentReplies = frameworkService.GetCommentById(commentId, GetAdminID());
+            if (commentReplies == null )
+            {
+                logger.LogWarning($"Failed to load comment: commentId: {commentId}");
+                return StatusCode(500);
+            }
             return View("Developer/CommentThread", commentReplies);
         }
         [HttpPost]
@@ -29,6 +30,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminID();
             frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
             return RedirectToAction("ViewThread", new { frameworkId, commentId });
+        }
+        public IActionResult ArchiveReply(int commentId, int replyToCommentId, int frameworkId)
+        {
+            frameworkService.ArchiveComment(commentId);
+            return RedirectToAction("ViewThread", new { frameworkId, commentId = replyToCommentId });
+        }
+        public IActionResult ArchiveComment(int commentId, int frameworkId)
+        {
+            frameworkService.ArchiveComment(commentId);
+            return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
         }
     }
     

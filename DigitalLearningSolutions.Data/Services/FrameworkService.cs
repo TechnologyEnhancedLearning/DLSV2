@@ -66,6 +66,7 @@
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
         void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
+        void ArchiveComment(int commentId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -1203,7 +1204,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         public IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId)
         {
             var result = connection.Query<CommentReplies>(
-                @"SELECT ID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
+                @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID Is NULL AND FrameworkID = @frameworkId",
                 new { frameworkId, adminId }
@@ -1221,7 +1222,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         public List<Comment> GetRepliesForCommentId(int commentId, int adminId)
         {
             return connection.Query<Comment>(
-                @"SELECT ID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID IS NULL THEN NULL WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, ReplyToFrameworkCommentID, AddedDate, Comments, LastEdit
+                @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID IS NULL THEN NULL WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, ReplyToFrameworkCommentID, AddedDate, Comments, LastEdit
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID = @commentId
                     ORDER BY AddedDate ASC", new { commentId, adminId }
@@ -1231,7 +1232,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         {
 
             var result = connection.Query<CommentReplies>(
-                 @"SELECT ID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = @adminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
+                 @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = @adminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID Is NULL AND ID = @commentId", new { commentId, adminId }
            ).FirstOrDefault();
@@ -1261,8 +1262,23 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not inserting assessment question level descriptor as db update failed. " +
+                    "Not inserting framework comment as db insert failed. " +
                     $"AdminId: {adminId}, frameworkId: {frameworkId}, comment: {comment}."
+                );
+            }
+        }
+
+        public void ArchiveComment(int commentId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @"UPDATE FrameworkComments
+                    SET Archived = GETUTCDATE()
+                    WHERE ID = @commentId", new { commentId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not archiving framework comment as db update failed. " +
+                    $"commentId: {commentId}."
                 );
             }
         }
