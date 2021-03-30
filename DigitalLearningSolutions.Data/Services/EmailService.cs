@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
     using MimeKit;
@@ -8,17 +7,14 @@
     public interface IEmailService
     {
         void SendEmail(Email email);
-        // make class of email details with To, CC, (BCC?) as string lists, and body as BodyBuilder
-
     }
-
 
     public class EmailService : IEmailService
     {
         private readonly IConfigService configService;
         private readonly ISmtpClientFactory smtpClientFactory;
 
-        public EmailService (
+        public EmailService(
             IConfigService configService,
             ISmtpClientFactory smtpClientFactory
         )
@@ -29,27 +25,16 @@
 
         public void SendEmail(Email email)
         {
-            var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername);
-            var mailServerPassword = configService.GetConfigValue(ConfigService.MailPassword);
-            var mailServerAddress = configService.GetConfigValue(ConfigService.MailServer);
-            var mailServerPortString = configService.GetConfigValue(ConfigService.MailPort);
-            var mailSenderAddress = configService.GetConfigValue(ConfigService.MailFromAddress);
-            if (
-                mailServerUsername == null
-                || mailServerPassword == null
-                || mailServerAddress == null
-                || mailServerPortString == null
-                || mailSenderAddress == null
-            )
-            {
-                var errorMessage = GenerateConfigValueMissingMessage(
-                    mailServerUsername,
-                    mailServerPassword,
-                    mailServerAddress,
-                    mailServerPortString
-                );
-                throw new ConfigValueMissingException(errorMessage);
-            }
+            var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername)
+                                     ?? throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("MailServerUsername"));
+            var mailServerPassword = configService.GetConfigValue(ConfigService.MailPassword)
+                                     ?? throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("MailServerPassword"));
+            var mailServerAddress = configService.GetConfigValue(ConfigService.MailServer)
+                                    ?? throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("MailServerAddress"));
+            var mailServerPortString = configService.GetConfigValue(ConfigService.MailPort)
+                                       ?? throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("MailServerPortString"));
+            var mailSenderAddress = configService.GetConfigValue(ConfigService.MailFromAddress)
+                                    ?? throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("MailFromAddress"));
 
             var mailServerPort = int.Parse(mailServerPortString);
 
@@ -66,9 +51,7 @@
                 client.Send(message);
                 client.Disconnect(true);
             }
-            catch 
-            {
-            }
+            catch { }
         }
 
         private MimeMessage CreateMessage(Email email, string mailSenderAddress)
@@ -79,49 +62,21 @@
             {
                 message.To.Add(MailboxAddress.Parse(toAddress));
             }
+
             foreach (string ccAddress in email.Cc)
             {
                 message.Cc.Add(MailboxAddress.Parse(ccAddress));
             }
+
             foreach (string bccAddress in email.Bcc)
             {
                 message.Bcc.Add(MailboxAddress.Parse(bccAddress));
             }
+
             message.Subject = email.Subject;
             message.Body = email.Body.ToMessageBody();
 
             return message;
-        }
-
-        private static string GenerateConfigValueMissingMessage(
-            string? mailServerUsername,
-            string? mailServerPassword,
-            string? mailServerAddress,
-            string? mailServerPortString
-            )
-        {
-            if (mailServerUsername == null)
-            {
-                return "Encountered an error while trying to send an email: The value of mailserverUsername is null";
-            }
-
-            if (mailServerPassword == null)
-            {
-                return "Encountered an error while trying to send an email: The value of mailserverPassword is null";
-            }
-
-            if (mailServerAddress == null)
-            {
-                return "Encountered an error while trying to send an email: The value of mailServerAddress is null";
-            }
-
-            if (mailServerPortString == null)
-            {
-                return "Encountered an error while trying to send an email: The value of mailServerPortString is null";
-            }
-
-            return "Encountered an error while trying to send an email: The value of mailSenderAddress is null";
-            
         }
     }
 }

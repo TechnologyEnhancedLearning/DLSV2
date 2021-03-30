@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -11,7 +13,7 @@
 
     public interface IPasswordResetService
     {
-        void SendResetPasswordEmail(string emailAddress);
+        void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -20,12 +22,12 @@
         private const string DelegatesTableName = "Candidates";
         private const string AdminIdColumnName = "AdminID";
         private const string DelegatesIdColumnName = "CandidateID";
+        private readonly IConfigService configService;
+        private readonly IDbConnection connection;
+        private readonly IEmailService emailService;
+        private readonly ILogger<PasswordResetService> logger;
 
         private readonly IUserService userService;
-        private readonly IDbConnection connection;
-        private readonly ILogger<PasswordResetService> logger;
-        private readonly IConfigService configService;
-        private readonly IEmailService emailService;
 
         public PasswordResetService(
             IUserService userService,
@@ -41,14 +43,14 @@
             this.emailService = emailService;
         }
 
-        public void SendResetPasswordEmail(string emailAddress)
+        public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            User user =
-                this.userService.GetUserByEmailAddress(emailAddress) ??
-                throw new EmailAddressNotFoundException("No user account could be found with the specified email address");
+            (List<AdminUser> adminUsers, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
+            User? user = adminUsers.FirstOrDefault();
+            user ??= delegateUsers.FirstOrDefault() ?? throw new EmailAddressNotFoundException("No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
-            Email resetPasswordEmail = GeneratePasswordResetEmail(emailAddress, resetPasswordHash, user.FirstName);
-            this.emailService.SendEmail(resetPasswordEmail);
+            Email resetPasswordEmail = GeneratePasswordResetEmail(emailAddress, resetPasswordHash, user.FirstName, baseUrl);
+            emailService.SendEmail(resetPasswordEmail);
         }
 
         private string GenerateResetPasswordHash(User user)
@@ -57,7 +59,7 @@
             string tableName = user.GetType() == typeof(DelegateUser) ? DelegatesTableName : AdminTableName;
             string idColumnName = user.GetType() == typeof(DelegateUser) ? DelegatesIdColumnName : AdminIdColumnName;
 
-            int numberOfAffectedRows = connection.Execute(
+            var numberOfAffectedRows = connection.Execute(
                 $@"BEGIN TRY
                         DECLARE @ResetPasswordID INT
                         BEGIN TRANSACTION
@@ -87,12 +89,8 @@
             return hash;
         }
 
-        private Email GeneratePasswordResetEmail(string emailAddress, string resetHash, string firstName)
+        private Email GeneratePasswordResetEmail(string emailAddress, string resetHash, string firstName, string baseUrl)
         {
-            string baseUrl =
-                configService.GetConfigValue(ConfigService.BaseUrl) ??
-                throw new ConfigValueMissingException("Encountered an error while trying to generate a Reset Password email: " +
-                                                      "The value of baseURL is null ");
             UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
             resetPasswordUrl.Path += "ResetPassword";
             resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
@@ -115,7 +113,7 @@
                                 </body>"
             };
 
-            return new Email(emailAddress, emailSubject, body);
+            return new Email(emailSubject, body, emailAddress);
         }
     }
 }

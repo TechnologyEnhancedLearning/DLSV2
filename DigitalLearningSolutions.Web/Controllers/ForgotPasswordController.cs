@@ -2,12 +2,12 @@
 {
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
-    using Microsoft.AspNetCore.Mvc;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
+    using Microsoft.AspNetCore.Mvc;
 
     public class ForgotPasswordController : Controller
     {
-
         private readonly IPasswordResetService passwordResetService;
 
         public ForgotPasswordController(IPasswordResetService passwordResetService)
@@ -31,14 +31,24 @@
                 return Index(model);
             }
 
+            string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+
             try
             {
-                this.passwordResetService.SendResetPasswordEmail(emailAddress);
+                passwordResetService.GenerateAndSendPasswordResetLink
+                (
+                    emailAddress,
+                    baseUrl
+                );
             }
             catch (EmailAddressNotFoundException)
             {
                 ForgotPasswordViewModel model = GetEmailNotFoundErrorModel(emailAddress);
                 return Index(model);
+            }
+            catch (ResetPasswordInsertException)
+            {
+                return RedirectToAction("Error", "LearningSolutions");
             }
 
             return RedirectToAction("Confirm");
@@ -54,7 +64,6 @@
             return new ForgotPasswordViewModel
             (
                 emailAddress,
-                true,
                 "The email address needs to be a valid email address, such as example@domain.com"
             );
         }
@@ -64,7 +73,6 @@
             return new ForgotPasswordViewModel
             (
                 emailAddress,
-                true,
                 "User with this email address does not exist. Please try again"
             );
         }

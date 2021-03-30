@@ -8,10 +8,10 @@
 
     public class UnlockServiceTests
     {
-        private NotificationService notificationService;
-        private INotificationDataService notificationDataService;
         private IConfigService configService;
         private IEmailService emailService;
+        private INotificationDataService notificationDataService;
+        private NotificationService notificationService;
 
         [SetUp]
         public void Setup()
@@ -36,7 +36,7 @@
         }
 
         [Test]
-        public void Trying_get_null_unlock_data_should_throw_an_exception()
+        public void Trying_to_send_unlock_request_with_null_unlock_data_should_throw_an_exception()
         {
             // Given
             A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(null);
@@ -46,7 +46,7 @@
         }
 
         [Test]
-        public void Trying_to_send_unlock_request_with_null_config_values_should_throw_an_exception()
+        public void Throws_an_exception_when_tracking_system_base_url_is_null()
         {
             // Given
             A.CallTo(() => configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)).Returns(null);

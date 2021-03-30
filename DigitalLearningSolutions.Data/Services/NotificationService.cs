@@ -13,15 +13,15 @@
 
     public class NotificationService : INotificationService
     {
-        private readonly INotificationDataService notificationDataService;
         private readonly IConfigService configService;
         private readonly IEmailService emailService;
+        private readonly INotificationDataService notificationDataService;
 
         public NotificationService(
             INotificationDataService notificationDataService,
             IConfigService configService,
             IEmailService emailService
-            )
+        )
         {
             this.notificationDataService = notificationDataService;
             this.configService = configService;
@@ -38,7 +38,7 @@
 
             unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
             var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl) ??
-                                        throw new ConfigValueMissingException(GenerateConfigValueMissingMessage());
+                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("TrackingSystemBaseUrl"));
             var unlockUrl = new UriBuilder(trackingSystemBaseUrl);
             unlockUrl.Path += "coursedelegates";
             unlockUrl.Query = $"CustomisationID={unlockData.CustomisationId}";
@@ -56,7 +56,7 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
                                 </body>"
             };
 
-            emailService.SendEmail(new Email(unlockData.ContactEmail, emailSubjectLine, builder, unlockData.DelegateEmail));
+            emailService.SendEmail(new Email(emailSubjectLine, builder, unlockData.ContactEmail, unlockData.DelegateEmail));
         }
 
         public void SendFrameworkCollaboratorInvite(int adminId, int frameworkId, int invitedByAdminId)
@@ -66,10 +66,16 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
             {
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. adminId: {adminId}, frameworkId: {frameworkId}, invitedByAdminId: {invitedByAdminId})");
             }
+
             collaboratorNotification.Forename = collaboratorNotification.Forename == "" ? "Colleague" : collaboratorNotification.Forename;
             var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)?.Replace("tracking/", "") ??
-                                        throw new ConfigValueMissingException(GenerateConfigValueMissingMessage());
-            if (trackingSystemBaseUrl.Contains("dls.nhs.uk")) { trackingSystemBaseUrl += "v2/"; }
+                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("TrackingSystemBaseUrl"));
+            ;
+            if (trackingSystemBaseUrl.Contains("dls.nhs.uk"))
+            {
+                trackingSystemBaseUrl += "v2/";
+            }
+
             var frameworkUrl = new UriBuilder(trackingSystemBaseUrl);
             frameworkUrl.Path += $"Framework/Structure/{collaboratorNotification.FrameworkID}";
             string emailSubjectLine = "DLS Digital Framework Contributor Invitation";
@@ -84,12 +90,7 @@ To access the framework, visit this url: {frameworkUrl}. You will need to login 
 <p>To access the framework, <a href='{frameworkUrl}'>click here</a>. You will need to login to DLS to view the framework.</p>"
             };
 
-            emailService.SendEmail(new Email(collaboratorNotification.Email, emailSubjectLine, builder, collaboratorNotification.InvitedByEmail));
-        }
-
-        private static string GenerateConfigValueMissingMessage()
-        {
-            return "Encountered an error while trying to send an unlock request email: The value of trackingSystemBaseUrl is null";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.Email, collaboratorNotification.InvitedByEmail));
         }
     }
 }

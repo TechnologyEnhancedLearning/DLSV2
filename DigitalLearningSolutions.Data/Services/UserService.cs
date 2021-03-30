@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -7,10 +8,7 @@
 
     public interface IUserService
     {
-        public User? GetUserByEmailAddress(string emailAddress);
-        public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
-        public DelegateUser? GetDelegateUserByEmailAddress(string emailAddress);
-
+        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
     }
 
     public class UserService : IUserService
@@ -22,21 +20,18 @@
             this.connection = connection;
         }
 
-        public User? GetUserByEmailAddress(string emailAddress)
+        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
         {
-            // Assume user is a delegate (in Candidates Table)
-            User? user = GetDelegateUserByEmailAddress(emailAddress);
+            List<AdminUser> adminUsers = GetAdminUsersByEmailAddress(emailAddress);
+            List<DelegateUser> delegateUsers = GetDelegateUsersByEmailAddress(emailAddress);
 
-            // If no Candidates entry found, look to AdminUsers
-            user ??= GetAdminUserByEmailAddress(emailAddress);
-
-            return user;
+            return (adminUsers, delegateUsers);
         }
 
-        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
+        private List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress)
         {
-            AdminUser? user = connection.Query<AdminUser>(
-                @"SELECT TOP (1)
+            List<AdminUser> user = connection.Query<AdminUser>(
+                @"SELECT
                         AdminID,
                         Forename,
                         Surname,
@@ -45,15 +40,15 @@
                     FROM AdminUsers
                     WHERE (Email = @emailAddress)",
                 new { emailAddress }
-            ).FirstOrDefault();
+            ).ToList();
 
             return user;
         }
 
-        public DelegateUser? GetDelegateUserByEmailAddress(string emailAddress)
+        private List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
-            DelegateUser? user = connection.Query<DelegateUser>(
-                @"SELECT TOP (1)
+            List<DelegateUser> user = connection.Query<DelegateUser>(
+                @"SELECT
                         CandidateID,
                         FirstName,
                         LastName,
@@ -62,7 +57,7 @@
                     FROM Candidates
                     WHERE (EmailAddress = @emailAddress)",
                 new { emailAddress }
-            ).FirstOrDefault();
+            ).ToList();
 
             return user;
         }
