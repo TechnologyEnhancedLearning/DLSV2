@@ -416,7 +416,7 @@
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().NotBeNull();
-                updatedSelfAssessment.LastAccessed.Should().BeCloseTo(DateTime.Now, 1000);
+                updatedSelfAssessment.LastAccessed.Should().BeCloseTo(DateTime.UtcNow, 1000);
             }
         }
 
@@ -477,7 +477,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.Now);
+                selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.UtcNow);
                 var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
@@ -604,7 +604,7 @@
 
                 // Then
                 originalSubmittedDate.Should().BeNull();
-                    updatedSelfAssessment.SubmittedDate.Should().BeSameDateAs(System.DateTime.Now);
+                    updatedSelfAssessment.SubmittedDate.Should().BeSameDateAs(System.DateTime.UtcNow);
             }
         }
         [Test]

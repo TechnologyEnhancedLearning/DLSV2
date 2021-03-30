@@ -219,7 +219,7 @@ CA.LaunchCount, CA.SubmittedDate
                           ,[Result]
                           ,[DateTime]
                           ,[SupportingComments])
-                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETDATE(), @supportingComments)
+                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
                     END",
                 new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result, supportingComments }
             );
@@ -257,7 +257,7 @@ CA.LaunchCount, CA.SubmittedDate
         public void UpdateLastAccessed(int selfAssessmentId, int candidateId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId",
                 new { selfAssessmentId, candidateId }
             );
@@ -383,7 +383,7 @@ CA.LaunchCount, CA.SubmittedDate
         public void SetSubmittedDateNow(int selfAssessmentId, int candidateId)
         {
             var numberOfAffectedRows = connection.Execute(
-               @"UPDATE CandidateAssessments SET SubmittedDate = GETDATE()
+               @"UPDATE CandidateAssessments SET SubmittedDate = GETUTCDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId AND SubmittedDate IS NULL",
                new { selfAssessmentId, candidateId }
            );
