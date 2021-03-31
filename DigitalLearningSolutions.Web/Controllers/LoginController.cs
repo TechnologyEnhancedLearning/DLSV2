@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Security.Claims;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -21,9 +22,25 @@
             return View();
         }
 
-        public IActionResult SignIn()
+        [HttpPost]
+        [Route("/Login")]
+        public IActionResult Login(LoginViewModel model)
         {
-            // TODO: HEEDLS-364 - Overwrite this old code for automatic sign in with new code that signs in the user
+            // TODO: HEEDLS-364 - Overwrite this old code for automatic sign in with new code that signs in the user after validation
+            if (model.Username?.ToLower() == "testusernameerror")
+            {
+                ModelState.AddModelError("username", "There is a username error.");
+            }
+
+            if (model.Username?.ToLower() == "testpassworderror")
+            {
+                ModelState.AddModelError("password", "There is a password error.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("Index", model);
+            }
 
             var claims = new List<Claim>
             {
