@@ -25,7 +25,7 @@
                 Description = description,
                 Name = name,
                 NumberOfCompetencies = numberOfCompetencies,
-                StartedDate = startedDate ?? DateTime.Now,
+                StartedDate = startedDate ?? DateTime.UtcNow,
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
                 UseFilteredApi = useFilteredApi,
