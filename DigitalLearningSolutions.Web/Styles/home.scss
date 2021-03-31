@@ -4,6 +4,14 @@
   @extend .nhsuk-u-font-size-32
 }
 
+.auth-button {
+  width: 160px;
+}
+
+.auth-button--left {
+  margin-right: 32px;
+}
+
 .content-area {
   overflow: auto;
   //margin: 0 -1000px;
@@ -45,6 +53,18 @@ ul.content-area__sub-list {
 
 .content-area__image-box--left {
   margin-right: 32px;
+}
+
+.content-area--yellow {
+  background: $color_nhsuk-pale-yellow
+}
+
+.content-area--grey {
+  background: $color_nhsuk-grey-4
+}
+
+.content-area--blue {
+  background: $color_nhsuk-aqua-green
 }
 
 .list-component {
