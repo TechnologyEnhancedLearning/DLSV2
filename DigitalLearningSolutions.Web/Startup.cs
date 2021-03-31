@@ -19,7 +19,6 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.FeatureManagement;
     using Serilog;
 
     public class Startup
@@ -64,7 +63,6 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddFeatureManagement();
             var mvcBuilder = services.AddControllersWithViews();
             mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
             if (env.IsDevelopment())
@@ -107,7 +105,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
         }
 
-        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
+        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
             if (env.IsDevelopment())
             {
@@ -125,21 +123,10 @@ namespace DigitalLearningSolutions.Web
 
             app.UseSession();
 
-            app.UseEndpoints(async (endpoints) => await ConfigureEndPointsAsync(endpoints, featureManager));
+            app.UseEndpoints((endpoints) =>
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}"));
 
             migrationRunner.MigrateUp();
-        }
-
-        private async Task ConfigureEndPointsAsync(IEndpointRouteBuilder endpoints, IFeatureManager featureManager)
-        {
-            if (await featureManager.IsEnabledAsync(nameof(FeatureFlags.Login)))
-            {
-                endpoints.MapControllerRoute("default", "{controller=Login}/{action=Index}");
-            }
-            else
-            {
-                endpoints.MapControllerRoute("default", "{controller=LearningPortal}/{action=Current}");
-            }
         }
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
