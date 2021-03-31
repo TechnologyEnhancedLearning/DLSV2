@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
@@ -13,6 +15,7 @@
 
     public interface IPasswordResetService
     {
+        Task<bool> PasswordResetHashIsValidAsync(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
     }
 
@@ -41,6 +44,29 @@
             this.logger = logger;
             this.configService = configService;
             this.emailService = emailService;
+        }
+
+        public async Task<bool> PasswordResetHashIsValidAsync(string emailAddress, string resetHash)
+        {
+            var (adminUsersWithEmail, delegateUsersWithEmail) = userService.GetUsersByEmailAddress(emailAddress);
+            var resetPasswordIdsForEmail = adminUsersWithEmail.Select(user => user.ResetPasswordId)
+                .Concat(delegateUsersWithEmail.Select(user => user.ResetPasswordId))
+                .Where(id => id.HasValue)
+                .Select(id => id.Value);
+
+            var resetPasswordEntitiesInDb = await Task.WhenAll(resetPasswordIdsForEmail.Select(FindResetPasswordAsync));
+
+            return resetPasswordEntitiesInDb.Any(
+                 entity => entity != null
+                       && entity.ResetPasswordHash == resetHash
+                       && DateTime.Now - entity.PasswordResetDateTime < TimeSpan.FromHours(2));
+        }
+
+        private async Task<ResetPassword?> FindResetPasswordAsync(int id)
+        {
+            return (await connection.QueryAsync<ResetPassword>(
+                @"SELECT * FROM [ResetPassword] WHERE ID = @id",
+                new { id })).SingleOrDefault();
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
@@ -78,7 +104,8 @@
                     BEGIN CATCH
                         ROLLBACK TRANSACTION
                     END CATCH
-                    ", new { ResetPasswordHash = hash, UserID = user.Id });
+                    ",
+                new { ResetPasswordHash = hash, UserID = user.Id });
             if (numberOfAffectedRows < 2)
             {
                 string message = $"Not saving reset password hash as db insert/update failed for User ID: {user.Id} from table {tableName}";
