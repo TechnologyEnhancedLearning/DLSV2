@@ -40,6 +40,9 @@
         LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue);
         Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
+        //  Comments:
+        IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
+        CommentReplies GetCommentById(int commentId, int adminId);
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -51,6 +54,7 @@
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
+        void InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -62,13 +66,14 @@
         void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction);
         void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
+        void ArchiveComment(int commentId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-        
+
     }
     public class FrameworkService : IFrameworkService
     {
@@ -383,14 +388,14 @@
                 return existingId;
             }
         }
-        public void AddDefaultQuestionsToCompetency (int competencyId, int frameworkId)
+        public void AddDefaultQuestionsToCompetency(int competencyId, int frameworkId)
         {
             connection.Execute(
                 @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
                         SELECT @competencyId AS Expr1, AssessmentQuestionId
                     FROM   FrameworkDefaultQuestions
                     WHERE (FrameworkId = @frameworkId)",
-                new {competencyId, frameworkId}
+                new { competencyId, frameworkId }
                 );
         }
         public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId)
@@ -546,7 +551,6 @@
                 );
 
         }
-
         public bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName)
         {
             if (frameworkName.Length == 0 | adminId < 1 | frameworkId < 1)
@@ -581,8 +585,6 @@
                 return true;
             }
         }
-
-
         public void UpdateFrameworkDescription(int frameworkId, int adminId, string? frameworkDescription)
         {
             if (adminId < 1 | frameworkId < 1)
@@ -596,7 +598,6 @@
                     WHERE ID = @frameworkId",
                new { frameworkDescription, adminId, frameworkId });
         }
-
         public void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig)
         {
             if (adminId < 1 | frameworkId < 1)
@@ -709,12 +710,10 @@ WHERE (fc.Id = @frameworkCompetencyId)",
         {
             connection.Execute("ReorderFrameworkCompetencyGroup", new { frameworkCompetencyGroupId, direction, singleStep }, commandType: CommandType.StoredProcedure);
         }
-
         public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction)
         {
             connection.Execute("ReorderFrameworkCompetency", new { frameworkCompetencyId, direction, singleStep }, commandType: CommandType.StoredProcedure);
         }
-
         public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
         {
             if (frameworkCompetencyGroupId < 1 | adminId < 1 | competencyGroupId < 1)
@@ -772,7 +771,6 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                 }
             }
         }
-
         public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
         {
             int competencyId = (int)connection.ExecuteScalar(@"SELECT CompetencyID FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId", new { frameworkCompetencyId });
@@ -859,7 +857,6 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                      ORDER BY [Question]"
                     , new { competencyId, adminId });
         }
-
         public void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting)
         {
             if (frameworkId < 1 | adminId < 1 | assessmentQuestionId < 1)
@@ -880,7 +877,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
                 );
             }
-            else if(addToExisting)
+            else if (addToExisting)
             {
                 numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
@@ -893,7 +890,6 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     new { assessmentQuestionId, frameworkId });
             }
         }
-
         public void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting)
         {
             if (frameworkId < 1 | adminId < 1 | assessmentQuestionId < 1)
@@ -914,7 +910,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
                 );
             }
-            else if(deleteFromExisting)
+            else if (deleteFromExisting)
             {
                 numberOfAffectedRows = connection.Execute(
                     @"DELETE FROM CompetencyAssessmentQuestions
@@ -930,7 +926,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return connection.Query<GenericSelectList>(
                 @"SELECT AQ.ID, CASE WHEN AddedByAdminId = @adminId THEN '* ' ELSE '' END + Question + ' (' + InputTypeName + ' ' + CAST(MinValue AS nvarchar) + ' to ' + CAST(MaxValue As nvarchar) + ')' AS Label
                     FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
-                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM FrameworkDefaultQuestions WHERE FrameworkId = @frameworkId)", new {frameworkId, adminId}
+                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM FrameworkDefaultQuestions WHERE FrameworkId = @frameworkId)", new { frameworkId, adminId }
                 );
         }
         public IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId)
@@ -963,12 +959,11 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                                   FROM    FrameworkCompetencies
                                   WHERE (FrameworkID = @frameworkId)))) AS CompetencyAssessmentQuestions
 FROM   FrameworkCompetencies AS FC
-WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
+WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                 );
         }
-
         public IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(int frameworkCompetencyId, int adminId)
-        { 
+        {
             return connection.Query<AssessmentQuestion>(
                  $@"{AssessmentQuestionFields}
                     {AssessmentQuestionTables}
@@ -976,10 +971,12 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                     INNER JOIN FrameworkCompetencies AS FC ON CAQ.CompetencyId = FC.CompetencyId
                     WHERE FC.Id = @frameworkCompetencyId
                      ORDER BY [Question]"
-                    , new { frameworkCompetencyId, adminId
-    });
+                    , new
+                    {
+                        frameworkCompetencyId,
+                        adminId
+                    });
         }
-
         public void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId)
         {
             if (frameworkCompetencyId < 1 | adminId < 1 | assessmentQuestionId < 1)
@@ -1003,7 +1000,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
             }
         }
-
         public void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId)
         {
             if (frameworkCompetencyId < 1 | adminId < 1 | assessmentQuestionId < 1)
@@ -1027,7 +1023,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
             }
         }
-
         public AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId)
         {
             return connection.QueryFirstOrDefault<AssessmentQuestionDetail>(
@@ -1037,7 +1032,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                      ORDER BY [Question]", new { adminId, assessmentQuestionId }
                 );
         }
-
         public LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level)
         {
             return connection.QueryFirstOrDefault<LevelDescriptor>(
@@ -1049,7 +1043,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                     WHERE (q1.n = @level)", new { assessmentQuestionId, adminId, level }
                 );
         }
-
         public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue)
         {
             return connection.Query<LevelDescriptor>(
@@ -1061,7 +1054,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                     WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, adminId, minValue, maxValue }
                );
         }
-
         public int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
         {
             if (question == null | adminId < 1)
@@ -1086,7 +1078,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
             }
             return id;
         }
-
         public void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId)
         {
             if (assessmentQuestionId < 1 | adminId < 1 | levelValue < 0)
@@ -1112,7 +1103,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
             }
         }
-
         public void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)
         {
             if (id < 1 | question == null | adminId < 1)
@@ -1132,7 +1122,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                         ,MaxValue = @maxValue
                         ,IncludeComments = @includeComments
                         ,AddedByAdminId = @adminId
-                    WHERE ID = @id", new {id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
+                    WHERE ID = @id", new { id, question, assessmentQuestionInputTypeId, maxValueDescription, minValueDescription, scoringInstructions, minValue, maxValue, includeComments, adminId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -1141,7 +1131,6 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
             }
         }
-
         public void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId)
         {
             if (id < 1 | adminId < 1 | levelValue < 0)
@@ -1156,7 +1145,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                         ,LevelLabel = @levelLabel
                         ,LevelDescription = @levelDescription
                         ,UpdatedByAdminID = @adminId
-                    WHERE ID = @id", new {id, levelValue, levelLabel, levelDescription, adminId });
+                    WHERE ID = @id", new { id, levelValue, levelLabel, levelDescription, adminId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -1165,12 +1154,11 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
                 );
             }
         }
-
         public Models.SelfAssessments.Competency GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
         {
             Models.SelfAssessments.Competency? competencyResult = null;
             return connection.Query<Models.SelfAssessments.Competency, Models.SelfAssessments.AssessmentQuestion, Models.SelfAssessments.Competency>(
-                $@"SELECT C.ID       AS Id,
+                @"SELECT C.ID       AS Id,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
@@ -1189,7 +1177,7 @@ WHERE (FrameworkID = @frameworkId)", new {frameworkId, assessmentQuestionId}
              CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
              AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
-WHERE (FC.ID = @frameworkCompetencyId)",
+             WHERE (FC.ID = @frameworkCompetencyId)",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -1203,16 +1191,96 @@ WHERE (FC.ID = @frameworkCompetencyId)",
                 param: new { frameworkCompetencyId }
             ).FirstOrDefault();
         }
-
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
             return (int)connection.ExecuteScalar(
-               @"SELECT  CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
-FROM Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
-WHERE FW.ID = @frameworkId",
+               @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole
+                FROM Frameworks AS FW LEFT OUTER JOIN
+                FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+                WHERE FW.ID = @frameworkId",
               new { adminId, frameworkId }
           );
+        }
+        public IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId)
+        {
+            var result = connection.Query<CommentReplies>(
+                @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
+                    FROM FrameworkComments
+                    WHERE Archived Is NULL AND ReplyToFrameworkCommentID Is NULL AND FrameworkID = @frameworkId",
+                new { frameworkId, adminId }
+           );
+            foreach (var comment in result)
+            {
+                var replies = GetRepliesForCommentId(comment.ID, adminId);
+                foreach (var reply in replies)
+                {
+                    comment.Replies.Add(reply);
+                }
+            }
+            return result;
+        }
+        public List<Comment> GetRepliesForCommentId(int commentId, int adminId)
+        {
+            return connection.Query<Comment>(
+                @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID IS NULL THEN NULL WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, ReplyToFrameworkCommentID, AddedDate, Comments, LastEdit
+                    FROM FrameworkComments
+                    WHERE Archived Is NULL AND ReplyToFrameworkCommentID = @commentId
+                    ORDER BY AddedDate ASC", new { commentId, adminId }
+           ).ToList();
+        }
+        public CommentReplies GetCommentById(int commentId, int adminId)
+        {
+
+            var result = connection.Query<CommentReplies>(
+                 @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = @adminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
+                    FROM FrameworkComments
+                    WHERE Archived Is NULL AND ReplyToFrameworkCommentID Is NULL AND ID = @commentId", new { commentId, adminId }
+           ).FirstOrDefault();
+            var replies = GetRepliesForCommentId(commentId, adminId);
+            foreach (var reply in replies)
+            {
+                result.Replies.Add(reply);
+            }
+            return result;
+        }
+        public void InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId)
+        {
+            if (frameworkId < 1 | adminId < 1 | comment == null)
+            {
+                logger.LogWarning(
+                    $"Not inserting assessment question level descriptor as it failed server side validation. AdminId: {adminId}, frameworkId: {frameworkId}, comment: {comment}"
+                );
+            }
+            var numberOfAffectedRows = connection.Execute(
+               @"INSERT INTO FrameworkComments
+                     (AdminID
+           ,ReplyToFrameworkCommentID
+           ,Comments
+           ,FrameworkID)
+                      VALUES (@adminId, @replyToCommentId, @comment, @frameworkId)"
+                   , new { adminId, replyToCommentId, comment, frameworkId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting framework comment as db insert failed. " +
+                    $"AdminId: {adminId}, frameworkId: {frameworkId}, comment: {comment}."
+                );
+            }
+        }
+
+        public void ArchiveComment(int commentId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @"UPDATE FrameworkComments
+                    SET Archived = GETUTCDATE()
+                    WHERE ID = @commentId", new { commentId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not archiving framework comment as db update failed. " +
+                    $"commentId: {commentId}."
+                );
+            }
         }
     }
 }

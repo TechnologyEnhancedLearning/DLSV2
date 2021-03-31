@@ -83,8 +83,7 @@
     }
     else if ((string)ViewContext.RouteData.Values["tabname"] == "Comments")
     {
-      @*<partial name="_Comments" />*@
-      <h2>Reviewer comments</h2>
+      <partial name="_Comments.cshtml" model="Model" />
     }
   </div>
 </div>
