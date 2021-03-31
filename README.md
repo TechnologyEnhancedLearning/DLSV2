@@ -2,6 +2,7 @@
 
 - [Visual Studio Professional 2019](https://visualstudio.microsoft.com/downloads/)
     - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
+    - JetBrains Rider can work as an alternative. Follow the setup steps laid out below. In addition, you'll have to run `npm run dev` manually to build the JS and SASS.
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
@@ -146,6 +147,9 @@ The typescript is linted with eslint. In Visual Studio, go to `Tools>Options>Tex
 Linting can be run with `npm run lint` inside `DigitalLearningSolutions.Web`. `npm run lint-fix` may autofix some errors.
 
 # Troubleshooting
+
+## Errors thrown when running scripts on database
+The migrations may not have run properly. Occasionally you need to run the project twice to get them all to complete. You should end up with around 134 db tables after running the migrations.
 
 ## Undeclared variable warning in `index.scss` (DigitalLearningSolutions.Web)
 
