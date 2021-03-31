@@ -2,15 +2,110 @@
   ViewData["Title"] = "Home";
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/home.css")" asp-append-version="true"/>
+
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading">Home</h1>
+  <div id="column" class="nhsuk-grid-column-full">
+    <h1 id="page-heading">A platform for digital learning delivery</h1>
+
+    <p id="page-subheading">Enabling health and care organisations to deliver digital learning to staff and students.</p>
 
     <a class="nhsuk-button" asp-controller="Login" asp-action="Index">
       Login
     </a>
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="Index">
       Register
+    </a>
+    <h2 id="products">Products</h2>
+    <ul class="content-area-list">
+      <li>
+        <div class="content-area content-area--yellow nhsuk-card">
+          <h3>Tracking System</h3>
+          <p>Distribute and track digital learning</p>
+          <ul class="content-area__sub-list">
+            <li>Provide your staff or students with access to quality assured digital learning content</li>
+            <li>Provide access to your own, hosted learning content</li>
+            <li>Comprehensive tools for managing learners and learning pathways</li>
+            <li>Track and report on learning</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="content-area nhsuk-card">
+          <h3>Content Management System</h3>
+          <p>Import and manage learning content</p>
+          <ul class="content-area__sub-list">
+            <li>Create courses, providing only necessary information</li>
+            <li>Upload digital content (tutorials, assessments, videos, documents etc) created in any tool</li>
+            <li>Structure your content to make it digestible and for ease of navigation</li>
+            <li>Publish content for your learners and even make it available to other DLS centres</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="content-area content-area--yellow nhsuk-card">
+          <h3>Learning portal</h3>
+          <p>Access to your current, available and completed learning</p>
+          <ul class="content-area__sub-list">
+            <li>At a glance view of current learning courses and target dates</li>
+            <li>Easy, searchable access to available learning content</li>
+            <li>Quick access to completed courses and certificates</li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+    <h2 id="learningcontent">Learning Content</h2>
+    <ul class="content-area-list">
+      <li>
+        <div class="flex-row content-area nhsuk-card nhsuk-card--clickable">
+          <div class="content-area__image-box content-area__image-box--left">
+            <img class="content-area__image" src="images/itSkillsPathwayLogo.png" alt="It Skills Pathway logo"/>
+          </div>
+          <div>
+            <h3>
+              <a href="https://www.dls.nhs.uk/Learning?brand=ITSkillsPathway">
+                IT Skills Pathway
+              </a>
+            </h3>
+            <p>Quality assured Digital Skills and Microsoft Office learning and assessment content. From basic digital literacy and skills through to advanced Microsoft Excel and Word training.</p>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="flex-row content-area nhsuk-card nhsuk-card--clickable">
+          <div>
+            <h3>
+              <a href="https://www.dls.nhs.uk/Learning?brand=ReasonableAdjustmentFlag">
+                Reasonable Adjustment Flag
+              </a>
+            </h3>
+            <p>The reasonable adjustment flag enables health and care professionals to record, share and view patients’ reasonable adjustments across the NHS. This enables staff and services to carry out this anticipatory duty wherever the patient is treated.</p>
+          </div>
+          <div>
+            <div class="content-area__image-box content-area__image-box--right ">
+              <img class="content-area__image" src="images/reasonableAdjustmentFlagLogo.png" alt="Reasonable Adjustment Flag logo"/>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="flex-row content-area nhsuk-card nhsuk-card--clickable">
+          <div class="content-area__image-box content-area__image-box--left">
+            <img class="content-area__image" src="images/nhsDigitalLogo.png" alt="NHS Digital logo"/>
+          </div>
+          <div>
+            <h3>
+              <a href="https://www.dls.nhs.uk/Learning?brand=TerminologyandClassificationsDeliveryService">
+                Terminology and Classifications Delivery Service
+              </a>
+            </h3>
+            <p>Learning resources relating to Clinical and Pharmacy Terminology and Clinical Classifications products, including ICD, OPCS, SNOMED CT and dm+d. These resources will help you to understand and make best use of these products.</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <a class="nhsuk-back-to-top__link" href="#">
+        Back to top
     </a>
   </div>
 </div>
