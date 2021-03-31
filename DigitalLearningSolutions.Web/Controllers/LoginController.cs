@@ -6,9 +6,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.FeatureManagement.Mvc;
-
-    [FeatureGate(FeatureFlags.Login)]
+    
     public class LoginController : Controller
     {
         public IActionResult Index()
