@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.ForgotPassword
 @model ForgotPasswordViewModel
 @{
-  ViewData["Title"] = "Reset Your Password";
-  bool errorHasOccurred = !String.IsNullOrWhiteSpace(Model.EmailErrorMessage);
+  bool errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Reset Your Password" : "Reset Your Password";
   var inputErrorClass = errorHasOccurred ? "nhsuk-input--error" : "";
   var formErrorClass = errorHasOccurred ? "nhsuk-form-group--error" : "";
 }
@@ -11,34 +11,23 @@
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
     {
-      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
-          There is a problem
-        </h2>
-        <div class="nhsuk-error-summary__body">
-          <ul class="nhsuk-list nhsuk-error-summary__list">
-            <li>
-              <a href="#emailAddress">@Model.EmailErrorMessage</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <partial name="_ErrorSummary"/>
     }
 
     <h1 id="page-heading" class="nhsuk-u-margin-bottom-6">Reset your password</h1>
 
-    <form method="post" novalidate>
+    <form method="post" novalidate asp-action="Index">
       <div class="nhsuk-form-group @formErrorClass">
-        <label class="nhsuk-label nhsuk-u-margin-bottom-4" for="emailAddress">
+        <label class="nhsuk-label nhsuk-u-margin-bottom-4" for="EmailAddress">
           Enter your email address and we will send you password reset instructions.
         </label>
         @if (errorHasOccurred)
         {
-          <span class="nhsuk-error-message" id="emailAddress-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @Model.EmailErrorMessage
+          <span class="nhsuk-error-message" id="EmailAddress-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["EmailAddress"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @inputErrorClass" type="text" id="emailAddress" spellcheck="false" autocomplete="email" aria-describedby="emailAddress-error" asp-for="EmailAddress" value="@Model.EmailAddress"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @inputErrorClass" type="text" id="EmailAddress" spellcheck="false" autocomplete="email" aria-describedby="EmailAddress-error" asp-for="EmailAddress"/>
       </div>
 
       <button class="nhsuk-button" type="submit">Reset</button>

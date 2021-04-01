@@ -107,7 +107,7 @@
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Dear {firstName},</p>
                                     <p>A request has been made to reset the password for your Digital Learning Solutions account.</p>
-                                    <p>To reset your password please follow this link: {resetPasswordUrl}</p>
+                                    <p>To reset your password please follow this link: <a href=""{resetPasswordUrl}"">{resetPasswordUrl}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>
                                     <p>Please don’t reply to this email as it has been automatically generated.</p>
                                 </body>"
