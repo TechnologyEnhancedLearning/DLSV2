@@ -1,7 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
 @model LoginViewModel 
 @{
-  ViewData["Title"] = "Login";
+  ViewData["Title"] = "Log in";
+  //ViewBag["ErrorSummaryOrder"] = new [] { "Username", "Password", "RememberMe" };
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
   var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
@@ -13,14 +14,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form method="post" novalidate asp-action="Login">
+    <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="Index">
 
       @if (errorHasOccurred) {
         <partial name="_ErrorSummary"/>
       }
-
-      <h1 id="page-heading">Login</h1>
-      <p>Enter your details to log into your account.</p>
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 id="page-heading">Log in</h1>
+        <p class="nhsuk-body-l">Enter your details to log into your account.</p>
+      </div>
 
       <div class="nhsuk-form-group @usernameFormGroupError">
         <label class="nhsuk-label" for="Username">
@@ -28,12 +30,10 @@
         </label>
         @if (usernameError) {
           <span class="nhsuk-error-message" id="username-error">
-            @foreach (var error in ViewData.ModelState["Username"].Errors) {
-              <span class="nhsuk-u-visually-hidden">Error:</span> @error.ErrorMessage
-            }
+            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Username"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-margin-bottom-4 @usernameInputErrorClass" type="text" id="Username" spellcheck="false" autocomplete="email" aria-describedby="username-error" asp-for="Username" />
+        <input class="nhsuk-input nhsuk-u-width-one-half @usernameInputErrorClass" type="text" id="Username" spellcheck="false" autocomplete="email" aria-describedby="username-error" asp-for="Username" />
       </div>
 
       <div class="nhsuk-form-group @passwordFormErrorClass">
@@ -41,39 +41,37 @@
           Password
         </label>
         @if (passwordError) {
-          <span class="nhsuk-error-message" id="password-error">
-            @foreach (var error in ViewData.ModelState["Password"].Errors) {
-              <span class="nhsuk-u-visually-hidden">Error:</span> @error.ErrorMessage
-            }
-          </span>
+      <span class="nhsuk-error-message" id="password-error">
+        <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Password"].Errors[0].ErrorMessage
+      </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-margin-bottom-4 @passwordInputErrorClass" type="password" id="Password" spellcheck="false" aria-describedby="password-error" asp-for="Password" />
+        <input class="nhsuk-input nhsuk-u-width-one-half @passwordInputErrorClass" type="password" id="Password" spellcheck="false" aria-describedby="password-error" asp-for="Password" />
       </div>
 
       <div class="nhsuk-checkboxes__item">
-        @Html.CheckBoxFor(model => model.RememberMe, new { @class = "nhsuk-checkboxes__input", id = "RememberMe" })
+        <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe" />
         <label class="nhsuk-label nhsuk-checkboxes__label" for="RememberMe">
           Remember Me
         </label>
       </div>
 
-      <div class="nhsuk-inset-text">
+      <div class="nhsuk-inset-text nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-4">
         <span class="nhsuk-u-visually-hidden">Information: </span>
         <p>
           By logging in, I consent to my details being stored and processed in line with your
-          <a class="" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy Policy</a>
+          <a href="https://www.hee.nhs.uk/about/privacy-notice">Privacy Policy</a>
           and agree to use the system according to
-          <a class="" asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
+          <a asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
         </p>
       </div>
 
-      <button class="nhsuk-button" type="submit">Login</button>
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-5" asp-controller="ForgotPassword" asp-action="Index">
-        Forgot Password
+      <button class="nhsuk-button" type="submit">Log in</button>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="ForgotPassword" asp-action="Index">
+        Forgot password
       </a>
     </form>
 
-    <p>Alternatively, if you are a new user, register:</p>
+    <p class="nhsuk-u-font-size-24">Alternatively, if you are a new user, register:</p>
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="Index">
       Register
     </a>

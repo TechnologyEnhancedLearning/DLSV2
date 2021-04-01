@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
@@ -23,8 +24,7 @@
         }
 
         [HttpPost]
-        [Route("/Login")]
-        public IActionResult Login(LoginViewModel model)
+        public IActionResult Index(LoginViewModel model)
         {
             // TODO: HEEDLS-364 - Overwrite this old code for automatic sign in with new code that signs in the user after validation
             if (model.Username?.ToLower() == "testusernameerror")
