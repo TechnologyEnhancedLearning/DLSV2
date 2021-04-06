@@ -1,12 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.ForgotPassword
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class ForgotPasswordControllerTests
@@ -19,17 +22,60 @@
         {
             passwordResetService = A.Fake<IPasswordResetService>();
 
-            controller = new ForgotPasswordController(passwordResetService);
+            // Set up unauthenticated user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(string.Empty));
+            var session = new MockHttpContextSession();
+            controller = new ForgotPasswordController(passwordResetService)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = session
+                    }
+                }
+            };
+        }
+
+        private ForgotPasswordController GetControllerWithAuthenticatedUser()
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity("mock"));
+            var session = new MockHttpContextSession();
+            return new ForgotPasswordController(passwordResetService)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = session
+                    }
+                }
+            };
         }
 
         [Test]
-        public void Render_basic_form_when_there_is_no_error_model()
+        public void Index_should_render_if_user_is_unauthenticated()
         {
             // When
-            var result = controller.Index(model: null);
+            var result = controller.Index();
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void Index_should_redirect_if_user_is_authenticated()
+        {
+            // Given
+            var controllerWithAuthenticatedUser = GetControllerWithAuthenticatedUser();
+
+            // When
+            var result = controllerWithAuthenticatedUser.Index();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
         }
 
         [Test]
@@ -39,7 +85,7 @@
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).DoesNothing();
 
             // When
-            var result = controller.Index("recipient@example.com");
+            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Confirm");
@@ -49,7 +95,7 @@
         public void Email_submission_should_call_password_reset_service()
         {
             // When
-            controller.Index("recipient@example.com");
+            controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).MustHaveHappened();
@@ -64,11 +110,12 @@
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).Throws(new EmailAddressNotFoundException(errorMessage));
 
             // When
-            var result = controller.Index("recipient@example.com");
+            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName()
-                .ModelAs<ForgotPasswordViewModel>().EmailErrorMessage.Should().NotBeNullOrWhiteSpace();
+                .ModelAs<ForgotPasswordViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [Test]
@@ -78,7 +125,7 @@
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).Throws(new ResetPasswordInsertException("DB Insert failed"));
 
             // When
-            var result = controller.Index("recipient@example.com");
+            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");

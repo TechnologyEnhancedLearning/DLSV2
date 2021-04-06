@@ -1,16 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.ForgotPassword
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ForgotPasswordViewModel
     {
-        public string? EmailAddress;
-        public string? EmailErrorMessage;
+        [Required(ErrorMessage = "Please enter a valid email address.")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "The email address must be a valid email address, such as example@domain.com")]
+        public string EmailAddress { get; set; }
 
         public ForgotPasswordViewModel() { }
 
-        public ForgotPasswordViewModel(string emailAddress, string emailErrorMessage)
+        public ForgotPasswordViewModel(string emailAddress)
         {
             EmailAddress = emailAddress;
-            EmailErrorMessage = emailErrorMessage;
         }
     }
 }

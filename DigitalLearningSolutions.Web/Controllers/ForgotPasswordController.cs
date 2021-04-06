@@ -16,19 +16,22 @@
         }
 
         [HttpGet]
-        public IActionResult Index(ForgotPasswordViewModel? model)
+        public IActionResult Index()
         {
-            model ??= new ForgotPasswordViewModel();
-            return View(model);
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Index(string? emailAddress)
+        public IActionResult Index(ForgotPasswordViewModel model)
         {
-            if (emailAddress?.Contains('@') != true)
+            if (!ModelState.IsValid)
             {
-                ForgotPasswordViewModel model = GetEmailInvalidErrorModel(emailAddress ?? string.Empty);
-                return Index(model);
+                return View(model);
             }
 
             string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
@@ -37,14 +40,15 @@
             {
                 passwordResetService.GenerateAndSendPasswordResetLink
                 (
-                    emailAddress,
+                    model.EmailAddress,
                     baseUrl
                 );
             }
             catch (EmailAddressNotFoundException)
             {
-                ForgotPasswordViewModel model = GetEmailNotFoundErrorModel(emailAddress);
-                return Index(model);
+                ModelState.AddModelError("EmailAddress", "User with this email address does not exist. Please try again.");
+
+                return View(model);
             }
             catch (ResetPasswordInsertException)
             {
@@ -56,25 +60,12 @@
 
         public IActionResult Confirm()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
-        }
-
-        private ForgotPasswordViewModel GetEmailInvalidErrorModel(string emailAddress)
-        {
-            return new ForgotPasswordViewModel
-            (
-                emailAddress,
-                "The email address needs to be a valid email address, such as example@domain.com"
-            );
-        }
-
-        private ForgotPasswordViewModel GetEmailNotFoundErrorModel(string emailAddress)
-        {
-            return new ForgotPasswordViewModel
-            (
-                emailAddress,
-                "User with this email address does not exist. Please try again"
-            );
         }
     }
 }
