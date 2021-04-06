@@ -103,6 +103,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IClockService, ClockService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
