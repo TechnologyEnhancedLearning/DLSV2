@@ -14,10 +14,30 @@
 
 .content-area {
   overflow: auto;
-  //margin: 0 -1000px;
-  //padding: 32px 1000px;
-  padding: 32px 16px;
+  padding: 32px 32px;
   background: $color_nhsuk-white
+}
+
+.content-area--with-image--image-after {
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column-reverse;
+  }
+}
+
+.content-area--with-image--image-before {
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column;
+  }
+}
+
+.content-area--with-image {
+  display: flex;
+  @include govuk-media-query($from: tablet) {
+    flex-direction: row;
+  }
+  @include govuk-media-query($until: tablet) {
+    align-items: center;
+  }
 }
 
 ul.content-area-list {
@@ -40,31 +60,43 @@ ul.content-area__sub-list {
   background: $color_nhsuk-white;
   border-radius: 4px;
   padding: 8px;
+  height: fit-content;
+  width: fit-content;
 }
 
 .content-area__image {
   height: 200px;
   width: auto;
+
+  // We do this so the containing div won't leave extra space below the image. See https://stackoverflow.com/a/8522087z
+  display: block;
 }
 
 .content-area__image-box--right {
-  margin-left: 32px;
+  @include govuk-media-query($from: tablet) {
+    margin-left: 32px;
+  }
 }
 
 .content-area__image-box--left {
-  margin-right: 32px;
+  @include govuk-media-query($from: tablet) {
+    margin-right: 32px;
+  }
 }
 
-.content-area--yellow {
-  background: $color_nhsuk-pale-yellow
+.learning-content__item-header {
+  @include govuk-media-query($until: tablet) {
+    margin-top: 16px;
+    text-align: center;
+  }
 }
 
-.content-area--grey {
-  background: $color_nhsuk-grey-4
-}
-
-.content-area--blue {
-  background: $color_nhsuk-aqua-green
+.learning-content__item-text {
+  @include govuk-media-query($until: tablet) {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
 }
 
 .list-component {
