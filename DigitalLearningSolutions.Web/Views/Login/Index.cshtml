@@ -1,14 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
 @model LoginViewModel 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = errorHasOccurred ? "Error: Log in" : "Log in";
-    var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
-    var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
-    var passwordInputErrorClass = passwordError ? "nhsuk-input--error" : "";
-    var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
-    var usernameInputErrorClass = usernameError ? "nhsuk-input--error" : "";
-    var usernameFormGroupError = usernameError ? "nhsuk-form-group--error" : "";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Log in" : "Log in";
+  var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
+  var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
+  var passwordInputErrorClass = passwordError ? "nhsuk-input--error" : "";
+  var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
+  var usernameInputErrorClass = usernameError ? "nhsuk-input--error" : "";
+  var usernameFormGroupError = usernameError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
@@ -32,7 +32,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Username"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @usernameInputErrorClass" type="text" id="Username" spellcheck="false" autocomplete="email" aria-describedby="username-error" asp-for="Username" />
+        <input class="nhsuk-input nhsuk-u-width-one-half @usernameInputErrorClass" type="text" id="Username" spellcheck="false" autocomplete="email" aria-describedby="username-error" asp-for="Username"/>
       </div>
 
       <div class="nhsuk-form-group @passwordFormErrorClass">
@@ -40,15 +40,15 @@
           Password
         </label>
         @if (passwordError) {
-      <span class="nhsuk-error-message" id="password-error">
-        <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Password"].Errors[0].ErrorMessage
-      </span>
+          <span class="nhsuk-error-message" id="password-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Password"].Errors[0].ErrorMessage
+          </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @passwordInputErrorClass" type="password" id="Password" spellcheck="false" aria-describedby="password-error" asp-for="Password" />
+        <input class="nhsuk-input nhsuk-u-width-one-half @passwordInputErrorClass" type="password" id="Password" spellcheck="false" aria-describedby="password-error" asp-for="Password"/>
       </div>
 
       <div class="nhsuk-checkboxes__item">
-        <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe" />
+        <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe"/>
         <label class="nhsuk-label nhsuk-checkboxes__label" for="RememberMe">
           Remember Me
         </label>
