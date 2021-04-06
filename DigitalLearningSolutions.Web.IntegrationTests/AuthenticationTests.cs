@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
 
         [Theory]
         [InlineData("/Home")]
+        [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
         [InlineData("/LearningSolutions/AccessibilityHelp")]
         [InlineData("/LearningSolutions/Terms")]
