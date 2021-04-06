@@ -46,8 +46,8 @@
             }
             catch (EmailAddressNotFoundException)
             {
-                ModelState.AddModelError("EmailAddress","User with this email address does not exist. Please try again.");
-                
+                ModelState.AddModelError("EmailAddress", "User with this email address does not exist. Please try again.");
+
                 return View(model);
             }
             catch (ResetPasswordInsertException)

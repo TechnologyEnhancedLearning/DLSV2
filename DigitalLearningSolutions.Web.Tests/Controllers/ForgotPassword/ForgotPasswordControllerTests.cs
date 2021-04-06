@@ -1,16 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.ForgotPassword
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class ForgotPasswordControllerTests
     {
         private ForgotPasswordController controller;
+        private ISession httpContextSession;
         private IPasswordResetService passwordResetService;
 
         [SetUp]
@@ -18,7 +23,55 @@
         {
             passwordResetService = A.Fake<IPasswordResetService>();
 
-            controller = new ForgotPasswordController(passwordResetService);
+            // Set up unauthenticated user
+            var user = new ClaimsPrincipal(new ClaimsIdentity());
+            httpContextSession = new MockHttpContextSession();
+            controller = new ForgotPasswordController(passwordResetService)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = httpContextSession
+                    }
+                }
+            };
+        }
+
+        [Test]
+        public void Index_should_render_if_user_is_unauthenticated()
+        {
+            // When
+            var result = controller.Index();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void Index_should_redirect_if_user_is_authenticated()
+        {
+            // Given user is authenticated
+            var user = new ClaimsPrincipal(new ClaimsIdentity("mock"));
+            httpContextSession = new MockHttpContextSession();
+            controller = new ForgotPasswordController(passwordResetService)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = httpContextSession
+                    }
+                }
+            };
+
+            // When
+            var result = controller.Index();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
         }
 
         [Test]
@@ -58,7 +111,7 @@
             // Then
             result.Should().BeViewResult().WithDefaultViewName()
                 .ModelAs<ForgotPasswordViewModel>();
-            Assert.IsTrue(controller.ModelState.IsValid is false);
+            Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [Test]
