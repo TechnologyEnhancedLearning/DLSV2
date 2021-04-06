@@ -15,7 +15,6 @@
     internal class ForgotPasswordControllerTests
     {
         private ForgotPasswordController controller;
-        private ISession httpContextSession;
         private IPasswordResetService passwordResetService;
 
         [SetUp]
@@ -24,8 +23,8 @@
             passwordResetService = A.Fake<IPasswordResetService>();
 
             // Set up unauthenticated user
-            var user = new ClaimsPrincipal(new ClaimsIdentity());
-            httpContextSession = new MockHttpContextSession();
+            var user = new ClaimsPrincipal(new ClaimsIdentity(string.Empty));
+            var session = new MockHttpContextSession();
             controller = new ForgotPasswordController(passwordResetService)
             {
                 ControllerContext = new ControllerContext
@@ -33,7 +32,24 @@
                     HttpContext = new DefaultHttpContext
                     {
                         User = user,
-                        Session = httpContextSession
+                        Session = session
+                    }
+                }
+            };
+        }
+
+        private ForgotPasswordController GetControllerWithAuthenticatedUser()
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity("mock"));
+            var session = new MockHttpContextSession();
+            return new ForgotPasswordController(passwordResetService)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = user,
+                        Session = session
                     }
                 }
             };
@@ -52,23 +68,11 @@
         [Test]
         public void Index_should_redirect_if_user_is_authenticated()
         {
-            // Given user is authenticated
-            var user = new ClaimsPrincipal(new ClaimsIdentity("mock"));
-            httpContextSession = new MockHttpContextSession();
-            controller = new ForgotPasswordController(passwordResetService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = httpContextSession
-                    }
-                }
-            };
+            // Given
+            var controllerWithAuthenticatedUser = GetControllerWithAuthenticatedUser();
 
             // When
-            var result = controller.Index();
+            var result = controllerWithAuthenticatedUser.Index();
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
