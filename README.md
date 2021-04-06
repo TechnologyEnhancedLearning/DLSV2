@@ -2,7 +2,7 @@
 
 - [Visual Studio Professional 2019](https://visualstudio.microsoft.com/downloads/)
     - Make sure you have the [NPM Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.NPMTaskRunner) extension
-    - JetBrains Rider can work as an alternative. Follow the setup steps laid out below. In addition, you'll have to run `npm run dev` manually to build the JS and SASS.
+    - [JetBrains Rider](https://www.jetbrains.com/rider/) can work as an alternative to Visual Studio. Follow the setup steps laid out below. In addition, you'll have to run `npm run dev` manually to build the JS and SASS.
 - SQL Server 2019
 - [SQL Server Management Studio 18](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15)
 - [Git](https://git-scm.com/)
