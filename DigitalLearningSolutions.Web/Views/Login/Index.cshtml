@@ -1,15 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
 @model LoginViewModel 
 @{
-  ViewData["Title"] = "Log in";
-  //ViewBag["ErrorSummaryOrder"] = new [] { "Username", "Password", "RememberMe" };
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
-  var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
-  var passwordInputErrorClass = passwordError ? "nhsuk-input--error" : "";
-  var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
-  var usernameInputErrorClass = usernameError ? "nhsuk-input--error" : "";
-  var usernameFormGroupError = usernameError ? "nhsuk-form-group--error" : "";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Log in" : "Log in";
+    var usernameError = ViewData.ModelState["Username"]?.Errors?.Count > 0;
+    var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
+    var passwordInputErrorClass = passwordError ? "nhsuk-input--error" : "";
+    var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
+    var usernameInputErrorClass = usernameError ? "nhsuk-input--error" : "";
+    var usernameFormGroupError = usernameError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
