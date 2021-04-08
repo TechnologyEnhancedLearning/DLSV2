@@ -6,6 +6,7 @@
     public interface ICentresService
     {
         string? GetBannerText(int centreId);
+        string? GetCentreName(int centreId);
     }
 
     public class CentresService : ICentresService
@@ -21,6 +22,16 @@
         {
             return connection.QueryFirstOrDefault<string?>(
                 @"SELECT BannerText
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public string? GetCentreName(int centreId)
+        {
+            return connection.QueryFirstOrDefault<string?>(
+                @"SELECT CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
                 new { centreId }

@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using Microsoft.Extensions.Configuration
+@model MyAccountViewModel
+
+@inject IConfiguration Configuration
+
+@{
+  ViewData["Title"] = "My Account";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading">My account</h1>
+
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Centre
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              User:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.User
+            </dd>
+
+          </div>
+
+          @if (Model.DelegateId?.Length > 0)
+          {
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
+                Delegate id:
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                @Model.DelegateId
+              </dd>
+            </div>
+          }
+
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <a class="nhsuk-button">
+      Manage notifications
+    </a>
+  </div>
+</div>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <a class="nhsuk-button nhsuk-button--secondary" href="@Configuration["CurrentSystemBaseUrl"]/logout">
+      Sign out
+    </a>
+  </div>
+</div>
