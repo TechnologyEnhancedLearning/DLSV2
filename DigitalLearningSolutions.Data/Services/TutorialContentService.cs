@@ -160,7 +160,9 @@
                                                )
                                          THEN 1
                                     ELSE 0
-                               END AS BIT) AS OtherItemsInSectionExist
+                               END AS BIT) AS OtherItemsInSectionExist,
+                        Customisations.Password,
+                        Progress.PasswordSubmitted
                     FROM Tutorials
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.TutorialID = Tutorials.TutorialID

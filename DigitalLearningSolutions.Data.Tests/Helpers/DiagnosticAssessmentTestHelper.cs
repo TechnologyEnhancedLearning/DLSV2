@@ -35,7 +35,9 @@
             int? nextTutorialId = 100,
             int? nextSectionId = 200,
             bool otherSectionsExist = true,
-            bool otherItemsInSectionExist = true
+            bool otherItemsInSectionExist = true,
+            string? password = null,
+            bool passwordSubmitted = false
         )
         {
             return new DiagnosticAssessment(
@@ -59,7 +61,9 @@
                 nextTutorialId,
                 nextSectionId,
                 otherSectionsExist,
-                otherItemsInSectionExist
+                otherItemsInSectionExist,
+                password,
+                passwordSubmitted
             );
         }
 

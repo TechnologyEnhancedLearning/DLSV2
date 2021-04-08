@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningMenuController
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
@@ -75,6 +76,10 @@
                     $"centre id: {centreId.ToString() ?? "null"}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
+            if (!String.IsNullOrEmpty(courseContent.Password) && !courseContent.PasswordSubmitted)
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
+            }
             if (courseContent.Sections.Count == 1)
             {
                 var sectionId = courseContent.Sections.First().Id;
@@ -93,8 +98,57 @@
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
         }
-
-        [Route("/LearningMenu/Close")]
+        [Route("LearningMenu/{customisationId:int}/Password")]
+        public IActionResult CoursePassword(int customisationId, bool error = false)
+        {
+            var centreId = User.GetCentreId();
+            var candidateId = User.GetCandidateId();
+            var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
+            if (courseContent == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as course/centre id was not found. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+            var model = new InitialMenuViewModel(courseContent);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("LearningMenu/{customisationId:int}/Password")]
+        public IActionResult CoursePassword(int customisationId, string? password)
+        {
+            var centreId = User.GetCentreId();
+            var candidateId = User.GetCandidateId();
+            var coursePassword = courseContentService.GetCoursePassword(customisationId);
+            if(coursePassword == null)
+            {
+                logger.LogError(
+                    "Redirecting to 404 as course password was null. " +
+                    $"Candidate id: {candidateId}, customisation id: {customisationId}, " +
+                    $"centre id: {centreId.ToString() ?? "null"}");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+            if (password == coursePassword)
+            {
+                var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
+                if (progressId == null)
+                {
+                    logger.LogError(
+                        "Redirecting to 404 as no progress id was returned. " +
+                        $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
+                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+                }
+                courseContentService.LogPasswordSubmitted((int)progressId);
+                return RedirectToAction("Index", "LearningMenu", new { customisationId });
+            }
+            else
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId, error = true });
+            }
+        }
+            [Route("/LearningMenu/Close")]
         public IActionResult Close()
         {
             sessionService.StopSession(User.GetCandidateId(), HttpContext.Session);
@@ -117,7 +171,10 @@
                     $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
+            if (!String.IsNullOrEmpty(sectionContent.Password) && !sectionContent.PasswordSubmitted)
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
+            }
             var hasDiagnosticAssessment = sectionContent.DiagnosticAssessmentPath != null && sectionContent.DiagnosticStatus;
             var hasPostLearningAssessment = sectionContent.PostLearningAssessmentPath != null && sectionContent.IsAssessed;
             var hasConsolidationMaterial = sectionContent.ConsolidationPath != null;
@@ -180,7 +237,10 @@
                     $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
+            if (!String.IsNullOrEmpty(diagnosticAssessment.Password) && !diagnosticAssessment.PasswordSubmitted)
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
+            }
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
@@ -256,7 +316,10 @@
                     $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
+            if (!String.IsNullOrEmpty(postLearningAssessment.Password) && !postLearningAssessment.PasswordSubmitted)
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
+            }
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)
@@ -332,7 +395,10 @@
                     $"centre id: {centreId.ToString() ?? "null"}, section id: {sectionId} tutorial id: {tutorialId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-
+            if (!String.IsNullOrEmpty(tutorialInformation.Password) && !tutorialInformation.PasswordSubmitted)
+            {
+                return RedirectToAction("CoursePassword", "LearningMenu", new { customisationId });
+            }
             var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
 
             if (progressId == null)

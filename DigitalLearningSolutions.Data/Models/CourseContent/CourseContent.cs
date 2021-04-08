@@ -19,6 +19,8 @@
         public int DiagnosticAssessmentCompletionThreshold { get; }
         public int TutorialsCompletionThreshold { get; }
         public CourseSettings CourseSettings { get; }
+        public string? Password { get; }
+        public bool PasswordSubmitted { get; }
         public List<CourseSection> Sections { get; } = new List<CourseSection>();
 
         public CourseContent(
@@ -36,7 +38,9 @@
             int postLearningAssessmentPassThreshold,
             int diagnosticAssessmentCompletionThreshold,
             int tutorialsCompletionThreshold,
-            string? courseSettings
+            string? courseSettings,
+            string? password,
+            bool passwordSubmitted
         )
         {
             Id = id;
@@ -53,6 +57,8 @@
             DiagnosticAssessmentCompletionThreshold = diagnosticAssessmentCompletionThreshold;
             TutorialsCompletionThreshold = tutorialsCompletionThreshold;
             CourseSettings = new CourseSettings(courseSettings);
+            Password = password;
+            PasswordSubmitted = passwordSubmitted;
         }
     }
 }

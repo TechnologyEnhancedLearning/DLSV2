@@ -50,7 +50,9 @@
                 85,
                 90,
                 0,
-                null
+                null,
+                "",
+                false
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -97,7 +99,9 @@
                 85,
                 90,
                 0,
-                null
+                null,
+                "",
+                false
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -144,7 +148,9 @@
                 85,
                 0,
                 100,
-                null
+                null,
+                "",
+                false
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -188,7 +194,9 @@
                 85,
                 0,
                 100,
-                null
+                null,
+                "",
+                false
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -236,7 +244,9 @@
                     85,
                     90,
                     0,
-                    null
+                    null,
+                "",
+                false
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -287,7 +297,9 @@
                     85,
                     90,
                     0,
-                    null
+                    null,
+                "",
+                false
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -340,7 +352,9 @@
                     85,
                     85,
                     0,
-                    null
+                    null,
+                "",
+                false
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -400,7 +414,9 @@
                 85,
                 85,
                 0,
-                null
+                null,
+                "",
+                false
             );
             expectedCourse.Sections.AddRange(
                 new[]
@@ -448,7 +464,9 @@
                     85,
                     90,
                     0,
-                    null
+                    null,
+                "",
+                false
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -500,7 +518,9 @@
                     85,
                     0,
                     100,
-                    null
+                    null,
+                "",
+                false
                 );
                 expectedCourse.Sections.AddRange(
                     new[]
@@ -885,7 +905,7 @@
 
                 // Then
                 const int twoMinutesInMilliseconds = 120000;
-                result.Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
+                result.Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
             }
         }
     }

@@ -33,6 +33,8 @@
         public int? NextSectionId { get; }
         public bool OtherSectionsExist { get; }
         public bool OtherItemsInSectionExist { get; }
+        public string? Password { get; }
+        public bool PasswordSubmitted { get; }
 
         public TutorialInformation(
             int id,
@@ -64,7 +66,9 @@
             int? nextTutorialId,
             int? nextSectionId,
             bool otherSectionsExist,
-            bool otherItemsInSectionExist
+            bool otherItemsInSectionExist,
+            string? password,
+            bool passwordSubmitted
         )
         {
             Id = id;
@@ -96,6 +100,8 @@
             NextSectionId = nextSectionId;
             OtherSectionsExist = otherSectionsExist;
             OtherItemsInSectionExist = otherItemsInSectionExist;
+            Password = password;
+            PasswordSubmitted = passwordSubmitted;
         }
     }
 }
