@@ -43,7 +43,7 @@
             bool active = true
         )
         {
-            loginTime ??= DateTime.Now;
+            loginTime ??= DateTime.UtcNow;
             return new Session(sessionId, candidateId, customisationId, loginTime.Value, duration, active);
         }
 

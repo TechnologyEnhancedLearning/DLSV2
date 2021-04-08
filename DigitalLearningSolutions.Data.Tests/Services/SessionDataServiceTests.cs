@@ -124,7 +124,7 @@
 
                 var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
                 activeSession.LoginTime.AddMinutes(activeSession.Duration)
-                    .Should().BeCloseTo(DateTime.Now, twoMinutesInMilliseconds);
+                    .Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
             }
         }
 
