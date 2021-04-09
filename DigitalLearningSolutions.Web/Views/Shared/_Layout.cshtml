@@ -104,7 +104,7 @@
             </li>
             @{
               string helpPage;
-              if (User.HasClaim(CustomClaimTypes.UserUserAdmin, "True")) {
+              if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)) {
                 helpPage = "/help/Introduction.html";
               } else if (User.Identity.IsAuthenticated) {
                 helpPage = "/learningportal/help/LearningPortal.html";
