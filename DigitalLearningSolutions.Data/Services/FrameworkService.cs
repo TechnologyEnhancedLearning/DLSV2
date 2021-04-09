@@ -20,6 +20,7 @@
         IEnumerable<BrandedFramework> GetFrameworksForAdminId(int adminId);
         IEnumerable<BrandedFramework> GetAllFrameworks(int adminId);
         int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId);
+        string? GetFrameworkConfigForFrameworkId(int frameworkId);
         //  Collaborators:
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
         //  Competencies/groups:
@@ -1267,7 +1268,6 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                 );
             }
         }
-
         public void ArchiveComment(int commentId)
         {
             var numberOfAffectedRows = connection.Execute(
@@ -1281,6 +1281,15 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                     $"commentId: {commentId}."
                 );
             }
+        }
+        public string? GetFrameworkConfigForFrameworkId(int frameworkId)
+        {
+            return (string?)connection.ExecuteScalar(
+               @"SELECT FrameworkConfig
+                FROM Frameworks 
+                WHERE ID = @frameworkId",
+              new { frameworkId }
+          );
         }
     }
 }
