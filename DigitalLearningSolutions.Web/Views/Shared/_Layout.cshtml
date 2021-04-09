@@ -79,7 +79,7 @@
           <ul class="nhsuk-header__navigation-list">
             @RenderSection("NavMenuItems", required: false)
             <li class="nhsuk-header__navigation-item">
-              <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/Home">
+              <a class="nhsuk-header__navigation-link" href="@Configuration["AppRootPath"]/Home">
                 Welcome
                 <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
@@ -122,7 +122,7 @@
             </li>
             @if (!User.Identity.IsAuthenticated) {
               <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/SignIn" target="_blank">
+                <a class="nhsuk-header__navigation-link" href="@Configuration["AppRootPath"]/SignIn" target="_blank">
                   Sign in
                   <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
@@ -130,7 +130,7 @@
                 </a>
               </li>
               <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/Register" target="_blank">
+                <a class="nhsuk-header__navigation-link" href="@Configuration["AppRootPath"]/Register" target="_blank">
                   Register
                   <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
@@ -140,7 +140,7 @@
             }
             @if (User.Identity.IsAuthenticated) {
               <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/MyAccount" target="_blank">
+                <a class="nhsuk-header__navigation-link" href="@Configuration["AppRootPath"]/MyAccount" target="_blank">
                   My account
                   <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
