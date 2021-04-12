@@ -2,7 +2,9 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CentresServiceTests
@@ -13,7 +15,8 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            centresService = new CentresService(connection);
+            var logger = A.Fake<ILogger<CentresService>>();
+            centresService = new CentresService(connection, logger);
         }
 
         [Test]
