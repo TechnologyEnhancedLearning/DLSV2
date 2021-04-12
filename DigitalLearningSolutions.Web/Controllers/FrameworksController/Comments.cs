@@ -19,6 +19,12 @@
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult ViewThread(int frameworkId, int commentId)
         {
+            var adminId = GetAdminID();
+            var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if(baseFramework.UserRole == 0)
+            {
+                return StatusCode(403);
+            }
             var commentReplies = frameworkService.GetCommentById(commentId, GetAdminID());
             if (commentReplies == null )
             {
