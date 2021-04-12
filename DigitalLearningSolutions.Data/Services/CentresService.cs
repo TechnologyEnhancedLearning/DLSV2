@@ -13,9 +13,9 @@
     public class CentresService : ICentresService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<CourseService> logger;
+        private readonly ILogger<CentresService> logger;
 
-        public CentresService(IDbConnection connection, ILogger<CourseService> logger)
+        public CentresService(IDbConnection connection, ILogger<CentresService> logger)
         {
             this.connection = connection;
             this.logger = logger;
