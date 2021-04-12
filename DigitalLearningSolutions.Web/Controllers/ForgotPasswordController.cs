@@ -44,7 +44,7 @@
                     baseUrl
                 );
             }
-            catch (EmailAddressNotFoundException)
+            catch (UserAccountNotFoundException)
             {
                 ModelState.AddModelError("EmailAddress", "User with this email address does not exist. Please try again.");
 
