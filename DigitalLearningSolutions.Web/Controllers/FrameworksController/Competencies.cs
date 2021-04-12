@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/CompetencyGroup")]
         public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId = 0)
         {
+            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
             if (userRole < 2)
             {
@@ -31,7 +32,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new CompetencyGroupViewModel()
             {
                 FrameworkId = frameworkId,
-                CompetencyGroupBase = competencyGroupBase
+                CompetencyGroupBase = competencyGroupBase,
+                frameworkConfig = frameworkConfig
             };
             return View("Developer/CompetencyGroup", model);
         }
@@ -114,11 +116,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             }
+            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
             var model = new FrameworkCompetencyViewModel()
             {
                 FrameworkId = frameworkId,
                 FrameworkCompetencyGroupId = frameworkCompetencyGroupId,
-                FrameworkCompetency = frameworkCompetency
+                FrameworkCompetency = frameworkCompetency,
+                frameworkConfig = frameworkConfig
             };
             return View("Developer/Competency", model);
         }
