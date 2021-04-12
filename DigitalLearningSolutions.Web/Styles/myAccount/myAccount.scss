@@ -3,22 +3,19 @@
 $nhs-dark-grey: #425563;
 
 .account-card-content {
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 32px;
-  padding-right: 32px;
+  padding: 16px 32px;
 }
 
 .account-summarylist_row:last-child {
-  border: 0;
-  margin-bottom: 0px;
+  border: none;
+  margin-bottom: 0;
 }
 
 .account-summarylist_row:last-child .nhsuk-summary-list__key {
-  border: 0;
+  border: none;
 }
 
 .account-summarylist_row:last-child .nhsuk-summary-list__value {
-  border: 0;
+  border: none;
   margin-bottom: 0px;
 }

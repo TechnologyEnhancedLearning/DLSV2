@@ -8,6 +8,7 @@
     public class MyAccountController : Controller
     {
         private readonly ICentresService centresService;
+
         public MyAccountController(ICentresService centresService)
         {
             this.centresService = centresService;

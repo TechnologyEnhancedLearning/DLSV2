@@ -2,6 +2,7 @@
 {
     using Dapper;
     using System.Data;
+    using Microsoft.Extensions.Logging;
 
     public interface ICentresService
     {
@@ -12,10 +13,12 @@
     public class CentresService : ICentresService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<CourseService> logger;
 
-        public CentresService(IDbConnection connection)
+        public CentresService(IDbConnection connection, ILogger<CourseService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public string? GetBannerText(int centreId)
@@ -30,12 +33,18 @@
 
         public string? GetCentreName(int centreId)
         {
-            return connection.QueryFirstOrDefault<string?>(
+            var name = connection.QueryFirstOrDefault<string?>(
                 @"SELECT CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
+            if (name == null)
+            {
+                logger.LogWarning(
+                    $"No centre found for centre id {centreId}"
+                );
+            }
         }
     }
 }
