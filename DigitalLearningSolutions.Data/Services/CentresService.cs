@@ -45,6 +45,8 @@
                     $"No centre found for centre id {centreId}"
                 );
             }
+
+            return name;
         }
     }
 }
