@@ -8,6 +8,8 @@
 
     public interface IUserService
     {
+        public List<AdminUser> GetAdminUsersByUsername(string username);
+        public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
     }
 
@@ -18,6 +20,60 @@
         public UserService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public List<AdminUser> GetAdminUsersByUsername(string username)
+        {
+            List<AdminUser> users = connection.Query<AdminUser>(
+                @"SELECT
+                        au.AdminID,
+                        au.CentreID, 
+                        ct.CentreName,
+                        au.Email,
+                        au.Forename,
+                        au.Surname,
+                        au.Password,
+                        au.CentreAdmin,
+                        au.IsCentreManager,
+                        au.ContentCreator,
+                        au.ContentManager,
+                        au.PublishToAll,
+                        au.SummaryReports,
+                        au.UserAdmin,
+                        au.CategoryID,
+                        au.Supervisor,
+                        au.Trainer,
+                        au.IsFrameworkDeveloper
+                    FROM AdminUsers AS au
+                    INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
+                new { username }
+            ).ToList();
+
+            return users;
+        }
+
+        public List<DelegateUser> GetDelegateUsersByUsername(string username)
+        {
+            List<DelegateUser> users = connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID 
+                    WHERE cd.Active = 1 AND
+                         (cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username)",
+                new { username }
+            ).ToList();
+
+            return users;
         }
 
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
