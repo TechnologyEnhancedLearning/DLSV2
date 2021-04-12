@@ -29,7 +29,9 @@
             int diagnosticAssessmentCompletionThreshold = 85,
             int tutorialsCompletionThreshold = 0,
             bool otherSectionsExist = true,
-            int? nextSectionId = null
+            int? nextSectionId = null,
+            string? password = null,
+            bool passwordSubmitted = false
         )
         {
             return new SectionContent(
@@ -56,7 +58,9 @@
                 diagnosticAssessmentCompletionThreshold,
                 tutorialsCompletionThreshold,
                 otherSectionsExist,
-                nextSectionId
+                nextSectionId,
+                password,
+                passwordSubmitted
             );
         }
 

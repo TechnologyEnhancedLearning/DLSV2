@@ -35,7 +35,9 @@
             int? nextTutorialId = 2,
             int? nextSectionId = 42,
             bool otherSectionsExist = true,
-            bool otherItemsInSectionExist = true
+            bool otherItemsInSectionExist = true,
+            string? password = null,
+            bool passwordSubmitted = false
         )
         {
             return new TutorialInformation(
@@ -68,7 +70,9 @@
                 nextTutorialId,
                 nextSectionId,
                 otherSectionsExist,
-                otherItemsInSectionExist
+                otherItemsInSectionExist,
+                password,
+                passwordSubmitted
             );
         }
 

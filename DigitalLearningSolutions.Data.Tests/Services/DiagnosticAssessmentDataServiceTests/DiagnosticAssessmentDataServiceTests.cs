@@ -60,7 +60,9 @@
                 383,
                 null,
                 false,
-                true
+                true,
+                "",
+                false
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
@@ -109,7 +111,9 @@
                 4340,
                 994,
                 true,
-                true
+                true,
+                null,
+                false
             );
             expectedDiagnosticAssessment.Tutorials.AddRange(
                 new[]
