@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Data;
     using Dapper;
+    using System.Data;
 
     public interface ICentresService
     {

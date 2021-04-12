@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     public class MyAccountViewModel
     {

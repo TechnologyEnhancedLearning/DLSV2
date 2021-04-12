@@ -4,18 +4,20 @@
 
 @inject IConfiguration Configuration
 
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "My Account";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading">My account</h1>
+    <h1 id="app-page-heading">My account</h1>
 
     <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
+      <div class="nhsuk-card__content account-card-content">
         <dl class="nhsuk-summary-list">
-          <div class="nhsuk-summary-list__row">
+          <div class="nhsuk-summary-list__row account-summarylist_row">
             <dt class="nhsuk-summary-list__key">
               Centre:
             </dt>
@@ -24,19 +26,21 @@
             </dd>
           </div>
 
-          <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-              User:
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              @Model.User
-            </dd>
-
-          </div>
+          @if (Model.User?.Length > 0)
+          {
+            <div class="nhsuk-summary-list__row account-summarylist_row">
+              <dt class="nhsuk-summary-list__key">
+                User:
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                @Model.User
+              </dd>
+            </div>
+          }
 
           @if (Model.DelegateId?.Length > 0)
           {
-            <div class="nhsuk-summary-list__row">
+            <div class="nhsuk-summary-list__row account-summarylist_row">
               <dt class="nhsuk-summary-list__key">
                 Delegate id:
               </dt>
@@ -45,7 +49,6 @@
               </dd>
             </div>
           }
-
         </dl>
       </div>
     </div>
