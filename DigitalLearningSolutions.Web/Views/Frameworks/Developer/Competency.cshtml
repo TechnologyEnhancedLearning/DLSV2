@@ -27,13 +27,13 @@
     @if (Model.FrameworkCompetency.Id > 0)
     {
     <h1>
-      Edit @Model.vocabSingular().ToLower()
+      Edit @Model.VocabSingular().ToLower()
     </h1>
     }
     else
     {
   <h1>
-    Add new @Model.vocabSingular().ToLower()
+    Add new @Model.VocabSingular().ToLower()
   </h1>
     }
     <form method="post">
@@ -43,14 +43,14 @@
       }
       <nhs-form-group nhs-validation-for="FrameworkCompetency.Name">
         <label class="nhsuk-label" id="competency-name-label" for="competency-name">
-          @Model.vocabSingular() statement
+          @Model.VocabSingular() statement
         </label>
         <span nhs-validation-for="FrameworkCompetency.Name"></span>
         <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="competency-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
       </nhs-form-group>
       <div class="nhsuk-form-group">
         <label class="nhsuk-label" id="competency-description-label" for="competency-description">
-          @Model.vocabSingular() description
+          @Model.VocabSingular() description
         </label>
         <textarea class="nhsuk-input html-editor" asp-for="FrameworkCompetency.Description" id="competency-description" name="Description" type="text" aria-describedby="competency-description-label"></textarea>
       </div>
