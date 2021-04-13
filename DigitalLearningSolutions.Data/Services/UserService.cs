@@ -8,7 +8,7 @@
 
     public interface IUserService
     {
-        public List<AdminUser> GetAdminUsersByUsername(string username);
+        public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
     }
@@ -22,9 +22,9 @@
             this.connection = connection;
         }
 
-        public List<AdminUser> GetAdminUsersByUsername(string username)
+        public AdminUser? GetAdminUserByUsername(string username)
         {
-            List<AdminUser> users = connection.Query<AdminUser>(
+            AdminUser? user = connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID,
                         au.CentreID, 
@@ -48,9 +48,9 @@
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
-            ).ToList();
+            ).FirstOrDefault();
 
-            return users;
+            return user;
         }
 
         public List<DelegateUser> GetDelegateUsersByUsername(string username)

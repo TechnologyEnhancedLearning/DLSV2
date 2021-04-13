@@ -18,16 +18,16 @@
             Map(adminUser => adminUser.ResetPasswordId).ToColumn("ResetPasswordID");
 
             // Columns specific to AdminUser class
-            Map(adminUser => adminUser.CentreAdmin).ToColumn("CentreAdmin");
+            Map(adminUser => adminUser.IsCentreAdmin).ToColumn("IsCentreAdmin");
             Map(adminUser => adminUser.IsCentreManager).ToColumn("IsCentreManager");
-            Map(adminUser => adminUser.ContentCreator).ToColumn("ContentCreator");
-            Map(adminUser => adminUser.ContentManager).ToColumn("ContentManager");
+            Map(adminUser => adminUser.IsContentCreator).ToColumn("IsContentCreator");
+            Map(adminUser => adminUser.IsContentManager).ToColumn("IsContentManager");
             Map(adminUser => adminUser.PublishToAll).ToColumn("PublishToAll");
             Map(adminUser => adminUser.SummaryReports).ToColumn("SummaryReports");
-            Map(adminUser => adminUser.UserAdmin).ToColumn("UserAdmin");
+            Map(adminUser => adminUser.IsUserAdmin).ToColumn("IsUserAdmin");
             Map(adminUser => adminUser.CategoryId).ToColumn("CategoryID");
-            Map(adminUser => adminUser.Supervisor).ToColumn("Supervisor");
-            Map(adminUser => adminUser.Trainer).ToColumn("Trainer");
+            Map(adminUser => adminUser.IsSupervisor).ToColumn("IsSupervisor");
+            Map(adminUser => adminUser.IsTrainer).ToColumn("IsTrainer");
             Map(adminUser => adminUser.IsFrameworkDeveloper).ToColumn("IsFrameworkDeveloper");
         }
     }
