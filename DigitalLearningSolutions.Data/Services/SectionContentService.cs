@@ -108,6 +108,8 @@
                                     ELSE 0
                               END AS BIT) AS OtherSectionsExist,
                         NextSectionIdTable.NextSectionId,
+                        Customisations.Password,
+                        Progress.PasswordSubmitted,
                         Tutorials.TutorialName,
                         COALESCE (aspProgress.TutStat, 0) AS TutStat,
                         COALESCE (TutStatus.Status, 'Not started') AS CompletionStatus,

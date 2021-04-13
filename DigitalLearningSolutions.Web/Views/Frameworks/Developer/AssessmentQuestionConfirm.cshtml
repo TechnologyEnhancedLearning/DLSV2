@@ -24,7 +24,7 @@
         else
         {
           <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Competency Assessment Questions</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.vocabSingular() Assessment Questions</a></li>
           <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestion.Id == 0 ? "New" : "Edit") Assessment Question</li>
         }
 
@@ -35,7 +35,7 @@
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to Competency Assessment Questions</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.vocabSingular() Assessment Questions</a></p>
       }
     </div>
   </nav>
@@ -51,11 +51,11 @@
   </div>
   @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-      Submit and apply <span class="nhsuk-u-visually-hidden">to existing competencies</span>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.vocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+      Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.vocabPlural().ToLower()</span>
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing competencies" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-      Submit <span class="nhsuk-u-visually-hidden">without applying to existing competencies</span>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.vocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+      Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.vocabPlural().ToLower()</span>
     </a>
   }
   else
