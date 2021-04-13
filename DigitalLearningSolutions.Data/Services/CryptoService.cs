@@ -14,6 +14,8 @@
         private const int SaltSize = 16;
         private const int PBKDF2SubkeyLength = 32;
         private const int PBKDF2IterationCount = 1000;
+        private const int CorrectStoredPasswordLength = 1 + SaltSize + PBKDF2SubkeyLength;
+        private const byte CorrectStoredPasswordVersionHeader = 0x00;
 
         public bool VerifyHashedPassword(string? hashedPassword, string password)
         {
@@ -23,10 +25,11 @@
             }
 
             var hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
+            bool storedPasswordIsIncorrectLength = hashedPasswordBytes.Length != CorrectStoredPasswordLength;
+            bool storedPasswordHasIncorrectVersionHeader = hashedPasswordBytes[0] != CorrectStoredPasswordVersionHeader;
 
-            if (hashedPasswordBytes.Length != 1 + SaltSize + PBKDF2SubkeyLength || hashedPasswordBytes[0] != 0x00)
+            if (storedPasswordIsIncorrectLength || storedPasswordHasIncorrectVersionHeader)
             {
-                // Wrong length or version header
                 return false;
             }
 

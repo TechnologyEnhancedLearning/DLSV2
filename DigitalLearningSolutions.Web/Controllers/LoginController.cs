@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -13,11 +13,13 @@
 
     public class LoginController : Controller
     {
-        private readonly ILoginService loginService;
+        private readonly IUserService userService;
+        private readonly ICryptoService cryptoService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(IUserService userService, ICryptoService cryptoService)
         {
-            this.loginService = loginService;
+            this.userService = userService;
+            this.cryptoService = cryptoService;
         }
 
         public IActionResult Index()
@@ -38,29 +40,45 @@
                 return View("Index", model);
             }
 
-            AdminUser? adminUser;
-            DelegateUser? delegateUser;
+            AdminUser? adminUser = userService.GetAdminUserByUsername(model.Username);
+            List<DelegateUser> delegateUsers = userService.GetDelegateUsersByUsername(model.Username);
 
-            try
+            if (adminUser == null && delegateUsers.Count == 0)
             {
-                (adminUser, delegateUser) = loginService.VerifyUserDetailsAndGetClaims(model.Username, model.Password);
-            }
-            catch (UserAccountNotFoundException e)
-            {
-                ModelState.AddModelError("Username", e.Message);
+                ModelState.AddModelError("Username","No account with that email address or user ID could be found.");
                 return View("Index", model);
             }
-            catch (IncorrectPasswordLoginException e)
+
+            adminUser = cryptoService.VerifyHashedPassword(adminUser?.Password, model.Password) ? adminUser : null;
+            delegateUsers = delegateUsers.Where(du => cryptoService.VerifyHashedPassword(du.Password, model.Password)).ToList();
+
+            if (adminUser == null && delegateUsers.Count == 0)
             {
-                ModelState.AddModelError("Password", e.Message);
+                ModelState.AddModelError("Password", "The password you have entered is incorrect.");
                 return View("Index", model);
             }
-            catch (DelegateUserNotApprovedException)
+
+            if (adminUser == null)
             {
-                return View("AccountNotApproved");
+                foreach (var delegateUser in delegateUsers.Where(du => du.EmailAddress != null))
+                {
+                    adminUser = userService.GetAdminUserByUsername(delegateUser.EmailAddress);
+
+                    if (cryptoService.VerifyHashedPassword(adminUser?.Password, model.Password))
+                    {
+                        break;
+                    }
+
+                    adminUser = null;
+                }
+
+                if (adminUser == null && delegateUsers.Any(du => !du.Approved) )
+                {
+                    return View("AccountNotApproved");
+                }
             }
 
-            var claims = GetClaimsForSignIn(adminUser, delegateUser);
+            var claims = GetClaimsForSignIn(adminUser, delegateUsers.FirstOrDefault(du => du.Approved));
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
@@ -79,23 +97,23 @@
                 new Claim(ClaimTypes.Email, adminUser?.EmailAddress ?? delegateUser?.EmailAddress),
                 new Claim(CustomClaimTypes.UserCentreId, adminUser?.CentreId.ToString() ?? delegateUser?.CentreId.ToString()),
                 new Claim(CustomClaimTypes.UserCentreManager, adminUser?.IsCentreManager.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreAdmin, adminUser?.CentreAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserUserAdmin, adminUser?.UserAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserContentCreator, adminUser?.ContentCreator.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminUser?.ContentManager.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreAdmin, adminUser?.IsCentreAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserUserAdmin, adminUser?.IsUserAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserContentCreator, adminUser?.IsContentCreator.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminUser?.IsContentManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserPublishToAll, adminUser?.PublishToAll.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreReports, adminUser?.SummaryReports.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnCandidateId, delegateUser?.Id.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateUser != null).ToString()),
                 new Claim(CustomClaimTypes.AdminCategoryId, adminUser?.CategoryId.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsSupervisor, adminUser?.Supervisor.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsTrainer, adminUser?.Trainer.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsFrameworkDeveloper, adminUser?.IsFrameworkDeveloper.ToString() ?? "False")
+                new Claim(CustomClaimTypes.IsSupervisor, adminUser?.IsSupervisor.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsTrainer, adminUser?.IsTrainer.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsFrameworkDeveloper, adminUser?.IsFrameworkDeveloper.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreName, adminUser?.CentreName ?? delegateUser?.CentreName)
             };
 
             var firstName = delegateUser?.FirstName ?? adminUser?.FirstName;
             var surname = delegateUser?.Surname ?? adminUser?.Surname;
-            var centreName = delegateUser?.CentreName ?? adminUser?.CentreName;
 
             if (firstName != null)
             {
@@ -105,11 +123,6 @@
             if (surname != null)
             {
                 claims.Add(new Claim(CustomClaimTypes.UserSurname, surname));
-            }
-
-            if (centreName != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserCentreName, centreName));
             }
 
             if (delegateUser?.CandidateNumber != null)

@@ -30,22 +30,22 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithUnauthenticatedUser(ILoginService loginService)
+        public static LoginController GetLoginControllerWithUnauthenticatedUser(IUserService userService, ICryptoService cryptoService)
         {
-            return GetLoginController(loginService, string.Empty);
+            return GetLoginController(userService, cryptoService, string.Empty);
         }
 
-        public static LoginController GetLoginControllerWithAuthenticatedUser(ILoginService loginService)
+        public static LoginController GetLoginControllerWithAuthenticatedUser(IUserService userService, ICryptoService cryptoService)
         {
-            return GetLoginController(loginService, "mock");
+            return GetLoginController(userService, cryptoService, "mock");
         }
 
-        private static LoginController GetLoginController(ILoginService loginService, string authenticationType)
+        private static LoginController GetLoginController(IUserService userService, ICryptoService cryptoService, string authenticationType)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-            return new LoginController(loginService)
+            return new LoginController(userService, cryptoService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -58,7 +58,7 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithSignInFunctionality(ILoginService loginService)
+        public static LoginController GetLoginControllerWithSignInFunctionality(IUserService userService, ICryptoService cryptoService)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(""));
             var session = new MockHttpContextSession();
@@ -71,7 +71,7 @@
             var services = A.Fake<IServiceProvider>();
             A.CallTo(() => services.GetService(typeof(IAuthenticationService))).Returns(authService);
             A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
-            return new LoginController(loginService)
+            return new LoginController(userService, cryptoService)
             {
                 ControllerContext = new ControllerContext
                 {
