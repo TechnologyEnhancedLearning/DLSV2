@@ -111,7 +111,9 @@
                                               )
                                         THEN 1
                                    ELSE 0
-                              END AS BIT) AS OtherItemsInSectionExist
+                              END AS BIT) AS OtherItemsInSectionExist,
+                        Customisations.Password,
+                        Progress.PasswordSubmitted
                     FROM Sections
                         INNER JOIN Customisations
                             ON Customisations.ApplicationID = Sections.ApplicationID

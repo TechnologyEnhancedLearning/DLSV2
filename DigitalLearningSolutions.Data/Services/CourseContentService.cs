@@ -12,6 +12,8 @@
         CourseContent? GetCourseContent(int candidateId, int customisationId);
         int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId);
         void UpdateProgress(int progressId);
+        string? GetCoursePassword(int customisationId);
+        void LogPasswordSubmitted(int progressId);
     }
 
     public class CourseContentService : ICourseContentService
@@ -72,6 +74,8 @@
                          Customisations.DiagCompletionThreshold AS DiagnosticAssessmentCompletionThreshold,
                          Customisations.TutCompletionThreshold AS TutorialsCompletionThreshold,
                          Applications.CourseSettings,
+                         Customisations.Password,
+                         Progress.PasswordSubmitted,
                          Sections.SectionName,
                          Sections.SectionID AS id,
                          dbo.CheckCustomisationSectionHasLearning(Customisations.CustomisationID, Sections.SectionID) AS HasLearning,
@@ -111,6 +115,8 @@
                          Applications.ApplicationName,
 						 Applications.ApplicationInfo,
                          Customisations.CustomisationName,
+                         Customisations.Password,
+                         Progress.PasswordSubmitted,
                          CustomisationDurations.AverageDuration,
                          Centres.CentreName,
                          Centres.BannerText,
@@ -138,6 +144,14 @@
                 new { candidateId, customisationId },
                 splitOn: "SectionName"
             ).FirstOrDefault();
+        }
+
+        public string? GetCoursePassword(int customisationId)
+        {
+            return connection.QueryFirstOrDefault<string?>(
+                @" SELECT Password FROM Customisations
+                    WHERE CustomisationID = @customisationId", new { customisationId }
+                );
         }
 
         public int? GetOrCreateProgressId(int candidateId, int customisationId, int centreId)
@@ -189,6 +203,24 @@
             }
 
             return null;
+        }
+
+        public void LogPasswordSubmitted(int progressId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE Progress
+	                    SET PasswordSubmitted = 1
+	                    WHERE Progress.ProgressID = @progressId",
+                new { progressId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not loggin password submitted as db update failed. " +
+                    $"Progress id: {progressId}"
+                );
+            }
         }
 
         public void UpdateProgress(int progressId)
