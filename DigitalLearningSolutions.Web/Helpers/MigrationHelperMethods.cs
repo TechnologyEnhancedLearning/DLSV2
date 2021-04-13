@@ -28,9 +28,21 @@
                         typeof(CompetencyFrameworkDBChanges).Assembly,
                         typeof(AddInsertCustomisationV3sp).Assembly,
                         typeof(CandidateAssessmentSubmittedDate).Assembly,
+                        typeof(AddFrameworkIdToFrameworkCompetencies).Assembly,
+                        typeof(AddCompetencyNameColumn).Assembly,
+                        typeof(MakeCompetencyDecsriptionNullable).Assembly,
+                        typeof(ReorderFrameworkCompetenciesAndGroupsSPs).Assembly,
+                        typeof(ChangesForDigitalCapability).Assembly,
+                        typeof(AddFrameworkDefaultQuestionsTable).Assembly,
+                        typeof(AddAssessmentQuestionAdminIDColumn).Assembly,
                         typeof(ChangesForDigitalCapability).Assembly,
                         typeof(FixFilteredSPs).Assembly,
+                        typeof(FilteredFunctionTweak).Assembly,
+                        typeof(AssessmentQuestionMaxMinDescriptionNullable).Assembly,
+                        typeof(FixFilteredSPs).Assembly,
                         typeof(AddAssessAttemptsIndex).Assembly,
+                        typeof(AddResetPasswordTable).Assembly,
+                        typeof(AddFrameworkCommentFrameworkID).Assembly,
                         typeof(AddPasswordSubmittedField).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb

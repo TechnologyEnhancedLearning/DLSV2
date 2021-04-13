@@ -1,0 +1,100 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model DetailFramework
+@{
+  ViewData["Title"] = "Framework Vocabulary";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item">Create framework</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="FrameworksDashboard">Back to frameworks</a></p>
+      </div>
+    </nav>
+  }
+}
+else
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item">Name</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">Back to framework detail</a></p>
+      </div>
+    </nav>
+  }
+}
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+<h1>Framework vocabulary</h1>
+}
+else
+{
+<h1>Edit framework vocabulary</h1>
+}
+<form method="post">
+  @if (!ViewData.ModelState.IsValid)
+  {
+    <partial name="_ErrorSummary" />}
+  <nhs-form-group nhs-validation-for="FrameworkName">
+    <label class="nhsuk-label" for="framework-name-hint">
+      <h2>Choose framework vocabulary</h2>
+    </label>
+    <div class="nhsuk-hint" id="framework-name-hint">
+      Choose the most appropriate term for the building blocks of this framework.
+    </div>
+    <select class="nhsuk-select" asp-for="FrameworkConfig" name="FrameworkConfig">
+      <option value="Capability" selected="selected">Capabilities</option>
+      <option value="Competency">Competencies</option>
+      <option value="Requirement">Requirements</option>
+    </select>
+    <span nhs-validation-for="FrameworkConfig"></span>
+  </nhs-form-group>
+  <input name="ID" type="hidden" asp-for="ID" />
+  <input name="FrameworkName" type="hidden" asp-for="FrameworkName" />
+  <input name="Description" type="hidden" asp-for="Description" />
+  <input name="brandId" type="hidden" asp-for="BrandID" />
+  <input name="categoryId" type="hidden" asp-for="CategoryID" />
+  <input name="topicId" type="hidden" asp-for="TopicID" />
+  <input name="ownerAdminId" type="hidden" asp-for="OwnerAdminID" />
+  <input name="updateByAdminId" type="hidden" asp-for="UpdatedByAdminID" />
+  <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+  {
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworksDashboard">
+      Cancel
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDescription" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+      Back
+    </a>
+    <button class="nhsuk-button" type="submit">
+      Continue
+    </button>
+  }
+  else
+  {
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">
+      Cancel
+    </a>
+    <button class="nhsuk-button" type="submit">
+      Save
+    </button>
+  }
+
+</form>
+@section scripts {
+  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}

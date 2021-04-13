@@ -1,0 +1,61 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model CompetencyGroupViewModel;
+@{
+  ViewData["Title"] = "Competency Group";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupBase.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Competency</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink"  asp-fragment="fcgroup-@Model.CompetencyGroupBase.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+    </div>
+  </nav>
+}
+<div class="nhsuk-grid-row">
+
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CompetencyGroupBase.ID > 0)
+    {
+    <h1>
+      Edit @Model.VocabSingular().ToLower() group
+    </h1>
+    }
+    else
+    {
+  <h1>
+    Add new @Model.VocabSingular().ToLower() group
+  </h1>
+
+    }
+    <form method="post">
+      @if (!ViewData.ModelState.IsValid)
+      {
+        <partial name="_ErrorSummary" />
+      }
+      <nhs-form-group nhs-validation-for="CompetencyGroupBase.Name">
+        <label class="nhsuk-label" id="competency-group-name-label" for="competency-group-name">
+          @Model.VocabSingular() group name
+        </label>
+        <span nhs-validation-for="CompetencyGroupBase.Name"></span>
+        <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
+      </nhs-form-group>
+      <input name="ID" type="hidden" asp-for="CompetencyGroupBase.ID" />
+      <input name="CompetencyGroupID" type="hidden" asp-for="CompetencyGroupBase.CompetencyGroupID" />
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupBase.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+        Cancel
+      </a>
+      <button class="nhsuk-button" type="submit">
+        Save
+      </button>
+    </form>
+  </div>
+</div>

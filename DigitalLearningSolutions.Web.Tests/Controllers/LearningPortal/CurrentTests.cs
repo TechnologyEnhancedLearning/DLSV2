@@ -228,7 +228,7 @@
             controller.RequestUnlock(progressId);
 
             // Then
-            A.CallTo(() => unlockService.SendUnlockRequest(progressId)).MustHaveHappened();
+            A.CallTo(() => notificationService.SendUnlockRequest(progressId)).MustHaveHappened();
         }
 
         [Test]

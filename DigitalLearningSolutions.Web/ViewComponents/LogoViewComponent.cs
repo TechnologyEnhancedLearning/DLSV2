@@ -17,9 +17,13 @@ namespace DigitalLearningSolutions.Web.ViewComponents
 
         public IViewComponentResult Invoke(int? customisationId)
         {
-            var centreId = ((ClaimsPrincipal) User).GetCentreId();
-            var customLogo = logoService.GetLogo(centreId, customisationId);
+            var centreId = ((ClaimsPrincipal) User).GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            if (centreId == null)
+            {
+                return View(new LogoViewModel(null));
+            }
 
+            var customLogo = logoService.GetLogo(centreId, customisationId);
             var model = new LogoViewModel(customLogo);
             return View(model);
         }

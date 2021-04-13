@@ -36,9 +36,9 @@
                 Sections = sections,
                 ProgressID = progressId,
                 Evaluated = evaluated,
-                StartedDate = startedDate ?? DateTime.Now,
-                LastAccessed = lastAccessed ?? DateTime.Now,
-                Completed = completed ?? DateTime.Now
+                StartedDate = startedDate ?? DateTime.UtcNow,
+                LastAccessed = lastAccessed ?? DateTime.UtcNow,
+                Completed = completed ?? DateTime.UtcNow
             };
         }
 

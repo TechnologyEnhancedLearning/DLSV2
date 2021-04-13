@@ -121,6 +121,9 @@
   <data name="ApplyLPDefaultsSPChanges" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\ApplyLPDefaultsSPChanges.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="DLSV2_106_CreateOrAlterInsertCustomisation_V3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-106-CreateOrAlterInsertCustomisation_V3.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -133,8 +136,14 @@
   <data name="DLSV2_133_UnAdjustScoresForFilteredSP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-133-UnAdjustScoresForFilteredSP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="DLSV2_153_DropFilteredFunctionTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DLSV2-153-DropFilteredFunctionTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="DLSV2_153_DropFilteredSPFixes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-153-DropFilteredSPFixes.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DLSV2_153_FilteredFunctionTweak" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DLSV2-153-FilteredFunctionTweak.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="DLSV2_153_FilteredSPFixes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-153-FilteredSPFixes.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
@@ -153,6 +162,9 @@
   </data>
   <data name="DropGetActiveAvailableV5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DropGetActiveAvailableV5.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DropReorderFrameworkCompetenciesAndGroupsSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DropReorderFrameworkCompetenciesAndGroupsSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="FilteredSPs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\FilteredSPs.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>

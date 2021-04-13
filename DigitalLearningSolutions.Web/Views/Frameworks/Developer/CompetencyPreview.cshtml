@@ -1,0 +1,83 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model SelfAssessmentCompetencyViewModel
+@{
+  ViewData["Title"] = "Competency Preview";
+  ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
+<div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
+  @if (Model.Competency.Description != null)
+  {
+    <details class="nhsuk-details">
+      <summary class="nhsuk-details__summary">
+        <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+          <span class="nhsuk-details__summary-text">
+            @Model.Competency.Name
+          </span>
+        </h2>
+      </summary>
+      <div class="nhsuk-details__text">
+        @(Html.Raw(@Model.Competency.Description))
+      </div>
+    </details>
+  }
+  else
+  {
+    <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+      @Model.Competency.Name
+    </h2>
+  }
+</div>
+@foreach (var question in @Model.Competency.AssessmentQuestions)
+{
+  <div class="nhsuk-form-group">
+    @if (question.AssessmentQuestionInputTypeID == 1)
+    {
+      <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
+    }
+    else
+    {
+      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
+    }
+  </div>
+  @if (question.IncludeComments)
+  {
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="tb-supportingComments-@question.Id">
+        Supporting comments:
+      </label>
+      <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@question.Id" asp-for="@question.SupportingComments" name="SupportingComments" type="text"></textarea>
+    </div>
+  }
+}
+
+<div class="nhsuk-u-margin-top-4">
+  Question 1 of 1
+</div>
+<button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-1" disabled>
+  Save and continue
+</button>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-back-link grid-column-85">
+    <span class="nhsuk-back-link__link">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Previous question
+    </span>
+    <span class="nhsuk-back-link__link skip-link">
+      Skip
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+      </svg>
+    </span>
+  </div>
+</div>
+<a class="nhsuk-button" asp-action="ViewFramework" asp-fragment="fc-@(ViewContext.RouteData.Values["frameworkCompetencyId"])" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">
+  Done
+</a>
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+}

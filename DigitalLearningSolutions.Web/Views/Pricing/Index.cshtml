@@ -1,0 +1,9 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@{
+  ViewData["Title"] = "Pricing";
+  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/pricing?nonav=true";
+}
+
+<div class="nhsuk-grid-row responsive-iframe-wrapper">
+  <iframe class="responsive-iframe" src="@url"></iframe>
+</div>

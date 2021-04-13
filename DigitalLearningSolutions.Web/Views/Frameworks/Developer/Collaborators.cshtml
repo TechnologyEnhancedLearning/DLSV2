@@ -1,0 +1,126 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model CollaboratorsViewModel
+@{
+  ViewData["Title"] = "Framework Collaborators";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item">Create framework</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="FrameworksDashboard">Back to frameworks</a></p>
+      </div>
+    </nav>
+  }
+}
+else
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item">Collaborators</li>
+        </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Back to framework detail</a></p>
+      </div>
+    </nav>
+  }
+}
+<h1>Choose working group members</h1>
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+{
+  <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
+}
+<div class="nhsuk-table__panel-with-heading-tab">
+  <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>
+  <table role="presentation" class="nhsuk-table-responsive">
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          User
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Role
+        </th>
+        @if (Model.Collaborators.Count() > 1)
+        {
+          <th role="columnheader" class="" scope="col">
+            Actions
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var collaborator in Model.Collaborators)
+      {
+        <tr role="row" class="nhsuk-table__row collaborator-row">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">User </span>
+            <span class="framework-collaborator-user">
+              @collaborator.Surname, @collaborator.Forename (@collaborator.Email)
+            </span>
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Role </span>
+            <span class="framework-collaborator-role">
+              <partial name="Shared/_RoleTag" model="collaborator" />
+            </span>
+          </td>
+          @if (Model.Collaborators.Count() > 1)
+          {
+            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+              <span class="nhsuk-table-responsive__heading">Actions </span>
+              @if (collaborator.FrameworkRole != "Owner")
+              {
+                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.FrameworkId" asp-route-adminId="@collaborator.AdminID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                  Remove
+                </a>
+              }
+
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+<form method="post">
+  <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
+    <h2>Add a user to the working group</h2>
+  </label>
+  <div class="nhsuk-hint" id="add-user-hint">
+    Choose a user and add them as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
+  </div>
+  <div class="sort-row no-label nhsuk-form-group">
+    <div class=" sort-select-container">
+      <select class="nhsuk-select" asp-items="Model.AdminSelectList" asp-for="AdminID" aria-label="User"></select>
+    </div>
+    <div class="sort-button-container">
+      <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.FrameworkId">
+        Add  as Contributor
+      </button>
+    </div>
+    <div class="sort-button-container">
+      <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-frameworkId="@Model.FrameworkId">
+        Add as Reviewer
+      </button>
+    </div>
+  </div>
+</form>
+<div class=" nhsuk-u-margin-top-6">
+    <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
+      Done
+    </a>
+</div>
+

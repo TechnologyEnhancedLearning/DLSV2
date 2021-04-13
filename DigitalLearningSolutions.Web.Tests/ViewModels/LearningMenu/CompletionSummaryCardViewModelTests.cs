@@ -41,7 +41,7 @@
             // When
             var completionSummaryCardViewModel = new CompletionSummaryCardViewModel(
                 CustomisationId,
-                DateTime.Now,
+                DateTime.UtcNow,
                 MaxPostLearningAssessmentAttempts,
                 IsAssessed,
                 PostLearningAssessmentPassThreshold,
@@ -77,7 +77,7 @@
             // When
             var completionSummaryCardViewModel = new CompletionSummaryCardViewModel(
                 CustomisationId,
-                DateTime.Now,
+                DateTime.UtcNow,
                 MaxPostLearningAssessmentAttempts,
                 IsAssessed,
                 PostLearningAssessmentPassThreshold,

@@ -25,7 +25,7 @@
                 Description = description,
                 Name = name,
                 NumberOfCompetencies = numberOfCompetencies,
-                StartedDate = startedDate ?? DateTime.Now,
+                StartedDate = startedDate ?? DateTime.UtcNow,
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
                 UseFilteredApi = useFilteredApi,
@@ -35,7 +35,8 @@
 
         public static Competency CreateDefaultCompetency(
             int id = 1,
-            string description = "description",
+            string name = "name",
+            string? description = "description",
             string competencyGroup = "competencyGroup",
             List<AssessmentQuestion> assessmentQuestions = null
         )
@@ -43,6 +44,7 @@
             return new Competency()
             {
                 Id = id,
+                Name = name,
                 Description = description,
                 CompetencyGroup = competencyGroup,
                 AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()
@@ -56,7 +58,8 @@
             string minValueDescription = "Beginner",
             int? result = null,
             int minValue = 0,
-            int maxValue = 10)
+            int maxValue = 10,
+            int assessmentQuestionInputTypeID = 1)
         {
             return new AssessmentQuestion()
             {
@@ -66,7 +69,8 @@
                 MinValueDescription = minValueDescription,
                 Result = result,
                 MinValue = minValue,
-                MaxValue = maxValue
+                MaxValue = maxValue,
+                AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID
             };
         }
 

@@ -167,6 +167,7 @@
             const int assessmentQuestionResult = 4;
             const int minValue = 0;
             const int maxValue = 10;
+            const int assessmentQuestionInputTypeID = 2;
             var assessmentQuestions = new Collection<AssessmentQuestion>()
             {
                 new AssessmentQuestion()
@@ -174,7 +175,8 @@
                     Id = assessmentQuestionId,
                     Result = assessmentQuestionResult,
                     MinValue = minValue,
-                    MaxValue = maxValue
+                    MaxValue = maxValue,
+                    AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID
                 }
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
