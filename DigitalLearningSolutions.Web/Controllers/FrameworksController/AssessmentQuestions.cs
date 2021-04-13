@@ -110,7 +110,7 @@
                 CompetencyName = (string)competency.Name,
                 AssessmentQuestions = assessmentQuestions,
                 QuestionSelectList = questionSelectList,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/CompetencyAssessmentQuestions", model);
         }
@@ -237,7 +237,7 @@
                 Name = name,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
                 InputTypeSelectList = inputTypeSelectList,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/AssessmentQuestion", model);
         }
@@ -302,7 +302,7 @@
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/AssessmentQuestionScoring", model);
         }
@@ -350,7 +350,7 @@
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/AssessmentQuestionOptions", model);
         }
@@ -403,7 +403,7 @@
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
                 LevelDescriptor = levelDescriptor,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/AssessmentQuestionLevelDescriptor", model);
         }
@@ -480,7 +480,7 @@
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionInputTypeID = assessmentQuestionDetail.AssessmentQuestionInputTypeID,
                 AssessmentQuestion = assessmentQuestion,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/AssessmentQuestionConfirm", model);
         }

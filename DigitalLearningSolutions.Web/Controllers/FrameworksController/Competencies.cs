@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 FrameworkId = frameworkId,
                 CompetencyGroupBase = competencyGroupBase,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/CompetencyGroup", model);
         }
@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 FrameworkId = frameworkId,
                 FrameworkCompetencyGroupId = frameworkCompetencyGroupId,
                 FrameworkCompetency = frameworkCompetency,
-                frameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig
             };
             return View("Developer/Competency", model);
         }
