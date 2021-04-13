@@ -2,7 +2,6 @@
 {
     using Microsoft.AspNetCore.Mvc;
 
-    [Route("FindYourCentre")]
     public class FindYourCentreController : Controller
     {
         public IActionResult Index()
