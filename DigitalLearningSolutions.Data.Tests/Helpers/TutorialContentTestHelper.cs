@@ -16,7 +16,7 @@
         {
             connection.Execute(
                 @"UPDATE Tutorials
-                     SET ArchivedDate = GETUTCDATE()
+                     SET ArchivedDate = GETDATE()
 
                    WHERE Tutorials.TutorialID = @tutorialId;",
                 new { tutorialId }

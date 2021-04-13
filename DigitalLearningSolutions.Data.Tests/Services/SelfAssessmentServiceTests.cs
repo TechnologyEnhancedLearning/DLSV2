@@ -65,7 +65,6 @@
             // Given
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 competencyGroup: "Data, information and content",
-                name: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 description: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {
@@ -88,7 +87,6 @@
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
-                name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()
                 {
@@ -416,7 +414,7 @@
 
                 // Then
                 updatedSelfAssessment.LastAccessed.Should().NotBeNull();
-                updatedSelfAssessment.LastAccessed.Should().BeCloseTo(DateTime.UtcNow, 1000);
+                updatedSelfAssessment.LastAccessed.Should().BeCloseTo(DateTime.Now, 1000);
             }
         }
 
@@ -477,7 +475,7 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.UtcNow);
+                selfAssessmentService.SetCompleteByDate(invalidSelfAssessmentId, CandidateId, DateTime.Now);
                 var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
@@ -604,7 +602,7 @@
 
                 // Then
                 originalSubmittedDate.Should().BeNull();
-                    updatedSelfAssessment.SubmittedDate.Should().BeSameDateAs(System.DateTime.UtcNow);
+                    updatedSelfAssessment.SubmittedDate.Should().BeSameDateAs(System.DateTime.Now);
             }
         }
         [Test]

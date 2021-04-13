@@ -51,7 +51,6 @@
                             AND SelfAssessmentID = @selfAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
-                                                  C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
                                                   AQ.ID         AS Id,
@@ -61,13 +60,15 @@
                                                   AQ.ScoringInstructions,
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
-                                                  AQ.AssessmentQuestionInputTypeID,
                                                   LAR.Result";
 
         private const string CompetencyTables =
             @"Competencies AS C
+                        
                         INNER JOIN CompetencyAssessmentQuestions AS CAQ
                             ON CAQ.CompetencyID = C.ID
+                        INNER JOIN CompetencyGroups AS CG
+                            ON C.CompetencyGroupID = CG.ID
                         INNER JOIN AssessmentQuestions AS AQ
                             ON AQ.ID = CAQ.AssessmentQuestionID
                         INNER JOIN CandidateAssessments AS CA
@@ -78,9 +79,7 @@
                                    AND LAR.AssessmentQuestionID = AQ.ID
                         INNER JOIN SelfAssessmentStructure AS SAS
                             ON C.ID = SAS.CompetencyID
-                                    AND SAS.SelfAssessmentID = @selfAssessmentId
-                        INNER JOIN CompetencyGroups AS CG
-                            ON SAS.CompetencyGroupID = CG.ID
+
                                     AND SAS.SelfAssessmentID = @selfAssessmentId";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
@@ -219,7 +218,7 @@ CA.LaunchCount, CA.SubmittedDate
                           ,[Result]
                           ,[DateTime]
                           ,[SupportingComments])
-                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
+                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETDATE(), @supportingComments)
                     END",
                 new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result, supportingComments }
             );
@@ -257,7 +256,7 @@ CA.LaunchCount, CA.SubmittedDate
         public void UpdateLastAccessed(int selfAssessmentId, int candidateId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE CandidateAssessments SET LastAccessed = GETUTCDATE()
+                @"UPDATE CandidateAssessments SET LastAccessed = GETDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId",
                 new { selfAssessmentId, candidateId }
             );
@@ -383,7 +382,7 @@ CA.LaunchCount, CA.SubmittedDate
         public void SetSubmittedDateNow(int selfAssessmentId, int candidateId)
         {
             var numberOfAffectedRows = connection.Execute(
-               @"UPDATE CandidateAssessments SET SubmittedDate = GETUTCDATE()
+               @"UPDATE CandidateAssessments SET SubmittedDate = GETDATE()
                       WHERE SelfAssessmentID = @selfAssessmentId AND CandidateID = @candidateId AND SubmittedDate IS NULL",
                new { selfAssessmentId, candidateId }
            );

@@ -232,7 +232,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow
+                completed: DateTime.Now
             );
 
             // When
@@ -314,8 +314,8 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow.AddDays(-1),
-                evaluated: DateTime.UtcNow,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -331,8 +331,8 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow.AddDays(-1),
-                evaluated: DateTime.UtcNow,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: true
             );
 
@@ -348,7 +348,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow,
+                completed: DateTime.Now,
                 evaluated: null,
                 isAssessed: true
             );
@@ -365,7 +365,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow,
+                completed: DateTime.Now,
                 evaluated: null,
                 isAssessed: true
             );
@@ -382,7 +382,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow,
+                completed: DateTime.Now,
                 evaluated: null,
                 isAssessed: false
             );
@@ -399,7 +399,7 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow,
+                completed: DateTime.Now,
                 evaluated: null,
                 isAssessed: false
             );
@@ -416,8 +416,8 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow.AddDays(-1),
-                evaluated: DateTime.UtcNow,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: false
             );
 
@@ -433,8 +433,8 @@
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(
-                completed: DateTime.UtcNow.AddDays(-1),
-                evaluated: DateTime.UtcNow,
+                completed: DateTime.Now.AddDays(-1),
+                evaluated: DateTime.Now,
                 isAssessed: false
             );
 

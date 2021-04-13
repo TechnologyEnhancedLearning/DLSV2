@@ -4,8 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.Frameworks;
-    using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
 
     public static class SortingHelper
@@ -53,38 +51,6 @@
                     ? learningItems.Cast<AvailableCourse>().OrderByDescending(course => course.Topic)
                     : learningItems.Cast<AvailableCourse>().OrderBy(course => course.Topic),
                 _ => learningItems
-            };
-        }
-        public static IEnumerable<BrandedFramework> SortFrameworkItems(
-            IEnumerable<BrandedFramework> frameworks,
-            string sortBy,
-            string sortDirection
-        )
-        {
-            return sortBy switch
-            {
-                FrameworkSortByOptionTexts.FrameworkName => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.FrameworkName)
-                    : frameworks.OrderBy(framework => framework.FrameworkName),
-                FrameworkSortByOptionTexts.FrameworkOwner => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.Owner)
-                    : frameworks.OrderBy(framework => framework.Owner),
-                FrameworkSortByOptionTexts.FrameworkCreatedDate => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.CreatedDate)
-                    : frameworks.OrderBy(framework => framework.CreatedDate),
-                FrameworkSortByOptionTexts.FrameworkPublishStatus => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.PublishStatus)
-                    : frameworks.OrderBy(framework => framework.PublishStatus),
-                FrameworkSortByOptionTexts.FrameworkBrand => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.Brand)
-                    : frameworks.OrderBy(framework => framework.Brand),
-                FrameworkSortByOptionTexts.FrameworkCategory => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                ? frameworks.OrderByDescending(framework => framework.Category)
-                : frameworks.OrderBy(framework => framework.Category),
-                FrameworkSortByOptionTexts.FrameworkTopic => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                ? frameworks.OrderByDescending(framework => framework.Topic)
-                : frameworks.OrderBy(framework => framework.Topic),
-                _ => frameworks
             };
         }
     }

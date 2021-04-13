@@ -11,9 +11,6 @@
                 fluentMapperConfig.AddMap(new CurrentCourseMap());
                 fluentMapperConfig.AddMap(new CompletedCourseMap());
                 fluentMapperConfig.AddMap(new AvailableCourseMap());
-
-                fluentMapperConfig.AddMap(new AdminUserMap());
-                fluentMapperConfig.AddMap(new DelegateUserMap());
             });
         }
     }

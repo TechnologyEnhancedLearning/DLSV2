@@ -19,8 +19,8 @@
         public Session? GetSession(int sessionId)
         {
             return connection.QueryFirstOrDefault<Session>(
-                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
-                    FROM Sessions
+                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
+                    FROM Sessions
                    WHERE SessionID = @sessionId",
                 new { sessionId });
         }
@@ -28,8 +28,8 @@
         public IEnumerable<Session> GetCandidateSessions(int candidateId)
         {
             return connection.Query<Session>(
-                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
-                    FROM Sessions
+                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
+                    FROM Sessions
                    WHERE CandidateID = @candidateId",
                 new { candidateId });
         }
@@ -42,7 +42,7 @@
             int duration = 0,
             bool active = true
         )
-        {
+        {
             loginTime ??= DateTime.UtcNow;
             return new Session(sessionId, candidateId, customisationId, loginTime.Value, duration, active);
         }

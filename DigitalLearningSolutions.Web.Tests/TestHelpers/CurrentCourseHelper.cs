@@ -40,8 +40,8 @@
                 SupervisorAdminId = supervisorAdminId,
                 GroupCustomisationId = groupCustomisationId,
                 CompleteByDate = completeByDate,
-                StartedDate = startedDate ?? DateTime.UtcNow,
-                LastAccessed = lastAccessed ?? DateTime.UtcNow,
+                StartedDate = startedDate ?? DateTime.Now,
+                LastAccessed = lastAccessed ?? DateTime.Now,
                 ProgressID = progressId,
                 EnrollmentMethodID = enrollmentMethodId,
                 PLLocked = locked

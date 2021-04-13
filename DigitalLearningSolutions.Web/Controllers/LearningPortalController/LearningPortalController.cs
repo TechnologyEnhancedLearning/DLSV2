@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICentresService centresService;
         private readonly ICourseService courseService;
         private readonly ISelfAssessmentService selfAssessmentService;
-        private readonly INotificationService notificationService;
+        private readonly IUnlockService unlockService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
         private readonly IFilteredApiHelperService filteredApiHelperService;
@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ICentresService centresService,
             ICourseService courseService,
             ISelfAssessmentService selfAssessmentService,
-            INotificationService notificationService,
+            IUnlockService unlockService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
             IFilteredApiHelperService filteredApiHelperService)
@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.centresService = centresService;
             this.courseService = courseService;
             this.selfAssessmentService = selfAssessmentService;
-            this.notificationService = notificationService;
+            this.unlockService = unlockService;
             this.logger = logger;
             this.config = config;
             this.filteredApiHelperService = filteredApiHelperService;

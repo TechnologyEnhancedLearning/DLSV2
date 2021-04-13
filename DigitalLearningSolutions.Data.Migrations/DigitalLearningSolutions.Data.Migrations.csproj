@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="19.2.7" />
     <PackageReference Include="FluentMigrator" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.2.9" />
   </ItemGroup>

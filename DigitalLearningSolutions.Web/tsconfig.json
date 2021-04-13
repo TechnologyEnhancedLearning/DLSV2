@@ -5,7 +5,6 @@
     "outDir": "./wwwroot",
     "rootDir": "./Scripts",
     "strict": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true
+    "esModuleInterop": true
   }
 }

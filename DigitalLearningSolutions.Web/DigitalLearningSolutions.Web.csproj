@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
     <None Remove="Scripts\learningMenu\contentViewer.ts" />
@@ -42,10 +41,16 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement" Version="2.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,7 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\diagnosticContentViewer.ts" />
@@ -97,6 +101,6 @@
     </ItemGroup>
   </Target>
 
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4js_4learningportal_4completed_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4current_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4paginate_1js_1map__JsonSchema="" wwwroot_4js_4learningportal_4searchsortandpaginate_1js_1map__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

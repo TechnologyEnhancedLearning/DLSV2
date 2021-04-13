@@ -129,7 +129,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            notificationService.SendUnlockRequest(progressId);
+            unlockService.SendUnlockRequest(progressId);
             return View("Current/UnlockCurrentCourse");
         }
     }

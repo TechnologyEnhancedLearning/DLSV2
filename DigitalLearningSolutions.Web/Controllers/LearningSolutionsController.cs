@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
+    [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LearningSolutionsController : Controller
     {
         private readonly IConfigService configService;

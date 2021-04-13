@@ -9,7 +9,6 @@
     {
         string? GetConfigValue(string key);
         bool GetCentreBetaTesting(int centreId);
-        string GetConfigValueMissingExceptionMessage(string missingConfigValue);
     }
 
     public class ConfigService : IConfigService
@@ -33,9 +32,9 @@
         public bool GetCentreBetaTesting(int centreId)
         {
             return connection.Query<bool>(
-                @"SELECT BetaTesting FROM Centres WHERE CentreID = @centreId",
-                new { centreId }
-            ).FirstOrDefault();
+               @"SELECT BetaTesting FROM Centres WHERE CentreID = @centreId",
+               new { centreId }
+           ).FirstOrDefault();
         }
 
         public string? GetConfigValue(string key)
@@ -46,15 +45,13 @@
             ).FirstOrDefault();
         }
 
-        public string GetConfigValueMissingExceptionMessage(string missingConfigValue)
-        {
-            return $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null";
-        }
     }
 
     public class ConfigValueMissingException : Exception
     {
         public ConfigValueMissingException(string message)
-            : base(message) { }
+            : base(message)
+        {
+        }
     }
 }
