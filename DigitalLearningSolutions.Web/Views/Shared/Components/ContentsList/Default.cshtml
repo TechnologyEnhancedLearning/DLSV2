@@ -1,0 +1,21 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub
+@model MiniHubNavigationModel
+
+<nav class="nhsuk-contents-list" role="navigation" aria-label="Pages in this guide">
+  <h2 class="nhsuk-u-visually-hidden">Contents</h2>
+  <ol class="nhsuk-contents-list__list">
+    @for (var pageIndex = 0; pageIndex < @Model.Sections.Count; pageIndex++) {
+      <li class="nhsuk-contents-list__item" aria-current="page">
+        @{ var sectionToRender = Model.Sections[pageIndex]; }
+        @if (Model.CurrentSectionIndex == pageIndex) {
+          <span class="nhsuk-contents-list__current">@sectionToRender.SectionTitle</span>
+        } else {
+          @Html.ActionLink(sectionToRender.SectionTitle,
+            sectionToRender.ActionName,
+            sectionToRender.ControllerName,
+            htmlAttributes: new { @class = "nhsuk-contents-list__link" });
+        }
+      </li>
+    }
+  </ol>
+</nav>
