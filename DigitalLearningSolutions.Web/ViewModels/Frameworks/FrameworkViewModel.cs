@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -17,34 +18,13 @@
         [StringLength(255000, MinimumLength = 3)]
         [Required]
         public string Comment { get; set; } = "";
-        public string vocabSingular()
+        public string VocabSingular()
         {
-            if (DetailFramework.FrameworkConfig == null)
-            {
-                return "Capability";
-            }
-            else
-            {
-                return DetailFramework.FrameworkConfig;
-            }
+            return FrameworkVocabularyHelper.VocabularySingular(DetailFramework.FrameworkConfig);
         }
-        public string vocabPlural()
+        public string VocabPlural()
         {
-            if (DetailFramework.FrameworkConfig == null)
-            {
-                return "Capabilities";
-            }
-            else
-            {
-                if (DetailFramework.FrameworkConfig.EndsWith("y"))
-                {
-                    return DetailFramework.FrameworkConfig.Substring(0, DetailFramework.FrameworkConfig.Length - 1) + "ies";
-                }
-                else
-                {
-                    return DetailFramework.FrameworkConfig + "s";
-                }
-            }
+            return FrameworkVocabularyHelper.VocabularyPlural(DetailFramework.FrameworkConfig);
         }
     }
 }

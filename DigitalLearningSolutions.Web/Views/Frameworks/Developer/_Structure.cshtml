@@ -5,12 +5,12 @@
 {
   foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
   {
-    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" view-data='@new ViewDataDictionary(ViewData) { { "vocabSingular", @Model.vocabSingular() }, {"vocabPlural", @Model.vocabPlural()  } }' />
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  } }' />
   }
 }
 else
 {
-<p>No @Model.vocabSingular().ToLower() groups in this framework</p>
+<p>No @Model.VocabSingular().ToLower() groups in this framework</p>
 }
 <div id="fc-ungrouped">
   @if (Model.FrameworkCompetencies.Any())
@@ -18,14 +18,14 @@ else
 
     foreach (var frameworkCompetency in Model.FrameworkCompetencies)
     {
-      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" view-data='@new ViewDataDictionary(ViewData) { { "vocabSingular", @Model.vocabSingular() }, {"vocabPlural", @Model.vocabPlural()  } }' />
+      <partial name="../Shared/_CompetencyCard.cshtml" model="new CompetencyCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroupId = null, FrameworkCompetency = frameworkCompetency}" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  } }' />
     }
 
   }
 </div>
 @if (Model.DetailFramework.UserRole > 1)
 {
-  <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.vocabSingular().ToLower() group</a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.vocabSingular().ToLower() without a group</a>
+  <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() group</a>
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() without a group</a>
 }
 

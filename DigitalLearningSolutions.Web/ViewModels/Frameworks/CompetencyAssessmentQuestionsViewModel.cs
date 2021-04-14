@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
     public class CompetencyAssessmentQuestionsViewModel
     {
@@ -11,35 +12,14 @@
         public SelectList? QuestionSelectList { get; set; }
         public IEnumerable<AssessmentQuestion>? AssessmentQuestions { get; set; }
         public int assessmentQuestionId { get; set; }
-        public string? frameworkConfig { get; set; }
-        public string vocabSingular()
+        public string? FrameworkConfig { get; set; }
+        public string VocabSingular()
         {
-            if (frameworkConfig == null)
-            {
-                return "Capability";
-            }
-            else
-            {
-                return frameworkConfig;
-            }
+            return FrameworkVocabularyHelper.VocabularySingular(FrameworkConfig);
         }
-        public string vocabPlural()
+        public string VocabPlural()
         {
-            if (frameworkConfig == null)
-            {
-                return "Capabilities";
-            }
-            else
-            {
-                if (frameworkConfig.EndsWith("y"))
-                {
-                    return frameworkConfig.Substring(0, frameworkConfig.Length - 1) + "ies";
-                }
-                else
-                {
-                    return frameworkConfig + "s";
-                }
-            }
+            return FrameworkVocabularyHelper.VocabularyPlural(FrameworkConfig);
         }
     }
 }

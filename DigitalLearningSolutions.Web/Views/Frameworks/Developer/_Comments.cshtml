@@ -2,6 +2,12 @@
 @model FrameworkViewModel;
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/comments.css")" asp-append-version="true">
 <h2>Comments</h2>
+@if (Model.DetailFramework.UserRole == 0)
+{
+<p class="nhsuk-body-l">Only the framework owner and identified contributors and reviewers can see and post comments on this framework. Please contact the framework owner to request access, if required.</p>
+}
+else
+{ 
 @if (Model.CommentReplies.Any())
 {
   foreach (var comment in Model.CommentReplies)
@@ -30,3 +36,4 @@ else
       Post
     </button>
 </form>
+}
