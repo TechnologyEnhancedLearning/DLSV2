@@ -1,0 +1,32 @@
+﻿@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Home
+@model LandingPageViewModel
+
+@{
+  ViewData["Title"] = "Welcome";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/home.css")" asp-append-version="true"/>
+
+<div class="nhsuk-grid-row">
+  <div id="column" class="nhsuk-grid-column-full">
+    <h1 id="page-heading">A platform for digital learning delivery</h1>
+
+    <p id="page-subheading">Enabling health and care organisations to deliver digital learning to staff and students.</p>
+
+    <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
+      Sign in
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary auth-button" asp-controller="Register" asp-action="Index">
+      Register
+    </a>
+
+    @await Component.InvokeAsync(
+      typeof(ContentsListViewComponent),
+      new { miniHubNavigationModel = Model.MiniHubNavigationModel })
+
+    <p>Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
+
+    @await Component.InvokeAsync(typeof(PaginationViewComponent), new { miniHubNavigationModel = Model.MiniHubNavigationModel })
+  </div>
+</div>
