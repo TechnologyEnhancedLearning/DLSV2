@@ -102,6 +102,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICryptoService, CryptoService>();
         }

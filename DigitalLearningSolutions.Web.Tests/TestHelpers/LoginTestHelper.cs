@@ -30,22 +30,22 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithUnauthenticatedUser(IUserService userService, ICryptoService cryptoService)
+        public static LoginController GetLoginControllerWithUnauthenticatedUser(ILoginService loginService)
         {
-            return GetLoginController(userService, cryptoService, string.Empty);
+            return GetLoginController(loginService, string.Empty);
         }
 
-        public static LoginController GetLoginControllerWithAuthenticatedUser(IUserService userService, ICryptoService cryptoService)
+        public static LoginController GetLoginControllerWithAuthenticatedUser(ILoginService loginService)
         {
-            return GetLoginController(userService, cryptoService, "mock");
+            return GetLoginController(loginService, "mock");
         }
 
-        private static LoginController GetLoginController(IUserService userService, ICryptoService cryptoService, string authenticationType)
+        private static LoginController GetLoginController(ILoginService loginService, string authenticationType)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-            return new LoginController(userService, cryptoService)
+            return new LoginController(loginService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -58,20 +58,21 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithSignInFunctionality(IUserService userService, ICryptoService cryptoService)
+        public static LoginController GetLoginControllerWithSignInFunctionality(ILoginService loginService)
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(""));
             var session = new MockHttpContextSession();
 
             var authService = A.Fake<IAuthenticationService>();
-            A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._, A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
+                A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
 
             var urlHelperFactory = A.Fake<IUrlHelperFactory>();
 
             var services = A.Fake<IServiceProvider>();
             A.CallTo(() => services.GetService(typeof(IAuthenticationService))).Returns(authService);
             A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
-            return new LoginController(userService, cryptoService)
+            return new LoginController(loginService)
             {
                 ControllerContext = new ControllerContext
                 {
