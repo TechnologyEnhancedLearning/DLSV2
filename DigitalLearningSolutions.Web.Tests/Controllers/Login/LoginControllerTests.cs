@@ -14,27 +14,17 @@
     internal class LoginControllerTests
     {
         private LoginController controller;
-        private ICryptoService cryptoService;
-        private IUserService userService;
+        private ILoginService loginService;
 
         [SetUp]
         public void SetUp()
         {
-            userService = A.Fake<IUserService>();
-            cryptoService = A.Fake<ICryptoService>();
-
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._))
-                .Returns(UserTestHelper.GetDefaultAdminUser());
-            A.CallTo(() => userService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() });
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._))
-                .Returns(true);
-
-            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(userService, cryptoService);
+            loginService = A.Fake<ILoginService>();
+            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService);
         }
 
         [Test]
-        public void Index_should_render_if_user_is_unauthenticated()
+        public void Index_should_render_basic_form()
         {
             // When
             var result = controller.Index();
@@ -48,7 +38,7 @@
         {
             // Given
             var controllerWithAuthenticatedUser =
-                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(userService, cryptoService);
+                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();
@@ -61,7 +51,15 @@
         [Test]
         public void Successful_sign_in_should_render_home_page()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(userService, cryptoService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService);
+
+            //Given
+            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
 
             // When
             var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -72,30 +70,25 @@
         }
 
         [Test]
-        public void Log_in_request_should_call_user_service()
+        public void Log_in_request_should_call_login_service()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(userService, cryptoService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService);
+
+            //Given
+            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._))
+            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
                 .MustHaveHappened();
-            A.CallTo(() => userService.GetDelegateUsersByUsername(A<string>._))
-                .MustHaveHappened();
-        }
-
-        [Test]
-        public void Log_in_request_should_call_crypto_service()
-        {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(userService, cryptoService);
-
-            // When
-            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._))
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .MustHaveHappened();
         }
 
@@ -103,10 +96,8 @@
         public void No_user_account_found_should_render_basic_form_with_error()
         {
             // Given
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._))
-                .Returns(null);
-            A.CallTo(() => userService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser>());
+            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+                .Returns((null, new List<DelegateUser>()));
 
             // When
             var result =
@@ -121,8 +112,8 @@
         public void Bad_password_should_render_basic_form_with_error()
         {
             // Given
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._))
-                .Returns(false);
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser>()));
 
             // When
             var result =
@@ -137,10 +128,11 @@
         public void Unapproved_delegate_account_redirect_to_not_approved_page()
         {
             // Given
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._))
-                .Returns(null);
-            A.CallTo(() => userService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: false) });
+            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: false) }));
 
             // When
             var result =
