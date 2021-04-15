@@ -14,7 +14,7 @@
             }
 
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
-            var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);//TODO HEEDLS-346 rename the variable in myaccount controller (and remove usings)
+            var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);//TODO HEEDLS-346 rename the variable in myaccount controller
 
             var model = new NotificationPreferencesViewModel(adminId, delegateId);
 
