@@ -14,10 +14,12 @@
     public class LoginController : Controller
     {
         private readonly ILoginService loginService;
+        private readonly IUserService userService;
 
-        public LoginController(ILoginService loginService)
+        public LoginController(ILoginService loginService, IUserService userService)
         {
             this.loginService = loginService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -38,7 +40,7 @@
                 return View("Index", model);
             }
 
-            var (unverifiedAdminUser, unverifiedDelegateUsers) = loginService.GetUsersByUsername(model.Username);
+            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(model.Username);
 
             if (unverifiedAdminUser == null && unverifiedDelegateUsers.Count == 0)
             {
@@ -68,7 +70,7 @@
 
         private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, string password, bool rememberMe)
         {
-            adminUser ??= loginService.GetVerifiedAdminUserAssociatedWithApprovedDelegateUser(delegateUser, password);
+            adminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(delegateUser, password);
 
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
@@ -105,7 +107,7 @@
             };
 
             var firstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            var surname = adminUser?.Surname ?? delegateUser?.Surname;
+            var surname = adminUser?.LastName ?? delegateUser?.LastName;
 
             if (firstName != null)
             {

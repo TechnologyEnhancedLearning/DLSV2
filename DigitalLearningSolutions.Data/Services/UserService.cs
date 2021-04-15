@@ -8,6 +8,7 @@
 
     public interface IUserService
     {
+        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
@@ -22,27 +23,35 @@
             this.connection = connection;
         }
 
+        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
+        {
+            var adminUser = GetAdminUserByUsername(username);
+            List<DelegateUser> delegateUsers = GetDelegateUsersByUsername(username);
+
+            return (adminUser, delegateUsers);
+        }
+
         public AdminUser? GetAdminUserByUsername(string username)
         {
-            AdminUser? user = connection.Query<AdminUser>(
+            var user = connection.Query<AdminUser>(
                 @"SELECT
-                        au.AdminID,
+                        au.AdminID AS Id,
                         au.CentreID, 
                         ct.CentreName,
-                        au.Email,
-                        au.Forename,
-                        au.Surname,
+                        au.Email AS EmailAddress,
+                        au.Forename AS FirstName,
+                        au.Surname AS LastName,
                         au.Password,
-                        au.CentreAdmin,
+                        au.CentreAdmin AS IsCentreAdmin,
                         au.IsCentreManager,
-                        au.ContentCreator,
-                        au.ContentManager,
+                        au.ContentCreator AS IsContentCreator,
+                        au.ContentManager AS IsContentManager,
                         au.PublishToAll,
                         au.SummaryReports,
-                        au.UserAdmin,
+                        au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
-                        au.Supervisor,
-                        au.Trainer,
+                        au.Supervisor AS IsSupervisor,
+                        au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
@@ -53,11 +62,19 @@
             return user;
         }
 
+        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
+        {
+            List<AdminUser> adminUsers = GetAdminUsersByEmailAddress(emailAddress);
+            List<DelegateUser> delegateUsers = GetDelegateUsersByEmailAddress(emailAddress);
+
+            return (adminUsers, delegateUsers);
+        }
+
         public List<DelegateUser> GetDelegateUsersByUsername(string username)
         {
             List<DelegateUser> users = connection.Query<DelegateUser>(
                 @"SELECT
-                        cd.CandidateID,
+                        cd.CandidateID AS Id,
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
@@ -74,14 +91,6 @@
             ).ToList();
 
             return users;
-        }
-
-        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
-        {
-            List<AdminUser> adminUsers = GetAdminUsersByEmailAddress(emailAddress);
-            List<DelegateUser> delegateUsers = GetDelegateUsersByEmailAddress(emailAddress);
-
-            return (adminUsers, delegateUsers);
         }
 
         private List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress)

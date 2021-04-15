@@ -12,7 +12,7 @@
             Map(adminUser => adminUser.CentreId).ToColumn("CentreID");
             Map(adminUser => adminUser.CentreName).ToColumn("CentreName");
             Map(adminUser => adminUser.FirstName).ToColumn("Forename");
-            Map(adminUser => adminUser.Surname).ToColumn("Surname");
+            Map(adminUser => adminUser.LastName).ToColumn("Surname");
             Map(adminUser => adminUser.EmailAddress).ToColumn("Email");
             Map(adminUser => adminUser.Password).ToColumn("Password");
             Map(adminUser => adminUser.ResetPasswordId).ToColumn("ResetPasswordID");

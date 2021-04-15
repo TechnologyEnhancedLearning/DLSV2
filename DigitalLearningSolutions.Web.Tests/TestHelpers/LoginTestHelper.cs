@@ -30,22 +30,35 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithUnauthenticatedUser(ILoginService loginService)
+        public static LoginController GetLoginControllerWithUnauthenticatedUser
+        (
+            ILoginService loginService,
+            IUserService userService
+        )
         {
-            return GetLoginController(loginService, string.Empty);
+            return GetLoginController(loginService, userService, string.Empty);
         }
 
-        public static LoginController GetLoginControllerWithAuthenticatedUser(ILoginService loginService)
+        public static LoginController GetLoginControllerWithAuthenticatedUser
+        (
+            ILoginService loginService,
+            IUserService userService
+        )
         {
-            return GetLoginController(loginService, "mock");
+            return GetLoginController(loginService, userService, "mock");
         }
 
-        private static LoginController GetLoginController(ILoginService loginService, string authenticationType)
+        private static LoginController GetLoginController
+        (
+            ILoginService loginService,
+            IUserService userService,
+            string authenticationType
+        )
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-            return new LoginController(loginService)
+            return new LoginController(loginService, userService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -58,7 +71,11 @@
             };
         }
 
-        public static LoginController GetLoginControllerWithSignInFunctionality(ILoginService loginService)
+        public static LoginController GetLoginControllerWithSignInFunctionality
+        (
+            ILoginService loginService,
+            IUserService userService
+        )
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(""));
             var session = new MockHttpContextSession();
@@ -72,7 +89,7 @@
             var services = A.Fake<IServiceProvider>();
             A.CallTo(() => services.GetService(typeof(IAuthenticationService))).Returns(authService);
             A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
-            return new LoginController(loginService)
+            return new LoginController(loginService, userService)
             {
                 ControllerContext = new ControllerContext
                 {

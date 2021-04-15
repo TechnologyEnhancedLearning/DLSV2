@@ -12,7 +12,7 @@
             Map(delegateUser => delegateUser.CentreId).ToColumn("CentreID");
             Map(delegateUser => delegateUser.CentreName).ToColumn("CentreName");
             Map(delegateUser => delegateUser.FirstName).ToColumn("FirstName");
-            Map(delegateUser => delegateUser.Surname).ToColumn("LastName");
+            Map(delegateUser => delegateUser.LastName).ToColumn("LastName");
             Map(delegateUser => delegateUser.EmailAddress).ToColumn("EmailAddress");
             Map(delegateUser => delegateUser.Password).ToColumn("Password");
             Map(delegateUser => delegateUser.ResetPasswordId).ToColumn("ResetPasswordID");

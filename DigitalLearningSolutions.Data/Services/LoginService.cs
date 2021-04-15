@@ -6,12 +6,10 @@
 
     public interface ILoginService
     {
-        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
-
         public (AdminUser?, List<DelegateUser>) VerifyUsers(
             string password, AdminUser? unverifiedAdminUser, List<DelegateUser> unverifiedDelegateUsers);
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithApprovedDelegateUser(DelegateUser approvedDelegateUser,
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
             string password);
     }
 
@@ -24,14 +22,6 @@
         {
             this.userService = userService;
             this.cryptoService = cryptoService;
-        }
-
-        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
-        {
-            var adminUser = userService.GetAdminUserByUsername(username);
-            List<DelegateUser> delegateUsers = userService.GetDelegateUsersByUsername(username);
-
-            return (adminUser, delegateUsers);
         }
 
         public (AdminUser?, List<DelegateUser>) VerifyUsers(string password, AdminUser? unverifiedAdminUser,
@@ -48,7 +38,7 @@
             return (verifiedAdminUser, verifiedDelegateUsers);
         }
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithApprovedDelegateUser(DelegateUser approvedDelegateUser,
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
             string password)
         {
             if (string.IsNullOrWhiteSpace(approvedDelegateUser.EmailAddress))

@@ -15,12 +15,15 @@
     {
         private LoginController controller;
         private ILoginService loginService;
+        private IUserService userService;
 
         [SetUp]
         public void SetUp()
         {
             loginService = A.Fake<ILoginService>();
-            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService);
+            userService = A.Fake<IUserService>();
+
+            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService, userService);
         }
 
         [Test]
@@ -38,7 +41,7 @@
         {
             // Given
             var controllerWithAuthenticatedUser =
-                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService);
+                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService, userService);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();
@@ -51,10 +54,10 @@
         [Test]
         public void Successful_sign_in_should_render_home_page()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
 
             //Given
-            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
@@ -72,10 +75,10 @@
         [Test]
         public void Log_in_request_should_call_login_service()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
 
             //Given
-            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
@@ -86,7 +89,7 @@
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .MustHaveHappened();
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .MustHaveHappened();
@@ -96,7 +99,7 @@
         public void No_user_account_found_should_render_basic_form_with_error()
         {
             // Given
-            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, new List<DelegateUser>()));
 
             // When
@@ -128,7 +131,7 @@
         public void Unapproved_delegate_account_redirect_to_not_approved_page()
         {
             // Given
-            A.CallTo(() => loginService.GetUsersByUsername(A<string>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
