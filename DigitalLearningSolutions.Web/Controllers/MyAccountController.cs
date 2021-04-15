@@ -23,13 +23,13 @@
             }
 
             var userEmail = User.GetCustomClaim(ClaimTypes.Email);
-            var delegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber);
+            var delegateNumber = User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber);
             var centreId = User.GetCentreId();
             var firstName = User.GetCustomClaim(CustomClaimTypes.UserForename);
             var surname = User.GetCustomClaim(CustomClaimTypes.UserSurname);
             var centreName = centresService.GetCentreName(centreId);
 
-            var model = new MyAccountViewModel(centreName, userEmail, delegateId, firstName, surname);
+            var model = new MyAccountViewModel(centreName, userEmail, delegateNumber, firstName, surname);
             return View(model);
         }
     }
