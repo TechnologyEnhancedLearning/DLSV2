@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -21,12 +22,14 @@
                 return RedirectToAction("Index", "Login");
             }
 
-            var userEmail = User.GetEmail();
+            var userEmail = User.GetCustomClaim(ClaimTypes.Email);
             var delegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber);
             var centreId = User.GetCentreId();
+            var firstName = User.GetCustomClaim(CustomClaimTypes.UserForename);
+            var surname = User.GetCustomClaim(CustomClaimTypes.UserSurname);
             var centreName = centresService.GetCentreName(centreId);
 
-            var model = new MyAccountViewModel(centreName, userEmail, delegateId);
+            var model = new MyAccountViewModel(centreName, userEmail, delegateId, firstName, surname);
             return View(model);
         }
     }

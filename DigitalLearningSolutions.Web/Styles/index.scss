@@ -84,3 +84,7 @@ h1#page-heading {
   height: 100%;
 }
 
+.bottom-margin-nhsuk-card {
+  @include nhsuk-responsive-margin(7, 'bottom');
+}
+
