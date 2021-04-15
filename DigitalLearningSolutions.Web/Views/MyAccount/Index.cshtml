@@ -12,7 +12,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="app-page-heading">My account</h1>
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">My account</h1>
 
     <div class="nhsuk-card">
       <div class="nhsuk-card__content account-card-content">
@@ -56,14 +56,63 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          My Details
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row account-summarylist_row">
+            <dt class="nhsuk-summary-list__key">
+              First name:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.FirstName
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row account-summarylist_row">
+            <dt class="nhsuk-summary-list__key">
+              Last name:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Surname
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row account-summarylist_row">
+            <dt class="nhsuk-summary-list__key">
+              Email address:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.User
+            </dd>
+          </div>
+        </dl>
+
+        <a class="nhsuk-button" role="button">
+          Edit details
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary  nhsuk-u-margin-left-2" role="button">
+          Change password
+        </a>
+
+      </div>
+    </details>
+  </div>
+</div>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <a class="nhsuk-button" role="button">
       Manage notifications
     </a>
   </div>
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button nhsuk-button--secondary" href="@Configuration["CurrentSystemBaseUrl"]/logout">
+    <a class="nhsuk-button nhsuk-button--secondary" href="@Configuration["CurrentSystemBaseUrl"]/logout" role="button">
       Log out
     </a>
   </div>

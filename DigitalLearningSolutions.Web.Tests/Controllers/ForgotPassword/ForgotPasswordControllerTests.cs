@@ -107,7 +107,7 @@
             string errorMessage = "No user account could be found with the specified email address";
 
             // Given
-            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).Throws(new EmailAddressNotFoundException(errorMessage));
+            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._)).Throws(new UserAccountNotFoundException(errorMessage));
 
             // When
             var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
