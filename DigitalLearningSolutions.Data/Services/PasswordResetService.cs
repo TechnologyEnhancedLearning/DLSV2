@@ -22,7 +22,6 @@
         private const string DelegatesTableName = "Candidates";
         private const string AdminIdColumnName = "AdminID";
         private const string DelegatesIdColumnName = "CandidateID";
-        private readonly IConfigService configService;
         private readonly IDbConnection connection;
         private readonly IEmailService emailService;
         private readonly ILogger<PasswordResetService> logger;
@@ -33,13 +32,11 @@
             IUserService userService,
             IDbConnection connection,
             ILogger<PasswordResetService> logger,
-            IConfigService configService,
             IEmailService emailService)
         {
             this.userService = userService;
             this.connection = connection;
             this.logger = logger;
-            this.configService = configService;
             this.emailService = emailService;
         }
 
@@ -47,7 +44,7 @@
         {
             (List<AdminUser> adminUsers, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             User? user = adminUsers.FirstOrDefault();
-            user ??= delegateUsers.FirstOrDefault() ?? throw new EmailAddressNotFoundException("No user account could be found with the specified email address");
+            user ??= delegateUsers.FirstOrDefault() ?? throw new UserAccountNotFoundException("No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
             Email resetPasswordEmail = GeneratePasswordResetEmail(emailAddress, resetPasswordHash, user.FirstName, baseUrl);
             emailService.SendEmail(resetPasswordEmail);

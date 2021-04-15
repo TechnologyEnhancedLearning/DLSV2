@@ -47,6 +47,7 @@ We've added data for the Digital Capabilities self assessment to the database. T
 4. Press the Execute button to run the script.
 5. Do the same for the EnrolUserOnSelfAssessment.sql script. This will enrol the test user on the self assessment.
 6. Do the same for the [PopulateDigitalCapabilityFCandFCGs.sql](https://github.com/TechnologyEnhancedLearning/DLSV2/blob/master/SQLScripts/PopulateDigitalCapabilityFCandFCGs.sql) script. This will turn the self assessment into a framework.
+7. Do the same for the PopulateTestUsers.sql script. This will create test users for the data tests.
 
 ## Fix inconsistencies with live
 
