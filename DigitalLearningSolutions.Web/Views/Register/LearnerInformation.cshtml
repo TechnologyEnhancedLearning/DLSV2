@@ -1,0 +1,14 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model RegisterViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  // QQ is this the format for titles?
+  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information": "Register - learner information";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    Test
+  </div>
+</div>
