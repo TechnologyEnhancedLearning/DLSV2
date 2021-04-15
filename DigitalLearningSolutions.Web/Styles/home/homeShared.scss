@@ -1,0 +1,71 @@
+@import "~nhsuk-frontend/packages/core/all";
+
+#page-subheading {
+  @extend .nhsuk-u-font-size-32
+}
+
+.auth-button {
+  width: 160px;
+}
+
+.auth-button--left {
+  margin-right: 32px;
+}
+
+.content-area {
+  margin-bottom: 72px;
+}
+
+.content-area__image-box {
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.05);
+  background: $color_nhsuk-white;
+  border-radius: 4px;
+  padding: 8px;
+  height: fit-content;
+  width: fit-content;
+
+  @include govuk-media-query($from: tablet) {
+    margin-right: 32px;
+  }
+}
+
+.content-area__image {
+  height: 200px;
+  width: auto;
+
+  // We do this so the containing div won't leave extra space below the image. See https://stackoverflow.com/a/8522087z
+  display: block;
+}
+
+.learning-content-item__header {
+  @include govuk-media-query($until: tablet) {
+    margin-top: 16px;
+    text-align: center;
+  }
+}
+
+.learning-content-item__text {
+  @include govuk-media-query($until: tablet) {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
+.learning-content-item__details-container {
+  display: flex;
+
+  @include govuk-media-query($until: tablet) {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    flex-direction: row;
+  }
+}
+
+.learning-content-item__text-container {
+  display: flex;
+  flex-direction: column;
+}

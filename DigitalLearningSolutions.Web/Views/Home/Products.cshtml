@@ -2,6 +2,8 @@
 @using DigitalLearningSolutions.Web.ViewModels.Home
 @model LandingPageViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/home/products.css")" />
+
 <div class="nhsuk-grid-row">
   <div id="column" class="nhsuk-grid-column-full">
     <h2 id="products">Products</h2>
@@ -10,43 +12,35 @@
       typeof(ContentsListViewComponent),
       new { miniHubNavigationModel = Model.MiniHubNavigationModel })
 
-    <ul class="content-area-list">
-      <li>
-        <div class="content-area nhsuk-card">
+        <div class="content-area">
           <h3>Tracking System</h3>
           <p>Distribute and track digital learning</p>
-          <ul class="content-area__sub-list">
+            <ul class="__sub-list">
             <li>Provide your staff or students with access to quality assured digital learning content</li>
             <li>Provide access to your own, hosted learning content</li>
             <li>Comprehensive tools for managing learners and learning pathways</li>
             <li>Track and report on learning</li>
           </ul>
         </div>
-      </li>
-      <li>
-        <div class="content-area nhsuk-card">
+        <div class="content-area">
           <h3>Content Management System</h3>
           <p>Import and manage learning content</p>
-          <ul class="content-area__sub-list">
+          <ul class="__sub-list">
             <li>Create courses, providing only necessary information</li>
             <li>Upload digital content (tutorials, assessments, videos, documents etc) created in any tool</li>
             <li>Structure your content to make it digestible and for ease of navigation</li>
             <li>Publish content for your learners and even make it available to other DLS centres</li>
           </ul>
         </div>
-      </li>
-      <li>
-        <div class="content-area nhsuk-card">
+        <div class="content-area">
           <h3>Learning portal</h3>
           <p>Access to your current, available and completed learning</p>
-          <ul class="content-area__sub-list">
+          <ul class="__sub-list">
             <li>At a glance view of current learning courses and target dates</li>
             <li>Easy, searchable access to available learning content</li>
             <li>Quick access to completed courses and certificates</li>
           </ul>
         </div>
-      </li>
-    </ul>
 
     @await Component.InvokeAsync(typeof(PaginationViewComponent), new { miniHubNavigationModel = Model.MiniHubNavigationModel })
 
