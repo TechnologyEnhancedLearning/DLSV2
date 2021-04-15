@@ -8,6 +8,10 @@
         [Route("/Framework/{frameworkId}/Comments/")]
         public IActionResult InsertComment(int frameworkId, string comment)
         {
+            if (comment == null)
+            {
+                return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
+            }
             var adminId = GetAdminID();
             frameworkService.InsertComment(frameworkId, adminId, comment, null);
             return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
@@ -15,6 +19,12 @@
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult ViewThread(int frameworkId, int commentId)
         {
+            var adminId = GetAdminID();
+            var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if(baseFramework.UserRole == 0)
+            {
+                return StatusCode(403);
+            }
             var commentReplies = frameworkService.GetCommentById(commentId, GetAdminID());
             if (commentReplies == null )
             {
@@ -27,6 +37,10 @@
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult InsertReply(int frameworkId, int commentId, string comment)
         {
+            if (comment == null)
+            {
+                return RedirectToAction("ViewThread", new { frameworkId, commentId });
+            }
             var adminId = GetAdminID();
             frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
             return RedirectToAction("ViewThread", new { frameworkId, commentId });

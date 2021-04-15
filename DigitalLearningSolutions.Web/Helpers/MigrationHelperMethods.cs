@@ -42,7 +42,8 @@
                         typeof(FixFilteredSPs).Assembly,
                         typeof(AddAssessAttemptsIndex).Assembly,
                         typeof(AddResetPasswordTable).Assembly,
-                        typeof(AddFrameworkCommentFrameworkID).Assembly
+                        typeof(AddFrameworkCommentFrameworkID).Assembly,
+                        typeof(AddPasswordSubmittedField).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

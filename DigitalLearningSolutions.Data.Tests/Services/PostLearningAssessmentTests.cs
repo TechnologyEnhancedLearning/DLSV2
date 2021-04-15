@@ -60,7 +60,9 @@
                 90,
                 104,
                 true,
-                true
+                true,
+                "",
+                false
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }
@@ -95,7 +97,9 @@
                 90,
                 104,
                 true,
-                true
+                true,
+                "",
+                false
             );
             result.Should().BeEquivalentTo(expectedPostLearningAssessmentService);
         }

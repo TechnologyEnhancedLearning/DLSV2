@@ -23,7 +23,9 @@
             int tutorialsCompletionThreshold = 0,
             int? nextSectionId = 101,
             bool otherSectionsExist = true,
-            bool otherItemsInSectionExist = true
+            bool otherItemsInSectionExist = true,
+            string? password = null,
+            bool passwordSubmitted = false
         )
         {
             return new PostLearningAssessment(
@@ -44,7 +46,9 @@
                 tutorialsCompletionThreshold,
                 nextSectionId,
                 otherSectionsExist,
-                otherItemsInSectionExist
+                otherItemsInSectionExist,
+                password,
+                passwordSubmitted
             );
         }
     }

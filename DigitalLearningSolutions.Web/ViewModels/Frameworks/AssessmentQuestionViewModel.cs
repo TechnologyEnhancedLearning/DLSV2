@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class AssessmentQuestionViewModel
@@ -10,5 +11,14 @@
         public string? Name { get; set; }
         public AssessmentQuestionDetail AssessmentQuestionDetail { get; set; }
         public SelectList? InputTypeSelectList { get; set; }
+        public string? FrameworkConfig { get; set; }
+        public string VocabSingular()
+        {
+            return FrameworkVocabularyHelper.VocabularySingular(FrameworkConfig);
+        }
+        public string VocabPlural()
+        {
+            return FrameworkVocabularyHelper.VocabularyPlural(FrameworkConfig);
+        }
     }
 }

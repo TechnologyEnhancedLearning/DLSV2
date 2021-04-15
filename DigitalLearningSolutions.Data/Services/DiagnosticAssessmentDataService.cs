@@ -125,6 +125,8 @@
                                         THEN 1
                                    ELSE 0
                               END AS BIT) AS OtherItemsInSectionExist,
+                         Customisations.Password,
+                         Progress.PasswordSubmitted,
                         Tutorials.TutorialName,
                         CASE WHEN Tutorials.OriginalTutorialID > 0
                              THEN Tutorials.OriginalTutorialID

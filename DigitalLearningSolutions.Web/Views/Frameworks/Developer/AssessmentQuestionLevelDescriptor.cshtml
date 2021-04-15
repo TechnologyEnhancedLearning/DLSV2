@@ -22,7 +22,7 @@
         else
         {
           <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Competency Assessment Questions</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
           <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") Assessment Question</li>
         }
 
@@ -33,7 +33,7 @@
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to Competency Assessment Questions</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
       }
     </div>
   </nav>

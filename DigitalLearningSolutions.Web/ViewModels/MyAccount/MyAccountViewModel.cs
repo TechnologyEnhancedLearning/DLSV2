@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     public class MyAccountViewModel
     {
-        public MyAccountViewModel(string? centreName, string? userEmail, string? delegateId)
+        public MyAccountViewModel(
+            string? centreName,
+            string? userEmail,
+            string? delegateId,
+            string? firstName,
+            string? surname)
         {
             Centre = centreName;
             User = userEmail;
             DelegateId = delegateId;
+            FirstName = firstName;
+            Surname = surname;
         }
 
         public string? Centre { get; set; }
@@ -19,5 +21,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public string? User { get; set; }
 
         public string? DelegateId { get; set; }
+
+        public string? FirstName { get; set; }
+
+        public string? Surname { get; set; }
     }
 }

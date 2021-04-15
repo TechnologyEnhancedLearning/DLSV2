@@ -1,0 +1,9 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@{
+  ViewData["Title"] = "Find Your Centre";
+  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
+}
+
+<div class="nhsuk-grid-row responsive-iframe-wrapper">
+  <iframe class="responsive-iframe" title="Find Your Centre" src="@url"></iframe>
+</div>

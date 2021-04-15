@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Configuration
+
+@model DigitalLearningSolutions.Web.ViewModels.LearningContent.LearningContentViewModel
+@{
+  ViewData["Title"] = "Learning Content";
+  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/Learning?brand=" + Model.Brand + "&nonav=true";
+}
+
+<div class="nhsuk-grid-row">
+  <vc:back-link asp-controller="Home" asp-action="Index"></vc:back-link>
+</div>
+<div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
+  <iframe class="responsive-iframe" title="Learning Content" src="@url"></iframe>
+</div>

@@ -28,6 +28,8 @@
         public int TutorialsCompletionThreshold { get; }
         public bool OtherSectionsExist { get; }
         public int? NextSectionId { get; }
+        public string? Password { get; }
+        public bool PasswordSubmitted { get; }
 
         public List<SectionTutorial> Tutorials { get; } = new List<SectionTutorial>();
 
@@ -55,7 +57,9 @@
             int diagnosticAssessmentCompletionThreshold,
             int tutorialsCompletionThreshold,
             bool otherSectionsExist,
-            int? nextSectionId
+            int? nextSectionId,
+            string? password,
+            bool passwordSubmitted
         )
         {
             CourseTitle = $"{applicationName} - {customisationName}";
@@ -81,6 +85,8 @@
             TutorialsCompletionThreshold = tutorialsCompletionThreshold;
             OtherSectionsExist = otherSectionsExist;
             NextSectionId = nextSectionId;
+            Password = password;
+            PasswordSubmitted = passwordSubmitted;
         }
     }
 }

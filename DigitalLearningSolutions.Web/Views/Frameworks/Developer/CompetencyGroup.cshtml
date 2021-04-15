@@ -25,15 +25,15 @@
   <div class="nhsuk-grid-column-full">
     @if (Model.CompetencyGroupBase.ID > 0)
     {
-      <h1>
-        Edit competency group
-      </h1>
+    <h1>
+      Edit @Model.VocabSingular().ToLower() group
+    </h1>
     }
     else
     {
-      <h1>
-        Add new competency group
-      </h1>
+  <h1>
+    Add new @Model.VocabSingular().ToLower() group
+  </h1>
 
     }
     <form method="post">
@@ -43,7 +43,7 @@
       }
       <nhs-form-group nhs-validation-for="CompetencyGroupBase.Name">
         <label class="nhsuk-label" id="competency-group-name-label" for="competency-group-name">
-          Competency group name
+          @Model.VocabSingular() group name
         </label>
         <span nhs-validation-for="CompetencyGroupBase.Name"></span>
         <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">

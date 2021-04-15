@@ -11,7 +11,7 @@
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
     {
-      <partial name="_ErrorSummary"/>
+      <partial name="_ErrorSummary" />
     }
 
     <h1 id="page-heading" class="nhsuk-u-margin-bottom-6">Reset your password</h1>
@@ -27,11 +27,21 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["EmailAddress"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @inputErrorClass" type="text" id="EmailAddress" spellcheck="false" autocomplete="email" aria-describedby="EmailAddress-error" asp-for="EmailAddress"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @inputErrorClass" type="text" id="EmailAddress" spellcheck="false" autocomplete="email" aria-describedby="EmailAddress-error" asp-for="EmailAddress" />
       </div>
 
       <button class="nhsuk-button" type="submit">Reset</button>
     </form>
+
+    <p class="nhsuk-u-font-size-24">
+      Alternatively, log in or register for an account:
+    </p>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Login" asp-action="Index" role="button">
+      Log in
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="Register" asp-action="Index" role="button">
+      Register
+    </a>
 
   </div>
 </div>
