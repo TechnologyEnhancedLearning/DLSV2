@@ -66,6 +66,7 @@
 }
 
 .learning-content-item__text-container {
+  flex-basis: 100%; // This ensures IE limits the item width to be within the containing div.
   display: flex;
   flex-direction: column;
 }
