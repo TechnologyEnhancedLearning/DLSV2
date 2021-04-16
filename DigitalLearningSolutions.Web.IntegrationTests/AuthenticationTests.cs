@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.IntegrationTests
 {
     using System.Threading.Tasks;
+    using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Xunit;
 
@@ -14,7 +15,9 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/Home")]
+        [InlineData("/Home/Section/Welcome")]
+        [InlineData("/Home/Section/Products")]
+        [InlineData("/Home/Section/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
         [InlineData("/LearningSolutions/AccessibilityHelp")]
@@ -31,6 +34,20 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task BaseUrlRedirectsToWelcomePage()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync("/");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            response.RequestMessage.RequestUri.LocalPath.Should().Be("/Home/Section/Welcome");
         }
     }
 }
