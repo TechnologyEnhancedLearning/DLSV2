@@ -2,13 +2,16 @@
 
 @model NotificationPreferencesViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Notification Preferences";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading">Notification Preferences</h1>
+    <h1 class="nhsuk-heading-xl">Notification Preferences</h1>
+
     @if (Model.AdminId.HasValue)
     {
       <details class="nhsuk-details nhsuk-expander">
@@ -35,13 +38,8 @@
       </details>
     }
 
-    <div class="nhsuk-back-link">
-      <a class="nhsuk-back-link__link" asp-controller="MyAccount" asp-action="Index" role="button">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-        </svg>
-        Go back
-      </a>
+    <div class="top-spaced-goback">
+      <vc:back-link asp-controller="MyAccount" asp-action="Index"></vc:back-link>
     </div>
   </div>
 </div>
