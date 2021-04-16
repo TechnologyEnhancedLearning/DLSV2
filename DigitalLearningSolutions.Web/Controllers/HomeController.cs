@@ -3,8 +3,10 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
+    using Microsoft.Extensions.Configuration;
 
     public class HomeController : Controller
     {
@@ -16,6 +18,13 @@ namespace DigitalLearningSolutions.Web.Controllers
                 new MiniHubSection
                     { ControllerName = "Home", ActionName = "LearningContent", SectionTitle = "Learning Content" },
             });
+
+        private readonly IConfiguration configuration;
+
+        public HomeController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
 
         public IActionResult Index()
         {
@@ -51,7 +60,9 @@ namespace DigitalLearningSolutions.Web.Controllers
                 {
                     Sections = Sections,
                     CurrentSectionIndex = sectionIndex,
-                }
+                },
+                UserIsLoggedIn = User.Identity.IsAuthenticated,
+                CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName],
             };
         }
     }

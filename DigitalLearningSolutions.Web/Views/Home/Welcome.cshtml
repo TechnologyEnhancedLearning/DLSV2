@@ -6,7 +6,7 @@
   ViewData["Title"] = "Welcome";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/home.css")" asp-append-version="true"/>
+<link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true"/>
 
 <div class="nhsuk-grid-row">
   <div id="column" class="nhsuk-grid-column-full">
@@ -14,12 +14,18 @@
 
     <p id="page-subheading">Enabling health and care organisations to deliver digital learning to staff and students.</p>
 
-    <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
-      Sign in
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary auth-button" asp-controller="Register" asp-action="Index">
-      Register
-    </a>
+    @if (Model.UserIsLoggedIn) {
+      <a class="nhsuk-button auth-button auth-button--left" href="@Model.CurrentSiteBaseUrl/Home?action=appselect">
+        Application&nbsp;selector
+      </a>
+    } else {
+      <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
+        Log in
+      </a>
+      <a class="nhsuk-button nhsuk-button--secondary auth-button" asp-controller="Register" asp-action="Index">
+        Register
+      </a>
+    }
 
     @await Component.InvokeAsync(
       typeof(ContentsListViewComponent),
