@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
     public class HomeController : Controller
     {
-        private readonly List<MiniHubSection> Sections = new List<MiniHubSection>(
+        private readonly List<MiniHubSection> sections = new List<MiniHubSection>(
             new[]
             {
                 new MiniHubSection { ControllerName = "Home", ActionName = "Welcome", SectionTitle = "Welcome" },
@@ -58,7 +58,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel
                 {
-                    Sections = Sections,
+                    Sections = sections,
                     CurrentSectionIndex = sectionIndex,
                 },
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
