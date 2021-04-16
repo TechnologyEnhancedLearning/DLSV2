@@ -35,7 +35,7 @@
             var delegateNotifications = new List<NotificationPreference>();
             if (delegateId.HasValue)
             {
-                delegateNotifications = notificationPreferenceService.GetNotificationPreferencesForAdmin(delegateId.Value).ToList();
+                delegateNotifications = notificationPreferenceService.GetNotificationPreferencesForDelegate(delegateId.Value).ToList();
             }
 
             var model = new NotificationPreferencesViewModel(adminId, delegateId, adminNotifications, delegateNotifications);
