@@ -4,6 +4,9 @@
   var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/pricing?nonav=true";
 }
 
-<div class="nhsuk-grid-row responsive-iframe-wrapper">
+<div class="nhsuk-grid-row">
+  <h1 class="nhsuk-heading-xl heading-margin-2" id="app-page-heading">Pricing</h1>
+</div>
+<div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
   <iframe class="responsive-iframe" title="Pricing" src="@url"></iframe>
 </div>
