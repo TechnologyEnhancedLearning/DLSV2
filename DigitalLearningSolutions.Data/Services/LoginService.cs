@@ -16,11 +16,11 @@
     public class LoginService : ILoginService
     {
         private readonly ICryptoService cryptoService;
-        private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
 
-        public LoginService(IUserService userService, ICryptoService cryptoService)
+        public LoginService(IUserDataService userDataService, ICryptoService cryptoService)
         {
-            this.userService = userService;
+            this.userDataService = userDataService;
             this.cryptoService = cryptoService;
         }
 
@@ -46,7 +46,7 @@
             }
 
             var adminUserAssociatedWithDelegate =
-                userService.GetAdminUserByUsername(delegateUser.EmailAddress);
+                userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
             return cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate?.Password, password)
                 ? adminUserAssociatedWithDelegate
                 : null;
