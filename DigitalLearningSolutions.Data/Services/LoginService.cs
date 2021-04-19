@@ -9,7 +9,7 @@
         public (AdminUser?, List<DelegateUser>) VerifyUsers(
             string password, AdminUser? unverifiedAdminUser, List<DelegateUser> unverifiedDelegateUsers);
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser,
             string password);
 
         public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser adminUser, string password);
