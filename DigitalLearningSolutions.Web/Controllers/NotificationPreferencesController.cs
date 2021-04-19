@@ -10,11 +10,11 @@
 
     public class NotificationPreferencesController : Controller
     {
-        private readonly INotificationPreferenceService notificationPreferenceService;
+        private readonly INotificationPreferencesDataService notificationPreferencesDataService;
 
-        public NotificationPreferencesController(INotificationPreferenceService notificationPreferenceService)
+        public NotificationPreferencesController(INotificationPreferencesDataService notificationPreferencesDataService)
         {
-            this.notificationPreferenceService = notificationPreferenceService;
+            this.notificationPreferencesDataService = notificationPreferencesDataService;
         }
 
         public IActionResult Index()
@@ -25,20 +25,12 @@
             }
 
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
-            var adminNotifications = new List<NotificationPreference>();
-            if (adminId.HasValue)
-            {
-                adminNotifications = notificationPreferenceService.GetNotificationPreferencesForAdmin(adminId.Value).ToList();
-            }
+            var adminNotifications = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(adminId);
 
             var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
-            var delegateNotifications = new List<NotificationPreference>();
-            if (delegateId.HasValue)
-            {
-                delegateNotifications = notificationPreferenceService.GetNotificationPreferencesForDelegate(delegateId.Value).ToList();
-            }
+            var delegateNotifications = notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminId, delegateId, adminNotifications, delegateNotifications);
+            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
 
             return View(model);
         }

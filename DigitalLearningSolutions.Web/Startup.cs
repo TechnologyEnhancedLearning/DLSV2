@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<INotificationPreferenceService, NotificationPreferenceService>();
+            services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkService, FrameworkService>();

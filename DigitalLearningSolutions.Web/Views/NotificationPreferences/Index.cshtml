@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 
 @model NotificationPreferencesViewModel
 
@@ -12,7 +12,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Notification Preferences</h1>
 
-    @if (Model.AdminId.HasValue)
+    @if (Model.AdminNotifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
@@ -25,7 +25,7 @@
       </details>
     }
 
-    @if (Model.DelegateId.HasValue)
+    @if (Model.DelegateNotifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
