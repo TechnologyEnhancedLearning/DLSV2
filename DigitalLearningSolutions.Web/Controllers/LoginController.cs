@@ -57,6 +57,17 @@
                 return View("Index", model);
             }
 
+            if (verifiedAdminUser != null && verifiedDelegateUsers.Count == 0)
+            {
+                verifiedDelegateUsers =
+                    loginService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, model.Password);
+            }
+            else if (verifiedAdminUser == null && verifiedDelegateUsers.Count > 0)
+            {
+                verifiedAdminUser ??=
+                    loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
+            }
+
             var approvedDelegateUser = verifiedDelegateUsers.FirstOrDefault(du => du.Approved);
 
             if (verifiedAdminUser == null && approvedDelegateUser == null)
@@ -64,14 +75,12 @@
                 return View("AccountNotApproved");
             }
 
-            LogIn(verifiedAdminUser, approvedDelegateUser, model.Password, model.RememberMe);
+            LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }
 
-        private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, string password, bool rememberMe)
+        private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
         {
-            adminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(delegateUser, password);
-
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties

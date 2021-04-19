@@ -11,6 +11,8 @@
 
         public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
             string password);
+
+        public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser adminUser, string password);
     }
 
     public class LoginService : ILoginService
@@ -38,19 +40,33 @@
             return (verifiedAdminUser, verifiedDelegateUsers);
         }
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
-            string password)
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser, string password)
         {
-            if (string.IsNullOrWhiteSpace(approvedDelegateUser.EmailAddress))
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
             {
                 return null;
             }
 
             var adminUserAssociatedWithDelegate =
-                userService.GetAdminUserByUsername(approvedDelegateUser.EmailAddress);
+                userService.GetAdminUserByUsername(delegateUser.EmailAddress);
             return cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate?.Password, password)
                 ? adminUserAssociatedWithDelegate
                 : null;
+        }
+
+        public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser adminUser, string password)
+        {
+            var delegateUsersAssociatedWithAdmin = new List<DelegateUser>();
+
+            if (string.IsNullOrWhiteSpace(adminUser.EmailAddress))
+            {
+                return delegateUsersAssociatedWithAdmin;
+            }
+
+            delegateUsersAssociatedWithAdmin = userService.GetDelegateUsersByUsername(adminUser.EmailAddress);
+
+            return delegateUsersAssociatedWithAdmin
+                .Where(du => cryptoService.VerifyHashedPassword(du.Password, password)).ToList();
         }
     }
 }

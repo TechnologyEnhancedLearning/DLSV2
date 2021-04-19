@@ -136,6 +136,8 @@
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: false) }));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+                .Returns(null);
 
             // When
             var result =
