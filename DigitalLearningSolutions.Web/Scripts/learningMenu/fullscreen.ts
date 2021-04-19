@@ -12,6 +12,7 @@ export function setupFullscreen(): void {
 export function exitFullscreen(): void {
   getIFrameWrapper()?.classList.remove('fullscreen');
   getIFrameWrapper()?.classList.add('content-viewer_iframe-wrapper');
+  getIFrameWrapper()?.classList.add('nhsuk-u-margin-top-6');
   getExitFullscreenButton()?.classList.add('hidden');
   getEnterFullscreenButton()?.classList.remove('hidden');
   getHeader()?.classList.remove('hidden');
@@ -22,6 +23,7 @@ export function exitFullscreen(): void {
 
 export function enterFullscreen(): void {
   getIFrameWrapper()?.classList.remove('content-viewer_iframe-wrapper');
+  getIFrameWrapper()?.classList.remove('nhsuk-u-margin-top-6');
   getIFrameWrapper()?.classList.add('fullscreen');
   getExitFullscreenButton()?.classList.remove('hidden');
   getEnterFullscreenButton()?.classList.add('hidden');
