@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
     public class HomeController : Controller
     {
+        private const string LandingPageMiniHubName = "Digital Learning Solutions";
         private readonly List<MiniHubSection> sections = new List<MiniHubSection>(
             new[]
             {
@@ -55,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             return new LandingPageViewModel
             {
-                MiniHubNavigationModel = new MiniHubNavigationModel
+                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName)
                 {
                     Sections = sections,
                     CurrentSectionIndex = sectionIndex,
