@@ -3,3 +3,25 @@
 .top-spaced-goback {
   margin-top: 32px;
 }
+
+.preference-list{
+  margin-bottom: 16px;
+}
+
+.preference-row {
+  border-bottom: 1px solid $color_nhsuk-grey-4;
+  margin-top: 24px;
+}
+
+.preference-row:first-child {
+  margin-top: 0;
+}
+
+.preference-button {
+  margin-top: 12px;
+  width: 10em;
+}
+
+.subscription-button--active {
+  background-color: $nhsuk-link-color;
+}

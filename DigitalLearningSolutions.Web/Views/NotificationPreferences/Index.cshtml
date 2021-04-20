@@ -1,4 +1,4 @@
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 
 @model NotificationPreferencesViewModel
 
@@ -21,6 +21,24 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <dl class="nhsuk-summary-list preference-list">
+            @foreach (var notification in Model.AdminNotifications) {
+              <div class="nhsuk-grid-row preference-row">
+                <div class="nhsuk-grid-column-three-quarters">
+                  <div class="nhsuk-heading-xs">@notification.NotificationName</div>
+                  <p>@Html.Raw(notification.Description)</p>
+                </div>
+                <div class="nhsuk-grid-column-one-quarter">
+                  <a class="preference-button nhsuk-button @(notification.Accepted ? "subscription-button--active" : "nhsuk-button--secondary")" role="button">
+                    @(notification.Accepted ? "Subscribed" : "Unsubscribed")
+                  </a>
+                </div>
+              </div>
+            }
+          </dl>
+          <a class="nhsuk-button" role="button">
+            Update preferences
+          </a>
         </div>
       </details>
     }
@@ -34,6 +52,25 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <dl class="nhsuk-summary-list preference-list">
+            @foreach (var notification in Model.DelegateNotifications)
+            {
+              <div class="nhsuk-grid-row preference-row">
+                <div class="nhsuk-grid-column-three-quarters">
+                  <div class="nhsuk-heading-xs">@notification.NotificationName</div>
+                  <p>@Html.Raw(notification.Description)</p>
+                </div>
+                <div class="nhsuk-grid-column-one-quarter">
+                  <a class="preference-button nhsuk-button @(notification.Accepted ? "subscription-button--active" : "nhsuk-button--secondary")" role="button">
+                    @(notification.Accepted ? "Subscribed" : "Unsubscribed")
+                  </a>
+                </div>
+              </div>
+            }
+          </dl>
+          <a class="nhsuk-button" role="button">
+            Update preferences
+          </a>
         </div>
       </details>
     }
