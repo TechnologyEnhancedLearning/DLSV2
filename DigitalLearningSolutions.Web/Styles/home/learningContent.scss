@@ -1,6 +1,8 @@
 @import "homeShared";
 
 .learning-content-item__text {
+  @extend .landing-page__body-text;
+
   @include govuk-media-query($until: tablet) {
     margin-left: auto;
     margin-right: auto;
@@ -17,8 +19,6 @@
 }
 
 .learning-content-item__details-container {
-  @extend .content-area__body;
-
   display: flex;
 
   @include govuk-media-query($until: tablet) {
