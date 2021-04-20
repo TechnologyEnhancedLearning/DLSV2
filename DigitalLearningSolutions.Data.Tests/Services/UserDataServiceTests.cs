@@ -25,7 +25,6 @@
 
             //When
             var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
-            returnedAdminUser.Id = expectedAdminUser.Id;
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -39,7 +38,6 @@
 
             //When
             var returnedDelegateUsers = userDataService.GetDelegateUsersByUsername("SV1234");
-            returnedDelegateUsers.First().Id = expectedDelegateUsers.Id;
 
             // Then
             returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUsers);
@@ -52,8 +50,7 @@
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedAdminUser = userDataService.GetAdminUserById(4259);
-            returnedAdminUser.Id = expectedAdminUser.Id;
+            var returnedAdminUser = userDataService.GetAdminUserById(7);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -66,8 +63,7 @@
             var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
 
             //When
-            var returnedDelegateUser = userDataService.GetDelegateUserById(299639);
-            returnedDelegateUser.Id = expectedDelegateUsers.Id;
+            var returnedDelegateUser = userDataService.GetDelegateUserById(1);
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);

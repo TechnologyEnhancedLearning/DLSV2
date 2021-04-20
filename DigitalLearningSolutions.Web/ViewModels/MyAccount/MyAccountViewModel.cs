@@ -6,14 +6,13 @@
     {
         public MyAccountViewModel(
             AdminUser? adminUser,
-            DelegateUser? delegateUser,
-            string? centreName)
+            DelegateUser? delegateUser)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
             User = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
             ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
-            Centre = centreName;
+            Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
             DelegateNumber = delegateUser?.CandidateNumber;
         }
 

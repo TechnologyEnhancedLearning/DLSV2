@@ -24,14 +24,11 @@
                 return RedirectToAction("Index", "Login");
             }
 
-            var centreId = User.GetCentreId();
-            var centreName = centresService.GetCentreName(centreId);
-
             var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
             var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, centreName);
+            var model = new MyAccountViewModel(adminUser, delegateUser);
 
             return View(model);
         }

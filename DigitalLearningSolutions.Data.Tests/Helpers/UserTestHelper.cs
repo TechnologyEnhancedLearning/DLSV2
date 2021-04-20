@@ -35,7 +35,7 @@
 
         public static AdminUser GetDefaultAdminUser
         (
-            int id = 1,
+            int id = 7,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
             string firstName = "forename",
@@ -78,6 +78,11 @@
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper
             };
+        }
+
+        public static string GetDefaultCentreName(string centreName = "North West Boroughs Healthcare NHS Foundation Trust")
+        {
+            return centreName;
         }
     }
 }

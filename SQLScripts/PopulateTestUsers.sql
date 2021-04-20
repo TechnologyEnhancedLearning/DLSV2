@@ -1,120 +1,75 @@
-INSERT INTO [dbo].[AdminUsers]
-           ([Login]
-           ,[Password]
-           ,[CentreID]
-           ,[CentreAdmin]
-           ,[ConfigAdmin]
-           ,[SummaryReports]
-           ,[UserAdmin]
-           ,[Forename]
-           ,[Surname]
-           ,[Email]
-           ,[IsCentreManager]
-           ,[Approved]
-           ,[PasswordReminder]
-           ,[EITSProfile]
-           ,[PasswordReminderHash]
-           ,[PasswordReminderDate]
-           ,[Active]
-           ,[ContentManager]
-           ,[PublishToAll]
-           ,[ImportOnly]
-           ,[TCAgreed]
-           ,[ContentCreator]
-           ,[FailedLoginCount]
-           ,[ProfileImage]
-           ,[Supervisor]
-           ,[Trainer]
-           ,[CategoryID]
-           ,[SkypeHandle]
-           ,[PublicSkypeLink]
-           ,[IsFrameworkDeveloper]
-           ,[ResetPasswordID])
-     VALUES
-           ('Username'
-           ,'Password'
-           ,2
-           ,1
-           ,1
-           ,0
-           ,1
-           ,'forename'
-           ,'surname'
-           ,'test@gmail.com'
-           ,1
-           ,1
-           ,0
-           ,0
-           ,null
-           ,null
-           ,1
-           ,1
-           ,1
-           ,1
-           ,null
-           ,0
-           ,0
-           ,null
-           ,1
-           ,1
-           ,1
-           ,null
-           ,0
-           ,1
-           ,null)
+UPDATE [dbo].[AdminUsers]
+    SET
+        [Login] = 'Username',
+        [Password] = 'Password',
+        [CentreID] = 2,
+        [CentreAdmin] = 1,
+        [ConfigAdmin] = 1,
+        [SummaryReports] = 0,
+        [UserAdmin] = 1,
+        [Forename] = 'forename',
+        [Surname] = 'surname',
+        [Email] = 'test@gmail.com',
+        [IsCentreManager] = 1,
+        [Approved] = 1,
+        [PasswordReminder] = 0,
+        [EITSProfile] = 0,
+        [PasswordReminderHash] = null,
+        [PasswordReminderDate] = null,
+        [Active] = 1,
+        [ContentManager] = 1,
+        [PublishToAll] = 1,
+        [ImportOnly] = 1,
+        [TCAgreed] = null,
+        [ContentCreator] = 0,
+        [FailedLoginCount] = 0,
+        [ProfileImage] = null,
+        [Supervisor] = 1,
+        [Trainer] = 1,
+        [CategoryID] = 1,
+        [SkypeHandle] = null,
+        [PublicSkypeLink] = 0,
+        [IsFrameworkDeveloper] = 1,
+        [ResetPasswordID] = null
+    WHERE
+        [AdminID] = 7
 GO
 
-INSERT INTO [dbo].[Candidates]
-           ([Active]
-           ,[CentreID]
-           ,[FirstName]
-           ,[LastName]
-           ,[DateRegistered]
-           ,[CandidateNumber]
-           ,[JobGroupID]
-           ,[Answer1]
-           ,[Answer2]
-           ,[Answer3]
-           ,[AliasID]
-           ,[Approved]
-           ,[EmailAddress]
-           ,[ExternalReg]
-           ,[SelfReg]
-           ,[Password]
-           ,[SkipPW]
-           ,[ResetHash]
-           ,[Answer4]
-           ,[Answer5]
-           ,[Answer6]
-           ,[SkypeHandle]
-           ,[PublicSkypeLink]
-           ,[ProfileImage]
-           ,[ResetPasswordID])
-     VALUES
-           (1
-           ,2
-           ,'Firstname'
-           ,'Test'
-           ,'2010-09-22 06:52:09.080'
-           ,'SV1234'
-           ,1
-           ,null
-           ,null
-           ,null
-           ,null
-           ,1
-           ,'email@test.com'
-           ,0
-           ,0
-           ,'password'
-           ,0
-           ,null
-           ,null
-           ,null
-           ,null
-           ,null
-           ,0
-           ,null
-           ,null)
+UPDATE [dbo].[Candidates]
+    SET
+        [Active] = 1,
+        [CentreID] = 2,
+        [FirstName] = 'Firstname',
+        [LastName] = 'Test',
+        [DateRegistered] = '2010-09-22 06:52:09.080',
+        [CandidateNumber] = 'SV1234',
+        [JobGroupID] = 1,
+        [Answer1] = null,
+        [Answer2] = null,
+        [Answer3] = null,
+        [AliasID] = null,
+        [Approved] = 1,
+        [EmailAddress] = 'email@test.com',
+        [ExternalReg] = 0,
+        [SelfReg] = 0,
+        [Password] = 'password',
+        [SkipPW] = 0,
+        [ResetHash] = null,
+        [Answer4] = null,
+        [Answer5] = null,
+        [Answer6] = null,
+        [SkypeHandle] = null,
+        [PublicSkypeLink] = 0,
+        [ProfileImage] = null,
+        [ResetPasswordID] = null
+    WHERE
+        [CandidateID] = 1
 GO
+
+UPDATE [dbo].[Centres]
+    SET
+        NotifyEmail = 'notify@test.com'
+    WHERE
+        [CentreID] = 2
+
 

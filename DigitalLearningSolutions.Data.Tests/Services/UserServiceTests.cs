@@ -31,10 +31,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._)).Returns(new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() });
 
             //When
-            var (returnedAdminUser, _) = userService.GetUsersByUsername("Username");
-            var (_, returnedDelegateUsers) = userService.GetUsersByUsername("SV1234");
-            returnedAdminUser.Id = expectedAdminUser.Id;
-            returnedDelegateUsers.First().Id = expectedDelegateUsers.Id;
+            var (returnedAdminUser, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -51,8 +48,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(UserTestHelper.GetDefaultDelegateUser());
 
             //When
-            var (returnedAdminUser, _) = userService.GetUsersById("1", "2");
-            var (_, returnedDelegateUser) = userService.GetUsersById("1", "2");
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("1", "2");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -67,8 +63,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
 
             //When
-            var (returnedAdminUser, _) = userService.GetUsersById("1", null);
-            var (_, returnedDelegateUser) = userService.GetUsersById("1", null);
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("1", null);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -83,8 +78,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(UserTestHelper.GetDefaultDelegateUser());
 
             //When
-            var (returnedAdminUser, _) = userService.GetUsersById(null, "2");
-            var (_, returnedDelegateUser) = userService.GetUsersById(null, "2");
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, "2");
 
             // Then
             returnedAdminUser.Should().BeNull();
@@ -95,8 +89,7 @@
         public void GetUsersById_Returns_nulls_with_unexpected_input()
         {
             // When
-            var (returnedAdminUser, _) = userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
-            var (_, returnedDelegateUser) = userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
 
             // Then
             returnedAdminUser.Should().BeNull();
