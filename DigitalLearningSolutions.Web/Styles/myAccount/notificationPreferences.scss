@@ -17,11 +17,16 @@
   margin-top: 0;
 }
 
-.preference-button {
-  margin-top: 12px;
-  width: 10em;
+.preference-tag {
+  width: 100%;
+  max-width: 10em;
+  text-align: center;
+  margin-bottom: nhsuk-spacing(4);
 }
 
-.subscription-button--active {
-  background-color: $nhsuk-link-color;
+@media (min-width: 48.0625em) {
+  .preference-tag {
+    margin-top: nhsuk-spacing(4);
+    margin-bottom: 0;
+  }
 }
