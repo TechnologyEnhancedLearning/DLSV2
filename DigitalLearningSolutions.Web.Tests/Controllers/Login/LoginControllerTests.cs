@@ -144,5 +144,24 @@
             // Then
             result.Should().BeViewResult().WithViewName("AccountNotApproved");
         }
+
+        [Test]
+        public void Log_in_with_approved_delegate_id_fetches_associated_admin_user()
+        {
+            // Given
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            var testDelegate = UserTestHelper.GetDefaultDelegateUser(emailAddress: "TestAccountAssociation@email.com");
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((null, new List<DelegateUser> { testDelegate }));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { testDelegate }));
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(testDelegate, A<string>._))
+                .MustHaveHappened();
+        }
     }
 }
