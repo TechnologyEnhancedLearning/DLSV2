@@ -8,6 +8,8 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -107,6 +109,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<IJobGroupsService, JobGroupsService>();
+            services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

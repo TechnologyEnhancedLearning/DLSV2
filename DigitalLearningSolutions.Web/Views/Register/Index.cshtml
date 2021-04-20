@@ -1,11 +1,11 @@
 @using DigitalLearningSolutions.Web.ViewModels.Register
 @model RegisterViewModel
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register": "Register";
   var firstNameError = ViewData.ModelState["FirstName"]?.Errors?.Count > 0;
   var lastNameError = ViewData.ModelState["LastName"]?.Errors?.Count > 0;
   var emailError = ViewData.ModelState["Email"]?.Errors?.Count > 0;
-  var errorHasOccurred = firstNameError || lastNameError || emailError;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register": "Register";
   var firstNameInputErrorClass = firstNameError ? "nhsuk-input--error" : "";
   var firstNameFormErrorClass = firstNameError ? "nhsuk-form-group--error" : "";
   var lastNameInputErrorClass = lastNameError ? "nhsuk-input--error" : "";
@@ -21,6 +21,7 @@
       @if (errorHasOccurred) {
         <partial name="_ErrorSummary"/>
       }
+
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Register</h1>
         <p class="nhsuk-body-l">

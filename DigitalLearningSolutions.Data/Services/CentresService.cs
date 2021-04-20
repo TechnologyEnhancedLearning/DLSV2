@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using Dapper;
     using System.Data;
     using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
+        IEnumerable<(int, string)> GetActiveCentres();
     }
 
     public class CentresService : ICentresService
@@ -47,6 +49,17 @@
             }
 
             return name;
+        }
+
+        public IEnumerable<(int, string)> GetActiveCentres()
+        {
+            var centres = connection.Query<(int, string)>(
+                @"SELECT CentreID, CentreName
+                        FROM Centres
+                        WHERE Active = 1
+                        ORDER BY CentreName"
+            );
+            return centres;
         }
     }
 }

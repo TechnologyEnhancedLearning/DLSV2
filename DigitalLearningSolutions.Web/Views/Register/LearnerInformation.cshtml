@@ -1,14 +1,73 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Register
-@model RegisterViewModel
+@model LearnerInformationViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   // QQ is this the format for titles?
-  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information": "Register - learner information";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information": "Register - Learner information";
+  var centreError = ViewData.ModelState["Centre"]?.Errors?.Count > 0;
+  var jobGroupError = ViewData.ModelState["JobGroup"]?.Errors?.Count > 0;
+  var centreSelectErrorClass = centreError ? "nhsuk-select--error" : "";
+  var centreFormErrorClass = centreError ? "nhsuk-form-group--error" : "";
+  var jobGroupSelectErrorClass = jobGroupError ? "nhsuk-select--error" : "";
+  var jobGroupFormErrorClass = jobGroupError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    Test
+    <form method="post" novalidate asp-action="Index">
+
+      @if (errorHasOccurred) {
+        <partial name="_ErrorSummary"/>
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 id="page-heading">Learner information</h1>
+      </div>
+
+      <div class="nhsuk-form-group @centreFormErrorClass">
+        <label class="nhsuk-label" for="Centre">
+          Centre
+        </label>
+        @if (centreError) {
+          <span class="nhsuk-error-message" id="centre-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Centre"].Errors[0].ErrorMessage
+          </span>
+        }
+        <select class="nhsuk-select @centreSelectErrorClass" id="Centre" aria-describedby="centre-error" asp-for="Centre">
+          <option value="" disabled selected>Select a centre</option>
+          @foreach (var option in ViewBag.Centres) {
+            <option value="@option.Item1">@option.Item2</option>
+          }
+        </select>
+      </div>
+
+      <div class="nhsuk-form-group @jobGroupFormErrorClass">
+        <label class="nhsuk-label" for="JobGroup">
+          Job group
+        </label>
+        @if (centreError) {
+          <span class="nhsuk-error-message" id="job-group-error">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["JobGroup"].Errors[0].ErrorMessage
+          </span>
+        }
+        <select class="nhsuk-select @jobGroupSelectErrorClass" id="JobGroup" aria-describedby="job-group-error" asp-for="JobGroup">
+          <option value="" disabled selected>Select a job group</option>
+          @foreach (var option in ViewBag.JobGroups) {
+            <option value="@option.Item1">@option.Item2</option>
+          }
+        </select>
+      </div>
+
+      <button class="nhsuk-button" type="submit" asp-action="LearnerInformation">Next</button>
+    </form>
+    <p>
+      <a class="nhsuk-back-link__link" asp-action="Index" role="link">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+        </svg>
+        Go back
+      </a>
+    </p>
   </div>
 </div>
