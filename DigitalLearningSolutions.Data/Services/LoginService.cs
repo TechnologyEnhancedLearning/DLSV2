@@ -9,7 +9,7 @@
         public (AdminUser?, List<DelegateUser>) VerifyUsers(
             string password, AdminUser? unverifiedAdminUser, List<DelegateUser> unverifiedDelegateUsers);
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser,
             string password);
     }
 
@@ -38,16 +38,15 @@
             return (verifiedAdminUser, verifiedDelegateUsers);
         }
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser approvedDelegateUser,
-            string password)
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser, string password)
         {
-            if (string.IsNullOrWhiteSpace(approvedDelegateUser.EmailAddress))
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
             {
                 return null;
             }
 
             var adminUserAssociatedWithDelegate =
-                userService.GetAdminUserByUsername(approvedDelegateUser.EmailAddress);
+                userService.GetAdminUserByUsername(delegateUser.EmailAddress);
             return cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate?.Password, password)
                 ? adminUserAssociatedWithDelegate
                 : null;

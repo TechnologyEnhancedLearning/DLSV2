@@ -5,13 +5,13 @@
         public MyAccountViewModel(
             string? centreName,
             string? userEmail,
-            string? delegateId,
+            string? delegateNumber,
             string? firstName,
             string? surname)
         {
             Centre = centreName;
             User = userEmail;
-            DelegateId = delegateId;
+            DelegateNumber = delegateNumber;
             FirstName = firstName;
             Surname = surname;
         }
@@ -20,7 +20,7 @@
 
         public string? User { get; set; }
 
-        public string? DelegateId { get; set; }
+        public string? DelegateNumber { get; set; }
 
         public string? FirstName { get; set; }
 

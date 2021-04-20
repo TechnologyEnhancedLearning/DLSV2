@@ -26,7 +26,9 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = GetAdminUserByUsername(username);
-            List<DelegateUser> delegateUsers = GetDelegateUsersByUsername(username);
+            var delegateUsername =
+                string.IsNullOrWhiteSpace(adminUser?.EmailAddress) ? username : adminUser.EmailAddress;
+            List<DelegateUser> delegateUsers = GetDelegateUsersByUsername(delegateUsername);
 
             return (adminUser, delegateUsers);
         }
@@ -52,7 +54,8 @@
                         au.CategoryID,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
-                        au.IsFrameworkDeveloper
+                        au.IsFrameworkDeveloper,
+                        au.Login
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",

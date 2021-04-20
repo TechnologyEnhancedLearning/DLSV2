@@ -64,14 +64,14 @@
                 return View("AccountNotApproved");
             }
 
-            LogIn(verifiedAdminUser, approvedDelegateUser, model.Password, model.RememberMe);
+            verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
+            
+            LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }
 
-        private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, string password, bool rememberMe)
+        private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
         {
-            adminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(delegateUser, password);
-
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
