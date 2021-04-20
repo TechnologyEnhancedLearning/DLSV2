@@ -34,21 +34,18 @@ namespace DigitalLearningSolutions.Web.Controllers
         }
 
         [HttpGet]
-        [Route("Home/Section/Welcome")]
         public IActionResult Welcome()
         {
             return View(GetLandingPageViewModel(0));
         }
 
         [HttpGet]
-        [Route("Home/Section/Products")]
         public IActionResult Products()
         {
             return View(GetLandingPageViewModel(1));
         }
 
         [HttpGet]
-        [Route("Home/Section/LearningContent")]
         public IActionResult LearningContent()
         {
             return View(GetLandingPageViewModel(2));

@@ -15,9 +15,9 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/Home/Section/Welcome")]
-        [InlineData("/Home/Section/Products")]
-        [InlineData("/Home/Section/LearningContent")]
+        [InlineData("/Home/Welcome")]
+        [InlineData("/Home/Products")]
+        [InlineData("/Home/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
         [InlineData("/LearningSolutions/AccessibilityHelp")]
@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            response.RequestMessage.RequestUri.LocalPath.Should().Be("/Home/Section/Welcome");
+            response.RequestMessage.RequestUri.LocalPath.Should().Be("/Home/Welcome");
         }
     }
 }
