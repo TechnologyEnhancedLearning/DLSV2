@@ -63,7 +63,7 @@
             var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
 
             //When
-            var returnedDelegateUser = userDataService.GetDelegateUserById(1);
+            var returnedDelegateUser = userDataService.GetDelegateUserById(2);
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);

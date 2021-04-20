@@ -6,7 +6,7 @@
     {
         public static DelegateUser GetDefaultDelegateUser
         (
-            int id = 1,
+            int id = 2,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
             string firstName = "Firstname",

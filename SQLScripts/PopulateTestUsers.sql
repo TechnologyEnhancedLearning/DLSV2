@@ -63,7 +63,7 @@ UPDATE [dbo].[Candidates]
         [ProfileImage] = null,
         [ResetPasswordID] = null
     WHERE
-        [CandidateID] = 1
+        [CandidateID] = 2
 GO
 
 UPDATE [dbo].[Centres]
@@ -71,5 +71,3 @@ UPDATE [dbo].[Centres]
         NotifyEmail = 'notify@test.com'
     WHERE
         [CentreID] = 2
-
-
