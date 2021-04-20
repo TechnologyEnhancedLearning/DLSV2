@@ -10,7 +10,7 @@
 
 <div class="nhsuk-grid-row">
   <div id="column" class="nhsuk-grid-column-full">
-    <h1 id="page-heading">A platform for digital learning delivery</h1>
+    <h1 class="nhsuk-heading-xl">A platform for digital learning delivery</h1>
 
     <p id="page-subheading">Enabling health and care organisations to deliver digital learning to staff and students.</p>
 
@@ -27,11 +27,9 @@
       </a>
     }
 
-    @await Component.InvokeAsync(
-      typeof(ContentsListViewComponent),
-      new { miniHubNavigationModel = Model.MiniHubNavigationModel })
+    <vc:contents-list mini-hub-navigation-model="@Model.MiniHubNavigationModel"/>
 
-    <p>Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
+    <p class="landing-page__body-text">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
 
     @await Component.InvokeAsync(typeof(PaginationViewComponent), new { miniHubNavigationModel = Model.MiniHubNavigationModel })
   </div>

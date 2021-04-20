@@ -1,7 +1,15 @@
 @import "~nhsuk-frontend/packages/core/all";
 
+.landing-page__body-text {
+  @extend .nhsuk-body-m;
+}
+
 .content-area {
   margin-bottom: 72px;
+}
+
+.content-area__heading {
+  @extend .nhsuk-heading-m;
 }
 
 .content-area__image-box {

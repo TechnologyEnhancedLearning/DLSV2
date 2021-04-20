@@ -1,12 +1,5 @@
 @import "homeShared";
 
-.learning-content-item__header {
-  @include govuk-media-query($until: tablet) {
-    margin-top: 16px;
-    text-align: center;
-  }
-}
-
 .learning-content-item__text {
   @include govuk-media-query($until: tablet) {
     margin-left: auto;
@@ -15,7 +8,17 @@
   }
 }
 
+.learning-content-item__text--header {
+
+  @include govuk-media-query($until: tablet) {
+    margin-top: 16px;
+    text-align: center;
+  }
+}
+
 .learning-content-item__details-container {
+  @extend .content-area__body;
+
   display: flex;
 
   @include govuk-media-query($until: tablet) {
