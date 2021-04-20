@@ -6,7 +6,7 @@
     @if (Model.CurrentSectionIndex > 0) {
       <li class="nhsuk-pagination-item--previous">
         @{ var previousSection = Model.Sections[Model.CurrentSectionIndex - 1]; }
-        <a class="nhsuk-pagination__link nhsuk-pagination__link--next" href="@Url.Action(previousSection.ActionName, previousSection.ControllerName)">
+        <a class="nhsuk-pagination__link nhsuk-pagination__link--next" asp-controller="@previousSection.ControllerName" asp-action="@previousSection.ActionName">
           <span class="nhsuk-pagination__title">Previous</span>
           <span class="nhsuk-u-visually-hidden">:</span>
           <span class="nhsuk-pagination__page">@previousSection.SectionTitle</span>
@@ -19,7 +19,7 @@
     @if (Model.CurrentSectionIndex < Model.Sections.Count - 1) {
       <li class="nhsuk-pagination-item--next">
         @{ var nextSection = Model.Sections[Model.CurrentSectionIndex + 1]; }
-        <a class="nhsuk-pagination__link nhsuk-pagination__link--next" href="@Url.Action(nextSection.ActionName, nextSection.ControllerName)">
+        <a class="nhsuk-pagination__link nhsuk-pagination__link--next" asp-controller="@nextSection.ControllerName" asp-action="@nextSection.ActionName">
           <span class="nhsuk-pagination__title">Next</span>
           <span class="nhsuk-u-visually-hidden">:</span>
           <span class="nhsuk-pagination__page">@nextSection.SectionTitle</span>
