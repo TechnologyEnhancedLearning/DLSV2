@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common.MiniHub
 
     public class MiniHubNavigationModel
     {
-        public List<MiniHubSection> Sections { get; set; }
+        public List<MiniHubSection> Sections { get; set; } = new List<MiniHubSection>();
         public int CurrentSectionIndex { get; set; }
     }
 }
