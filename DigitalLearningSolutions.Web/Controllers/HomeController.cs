@@ -13,10 +13,12 @@ namespace DigitalLearningSolutions.Web.Controllers
         private readonly List<MiniHubSection> sections = new List<MiniHubSection>(
             new[]
             {
-                new MiniHubSection { ControllerName = "Home", ActionName = "Welcome", SectionTitle = "Welcome" },
-                new MiniHubSection { ControllerName = "Home", ActionName = "Products", SectionTitle = "Products" },
-                new MiniHubSection
-                    { ControllerName = "Home", ActionName = "LearningContent", SectionTitle = "Learning Content" },
+                new MiniHubSection(sectionTitle: "Welcome", controllerName: "Home", actionName: "Welcome"),
+                new MiniHubSection(sectionTitle: "Products", controllerName: "Home", actionName: "Products"),
+                new MiniHubSection(
+                    sectionTitle: "Learning Content",
+                    controllerName: "Home",
+                    actionName: "LearningContent"),
             });
 
         private readonly IConfiguration configuration;

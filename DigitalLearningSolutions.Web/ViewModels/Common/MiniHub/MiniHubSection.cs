@@ -2,8 +2,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common.MiniHub
 {
     public class MiniHubSection
     {
-        public string ControllerName { get; set; }
-        public string ActionName { get; set; }
-        public string SectionTitle { get; set; }
+        public MiniHubSection(string sectionTitle, string controllerName, string actionName)
+        {
+            ControllerName = controllerName;
+            ActionName = actionName;
+            SectionTitle = sectionTitle;
+        }
+
+        public readonly string ControllerName;
+        public readonly string ActionName;
+        public readonly string SectionTitle;
     }
 }
