@@ -136,8 +136,6 @@
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: false) }));
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
-                .Returns(null);
 
             // When
             var result =
@@ -145,6 +143,45 @@
 
             // Then
             result.Should().BeViewResult().WithViewName("AccountNotApproved");
+        }
+
+        [Test]
+        public void Log_in_with_admin_id_recovers_associated_delegate_users()
+        {
+            // Given
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((UserTestHelper.GetDefaultAdminUser(emailAddress: "TestAccountAssociation@email.com"),
+                    new List<DelegateUser>()));
+            A.CallTo(() => userService.GetDelegateUsersByUsername(A<string>._))
+                .Returns(new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() });
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser>()));
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userService.GetDelegateUsersByUsername("TestAccountAssociation@email.com"))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void Log_in_with_approved_delegate_id_recovers_associated_admin_user()
+        {
+            // Given
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            var testDelegate = UserTestHelper.GetDefaultDelegateUser(emailAddress: "TestAccountAssociation@email.com");
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((null, new List<DelegateUser> { testDelegate }));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { testDelegate }));
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(testDelegate, A<string>._))
+                .MustHaveHappened();
         }
     }
 }
