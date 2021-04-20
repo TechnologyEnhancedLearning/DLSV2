@@ -48,11 +48,6 @@
                 return View("Index", model);
             }
 
-            if (unverifiedAdminUser != null && unverifiedDelegateUsers.Count == 0)
-            {
-                unverifiedDelegateUsers = userService.GetDelegateUsersByUsername(unverifiedAdminUser.EmailAddress);
-            }
-
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password, unverifiedAdminUser, unverifiedDelegateUsers);
 
@@ -69,14 +64,8 @@
                 return View("AccountNotApproved");
             }
 
-            if (verifiedAdminUser == null && verifiedDelegateUsers.Count > 0)
-            {
-                verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser
-                (
-                    verifiedDelegateUsers.First(), model.Password
-                );
-            }
-
+            verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
+            
             LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }

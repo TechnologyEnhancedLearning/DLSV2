@@ -26,7 +26,9 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = GetAdminUserByUsername(username);
-            List<DelegateUser> delegateUsers = GetDelegateUsersByUsername(username);
+            string delegateUsername =
+                string.IsNullOrWhiteSpace(adminUser?.EmailAddress) ? username : adminUser.EmailAddress;
+            List<DelegateUser> delegateUsers = GetDelegateUsersByUsername(delegateUsername);
 
             return (adminUser, delegateUsers);
         }
