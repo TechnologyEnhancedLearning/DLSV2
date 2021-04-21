@@ -12,7 +12,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Notification Preferences</h1>
 
-    @if (Model.AdminNotifications.Any())
+    @if (Model.AdminNotifications.Notifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
@@ -21,29 +21,12 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
-          <dl class="nhsuk-summary-list preference-list">
-            @foreach (var notification in Model.AdminNotifications) {
-              <div class="nhsuk-grid-row preference-row">
-                <div class="nhsuk-grid-column-three-quarters">
-                  <div class="nhsuk-heading-xs">@notification.NotificationName</div>
-                  <p class="nhsuk-body-m">@Html.Raw(notification.Description)</p>
-                </div>
-                <div class="nhsuk-grid-column-one-quarter">
-                  <strong class="nhsuk-u-font-size-19 preference-tag nhsuk-tag @(notification.Accepted ? "" : "nhsuk-tag--grey")">
-                    @(notification.Accepted ? "Subscribed" : "Unsubscribed")
-                  </strong>
-                </div>
-              </div>
-            }
-          </dl>
-          <a class="nhsuk-button" role="button">
-            Update preferences
-          </a>
+          <partial name="_NotificationPreferenceList" model="Model.AdminNotifications" />
         </div>
       </details>
     }
 
-    @if (Model.DelegateNotifications.Any())
+    @if (Model.DelegateNotifications.Notifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
@@ -52,25 +35,7 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
-          <dl class="nhsuk-summary-list preference-list">
-            @foreach (var notification in Model.DelegateNotifications)
-            {
-              <div class="nhsuk-grid-row preference-row">
-                <div class="nhsuk-grid-column-three-quarters">
-                  <div class="nhsuk-heading-xs">@notification.NotificationName</div>
-                  <p class="nhsuk-body-m">@Html.Raw(notification.Description)</p>
-                </div>
-                <div class="nhsuk-grid-column-one-quarter">
-                  <strong class="nhsuk-u-font-size-19 preference-tag nhsuk-tag @(notification.Accepted ? "" : "nhsuk-tag--grey")">
-                    @(notification.Accepted ? "Subscribed" : "Unsubscribed")
-                  </strong>
-                </div>
-              </div>
-            }
-          </dl>
-          <a class="nhsuk-button" role="button">
-            Update preferences
-          </a>
+          <partial name="_NotificationPreferenceList" model="Model.DelegateNotifications" />
         </div>
       </details>
     }
