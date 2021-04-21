@@ -10,10 +10,10 @@
             JobGroup = 0;
         }
 
-        [Required(ErrorMessage = "Please select a centre to register.")]
+        [Required(ErrorMessage = "Please select a centre.")]
         public int? Centre { get; set; }
 
-        [Required(ErrorMessage = "Please select a job group to register.")]
+        [Required(ErrorMessage = "Please select a job group.")]
         public int? JobGroup { get; set; }
     }
 }

@@ -10,16 +10,15 @@
             ConfirmPassword = string.Empty;
         }
 
-        [Required(ErrorMessage = "Please enter a password to register.")]
+        [Required(ErrorMessage = "Please enter a password.")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
         [RegularExpression(@"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*",
-            ErrorMessage = "Password must contain at least 1 uppercase letter, at least 1 number, and at least 1 symbol")]
+            ErrorMessage = "Password must contain at least 1 letter, 1 number and 1 symbol")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
         [Required(ErrorMessage = "Please confirm your password.")]
         [DataType(DataType.Password)]
-        // QQ Better error message
         [Compare("Password", ErrorMessage = "Password and confirm password do not match.")]
         public string? ConfirmPassword { get; set; }
     }

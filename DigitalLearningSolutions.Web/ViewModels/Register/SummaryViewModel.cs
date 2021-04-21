@@ -27,7 +27,7 @@
             if (Terms == false)
             {
                 yield return new ValidationResult(
-                    "Please accept the Terms and Conditions to register.",
+                    "Please accept the Terms and Conditions.",
                     new[] { "Terms" });
             }
         }
