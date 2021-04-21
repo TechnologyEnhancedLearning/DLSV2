@@ -22,10 +22,8 @@
   max-width: 10em;
   text-align: center;
   margin-bottom: nhsuk-spacing(4);
-}
 
-@media (min-width: 48.0625em) {
-  .preference-tag {
+  @include govuk-media-query($from: desktop) {
     margin-top: nhsuk-spacing(4);
     margin-bottom: 0;
   }
