@@ -17,6 +17,19 @@
   margin-top: 0;
 }
 
+.preference-text-column {
+  padding-left: 0;
+}
+
+.preference-tag-column {
+  padding: 0;
+
+  @include govuk-media-query($from: desktop) {
+    text-align: right;
+    padding-left: nhsuk-spacing(3);
+  }
+}
+
 .preference-tag {
   width: 100%;
   max-width: 10em;
