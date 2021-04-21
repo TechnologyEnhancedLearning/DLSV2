@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Security.Claims;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -9,10 +9,12 @@
     public class MyAccountController : Controller
     {
         private readonly ICentresService centresService;
+        private readonly IUserService userService;
 
-        public MyAccountController(ICentresService centresService)
+        public MyAccountController(ICentresService centresService, IUserService userService)
         {
             this.centresService = centresService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -22,14 +24,12 @@
                 return RedirectToAction("Index", "Login");
             }
 
-            var userEmail = User.GetCustomClaim(ClaimTypes.Email);
-            var delegateNumber = User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber);
-            var centreId = User.GetCentreId();
-            var firstName = User.GetCustomClaim(CustomClaimTypes.UserForename);
-            var surname = User.GetCustomClaim(CustomClaimTypes.UserSurname);
-            var centreName = centresService.GetCentreName(centreId);
+            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
+            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
+            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var model = new MyAccountViewModel(centreName, userEmail, delegateNumber, firstName, surname);
+            var model = new MyAccountViewModel(adminUser, delegateUser);
+
             return View(model);
         }
     }
