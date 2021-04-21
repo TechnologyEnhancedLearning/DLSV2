@@ -10,10 +10,11 @@
         @if (Model.CurrentSectionIndex == pageIndex) {
           <span class="nhsuk-contents-list__current">@sectionToRender.SectionTitle</span>
         } else {
-          @Html.ActionLink(sectionToRender.SectionTitle,
-            sectionToRender.ActionName,
-            sectionToRender.ControllerName,
-            htmlAttributes: new { @class = "nhsuk-contents-list__link" });
+          <a class="nhsuk-contents-list__link"
+             asp-controller="@sectionToRender.ControllerName"
+             asp-action="@sectionToRender.ActionName">
+            @sectionToRender.SectionTitle
+          </a>
         }
       </li>
     }

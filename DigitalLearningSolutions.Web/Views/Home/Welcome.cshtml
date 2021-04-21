@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.Home
+﻿@using DigitalLearningSolutions.Web.ViewModels.Home
 @model LandingPageViewModel
 
 @{
@@ -16,7 +15,7 @@
 
     @if (Model.UserIsLoggedIn) {
       <a class="nhsuk-button auth-button auth-button--left" href="@Model.CurrentSiteBaseUrl/Home?action=appselect">
-        Application&nbsp;selector
+        Switch application
       </a>
     } else {
       <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
@@ -31,6 +30,6 @@
 
     <p class="landing-page__body-text">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
 
-    @await Component.InvokeAsync(typeof(PaginationViewComponent), new { miniHubNavigationModel = Model.MiniHubNavigationModel })
+    <vc:pagination mini-hub-navigation-model="@Model.MiniHubNavigationModel"/>
   </div>
 </div>
