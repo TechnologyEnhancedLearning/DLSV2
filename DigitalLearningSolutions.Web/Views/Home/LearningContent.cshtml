@@ -10,9 +10,9 @@
 <div class="nhsuk-grid-row">
   <div id="column" class="nhsuk-grid-column-full">
 
-    <vc:mini-hub-heading mini-hub-navigation-model="@Model.MiniHubNavigationModel" />
+    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />
 
-    <vc:contents-list mini-hub-navigation-model="@Model.MiniHubNavigationModel" />
+    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
 
     <div class="content-area">
 
@@ -68,6 +68,6 @@
 
     </div>
 
-    <vc:pagination mini-hub-navigation-model="@Model.MiniHubNavigationModel" />
+    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
   </div>
 </div>
