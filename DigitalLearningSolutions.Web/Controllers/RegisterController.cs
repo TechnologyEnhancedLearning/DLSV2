@@ -95,8 +95,36 @@
             data.LearnerInformationViewModel = model;
             TempData.Set(data);
 
-            // QQ link to password page
-            return View();
+            return RedirectToAction("Password");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [Route("Register/password")]
+        [HttpGet]
+        public IActionResult Password()
+        {
+            var data = TempData.Get<DelegateRegistrationData>();
+            var viewModel = data.PasswordViewModel;
+
+            return View(viewModel);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [Route("Register/password")]
+        [HttpPost]
+        public IActionResult Password(PasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Password", model);
+            }
+
+            var data = TempData.Get<DelegateRegistrationData>();
+            data.PasswordViewModel = model;
+            TempData.Set(data);
+
+            // QQ redirect to summary
+            return RedirectToAction("Password");
         }
     }
 }
