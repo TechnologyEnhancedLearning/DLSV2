@@ -19,7 +19,7 @@
         <partial name="_ErrorSummary"/>
       }
       <div class="nhsuk-u-margin-bottom-8">
-        <h1 id="page-heading">Log in</h1>
+        <h1 id="page-heading" class="nhsuk-heading-xl">Log in</h1>
         <p class="nhsuk-body-l">Enter your details to log into your account.</p>
       </div>
 
@@ -50,7 +50,7 @@
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input" type="checkbox" id="RememberMe" spellcheck="false" asp-for="RememberMe"/>
         <label class="nhsuk-label nhsuk-checkboxes__label" for="RememberMe">
-          Remember Me
+          Remember me
         </label>
       </div>
 
@@ -58,20 +58,20 @@
         <span class="nhsuk-u-visually-hidden">Information: </span>
         <p>
           By logging in, I consent to my details being stored and processed in line with your
-          <a href="https://www.hee.nhs.uk/about/privacy-notice">Privacy Policy</a>
+          <a target="_blank" href="https://www.hee.nhs.uk/about/privacy-notice">Privacy Policy</a>
           and agree to use the system according to
-          <a asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
+          <a target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of Use</a>
         </p>
       </div>
 
       <button class="nhsuk-button" type="submit">Log in</button>
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="ForgotPassword" asp-action="Index">
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-2" asp-controller="ForgotPassword" asp-action="Index" role="button">
         Forgot password
       </a>
     </form>
 
     <p class="nhsuk-u-font-size-24">Alternatively, if you are a new user, register:</p>
-    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="Index">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="Index" role="button">
       Register
     </a>
 

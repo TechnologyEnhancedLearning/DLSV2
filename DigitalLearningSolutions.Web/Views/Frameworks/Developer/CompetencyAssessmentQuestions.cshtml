@@ -21,10 +21,10 @@
   </nav>
 }
 <h1 class="truncate-overflow">@Model.CompetencyName</h1>
-<h2>Competency assessment questions</h2>
-<p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this competency.</p>
+<h2>@Model.VocabSingular() assessment questions</h2>
+<p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this @Model.VocabSingular().ToLower().</p>
 <div class="nhsuk-table__panel-with-heading-tab">
-  <h3 class="nhsuk-table__heading-tab">Assessment questions for competency</h3>
+  <h3 class="nhsuk-table__heading-tab">Assessment questions for @Model.VocabSingular().ToLower()</h3>
 
   @if (Model.AssessmentQuestions.Any())
   {
@@ -79,14 +79,14 @@
   }
   else
   {
-    <p>No assessment questions have been added to this competency.</p>
+<p>No assessment questions have been added to this @Model.VocabSingular().ToLower().</p>
   }
 </div>
   <h3>Add a question</h3>
   <form method="post">
     <div class="nhsuk-form-group">
       <label class="nhsuk-label" for="select-question">
-        Add an existing assessment question to the competency
+        Add an existing assessment question to the @Model.VocabSingular().ToLower()
       </label>
       <select class="nhsuk-select nhsuk-u-width-three-quarters" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
       <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.FrameworkId">

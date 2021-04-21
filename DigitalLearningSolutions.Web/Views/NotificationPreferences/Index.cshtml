@@ -1,0 +1,45 @@
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+
+@model NotificationPreferencesViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Notification Preferences";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Notification Preferences</h1>
+
+    @if (Model.AdminNotifications.Any())
+    {
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">
+            My admin account notifications
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+        </div>
+      </details>
+    }
+
+    @if (Model.DelegateNotifications.Any())
+    {
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">
+            My delegate account notifications
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+        </div>
+      </details>
+    }
+
+    <div class="top-spaced-goback">
+      <vc:back-link asp-controller="MyAccount" asp-action="Index"></vc:back-link>
+    </div>
+  </div>
+</div>

@@ -1,14 +1,13 @@
-﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
-
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments 
 @foreach (var questionType in ((IGrouping<string, Competency>)ViewData["competencyGroup"])
-  .SelectMany(competency => competency.AssessmentQuestions)
-  .GroupBy(question => question.Question)
-  )
+ .SelectMany(competency => competency.AssessmentQuestions)
+ .GroupBy(question => question.Question)
+ )
 {
   var meanScore = questionType.Average(question => question.Result);
   var scoreText = meanScore == null
     ? "<span class ='nhsuk-u-visually-hidden'>No answers submitted </span>&nbsp;-"
-    : meanScore.Value.ToString("F1") + "&nbsp;/&nbsp;10";
+    : meanScore.Value.ToString("F1") + "&nbsp;/&nbsp;" + questionType.First().MaxValue;
   <span class="score">
     @Html.Raw($@"{questionType.Key} (average score):&nbsp;{scoreText}")
   </span>

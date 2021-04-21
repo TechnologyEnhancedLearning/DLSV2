@@ -87,6 +87,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkService, FrameworkService>();
@@ -102,7 +103,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IClockService, ClockService>();
         }
 

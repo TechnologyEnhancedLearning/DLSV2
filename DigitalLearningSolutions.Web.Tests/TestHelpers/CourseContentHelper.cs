@@ -20,7 +20,9 @@
             int postLearningAssessmentPassThreshold = 100,
             int diagnosticAssessmentCompletionThreshold = 85,
             int tutorialsCompletionThreshold = 0,
-            string? courseSettings = null
+            string? courseSettings = null,
+            string? password = null,
+            bool passwordSubmitted = false
         )
         {
             return new CourseContent(
@@ -38,7 +40,9 @@
                 postLearningAssessmentPassThreshold,
                 diagnosticAssessmentCompletionThreshold,
                 tutorialsCompletionThreshold,
-                courseSettings
+                courseSettings,
+                password,
+                passwordSubmitted
             );
         }
 

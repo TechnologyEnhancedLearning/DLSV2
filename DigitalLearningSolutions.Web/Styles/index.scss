@@ -61,3 +61,34 @@ h1#page-heading {
   margin-bottom: 16px;
 }
 
+#maincontentwrapper {
+  display: flex;
+}
+
+.nhsuk-main-wrapper {
+  flex: 1;
+}
+
+.responsive-iframe-wrapper {
+  height: 100%;
+  flex: 1 1 auto;
+  display: flex;
+}
+
+.responsive-iframe-wrapper-padding {
+  padding-bottom: nhsuk-spacing(7);
+}
+
+.nhsuk-heading-xl.heading-margin-2 {
+  margin-bottom: nhsuk-spacing(2);
+}
+
+.responsive-iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.bottom-margin-nhsuk-card {
+  @include nhsuk-responsive-margin(7, 'bottom');
+}
+

@@ -64,7 +64,9 @@
                 85,
                 100,
                 true,
-                383
+                383,
+                "",
+                false
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -151,7 +153,9 @@
                 85,
                 100,
                 true,
-                1012
+                1012,
+                "",
+                false
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -205,7 +209,9 @@
                 85,
                 100,
                 true,
-                1012
+                1012,
+                "",
+                false
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -283,7 +289,9 @@
                 0,
                 100,
                 true,
-                75
+                75,
+                "",
+                false
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -324,7 +332,9 @@
                 0,
                 100,
                 true,
-                75
+                75,
+                "",
+                false
             );
             // Will have no tutorials as CustomisationTutorial.Status is 0 for all tutorials in this section
 
@@ -365,7 +375,9 @@
                 0,
                 100,
                 true,
-                75
+                75,
+                "",
+                false
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]
@@ -580,7 +592,9 @@
                 85,
                 100,
                 true,
-                383
+                383,
+                "",
+                false
             );
             expectedSectionContent.Tutorials.AddRange(
                 new[]

@@ -1,18 +1,18 @@
 ﻿@model string
 
-<div class="nhsuk-u-margin-bottom-6 content-viewer_iframe-wrapper js-only-block" id="content-viewer_iframe-wrapper">
-  <iframe src="@Model" class="nhsuk-u-margin-bottom-6 content-viewer_iframe">
-  </iframe>
-</div>
-
 <a class="nhsuk-button js-only-inline"
    id="content-viewer_enter-fullscreen-button"
    href="#">
-  Fullscreen
+  View full screen
 </a>
+
+<div class="nhsuk-u-margin-bottom-6 nhsuk-u-margin-top-6 content-viewer_iframe-wrapper js-only-block" id="content-viewer_iframe-wrapper">
+  <iframe src="@Model" class="content-viewer_iframe">
+  </iframe>
+</div>
 
 <a class="nhsuk-button nhsuk-button--secondary exit-fullscreen-button hidden"
    id="content-viewer_exit-fullscreen-button"
    href="#">
-  Exit fullscreen
+  Exit full screen
 </a>

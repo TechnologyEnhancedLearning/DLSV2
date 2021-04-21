@@ -14,7 +14,6 @@
 
     public class PasswordResetServiceTests
     {
-        private IConfigService configService;
         private IDbConnection connection;
         private IEmailService emailService;
         private ILogger<PasswordResetService> logger;
@@ -26,7 +25,6 @@
         {
             userService = A.Fake<IUserService>();
             logger = A.Fake<ILogger<PasswordResetService>>();
-            configService = A.Fake<IConfigService>();
             emailService = A.Fake<IEmailService>();
             connection = ServiceTestHelper.GetDatabaseConnection();
 
@@ -36,7 +34,7 @@
                 new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
             ));
 
-            passwordResetService = new PasswordResetService(userService, connection, logger, configService, emailService);
+            passwordResetService = new PasswordResetService(userService, connection, logger, emailService);
         }
 
         [Test]
@@ -46,7 +44,7 @@
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((new List<AdminUser>(), new List<DelegateUser>()));
 
             // Then
-            Assert.Throws<EmailAddressNotFoundException>(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com"));
+            Assert.Throws<UserAccountNotFoundException>(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com"));
         }
 
         [Test]
