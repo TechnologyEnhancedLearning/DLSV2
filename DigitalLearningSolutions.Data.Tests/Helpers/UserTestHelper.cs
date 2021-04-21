@@ -79,10 +79,5 @@
                 IsFrameworkDeveloper = isFrameworkDeveloper
             };
         }
-
-        public static string GetDefaultCentreName(string centreName = "North West Boroughs Healthcare NHS Foundation Trust")
-        {
-            return centreName;
-        }
     }
 }

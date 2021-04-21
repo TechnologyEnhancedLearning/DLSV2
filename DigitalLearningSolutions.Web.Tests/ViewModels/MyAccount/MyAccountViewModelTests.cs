@@ -35,7 +35,6 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var centreName = UserTestHelper.GetDefaultCentreName();
 
             // When
             var returnedModel = new MyAccountViewModel(adminUser, null);
@@ -57,7 +56,6 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var centreName = UserTestHelper.GetDefaultCentreName();
 
             // When
             var returnedModel = new MyAccountViewModel(null, delegateUser);

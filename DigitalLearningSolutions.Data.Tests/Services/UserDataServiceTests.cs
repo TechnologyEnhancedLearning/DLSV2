@@ -31,16 +31,16 @@
         }
 
         [Test]
-        public void GetDelegateUsersByUsername_Returns_delegate_users()
+        public void GetDelegateUsersByUsername_Returns_delegate_user()
         {
             // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
             //When
             var returnedDelegateUsers = userDataService.GetDelegateUsersByUsername("SV1234");
 
             // Then
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUsers);
+            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
