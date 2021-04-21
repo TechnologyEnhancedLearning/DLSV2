@@ -7,16 +7,37 @@
 
     public interface IJobGroupsService
     {
+        string GetJobGroupName(int jobGroupId);
         IEnumerable<(int, string)> GetJobGroups();
     }
 
     public class JobGroupsService : IJobGroupsService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<JobGroupsService> logger;
 
-        public JobGroupsService(IDbConnection connection)
+        public JobGroupsService(IDbConnection connection, ILogger<JobGroupsService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
+        }
+
+        public string GetJobGroupName(int jobGroupId)
+        {
+            var name = connection.QueryFirstOrDefault<string?>(
+                @"SELECT JobGroupName
+                        FROM JobGroups
+                        WHERE JobGroupID = @jobGroupId",
+                new { jobGroupId }
+            );
+            if (name == null)
+            {
+                logger.LogWarning(
+                    $"No centre found for job group id {jobGroupId}"
+                );
+            }
+
+            return name;
         }
 
         public IEnumerable<(int, string)> GetJobGroups()

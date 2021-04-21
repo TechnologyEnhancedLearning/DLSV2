@@ -16,7 +16,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="Index">
+    <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
 
       @if (errorHasOccurred) {
         <partial name="_ErrorSummary"/>
@@ -39,7 +39,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["FirstName"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @firstNameInputErrorClass" type="text" id="FirstName" spellcheck="false" autocomplete="given-name" aria-describedby="first-name-error" asp-for="FirstName"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @firstNameInputErrorClass" id="FirstName" spellcheck="false" autocomplete="given-name" aria-describedby="first-name-error" asp-for="FirstName"/>
       </div>
 
       <div class="nhsuk-form-group @lastNameFormErrorClass">
@@ -51,7 +51,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["LastName"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @lastNameInputErrorClass" type="text" id="LastName" spellcheck="false" autocomplete="family-name" aria-describedby="last-name-error" asp-for="LastName"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @lastNameInputErrorClass" id="LastName" spellcheck="false" autocomplete="family-name" aria-describedby="last-name-error" asp-for="LastName"/>
       </div>
 
       <div class="nhsuk-form-group @emailFormErrorClass">
@@ -63,7 +63,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Email"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" type="text" id="Email" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
       </div>
 
       <button class="nhsuk-button" type="submit">Next</button>

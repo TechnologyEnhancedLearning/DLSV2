@@ -47,7 +47,7 @@
                 return View();
             }
 
-            return View("Index", delegateRegistrationData.RegisterViewModel);
+            return View(delegateRegistrationData.RegisterViewModel);
         }
 
         [HttpPost]
@@ -55,7 +55,7 @@
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", model);
+                return View(model);
             }
 
             var data = TempData.Get<DelegateRegistrationData>();
@@ -85,10 +85,9 @@
         {
             if (!ModelState.IsValid)
             {
-                // QQ is this line necessary
                 ViewBag.Centres = centresService.GetActiveCentres();
                 ViewBag.JobGroups = jobGroupsService.GetJobGroups();
-                return View("LearnerInformation", model);
+                return View(model);
             }
 
             var data = TempData.Get<DelegateRegistrationData>();
@@ -116,15 +115,55 @@
         {
             if (!ModelState.IsValid)
             {
-                return View("Password", model);
+                return View(model);
             }
-
             var data = TempData.Get<DelegateRegistrationData>();
             data.PasswordViewModel = model;
             TempData.Set(data);
 
-            // QQ redirect to summary
-            return RedirectToAction("Password");
+            return RedirectToAction("Summary");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [Route("Register/summary")]
+        [HttpGet]
+        public IActionResult Summary()
+        {
+            var data = TempData.Get<DelegateRegistrationData>();
+            var viewModel = MapToSummary(data);
+
+            return View(viewModel);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [Route("Register/summary")]
+        [HttpPost]
+        public IActionResult Summary(SummaryViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var data = TempData.Get<DelegateRegistrationData>();
+                var viewModel = MapToSummary(data);
+                viewModel.Terms = model.Terms;
+                return View(viewModel);
+            }
+
+            // TODO HEEDLS-396 create new user and redirect to confirmation page
+            return View(model);
+        }
+
+        private SummaryViewModel MapToSummary(DelegateRegistrationData data)
+        {
+            var centre = centresService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var jobGroup = jobGroupsService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+            return new SummaryViewModel
+            {
+                FirstName = data.RegisterViewModel.FirstName,
+                LastName = data.RegisterViewModel.LastName,
+                Email = data.RegisterViewModel.Email,
+                Centre = centre,
+                JobGroup = jobGroup
+            };
         }
     }
 }
