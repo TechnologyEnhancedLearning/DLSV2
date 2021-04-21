@@ -56,11 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             return new LandingPageViewModel
             {
-                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName)
-                {
-                    Sections = sections,
-                    CurrentSectionIndex = sectionIndex,
-                },
+                MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName],
             };

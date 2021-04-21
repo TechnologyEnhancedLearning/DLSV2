@@ -1,16 +1,19 @@
 namespace DigitalLearningSolutions.Web.ViewModels.Common.MiniHub
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public class MiniHubNavigationModel
     {
-        public MiniHubNavigationModel(string miniHubName)
+        public MiniHubNavigationModel(string miniHubName, IEnumerable<MiniHubSection> sections, int currentSectionIndex)
         {
             MiniHubName = miniHubName;
+            Sections = sections.ToList();
+            CurrentSectionIndex = currentSectionIndex;
         }
 
         public readonly string MiniHubName;
-        public List<MiniHubSection> Sections { get; set; } = new List<MiniHubSection>();
-        public int CurrentSectionIndex { get; set; }
+        public readonly List<MiniHubSection> Sections;
+        public readonly int CurrentSectionIndex;
     }
 }
