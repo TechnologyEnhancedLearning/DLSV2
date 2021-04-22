@@ -8,7 +8,6 @@
     public interface INotificationService
     {
         void SendUnlockRequest(int progressId);
-        void SendFrameworkCollaboratorInvite(int adminId, int frameworkId, int invitedByAdminId);
     }
 
     public class NotificationService : INotificationService
@@ -57,40 +56,6 @@ To review and unlock their progress, visit the this url: ${unlockUrl}.",
             };
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, unlockData.ContactEmail, unlockData.DelegateEmail));
-        }
-
-        public void SendFrameworkCollaboratorInvite(int adminId, int frameworkId, int invitedByAdminId)
-        {
-            var collaboratorNotification = notificationDataService.GetCollaboratorNotification(adminId, frameworkId, invitedByAdminId);
-            if (collaboratorNotification == null)
-            {
-                throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. adminId: {adminId}, frameworkId: {frameworkId}, invitedByAdminId: {invitedByAdminId})");
-            }
-
-            collaboratorNotification.Forename = collaboratorNotification.Forename == "" ? "Colleague" : collaboratorNotification.Forename;
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)?.Replace("tracking/", "") ??
-                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("TrackingSystemBaseUrl"));
-            ;
-            if (trackingSystemBaseUrl.Contains("dls.nhs.uk"))
-            {
-                trackingSystemBaseUrl += "v2/";
-            }
-
-            var frameworkUrl = new UriBuilder(trackingSystemBaseUrl);
-            frameworkUrl.Path += $"Framework/Structure/{collaboratorNotification.FrameworkID}";
-            string emailSubjectLine = "DLS Digital Framework Contributor Invitation";
-            var builder = new BodyBuilder
-            {
-                TextBody = $@"Dear {collaboratorNotification?.Forename},
-You have been identified as a {collaboratorNotification?.FrameworkRole} for the digital capability framework, {collaboratorNotification?.FrameworkName} by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}).
-To access the framework, visit this url: {frameworkUrl}. You will need to login to DLS to view the framework.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
-                                    <p>Dear {collaboratorNotification?.Forename},</p>
-<p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the digital capability framework, {collaboratorNotification?.FrameworkName} by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p>
-<p>To access the framework, <a href='{frameworkUrl}'>click here</a>. You will need to login to DLS to view the framework.</p>"
-            };
-
-            emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.Email, collaboratorNotification.InvitedByEmail));
         }
     }
 }

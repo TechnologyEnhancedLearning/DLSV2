@@ -499,7 +499,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCollaborator(string actionname, int adminId, bool canModify, int frameworkId)
         {
             frameworkService.AddCollaboratorToFramework(frameworkId, adminId, canModify);
-            notificationService.SendFrameworkCollaboratorInvite(adminId, frameworkId, GetAdminID());
+            frameworkNotificationService.SendFrameworkCollaboratorInvite(adminId, frameworkId, GetAdminID());
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int adminId)

@@ -107,6 +107,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
+    using DigitalLearningSolutions.Data.Models.Email;
 
     public interface IFrameworkService
     {
@@ -23,6 +24,7 @@
         string? GetFrameworkConfigForFrameworkId(int frameworkId);
         //  Collaborators:
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
+        CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId);
         //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
@@ -43,7 +45,9 @@
         Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
-        CommentReplies GetCommentById(int commentId, int adminId);
+        CommentReplies GetCommentRepliesById(int commentId, int adminId);
+        Comment GetCommentById(int adminId, int commentId);
+        List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId);
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -55,7 +59,7 @@
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
-        void InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
+        int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -1229,7 +1233,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                     ORDER BY AddedDate ASC", new { commentId, adminId }
            ).ToList();
         }
-        public CommentReplies GetCommentById(int commentId, int adminId)
+        public CommentReplies GetCommentRepliesById(int commentId, int adminId)
         {
 
             var result = connection.Query<CommentReplies>(
@@ -1244,7 +1248,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
             }
             return result;
         }
-        public void InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId)
+        public int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId)
         {
             if (frameworkId < 1 | adminId < 1 | comment == null)
             {
@@ -1252,21 +1256,23 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                     $"Not inserting assessment question level descriptor as it failed server side validation. AdminId: {adminId}, frameworkId: {frameworkId}, comment: {comment}"
                 );
             }
-            var numberOfAffectedRows = connection.Execute(
+            var commentId = connection.ExecuteScalar<int>(
                @"INSERT INTO FrameworkComments
                      (AdminID
            ,ReplyToFrameworkCommentID
            ,Comments
            ,FrameworkID)
-                      VALUES (@adminId, @replyToCommentId, @comment, @frameworkId)"
+                      VALUES (@adminId, @replyToCommentId, @comment, @frameworkId);
+                      SELECT CAST(SCOPE_IDENTITY() as int)"
                    , new { adminId, replyToCommentId, comment, frameworkId });
-            if (numberOfAffectedRows < 1)
+            if (commentId < 1)
             {
                 logger.LogWarning(
                     "Not inserting framework comment as db insert failed. " +
                     $"AdminId: {adminId}, frameworkId: {frameworkId}, comment: {comment}."
                 );
             }
+            return commentId;
         }
         public void ArchiveComment(int commentId)
         {
@@ -1290,6 +1296,58 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                 WHERE ID = @frameworkId",
               new { frameworkId }
           );
+        }
+        public CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId)
+        {
+            return connection.Query<CollaboratorNotification>(
+
+                @"SELECT fc.FrameworkID, fc.AdminID, fc.CanModify, au.Email, au.Forename, au.Surname, CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole, f.FrameworkName,
+                    (SELECT Forename + ' ' + Surname AS Expr1
+                         FROM    AdminUsers AS au1
+                         WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
+                    (SELECT Email
+                        FROM    AdminUsers AS au2
+                        WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
+                    FROM   FrameworkCollaborators AS fc INNER JOIN
+                        AdminUsers AS au ON fc.AdminID = au.AdminID INNER JOIN
+                        Frameworks AS f ON fc.FrameworkID = f.ID
+                    WHERE (fc.FrameworkID = @frameworkId) AND (fc.AdminID = @adminId)",
+                new { invitedByAdminId, frameworkId, adminId }
+                ).FirstOrDefault();
+        }
+
+        public List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId)
+        {
+            return connection.Query<Recipient>(
+                @"SELECT au.Email, au.Forename, au.Surname, CAST(0 AS bit) AS Owner, CAST(0 AS bit) AS Sender
+                    FROM   FrameworkComments AS fwc INNER JOIN
+                         AdminUsers AS au ON fwc.AdminID = au.AdminID INNER JOIN
+                         Frameworks AS fw1 ON fwc.FrameworkID = fw1.ID AND fwc.AdminID <> fw1.OwnerAdminID
+                    WHERE (fwc.FrameworkID = @frameworkId) AND (fwc.AdminID <> @adminID) AND (fwc.ReplyToFrameworkCommentID = @replyToCommentId)
+                    GROUP BY fwc.FrameworkID, fwc.AdminID, au.Email, au.Forename, au.Surname
+                    UNION
+                    SELECT au1.Email, au1.Forename, au1.Surname, CAST(1 AS bit) AS Owner, CAST(0 AS bit) AS Sender
+                    FROM   Frameworks AS fw INNER JOIN
+                         AdminUsers AS au1 ON fw.OwnerAdminID = au1.AdminID AND au1.AdminID <> @adminId
+                    WHERE (fw.ID = @frameworkId)
+                    UNION
+                    SELECT Email, Forename, Surname, CAST(0 AS bit) AS Owner, CAST(1 AS bit) AS Sender
+                    FROM   AdminUsers AS au2
+                    WHERE (AdminID = @adminId)
+                    ORDER BY Sender Desc",
+                new { frameworkId, adminId, replyToCommentId }
+                ).ToList();
+        }
+
+        public Comment GetCommentById(int adminId, int commentId)
+        {
+            return (Comment)connection.QueryFirst(
+                @"DECLARE @adminId int = 1;
+DECLARE @commentId int = 7;
+SELECT ID, ReplyToFrameworkCommentID, AdminID, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, Archived, LastEdit, FrameworkID
+FROM   FrameworkComments
+WHERE (ID = @commentId)", new { adminId, commentId }
+                );
         }
     }
 }
