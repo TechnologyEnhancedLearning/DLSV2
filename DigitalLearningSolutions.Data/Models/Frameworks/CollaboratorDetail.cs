@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Models.Frameworks
+﻿namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class CollaboratorDetail : Collaborator
     {
