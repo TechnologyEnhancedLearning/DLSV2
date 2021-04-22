@@ -12,6 +12,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Routing;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
     public static class LoginTestHelper
     {
@@ -58,7 +59,7 @@
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-            return new LoginController(loginService, userService)
+            var controller = new LoginController(loginService, userService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -69,6 +70,11 @@
                     }
                 }
             };
+
+            var tempData = new TempDataDictionary(controller.HttpContext, A.Fake<ITempDataProvider>());
+            controller.TempData = tempData;
+
+            return controller;
         }
 
         public static LoginController GetLoginControllerWithSignInFunctionality
@@ -77,30 +83,20 @@
             IUserService userService
         )
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(""));
-            var session = new MockHttpContextSession();
+            var controller = GetLoginControllerWithUnauthenticatedUser(loginService, userService);
 
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
                 A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
 
             var urlHelperFactory = A.Fake<IUrlHelperFactory>();
-
             var services = A.Fake<IServiceProvider>();
             A.CallTo(() => services.GetService(typeof(IAuthenticationService))).Returns(authService);
             A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
-            return new LoginController(loginService, userService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = session,
-                        RequestServices = services
-                    }
-                }
-            };
+
+            controller.HttpContext.RequestServices = services;
+
+            return controller;
         }
     }
 }

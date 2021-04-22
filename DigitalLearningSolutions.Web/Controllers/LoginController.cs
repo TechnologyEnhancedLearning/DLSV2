@@ -6,6 +6,7 @@
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
@@ -40,16 +41,16 @@
                 return View("Index", model);
             }
 
-            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(model.Username);
+            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username);
 
-            if (unverifiedAdminUser == null && unverifiedDelegateUsers.Count == 0)
+            if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "No account with that email address or user ID could be found.");
                 return View("Index", model);
             }
 
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(model.Password, unverifiedAdminUser, unverifiedDelegateUsers);
+                loginService.VerifyUsers(model.Password, adminUser, delegateUsers);
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -57,20 +58,67 @@
                 return View("Index", model);
             }
 
-            var approvedDelegateUser = verifiedDelegateUsers.FirstOrDefault(du => du.Approved);
+            var approvedDelegateUsers = verifiedDelegateUsers.Where(du => du.Approved).ToList();
 
-            if (verifiedAdminUser == null && approvedDelegateUser == null)
+            if (verifiedAdminUser == null && !approvedDelegateUsers.Any())
             {
                 return View("AccountNotApproved");
             }
 
-            verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
-            
-            LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
-            return RedirectToAction("Index", "Home");
+            verifiedAdminUser ??=
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
+
+            var availableCentres = GetAvailableCentres(verifiedAdminUser, approvedDelegateUsers);
+
+            if (availableCentres.Count == 1)
+            {
+                return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
+            }
+
+            TempData.Clear();
+            TempData["RememberMe"] = model.RememberMe;
+            TempData.Set(adminUser);
+            TempData.Set(approvedDelegateUsers);
+
+            return View("ChooseACentre", availableCentres);
         }
 
-        private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
+        [HttpPost]
+        public IActionResult ChooseACentre(int centreId)
+        {
+            var rememberMe = (bool)TempData["RememberMe"];
+            var adminAccount = TempData.Get<AdminUser>();
+            var approvedDelegateAccounts = TempData.Get<List<DelegateUser>>();
+
+            var adminAccountForChosenCentre = adminAccount?.CentreId == centreId ? adminAccount : null;
+            var delegateAccountForChosenCentre =
+                approvedDelegateAccounts?.FirstOrDefault(du => du.CentreId == centreId);
+
+            return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
+        }
+
+        private List<ChooseACentreViewModel> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        {
+            var availableCentres = new List<ChooseACentreViewModel>();
+
+            foreach (var delegateUser in delegateUsers)
+            {
+                var isAdmin = adminUser?.CentreId == delegateUser.CentreId;
+
+                availableCentres.Add(new ChooseACentreViewModel(
+                    delegateUser.CentreId, delegateUser.CentreName, isAdmin, true));
+            }
+
+            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
+            {
+                availableCentres.Add(new ChooseACentreViewModel
+                    (adminUser.CentreId, adminUser.CentreName, true));
+            }
+
+            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
+        }
+
+        private IActionResult LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
         {
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
@@ -81,6 +129,7 @@
                 IssuedUtc = DateTime.UtcNow
             };
             HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+            return RedirectToAction("Index", "Home");
         }
 
         private List<Claim> GetClaimsForSignIn(AdminUser? adminUser, DelegateUser? delegateUser)
