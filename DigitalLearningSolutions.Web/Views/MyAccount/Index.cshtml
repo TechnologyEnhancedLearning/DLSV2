@@ -91,7 +91,50 @@
             </dd>
           </div>
 
-          <div class="nhsuk-summary-list__row account-details-list__row">
+          @if (Model.DelegateNumber != null)
+          {
+            <div class="nhsuk-summary-list__row account-details-list__row">
+              <dt class="nhsuk-summary-list__key">
+                Job group:
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                @Model.JobGroup
+              </dd>
+            </div>
+
+            @if (Model.CustomField1 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField1" />
+            }
+
+            @if (Model.CustomField2 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField2" />
+            }
+
+            @if (Model.CustomField3 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField3" />
+            }
+
+            @if (Model.CustomField4 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField4" />
+            }
+
+            @if (Model.CustomField5 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField5" />
+            }
+
+            @if (Model.CustomField6 != null)
+            {
+              <partial name="MyDetailsCustomField" model="@Model.CustomField6" />
+            }
+
+          }
+
+          <div class="nhsuk-summary-list__row account-detailslist_row">
             <dt class="nhsuk-summary-list__key profile-picture__label">
               Profile picture (optional):
             </dt>

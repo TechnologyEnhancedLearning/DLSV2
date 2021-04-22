@@ -1,0 +1,100 @@
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
+{
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
+
+    public static class CustomPromptsTestHelper
+    {
+        public static CentreCustomPrompts GetDefaultCentreCustomPrompts
+        (
+            int centreId = 2,
+            CustomPrompt? customPrompt1 = null,
+            CustomPrompt? customPrompt2 = null,
+            CustomPrompt? customPrompt3 = null,
+            CustomPrompt? customPrompt4 = null,
+            CustomPrompt? customPrompt5 = null,
+            CustomPrompt? customPrompt6 = null
+        )
+        {
+            return new CentreCustomPrompts
+            {
+                CentreId = centreId,
+                CustomField1 = customPrompt1,
+                CustomField2 = customPrompt2,
+                CustomField3 = customPrompt3,
+                CustomField4 = customPrompt4,
+                CustomField5 = customPrompt5,
+                CustomField6 = customPrompt6
+            };
+        }
+
+        public static CustomPrompt GetDefaultCustomPrompt
+        (
+            int id = 1,
+            string text = "Custom Prompt",
+            string options = "",
+            bool mandatory = false
+        )
+        {
+            return new CustomPrompt(id, text, options, mandatory);
+        }
+
+        public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult
+        (
+            int centreId = 2,
+            int customField1PromptId = 0,
+            string? customField1Prompt = null,
+            string? customField1Options = null,
+            bool customField1Mandatory = false,
+            int customField2PromptId = 0,
+            string? customField2Prompt = null,
+            string? customField2Options = null,
+            bool customField2Mandatory = false,
+            int customField3PromptId = 0,
+            string? customField3Prompt = null,
+            string? customField3Options = null,
+            bool customField3Mandatory = false,
+            int customField4PromptId = 0,
+            string? customField4Prompt = null,
+            string? customField4Options = null,
+            bool customField4Mandatory = false,
+            int customField5PromptId = 0,
+            string? customField5Prompt = null,
+            string? customField5Options = null,
+            bool customField5Mandatory = false,
+            int customField6PromptId = 0,
+            string? customField6Prompt = null,
+            string? customField6Options = null,
+            bool customField6Mandatory = false
+        )
+        {
+            return new CentreCustomPromptsResult
+            {
+                CentreId = centreId,
+                CustomField1PromptId = customField1PromptId,
+                CustomField1Prompt = customField1Prompt,
+                CustomField1Options = customField1Options,
+                CustomField1Mandatory = customField1Mandatory,
+                CustomField2PromptId = customField2PromptId,
+                CustomField2Prompt = customField2Prompt,
+                CustomField2Options = customField2Options,
+                CustomField2Mandatory = customField2Mandatory,
+                CustomField3PromptId = customField3PromptId,
+                CustomField3Prompt = customField3Prompt,
+                CustomField3Options = customField3Options,
+                CustomField3Mandatory = customField3Mandatory,
+                CustomField4PromptId = customField4PromptId,
+                CustomField4Prompt = customField4Prompt,
+                CustomField4Options = customField4Options,
+                CustomField4Mandatory = customField4Mandatory,
+                CustomField5PromptId = customField5PromptId,
+                CustomField5Prompt = customField5Prompt,
+                CustomField5Options = customField5Options,
+                CustomField5Mandatory = customField5Mandatory,
+                CustomField6PromptId = customField6PromptId,
+                CustomField6Prompt = customField6Prompt,
+                CustomField6Options = customField6Options,
+                CustomField6Mandatory = customField6Mandatory
+            };
+        }
+    }
+}

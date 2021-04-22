@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -8,12 +7,12 @@
 
     public class MyAccountController : Controller
     {
-        private readonly ICentresService centresService;
         private readonly IUserService userService;
+        private readonly ICustomPromptsService customPromptsService;
 
-        public MyAccountController(ICentresService centresService, IUserService userService)
+        public MyAccountController(ICustomPromptsService customPromptsService, IUserService userService)
         {
-            this.centresService = centresService;
+            this.customPromptsService = customPromptsService;
             this.userService = userService;
         }
 
@@ -28,7 +27,9 @@
             var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var model = new MyAccountViewModel(adminUser, delegateUser);
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(delegateUser?.CentreId ?? adminUser?.CentreId);
+
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 
             return View(model);
         }

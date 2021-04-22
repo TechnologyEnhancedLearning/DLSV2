@@ -14,9 +14,10 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: CustomPromptsTestHelper.GetDefaultCustomPrompt());
             
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, delegateUser);
+            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 
             // Then
             using (new AssertionScope())
@@ -27,6 +28,11 @@
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
+                returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
+                returnedModel.CustomField1?.CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
+                returnedModel.CustomField1?.Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.CustomField1?.Mandatory.Should().BeFalse();
+                returnedModel.CustomField2.Should().BeNull();
             }
         }
 
@@ -37,7 +43,7 @@
             var adminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, null);
+            var returnedModel = new MyAccountViewModel(adminUser, null, null);
 
             // Then
             using (new AssertionScope())
@@ -48,6 +54,8 @@
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(adminUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeNull();
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
+                returnedModel.JobGroup.Should().BeNull();
+                returnedModel.CustomField1.Should().BeNull();
             }
         }
 
@@ -56,9 +64,10 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: CustomPromptsTestHelper.GetDefaultCustomPrompt());
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser);
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts);
 
             // Then
             using (new AssertionScope())
@@ -69,6 +78,11 @@
                 returnedModel.ProfilePicture.Should().BeEquivalentTo(delegateUser.ProfileImage);
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(delegateUser.EmailAddress);
+                returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
+                returnedModel.CustomField1?.CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
+                returnedModel.CustomField1?.Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.CustomField1?.Mandatory.Should().BeFalse();
+                returnedModel.CustomField2.Should().BeNull();
             }
         }
     }
