@@ -1237,7 +1237,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         {
 
             var result = connection.Query<CommentReplies>(
-                 @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = @adminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
+                 @"SELECT ID, ReplyToFrameworkCommentID, AdminID, (SELECT Forename + ' ' + Surname FROM AdminUsers WHERE AdminID = FrameworkComments.AdminId) AS Commenter, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, LastEdit
                     FROM FrameworkComments
                     WHERE Archived Is NULL AND ReplyToFrameworkCommentID Is NULL AND ID = @commentId", new { commentId, adminId }
            ).FirstOrDefault();
