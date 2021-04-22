@@ -4,12 +4,6 @@
 
     public class PasswordViewModel
     {
-        public PasswordViewModel()
-        {
-            Password = string.Empty;
-            ConfirmPassword = string.Empty;
-        }
-
         [Required(ErrorMessage = "Please enter a password.")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
         [RegularExpression(@"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*",

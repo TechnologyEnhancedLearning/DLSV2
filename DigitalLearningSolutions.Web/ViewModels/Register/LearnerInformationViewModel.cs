@@ -4,12 +4,6 @@
 
     public class LearnerInformationViewModel
     {
-        public LearnerInformationViewModel()
-        {
-            Centre = 0;
-            JobGroup = 0;
-        }
-
         [Required(ErrorMessage = "Please select a centre.")]
         public int? Centre { get; set; }
 

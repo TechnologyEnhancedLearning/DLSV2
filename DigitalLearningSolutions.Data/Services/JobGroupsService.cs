@@ -7,7 +7,7 @@
 
     public interface IJobGroupsService
     {
-        string GetJobGroupName(int jobGroupId);
+        string? GetJobGroupName(int jobGroupId);
         IEnumerable<(int, string)> GetJobGroups();
     }
 
@@ -22,7 +22,7 @@
             this.logger = logger;
         }
 
-        public string GetJobGroupName(int jobGroupId)
+        public string? GetJobGroupName(int jobGroupId)
         {
             var name = connection.QueryFirstOrDefault<string?>(
                 @"SELECT JobGroupName
@@ -33,7 +33,7 @@
             if (name == null)
             {
                 logger.LogWarning(
-                    $"No centre found for job group id {jobGroupId}"
+                    $"No job group found for job group id {jobGroupId}"
                 );
             }
 

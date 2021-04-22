@@ -50,6 +50,7 @@
             return View(delegateRegistrationData.RegisterViewModel);
         }
 
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
         public IActionResult Index(RegisterViewModel model)
         {
@@ -59,19 +60,18 @@
             }
 
             var data = TempData.Get<DelegateRegistrationData>();
-            data.RegisterViewModel = model;
+            data!.RegisterViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/learner-information")]
         [HttpGet]
         public IActionResult LearnerInformation()
         {
             var data = TempData.Get<DelegateRegistrationData>();
-            var viewModel = data.LearnerInformationViewModel;
+            var viewModel = data!.LearnerInformationViewModel;
             ViewBag.Centres = centresService.GetActiveCentres();
             ViewBag.JobGroups = jobGroupsService.GetJobGroups();
 
@@ -79,7 +79,6 @@
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/learner-information")]
         [HttpPost]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
@@ -91,25 +90,23 @@
             }
 
             var data = TempData.Get<DelegateRegistrationData>();
-            data.LearnerInformationViewModel = model;
+            data!.LearnerInformationViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Password");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/password")]
         [HttpGet]
         public IActionResult Password()
         {
             var data = TempData.Get<DelegateRegistrationData>();
-            var viewModel = data.PasswordViewModel;
+            var viewModel = data!.PasswordViewModel;
 
             return View(viewModel);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/password")]
         [HttpPost]
         public IActionResult Password(PasswordViewModel model)
         {
@@ -118,32 +115,30 @@
                 return View(model);
             }
             var data = TempData.Get<DelegateRegistrationData>();
-            data.PasswordViewModel = model;
+            data!.PasswordViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Summary");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/summary")]
         [HttpGet]
         public IActionResult Summary()
         {
             var data = TempData.Get<DelegateRegistrationData>();
-            var viewModel = MapToSummary(data);
+            var viewModel = MapToSummary(data!);
 
             return View(viewModel);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
-        [Route("Register/summary")]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 var data = TempData.Get<DelegateRegistrationData>();
-                var viewModel = MapToSummary(data);
+                var viewModel = MapToSummary(data!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
