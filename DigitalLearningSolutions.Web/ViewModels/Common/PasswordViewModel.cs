@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     using System.ComponentModel.DataAnnotations;
 
