@@ -1,7 +1,15 @@
-@import "homeShared";
+@import "~nhsuk-frontend/packages/core/all";
+
+.learning-content-item {
+  margin-bottom: 72px;
+}
+
+.learning-content-item__heading {
+  @extend .nhsuk-heading-m;
+}
 
 .learning-content-item__text {
-  @extend .landing-page__body-text;
+  @extend .nhsuk-body-m;
 
   @include govuk-media-query($until: tablet) {
     margin-left: auto;
@@ -35,4 +43,25 @@
   flex-basis: 100%; // This ensures IE limits the item width to be within the containing div.
   display: flex;
   flex-direction: column;
+}
+
+.learning-content-item__image-box {
+  box-shadow: 0 0 10px 1px rgba(0,0,0,0.05);
+  background: $color_nhsuk-white;
+  border-radius: 4px;
+  padding: 8px;
+  height: fit-content;
+  width: fit-content;
+
+  @include govuk-media-query($from: tablet) {
+    margin-right: 32px;
+  }
+}
+
+.learning-content-item__image {
+  height: 200px;
+  width: auto;
+
+  // We do this so the containing div won't leave extra space below the image. See https://stackoverflow.com/a/8522087z
+  display: block;
 }
