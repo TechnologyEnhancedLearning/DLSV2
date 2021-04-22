@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using Microsoft.CodeAnalysis.CSharp.Syntax
 @using Microsoft.Extensions.Configuration
 @model MyAccountViewModel
 
@@ -64,7 +65,7 @@
       </summary>
       <div class="nhsuk-details__text">
         <dl class="nhsuk-summary-list">
-          <div class="nhsuk-summary-list__row account-summarylist_row">
+          <div class="nhsuk-summary-list__row account-detailslist_row">
             <dt class="nhsuk-summary-list__key">
               First name:
             </dt>
@@ -73,7 +74,7 @@
             </dd>
           </div>
 
-          <div class="nhsuk-summary-list__row account-summarylist_row">
+          <div class="nhsuk-summary-list__row account-detailslist_row">
             <dt class="nhsuk-summary-list__key">
               Last name:
             </dt>
@@ -82,12 +83,30 @@
             </dd>
           </div>
 
-          <div class="nhsuk-summary-list__row account-summarylist_row">
+          <div class="nhsuk-summary-list__row account-detailslist_row">
             <dt class="nhsuk-summary-list__key">
               Email address:
             </dt>
             <dd class="nhsuk-summary-list__value">
               @Model.User
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row account-detailslist_row">
+            <dt class="nhsuk-summary-list__key profile-picture__label">
+              Profile picture (optional):
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              <div class="profile-picture__image-box">
+                @if (Model.ProfilePicture != null)
+                {
+                  <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfilePicture)" alt="Profile Picture" />
+                }
+                else
+                {
+                  <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
+                }
+              </div>
             </dd>
           </div>
         </dl>

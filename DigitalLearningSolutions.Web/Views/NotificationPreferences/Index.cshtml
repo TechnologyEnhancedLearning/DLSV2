@@ -1,4 +1,4 @@
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 
 @model NotificationPreferencesViewModel
 
@@ -12,7 +12,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Notification Preferences</h1>
 
-    @if (Model.AdminNotifications.Any())
+    @if (Model.AdminNotifications.Notifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
@@ -21,11 +21,12 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <partial name="_NotificationPreferenceList" model="Model.AdminNotifications" />
         </div>
       </details>
     }
 
-    @if (Model.DelegateNotifications.Any())
+    @if (Model.DelegateNotifications.Notifications.Any())
     {
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
@@ -34,6 +35,7 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <partial name="_NotificationPreferenceList" model="Model.DelegateNotifications" />
         </div>
       </details>
     }
