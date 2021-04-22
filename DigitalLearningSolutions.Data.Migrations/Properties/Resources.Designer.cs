@@ -293,6 +293,46 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[InsertUpdateCustomisationTutorials]    Script Date: 21/04/2021 16:16:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 02/03/2020
+        ///-- Description:	Updates or inserts a CustomisationTutorials record  with new values
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[InsertUpdateCustomisationTutorials]
+        ///	-- Add the parameters for the store [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string dlsv2_172_fixcustomisationtutorialprogressissue_down {
+            get {
+                return ResourceManager.GetString("dlsv2_172_fixcustomisationtutorialprogressissue_down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[InsertUpdateCustomisationTutorials]    Script Date: 21/04/2021 16:16:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 02/03/2020
+        ///-- Description:	Updates or inserts a CustomisationTutorials record  with new values
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[InsertUpdateCustomisationTutorials]
+        ///	-- Add the parameters for the store [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string dlsv2_172_fixcustomisationtutorialprogressissue_up {
+            get {
+                return ResourceManager.GetString("dlsv2_172_fixcustomisationtutorialprogressissue_up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table
