@@ -1,0 +1,13 @@
+@import "~nhsuk-frontend/packages/core/all";
+
+.product {
+  margin-bottom: 72px;
+}
+
+.product__heading {
+  @extend .nhsuk-heading-m;
+}
+
+.product__body-text {
+  @extend .nhsuk-body-m;
+}
