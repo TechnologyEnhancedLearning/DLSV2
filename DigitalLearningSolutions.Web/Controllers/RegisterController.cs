@@ -32,8 +32,8 @@
 
             if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
             {
-                var id = Guid.NewGuid();
-                delegateRegistrationData = new DelegateRegistrationData { Id = id };
+                delegateRegistrationData = new DelegateRegistrationData();
+                var id = delegateRegistrationData.Id;
 
                 Response.Cookies.Append(
                     CookieName,
