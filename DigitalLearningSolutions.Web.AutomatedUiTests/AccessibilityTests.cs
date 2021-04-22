@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests
 {
     using System;
+    using FluentAssertions;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
     using Selenium.Axe;
@@ -36,7 +37,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             var axeResult = new AxeBuilder(driver).Analyze();
 
             // then
-            Assert.Empty(axeResult.Violations);
+            axeResult.Violations.Should().BeEmpty();
         }
 
         private ChromeDriver CreateHeadlessChromeDriver()
