@@ -6,6 +6,9 @@
 
 .learning-content-item__heading {
   @extend .nhsuk-heading-m;
+  @include govuk-media-query($until: tablet) {
+    text-align: center;
+  }
 }
 
 .learning-content-item__text {
@@ -52,6 +55,10 @@
   padding: 8px;
   height: fit-content;
   width: fit-content;
+
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: 12px;
+  }
 
   @include govuk-media-query($from: tablet) {
     margin-right: 32px;
