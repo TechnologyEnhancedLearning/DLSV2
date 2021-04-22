@@ -6,6 +6,7 @@
     {
         public static void SetUpFluentMapper()
         {
+            FluentMapper.EntityMaps.Clear();
             FluentMapper.Initialize(fluentMapperConfig =>
             {
                 fluentMapperConfig.AddMap(new CurrentCourseMap());
