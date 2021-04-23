@@ -29,7 +29,7 @@
                 return RedirectToAction("Index", "Home");
             }
 
-            var delegateRegistrationData = TempData.Get<DelegateRegistrationData>();
+            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
 
             if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
             {
@@ -60,7 +60,7 @@
                 return View(model);
             }
 
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             data!.RegisterViewModel = model;
             TempData.Set(data);
 
@@ -71,7 +71,7 @@
         [HttpGet]
         public IActionResult LearnerInformation()
         {
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             var viewModel = data!.LearnerInformationViewModel;
             ViewBag.Centres = centresService.GetActiveCentres();
             ViewBag.JobGroups = jobGroupsService.GetJobGroups();
@@ -90,7 +90,7 @@
                 return View(model);
             }
 
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             data!.LearnerInformationViewModel = model;
             TempData.Set(data);
 
@@ -101,7 +101,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             var viewModel = data!.PasswordViewModel;
 
             return View(viewModel);
@@ -115,7 +115,7 @@
             {
                 return View(model);
             }
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             data!.PasswordViewModel = model;
             TempData.Set(data);
 
@@ -126,7 +126,7 @@
         [HttpGet]
         public IActionResult Summary()
         {
-            var data = TempData.Get<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>();
             var viewModel = MapToSummary(data!);
 
             return View(viewModel);
@@ -138,7 +138,7 @@
         {
             if (!ModelState.IsValid)
             {
-                var data = TempData.Get<DelegateRegistrationData>();
+                var data = TempData.Peek<DelegateRegistrationData>();
                 var viewModel = MapToSummary(data!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);

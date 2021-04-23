@@ -132,7 +132,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 TempData.Set(sessionNewFramework);
                 detailFramework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
@@ -159,7 +159,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 if (actionname == "New")
                 {
-                    SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                    SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                     sessionNewFramework.DetailFramework = detailFramework;
                     TempData.Set(sessionNewFramework);
                     return RedirectToAction("SetNewFrameworkName", new { frameworkname = detailFramework.FrameworkName, actionname });
@@ -187,7 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 TempData.Set(sessionNewFramework);
             }
             var adminId = GetAdminID();
@@ -223,7 +223,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             //need to create framework and move to next step.
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("FrameworkDescription", "Frameworks", new { actionname });
             }
@@ -241,7 +241,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 framework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
             }
@@ -267,7 +267,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 sessionNewFramework.DetailFramework = detailFramework;
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("FrameworkType", "Frameworks", new { actionname });
@@ -288,7 +288,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 framework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
             }
@@ -314,7 +314,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 sessionNewFramework.DetailFramework = detailFramework;
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { actionname });
@@ -334,7 +334,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             DetailFramework? framework;
             if (actionname == "New")
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 framework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
             }
@@ -390,7 +390,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+                SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 sessionNewFramework.DetailFramework.BrandID = detailFramework.BrandID;
                 sessionNewFramework.DetailFramework.Brand = detailFramework.Brand;
                 sessionNewFramework.DetailFramework.CategoryID = detailFramework.CategoryID;
@@ -462,7 +462,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/New/Summary")]
         public IActionResult FrameworkSummary()
         {
-            SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+            SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
             if(sessionNewFramework == null)
             {
                 return RedirectToAction("FrameworksDashboard");
@@ -540,7 +540,7 @@ var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(framework
         public IActionResult InsertFramework()
         {
             var adminId = GetAdminID();
-            SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
+            SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
             DetailFramework? detailFramework = sessionNewFramework.DetailFramework;
             detailFramework = InsertBrandingCategoryTopicIfRequired(detailFramework);
             if (detailFramework == null || adminId < 1)

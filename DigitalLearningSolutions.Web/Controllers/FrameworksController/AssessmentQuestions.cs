@@ -213,7 +213,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             string name = "";
@@ -279,7 +279,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
@@ -292,7 +292,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
@@ -319,7 +319,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 1)
@@ -340,7 +340,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
@@ -362,7 +362,7 @@
             {
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
                 return RedirectToAction("AssessmentQuestionConfirm", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
@@ -375,7 +375,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             if (level < assessmentQuestionDetail.MinValue)
@@ -412,7 +412,7 @@
         public IActionResult AssessmentQuestionLevelDescriptor(LevelDescriptor levelDescriptor, int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(LevelDescriptor.LevelLabel));
@@ -455,7 +455,7 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var levelDescriptors = sessionAssessmentQuestion.LevelDescriptors;
             TempData.Set(sessionAssessmentQuestion);
@@ -487,7 +487,7 @@
         public IActionResult SubmitAssessmentQuestion(int frameworkId, bool addToExisting, int frameworkCompetencyId = 0)
         {
             var adminId = GetAdminID();
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Get<SessionAssessmentQuestion>();
+            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestion = sessionAssessmentQuestion.AssessmentQuestionDetail;
             int newId = assessmentQuestion.ID;
             if (newId > 0)

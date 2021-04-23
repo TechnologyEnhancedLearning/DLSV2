@@ -4,7 +4,7 @@
     using Newtonsoft.Json;
     internal static class TempDataExtension
     {
-        public static T? Get<T>(this ITempDataDictionary tempData) where T : class
+        public static T? Peek<T>(this ITempDataDictionary tempData) where T : class
             => tempData.TryPeek(typeof(T).Name, out var data) ? JsonConvert.DeserializeObject<T>(data) : null;
 
         public static void Set<T>(this ITempDataDictionary tempData, T incomingTempData)

@@ -14,7 +14,7 @@
         {
             if (context.Controller is Controller controller)
             {
-                var userSessionData = controller.TempData.Get<T>();
+                var userSessionData = controller.TempData.Peek<T>();
                 if (userSessionData == null)
                 {
                     context.Result = controller.RedirectToAction("Index");
