@@ -89,6 +89,10 @@
         private Email GeneratePasswordResetEmail(string emailAddress, string resetHash, string firstName, string baseUrl)
         {
             UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
+            if (!resetPasswordUrl.Path.EndsWith('/'))
+            {
+                resetPasswordUrl.Path += '/';
+            }
             resetPasswordUrl.Path += "ResetPassword";
             resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
 
