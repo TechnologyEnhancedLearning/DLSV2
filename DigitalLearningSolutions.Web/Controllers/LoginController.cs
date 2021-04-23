@@ -15,11 +15,13 @@
     {
         private readonly ILoginService loginService;
         private readonly IUserService userService;
+        private readonly ISessionService sessionService;
 
-        public LoginController(ILoginService loginService, IUserService userService)
+        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
         {
             this.loginService = loginService;
             this.userService = userService;
+            this.sessionService = sessionService;
         }
 
         public IActionResult Index()
@@ -72,6 +74,11 @@
 
         private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
         {
+            if (adminUser != null)
+            {
+                sessionService.StartAdminSession(adminUser.Id);
+            }
+
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties

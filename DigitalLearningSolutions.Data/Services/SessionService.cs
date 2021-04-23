@@ -4,8 +4,9 @@
 
     public interface ISessionService
     {
-        void StartOrUpdateSession(int candidateId, int customisationId, ISession httpContextSession);
-        void StopSession(int candidateId, ISession httpContextSession);
+        void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
+        void StopDelegateSession(int candidateId, ISession httpContextSession);
+        void StartAdminSession(int adminId);
     }
 
     public class SessionService : ISessionService
@@ -17,12 +18,12 @@
             this.sessionDataService = sessionDataService;
         }
 
-        public void StartOrUpdateSession(int candidateId, int customisationId, ISession httpContextSession)
+        public void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession)
         {
             var currentSessionId = httpContextSession.GetInt32($"SessionID-{customisationId}");
             if (currentSessionId != null)
             {
-                sessionDataService.UpdateSessionDuration(currentSessionId.Value);
+                sessionDataService.UpdateDelegateSessionDuration(currentSessionId.Value);
             }
             else
             {
@@ -30,15 +31,20 @@
                 httpContextSession.Clear();
 
                 // Make and keep track of a new session starting at this request
-                var newSessionId = sessionDataService.StartOrRestartSession(candidateId, customisationId);
+                var newSessionId = sessionDataService.StartOrRestartDelegateSession(candidateId, customisationId);
                 httpContextSession.SetInt32($"SessionID-{customisationId}", newSessionId);
             }
         }
 
-        public void StopSession(int candidateId, ISession httpContextSession)
+        public void StopDelegateSession(int candidateId, ISession httpContextSession)
         {
-            sessionDataService.StopSession(candidateId);
+            sessionDataService.StopDelegateSession(candidateId);
             httpContextSession.Clear();
+        }
+
+        public void StartAdminSession(int adminId)
+        {
+            sessionDataService.StartAdminSession(adminId);
         }
     }
 }

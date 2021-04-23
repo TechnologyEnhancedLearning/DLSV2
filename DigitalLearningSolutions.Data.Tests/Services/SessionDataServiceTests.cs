@@ -22,14 +22,14 @@
         }
 
         [Test]
-        public void StartOrRestartSession_Should_Start_Users_First_Session()
+        public void StartOrRestartDelegateSession_Should_Start_Users_First_Session()
         {
             using (new TransactionScope())
             {
                 // When
                 const int candidateId = 29;
                 const int customisationId = 100;
-                var sessionId = sessionDataService.StartOrRestartSession(candidateId, customisationId);
+                var sessionId = sessionDataService.StartOrRestartDelegateSession(candidateId, customisationId);
 
                 // Then
                 var newSession = sessionTestHelper.GetSession(sessionId);
@@ -43,14 +43,14 @@
         }
 
         [Test]
-        public void StartOrRestartSession_Should_Start_Subsequent_Session()
+        public void StartOrRestartDelegateSession_Should_Start_Subsequent_Session()
         {
             using (new TransactionScope())
             {
                 // When
                 const int candidateId = 101;
                 const int customisationId = 1240;
-                var sessionId = sessionDataService.StartOrRestartSession(candidateId, customisationId);
+                var sessionId = sessionDataService.StartOrRestartDelegateSession(candidateId, customisationId);
 
                 // Then
                 var newSession = sessionTestHelper.GetSession(sessionId);
@@ -64,14 +64,14 @@
         }
 
         [Test]
-        public void StartOrRestartSession_Should_Stop_Other_Sessions()
+        public void StartOrRestartDelegateSession_Should_Stop_Other_Sessions()
         {
             using (new TransactionScope())
             {
                 // When
                 const int candidateId = 101;
                 const int customisationId = 1240;
-                var sessionId = sessionDataService.StartOrRestartSession(candidateId, customisationId);
+                var sessionId = sessionDataService.StartOrRestartDelegateSession(candidateId, customisationId);
 
                 // Then
                 var sessions = sessionTestHelper.GetCandidateSessions(candidateId);
@@ -83,13 +83,13 @@
         }
 
         [Test]
-        public void StopSession_Should_Stop_Candidates_Sessions()
+        public void StopDelegateSession_Should_Stop_Candidates_Sessions()
         {
             using (new TransactionScope())
             {
                 // When
                 const int candidateId = 101;
-                sessionDataService.StopSession(candidateId);
+                sessionDataService.StopDelegateSession(candidateId);
 
                 // Then
                 var sessions = sessionTestHelper.GetCandidateSessions(candidateId);
@@ -100,7 +100,7 @@
         }
 
         [Test]
-        public void UpdateSessionDuration_Should_Only_Update_Given_Active_Sessions()
+        public void UpdateDelegateSessionDuration_Should_Only_Update_Given_Active_Sessions()
         {
             const int twoMinutesInMilliseconds = 120 * 1000;
 
@@ -112,7 +112,7 @@
 
                 // When
                 const int sessionId = 473;
-                sessionDataService.UpdateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId).ToList();
@@ -129,7 +129,7 @@
         }
 
         [Test]
-        public void UpdateSessionDuration_Should_Not_Update_Inactive_Session()
+        public void UpdateDelegateSessionDuration_Should_Not_Update_Inactive_Session()
         {
             using (new TransactionScope())
             {
@@ -139,12 +139,27 @@
 
                 // When
                 const int sessionId = 468;
-                sessionDataService.UpdateSessionDuration(sessionId);
+                sessionDataService.UpdateDelegateSessionDuration(sessionId);
 
                 // Then
                 var updatedSessions = sessionTestHelper.GetCandidateSessions(candidateId);
 
                 updatedSessions.Should().BeEquivalentTo(startingSessions);
+            }
+        }
+
+        [Test]
+        public void StartAdminSession_Should_Start_Users_New_Admin_Session()
+        {
+            using (new TransactionScope())
+            {
+                // When
+                var adminUser = UserTestHelper.GetDefaultAdminUser();
+                var sessionId = sessionDataService.StartAdminSession(adminUser.Id);
+
+                // Then
+
+                sessionId.Should().NotBe(0);
             }
         }
     }

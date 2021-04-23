@@ -5,9 +5,11 @@
 
     public interface ISessionDataService
     {
-        int StartOrRestartSession(int candidateId, int customisationId);
-        void StopSession(int candidateId);
-        void UpdateSessionDuration(int sessionId);
+        int StartOrRestartDelegateSession(int candidateId, int customisationId);
+        void StopDelegateSession(int candidateId);
+        void UpdateDelegateSessionDuration(int sessionId);
+
+        int StartAdminSession(int adminId);
     }
 
     public class SessionDataService : ISessionDataService
@@ -23,7 +25,7 @@
             this.connection = connection;
         }
 
-        public int StartOrRestartSession(int candidateId, int customisationId)
+        public int StartOrRestartDelegateSession(int candidateId, int customisationId)
         {
             return connection.QueryFirst<int>(
                 stopSessionsSql +
@@ -35,18 +37,28 @@
             );
         }
 
-        public void StopSession(int candidateId)
+        public void StopDelegateSession(int candidateId)
         {
             connection.Query(stopSessionsSql, new { candidateId });
         }
 
-        public void UpdateSessionDuration(int sessionId)
+        public void UpdateDelegateSessionDuration(int sessionId)
         {
             connection.Query(
                 @"UPDATE Sessions SET Duration = DATEDIFF(minute, LoginTime, GetUTCDate())
                    WHERE [SessionID] = @sessionId AND Active = 1;",
                 new { sessionId }
             );
+        }
+
+        public int StartAdminSession(int adminId)
+        {
+            return connection.QueryFirst<int>(
+                @"INSERT INTO AdminSessions (AdminID, LoginTime, Duration, Active)
+                  VALUES (@adminId, GetUTCDate(), 0, 0);
+
+                  SELECT SCOPE_IDENTITY();",
+                new { adminId });
         }
     }
 }
