@@ -34,8 +34,7 @@
 
         public static string GetEvaluateUrl(this IConfiguration config, int progressId, bool fromLearningPortal)
         {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}" +
-                (fromLearningPortal ? "&lp=1" : "");
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}";
         }
 
         public static string GetTrackingUrl(this IConfiguration config)
