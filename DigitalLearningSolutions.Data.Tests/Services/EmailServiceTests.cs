@@ -6,6 +6,7 @@
     using FakeItEasy;
     using MailKit.Net.Smtp;
     using MailKit.Security;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
     using NUnit.Framework;
 
@@ -29,7 +30,8 @@
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailServer)).Returns("smtp.example.com");
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
 
-            emailService = new EmailService(configService, smtpClientFactory);
+            var logger = A.Fake<ILogger<EmailService>>();
+            emailService = new EmailService(configService, smtpClientFactory, logger);
         }
 
         [TestCase(ConfigService.MailPort)]
