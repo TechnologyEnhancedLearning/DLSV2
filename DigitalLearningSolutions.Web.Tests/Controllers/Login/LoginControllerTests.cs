@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -183,6 +184,26 @@
             // Then
             A.CallTo(() => sessionService.StartAdminSession(expectedAdmin.Id))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void Log_in_as_delegate_does_not_record_admin_session()
+        {
+            // Given
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
+            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: true) };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+                .Returns(null);
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => sessionService.StartAdminSession(A<int>._))
+                .MustNotHaveHappened();
         }
     }
 }
