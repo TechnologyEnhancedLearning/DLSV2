@@ -1,5 +1,15 @@
 @import "~nhsuk-frontend/packages/core/all";
 
+.welcome-page-button-container {
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: 28px;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    margin-bottom: 20px;
+  }
+}
+
 .auth-button {
   min-width: 160px;
 }
