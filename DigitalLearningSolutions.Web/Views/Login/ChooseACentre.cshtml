@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
-@model List<ChooseACentreViewModel>
+@model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
 }
@@ -17,40 +17,40 @@
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Centre
         </th>
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Roles
         </th>
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Action
         </th>
       </tr>
       </thead>
       <tbody class="nhsuk-table__body">
-      @foreach (var centreRow in Model) {
-        <form method="post" novalidate asp-action="ChooseACentre">
-          <tr role="row" class="nhsuk-table__row">
-            <td role="cell" class="nhsuk-table__cell">
-              @centreRow.CentreName
-            </td>
-            <td role="cell" class="nhsuk-table__cell">
-              @if (centreRow.IsAdmin) {
-                <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
-              }
-              @if (centreRow.IsDelegate) {
-                <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
-              }
-            </td>
-            <td role="cell"class="nhsuk-table__cell">
-              <input type="hidden" name="centreId" value="@centreRow.CentreId"/>
-              <button class="nhsuk-button nhsuk-u-margin-bottom-1 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0" type="submit">
-                Choose
-              </button>
-            </td>
-          </tr>
-        </form>
+      @foreach (var centreRow in Model.CentreUserDetails) {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" class="choose-centre-td nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Centre Name </span>
+            @centreRow.CentreName
+          </td>
+          <td role="cell" class="choose-centre-td nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Roles </span>
+            @if (centreRow.IsAdmin) {
+              <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+            }
+            @if (centreRow.IsDelegate) {
+              <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+            }
+          </td>
+          <td role="cell" class="choose-centre-td nhsuk-table__cell">
+            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-1 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0"
+               asp-action="ChooseACentre" asp-route-centreId="@centreRow.CentreId">
+              Choose
+            </a>
+          </td>
+        </tr>
       }
       </tbody>
     </table>

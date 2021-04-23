@@ -187,7 +187,8 @@
         }
 
         [Test]
-        public void Multiple_accounts_with_different_passwords_should_use_ones_with_input_password()
+        public void
+            When_user_has_multiple_accounts_with_different_passwords_only_log_in_to_ones_matching_input_password()
         {
             // Given
             controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
@@ -209,7 +210,8 @@
         }
 
         [Test]
-        public void Multiple_accounts_with_different_approved_statuses_should_use_accounts_with_approved_statuses()
+        public void
+            When_user_has_accounts_with_different_approved_statuses_only_log_in_to_accounts_with_approved_statuses()
         {
             // Given
             controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);

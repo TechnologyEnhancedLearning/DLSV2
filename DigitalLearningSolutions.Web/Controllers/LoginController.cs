@@ -42,7 +42,6 @@
             }
 
             var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username);
-
             if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "No account with that email address or user ID could be found.");
@@ -51,7 +50,6 @@
 
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password, adminUser, delegateUsers);
-
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect.");
@@ -59,36 +57,34 @@
             }
 
             var approvedDelegateUsers = verifiedDelegateUsers.Where(du => du.Approved).ToList();
-
             if (verifiedAdminUser == null && !approvedDelegateUsers.Any())
             {
                 return View("AccountNotApproved");
             }
 
             verifiedAdminUser ??=
-                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
+                    model.Password);
 
             var availableCentres = GetAvailableCentres(verifiedAdminUser, approvedDelegateUsers);
-
             if (availableCentres.Count == 1)
             {
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
             }
 
-            TempData.Clear();
-            TempData["RememberMe"] = model.RememberMe;
-            TempData.Set(adminUser);
-            TempData.Set(approvedDelegateUsers);
-
-            return View("ChooseACentre", availableCentres);
+            SetTempDataForChooseACentre(model.RememberMe, verifiedAdminUser, approvedDelegateUsers);
+            ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel
+                { CentreUserDetails = availableCentres };
+            return View("ChooseACentre", chooseACentreViewModel);
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult ChooseACentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
             var adminAccount = TempData.Get<AdminUser>();
             var approvedDelegateAccounts = TempData.Get<List<DelegateUser>>();
+            TempData.Clear();
 
             var adminAccountForChosenCentre = adminAccount?.CentreId == centreId ? adminAccount : null;
             var delegateAccountForChosenCentre =
@@ -97,25 +93,27 @@
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 
-        private List<ChooseACentreViewModel> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        private List<CentreUserDetails> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            var availableCentres = new List<ChooseACentreViewModel>();
-
-            foreach (var delegateUser in delegateUsers)
-            {
-                var isAdmin = adminUser?.CentreId == delegateUser.CentreId;
-
-                availableCentres.Add(new ChooseACentreViewModel(
-                    delegateUser.CentreId, delegateUser.CentreName, isAdmin, true));
-            }
+            var availableCentres = delegateUsers.Select(du => new CentreUserDetails
+                (du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)).ToList();
 
             if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
             {
-                availableCentres.Add(new ChooseACentreViewModel
-                    (adminUser.CentreId, adminUser.CentreName, true));
+                availableCentres.Add(
+                    new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
             }
 
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
+        }
+
+        private void SetTempDataForChooseACentre(bool rememberMe, AdminUser? adminUser,
+            List<DelegateUser> approvedDelegateUsers)
+        {
+            TempData.Clear();
+            TempData["RememberMe"] = rememberMe;
+            TempData.Set(adminUser);
+            TempData.Set(approvedDelegateUsers);
         }
 
         private IActionResult LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)

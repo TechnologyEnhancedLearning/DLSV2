@@ -1,5 +1,13 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
 .centre-role-tag {
-    text-align:center;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.choose-centre-td {
+  @include mq($until: desktop) {
+    border-bottom: none;
+    justify-content: left !important;
+  }
 }
