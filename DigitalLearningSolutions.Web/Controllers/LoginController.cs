@@ -15,11 +15,13 @@
     {
         private readonly ILoginService loginService;
         private readonly IUserService userService;
+        private readonly ISessionService sessionService;
 
-        public LoginController(ILoginService loginService, IUserService userService)
+        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
         {
             this.loginService = loginService;
             this.userService = userService;
+            this.sessionService = sessionService;
         }
 
         public IActionResult Index()
@@ -65,7 +67,11 @@
             }
 
             verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
-            
+            if (verifiedAdminUser != null)
+            {
+                sessionService.StartAdminSession(verifiedAdminUser.Id);
+            }
+
             LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }
