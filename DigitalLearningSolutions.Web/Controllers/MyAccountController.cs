@@ -33,5 +33,33 @@
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult EditDetails()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
+            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
+            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+
+            var model = new EditDetailsViewModel(adminUser, delegateUser);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditDetails(EditDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }
