@@ -152,14 +152,15 @@
         {
             using (new TransactionScope())
             {
+                // Given
+                var sessionId = sessionDataService.StartAdminSession(7);
+
                 // When
-                var adminUser = UserTestHelper.GetDefaultAdminUser();
-                var sessionId = sessionDataService.StartAdminSession(adminUser.Id);
+                var newAdminSession = sessionTestHelper.GetAdminSession(sessionId);
 
                 // Then
-                var newAdminSession = sessionTestHelper.GetAdminSession(sessionId);
                 newAdminSession.Should().NotBe(null);
-                newAdminSession.AdminId.Should().Be(adminUser.Id);
+                newAdminSession.AdminId.Should().Be(7);
                 newAdminSession.LoginTime.Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
             }
         }
