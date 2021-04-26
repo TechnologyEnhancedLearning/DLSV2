@@ -88,23 +88,28 @@
             }
 
             message.Subject = email.Subject;
+            message.Body = GetMultipartAlternativeFromBody(email.Body); 
+            return message;
+        }
+        private MultipartAlternative GetMultipartAlternativeFromBody(BodyBuilder body)
+        {
+            //Sets body content encooding to quoated-printable to avoid rejection by NHS email servers
             var htmlPart = new TextPart(MimeKit.Text.TextFormat.Html)
             {
                 ContentTransferEncoding = ContentEncoding.QuotedPrintable
             };
-            htmlPart.SetText(Encoding.UTF8, email.Body.HtmlBody);
+            htmlPart.SetText(Encoding.UTF8, body.HtmlBody);
             var textPart = new TextPart(MimeKit.Text.TextFormat.Plain)
             {
                 ContentTransferEncoding = ContentEncoding.QuotedPrintable
             };
-            textPart.SetText(Encoding.UTF8, email.Body.TextBody);
+            textPart.SetText(Encoding.UTF8, body.TextBody);
             var multipartAlternative = new MultipartAlternative()
             {
                 textPart,
                 htmlPart
             };
-            message.Body = multipartAlternative;
-            return message;
+            return multipartAlternative;
         }
     }
 }
