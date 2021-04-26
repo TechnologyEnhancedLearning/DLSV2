@@ -63,8 +63,8 @@ using System.Collections.Generic;
                         TextBody = $@"Dear {recipient.FirstName},
 A comment has been submitted  against the framework, {baseFramework.FrameworkName} by {sender.FirstName} {sender.LastName} ({sender.Email}){(parentComment != null ? " in response to the thread " + parentComment : "")}.
 The comment reads: {comment}
-To view or reply to the comment in the framework system, visit this url: {commentUrl}. You will need to login to DLS to view the framework.",
-                        HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {recipient.FirstName},</p><p>A comment has been submitted  against the framework, <strong>{baseFramework.FrameworkName}</strong>, by <a href='mailto:{sender.Email}'>{sender.FirstName} {sender.LastName}</a>{(parentComment != null ? " in response to the thread <strong>" + parentComment + "</strong>" : ".")}</p><p>The comment reads: <strong>{comment}</strong></p><p><a href='{commentUrl}'>Click here</a> to view or reply to the comment in the framework system. You will need to login to DLS to view the framework.</p>"
+To view or reply to the comment in the framework system, visit this url: {commentUrl.Uri}. You will need to login to DLS to view the framework.",
+                        HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {recipient.FirstName},</p><p>A comment has been submitted  against the framework, <strong>{baseFramework.FrameworkName}</strong>, by <a href='mailto:{sender.Email}'>{sender.FirstName} {sender.LastName}</a>{(parentComment != null ? " in response to the thread <strong>" + parentComment + "</strong>" : ".")}</p><p>The comment reads: <strong>{comment}</strong></p><p><a href='{commentUrl.Uri}'>Click here</a> to view or reply to the comment in the framework system. You will need to login to DLS to view the framework.</p>"
                     };
                     emailService.SendEmail(new Email(emailSubject, builder, recipient.Email));
                 }
@@ -97,8 +97,8 @@ To view or reply to the comment in the framework system, visit this url: {commen
             {
                 TextBody = $@"Dear {collaboratorNotification?.Forename},
 You have been identified as a {collaboratorNotification?.FrameworkRole} for the framework, {collaboratorNotification?.FrameworkName} by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}).
-To access the framework, visit this url: {frameworkUrl}. You will need to login to DLS to view the framework.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {collaboratorNotification?.Forename},</p><p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the  framework, {collaboratorNotification?.FrameworkName} by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl}'>Click here</a> to access the framework. You will need to login to DLS to view the framework.</p>"
+To access the framework, visit this url: {frameworkUrl.Uri}. You will need to login to DLS to view the framework.",
+                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {collaboratorNotification?.Forename},</p><p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the  framework, {collaboratorNotification?.FrameworkName} by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl.Uri}'>Click here</a> to access the framework. You will need to login to DLS to view the framework.</p>"
             };
 
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.Email, collaboratorNotification.InvitedByEmail));
