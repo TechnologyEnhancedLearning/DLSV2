@@ -67,18 +67,17 @@
             }
 
             verifiedAdminUser ??= loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(), model.Password);
-            
+            if (verifiedAdminUser != null)
+            {
+                sessionService.StartAdminSession(verifiedAdminUser.Id);
+            }
+
             LogIn(verifiedAdminUser, approvedDelegateUser, model.RememberMe);
             return RedirectToAction("Index", "Home");
         }
 
         private void LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
         {
-            if (adminUser != null)
-            {
-                sessionService.StartAdminSession(adminUser.Id);
-            }
-
             var claims = GetClaimsForSignIn(adminUser, delegateUser);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties

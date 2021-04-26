@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using Microsoft.AspNetCore.Http;
 
     public interface ISessionService

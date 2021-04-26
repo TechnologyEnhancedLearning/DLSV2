@@ -198,6 +198,7 @@
                 .Returns((null, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
                 .Returns(null);
+
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
