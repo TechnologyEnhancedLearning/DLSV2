@@ -4,14 +4,14 @@
 
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "Please enter a first name.")]
+        [Required(ErrorMessage = "Enter your first name")]
         public string? FirstName { get; set; }
 
-        [Required(ErrorMessage = "Please enter a last name.")]
+        [Required(ErrorMessage = "Enter your last name")]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Please enter an email address.")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Required(ErrorMessage = "Enter your email address")]
+        [EmailAddress(ErrorMessage = "Enter an email address with an @ in it, such as example@domain.com")]
         public string? Email { get; set; }
     }
 }

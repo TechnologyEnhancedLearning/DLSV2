@@ -4,10 +4,10 @@
 
     public class LearnerInformationViewModel
     {
-        [Required(ErrorMessage = "Please select a centre.")]
+        [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
 
-        [Required(ErrorMessage = "Please select a job group.")]
+        [Required(ErrorMessage = "Select a job group")]
         public int? JobGroup { get; set; }
     }
 }
