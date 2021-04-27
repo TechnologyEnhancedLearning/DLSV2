@@ -1,9 +1,9 @@
 namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
+    using System.Linq;
     using System.Threading.Tasks;
     using Dapper;
-    using Dapper.Contrib.Extensions;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -31,7 +31,10 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public async Task<ResetPassword> FindAsync(int id)
         {
-            return await connection.GetAsync<ResetPassword>(id);
+            return (await connection.QueryAsync<ResetPassword>(
+                "SELECT * FROM [ResetPassword] WHERE [ID] = @id",
+                new { id }))
+                .Single();
         }
 
         public void CreatePasswordReset(ResetPasswordCreateModel createModel)
