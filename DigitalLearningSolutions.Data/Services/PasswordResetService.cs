@@ -2,12 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
-    using Dapper;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
@@ -21,108 +21,92 @@
 
     public class PasswordResetService : IPasswordResetService
     {
-        private const string AdminTableName = "AdminUsers";
-        private const string DelegatesTableName = "Candidates";
-        private const string AdminIdColumnName = "AdminID";
-        private const string DelegatesIdColumnName = "CandidateID";
-        private readonly IDbConnection connection;
+        private readonly IPasswordResetDataService passwordResetDataService;
         private readonly IEmailService emailService;
+        private readonly IClockService clockService;
         private readonly ILogger<PasswordResetService> logger;
 
         private readonly IUserService userService;
 
         public PasswordResetService(
             IUserService userService,
-            IDbConnection connection,
+            IPasswordResetDataService passwordResetDataService,
             ILogger<PasswordResetService> logger,
-            IEmailService emailService)
+            IEmailService emailService,
+            IClockService clockService)
         {
             this.userService = userService;
-            this.connection = connection;
+            this.passwordResetDataService = passwordResetDataService;
             this.logger = logger;
             this.emailService = emailService;
+            this.clockService = clockService;
         }
 
         public async Task<bool> PasswordResetHashIsValidAsync(string emailAddress, string resetHash)
         {
             var (adminUsersWithEmail, delegateUsersWithEmail) = userService.GetUsersByEmailAddress(emailAddress);
+
             var resetPasswordIdsForEmail = adminUsersWithEmail.Select(user => user.ResetPasswordId)
                 .Concat(delegateUsersWithEmail.Select(user => user.ResetPasswordId))
                 .Where(id => id.HasValue)
                 .Select(id => id.Value);
 
-            var resetPasswordEntitiesInDb = await Task.WhenAll(resetPasswordIdsForEmail.Select(FindResetPasswordAsync));
+            var resetPasswordEntitiesInDb = await Task.WhenAll(
+                resetPasswordIdsForEmail.Select(id => passwordResetDataService.FindAsync(id)));
 
             return resetPasswordEntitiesInDb.Any(
-                 entity => entity != null
-                       && entity.ResetPasswordHash == resetHash
-                       && DateTime.Now - entity.PasswordResetDateTime < TimeSpan.FromHours(2));
-        }
-
-        private async Task<ResetPassword?> FindResetPasswordAsync(int id)
-        {
-            return (await connection.QueryAsync<ResetPassword>(
-                @"SELECT * FROM [ResetPassword] WHERE ID = @id",
-                new { id })).SingleOrDefault();
+                entity => entity != null
+                          && entity.ResetPasswordHash == resetHash
+                          && clockService.UtcNow - entity.PasswordResetDateTime < TimeSpan.FromHours(2));
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            (List<AdminUser> adminUsers, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
+            (List<AdminUser> adminUsers, List<DelegateUser> delegateUsers) =
+                userService.GetUsersByEmailAddress(emailAddress);
             User? user = adminUsers.FirstOrDefault();
-            user ??= delegateUsers.FirstOrDefault() ?? throw new UserAccountNotFoundException("No user account could be found with the specified email address");
+            user ??= delegateUsers.FirstOrDefault() ??
+                     throw new UserAccountNotFoundException(
+                         "No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
-            Email resetPasswordEmail = GeneratePasswordResetEmail(emailAddress, resetPasswordHash, user.FirstName, baseUrl);
+            Email resetPasswordEmail = GeneratePasswordResetEmail(
+                emailAddress,
+                resetPasswordHash,
+                user.FirstName,
+                baseUrl);
             emailService.SendEmail(resetPasswordEmail);
         }
 
         private string GenerateResetPasswordHash(User user)
         {
             string hash = Guid.NewGuid().ToString();
-            string tableName = user.GetType() == typeof(DelegateUser) ? DelegatesTableName : AdminTableName;
-            string idColumnName = user.GetType() == typeof(DelegateUser) ? DelegatesIdColumnName : AdminIdColumnName;
 
-            var numberOfAffectedRows = connection.Execute(
-                $@"BEGIN TRY
-                        DECLARE @ResetPasswordID INT
-                        BEGIN TRANSACTION
-                            INSERT INTO dbo.ResetPassword
-                                ([ResetPasswordHash]
-                                ,[PasswordResetDateTime])
-                            VALUES(@ResetPasswordHash, GETDATE())
+            var resetPasswordCreateModel = new ResetPasswordCreateModel(
+                clockService.UtcNow,
+                hash,
+                user.Id,
+                user is DelegateUser ? UserType.DelegateUser : UserType.AdminUser);
 
-                            SET @ResetPasswordID = SCOPE_IDENTITY()
-
-                            UPDATE {tableName}
-                            SET ResetPasswordID = @ResetPasswordID
-                            WHERE {idColumnName} = @UserID
-                        COMMIT TRANSACTION
-                    END TRY
-                    BEGIN CATCH
-                        ROLLBACK TRANSACTION
-                    END CATCH
-                    ",
-                new { ResetPasswordHash = hash, UserID = user.Id });
-            if (numberOfAffectedRows < 2)
-            {
-                string message = $"Not saving reset password hash as db insert/update failed for User ID: {user.Id} from table {tableName}";
-                logger.LogWarning(message);
-                throw new ResetPasswordInsertException(message);
-            }
+            passwordResetDataService.CreatePasswordReset(resetPasswordCreateModel);
 
             return hash;
         }
 
-        private Email GeneratePasswordResetEmail(string emailAddress, string resetHash, string firstName, string baseUrl)
+        private static Email GeneratePasswordResetEmail(
+            string emailAddress,
+            string resetHash,
+            string firstName,
+            string baseUrl)
         {
             UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
             if (!resetPasswordUrl.Path.EndsWith('/'))
             {
                 resetPasswordUrl.Path += '/';
             }
+
             resetPasswordUrl.Path += "ResetPassword";
             resetPasswordUrl.Query = $"code={resetHash}&email={emailAddress}";
-            
+
             string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
             BodyBuilder body = new BodyBuilder
