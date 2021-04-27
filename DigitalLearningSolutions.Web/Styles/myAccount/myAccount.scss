@@ -26,3 +26,12 @@
   width: 150px;
   height: 150px;
 }
+
+#change-password-button {
+  margin-left: 8px;
+
+  @include govuk-media-query($until: tablet) {
+    margin-left: 0;
+  }
+}
+
