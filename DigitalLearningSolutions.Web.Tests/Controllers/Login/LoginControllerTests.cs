@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -9,6 +10,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Common;
     using NUnit.Framework;
 
     internal class LoginControllerTests
@@ -63,6 +65,9 @@
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
             // When
             var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -177,6 +182,12 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new List<CentreUserDetails>
+                {
+                    new CentreUserDetails(1, "Centre 1", true),
+                    new CentreUserDetails(2, "Centre 2", false, true)
+                });
 
             // When
             var result =
@@ -188,10 +199,9 @@
 
         [Test]
         public void
-            When_user_has_multiple_accounts_with_different_passwords_only_log_in_to_ones_matching_input_password()
+            When_user_has_multiple_accounts_with_different_passwords_only_use_ones_matching_input_password_to_check_for_centres()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2") };
@@ -201,20 +211,20 @@
                 .Returns((expectedAdminUser, new List<DelegateUser>()));
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
+            A.CallTo(() => userService.GetAvailableCentres(
+                    A<AdminUser>.That.Matches(au => au.IsSameOrEqualTo(expectedAdminUser)),
+                    A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(new List<DelegateUser>()))))
+                .MustHaveHappened();
         }
 
         [Test]
         public void
-            When_user_has_accounts_with_different_approved_statuses_only_log_in_to_accounts_with_approved_statuses()
+            When_user_has_accounts_with_different_approved_statuses_only_check_for_centres_on_approved_accounts()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
             var expectedDelegateUsers = new List<DelegateUser>
             {
@@ -225,14 +235,16 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
+            var expectedApprovedDelegateUsers = expectedDelegateUsers.Where(du => du.Approved).ToList();
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
+            A.CallTo(() => userService.GetAvailableCentres(
+                    A<AdminUser>.That.Matches(au => au.IsSameOrEqualTo(expectedAdminUser)),
+                    A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(expectedApprovedDelegateUsers))))
+                .MustHaveHappened();
         }
 
         [Test]
@@ -247,6 +259,9 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
             // When
             var result =

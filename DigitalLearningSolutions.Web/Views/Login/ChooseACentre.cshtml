@@ -31,12 +31,12 @@
       <tbody class="nhsuk-table__body">
       @foreach (var centreRow in Model.CentreUserDetails) {
         <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="choose-centre-td nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Centre Name </span>
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <span class="nhsuk-table-responsive__heading">Centre: </span>
             @centreRow.CentreName
           </td>
-          <td role="cell" class="choose-centre-td nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Roles </span>
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <span class="nhsuk-table-responsive__heading">Roles: </span>
             @if (centreRow.IsAdmin) {
               <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
             }
@@ -44,8 +44,8 @@
               <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
             }
           </td>
-          <td role="cell" class="choose-centre-td nhsuk-table__cell">
-            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-1 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0"
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-1"
                asp-action="ChooseACentre" asp-route-centreId="@centreRow.CentreId">
               Choose
             </a>

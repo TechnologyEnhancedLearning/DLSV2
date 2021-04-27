@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
@@ -8,6 +9,8 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(string? adminId, string? delegateId);
+
+        public List<CentreUserDetails> GetAvailableCentres(AdminUser adminUser, List<DelegateUser> delegateUsers);
     }
 
     public class UserService : IUserService
@@ -54,6 +57,20 @@
             }
 
             return (adminUser, delegateUser);
+        }
+
+        public List<CentreUserDetails> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        {
+            var availableCentres = delegateUsers.Select(du => new CentreUserDetails
+                (du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)).ToList();
+
+            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
+            {
+                availableCentres.Add(
+                    new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
+            }
+
+            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
     }
 }

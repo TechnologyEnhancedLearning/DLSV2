@@ -5,9 +5,14 @@
     margin-right: 5px;
 }
 
-.choose-centre-td {
-  @include mq($until: desktop) {
-    border-bottom: none;
-    justify-content: left !important;
+.nhsuk-table__row {
+  td.nhsuk-table__cell {
+    &.choose-centre-td {
+      @include govuk-media-query($until: desktop) {
+        border-bottom: none;
+        justify-content: left;
+        text-align: left;
+      }
+    }
   }
 }

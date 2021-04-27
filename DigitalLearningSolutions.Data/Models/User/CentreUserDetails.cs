@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Login
+﻿namespace DigitalLearningSolutions.Data.Models.User
 {
     public class CentreUserDetails
     {

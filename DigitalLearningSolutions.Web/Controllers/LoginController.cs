@@ -66,15 +66,14 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var availableCentres = GetAvailableCentres(verifiedAdminUser, approvedDelegateUsers);
+            var availableCentres = userService.GetAvailableCentres(verifiedAdminUser, approvedDelegateUsers);
             if (availableCentres.Count == 1)
             {
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
             }
 
             SetTempDataForChooseACentre(model.RememberMe, verifiedAdminUser, approvedDelegateUsers);
-            ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel
-                { CentreUserDetails = availableCentres };
+            ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
             return View("ChooseACentre", chooseACentreViewModel);
         }
 
@@ -91,20 +90,6 @@
                 approvedDelegateAccounts?.FirstOrDefault(du => du.CentreId == centreId);
 
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
-        }
-
-        private List<CentreUserDetails> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
-        {
-            var availableCentres = delegateUsers.Select(du => new CentreUserDetails
-                (du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)).ToList();
-
-            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
-            {
-                availableCentres.Add(
-                    new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
-            }
-
-            return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
         private void SetTempDataForChooseACentre(bool rememberMe, AdminUser? adminUser,
