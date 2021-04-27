@@ -22,7 +22,6 @@
 }
 
 .learning-content-item__text--header {
-
   @include govuk-media-query($until: tablet) {
     margin-top: 16px;
     text-align: center;
@@ -32,13 +31,11 @@
 .learning-content-item__details-container {
   display: flex;
 
+  flex-direction: row;
+
   @include govuk-media-query($until: tablet) {
     flex-direction: column;
     align-items: center;
-  }
-
-  @include govuk-media-query($from: tablet) {
-    flex-direction: row;
   }
 }
 

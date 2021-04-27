@@ -1,9 +1,7 @@
 @import "~nhsuk-frontend/packages/core/all";
 
 .welcome-page-button-container {
-  @include govuk-media-query($from: tablet) {
-    margin-bottom: 32px;
-  }
+  margin-bottom: 32px;
 
   @include govuk-media-query($until: tablet) {
     margin-bottom: 26px;
@@ -21,9 +19,7 @@
 }
 
 .auth-button--left {
-  @include govuk-media-query($from: tablet) {
-    margin-right: 32px;
-  }
+  margin-right: 32px;
 
   @include govuk-media-query($until: tablet) {
     margin-right: 8px;
