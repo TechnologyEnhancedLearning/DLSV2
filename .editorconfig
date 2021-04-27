@@ -6,6 +6,9 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# ReSharper properties
+resharper_csharp_wrap_lines = true
+
 [*.{cs}]
 indent_size = 4
 

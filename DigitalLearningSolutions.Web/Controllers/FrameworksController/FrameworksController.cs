@@ -14,7 +14,7 @@
         private readonly IFrameworkService frameworkService;
         private readonly ICommonService commonService;
         private readonly ICentresService centresService;
-        private readonly INotificationService notificationService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IConfigService configService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
@@ -22,7 +22,7 @@
             IFrameworkService frameworkService,
             ICommonService commonService,
            ICentresService centresService,
-            INotificationService notificationService,
+            IFrameworkNotificationService frameworkNotificationService,
            IConfigService configService,
             ILogger<FrameworksController> logger,
             IConfiguration config)
@@ -30,7 +30,7 @@
             this.frameworkService = frameworkService;
             this.commonService = commonService;
             this.centresService = centresService;
-            this.notificationService = notificationService;
+            this.frameworkNotificationService = frameworkNotificationService;
             this.configService = configService;
             this.logger = logger;
             this.config = config;
