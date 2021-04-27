@@ -27,7 +27,7 @@
             var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(delegateUser?.CentreId ?? adminUser?.CentreId);
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(delegateUser?.CentreId);
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 

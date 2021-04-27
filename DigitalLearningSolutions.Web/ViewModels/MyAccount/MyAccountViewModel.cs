@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -18,22 +19,22 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             JobGroup = delegateUser?.JobGroupName;
 
-            CustomField1 = PopulateCustomFieldViewModel(customPrompts?.CustomField1, delegateUser?.Answer1);
-            CustomField2 = PopulateCustomFieldViewModel(customPrompts?.CustomField2, delegateUser?.Answer2);
-            CustomField3 = PopulateCustomFieldViewModel(customPrompts?.CustomField3, delegateUser?.Answer3);
-            CustomField4 = PopulateCustomFieldViewModel(customPrompts?.CustomField4, delegateUser?.Answer4);
-            CustomField5 = PopulateCustomFieldViewModel(customPrompts?.CustomField5, delegateUser?.Answer5);
-            CustomField6 = PopulateCustomFieldViewModel(customPrompts?.CustomField6, delegateUser?.Answer6);
+            CustomFields = new List<CustomFieldViewModel>();
+
+            TryAddCustomFieldViewModelToList(1, customPrompts?.CustomField1, delegateUser?.Answer1);
+            TryAddCustomFieldViewModelToList(2, customPrompts?.CustomField2, delegateUser?.Answer2);
+            TryAddCustomFieldViewModelToList(3, customPrompts?.CustomField3, delegateUser?.Answer3);
+            TryAddCustomFieldViewModelToList(4, customPrompts?.CustomField4, delegateUser?.Answer4);
+            TryAddCustomFieldViewModelToList(5, customPrompts?.CustomField5, delegateUser?.Answer5);
+            TryAddCustomFieldViewModelToList(6, customPrompts?.CustomField6, delegateUser?.Answer6);
         }
 
-        private CustomFieldViewModel? PopulateCustomFieldViewModel(CustomPrompt? customPrompt, string? answer)
+        private void TryAddCustomFieldViewModelToList(int fieldNumber, CustomPrompt? customPrompt, string? answer)
         {
-            if (customPrompt == null)
+            if (customPrompt != null)
             {
-                return null;
+                CustomFields.Add(new CustomFieldViewModel(fieldNumber, customPrompt.CustomPromptText, customPrompt.Mandatory, answer));
             }
-
-            return new CustomFieldViewModel(customPrompt.CustomPromptText, customPrompt.Mandatory, answer);
         }
 
         public string? Centre { get; set; }
@@ -50,16 +51,6 @@
 
         public string? JobGroup { get; set; }
 
-        public CustomFieldViewModel? CustomField1 { get; set; }
-
-        public CustomFieldViewModel? CustomField2 { get; set; }
-
-        public CustomFieldViewModel? CustomField3 { get; set; }
-
-        public CustomFieldViewModel? CustomField4 { get; set; }
-
-        public CustomFieldViewModel? CustomField5 { get; set; }
-
-        public CustomFieldViewModel? CustomField6 { get; set; }
+        public List<CustomFieldViewModel> CustomFields { get; set; }
     }
 }

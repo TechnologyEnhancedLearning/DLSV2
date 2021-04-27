@@ -37,9 +37,9 @@
             };
         }
 
-        private CustomPrompt? PopulateCustomPrompt(int promptId, string prompt, string? options, bool mandatory)
+        private CustomPrompt? PopulateCustomPrompt(int promptId, string? prompt, string? options, bool mandatory)
         {
-            return promptId != 0 ? new CustomPrompt(promptId, prompt, options, mandatory) : null;
+            return promptId != 0 && prompt != null ? new CustomPrompt(promptId, prompt, options, mandatory) : null;
         }
     }
 }

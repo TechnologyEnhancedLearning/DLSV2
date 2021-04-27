@@ -17,13 +17,13 @@
         }
 
         [Test]
-        public void GetCentreCustomPromptsByCentreId()
+        public void GetCentreCustomPromptsByCentreId_Returns_populated_CentreCustomPromptsResult()
         {
             // Given
             var expectedCentreCustomPromptsResult = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult();
 
-            //When
-            var returnedCentreCustomPromptsResult = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+            // When
+            var returnedCentreCustomPromptsResult = customPromptsDataService.GetCentreCustomPromptsByCentreId(29);
 
             // Then
             returnedCentreCustomPromptsResult.Should().BeEquivalentTo(expectedCentreCustomPromptsResult);

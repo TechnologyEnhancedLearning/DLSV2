@@ -6,7 +6,7 @@
     {
         public static CentreCustomPrompts GetDefaultCentreCustomPrompts
         (
-            int centreId = 2,
+            int centreId = 29,
             CustomPrompt? customPrompt1 = null,
             CustomPrompt? customPrompt2 = null,
             CustomPrompt? customPrompt3 = null,
@@ -30,8 +30,8 @@
         public static CustomPrompt GetDefaultCustomPrompt
         (
             int id = 1,
-            string text = "Custom Prompt",
-            string options = "",
+            string? text = "Custom Prompt",
+            string? options = "",
             bool mandatory = false
         )
         {
@@ -40,15 +40,15 @@
 
         public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult
         (
-            int centreId = 2,
-            int customField1PromptId = 0,
-            string? customField1Prompt = null,
-            string? customField1Options = null,
-            bool customField1Mandatory = false,
-            int customField2PromptId = 0,
-            string? customField2Prompt = null,
+            int centreId = 29,
+            int customField1PromptId = 3,
+            string? customField1Prompt = "Group",
+            string? customField1Options = "Clinical\r\nNon-Clinical",
+            bool customField1Mandatory = true,
+            int customField2PromptId = 1,
+            string? customField2Prompt = "Department / team",
             string? customField2Options = null,
-            bool customField2Mandatory = false,
+            bool customField2Mandatory = true,
             int customField3PromptId = 0,
             string? customField3Prompt = null,
             string? customField3Options = null,

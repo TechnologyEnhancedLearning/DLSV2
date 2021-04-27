@@ -2,7 +2,7 @@
 {
     public class CustomPrompt
     {
-        public CustomPrompt(int id, string text, string? options, bool mandatory)
+        public CustomPrompt(int id, string? text, string? options, bool mandatory)
         {
             CustomPromptId = id;
             CustomPromptText = text;
@@ -11,7 +11,7 @@
         }
 
         public int CustomPromptId { get; set; }
-        public string CustomPromptText { get; set; }
+        public string? CustomPromptText { get; set; }
         public string? Options { get; set; }
         public bool Mandatory { get; set; }
     }

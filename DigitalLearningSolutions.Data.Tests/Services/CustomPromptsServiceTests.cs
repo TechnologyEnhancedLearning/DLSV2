@@ -23,21 +23,22 @@
         public void GetCustomPromptsForCentreByCentreId_Returns_Populated_CentreCustomPrompts()
         {
             // Given
-            var options = "options";
-            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(options: options);
-            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: expectedPrompt1);
-            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(A<int>._))
-                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1PromptId: 1, customField1Prompt: "Custom Prompt", customField1Options: options));
+            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(options: null, mandatory: true);
+            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(text: "Department / team", options: null, mandatory: true);
+            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: expectedPrompt1, customPrompt2: expectedPrompt2);
+            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(29))
+                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1PromptId: 1, customField1Prompt: "Custom Prompt", customField1Options: null));
 
             // When
-            var result = customPromptsService.GetCustomPromptsForCentreByCentreId(2);
+            var result = customPromptsService.GetCustomPromptsForCentreByCentreId(29);
 
             // Then
             using (new AssertionScope())
             {
                 result.Should().BeEquivalentTo(expectedCustomerPrompts);
                 result.CustomField1.Should().BeEquivalentTo(expectedPrompt1);
-                result.CustomField2.Should().BeNull();
+                result.CustomField2.Should().BeEquivalentTo(expectedPrompt2);
+                result.CustomField3.Should().BeNull();
             }
         }
     }

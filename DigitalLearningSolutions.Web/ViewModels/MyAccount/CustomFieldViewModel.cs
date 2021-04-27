@@ -2,14 +2,17 @@
 {
     public class CustomFieldViewModel
     {
-        public CustomFieldViewModel(string prompt, bool mandatory, string? answer)
+        public CustomFieldViewModel(int fieldId, string? prompt, bool mandatory, string? answer)
         {
+            CustomFieldId = fieldId;
             CustomPrompt = prompt;
             Mandatory = mandatory;
             Answer = answer;
         }
 
-        public string CustomPrompt { get; set; }
+        public int CustomFieldId { get; set; }
+
+        public string? CustomPrompt { get; set; }
 
         public bool Mandatory { get; set; }
 

@@ -29,10 +29,7 @@
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
-                returnedModel.CustomField1?.CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
-                returnedModel.CustomField1?.Answer.Should().BeEquivalentTo(delegateUser.Answer1);
-                returnedModel.CustomField1?.Mandatory.Should().BeFalse();
-                returnedModel.CustomField2.Should().BeNull();
+                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
             }
         }
 
@@ -55,7 +52,7 @@
                 returnedModel.DelegateNumber.Should().BeNull();
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeNull();
-                returnedModel.CustomField1.Should().BeNull();
+                returnedModel.CustomFields.Should().BeEmpty();
             }
         }
 
@@ -79,10 +76,34 @@
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(delegateUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
-                returnedModel.CustomField1?.CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
-                returnedModel.CustomField1?.Answer.Should().BeEquivalentTo(delegateUser.Answer1);
-                returnedModel.CustomField1?.Mandatory.Should().BeFalse();
-                returnedModel.CustomField2.Should().BeNull();
+                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
+                
+            }
+        }
+
+        [Test]
+        public void MyAccountViewModel_CustomFields_ShouldBePopulated()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: CustomPromptsTestHelper.GetDefaultCustomPrompt(), customPrompt2: CustomPromptsTestHelper.GetDefaultCustomPrompt());
+
+            // When
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts);
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
+                returnedModel.CustomFields[0].CustomFieldId.Should().Be(1);
+                returnedModel.CustomFields[0].CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
+                returnedModel.CustomFields[0].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.CustomFields[0].Mandatory.Should().BeFalse();
+
+                returnedModel.CustomFields[1].CustomFieldId.Should().Be(2);
+                returnedModel.CustomFields[1].CustomPrompt.Should().BeEquivalentTo(customPrompts.CustomField1?.CustomPromptText);
+                returnedModel.CustomFields[1].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.CustomFields[1].Mandatory.Should().BeFalse();
             }
         }
     }
