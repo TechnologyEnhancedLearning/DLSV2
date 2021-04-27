@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -16,14 +17,16 @@
         private LoginController controller;
         private ILoginService loginService;
         private IUserService userService;
+        private ISessionService sessionService;
 
         [SetUp]
         public void SetUp()
         {
             loginService = A.Fake<ILoginService>();
             userService = A.Fake<IUserService>();
+            sessionService = A.Fake<ISessionService>();
 
-            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService, userService);
+            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService, userService, sessionService);
         }
 
         [Test]
@@ -41,7 +44,7 @@
         {
             // Given
             var controllerWithAuthenticatedUser =
-                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService, userService);
+                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService, userService, sessionService);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();
@@ -54,7 +57,7 @@
         [Test]
         public void Successful_sign_in_should_render_home_page()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
 
             //Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
@@ -75,7 +78,7 @@
         [Test]
         public void Log_in_request_should_call_login_service()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
 
             //Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
@@ -149,7 +152,7 @@
         public void Log_in_with_approved_delegate_id_fetches_associated_admin_user()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var testDelegate = UserTestHelper.GetDefaultDelegateUser(emailAddress: "TestAccountAssociation@email.com");
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, new List<DelegateUser> { testDelegate }));
@@ -162,6 +165,46 @@
             // Then
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(testDelegate, A<string>._))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void Log_in_as_admin_records_admin_session()
+        {
+            // Given
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
+            var expectedAdmin = UserTestHelper.GetDefaultAdminUser(10);
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((expectedAdmin, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, new List<DelegateUser>()));
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => sessionService.StartAdminSession(expectedAdmin.Id))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void Log_in_as_delegate_does_not_record_admin_session()
+        {
+            // Given
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
+            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: true) };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+                .Returns(null);
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => sessionService.StartAdminSession(A<int>._))
+                .MustNotHaveHappened();
         }
     }
 }

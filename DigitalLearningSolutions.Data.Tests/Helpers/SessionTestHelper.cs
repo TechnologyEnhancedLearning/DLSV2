@@ -9,7 +9,7 @@
 
     public class SessionTestHelper
     {
-        private SqlConnection connection;
+        private readonly SqlConnection connection;
 
         public SessionTestHelper(SqlConnection connection)
         {
@@ -23,6 +23,15 @@
                     FROM Sessions
                    WHERE SessionID = @sessionId",
                 new { sessionId });
+        }
+
+        public AdminSession? GetAdminSession(int adminSessionId)
+        {
+            return connection.QueryFirstOrDefault<AdminSession>(
+                @"SELECT AdminSessionID, AdminID, LoginTime, Duration, Active
+                    FROM AdminSessions
+                   WHERE AdminSessionID = @adminSessionId",
+                new { adminSessionId });
         }
 
         public IEnumerable<Session> GetCandidateSessions(int candidateId)
@@ -42,7 +51,7 @@
             int duration = 0,
             bool active = true
         )
-        {
+        {
             loginTime ??= DateTime.UtcNow;
             return new Session(sessionId, candidateId, customisationId, loginTime.Value, duration, active);
         }

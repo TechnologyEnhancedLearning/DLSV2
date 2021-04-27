@@ -3,3 +3,41 @@
 .top-spaced-goback {
   margin-top: 32px;
 }
+
+.preference-list{
+  margin-bottom: 16px;
+}
+
+.preference-row {
+  border-bottom: 1px solid $color_nhsuk-grey-4;
+  margin-top: 24px;
+}
+
+.preference-row:first-child {
+  margin-top: 0;
+}
+
+.preference-text-column {
+  padding-left: 0;
+}
+
+.preference-tag-column {
+  padding: 0;
+
+  @include govuk-media-query($from: desktop) {
+    text-align: right;
+    padding-left: nhsuk-spacing(3);
+  }
+}
+
+.preference-tag {
+  width: 100%;
+  max-width: 10em;
+  text-align: center;
+  margin-bottom: nhsuk-spacing(4);
+
+  @include govuk-media-query($from: desktop) {
+    margin-top: nhsuk-spacing(4);
+    margin-bottom: 0;
+  }
+}

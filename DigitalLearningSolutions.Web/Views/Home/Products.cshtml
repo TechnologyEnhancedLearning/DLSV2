@@ -1,0 +1,49 @@
+@using DigitalLearningSolutions.Web.ViewModels.Home
+@model LandingPageViewModel
+
+@{
+  ViewData["Title"] = "Welcome - Products";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/home/products.css")"/>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel"/>
+
+    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel"/>
+
+    <div class="product">
+      <h2 class="product__heading">Tracking System</h2>
+      <p class="product__body-text">Distribute and track digital learning</p>
+      <ul class="product__body-text">
+        <li>Provide your staff or students with access to quality assured digital learning content</li>
+        <li>Provide access to your own, hosted learning content</li>
+        <li>Comprehensive tools for managing learners and learning pathways</li>
+        <li>Track and report on learning</li>
+      </ul>
+    </div>
+    <div class="product">
+      <h2 class="product__heading">Content Management System</h2>
+      <p class="product__body-text">Import and manage learning content</p>
+      <ul class="product__body-text">
+        <li>Create courses, providing only necessary information</li>
+        <li>Upload digital content (tutorials, assessments, videos, documents etc) created in any tool</li>
+        <li>Structure your content to make it digestible and for ease of navigation</li>
+        <li>Publish content for your learners and even make it available to other DLS centres</li>
+      </ul>
+    </div>
+    <div class="product">
+      <h2 class="product__heading">Learning portal</h2>
+      <p class="product__body-text">Access to your current, available and completed learning</p>
+      <ul class="product__body-text">
+        <li>At a glance view of current learning courses and target dates</li>
+        <li>Easy, searchable access to available learning content</li>
+        <li>Quick access to completed courses and certificates</li>
+      </ul>
+    </div>
+
+    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel"/>
+  </div>
+</div>

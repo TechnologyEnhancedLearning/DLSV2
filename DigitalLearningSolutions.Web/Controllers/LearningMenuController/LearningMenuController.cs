@@ -93,7 +93,7 @@
                     $"Candidate id: {candidateId}, customisation id: {customisationId}, centre id: {centreId}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
             var model = new InitialMenuViewModel(courseContent);
             return View(model);
@@ -151,7 +151,7 @@
             [Route("/LearningMenu/Close")]
         public IActionResult Close()
         {
-            sessionService.StopSession(User.GetCandidateId(), HttpContext.Session);
+            sessionService.StopDelegateSession(User.GetCandidateId(), HttpContext.Session);
 
             return RedirectToAction("Current", "LearningPortal");
         }
@@ -214,7 +214,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new SectionContentViewModel(config, sectionContent, customisationId, sectionId);
@@ -251,7 +251,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new DiagnosticAssessmentViewModel(diagnosticAssessment, customisationId, sectionId);
@@ -284,7 +284,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new DiagnosticContentViewModel(
@@ -330,7 +330,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new PostLearningAssessmentViewModel(postLearningAssessment, customisationId, sectionId);
@@ -363,7 +363,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new PostLearningContentViewModel(
@@ -409,7 +409,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var viewModel = new TutorialViewModel(config, tutorialInformation, customisationId, sectionId);
@@ -443,7 +443,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new ContentViewerViewModel(
@@ -486,7 +486,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new TutorialVideoViewModel(
@@ -526,7 +526,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            sessionService.StartOrUpdateSession(candidateId, customisationId, HttpContext.Session);
+            sessionService.StartOrUpdateDelegateSession(candidateId, customisationId, HttpContext.Session);
             courseContentService.UpdateProgress(progressId.Value);
 
             var model = new CourseCompletionViewModel(config, courseCompletion, progressId.Value);

@@ -11,15 +11,15 @@
     {
         private ICryptoService cryptoService;
         private LoginService loginService;
-        private IUserService userService;
+        private IUserDataService userDataService;
 
         [SetUp]
         public void Setup()
         {
-            userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             cryptoService = A.Fake<ICryptoService>();
 
-            loginService = new LoginService(userService, cryptoService);
+            loginService = new LoginService(userDataService, cryptoService);
         }
 
         [Test]
@@ -177,7 +177,7 @@
             GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_no_admin_account_is_associated_with_delegate()
         {
             // Given
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._)).Returns(null);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(null);
 
             // When
             var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
@@ -193,7 +193,7 @@
         {
             // Given
             var associatedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userService.GetAdminUserByUsername(A<string>._)).Returns(associatedAdminUser);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(associatedAdminUser);
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When

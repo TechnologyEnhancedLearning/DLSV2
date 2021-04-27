@@ -11,7 +11,7 @@
     public partial class LearningMenuControllerTests
     {
         [Test]
-        public void CompletionSummary_should_StartOrUpdate_session_if_valid_course()
+        public void CompletionSummary_should_StartOrUpdateDelegateSession_if_valid_course()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
@@ -26,16 +26,16 @@
             controller.CompletionSummary(CustomisationId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, httpContextSession))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
                     candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
         }
 
         [Test]
-        public void CompletionSummary_should_not_StartOrUpdate_session_if_invalid_course()
+        public void CompletionSummary_should_not_StartOrUpdateDelegateSession_if_invalid_course()
         {
             // Given
             const int progressId = 3;
@@ -49,12 +49,12 @@
             controller.CompletionSummary(CustomisationId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .MustNotHaveHappened();
         }
 
         [Test]
-        public void CompletionSummary_should_not_StartOrUpdate_session_if_unable_to_enrol()
+        public void CompletionSummary_should_not_StartOrUpdateDelegateSession_if_unable_to_enrol()
         {
             // Given
             var expectedCourseCompletion = CourseCompletionHelper.CreateDefaultCourseCompletion(CustomisationId);
@@ -68,7 +68,7 @@
             controller.CompletionSummary(CustomisationId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .MustNotHaveHappened();
         }
 
