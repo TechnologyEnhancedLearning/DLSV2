@@ -7,7 +7,7 @@
     {
         public IViewComponentResult Invoke(string aspController, string aspAction)
         {
-            return View(new BackLinkViewModel(aspController, aspAction));
+            return View(new LinkViewModel(aspController, aspAction));
         }
     }
 }
