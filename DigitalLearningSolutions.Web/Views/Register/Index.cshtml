@@ -16,7 +16,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form method="post" asp-action="Index">
+    <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
 
       @if (errorHasOccurred) {
         <partial name="_ErrorSummary"/>
@@ -63,7 +63,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Email"].Errors[0].ErrorMessage
           </span>
         }
-        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
+        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" type="text" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
       </div>
 
       <button class="nhsuk-button" type="submit">Next</button>

@@ -33,7 +33,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Centre"].Errors[0].ErrorMessage
           </span>
         }
-        <select class="nhsuk-select @centreSelectErrorClass" id="Centre" aria-describedby="centre-error" asp-for="Centre">
+        <select class="nhsuk-select nhsuk-u-width-full @centreSelectErrorClass" id="Centre" aria-describedby="centre-error" asp-for="Centre">
           <option value="" disabled selected>Select a centre</option>
           @foreach (var option in ViewBag.Centres) {
             <option value="@option.Item1">@option.Item2</option>
@@ -50,7 +50,7 @@
             <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["JobGroup"].Errors[0].ErrorMessage
           </span>
         }
-        <select class="nhsuk-select @jobGroupSelectErrorClass" id="JobGroup" aria-describedby="job-group-error" asp-for="JobGroup">
+        <select class="nhsuk-select nhsuk-u-width-full @jobGroupSelectErrorClass" id="JobGroup" aria-describedby="job-group-error" asp-for="JobGroup">
           <option value="" disabled selected>Select a job group</option>
           @foreach (var option in ViewBag.JobGroups) {
             <option value="@option.Item1">@option.Item2</option>
