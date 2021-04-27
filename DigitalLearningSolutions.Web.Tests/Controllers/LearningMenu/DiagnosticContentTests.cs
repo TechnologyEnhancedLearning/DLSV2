@@ -27,8 +27,8 @@
             controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
                     candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
@@ -46,7 +46,7 @@
             controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -64,7 +64,7 @@
             controller.DiagnosticContent(CustomisationId, SectionId, emptySelectedTutorials);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._)).MustNotHaveHappened();
         }
 
         [Test]

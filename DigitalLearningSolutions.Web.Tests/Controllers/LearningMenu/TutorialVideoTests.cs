@@ -11,7 +11,7 @@
     public partial class LearningMenuControllerTests
     {
         [Test]
-        public void TutorialVideo_should_StartOrUpdate_session_if_valid_tutorial()
+        public void TutorialVideo_should_StartOrUpdateDelegateSession_if_valid_tutorial()
         {
             // Given
             var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo();
@@ -26,16 +26,16 @@
             controller.TutorialVideo(CustomisationId, SectionId, TutorialId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(CandidateId, CustomisationId, httpContextSession))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(CandidateId, CustomisationId, httpContextSession))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .WhenArgumentsMatch((int candidateId, int customisationId, ISession session) =>
                     candidateId != CandidateId || customisationId != CustomisationId)
                 .MustNotHaveHappened();
         }
 
         [Test]
-        public void TutorialVideo_should_not_StartOrUpdate_session_if_invalid_tutorial()
+        public void TutorialVideo_should_not_StartOrUpdateDelegateSession_if_invalid_tutorial()
         {
             // Given
             const int progressId = 3;
@@ -49,12 +49,12 @@
             controller.TutorialVideo(CustomisationId, SectionId, TutorialId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .MustNotHaveHappened();
         }
 
         [Test]
-        public void TutorialVideo_should_not_StartOrUpdate_session_if_unable_to_enrol()
+        public void TutorialVideo_should_not_StartOrUpdateDelegateSession_if_unable_to_enrol()
         {
             // Given
             var expectedTutorialVideo = TutorialContentHelper.CreateDefaultTutorialVideo();
@@ -68,7 +68,7 @@
             controller.TutorialVideo(CustomisationId, SectionId, TutorialId);
 
             // Then
-            A.CallTo(() => sessionService.StartOrUpdateSession(A<int>._, A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StartOrUpdateDelegateSession(A<int>._, A<int>._, A<ISession>._))
                 .MustNotHaveHappened();
         }
 
