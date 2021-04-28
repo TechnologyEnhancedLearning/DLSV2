@@ -70,9 +70,17 @@
                         cd.LastName,
                         cd.Password,
                         cd.Approved,
-                        cd.ProfileImage
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        jg.JobGroupName
                     FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID 
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();

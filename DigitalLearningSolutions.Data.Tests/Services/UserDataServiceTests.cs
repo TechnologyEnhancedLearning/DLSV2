@@ -60,7 +60,7 @@
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(jobGroupName: "Nursing / midwifery");
 
             //When
             var returnedDelegateUser = userDataService.GetDelegateUserById(2);

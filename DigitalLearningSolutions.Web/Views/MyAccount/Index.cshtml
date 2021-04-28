@@ -91,7 +91,23 @@
             </dd>
           </div>
 
-          <div class="nhsuk-summary-list__row account-details-list__row">
+          @if (Model.DelegateNumber != null)
+          {
+            <div class="nhsuk-summary-list__row account-details-list__row">
+              <dt class="nhsuk-summary-list__key">
+                Job group:
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                @Model.JobGroup
+              </dd>
+            </div>
+
+            foreach (var customField in Model.CustomFields) {
+              <partial name="MyDetailsCustomField" model="@customField" />
+            }
+          }
+
+          <div class="nhsuk-summary-list__row account-detailslist_row">
             <dt class="nhsuk-summary-list__key profile-picture__label">
               Profile picture (optional):
             </dt>

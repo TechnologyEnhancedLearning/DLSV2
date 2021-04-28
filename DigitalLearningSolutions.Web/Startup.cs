@@ -108,6 +108,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
+            services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
         }
 
