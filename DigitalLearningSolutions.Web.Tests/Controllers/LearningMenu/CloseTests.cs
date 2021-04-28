@@ -14,8 +14,8 @@
             controller.Close();
 
             // Then
-            A.CallTo(() => sessionService.StopSession(CandidateId, httpContextSession)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => sessionService.StopSession(A<int>._, A<ISession>._))
+            A.CallTo(() => sessionService.StopDelegateSession(CandidateId, httpContextSession)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => sessionService.StopDelegateSession(A<int>._, A<ISession>._))
                 .WhenArgumentsMatch((int candidateId, ISession _) => candidateId != CandidateId)
                 .MustNotHaveHappened();
         }

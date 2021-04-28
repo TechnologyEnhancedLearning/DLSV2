@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Services;
@@ -107,6 +108,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

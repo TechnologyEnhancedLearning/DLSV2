@@ -1,0 +1,35 @@
+@using DigitalLearningSolutions.Web.ViewModels.Home
+@model LandingPageViewModel
+
+@{
+  ViewData["Title"] = "Welcome";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true"/>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel"/>
+
+    <div class="welcome-page-button-container">
+      @if (Model.UserIsLoggedIn) {
+        <a class="nhsuk-button auth-button auth-button--left" href="@Model.CurrentSiteBaseUrl/Home?action=appselect">
+          Switch application
+        </a>
+      } else {
+        <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
+          Log in
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary auth-button" asp-controller="Register" asp-action="Index">
+          Register
+        </a>
+      }
+    </div>
+
+    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel"/>
+
+    <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
+
+    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel"/>
+  </div>
+</div>

@@ -34,32 +34,36 @@
         public static LoginController GetLoginControllerWithUnauthenticatedUser
         (
             ILoginService loginService,
-            IUserService userService
+            IUserService userService,
+            ISessionService sessionService
         )
         {
-            return GetLoginController(loginService, userService, string.Empty);
+            return GetLoginController(loginService, userService, sessionService, string.Empty);
         }
 
         public static LoginController GetLoginControllerWithAuthenticatedUser
         (
             ILoginService loginService,
-            IUserService userService
+            IUserService userService,
+            ISessionService sessionService
         )
         {
-            return GetLoginController(loginService, userService, "mock");
+            return GetLoginController(loginService, userService, sessionService, "mock");
         }
 
         private static LoginController GetLoginController
         (
             ILoginService loginService,
             IUserService userService,
+            ISessionService sessionService,
             string authenticationType
         )
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-            var controller = new LoginController(loginService, userService)
+
+            var new LoginController(loginService, userService, sessionService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -80,7 +84,8 @@
         public static LoginController GetLoginControllerWithSignInFunctionality
         (
             ILoginService loginService,
-            IUserService userService
+            IUserService userService,
+            ISessionService sessionService
         )
         {
             var controller = GetLoginControllerWithUnauthenticatedUser(loginService, userService);

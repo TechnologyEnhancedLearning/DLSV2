@@ -1,0 +1,14 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub
+@model MiniHubNavigationModel
+
+<h1 class="nhsuk-heading-xl">
+  <span>
+    <span>@Model.Sections[Model.CurrentSectionIndex].SectionTitle</span>
+    <span class="nhsuk-caption-xl nhsuk-caption--bottom">
+      <span class="nhsuk-u-visually-hidden">
+        -
+      </span>
+      @Model.MiniHubName
+    </span>
+  </span>
+</h1>

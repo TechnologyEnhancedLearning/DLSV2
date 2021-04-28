@@ -13,7 +13,8 @@
                 return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
             }
             var adminId = GetAdminID();
-            frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, null, null);
             return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
         }
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
@@ -25,7 +26,7 @@
             {
                 return StatusCode(403);
             }
-            var commentReplies = frameworkService.GetCommentById(commentId, GetAdminID());
+            var commentReplies = frameworkService.GetCommentRepliesById(commentId, GetAdminID());
             if (commentReplies == null )
             {
                 logger.LogWarning($"Failed to load comment: commentId: {commentId}");
@@ -35,14 +36,15 @@
         }
         [HttpPost]
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
-        public IActionResult InsertReply(int frameworkId, int commentId, string comment)
+        public IActionResult InsertReply(int frameworkId, int commentId, string comment, string parentComment)
         {
             if (comment == null)
             {
                 return RedirectToAction("ViewThread", new { frameworkId, commentId });
             }
             var adminId = GetAdminID();
-            frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
+            var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
+            frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, commentId, parentComment);
             return RedirectToAction("ViewThread", new { frameworkId, commentId });
         }
         public IActionResult ArchiveReply(int commentId, int replyToCommentId, int frameworkId)

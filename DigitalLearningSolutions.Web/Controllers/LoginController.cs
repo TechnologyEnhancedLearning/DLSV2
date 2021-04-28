@@ -16,11 +16,13 @@
     {
         private readonly ILoginService loginService;
         private readonly IUserService userService;
+        private readonly ISessionService sessionService;
 
-        public LoginController(ILoginService loginService, IUserService userService)
+        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
         {
             this.loginService = loginService;
             this.userService = userService;
+            this.sessionService = sessionService;
         }
 
         public IActionResult Index()
@@ -61,7 +63,7 @@
             {
                 return View("AccountNotApproved");
             }
-
+            
             verifiedAdminUser ??=
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
@@ -69,6 +71,10 @@
             var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
             if (availableCentres.Count == 1)
             {
+                if (verifiedAdminUser != null)
+                {
+                    sessionService.StartAdminSession(verifiedAdminUser.Id);
+                }
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
             }
 
@@ -88,7 +94,10 @@
             var adminAccountForChosenCentre = adminAccount?.CentreId == centreId ? adminAccount : null;
             var delegateAccountForChosenCentre =
                 approvedDelegateAccounts?.FirstOrDefault(du => du.CentreId == centreId);
-
+            if (adminAccountForChosenCentre != null)
+            {
+                sessionService.StartAdminSession(adminAccountForChosenCentre.Id);
+            }
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 
