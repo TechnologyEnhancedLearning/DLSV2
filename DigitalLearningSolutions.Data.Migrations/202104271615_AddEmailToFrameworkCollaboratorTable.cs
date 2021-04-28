@@ -13,6 +13,7 @@
             Execute.Sql("UPDATE FrameworkCollaborators SET UserEmail = (SELECT Email FROM AdminUsers WHERE AdminID = FrameworkCollaborators.AdminID);");
             Alter.Column("UserEmail").OnTable("FrameworkCollaborators").AsString(255).NotNullable();
             Alter.Column("AdminID").OnTable("FrameworkCollaborators").AsInt32().Nullable();
+            Alter.Table("AdminUsers").AddColumn("IsFrameworkContributor").AsBoolean().NotNullable().WithDefaultValue(false);
         }
         public override void Down()
         {
@@ -22,6 +23,7 @@
             Delete.PrimaryKey("PK_FrameworkCollaborators").FromTable("FrameworkCollaborators");
             Delete.Column("ID").FromTable("FrameworkCollaborators");
             Create.PrimaryKey("PK_FrameworkCollaborators").OnTable("FrameworkCollaborators").Columns("AdminID", "FrameworkID");
+            Delete.Column("IsFrameworkContributor").FromTable("AdminUsers");
         }
     }
 }

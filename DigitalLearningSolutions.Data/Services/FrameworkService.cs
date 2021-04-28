@@ -503,6 +503,10 @@
                     );
                     return -1;
                 }
+                if(adminId > 0)
+                {
+                    connection.Execute(@"UPDATE AdminUsers SET IsFrameworkContributor = 1 WHERE AdminId = @adminId AND IsFrameworkContributor = 0", new { adminId });
+                }
                 existingId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
                  ((SELECT ID
@@ -514,9 +518,13 @@
         }
         public void RemoveCollaboratorFromFramework(int frameworkId, int id)
         {
+            var adminId = (int?)connection.ExecuteScalar(
+                    @"SELECT AdminID FROM FrameworkCollaborators WHERE  (FrameworkID = @frameworkId) AND (ID = @id)", new { frameworkId, id }
+                    );
             connection.Execute(
-                             @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id)",
-                            new { frameworkId, id });
+                             @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
+                            new { frameworkId, id, adminId });
+
         }
 
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
