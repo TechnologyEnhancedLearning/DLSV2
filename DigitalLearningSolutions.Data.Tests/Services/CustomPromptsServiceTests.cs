@@ -27,7 +27,7 @@
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(text: "Department / team", options: null, mandatory: true);
             var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: expectedPrompt1, customPrompt2: expectedPrompt2);
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(29))
-                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1PromptId: 1, customField1Prompt: "Custom Prompt", customField1Options: null));
+                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1Prompt: "Custom Prompt", customField1Options: null));
 
             // When
             var result = customPromptsService.GetCustomPromptsForCentreByCentreId(29);
