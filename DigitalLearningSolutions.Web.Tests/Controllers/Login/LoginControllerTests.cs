@@ -65,7 +65,7 @@
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
-            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
@@ -182,7 +182,7 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new List<CentreUserDetails>
                 {
                     new CentreUserDetails(1, "Centre 1", true),
@@ -214,9 +214,9 @@
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userService.GetAvailableCentres(
-                    A<AdminUser>.That.Matches(au => au.IsSameOrEqualTo(expectedAdminUser)),
-                    A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(new List<DelegateUser>()))))
+            A.CallTo(() => userService.GetUserCentres(
+                    A<AdminUser>.That.IsEqualTo(expectedAdminUser),
+                    A<List<DelegateUser>>.That.IsEmpty()))
                 .MustHaveHappened();
         }
 
@@ -241,8 +241,8 @@
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userService.GetAvailableCentres(
-                    A<AdminUser>.That.Matches(au => au.IsSameOrEqualTo(expectedAdminUser)),
+            A.CallTo(() => userService.GetUserCentres(
+                    A<AdminUser>.That.IsEqualTo(expectedAdminUser),
                     A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(expectedApprovedDelegateUsers))))
                 .MustHaveHappened();
         }
@@ -259,7 +259,7 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => userService.GetAvailableCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 

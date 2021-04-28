@@ -9,8 +9,7 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(string? adminId, string? delegateId);
-
-        public List<CentreUserDetails> GetAvailableCentres(AdminUser adminUser, List<DelegateUser> delegateUsers);
+        public List<CentreUserDetails> GetUserCentres(AdminUser adminUser, List<DelegateUser> delegateUsers);
     }
 
     public class UserService : IUserService
@@ -44,7 +43,7 @@
         {
             AdminUser? adminUser = null;
 
-            if (int.TryParse(userAdminId, out int adminId))
+            if (int.TryParse(userAdminId, out var adminId))
             {
                 adminUser = userDataService.GetAdminUserById(adminId);
             }
@@ -59,10 +58,12 @@
             return (adminUser, delegateUser);
         }
 
-        public List<CentreUserDetails> GetAvailableCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            var availableCentres = delegateUsers.Select(du => new CentreUserDetails
-                (du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)).ToList();
+            var availableCentres = delegateUsers
+                .Select(du =>
+                    new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true))
+                .ToList();
 
             if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
             {

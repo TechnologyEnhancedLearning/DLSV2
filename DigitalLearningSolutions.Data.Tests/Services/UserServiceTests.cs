@@ -131,7 +131,7 @@
             var expectedIdOrder = new List<int> { 2, 1, 4, 3 };
 
             // When
-            var result = userService.GetAvailableCentres(inputAdminAccount, inputDelegateList);
+            var result = userService.GetUserCentres(inputAdminAccount, inputDelegateList);
             var resultIdOrder = result.Select(details => details.CentreId).ToList();
 
             // Then

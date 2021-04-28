@@ -66,7 +66,7 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var availableCentres = userService.GetAvailableCentres(verifiedAdminUser, approvedDelegateUsers);
+            var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
             if (availableCentres.Count == 1)
             {
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
