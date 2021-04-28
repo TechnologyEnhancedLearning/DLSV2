@@ -14,30 +14,12 @@
 
     @if (Model.AdminNotifications.Notifications.Any())
     {
-      <details class="nhsuk-details nhsuk-expander">
-        <summary class="nhsuk-details__summary">
-          <span class="nhsuk-details__summary-text">
-            My admin account notifications
-          </span>
-        </summary>
-        <div class="nhsuk-details__text">
-          <partial name="_NotificationPreferenceList" model="Model.AdminNotifications" />
-        </div>
-      </details>
+      <partial name="_NotificationPreferenceList" model="Model.AdminNotifications" />
     }
 
     @if (Model.DelegateNotifications.Notifications.Any())
     {
-      <details class="nhsuk-details nhsuk-expander">
-        <summary class="nhsuk-details__summary">
-          <span class="nhsuk-details__summary-text">
-            My delegate account notifications
-          </span>
-        </summary>
-        <div class="nhsuk-details__text">
-          <partial name="_NotificationPreferenceList" model="Model.DelegateNotifications" />
-        </div>
-      </details>
+      <partial name="_NotificationPreferenceList" model="Model.DelegateNotifications" />
     }
 
     <div class="top-spaced-goback">

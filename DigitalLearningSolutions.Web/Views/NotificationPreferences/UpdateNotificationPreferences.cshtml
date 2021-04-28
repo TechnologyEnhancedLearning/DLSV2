@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+
+@model UpdateNotificationPreferencesViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Update Notification Preferences";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Update Notification Preferences</h1>
+    <div class="nhsuk-hint">Please tick the boxes for all the notifications you would like to receive.</div>
+    @foreach (var notification in Model.Notifications) {
+      <div class="nhsuk-grid-row">
+        <input class="nhsuk-checkboxes__input" id="example-1" name="example" type="checkbox" value="email">
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="example-1">
+          @notification.Description
+        </label>
+      </div>
+    }
+
+    @*save button here*@
+    <div class="top-spaced-goback">
+      <vc:back-link asp-controller="MyAccount" asp-action="Index"></vc:back-link>
+    </div>
+  </div>
+</div>

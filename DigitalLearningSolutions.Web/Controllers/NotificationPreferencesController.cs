@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -31,6 +30,36 @@
             var delegateNotifications = notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId);
 
             var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
+
+            return View(model);
+        }
+
+        [Route("/NotificationPreferences/Edit/{userType}")]
+        public IActionResult UpdateNotificationPreferences(string userType)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            IEnumerable<NotificationPreference> notifications;
+
+            if (userType == UserTypes.Admin)
+            {
+                var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
+                notifications = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(adminId);
+            }
+            else if (userType == UserTypes.Delegate)
+            {
+                var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+                notifications = notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Login"); //TODO AIR-349 is this correct?
+            }
+
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
 
             return View(model);
         }
