@@ -1,9 +1,9 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common
-<h1>Something went wrong...</h1>
-<p>
+<h1 class="nhsuk-heading-xl">Something went wrong...</h1>
+<p class="nhsuk-body-m">
   There was a problem resetting your password.
   The reset password link is only valid once, and expires after 2 hours.
   Please try again.
 </p>
 
-<partial name="_ActionLink" model="@(new LinkViewModel("ForgotPassword", "Index"))" />
+<partial name="_ActionLink" model="@(new ActionLinkViewModel("ForgotPassword", "Index", "Reset password"))" />
