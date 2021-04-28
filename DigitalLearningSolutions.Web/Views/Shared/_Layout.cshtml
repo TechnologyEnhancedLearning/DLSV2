@@ -57,7 +57,7 @@
           </a>
         </div>
 
-        @if (ViewData["DoNotDisplayNavBar"] == null) {
+        @if ((bool?)ViewData["DoNotDisplayNavBar"] != true) {
           <div class="nhsuk-header__content" id="content-header">
             <div class="nhsuk-header__menu">
               <button class="nhsuk-header__menu-toggle" id="toggle-menu" aria-controls="header-navigation" aria-label="Open menu">Menu</button>
@@ -67,7 +67,7 @@
         <vc:logo customisation-id="@((int?) ViewData["CustomisationId"])" />
       </div>
 
-      @if (ViewData["DoNotDisplayNavBar"] == null) {
+      @if ((bool?)ViewData["DoNotDisplayNavBar"] != true) {
         <nav class="nhsuk-header__navigation" id="header-navigation" role="navigation" aria-label="Primary navigation" aria-labelledby="label-navigation">
           <div class="nhsuk-width-container">
             <p class="nhsuk-header__navigation-title">
@@ -173,7 +173,9 @@
           </div>
         </nav>
       }
-      <div class="visual-separator"></div>
+
+      @{ var visualSeparatorStyle = (bool?)ViewData["DoNotDisplayNavBar"] == true ? "display : block;" : string.Empty; }
+      <div class="visual-separator" style="@visualSeparatorStyle"></div>
     </header>
 
     @RenderSection("NavBreadcrumbs", required: false)
