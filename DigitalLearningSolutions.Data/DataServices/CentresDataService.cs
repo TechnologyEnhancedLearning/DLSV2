@@ -8,7 +8,7 @@
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
-        IEnumerable<(int, string)> GetActiveCentres();
+        IEnumerable<(int, string)> GetActiveCentresAlphabetical();
     }
 
     public class CentresDataService: ICentresDataService
@@ -42,7 +42,7 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetActiveCentres()
+        public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
         {
             var centres = connection.Query<(int, string)>(
                 @"SELECT CentreID, CentreName

@@ -74,7 +74,7 @@
         public void Get_active_centres_should_contain_an_active_centre()
         {
             // When
-            var result = centresDataService.GetActiveCentres().ToList();
+            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
 
             // Then
             result.Contains((2, "North West Boroughs Healthcare NHS Foundation Trust")).Should().BeTrue();
@@ -84,7 +84,7 @@
         public void Get_active_centres_should_not_contain_an_inactive_centre()
         {
             // When
-            var result = centresDataService.GetActiveCentres().ToList();
+            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
 
             // Then
             result.Contains((6, "Closed_Basildon and Thurrock University Hospitals NHS Foundation Trust")).Should().BeFalse();

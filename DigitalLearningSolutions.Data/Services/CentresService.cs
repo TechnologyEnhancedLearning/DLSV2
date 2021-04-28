@@ -8,7 +8,7 @@
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
-        IEnumerable<(int, string)> GetActiveCentres();
+        IEnumerable<(int, string)> GetActiveCentresAlphabetical();
     }
 
     public class CentresService : ICentresService
@@ -40,9 +40,9 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetActiveCentres()
+        public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
         {
-            return centresDataService.GetActiveCentres();
+            return centresDataService.GetActiveCentresAlphabetical();
         }
     }
 }
