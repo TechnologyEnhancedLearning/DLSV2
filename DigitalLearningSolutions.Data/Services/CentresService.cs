@@ -1,8 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
-    using Dapper;
-    using System.Data;
+    using DigitalLearningSolutions.Data.DataServices;
     using Microsoft.Extensions.Logging;
 
     public interface ICentresService
@@ -14,33 +13,23 @@
 
     public class CentresService : ICentresService
     {
-        private readonly IDbConnection connection;
+        private readonly ICentresDataService centresDataService;
         private readonly ILogger<CentresService> logger;
 
-        public CentresService(IDbConnection connection, ILogger<CentresService> logger)
+        public CentresService(ICentresDataService centresDataService, ILogger<CentresService> logger)
         {
-            this.connection = connection;
+            this.centresDataService = centresDataService;
             this.logger = logger;
         }
 
         public string? GetBannerText(int centreId)
         {
-            return connection.QueryFirstOrDefault<string?>(
-                @"SELECT BannerText
-                        FROM Centres
-                        WHERE CentreID = @centreId",
-                new { centreId }
-            );
+            return centresDataService.GetBannerText(centreId);
         }
 
         public string? GetCentreName(int centreId)
         {
-            var name = connection.QueryFirstOrDefault<string?>(
-                @"SELECT CentreName
-                        FROM Centres
-                        WHERE CentreID = @centreId",
-                new { centreId }
-            );
+            var name = centresDataService.GetCentreName(centreId);
             if (name == null)
             {
                 logger.LogWarning(
@@ -53,13 +42,7 @@
 
         public IEnumerable<(int, string)> GetActiveCentres()
         {
-            var centres = connection.Query<(int, string)>(
-                @"SELECT CentreID, CentreName
-                        FROM Centres
-                        WHERE Active = 1
-                        ORDER BY CentreName"
-            );
-            return centres;
+            return centresDataService.GetActiveCentres();
         }
     }
 }
