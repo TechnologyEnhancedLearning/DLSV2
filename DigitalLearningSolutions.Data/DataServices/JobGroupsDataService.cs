@@ -7,7 +7,7 @@
     public interface IJobGroupsDataService
     {
         string? GetJobGroupName(int jobGroupId);
-        IEnumerable<(int, string)> GetJobGroups();
+        IEnumerable<(int id, string name)> GetJobGroupsAlphabetical();
     }
 
     public class JobGroupsDataService: IJobGroupsDataService
@@ -31,7 +31,7 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetJobGroups()
+        public IEnumerable<(int, string)> GetJobGroupsAlphabetical()
         {
             var jobGroups = connection.Query<(int, string)>(
                 @"SELECT JobGroupID, JobGroupName

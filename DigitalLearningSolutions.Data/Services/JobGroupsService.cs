@@ -7,7 +7,7 @@
     public interface IJobGroupsService
     {
         string? GetJobGroupName(int jobGroupId);
-        IEnumerable<(int, string)> GetJobGroups();
+        IEnumerable<(int id, string name)> GetJobGroupsAlphabetical();
     }
 
     public class JobGroupsService : IJobGroupsService
@@ -34,9 +34,9 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetJobGroups()
+        public IEnumerable<(int, string)> GetJobGroupsAlphabetical()
         {
-            return jobGroupsDataService.GetJobGroups();
+            return jobGroupsDataService.GetJobGroupsAlphabetical();
         }
     }
 }

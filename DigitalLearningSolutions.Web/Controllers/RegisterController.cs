@@ -74,7 +74,7 @@
             var data = TempData.Peek<DelegateRegistrationData>();
             var viewModel = data!.LearnerInformationViewModel;
             ViewBag.Centres = centresService.GetActiveCentres();
-            ViewBag.JobGroups = jobGroupsService.GetJobGroups();
+            ViewBag.JobGroups = jobGroupsService.GetJobGroupsAlphabetical();
 
             return View(viewModel);
         }
@@ -86,7 +86,7 @@
             if (!ModelState.IsValid)
             {
                 ViewBag.Centres = centresService.GetActiveCentres();
-                ViewBag.JobGroups = jobGroupsService.GetJobGroups();
+                ViewBag.JobGroups = jobGroupsService.GetJobGroupsAlphabetical();
                 return View(model);
             }
 
