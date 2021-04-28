@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web
 {
+    using System.Configuration;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Org.BouncyCastle.Asn1.Ocsp;
     using Serilog;
 
     public class Startup
@@ -43,6 +45,7 @@ namespace DigitalLearningSolutions.Web
                 .AddCookie("Identity.Application", options =>
                 {
                     options.Cookie.Name = ".AspNet.SharedCookie";
+                    options.Cookie.Domain = config.GetValue<string>("SharedCookieDomain");
                     options.Events.OnRedirectToLogin = RedirectToLogin;
                     options.Events.OnRedirectToAccessDenied = RedirectToHome;
                 });
