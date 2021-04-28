@@ -43,6 +43,7 @@ namespace DigitalLearningSolutions.Web
                 {
                     options.Cookie.Name = ".AspNet.SharedCookie";
                     options.Cookie.Domain = config.GetValue<string>("SharedCookieDomain");
+                    options.Cookie.Path = "/";
                     options.Events.OnRedirectToLogin = RedirectToLogin;
                     options.Events.OnRedirectToAccessDenied = RedirectToHome;
                 });
