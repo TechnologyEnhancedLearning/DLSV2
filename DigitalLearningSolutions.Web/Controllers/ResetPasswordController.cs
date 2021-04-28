@@ -13,14 +13,14 @@ namespace DigitalLearningSolutions.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string email, string resetHash)
+        public async Task<IActionResult> Index(string email, string code)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(resetHash))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(code))
             {
                 return RedirectToAction("Index", "Login");
             }
 
-            var requestIsValid = await passwordResetService.PasswordResetHashIsValidAsync(email, resetHash);
+            var requestIsValid = await passwordResetService.PasswordResetHashIsValidAsync(email, code);
 
             if (!requestIsValid)
             {
