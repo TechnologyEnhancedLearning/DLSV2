@@ -26,7 +26,9 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         }
 
         [Theory]
-        [InlineData("/Home")]
+        [InlineData("/Home/Welcome")]
+        [InlineData("/Home/Products")]
+        [InlineData("/Home/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
         [InlineData("/Register")]
