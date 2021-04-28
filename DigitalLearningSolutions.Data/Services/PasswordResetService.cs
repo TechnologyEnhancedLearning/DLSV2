@@ -55,8 +55,7 @@
                 resetPasswordIdsForEmail.Select(id => passwordResetDataService.FindAsync(id)));
 
             return resetPasswordEntitiesInDb.Any(
-                entity => entity != null
-                          && entity.ResetPasswordHash == resetHash
+                entity => entity.ResetPasswordHash == resetHash
                           && clockService.UtcNow - entity.PasswordResetDateTime < TimeSpan.FromHours(2));
         }
 

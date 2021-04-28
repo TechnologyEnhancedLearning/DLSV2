@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -152,7 +152,6 @@
         {
             // Given
             var createTime = DateTime.UtcNow;
-            A.CallTo(() => clockService.UtcNow).Returns(createTime + TimeSpan.FromMinutes(2));
 
             var resetPasswordModel = Builder<ResetPassword>.CreateNew()
                 .With(m => m.Id = 1)
@@ -162,7 +161,9 @@
             GivenResetPasswordExists(resetPasswordModel);
 
             A.CallTo(() => userService.GetUsersByEmailAddress("Albus.Dumbledore@Hogwarts.com"))
-                .Returns((new List<AdminUser>().ToList(), new List<DelegateUser>()));
+                .Returns((new List<AdminUser>(), new List<DelegateUser>()));
+
+            GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
             var isValid = await passwordResetService.PasswordResetHashIsValidAsync(
