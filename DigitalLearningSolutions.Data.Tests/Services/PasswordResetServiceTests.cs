@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Collections.Generic;
@@ -169,6 +169,36 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var isValid = await passwordResetService.PasswordResetHashIsValidAsync(
                 "Albus.Dumbledore@Hogwarts.com",
                 "New Hash Brown");
+
+            // Then
+            isValid.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Reset_password_hash_is_invalid_if_hash_does_not_match_db_entity()
+        {
+            // Given
+            const string emailAddress = "Albus.Dumbledore@Hogwarts.com";
+
+            var createTime = DateTime.UtcNow;
+            A.CallTo(() => clockService.UtcNow).Returns(createTime + TimeSpan.FromMinutes(2));
+
+            var resetPasswordModel = Builder<ResetPassword>.CreateNew()
+                .With(m => m.Id = 1)
+                .With(m => m.PasswordResetDateTime = createTime)
+                .With(m => m.ResetPasswordHash = "New Hash Brown")
+                .Build();
+            GivenResetPasswordExists(resetPasswordModel);
+
+            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = resetPasswordModel.Id)
+                .Build();
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
+                .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
+
+            // When
+            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(
+                emailAddress,
+                "Nonexistent Hash");
 
             // Then
             isValid.Should().BeFalse();
