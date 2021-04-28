@@ -56,7 +56,7 @@
             }
             else
             {
-                return RedirectToAction("Index", "Login"); //TODO AIR-349 is this correct?
+                return RedirectToAction("Index", "Home");
             }
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
