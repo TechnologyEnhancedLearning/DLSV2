@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
     public interface IFrameworkNotificationService
     {
-        void SendFrameworkCollaboratorInvite(int adminId, int frameworkId, int invitedByAdminId);
+        void SendFrameworkCollaboratorInvite(int id, int invitedByAdminId);
         void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
@@ -83,25 +83,25 @@ To view or reply to the comment in the framework system, visit this url: {commen
             var baseUrl = new UriBuilder(trackingSystemBaseUrl);
             return baseUrl;
         }
-        public void SendFrameworkCollaboratorInvite(int adminId, int frameworkId, int invitedByAdminId)
+        public void SendFrameworkCollaboratorInvite(int id, int invitedByAdminId)
         {
-            var collaboratorNotification = frameworkService.GetCollaboratorNotification(adminId, frameworkId, invitedByAdminId);
+            var collaboratorNotification = frameworkService.GetCollaboratorNotification(id, invitedByAdminId);
             if (collaboratorNotification == null)
             {
-                throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. adminId: {adminId}, frameworkId: {frameworkId}, invitedByAdminId: {invitedByAdminId})");
+                throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId})");
             }
             var frameworkUrl = getBaseURL();
             frameworkUrl.Path += $"Framework/Structure/{collaboratorNotification.FrameworkID}";
             string emailSubjectLine = "DLS Digital Framework Contributor Invitation";
             var builder = new BodyBuilder
             {
-                TextBody = $@"Dear {collaboratorNotification?.Forename},
+                TextBody = $@"Dear colleague,
 You have been identified as a {collaboratorNotification?.FrameworkRole} for the framework, {collaboratorNotification?.FrameworkName} by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}).
-To access the framework, visit this url: {frameworkUrl.Uri}. You will need to login to DLS to view the framework.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {collaboratorNotification?.Forename},</p><p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the  framework, {collaboratorNotification?.FrameworkName} by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl.Uri}'>Click here</a> to access the framework. You will need to login to DLS to view the framework.</p>"
+To access the framework, visit this url: {frameworkUrl.Uri}. You will need to be registered on the Digital Learning Solutions platform to view the framework.",
+                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear colleague,</p><p>You have been identified as a {collaboratorNotification?.FrameworkRole} for the  framework, {collaboratorNotification?.FrameworkName} by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl.Uri}'>Click here</a> to access the framework. You will need to be registered on the Digital Learning Solutions platform to view the framework.</p>"
             };
 
-            emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.Email, collaboratorNotification.InvitedByEmail));
+            emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
     }
 }

@@ -474,37 +474,32 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCollaborators(string actionname, int frameworkId)
         {
             var adminId = GetAdminID();
-            var centreId = GetCentreId();
-            var adminList = commonService.GetOtherAdministratorsForCentre((int)centreId, adminId).Select(a => new { a.AdminID, a.Email }).ToList();
-            var adminSelectList = new SelectList(adminList, "AdminID", "Email");
-            string frameworkName = "";
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             if (framework.UserRole < 2)
             {
                 return StatusCode(403);
             }
-            frameworkName = (string)framework.FrameworkName;
+            var frameworkName = (string)framework.FrameworkName;
             var model = new CollaboratorsViewModel()
             {
                 FrameworkId = frameworkId,
                 FrameworkName = frameworkName,
-                AdminSelectList = adminSelectList,
                 Collaborators = collaborators
             };
             return View("Developer/Collaborators", model);
         }
         [HttpPost]
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborator(string actionname, int adminId, bool canModify, int frameworkId)
+        public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
         {
-            frameworkService.AddCollaboratorToFramework(frameworkId, adminId, canModify);
-            frameworkNotificationService.SendFrameworkCollaboratorInvite(adminId, frameworkId, GetAdminID());
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminID());
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
-        public IActionResult RemoveCollaborator(int frameworkId, string actionname, int adminId)
+        public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
         {
-            frameworkService.RemoveCollaboratorFromFramework(frameworkId, adminId);
+            frameworkService.RemoveCollaboratorFromFramework(frameworkId, id);
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         [Route("/Framework/{frameworkId}/{tabname}/")]

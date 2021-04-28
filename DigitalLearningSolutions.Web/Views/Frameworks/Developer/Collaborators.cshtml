@@ -68,7 +68,7 @@ else
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">User </span>
             <span class="framework-collaborator-user">
-              @collaborator.Surname, @collaborator.Forename (@collaborator.Email)
+             @collaborator.UserEmail
             </span>
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
@@ -99,24 +99,23 @@ else
   <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
     <h2>Add a user to the working group</h2>
   </label>
-  <div class="nhsuk-hint" id="add-user-hint">
-    Choose a user and add them as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
-  </div>
-  <div class="sort-row no-label nhsuk-form-group">
+  <div class="nhsuk-form-group">
     <div class=" sort-select-container">
-      <select class="nhsuk-select" asp-items="Model.AdminSelectList" asp-for="AdminID" aria-label="User"></select>
-    </div>
-    <div class="sort-button-container">
-      <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.FrameworkId">
-        Add  as Contributor
-      </button>
-    </div>
-    <div class="sort-button-container">
-      <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-frameworkId="@Model.FrameworkId">
-        Add as Reviewer
-      </button>
+      <label class="nhsuk-label" for="example">
+        User email address
+      </label>
+      <div class="nhsuk-hint" id="add-user-hint">
+        Provide a user email address to add as a Contributor (to help create your framework) or Reviewer (to sign off your framework). Working group members can be added and removed later.
+      </div>
+      <input class="nhsuk-input" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
     </div>
   </div>
+  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.FrameworkId">
+    Add  as Contributor
+  </button>
+  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-frameworkId="@Model.FrameworkId">
+    Add as Reviewer
+  </button>
 </form>
 <div class=" nhsuk-u-margin-top-6">
     <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
