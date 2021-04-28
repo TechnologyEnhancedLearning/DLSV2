@@ -62,8 +62,7 @@
             var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             var session = new MockHttpContextSession();
 
-
-            var new LoginController(loginService, userService, sessionService)
+            var controller = new LoginController(loginService, userService, sessionService)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -88,7 +87,7 @@
             ISessionService sessionService
         )
         {
-            var controller = GetLoginControllerWithUnauthenticatedUser(loginService, userService);
+            var controller = GetLoginControllerWithUnauthenticatedUser(loginService, userService, sessionService);
 
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,

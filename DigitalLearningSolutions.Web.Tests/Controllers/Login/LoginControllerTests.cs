@@ -230,6 +230,10 @@
                 .Returns((expectedAdmin, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(expectedAdmin.CentreId, expectedAdmin.CentreName, true) });
+
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -291,7 +295,7 @@
         public void Multiple_approved_accounts_at_same_centre_should_log_in()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService);
+            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true) };
