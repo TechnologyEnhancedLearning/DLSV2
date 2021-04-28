@@ -120,7 +120,7 @@ NB the redirect urls for when a user is not logged in or is not authorized (does
 These tests will also be run by the Jenkins job whenever you push.
 
 ## Running the web tests
-These tests are in the DigitalLearningSolutions.Web.Tests project. No setup is required to run them and they'll also be run by the jenkins job whenever you push. See the sections below for how to run one test, all tests in a file or all the tests in the project.
+These tests are in the DigitalLearningSolutions.Web.(...)Tests projects. No setup is required to run them and they'll also be run by the jenkins job whenever you push. See the sections below for how to run one test, all tests in a file or all the tests in the project.
 
 ## Running the data tests
 These tests are in the DigitalLearningSolutions.Data.Tests project. Some setup is required as these tests use a real db instance.
@@ -137,7 +137,7 @@ Open the test file, find the test you want to run, click the icon to the left of
 Open the file and click the icon to the left of the class name.
 
 ## Run all the tests
-Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests or DigitalLearningSolutions.Data.Tests) and select "Run tests".
+Open the solution explorer. Right click the test project you want (DigitalLearningSolutions.Web.Tests, DigitalLearningSolutions.Data.Tests, etc.) and select "Run tests".
 
 ## Typescript tests
 The typescrpt tests are run using Jasmine, and can be found in `DigitalLearningSolutions.Web/Scripts/spec`. The tests can be run using the Task Runner Explorer, or from the terminal using `npm t` inside DigitalLearningSolutions.Web.
