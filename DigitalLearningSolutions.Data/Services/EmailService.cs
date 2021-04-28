@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Text;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
     using Microsoft.Extensions.Logging;
@@ -69,6 +70,7 @@
         private MimeMessage CreateMessage(Email email, string mailSenderAddress)
         {
             var message = new MimeMessage();
+            message.Prepare(EncodingConstraint.SevenBit);
             message.From.Add(MailboxAddress.Parse(mailSenderAddress));
             foreach (string toAddress in email.To)
             {
@@ -86,9 +88,28 @@
             }
 
             message.Subject = email.Subject;
-            message.Body = email.Body.ToMessageBody();
-
+            message.Body = GetMultipartAlternativeFromBody(email.Body); 
             return message;
+        }
+        private MultipartAlternative GetMultipartAlternativeFromBody(BodyBuilder body)
+        {
+            //Sets body content encooding to quoated-printable to avoid rejection by NHS email servers
+            var htmlPart = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                ContentTransferEncoding = ContentEncoding.QuotedPrintable
+            };
+            htmlPart.SetText(Encoding.UTF8, body.HtmlBody);
+            var textPart = new TextPart(MimeKit.Text.TextFormat.Plain)
+            {
+                ContentTransferEncoding = ContentEncoding.QuotedPrintable
+            };
+            textPart.SetText(Encoding.UTF8, body.TextBody);
+            var multipartAlternative = new MultipartAlternative()
+            {
+                textPart,
+                htmlPart
+            };
+            return multipartAlternative;
         }
     }
 }
