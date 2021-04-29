@@ -10,18 +10,18 @@
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications)
         {
-            AdminNotifications = new NotificationPreferenceListViewModel(adminNotifications, UserTypes.Admin);
-            DelegateNotifications = new NotificationPreferenceListViewModel(delegateNotifications, UserTypes.Delegate);
+            AdminNotifications = new NotificationPreferenceExpanderViewModel(adminNotifications, UserTypes.Admin);
+            DelegateNotifications = new NotificationPreferenceExpanderViewModel(delegateNotifications, UserTypes.Delegate);
         }
 
-        public NotificationPreferenceListViewModel AdminNotifications { get; set; }
+        public NotificationPreferenceExpanderViewModel AdminNotifications { get; set; }
 
-        public NotificationPreferenceListViewModel DelegateNotifications { get; set; }
+        public NotificationPreferenceExpanderViewModel DelegateNotifications { get; set; }
     }
 
-    public class NotificationPreferenceListViewModel
+    public class NotificationPreferenceExpanderViewModel
     {
-        public NotificationPreferenceListViewModel(IEnumerable<NotificationPreference> notifications, string userType)
+        public NotificationPreferenceExpanderViewModel(IEnumerable<NotificationPreference> notifications, string userType)
         {
             Notifications = notifications;
             UserType = userType;

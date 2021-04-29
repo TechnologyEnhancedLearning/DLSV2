@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     public class NotificationPreferencesController : Controller
@@ -35,15 +36,11 @@
             return View(model);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(string userType)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
             IEnumerable<NotificationPreference> notifications;
 
             if (userType == UserTypes.Admin)
