@@ -25,25 +25,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            if (isFrameworkDeveloper == false | isFrameworkDeveloper == null)
+            var isFrameworkContributor = GetIsFrameworkContributor();
+            if (!isFrameworkDeveloper  && !isFrameworkContributor)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
             }
-
-
             var frameworks = frameworkService.GetFrameworksForAdminId(adminId);
             if (frameworks == null)
             {
                 logger.LogWarning($"Attempt to display frameworks for admin {adminId} returned null.");
                 return StatusCode(403);
             }
-
-            var model = new MyFrameworksViewModel(frameworks,
+            var model = new MyFrameworksViewModel(
+                frameworks,
                 searchString,
                 sortBy,
                 sortDirection,
-                page);
+                page,
+                isFrameworkDeveloper);
             return View("Developer/MyFrameworks", model);
         }
         [Route("/Frameworks/AllFrameworks/{page=1:int}")]
@@ -53,8 +53,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             int page = 1)
         {
             var adminId = GetAdminID();
-            var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            if (isFrameworkDeveloper == false | isFrameworkDeveloper == null)
+            var isFrameworkContributor = GetIsFrameworkContributor();
+            if (!isFrameworkDeveloper && !isFrameworkContributor)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
