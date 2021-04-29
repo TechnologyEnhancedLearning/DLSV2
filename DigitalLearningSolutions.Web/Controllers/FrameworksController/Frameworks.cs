@@ -53,8 +53,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             int page = 1)
         {
             var adminId = GetAdminID();
-            var isFrameworkContributor = GetIsFrameworkContributor();
-            if (!isFrameworkDeveloper && !isFrameworkContributor)
+            var isFrameworkDeveloper = GetIsFrameworkDeveloper();
+            if (!isFrameworkDeveloper)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
