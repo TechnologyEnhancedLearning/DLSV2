@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     public class ResetPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
+
         public ResetPasswordController(IPasswordResetService passwordResetService)
         {
             this.passwordResetService = passwordResetService;

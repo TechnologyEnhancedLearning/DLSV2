@@ -68,10 +68,11 @@
         {
             // Given
             var emailAddress = "recipient@example.com";
-            var adminUser = Builder<AdminUser>.CreateNew().With(user => user.EmailAddress = emailAddress)
+            var adminUser = Builder<AdminUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
                 .Build();
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._))
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
                 .Returns((new[] { adminUser }.ToList(), new List<DelegateUser>()));
 
             // When
@@ -97,6 +98,7 @@
         {
             // Given
             var createTime = DateTime.UtcNow;
+            var emailAddress = "email";
 
             var resetPasswordModel = Builder<ResetPassword>.CreateNew()
                 .With(m => m.Id = 1)
@@ -108,13 +110,13 @@
             var candidate = Builder<DelegateUser>.CreateNew()
                 .With(user => user.ResetPasswordId = resetPasswordModel.Id)
                 .Build();
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._))
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
                 .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
 
             GivenCurrentTimeIs(createTime.Add(TimeSpan.FromMinutes(125)));
 
             // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync("email", "New Hash Brown");
+            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(emailAddress, "New Hash Brown");
 
             // Then
             isValid.Should().BeFalse();
@@ -125,6 +127,7 @@
         {
             // Given
             var createTime = DateTime.UtcNow;
+            var emailAddress = "email";
 
             var resetPasswordModel = Builder<ResetPassword>.CreateNew()
                 .With(m => m.Id = 1)
@@ -133,15 +136,16 @@
                 .Build();
             GivenResetPasswordExists(resetPasswordModel);
 
-            var candidate = Builder<DelegateUser>.CreateNew().With(user => user.ResetPasswordId = resetPasswordModel.Id)
+            var candidate = Builder<DelegateUser>.CreateNew()
+                .With(user => user.ResetPasswordId = resetPasswordModel.Id)
                 .Build();
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._))
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
                 .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
 
             GivenCurrentTimeIs(createTime.Add(TimeSpan.FromMinutes(115)));
 
             // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync("email", "New Hash Brown");
+            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(emailAddress, "New Hash Brown");
 
             // Then
             isValid.Should().BeTrue();
@@ -190,7 +194,8 @@
                 .Build();
             GivenResetPasswordExists(resetPasswordModel);
 
-            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = resetPasswordModel.Id)
+            var candidate = Builder<DelegateUser>.CreateNew()
+                .With(u => u.ResetPasswordId = resetPasswordModel.Id)
                 .Build();
             A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
                 .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
