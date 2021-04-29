@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -16,11 +17,14 @@
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
 
-        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService)
+        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
+            IRegistrationService registrationService)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.registrationService = registrationService;
         }
 
         public IActionResult Index()
@@ -138,15 +142,15 @@
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
+            var data = TempData.Peek<DelegateRegistrationData>();
             if (!ModelState.IsValid)
             {
-                var data = TempData.Peek<DelegateRegistrationData>();
                 var viewModel = MapToSummary(data!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
-            // TODO HEEDLS-396 create new user and redirect to confirmation page
+            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data!));
             return View(model);
         }
 
@@ -162,6 +166,19 @@
                 centre!,
                 jobGroup!
             );
+        }
+
+        private static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
+        {
+            return new DelegateRegistrationModel
+            {
+                FirstName = data.RegisterViewModel.FirstName!,
+                LastName = data.RegisterViewModel.LastName!,
+                Email = data.RegisterViewModel.Email!,
+                Centre = (int)data.LearnerInformationViewModel.Centre!,
+                JobGroup = (int)data.LearnerInformationViewModel.JobGroup!,
+                Password = data.PasswordViewModel.Password!
+            };
         }
     }
 }

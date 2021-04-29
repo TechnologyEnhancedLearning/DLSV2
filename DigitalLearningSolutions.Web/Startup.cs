@@ -122,6 +122,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
