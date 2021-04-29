@@ -15,7 +15,9 @@
             string password = "password",
             int? resetPasswordId = null,
             bool approved = true,
-            string candidateNumber = "SV1234"
+            string candidateNumber = "SV1234",
+            string? jobGroupName = null,
+            string? answer1 = null
         )
         {
             return new DelegateUser
@@ -29,7 +31,9 @@
                 Password = password,
                 ResetPasswordId = resetPasswordId,
                 Approved = approved,
-                CandidateNumber = candidateNumber
+                CandidateNumber = candidateNumber,
+                JobGroupName = jobGroupName,
+                Answer1 = answer1
             };
         }
 
