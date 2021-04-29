@@ -83,7 +83,7 @@ else
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (collaborator.FrameworkRole != "Owner")
               {
-                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.FrameworkId" asp-route-adminId="@collaborator.AdminID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.FrameworkId" asp-route-id="@collaborator.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
                   Remove
                 </a>
               }
