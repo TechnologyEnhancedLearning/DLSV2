@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
@@ -34,6 +35,7 @@
             return View(model);
         }
 
+        [HttpGet]
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(string userType)
         {
@@ -62,6 +64,13 @@
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("/NotificationPreferences/Edit/{userType}")]
+        public IActionResult SaveNotificationPreferences(IEnumerable<int> notifications)
+        {
+            throw new NotImplementedException();
         }
     }
 }

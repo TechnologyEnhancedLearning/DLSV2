@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
 
-    public class UpdateNotificationPreferencesViewModel // TODO 
+    public class UpdateNotificationPreferencesViewModel
     {
         public UpdateNotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> notifications, string userType)
