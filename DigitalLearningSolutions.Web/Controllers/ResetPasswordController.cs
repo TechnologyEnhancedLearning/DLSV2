@@ -16,6 +16,11 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string email, string code)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(code))
             {
                 return RedirectToAction("Index", "Login");
