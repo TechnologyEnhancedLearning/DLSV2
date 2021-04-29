@@ -3,8 +3,10 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     public class MyAccountController : Controller
     {
         private readonly IUserService userService;
@@ -18,11 +20,6 @@
 
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
             var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
             var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
@@ -56,6 +53,30 @@
         {
             if (!ModelState.IsValid)
             {
+                return View(model);
+            }
+
+            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
+            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
+            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+
+            if (adminUser != null)
+            {
+                adminUser.FirstName = model.FirstName;
+                adminUser.LastName = model.LastName;
+                adminUser.EmailAddress = model.Email;
+            }
+            
+            if (delegateUser != null)
+            {
+                delegateUser.FirstName = model.FirstName;
+                delegateUser.LastName = model.LastName;
+                delegateUser.EmailAddress = model.Email;
+            }
+
+            if (!userService.TryUpdateUsers(adminUser, delegateUser, model.Password))
+            {
+                ModelState.AddModelError("Password", "The password you have entered is incorrect.");
                 return View(model);
             }
 
