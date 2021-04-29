@@ -8,12 +8,38 @@
   ViewData["Title"] = "Update Notification Preferences";
 }
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Update Notification Preferences</h1>
-    <div class="nhsuk-hint">Please tick the boxes for all the notifications you would like to receive.</div>
+<div class="nhsuk-form-group">
+  <div class="nhsuk-fieldset" aria-describedby="notification-hint">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <h1 class="nhsuk-fieldset__heading">
+        Update notification preferences
+      </h1>
+    </legend>
+    <div class="nhsuk-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
+      <div class="nhsuk-checkboxes">
+        @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index))) {
+          <div class="nhsuk-checkboxes__item">
+            <input
+              class="nhsuk-checkboxes__input"
+              id="notification-@index.ToString())"
+              name="notification"
+              type="checkbox"
+              value="@notification.NotificationId"
+              aria-describedby="notification-@index.ToString()-item-hint"
+              @(notification.Accepted ? "checked" : "")>
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="notification-@index.ToString()">
+              @notification.NotificationName
+            </label>
+            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="notification-@index.ToString()-item-hint">
+              @Html.Raw(notification.Description)
+            </div>
+          </div>
+        }
+      </div>
+
+    @*save button here*@
     <div class="top-spaced-goback">
-      <vc:back-link asp-controller="MyAccount" asp-action="Index"></vc:back-link>
+      <vc:back-link asp-controller="NotificationPreferences" asp-action="Index"></vc:back-link>
     </div>
   </div>
 </div>
