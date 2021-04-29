@@ -174,8 +174,8 @@
         </nav>
       }
 
-      @{ var visualSeparatorStyle = (bool?)ViewData["DoNotDisplayNavBar"] == true ? "display : block;" : string.Empty; }
-      <div class="visual-separator" style="@visualSeparatorStyle"></div>
+      @{ var visualSeparatorNoNavBar = (bool?)ViewData["DoNotDisplayNavBar"] == true ? "visual-separator-no-nav-bar" : string.Empty; }
+      <div class="visual-separator @visualSeparatorNoNavBar"></div>
     </header>
 
     @RenderSection("NavBreadcrumbs", required: false)
