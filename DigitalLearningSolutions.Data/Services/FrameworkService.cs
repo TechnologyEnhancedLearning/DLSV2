@@ -833,7 +833,8 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     WHERE ID = @competencyId", new { adminId, competencyId }
                );
                 numberOfAffectedRows = connection.Execute(
-                    @"DELETE FROM Competencies WHERE ID = @competencyId", new { competencyId }
+                    @"DELETE FROM CompetencyAssessmentQuestions WHERE CompetencyID = @competencyId;
+                        DELETE FROM Competencies WHERE ID = @competencyId", new { competencyId }
                     );
                 if (numberOfAffectedRows < 1)
                 {
