@@ -6,11 +6,11 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using FluentAssertions.Common;
     using NUnit.Framework;
 
     internal class LoginControllerTests
@@ -27,7 +27,9 @@
             userService = A.Fake<IUserService>();
             sessionService = A.Fake<ISessionService>();
 
-            controller = LoginTestHelper.GetLoginControllerWithUnauthenticatedUser(loginService, userService, sessionService);
+            controller = new LoginController(loginService, userService, sessionService);
+            
+            ControllerContextHelper.SetUpControllerWithSignInFunctionality(ref controller);
         }
 
         [Test]
@@ -44,8 +46,8 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser =
-                LoginTestHelper.GetLoginControllerWithAuthenticatedUser(loginService, userService, sessionService);
+            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService);
+            ControllerContextHelper.SetUpControllerWithUser(ref controllerWithAuthenticatedUser, "mock");
 
             // When
             var result = controllerWithAuthenticatedUser.Index();
@@ -58,8 +60,6 @@
         [Test]
         public void Successful_sign_in_should_render_home_page()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
-
             //Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
@@ -82,8 +82,6 @@
         [Test]
         public void Log_in_request_should_call_login_service()
         {
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
-
             //Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
@@ -158,7 +156,6 @@
         public void Log_in_with_approved_delegate_id_fetches_associated_admin_user()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var testDelegate = UserTestHelper.GetDefaultDelegateUser(emailAddress: "TestAccountAssociation@email.com");
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, new List<DelegateUser> { testDelegate }));
@@ -224,7 +221,6 @@
         public void Log_in_as_admin_records_admin_session()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var expectedAdmin = UserTestHelper.GetDefaultAdminUser(10);
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
@@ -233,7 +229,6 @@
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(expectedAdmin.CentreId, expectedAdmin.CentreName, true) });
-
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -247,7 +242,6 @@
         public void Log_in_as_delegate_does_not_record_admin_session()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: true) };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, expectedDelegates));
@@ -295,7 +289,6 @@
         public void Multiple_approved_accounts_at_same_centre_should_log_in()
         {
             // Given
-            controller = LoginTestHelper.GetLoginControllerWithSignInFunctionality(loginService, userService, sessionService);
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true) };
