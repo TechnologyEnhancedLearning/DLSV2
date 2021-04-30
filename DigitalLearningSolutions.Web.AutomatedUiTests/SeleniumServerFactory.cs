@@ -23,6 +23,7 @@
         public SeleniumServerFactory()
         {
             CreateServer(CreateWebHostBuilder());
+            this.CreateClient();
         }
 
         protected sealed override TestServer CreateServer(IWebHostBuilder builder)
@@ -38,9 +39,10 @@
 
         protected sealed override IWebHostBuilder CreateWebHostBuilder()
         {
-            var builder = WebHost.CreateDefaultBuilder(Array.Empty<string>());
-            builder.UseStartup<TStartup>();
-            builder.UseSerilog();
+            var builder = WebHost.CreateDefaultBuilder(Array.Empty<string>())
+                .UseStartup<TStartup>()
+                .UseSerilog()
+                .UseEnvironment("Development");
             ConfigureWebHost(builder);
             return builder;
         }
