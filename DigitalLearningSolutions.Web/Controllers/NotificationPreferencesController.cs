@@ -26,10 +26,10 @@
             }
 
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
-            var adminNotifications = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(adminId);
+            var adminNotifications = GetNotificationPreferencesForUser(UserTypes.Admin, adminId);
 
             var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
-            var delegateNotifications = notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId);
+            var delegateNotifications = GetNotificationPreferencesForUser(UserTypes.Delegate, delegateId);
 
             var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
 
@@ -41,26 +41,28 @@
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(string userType)
         {
-            IEnumerable<NotificationPreference> notifications;
+            var claimType = userType == UserTypes.Admin ? CustomClaimTypes.UserAdminId : CustomClaimTypes.LearnCandidateId;
 
-            if (userType == UserTypes.Admin)
-            {
-                var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
-                notifications = notificationPreferencesDataService.GetNotificationPreferencesForAdmin(adminId);
-            }
-            else if (userType == UserTypes.Delegate)
-            {
-                var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
-                notifications = notificationPreferencesDataService.GetNotificationPreferencesForDelegate(delegateId);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            var userId = User.GetCustomClaimAsInt(claimType);
+            var notifications = GetNotificationPreferencesForUser(userType, userId);
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
 
             return View(model);
+        }
+
+        // TODO AIR-349 this should be moved into the repository once the user type enum is merged
+        private IEnumerable<NotificationPreference> GetNotificationPreferencesForUser(string userType, int? userId)
+        {
+            if (userType == UserTypes.Admin)
+            {
+                return notificationPreferencesDataService.GetNotificationPreferencesForAdmin(userId);
+            }
+            if (userType == UserTypes.Delegate)
+            {
+                return notificationPreferencesDataService.GetNotificationPreferencesForDelegate(userId);
+            }
+            throw new Exception(); // switching to enum will allow a better specific handling of this
         }
 
         [HttpPost]

@@ -2,7 +2,7 @@
 
 @model UpdateNotificationPreferencesViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/updateNotificationPreferences.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Update Notification Preferences";
@@ -16,7 +16,7 @@
           Update notification preferences
         </h1>
       </legend>
-      <div class="nhsuk-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
+      <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
       <div class="nhsuk-checkboxes">
         @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index)))
         {
