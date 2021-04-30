@@ -1,4 +1,3 @@
-@using DigitalLearningSolutions.Web.ViewModels.Common
 <h1 class="nhsuk-heading-xl">Something went wrong...</h1>
 <p class="nhsuk-body-m">
   There was a problem resetting your password.
@@ -6,4 +5,4 @@
   Please try again.
 </p>
 
-<partial name="_ActionLink" model="@(new ActionLinkViewModel("ForgotPassword", "Index", "Reset password"))" />
+<vc:action-link asp-controller="ForgotPassword" asp-action="Index" link-text="Reset password" />
