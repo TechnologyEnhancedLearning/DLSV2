@@ -65,8 +65,8 @@
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>();
-            data!.RegisterViewModel = model;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            data.RegisterViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
@@ -76,8 +76,8 @@
         [HttpGet]
         public IActionResult LearnerInformation()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = data!.LearnerInformationViewModel;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var viewModel = data.LearnerInformationViewModel;
             ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
             ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
 
@@ -95,8 +95,8 @@
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>();
-            data!.LearnerInformationViewModel = model;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            data.LearnerInformationViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Password");
@@ -106,8 +106,8 @@
         [HttpGet]
         public IActionResult Password()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = data!.PasswordViewModel;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var viewModel = data.PasswordViewModel;
 
             return View(viewModel);
         }
@@ -120,9 +120,9 @@
             {
                 return View(model);
             }
-            var data = TempData.Peek<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>()!;
             // TODO HEEDLS-396 only ever store the password hashed
-            data!.PasswordViewModel = model;
+            data.PasswordViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Summary");
@@ -132,8 +132,8 @@
         [HttpGet]
         public IActionResult Summary()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = MapToSummary(data!);
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var viewModel = MapToSummary(data);
 
             return View(viewModel);
         }
@@ -142,16 +142,31 @@
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
+            var data = TempData.Peek<DelegateRegistrationData>()!;
             if (!ModelState.IsValid)
             {
-                var viewModel = MapToSummary(data!);
+                var viewModel = MapToSummary(data);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
-            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data!));
-            return View(model);
+            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data));
+            TempData.Clear();
+            TempData.Add("candidateNumber", candidateNumber);
+            return RedirectToAction("Confirmation");
+        }
+
+        [HttpGet]
+        public IActionResult Confirmation()
+        {
+            var candidateNumber = (string?)TempData.Peek("candidateNumber");
+            if (candidateNumber == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = new ConfirmationViewModel(candidateNumber);
+            return View(viewModel);
         }
 
         private SummaryViewModel MapToSummary(DelegateRegistrationData data)

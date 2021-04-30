@@ -8,6 +8,7 @@
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+        void SetPassword(string candidateNumber, string passwordHash);
     }
 
     public class RegistrationDataService: IRegistrationDataService
@@ -47,6 +48,15 @@
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType:CommandType.StoredProcedure);
+        }
+
+        public void SetPassword(string candidateNumber, string passwordHash)
+        {
+            connection.Query(
+                @"UPDATE Candidates
+                        SET Password = @passwordHash
+                        WHERE CandidateNumber = @candidateNumber",
+                new { passwordHash, candidateNumber });
         }
     }
 }
