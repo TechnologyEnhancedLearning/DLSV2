@@ -6,7 +6,8 @@
     public class UpdateNotificationPreferencesViewModel
     {
         public UpdateNotificationPreferencesViewModel(
-            IEnumerable<NotificationPreference> notifications, string userType)
+            IEnumerable<NotificationPreference> notifications,
+            string userType)
         {
             Notifications = notifications;
             UserType = userType;

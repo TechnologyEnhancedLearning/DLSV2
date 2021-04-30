@@ -41,9 +41,7 @@
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(string userType)
         {
-            var claimType = userType == UserTypes.Admin ? CustomClaimTypes.UserAdminId : CustomClaimTypes.LearnCandidateId;
-
-            var userId = User.GetCustomClaimAsInt(claimType);
+            var userId = userType == UserTypes.Admin ? User.GetAdminId() : User.GetCandidateId();
             var notifications = GetNotificationPreferencesForUser(userType, userId);
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
@@ -51,7 +49,7 @@
             return View(model);
         }
 
-        // TODO AIR-349 this should be moved into the repository once the user type enum is merged
+        // TODO HEEDLS-349 this should be moved into the service once the user type enum is merged
         private IEnumerable<NotificationPreference> GetNotificationPreferencesForUser(string userType, int? userId)
         {
             if (userType == UserTypes.Admin)
@@ -69,7 +67,8 @@
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult SaveNotificationPreferences(IEnumerable<int> notifications)
         {
-            throw new NotImplementedException();
+            // TODO HEEDLS-349 wire this up to an actual service method
+            return RedirectToAction("Index", "NotificationPreferences");
         }
     }
 }
