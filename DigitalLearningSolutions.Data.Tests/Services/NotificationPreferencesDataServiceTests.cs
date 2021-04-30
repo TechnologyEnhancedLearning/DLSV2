@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
@@ -91,6 +92,74 @@
 
             // then
             result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Update_notification_preferences_for_admin_should_update_notification_preferences_for_admin()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // when
+                    var notificationIds = new[] { 2, 3, 4 };
+                    service.SetNotificationPreferencesForAdmin(10, notificationIds);
+                    var result = service.GetNotificationPreferencesForAdmin(10).ToList();
+
+                    // then
+                    result.Count().Should().Be(7);
+
+                    var first = result.First();
+
+                    first.NotificationId.Should().Be(1);
+                    first.NotificationName.Should().Be("System notification added");
+                    first.Accepted.Should().BeFalse();
+
+                    var fourth = result[3];
+
+                    fourth.NotificationId.Should().Be(4);
+                    fourth.NotificationName.Should().Be("Delegate registration requires approval");
+                    fourth.Accepted.Should().BeTrue();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void Update_notification_preferences_for_delegate_should_update_notification_preferences_for_delegate()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // when
+                    var notificationIds = new[] { 9, 10 };
+                    service.SetNotificationPreferencesForDelegate(7, notificationIds);
+                    var result = service.GetNotificationPreferencesForDelegate(7).ToList();
+
+                    // then
+                    result.Count().Should().Be(7);
+
+                    var first = result.First();
+
+                    first.NotificationId.Should().Be(9);
+                    first.NotificationName.Should().Be("Course completion reminder");
+                    first.Accepted.Should().BeTrue();
+
+                    var seventh = result[6];
+
+                    seventh.NotificationId.Should().Be(17);
+                    seventh.NotificationName.Should().Be("Supervisor completed verification");
+                    seventh.Accepted.Should().BeFalse();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
         }
     }
 }

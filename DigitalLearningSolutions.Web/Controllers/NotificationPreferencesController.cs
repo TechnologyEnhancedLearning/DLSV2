@@ -65,10 +65,26 @@
 
         [HttpPost]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(IEnumerable<int> notifications)
+        public IActionResult SaveNotificationPreferences(string userType, IEnumerable<int> notifications)
         {
-            // TODO HEEDLS-349 wire this up to an actual service method
+            var userId = userType == UserTypes.Admin ? User.GetAdminId() : User.GetCandidateId();
+
+            SetNotificationPreferencesForUser(userType, userId, notifications);
+
             return RedirectToAction("Index", "NotificationPreferences");
+        }
+
+        // TODO HEEDLS-349 this should be moved into the service once the user type enum is merged
+        private void SetNotificationPreferencesForUser(string userType, int? userId, IEnumerable<int> notificationIds)
+        {
+            if (userType == UserTypes.Admin)
+            {
+                notificationPreferencesDataService.SetNotificationPreferencesForAdmin(userId, notificationIds);
+            }
+            else if (userType == UserTypes.Delegate)
+            {
+                notificationPreferencesDataService.SetNotificationPreferencesForDelegate(userId, notificationIds);
+            }
         }
     }
 }

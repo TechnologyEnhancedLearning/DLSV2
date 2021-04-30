@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
 
@@ -9,6 +10,8 @@
     {
         IEnumerable<NotificationPreference> GetNotificationPreferencesForAdmin(int? adminId);
         IEnumerable<NotificationPreference> GetNotificationPreferencesForDelegate(int? delegateId);
+        void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds);
+        void SetNotificationPreferencesForDelegate(int? delegateId, IEnumerable<int> notificationIds);
     }
 
     public class NotificationPreferencesDataService : INotificationPreferencesDataService
@@ -70,6 +73,44 @@
 	                    WHERE nr.RoleID = 5
                         ORDER BY n.NotificationID",
                 new { delegateId }
+            );
+        }
+
+        public void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds)
+        {
+            if (!adminId.HasValue) return;
+
+            connection.Execute(
+                @"DELETE FROM NotificationUsers
+                    WHERE AdminUserId = @adminId",
+                new { adminId }
+            );
+
+            var notificationIdsWithAdminId = notificationIds.Select(notificationId => new { adminId, notificationId });
+
+            connection.Execute(
+                @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
+                VALUES (@notificationId, @adminId)",
+                notificationIdsWithAdminId
+            );
+        }
+
+        public void SetNotificationPreferencesForDelegate(int? delegateId, IEnumerable<int> notificationIds)
+        {
+            if (!delegateId.HasValue) return;
+
+            connection.Execute(
+                @"DELETE FROM NotificationUsers
+                    WHERE CandidateId = @delegateId",
+                new { delegateId }
+            );
+
+            var notificationIdsWithDelegateId = notificationIds.Select(notificationId => new { delegateId, notificationId });
+
+            connection.Execute(
+                @"INSERT INTO NotificationUsers (NotificationId, CandidateId)
+                VALUES (@notificationId, @delegateId)",
+                notificationIdsWithDelegateId
             );
         }
     }
