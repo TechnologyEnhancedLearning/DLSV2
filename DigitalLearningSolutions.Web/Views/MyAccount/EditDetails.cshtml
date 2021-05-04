@@ -1,10 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model EditDetailsViewModel
 
-@{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: My Details" : "My Details";
-}
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
+
+@{ var errorHasOccurred = !ViewData.ModelState.IsValid;
+        ViewData["Title"] = errorHasOccurred ? "Error: My Details" : "My Details"; }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -12,16 +12,16 @@
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditDetails">
+<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditDetails" enctype="multipart/form-data">
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       @if (errorHasOccurred)
       {
         <vc:error-summary order-of-property-names="@(new[] {
-                                                     nameof(Model.FirstName),
-                                                     nameof(Model.LastName),
-                                                     nameof(Model.Email),
-                                                     nameof(Model.Password)})" />
+                       nameof(Model.FirstName),
+                       nameof(Model.LastName),
+                       nameof(Model.Email),
+                       nameof(Model.Password)})" />
       }
     </div>
   </div>
@@ -46,9 +46,32 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="ProfilePicture">
+          Profile image (optional)
+        </label>
+        <div class="profile-picture__image-box">
+          @if (Model.ProfileImage != null)
+          {
+            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
+          }
+          else
+          {
+            <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
+          }
+        </div>
+        <input class="nhsuk-input nhsuk-u-width-one-half" type="file" id="ProfilePicture" asp-for="ProfilePicture" />
+        <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
+        <button name="action" class="nhsuk-button" value="removeImage">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
       <vc:text-input asp-for="Password" label="Confirm password to save changes:" type="password" spell-check="false" autocomplete="email" />
 
-      <button class="nhsuk-button" type="submit">Save</button>
+      <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
   </div>
 </form>

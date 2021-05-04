@@ -5,17 +5,23 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     [Authorize]
     public class MyAccountController : Controller
     {
         private readonly IUserService userService;
         private readonly ICustomPromptsService customPromptsService;
+        private readonly IImageResizeService imageResizeService;
 
-        public MyAccountController(ICustomPromptsService customPromptsService, IUserService userService)
+        public MyAccountController(
+            ICustomPromptsService customPromptsService,
+            IUserService userService,
+            IImageResizeService imageResizeService)
         {
             this.customPromptsService = customPromptsService;
             this.userService = userService;
+            this.imageResizeService = imageResizeService;
         }
 
         public IActionResult Index()
@@ -49,7 +55,22 @@
         }
 
         [HttpPost]
-        public IActionResult EditDetails(EditDetailsViewModel model)
+        public IActionResult EditDetails(EditDetailsViewModel model, string action)
+        {
+            switch (action)
+            {
+                case "save":
+                    return EditDetailsPostSave(model);
+                case "previewImage":
+                    return EditDetailsPostPreviewImage(model);
+                case "removeImage":
+                    return EditDetailsPostRemoveImage(model);
+                default:
+                    return View(model);
+            }
+        }
+
+        private IActionResult EditDetailsPostSave(EditDetailsViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -66,6 +87,38 @@
             }
 
             return RedirectToAction("Index");
+        }
+
+        private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)
+        {
+            // We don't want to display errors in this case
+            foreach (var key in ModelState.Keys)
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
+
+            if (model.ProfilePicture != null)
+            {
+                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult EditDetailsPostRemoveImage(EditDetailsViewModel model)
+        {
+            // We don't want to display errors in this case
+            foreach (var key in ModelState.Keys)
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
+
+            model.ProfilePicture = null;
+            model.ProfileImage = null;
+
+            return View(model);
         }
     }
 }

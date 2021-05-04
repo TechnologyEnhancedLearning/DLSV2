@@ -2,6 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.AspNetCore.Http;
 
     public class EditDetailsViewModel
     {
@@ -14,6 +15,7 @@
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
+            ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
         }
 
         [Required(ErrorMessage = "Enter a first name.")]
@@ -33,5 +35,9 @@
         [DataType(DataType.Password)]
         [MaxLength(100, ErrorMessage = "Password must be at most 100 characters")]
         public string? Password { get; set; }
+
+        public byte[]? ProfileImage { get; set; }
+
+        public IFormFile? ProfilePicture { get; set; }
     }
 }

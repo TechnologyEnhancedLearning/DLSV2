@@ -5,7 +5,8 @@
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
-  @if (Model.HasError) {
+  @if (Model.HasError)
+  {
     <span class="nhsuk-error-message" id="@Model.Name-error">
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
@@ -17,5 +18,5 @@
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
-         aria-describedby="@Model.Name-error"/>
+         aria-describedby="@Model.Name-error" />
 </div>
