@@ -2,18 +2,26 @@
 {
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
-    public class LogoutControllerTests
+    internal class LogoutControllerTests
     {
+        private IAuthenticationService authenticationService;
         private LogoutController controller;
 
         [SetUp]
         public void SetUp()
         {
             controller = new LogoutController();
-            ControllerContextHelper.SetUpControllerWithSignInFunctionality(ref controller, "mock");
+            ControllerContextHelper.SetUpControllerWithServices(ref controller);
+
+            authenticationService =
+                (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
+                    typeof(IAuthenticationService));
         }
 
         [Test]
@@ -24,6 +32,18 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public void Logout_should_call_SignOutAsync()
+        {
+            // When
+            controller.Index();
+
+            // Then
+            A.CallTo(() =>
+                    authenticationService.SignOutAsync(A<HttpContext>._, A<string>._, A<AuthenticationProperties>._))
+                .MustHaveHappened();
         }
     }
 }

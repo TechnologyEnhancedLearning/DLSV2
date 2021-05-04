@@ -34,13 +34,15 @@
             controller.TempData = tempData;
         }
 
-        public static void SetUpControllerWithSignInFunctionality<T>(ref T controller, string authenticationType = "")
+        public static void SetUpControllerWithServices<T>(ref T controller, string authenticationType = "")
             where T : Controller
         {
             SetUpControllerWithUser(ref controller, authenticationType);
 
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
+                A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => authService.SignOutAsync(A<HttpContext>._, A<string>._,
                 A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
 
             var urlHelperFactory = A.Fake<IUrlHelperFactory>();
