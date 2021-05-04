@@ -63,7 +63,7 @@
             {
                 return View("AccountNotApproved");
             }
-            
+
             verifiedAdminUser ??=
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
@@ -87,8 +87,8 @@
         public IActionResult ChooseACentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
-            var adminAccount = TempData.Get<AdminUser>();
-            var approvedDelegateAccounts = TempData.Get<List<DelegateUser>>();
+            var adminAccount = TempData.Peek<AdminUser>();
+            var approvedDelegateAccounts = TempData.Peek<List<DelegateUser>>();
             TempData.Clear();
 
             var adminAccountForChosenCentre = adminAccount?.CentreId == centreId ? adminAccount : null;

@@ -1,21 +1,23 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using Dapper;
+    using System.Collections.Generic;
     using System.Data;
+    using Dapper;
     using Microsoft.Extensions.Logging;
 
-    public interface ICentresService
+    public interface ICentresDataService
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
+        IEnumerable<(int, string)> GetActiveCentresAlphabetical();
     }
 
-    public class CentresService : ICentresService
+    public class CentresDataService: ICentresDataService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<CentresService> logger;
+        private readonly ILogger<CentresDataService> logger;
 
-        public CentresService(IDbConnection connection, ILogger<CentresService> logger)
+        public CentresDataService(IDbConnection connection, ILogger<CentresDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -47,6 +49,17 @@
             }
 
             return name;
+        }
+
+        public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
+        {
+            var centres = connection.Query<(int, string)>(
+                @"SELECT CentreID, CentreName
+                        FROM Centres
+                        WHERE Active = 1
+                        ORDER BY CentreName"
+            );
+            return centres;
         }
     }
 }

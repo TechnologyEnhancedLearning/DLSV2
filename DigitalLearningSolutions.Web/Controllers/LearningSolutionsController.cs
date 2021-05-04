@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
@@ -11,17 +12,17 @@ namespace DigitalLearningSolutions.Web.Controllers
     {
         private readonly IConfigService configService;
         private readonly ILogger<LearningSolutionsController> logger;
-        private readonly ICentresService centresService;
+        private readonly ICentresDataService centresDataService;
 
         public LearningSolutionsController(
             IConfigService configService,
             ILogger<LearningSolutionsController> logger,
-            ICentresService centresService
+            ICentresDataService centresDataService
         )
         {
             this.configService = configService;
             this.logger = logger;
-            this.centresService = centresService;
+            this.centresDataService = centresDataService;
         }
 
         public IActionResult AccessibilityHelp()
@@ -88,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         private string? GetBannerText()
         {
             var centreId = User.GetCentreId();
-            var bannerText = centresService.GetBannerText(centreId);
+            var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }
     }

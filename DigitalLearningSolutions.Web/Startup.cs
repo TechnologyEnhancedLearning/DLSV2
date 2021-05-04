@@ -9,6 +9,8 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -80,7 +82,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register data services.
-            services.AddScoped<ICentresService, CentresService>();
+            services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -110,6 +112,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsService, CustomPromptsService>();
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
+            services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
