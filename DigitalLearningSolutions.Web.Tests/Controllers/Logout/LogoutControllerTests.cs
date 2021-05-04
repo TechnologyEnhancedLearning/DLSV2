@@ -17,7 +17,9 @@
         public void SetUp()
         {
             controller = new LogoutController()
-                .SetUpDefaultController().SetUpControllerUser(true).SetUpControllerServices();
+                .WithDefaultContext()
+                .WithMockUser(true)
+                .WithMockServices();
 
             authenticationService =
                 (IAuthenticationService)controller.HttpContext.RequestServices.GetService(

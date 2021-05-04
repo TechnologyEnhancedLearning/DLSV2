@@ -32,8 +32,10 @@
             sessionService = A.Fake<ISessionService>();
 
             controller = new LoginController(loginService, userService, sessionService)
-                .SetUpDefaultController().SetUpControllerUser(false).SetUpControllerTempData()
-                .SetUpControllerServices();
+                .WithDefaultContext()
+                .WithMockUser(false)
+                .WithMockTempData()
+                .WithMockServices();
 
             authenticationService =
                 (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
@@ -55,7 +57,8 @@
         {
             // Given
             var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService)
-                .SetUpDefaultController().SetUpControllerUser(true);
+                .WithDefaultContext()
+                .WithMockUser(true);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();

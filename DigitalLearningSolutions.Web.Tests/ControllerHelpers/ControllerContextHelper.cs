@@ -12,7 +12,7 @@
 
     public static class ControllerContextHelper
     {
-        public static T SetUpDefaultController<T>(this T controller) where T : Controller
+        public static T WithDefaultContext<T>(this T controller) where T : Controller
         {
             controller.ControllerContext = new ControllerContext
             {
@@ -22,20 +22,20 @@
             return controller;
         }
 
-        public static T SetUpControllerUser<T>(this T controller, bool isAuthenticated) where T : Controller
+        public static T WithMockUser<T>(this T controller, bool isAuthenticated) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
             controller.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
             return controller;
         }
 
-        public static T SetUpControllerTempData<T>(this T controller) where T : Controller
+        public static T WithMockTempData<T>(this T controller) where T : Controller
         {
             controller.TempData = new TempDataDictionary(controller.HttpContext, A.Fake<ITempDataProvider>());
             return controller;
         }
 
-        public static T SetUpControllerServices<T>(this T controller) where T : Controller
+        public static T WithMockServices<T>(this T controller) where T : Controller
         {
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
