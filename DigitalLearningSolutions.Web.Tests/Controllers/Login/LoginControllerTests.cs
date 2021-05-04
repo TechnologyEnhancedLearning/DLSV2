@@ -31,9 +31,9 @@
             userService = A.Fake<IUserService>();
             sessionService = A.Fake<ISessionService>();
 
-            controller = new LoginController(loginService, userService, sessionService);
-
-            ControllerContextHelper.SetUpControllerWithServices(ref controller);
+            controller = new LoginController(loginService, userService, sessionService)
+                .SetUpDefaultController().SetUpControllerUser(false).SetUpControllerTempData()
+                .SetUpControllerServices();
 
             authenticationService =
                 (IAuthenticationService)controller.HttpContext.RequestServices.GetService(
@@ -54,8 +54,8 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService);
-            ControllerContextHelper.SetUpControllerWithUser(ref controllerWithAuthenticatedUser, "mock");
+            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService)
+                .SetUpDefaultController().SetUpControllerUser(true);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();

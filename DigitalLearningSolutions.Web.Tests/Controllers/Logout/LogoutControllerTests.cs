@@ -16,8 +16,8 @@
         [SetUp]
         public void SetUp()
         {
-            controller = new LogoutController();
-            ControllerContextHelper.SetUpControllerWithServices(ref controller);
+            controller = new LogoutController()
+                .SetUpDefaultController().SetUpControllerUser(true).SetUpControllerServices();
 
             authenticationService =
                 (IAuthenticationService)controller.HttpContext.RequestServices.GetService(

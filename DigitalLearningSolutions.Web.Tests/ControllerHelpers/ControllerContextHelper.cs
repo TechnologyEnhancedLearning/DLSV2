@@ -3,7 +3,6 @@
     using System;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
@@ -13,32 +12,31 @@
 
     public static class ControllerContextHelper
     {
-        public static void SetUpControllerWithUser<T>(ref T controller, string authenticationType = "")
-            where T : Controller
+        public static T SetUpDefaultController<T>(this T controller) where T : Controller
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
-            var session = new MockHttpContextSession();
-
-            var controllerContext = new ControllerContext
+            controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = user,
-                    Session = session
-                }
+                HttpContext = new DefaultHttpContext()
             };
 
-            controller.ControllerContext = controllerContext;
-
-            var tempData = new TempDataDictionary(controller.HttpContext, A.Fake<ITempDataProvider>());
-            controller.TempData = tempData;
+            return controller;
         }
 
-        public static void SetUpControllerWithServices<T>(ref T controller, string authenticationType = "")
-            where T : Controller
+        public static T SetUpControllerUser<T>(this T controller, bool isAuthenticated) where T : Controller
         {
-            SetUpControllerWithUser(ref controller, authenticationType);
+            var authenticationType = isAuthenticated ? "mock" : string.Empty;
+            controller.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
+            return controller;
+        }
 
+        public static T SetUpControllerTempData<T>(this T controller) where T : Controller
+        {
+            controller.TempData = new TempDataDictionary(controller.HttpContext, A.Fake<ITempDataProvider>());
+            return controller;
+        }
+
+        public static T SetUpControllerServices<T>(this T controller) where T : Controller
+        {
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
                 A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
@@ -51,6 +49,7 @@
             A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
 
             controller.HttpContext.RequestServices = services;
+            return controller;
         }
     }
 }
