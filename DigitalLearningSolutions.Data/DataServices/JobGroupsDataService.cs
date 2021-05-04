@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using Microsoft.Extensions.Logging;
 
     public interface IJobGroupsDataService
     {
@@ -13,10 +14,12 @@
     public class JobGroupsDataService: IJobGroupsDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<JobGroupsDataService> logger;
 
-        public JobGroupsDataService(IDbConnection connection)
+        public JobGroupsDataService(IDbConnection connection, ILogger<JobGroupsDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public string? GetJobGroupName(int jobGroupId)
@@ -27,6 +30,12 @@
                         WHERE JobGroupID = @jobGroupId",
                 new { jobGroupId }
             );
+            if (name == null)
+            {
+                logger.LogWarning(
+                    $"No job group found for job group id {jobGroupId}"
+                );
+            }
 
             return name;
         }

@@ -83,7 +83,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register data services.
-            services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
@@ -112,7 +111,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
-            services.AddScoped<IJobGroupsService, JobGroupsService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
         }

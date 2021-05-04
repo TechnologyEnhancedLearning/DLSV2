@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using Microsoft.Extensions.Logging;
 
     public interface ICentresDataService
     {
@@ -14,10 +15,12 @@
     public class CentresDataService: ICentresDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<CentresDataService> logger;
 
-        public CentresDataService(IDbConnection connection)
+        public CentresDataService(IDbConnection connection, ILogger<CentresDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public string? GetBannerText(int centreId)
@@ -38,6 +41,12 @@
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
+            if (name == null)
+            {
+                logger.LogWarning(
+                    $"No centre found for centre id {centreId}"
+                );
+            }
 
             return name;
         }

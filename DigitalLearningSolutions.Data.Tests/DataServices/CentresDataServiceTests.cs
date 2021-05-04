@@ -17,7 +17,8 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            centresDataService = new CentresDataService(connection);
+            var logger = A.Fake<ILogger<CentresDataService>>();
+            centresDataService = new CentresDataService(connection, logger);
         }
 
         [Test]

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -13,13 +14,13 @@
     public class RegisterController : Controller
     {
         private const string CookieName = "RegistrationData";
-        private readonly ICentresService centresService;
-        private readonly IJobGroupsService jobGroupsService;
+        private readonly ICentresDataService centresDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
-        public RegisterController(ICentresService centresService, IJobGroupsService jobGroupsService)
+        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService)
         {
-            this.centresService = centresService;
-            this.jobGroupsService = jobGroupsService;
+            this.centresDataService = centresDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
         }
 
         public IActionResult Index()
@@ -73,8 +74,8 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>();
             var viewModel = data!.LearnerInformationViewModel;
-            ViewBag.Centres = centresService.GetActiveCentresAlphabetical();
-            ViewBag.JobGroups = jobGroupsService.GetJobGroupsAlphabetical();
+            ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
+            ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
 
             return View(viewModel);
         }
@@ -85,8 +86,8 @@
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Centres = centresService.GetActiveCentresAlphabetical();
-                ViewBag.JobGroups = jobGroupsService.GetJobGroupsAlphabetical();
+                ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
+                ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 return View(model);
             }
 
@@ -150,8 +151,8 @@
 
         private SummaryViewModel MapToSummary(DelegateRegistrationData data)
         {
-            var centre = centresService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
-            var jobGroup = jobGroupsService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             return new SummaryViewModel
             {
                 FirstName = data.RegisterViewModel.FirstName,

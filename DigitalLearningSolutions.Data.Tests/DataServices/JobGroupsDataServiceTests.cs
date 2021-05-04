@@ -3,7 +3,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class JobGroupsServiceTests
@@ -14,7 +16,8 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            jobGroupsDataService = new JobGroupsDataService(connection);
+            var logger = A.Fake<ILogger<JobGroupsDataService>>();
+            jobGroupsDataService = new JobGroupsDataService(connection, logger);
         }
 
         [Test]

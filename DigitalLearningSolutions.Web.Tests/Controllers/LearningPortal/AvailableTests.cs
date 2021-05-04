@@ -41,7 +41,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var availableViewModel = AvailableCourseHelper.AvailableViewModelFromController(controller);

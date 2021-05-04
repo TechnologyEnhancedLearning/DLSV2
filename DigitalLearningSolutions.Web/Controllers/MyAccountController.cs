@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -8,12 +7,10 @@
 
     public class MyAccountController : Controller
     {
-        private readonly ICentresService centresService;
         private readonly IUserService userService;
 
-        public MyAccountController(ICentresService centresService, IUserService userService)
+        public MyAccountController(IUserService userService)
         {
-            this.centresService = centresService;
             this.userService = userService;
         }
 

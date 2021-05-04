@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
@@ -11,7 +12,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public partial class LearningPortalController : Controller
     {
-        private readonly ICentresService centresService;
+        private readonly ICentresDataService centresDataService;
         private readonly ICourseService courseService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly INotificationService notificationService;
@@ -20,7 +21,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly IFilteredApiHelperService filteredApiHelperService;
 
         public LearningPortalController(
-            ICentresService centresService,
+            ICentresDataService centresDataService,
             ICourseService courseService,
             ISelfAssessmentService selfAssessmentService,
             INotificationService notificationService,
@@ -28,7 +29,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IConfiguration config,
             IFilteredApiHelperService filteredApiHelperService)
         {
-            this.centresService = centresService;
+            this.centresDataService = centresDataService;
             this.courseService = courseService;
             this.selfAssessmentService = selfAssessmentService;
             this.notificationService = notificationService;
@@ -45,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private string? GetBannerText()
         {
             var centreId = User.GetCentreId();
-            var bannerText = centresService.GetBannerText(centreId);
+            var bannerText = centresDataService.GetBannerText(centreId);
             return bannerText;
         }
     }
