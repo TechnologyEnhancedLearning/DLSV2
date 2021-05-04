@@ -1,0 +1,9 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.update-notification-hint {
+  margin-bottom: 24px;
+
+  @include govuk-media-query($from: desktop) {
+    margin-bottom: 32px;
+  }
+}

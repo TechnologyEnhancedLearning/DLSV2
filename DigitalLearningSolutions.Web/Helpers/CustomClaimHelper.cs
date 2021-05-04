@@ -4,6 +4,11 @@
 
     public static class CustomClaimHelper
     {
+        public static int GetAdminId(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
+        }
+
         public static int GetCandidateId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);

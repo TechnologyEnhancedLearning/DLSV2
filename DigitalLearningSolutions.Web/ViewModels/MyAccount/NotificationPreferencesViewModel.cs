@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class NotificationPreferencesViewModel
     {
@@ -9,21 +10,24 @@
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications)
         {
-            AdminNotifications = new NotificationPreferenceListViewModel(adminNotifications);
-            DelegateNotifications = new NotificationPreferenceListViewModel(delegateNotifications);
+            AdminNotifications = new NotificationPreferenceExpanderViewModel(adminNotifications, UserTypes.Admin);
+            DelegateNotifications = new NotificationPreferenceExpanderViewModel(delegateNotifications, UserTypes.Delegate);
         }
 
-        public NotificationPreferenceListViewModel AdminNotifications { get; set; }
+        public NotificationPreferenceExpanderViewModel AdminNotifications { get; set; }
 
-        public NotificationPreferenceListViewModel DelegateNotifications { get; set; }
+        public NotificationPreferenceExpanderViewModel DelegateNotifications { get; set; }
     }
 
-    public class NotificationPreferenceListViewModel
+    public class NotificationPreferenceExpanderViewModel
     {
-        public NotificationPreferenceListViewModel(IEnumerable<NotificationPreference> notifications)
+        public NotificationPreferenceExpanderViewModel(IEnumerable<NotificationPreference> notifications, string userType)
         {
             Notifications = notifications;
+            UserType = userType;
         }
+
+        public string UserType { get; set; }
 
         public IEnumerable<NotificationPreference> Notifications { get; set; }
     }
