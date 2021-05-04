@@ -14,7 +14,7 @@
 
         [Required(ErrorMessage = "Confirm your password")]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password and confirm password do not match.")]
+        [Compare("Password", ErrorMessage = "Password and confirm password do not match")]
         [MaxLength(100, ErrorMessage = "Password must be at most 100 characters")]
         public string? ConfirmPassword { get; set; }
     }

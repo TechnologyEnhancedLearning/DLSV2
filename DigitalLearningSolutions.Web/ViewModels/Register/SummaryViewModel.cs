@@ -5,11 +5,20 @@
 
     public class SummaryViewModel: IValidatableObject
     {
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? Email { get; set; }
-        public string? Centre { get; set; }
-        public string? JobGroup { get; set; }
+        public SummaryViewModel()
+        {
+            FirstName = "";
+            LastName = "";
+            Email = "";
+            Centre = "";
+            JobGroup = "";
+        }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Centre { get; set; }
+        public string JobGroup { get; set; }
         public bool Terms { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
