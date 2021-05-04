@@ -11,8 +11,8 @@
 
     public class UserServiceTests
     {
-        private IUserService userService;
         private IUserDataService userDataService;
+        private IUserService userService;
 
         [SetUp]
         public void Setup()
@@ -28,7 +28,8 @@
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
             var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(expectedAdminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._)).Returns(new List<DelegateUser> { expectedDelegateUsers });
+            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
+                .Returns(new List<DelegateUser> { expectedDelegateUsers });
 
             //When
             var (returnedAdminUser, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
@@ -89,7 +90,8 @@
         public void GetUsersById_Returns_nulls_with_unexpected_input()
         {
             // When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
+            var (returnedAdminUser, returnedDelegateUser) =
+                userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
 
             // Then
             returnedAdminUser.Should().BeNull();
@@ -104,7 +106,7 @@
             A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._))
                 .Returns(testAdmin);
             A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns((new List<DelegateUser>()));
+                .Returns(new List<DelegateUser>());
 
             // When
             userService.GetUsersByUsername("Admin Id");
@@ -112,6 +114,28 @@
             // Then
             A.CallTo(() => userDataService.GetDelegateUsersByUsername("TestAccountAssociation@email.com"))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetAvailableCentres_returns_centres_correctly_ordered()
+        {
+            // Given
+            var inputDelegateList = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "First Centre"),
+                UserTestHelper.GetDefaultDelegateUser(centreId: 3, centreName: "Third Centre"),
+                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre")
+            };
+            var inputAdminAccount = UserTestHelper.GetDefaultAdminUser(centreId: 2, centreName: "Second Centre");
+            // Expect Admin first, alphabetical after
+            var expectedIdOrder = new List<int> { 2, 1, 4, 3 };
+
+            // When
+            var result = userService.GetUserCentres(inputAdminAccount, inputDelegateList);
+            var resultIdOrder = result.Select(details => details.CentreId).ToList();
+
+            // Then
+            Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
         }
     }
 }

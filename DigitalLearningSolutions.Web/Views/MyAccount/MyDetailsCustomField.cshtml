@@ -1,0 +1,10 @@
+﻿@model DigitalLearningSolutions.Web.ViewModels.MyAccount.CustomFieldViewModel
+
+<div class="nhsuk-summary-list__row account-detailslist_row">
+  <dt class="nhsuk-summary-list__key">
+    @Model.CustomPrompt@(Model.Mandatory ? ":" : " (optional):")
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.Answer
+  </dd>
+</div>

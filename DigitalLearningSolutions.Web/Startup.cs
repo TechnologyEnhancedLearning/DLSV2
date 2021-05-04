@@ -17,7 +17,6 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Routing;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -45,18 +44,18 @@ namespace DigitalLearningSolutions.Web
                 .AddCookie("Identity.Application", options =>
                 {
                     options.Cookie.Name = ".AspNet.SharedCookie";
+                    options.Cookie.Path = "/";
                     options.Events.OnRedirectToLogin = RedirectToLogin;
                     options.Events.OnRedirectToAccessDenied = RedirectToHome;
                 });
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(CustomPolicies.UserOnly, policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
+                options.AddPolicy(CustomPolicies.UserOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
             });
 
-            services.ConfigureApplicationCookie(options => {
-                options.Cookie.Name = ".AspNet.SharedCookie";
-            });
+            services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
 
             services.AddDistributedMemoryCache();
 
@@ -110,6 +109,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
+            services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
@@ -133,7 +134,7 @@ namespace DigitalLearningSolutions.Web
 
             app.UseSession();
 
-            app.UseEndpoints((endpoints) =>
+            app.UseEndpoints(endpoints =>
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}"));
 
             migrationRunner.MigrateUp();
@@ -141,7 +142,7 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect( $"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
             return Task.CompletedTask;
         }
 

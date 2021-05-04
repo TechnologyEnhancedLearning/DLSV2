@@ -8,9 +8,11 @@
     public class MyAccountController : Controller
     {
         private readonly IUserService userService;
+        private readonly ICustomPromptsService customPromptsService;
 
-        public MyAccountController(IUserService userService)
+        public MyAccountController(ICustomPromptsService customPromptsService, IUserService userService)
         {
+            this.customPromptsService = customPromptsService;
             this.userService = userService;
         }
 
@@ -25,7 +27,9 @@
             var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var model = new MyAccountViewModel(adminUser, delegateUser);
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(delegateUser?.CentreId);
+
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 
             return View(model);
         }

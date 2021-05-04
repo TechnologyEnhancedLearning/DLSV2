@@ -85,27 +85,79 @@ pipeline {
                 withCredentials([string(credentialsId: 'ftp-password', variable: 'PASSWORD')]) {
                     bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
                 }
-                slack(":tada: Successfully deployed to UAT", "good")
+                sendSlackMessageToTeamChannel(":tada: Successfully deployed to UAT", "good")
             }
         }
     }
 
     post {
         failure {
-            slack(":red_circle: Build failed", "danger")
+            sendFailureMessages(":red_circle: Build failed", "danger")
         }
         success {
-            slack(":excellent: Build succeeded", "good")
+            sendSlackMessageToTeamChannel(":excellent: Build succeeded", "good")
         }
     }
 }
 
-def slack(message, color = "") {
-    withCredentials([string(credentialsId: 'slack-token', variable: 'SLACKTOKEN')]) {
+def sendFailureMessages(message, color) {
+	sendSlackMessageToTeamChannel(message, color)
+	sendSlackDirectMessage(message, color)
+}
+
+def sendSlackMessageToTeamChannel(message, color) {
+	sendSlackNotificationToChannel("#hee-notifications", message, color)
+}
+
+def sendSlackNotificationToChannel(channel, message, color) {	
+	withCredentials([string(credentialsId: 'slack-token', variable: 'SLACKTOKEN')]) {
         slackSend teamDomain: "softwire",
-            channel: "#hee-notifications",
+            channel: channel,
             token: "$SLACKTOKEN",
             message: "*$message* - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)",
             color: color
     }
+}
+
+def sendSlackDirectMessage(message, color) {
+	def emailAddress = getCommitterEmailAddress()
+	def slackUser = getSlackUserByEmailAddress(emailAddress)
+	sendSlackNotificationToChannel(slackUser, message, color)
+}
+
+def getCommitterEmailAddress() {
+	if (steps.isUnix()) {
+		return steps.sh (
+			script: 'git --no-pager show -s --format=\'%ae\'',
+			returnStdout: true
+		).trim()
+	} else {
+		def commitDetails = steps.bat (
+			script: 'git --no-pager show --no-patch --format=%%ae',
+			returnStdout: true
+		)
+
+		return extractEmailAddressFromCommitDetails(commitDetails)
+	}
+}
+
+def extractEmailAddressFromCommitDetails(commitDetails) {
+	def tokens = commitDetails.tokenize('\n')
+	return tokens.last().trim()
+}
+
+def getSlackUserByEmailAddress(emailAddress) {
+	return getSlackUsers()[emailAddress.toLowerCase()] ?: '#hee-notifications'
+}
+
+def getSlackUsers() {
+	return [
+		'stella.veski@softwire.com':'@SteVes',
+		'stellaveski@gmail.com':'@SteVes',
+		'alex.jackson@softwire.com':'@AleJac',
+		'daniel.bloxham@softwire.com':'@DanBlo',
+		'david.may-miller@softwire.com':'@DavMay',
+		'jonathan.bloxsom@softwire.com':'@JonBlo',
+		'stephen.jackson@softwire.com':'@SteJac'
+	]
 }
