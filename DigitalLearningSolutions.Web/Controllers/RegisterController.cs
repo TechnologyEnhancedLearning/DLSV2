@@ -117,6 +117,7 @@
                 return View(model);
             }
             var data = TempData.Peek<DelegateRegistrationData>();
+            // TODO HEEDLS-396 only ever store the password hashed
             data!.PasswordViewModel = model;
             TempData.Set(data);
 

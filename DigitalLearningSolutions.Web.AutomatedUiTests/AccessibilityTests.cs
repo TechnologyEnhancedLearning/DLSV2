@@ -46,5 +46,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             chromeOptions.AddArgument("--headless");
             return new ChromeDriver(chromeOptions);
         }
+
+        // TODO HEEDLS-396 Add automated UI tests for registration journey
     }
 }
