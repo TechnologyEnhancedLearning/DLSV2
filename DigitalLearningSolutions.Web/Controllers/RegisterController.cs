@@ -154,13 +154,13 @@
             var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             return new SummaryViewModel
-            {
-                FirstName = data.RegisterViewModel.FirstName,
-                LastName = data.RegisterViewModel.LastName,
-                Email = data.RegisterViewModel.Email,
-                Centre = centre,
-                JobGroup = jobGroup
-            };
+            (
+                data.RegisterViewModel.FirstName!,
+                data.RegisterViewModel.LastName!,
+                data.RegisterViewModel.Email!,
+                centre!,
+                jobGroup!
+            );
         }
     }
 }
