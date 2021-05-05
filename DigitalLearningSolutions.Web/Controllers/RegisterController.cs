@@ -18,13 +18,15 @@
         private readonly ICentresDataService centresDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
+        private readonly ICryptoService cryptoService;
 
         public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService, ICryptoService cryptoService)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
+            this.cryptoService = cryptoService;
         }
 
         public IActionResult Index()
@@ -106,10 +108,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = data.PasswordViewModel;
-
-            return View(viewModel);
+            return View();
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -121,8 +120,7 @@
                 return View(model);
             }
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            // TODO HEEDLS-396 only ever store the password hashed
-            data.PasswordViewModel = model;
+            data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
             return RedirectToAction("Summary");
@@ -186,14 +184,14 @@
         private static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
         {
             return new DelegateRegistrationModel
-            {
-                FirstName = data.RegisterViewModel.FirstName!,
-                LastName = data.RegisterViewModel.LastName!,
-                Email = data.RegisterViewModel.Email!,
-                Centre = (int)data.LearnerInformationViewModel.Centre!,
-                JobGroup = (int)data.LearnerInformationViewModel.JobGroup!,
-                Password = data.PasswordViewModel.Password!
-            };
+            (
+                data.RegisterViewModel.FirstName!,
+                data.RegisterViewModel.LastName!,
+                data.RegisterViewModel.Email!,
+                (int)data.LearnerInformationViewModel.Centre!,
+                (int)data.LearnerInformationViewModel.JobGroup!,
+                data.PasswordHash!
+            );
         }
     }
 }

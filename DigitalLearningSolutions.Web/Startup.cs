@@ -124,6 +124,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IPasswordDataService, PasswordDataService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

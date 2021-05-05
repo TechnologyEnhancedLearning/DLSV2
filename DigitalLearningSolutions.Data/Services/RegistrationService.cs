@@ -11,23 +11,19 @@
     public class RegistrationService: IRegistrationService
     {
         private readonly IRegistrationDataService registrationDataService;
-        private readonly ICryptoService cryptoService;
-        private readonly ILogger<RegistrationService> logger;
+        private readonly IPasswordDataService passwordDataService;
 
         public RegistrationService(IRegistrationDataService registrationDataService,
-            ICryptoService cryptoService,
-            ILogger<RegistrationService> logger)
+            IPasswordDataService passwordDataService)
         {
             this.registrationDataService = registrationDataService;
-            this.cryptoService = cryptoService;
-            this.logger = logger;
+            this.passwordDataService = passwordDataService;
         }
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            var passwordHash = cryptoService.GetPasswordHash(delegateRegistrationModel.Password);
-            registrationDataService.SetPassword(candidateNumber, passwordHash);
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
 
             return candidateNumber;
         }

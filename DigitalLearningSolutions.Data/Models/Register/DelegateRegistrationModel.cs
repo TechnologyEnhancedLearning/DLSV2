@@ -2,6 +2,16 @@
 {
     public class DelegateRegistrationModel
     {
+        public DelegateRegistrationModel(string firstName, string lastName, string email, int centre, int jobGroup,
+            string passwordHash)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Centre = centre;
+            JobGroup = jobGroup;
+            PasswordHash = passwordHash;
+        }
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -12,6 +22,6 @@
 
         public int JobGroup { get; set; }
 
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
     }
 }
