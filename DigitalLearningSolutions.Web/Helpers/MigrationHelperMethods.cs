@@ -45,7 +45,8 @@
                         typeof(AddFrameworkCommentFrameworkID).Assembly,
                         typeof(AddPasswordSubmittedField).Assembly,
                         typeof(FixCustomisationUpdateSPs).Assembly,
-                        typeof(AddEmailToFrameworkCollaboratorTable).Assembly
+                        typeof(AddEmailToFrameworkCollaboratorTable).Assembly,
+                        typeof(AddFrameworkReviewsTable).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()

@@ -30,13 +30,13 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
     <ol class="hee-fwservice--framework-progress-bar">
-      <li class=@(Model.DetailFramework.PublishStatus == "Draft" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatusID == 1 ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">1</div><div class="hee-fwservice--framework-progress-caption">In draft</div>
       </li>
-      <li class=@(Model.DetailFramework.PublishStatus == "Review" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatusID == 2 ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">2</div><div class="hee-fwservice--framework-progress-caption">In review</div>
       </li>
-      <li class=@(Model.DetailFramework.PublishStatus == "Published" ? "active" : "")>
+      <li class=@(Model.DetailFramework.PublishStatusID == 3 ? "active" : "")>
         <div class="hee-fwservice--framework-progress-marker">3</div><div class="hee-fwservice--framework-progress-caption">Published</div>
       </li>
     </ol>
@@ -45,17 +45,17 @@
     @*<a class="nhsuk-button nhsuk-button--secondary">Preview</a>*@
     @if (Model.DetailFramework.UserRole > 1)
     {
-      if (Model.DetailFramework.PublishStatus == "Review")
+      if (Model.DetailFramework.PublishStatusID == 2)
       {
-        <button type="submit" class="nhsuk-button">Publish</button>
+        <a role="button" asp-action="PublishFramework" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish</a>
       }
-      else if (Model.DetailFramework.PublishStatus == "Published")
+      else if (Model.DetailFramework.PublishStatusID == 3)
       {
         <button type="submit" class="nhsuk-button">Unpublish</button>
       }
       else
       {
-        <button type="submit" class="nhsuk-button">Send for review</button>
+        <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class=@(Model.FrameworkCompetencies.Count() == 0 && Model.FrameworkCompetencyGroups.Count() == 0 ? "nhsuk-button nhsuk-button--disabled": "nhsuk-button")>Send for review</a>
       }
     }
   </div>

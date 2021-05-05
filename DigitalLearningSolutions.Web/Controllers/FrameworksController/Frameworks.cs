@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var isFrameworkContributor = GetIsFrameworkContributor();
-            if (!isFrameworkDeveloper  && !isFrameworkContributor)
+            if (!isFrameworkDeveloper && !isFrameworkContributor)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
@@ -147,7 +147,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         public IActionResult CreateNewFramework(DetailFramework detailFramework, string actionname, int frameworkId = 0)
-        {            
+        {
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(BaseFramework.FrameworkName));
@@ -463,7 +463,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult FrameworkSummary()
         {
             SessionNewFramework sessionNewFramework = TempData.Get<SessionNewFramework>();
-            if(sessionNewFramework == null)
+            if (sessionNewFramework == null)
             {
                 return RedirectToAction("FrameworksDashboard");
             }
@@ -494,7 +494,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
         {
             var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
-            frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminID());
+            if (collaboratorId > 0)
+            {
+                frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminID());
+            }
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
@@ -511,7 +514,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             IEnumerable<FrameworkCompetency>? frameworkCompetencies;
             IEnumerable<AssessmentQuestion>? frameworkDefaultQuestions;
             IEnumerable<CommentReplies>? commentReplies;
-var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var model = new FrameworkViewModel()
             {
                 DetailFramework = detailFramework

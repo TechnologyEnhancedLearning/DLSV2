@@ -22,6 +22,22 @@
     </nav>
   }
 }
+else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+{
+  @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+      <div class="nhsuk-width-container">
+          <ol class="nhsuk-breadcrumb__list">
+            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Send for Review</a></li>
+            <li class="nhsuk-breadcrumb__item">Collaborators</li>
+          </ol>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Send for Review</a></p>
+      </div>
+    </nav>
+  }
+}
 else
 {
   @section NavBreadcrumbs {
@@ -68,7 +84,7 @@ else
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">User </span>
             <span class="framework-collaborator-user">
-             @collaborator.UserEmail
+              @collaborator.UserEmail
             </span>
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
@@ -118,8 +134,18 @@ else
   </button>
 </form>
 <div class=" nhsuk-u-margin-top-6">
+  @if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+  {
+    <a class="nhsuk-button" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+      Done
+    </a>
+  }
+  else
+  {
     <a class="nhsuk-button" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Details">
       Done
     </a>
+  }
+
 </div>
 
