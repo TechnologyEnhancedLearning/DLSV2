@@ -8,9 +8,9 @@
     {
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
-        public (AdminUser?, DelegateUser?) GetUsersById(string? adminId, string? delegateId);
+        public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
         public List<CentreUserDetails> GetUserCentres(AdminUser adminUser, List<DelegateUser> delegateUsers);
-        public bool TryUpdateUsers(AdminUser? adminUser, DelegateUser? delegateUser, string password);
+        public bool TryUpdateUserAccountDetails(string password, string signedInEmail, string firstName, string surname, string email);
     }
 
     public class UserService : IUserService
@@ -42,20 +42,20 @@
             return (adminUsers, delegateUsers);
         }
 
-        public (AdminUser?, DelegateUser?) GetUsersById(string? userAdminId, string? userDelegateId)
+        public (AdminUser?, DelegateUser?) GetUsersById(int? userAdminId, int? userDelegateId)
         {
             AdminUser? adminUser = null;
 
-            if (int.TryParse(userAdminId, out var adminId))
+            if (userAdminId != null)
             {
-                adminUser = userDataService.GetAdminUserById(adminId);
+                adminUser = userDataService.GetAdminUserById(userAdminId.Value);
             }
 
             DelegateUser? delegateUser = null;
 
-            if (int.TryParse(userDelegateId, out var delegateId))
+            if (userDelegateId != null)
             {
-                delegateUser = userDataService.GetDelegateUserById(delegateId);
+                delegateUser = userDataService.GetDelegateUserById(userDelegateId.Value);
             }
 
             return (adminUser, delegateUser);
@@ -77,17 +77,12 @@
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public bool TryUpdateUsers(AdminUser? adminUser, DelegateUser? delegateUser, string password)
+        public bool TryUpdateUserAccountDetails(string password, string signedInEmail, string firstName, string surname, string email)
         {
-            var delegateUsers = new List<DelegateUser>();
-
-            if (delegateUser != null)
-            {
-                delegateUsers.Add(delegateUser);
-            }
+            var (adminUsers, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
 
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(password, adminUser, delegateUsers);
+                loginService.VerifyUsers(password, adminUsers.SingleOrDefault(), delegateUsers);
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -96,13 +91,12 @@
 
             if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUser(verifiedAdminUser);
+                userDataService.UpdateAdminUser(firstName, surname, email, verifiedAdminUser.Id);
             }
 
-            var verifiedDelegateUser = verifiedDelegateUsers.SingleOrDefault();
-            if (verifiedDelegateUser != null)
+            foreach (var verifiedDelegateUser in verifiedDelegateUsers)
             {
-                userDataService.UpdateDelegateUser(verifiedDelegateUser);
+                userDataService.UpdateDelegateUser(firstName, surname, email, verifiedDelegateUser.Id);
             }
 
             return true;

@@ -14,8 +14,8 @@
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-        public void UpdateAdminUser(AdminUser adminUser);
-        public void UpdateDelegateUser(DelegateUser delegateUser);
+        public void UpdateAdminUser(string firstName, string surname, string email, int id);
+        public void UpdateDelegateUser(string firstName, string surname, string email, int id);
     }
 
     public class UserDataService : IUserDataService
@@ -179,7 +179,7 @@
             return users;
         }
 
-        public void UpdateAdminUser(AdminUser adminUser)
+        public void UpdateAdminUser(string firstName, string surname, string email, int id)
         {
             connection.Execute(
                 @"UPDATE AdminUsers
@@ -188,11 +188,11 @@
                             Surname = @surname,
                             Email = @email
                         WHERE AdminID = @id",
-                new {firstName = adminUser.FirstName, surname = adminUser.LastName, email = adminUser.EmailAddress, id = adminUser.Id}
+                new {firstName, surname, email, id}
             );
         }
 
-        public void UpdateDelegateUser(DelegateUser delegateUser)
+        public void UpdateDelegateUser(string firstName, string surname, string email, int id)
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -201,7 +201,7 @@
                             LastName = @surname,
                             EmailAddress = @email
                         WHERE CandidateID = @id",
-                new { firstName = delegateUser.FirstName, surname = delegateUser.LastName, email = delegateUser.EmailAddress, id = delegateUser.Id }
+                new { firstName, surname, email, id }
             );
         }
     }

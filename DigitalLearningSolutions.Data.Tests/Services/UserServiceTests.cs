@@ -51,7 +51,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
             //When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("1", "2");
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, 2);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -66,7 +66,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
 
             //When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById("1", null);
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, null);
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -81,7 +81,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
             //When
-            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, "2");
+            var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
 
             // Then
             returnedAdminUser.Should().BeNull();
@@ -93,7 +93,7 @@
         {
             // When
             var (returnedAdminUser, returnedDelegateUser) =
-                userService.GetUsersById("can't int.Parse this string", "can't int.Parse this string");
+                userService.GetUsersById(null, null);
 
             // Then
             returnedAdminUser.Should().BeNull();
@@ -145,18 +145,28 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
+            string signedInEmail = "oldtest@email.com";
             string password = "password";
+            var firstName = "TestFirstName";
+            var lastName = "TestLastName";
+            var email = "test@email.com";
+            
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
+                .Returns(new List<DelegateUser> ());
             A.CallTo(() => loginService.VerifyUsers(password, adminUser, A<List<DelegateUser>>._))
                 .Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => userDataService.UpdateAdminUser(adminUser)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUsers(adminUser, null, password);
+            var result = userService.TryUpdateUserAccountDetails(password, signedInEmail, firstName, lastName, email);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateAdminUser(adminUser))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -164,18 +174,28 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            string signedInEmail = "oldtest@email.com";
             string password = "password";
+            var firstName = "TestFirstName";
+            var lastName = "TestLastName";
+            var email = "test@email.com";
+
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
+                .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, null, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser> { delegateUser }));
-            A.CallTo(() => userDataService.UpdateDelegateUser(delegateUser)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUsers(null, delegateUser, password);
+            var result = userService.TryUpdateUserAccountDetails(password, signedInEmail, firstName, lastName, email);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateDelegateUser(delegateUser))
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -184,43 +204,54 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            string signedInEmail = "oldtest@email.com";
             string password = "password";
+            var firstName = "TestFirstName";
+            var lastName = "TestLastName";
+            var email = "test@email.com";
+
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
+                .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((adminUser, new List<DelegateUser> { delegateUser }));
-            A.CallTo(() => userDataService.UpdateDelegateUser(delegateUser)).DoesNothing();
-            A.CallTo(() => userDataService.UpdateAdminUser(adminUser)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUsers(null, delegateUser, password);
+            var result = userService.TryUpdateUserAccountDetails(password, signedInEmail, firstName, lastName, email);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateDelegateUser(delegateUser))
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(adminUser))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustHaveHappened();
         }
-
-        
 
         [Test]
         public void TryUpdateUsers_with_incorrect_password_doesnt_update()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            string signedInEmail = "oldtest@email.com";
             string password = "incorrectPassword";
+            var firstName = "TestFirstName";
+            var lastName = "TestLastName";
+            var email = "test@email.com";
+            A.CallTo(() => userDataService.GetAdminUserByUsername(signedInEmail)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByUsername(signedInEmail))
+                .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser>()));
 
             // When
-            var result = userService.TryUpdateUsers(adminUser, delegateUser, password);
+            var result = userService.TryUpdateUserAccountDetails(password, signedInEmail, firstName, lastName, email);
 
             // Then
             result.Should().BeFalse();
-            A.CallTo(() => userDataService.UpdateDelegateUser(A<DelegateUser>._))
+            A.CallTo(() => userDataService.UpdateDelegateUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustNotHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<AdminUser>._))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
                 .MustNotHaveHappened();
         }
     }

@@ -81,13 +81,9 @@
                     var firstName = "TestFirstName";
                     var lastName = "TestLastName";
                     var email = "test@email.com";
-                    var adminUser = UserTestHelper.GetDefaultAdminUser();
-                    adminUser.FirstName = firstName;
-                    adminUser.LastName = lastName;
-                    adminUser.EmailAddress = email;
 
                     // When
-                    userDataService.UpdateAdminUser(adminUser);
+                    userDataService.UpdateAdminUser(firstName, lastName, email, 7);
                     var updatedUser = userDataService.GetAdminUserById(7);
 
                     // Then
@@ -113,13 +109,9 @@
                     var firstName = "TestFirstName";
                     var lastName = "TestLastName";
                     var email = "test@email.com";
-                    var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-                    delegateUser.FirstName = firstName;
-                    delegateUser.LastName = lastName;
-                    delegateUser.EmailAddress = email;
 
                     // When
-                    userDataService.UpdateDelegateUser(delegateUser);
+                    userDataService.UpdateDelegateUser(firstName, lastName, email, 2);
                     var updatedUser = userDataService.GetDelegateUserById(2);
 
                     // Then

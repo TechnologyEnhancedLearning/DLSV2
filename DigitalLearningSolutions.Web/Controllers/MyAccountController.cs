@@ -20,8 +20,8 @@
 
         public IActionResult Index()
         {
-            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
-            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetNullableCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(delegateUser?.CentreId);
@@ -39,8 +39,8 @@
                 return RedirectToAction("Index", "Login");
             }
 
-            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
-            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetNullableCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var model = new EditDetailsViewModel(adminUser, delegateUser);
@@ -56,25 +56,9 @@
                 return View(model);
             }
 
-            var userAdminId = User.GetCustomClaim(CustomClaimTypes.UserAdminId);
-            var userDelegateId = User.GetCustomClaim(CustomClaimTypes.LearnCandidateId);
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var signedInEmail = User.GetEmail();
 
-            if (adminUser != null)
-            {
-                adminUser.FirstName = model.FirstName;
-                adminUser.LastName = model.LastName;
-                adminUser.EmailAddress = model.Email;
-            }
-            
-            if (delegateUser != null)
-            {
-                delegateUser.FirstName = model.FirstName;
-                delegateUser.LastName = model.LastName;
-                delegateUser.EmailAddress = model.Email;
-            }
-
-            if (!userService.TryUpdateUsers(adminUser, delegateUser, model.Password))
+            if (!userService.TryUpdateUserAccountDetails(model.Password, signedInEmail, model.FirstName, model.LastName, model.Email))
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect.");
                 return View(model);

@@ -13,16 +13,15 @@
                 .SelectMany(kvp => kvp.Value.Errors.Select(e => new ErrorSummaryListItem(kvp.Key, e.ErrorMessage)))
                 .ToList();
 
-            var orderedErrors = GetOrderedPropertyNames(errors, orderOfPropertyNames ?? new string[0]);
+            var orderedErrors = GetOrderedErrors(errors, orderOfPropertyNames ?? new string[0]);
 
             var errorSummaryViewModel = new ErrorSummaryViewModel(orderedErrors);
             return View(errorSummaryViewModel);
         }
 
-        private static List<ErrorSummaryListItem> GetOrderedPropertyNames(List<ErrorSummaryListItem> errors, string[] orderOfPropertyNames)
+        private static List<ErrorSummaryListItem> GetOrderedErrors(List<ErrorSummaryListItem> errors, string[] orderOfPropertyNames)
         {
-            var orderedErrors = errors.OrderBy(e => orderOfPropertyNames.ToList().IndexOf(e.Key)).ToList();
-            return orderedErrors;
+            return errors.OrderBy(e => orderOfPropertyNames.ToList().IndexOf(e.Key)).ToList();
         }
     }
 }

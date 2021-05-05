@@ -18,35 +18,35 @@
       @if (errorHasOccurred)
       {
         <vc:error-summary order-of-property-names="@(new[] {
-                 nameof(Model.FirstName),
-                 nameof(Model.LastName),
-                 nameof(Model.Email),
-                 nameof(Model.Password)})"></vc:error-summary>
+                                                     nameof(Model.FirstName),
+                                                     nameof(Model.LastName),
+                                                     nameof(Model.Email),
+                                                     nameof(Model.Password)})" />
       }
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="FirstName" label="First Name" type="text" spell-check="false" autocomplete="given-name"></vc:text-input>
+      <vc:text-input asp-for="FirstName" label="First Name" type="text" spell-check="false" autocomplete="given-name" />
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="LastName" label="Last Name" type="text" spell-check="false" autocomplete="family-name"></vc:text-input>
+      <vc:text-input asp-for="LastName" label="Last Name" type="text" spell-check="false" autocomplete="family-name" />
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Email" label="Email Address" type="text" spell-check="false" autocomplete="email"></vc:text-input>
+      <vc:text-input asp-for="Email" label="Email Address" type="text" spell-check="false" autocomplete="email" />
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Password" label="Confirm password to save changes:" type="password" spell-check="false" autocomplete="email"></vc:text-input>
+      <vc:text-input asp-for="Password" label="Confirm password to save changes:" type="password" spell-check="false" autocomplete="email" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </div>
@@ -54,7 +54,7 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="MyAccount" asp-action="Index"></vc:back-link>
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" />
   </div>
 </div>
 
