@@ -42,8 +42,7 @@
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
-            (List<AdminUser> adminUsers, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            User? user = adminUsers.FirstOrDefault();
+            (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             user ??= delegateUsers.FirstOrDefault() ?? throw new UserAccountNotFoundException("No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
             Email resetPasswordEmail = GeneratePasswordResetEmail(emailAddress, resetPasswordHash, user.FirstName, baseUrl);

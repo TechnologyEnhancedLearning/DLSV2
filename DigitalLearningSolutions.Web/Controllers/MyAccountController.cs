@@ -56,9 +56,10 @@
                 return View(model);
             }
 
-            var signedInEmail = User.GetEmail();
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetNullableCandidateId();
 
-            if (!userService.TryUpdateUserAccountDetails(model.Password, signedInEmail, model.FirstName, model.LastName, model.Email))
+            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email))
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect.");
                 return View(model);

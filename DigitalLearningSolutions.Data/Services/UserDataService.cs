@@ -12,10 +12,10 @@
         public DelegateUser? GetDelegateUserById(int id);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
-        public List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress);
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public void UpdateAdminUser(string firstName, string surname, string email, int id);
-        public void UpdateDelegateUser(string firstName, string surname, string email, int id);
+        public void UpdateDelegateUsers(string firstName, string surname, string email, int[] ids);
     }
 
     public class UserDataService : IUserDataService
@@ -145,9 +145,9 @@
             return users;
         }
 
-        public List<AdminUser> GetAdminUsersByEmailAddress(string emailAddress)
+        public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
         {
-            List<AdminUser> users = connection.Query<AdminUser>(
+            return connection.Query<AdminUser>(
                 @"SELECT
                         AdminID,
                         Forename,
@@ -157,9 +157,7 @@
                     FROM AdminUsers
                     WHERE (Email = @emailAddress)",
                 new { emailAddress }
-            ).ToList();
-
-            return users;
+            ).SingleOrDefault();
         }
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
@@ -192,7 +190,7 @@
             );
         }
 
-        public void UpdateDelegateUser(string firstName, string surname, string email, int id)
+        public void UpdateDelegateUsers(string firstName, string surname, string email, int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -200,8 +198,8 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             EmailAddress = @email
-                        WHERE CandidateID = @id",
-                new { firstName, surname, email, id }
+                        WHERE CandidateID in @ids",
+                new { firstName, surname, email, ids }
             );
         }
     }
