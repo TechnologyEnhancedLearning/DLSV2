@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,8 @@
     public class LoginController : Controller
     {
         private readonly ILoginService loginService;
-        private readonly IUserService userService;
         private readonly ISessionService sessionService;
+        private readonly IUserService userService;
 
         public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
         {
@@ -75,16 +76,40 @@
                 {
                     sessionService.StartAdminSession(verifiedAdminUser.Id);
                 }
+
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
             }
 
-            SetTempDataForChooseACentre(model.RememberMe, verifiedAdminUser, approvedDelegateUsers);
             ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
-            return View("ChooseACentre", chooseACentreViewModel);
+            SetTempDataForChooseACentre
+            (
+                model.RememberMe,
+                verifiedAdminUser,
+                approvedDelegateUsers,
+                chooseACentreViewModel
+            );
+
+            return RedirectToAction("ChooseACentre", "Login");
         }
 
+        [ServiceFilter(typeof(RedirectEmptySessionData<ChooseACentreViewModel>))]
         [HttpGet]
-        public IActionResult ChooseACentre(int centreId)
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult ChooseACentre()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = TempData.Peek<ChooseACentreViewModel>();
+
+            return View("ChooseACentre", model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<List<DelegateUser>>))]
+        [HttpGet]
+        public IActionResult ChooseCentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
             var adminAccount = TempData.Peek<AdminUser>();
@@ -98,16 +123,28 @@
             {
                 sessionService.StartAdminSession(adminAccountForChosenCentre.Id);
             }
+
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 
         private void SetTempDataForChooseACentre(bool rememberMe, AdminUser? adminUser,
-            List<DelegateUser> approvedDelegateUsers)
+            List<DelegateUser> approvedDelegateUsers, ChooseACentreViewModel chooseACentreViewModel)
         {
+            if (adminUser != null)
+            {
+                adminUser.ProfileImage = null;
+            }
+
+            foreach (var user in approvedDelegateUsers.Where(du => du.ProfileImage != null))
+            {
+                user.ProfileImage = null;
+            }
+
             TempData.Clear();
             TempData["RememberMe"] = rememberMe;
             TempData.Set(adminUser);
             TempData.Set(approvedDelegateUsers);
+            TempData.Set(chooseACentreViewModel);
         }
 
         private IActionResult LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)

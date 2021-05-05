@@ -227,7 +227,7 @@
                 controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            result.Should().BeViewResult().WithViewName("ChooseACentre");
+            result.Should().BeRedirectToActionResult().WithActionName("ChooseACentre");
         }
 
         [Test]

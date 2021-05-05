@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Login
 @model ChooseACentreViewModel
 @{
-  ViewData["Title"] = "Choose A Centre";
+  ViewData["Title"] = "Choose a centre";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/login/chooseACentre.css")" asp-append-version="true">
@@ -45,8 +45,8 @@
             }
           </td>
           <td role="cell" class="nhsuk-table__cell choose-centre-td">
-            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-1"
-               asp-action="ChooseACentre" asp-route-centreId="@centreRow.CentreId">
+            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
+               asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
               Choose
             </a>
           </td>
