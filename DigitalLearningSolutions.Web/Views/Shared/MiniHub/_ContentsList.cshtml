@@ -4,16 +4,19 @@
 <nav class="nhsuk-contents-list" role="navigation" aria-label="Pages in this guide">
   <h2 class="nhsuk-u-visually-hidden">Contents</h2>
   <ol class="nhsuk-contents-list__list">
-    @for (var pageIndex = 0; pageIndex < @Model.Sections.Count; pageIndex++) {
-      <li class="nhsuk-contents-list__item" aria-current="page">
-        @{ var sectionToRender = Model.Sections[pageIndex]; }
-        @if (Model.CurrentSectionIndex == pageIndex) {
-          <span class="nhsuk-contents-list__current">@sectionToRender.SectionTitle</span>
+    @for (var sectionIndex = 0; sectionIndex < @Model.Sections.Count; sectionIndex++) {
+
+      var isCurrentSection = Model.CurrentSectionIndex == sectionIndex;
+      var sectionToLinkTo = Model.Sections[sectionIndex];
+
+      <li class="nhsuk-contents-list__item" @Html.Raw(isCurrentSection ? @"aria-current=""page""" : string.Empty)>
+        @if (isCurrentSection) {
+          <span class="nhsuk-contents-list__current">@sectionToLinkTo.SectionTitle</span>
         } else {
           <a class="nhsuk-contents-list__link"
-             asp-controller="@sectionToRender.ControllerName"
-             asp-action="@sectionToRender.ActionName">
-            @sectionToRender.SectionTitle
+             asp-controller="@sectionToLinkTo.ControllerName"
+             asp-action="@sectionToLinkTo.ActionName">
+            @sectionToLinkTo.SectionTitle
           </a>
         }
       </li>
