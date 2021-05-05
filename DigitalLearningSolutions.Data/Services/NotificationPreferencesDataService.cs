@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
 
@@ -80,38 +81,50 @@
         {
             if (!adminId.HasValue) return;
 
-            connection.Execute(
-                @"DELETE FROM NotificationUsers
+            using (var transaction = new TransactionScope())
+            {
+                connection.Execute(
+                    @"DELETE FROM NotificationUsers
                     WHERE AdminUserId = @adminId",
-                new { adminId }
-            );
+                    new { adminId }
+                );
 
-            var notificationIdsWithAdminId = notificationIds.Select(notificationId => new { adminId, notificationId });
+                var notificationIdsWithAdminId =
+                    notificationIds.Select(notificationId => new { adminId, notificationId });
 
-            connection.Execute(
-                @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
-                VALUES (@notificationId, @adminId)",
-                notificationIdsWithAdminId
-            );
+                connection.Execute(
+                    @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
+                    VALUES (@notificationId, @adminId)",
+                    notificationIdsWithAdminId
+                );
+
+                transaction.Complete();
+            }
         }
 
         public void SetNotificationPreferencesForDelegate(int? delegateId, IEnumerable<int> notificationIds)
         {
             if (!delegateId.HasValue) return;
 
-            connection.Execute(
-                @"DELETE FROM NotificationUsers
+            using (var transaction = new TransactionScope())
+            {
+                connection.Execute(
+                    @"DELETE FROM NotificationUsers
                     WHERE CandidateId = @delegateId",
-                new { delegateId }
-            );
+                    new { delegateId }
+                );
 
-            var notificationIdsWithDelegateId = notificationIds.Select(notificationId => new { delegateId, notificationId });
+                var notificationIdsWithDelegateId =
+                    notificationIds.Select(notificationId => new { delegateId, notificationId });
 
-            connection.Execute(
-                @"INSERT INTO NotificationUsers (NotificationId, CandidateId)
-                VALUES (@notificationId, @delegateId)",
-                notificationIdsWithDelegateId
-            );
+                connection.Execute(
+                    @"INSERT INTO NotificationUsers (NotificationId, CandidateId)
+                    VALUES (@notificationId, @delegateId)",
+                    notificationIdsWithDelegateId
+                );
+
+                transaction.Complete();
+            }
         }
     }
 }

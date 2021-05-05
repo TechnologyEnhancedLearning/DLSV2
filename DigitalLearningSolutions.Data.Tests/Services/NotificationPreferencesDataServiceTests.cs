@@ -104,22 +104,13 @@
                     // when
                     var notificationIds = new[] { 2, 3, 4 };
                     service.SetNotificationPreferencesForAdmin(10, notificationIds);
-                    var result = service.GetNotificationPreferencesForAdmin(10).ToList();
+                    var result = service.GetNotificationPreferencesForAdmin(10)
+                        .Where(notification => notification.Accepted)
+                        .Select(notification => notification.NotificationId)
+                        .ToList();
 
                     // then
-                    result.Count().Should().Be(7);
-
-                    var first = result.First();
-
-                    first.NotificationId.Should().Be(1);
-                    first.NotificationName.Should().Be("System notification added");
-                    first.Accepted.Should().BeFalse();
-
-                    var fourth = result[3];
-
-                    fourth.NotificationId.Should().Be(4);
-                    fourth.NotificationName.Should().Be("Delegate registration requires approval");
-                    fourth.Accepted.Should().BeTrue();
+                    result.Should().BeEquivalentTo(notificationIds);
                 }
                 finally
                 {
@@ -138,22 +129,13 @@
                     // when
                     var notificationIds = new[] { 9, 10 };
                     service.SetNotificationPreferencesForDelegate(7, notificationIds);
-                    var result = service.GetNotificationPreferencesForDelegate(7).ToList();
+                    var result = service.GetNotificationPreferencesForDelegate(7)
+                        .Where(notification => notification.Accepted)
+                        .Select(notification => notification.NotificationId)
+                        .ToList();
 
                     // then
-                    result.Count().Should().Be(7);
-
-                    var first = result.First();
-
-                    first.NotificationId.Should().Be(9);
-                    first.NotificationName.Should().Be("Course completion reminder");
-                    first.Accepted.Should().BeTrue();
-
-                    var seventh = result[6];
-
-                    seventh.NotificationId.Should().Be(17);
-                    seventh.NotificationName.Should().Be("Supervisor completed verification");
-                    seventh.Accepted.Should().BeFalse();
+                    result.Should().BeEquivalentTo(notificationIds);
                 }
                 finally
                 {

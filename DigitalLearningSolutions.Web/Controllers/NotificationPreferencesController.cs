@@ -65,11 +65,11 @@
 
         [HttpPost]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(string userType, IEnumerable<int> notifications)
+        public IActionResult SaveNotificationPreferences(string userType, IEnumerable<int> notificationIds)
         {
             var userId = userType == UserTypes.Admin ? User.GetAdminId() : User.GetCandidateId();
 
-            SetNotificationPreferencesForUser(userType, userId, notifications);
+            SetNotificationPreferencesForUser(userType, userId, notificationIds);
 
             return RedirectToAction("Index", "NotificationPreferences");
         }
