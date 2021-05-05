@@ -79,14 +79,7 @@
 
         public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName, string surname, string email)
         {
-            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
-
-            var signedInEmail = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
-
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
-
-            var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(password, adminUser, delegateUsers);
+            var (verifiedAdminUser, verifiedDelegateUsers) = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -100,10 +93,27 @@
 
             if (verifiedDelegateUsers.Count != 0)
             {
-                userDataService.UpdateDelegateUsers(firstName, surname, email, verifiedDelegateUsers.Select(d => d.Id).ToArray());
+                var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
+                userDataService.UpdateDelegateUsers(firstName, surname, email, delegateIds);
             }
             
             return true;
+        }
+
+        private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password)
+        {
+            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
+
+            var signedInEmail = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
+
+            if (signedInEmail == null)
+            {
+                return (null, new List<DelegateUser>());
+            }
+
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
+
+            return loginService.VerifyUsers(password, adminUser, delegateUsers);
         }
     }
 }
