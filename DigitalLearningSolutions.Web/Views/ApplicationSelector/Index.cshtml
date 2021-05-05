@@ -1,0 +1,93 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Configuration
+
+@model ApplicationSelectorViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Select Application";
+}
+
+<div class="nhsuk-grid-row">
+  @if (Model.LearningPortalAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" asp-controller="LearningPortal" asp-action="Current">Learning Portal</a>
+          </h2>
+          <p class="nhsuk-card__description">Access to your current, available and completed learning courses.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.TrackingSystemAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/dashboard">Tracking System</a>
+          </h2>
+          <p class="nhsuk-card__description">Manage and distribute learning to your organisation and access reports.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.ContentManagementSystemAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/cms/courses">Content Management System</a>
+          </h2>
+          <p class="nhsuk-card__description">Import and manage learning content that's delivered through the Digital Learning Solutions platform.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.SuperviseAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/supervise">Supervise</a>
+          </h2>
+          <p class="nhsuk-card__description">Assign and review staff competency self assessments and arrange supervision sessions.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.ContentCreatorAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/cms/contentcreator">Content Creator</a>
+          </h2>
+          <p class="nhsuk-card__description">Create interactive elearning and assessments.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.FrameworksAccess)
+  {
+    <div class="nhsuk-grid-column-one-half">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="MyFrameworks">Frameworks</a>
+          </h2>
+          <p class="nhsuk-card__description">Create and distribute competency frameworks and role profiles.</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>
