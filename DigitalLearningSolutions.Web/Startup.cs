@@ -53,6 +53,8 @@ namespace DigitalLearningSolutions.Web
             {
                 options.AddPolicy(CustomPolicies.UserOnly,
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
+                options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
