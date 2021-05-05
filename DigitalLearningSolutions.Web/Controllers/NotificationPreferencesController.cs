@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
