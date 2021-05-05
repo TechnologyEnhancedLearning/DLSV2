@@ -14,12 +14,12 @@
 
     @if (Model.AdminNotifications.Notifications.Any())
     {
-      <partial name="_NotificationPreferenceExpander" model="Model.AdminNotifications" />
+      <partial name="_NotificationPreferenceExpander" model="Model.AdminNotifications"/>
     }
 
     @if (Model.DelegateNotifications.Notifications.Any())
     {
-      <partial name="_NotificationPreferenceExpander" model="Model.DelegateNotifications" />
+      <partial name="_NotificationPreferenceExpander" model="Model.DelegateNotifications"/>
     }
 
     <div class="top-spaced-goback">
