@@ -1,0 +1,60 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model EditDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: My Details" : "My Details";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">My details</h1>
+  </div>
+</div>
+
+<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditDetails">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      @if (errorHasOccurred)
+      {
+        <vc:error-summary order-of-property-names="@(new[] {
+                                                     nameof(Model.FirstName),
+                                                     nameof(Model.LastName),
+                                                     nameof(Model.Email),
+                                                     nameof(Model.Password)})" />
+      }
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:text-input asp-for="FirstName" label="First Name" type="text" spell-check="false" autocomplete="given-name" />
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:text-input asp-for="LastName" label="Last Name" type="text" spell-check="false" autocomplete="family-name" />
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:text-input asp-for="Email" label="Email Address" type="text" spell-check="false" autocomplete="email" />
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:text-input asp-for="Password" label="Confirm password to save changes:" type="password" spell-check="false" autocomplete="email" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </div>
+  </div>
+</form>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" />
+  </div>
+</div>
+

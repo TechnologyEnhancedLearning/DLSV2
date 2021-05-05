@@ -142,13 +142,13 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            context.HttpContext.Response.Redirect( "/Login");
             return Task.CompletedTask;
         }
 
         private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home");
+            context.HttpContext.Response.Redirect("/Home");
             return Task.CompletedTask;
         }
     }
