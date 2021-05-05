@@ -1,17 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
-    using System;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ViewModels.Login;
-    using FakeItEasy;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Routing;
 
     public static class LoginTestHelper
     {
@@ -27,83 +16,6 @@
                 Username = username,
                 Password = password,
                 RememberMe = rememberMe
-            };
-        }
-
-        public static LoginController GetLoginControllerWithUnauthenticatedUser
-        (
-            ILoginService loginService,
-            IUserService userService,
-            ISessionService sessionService
-        )
-        {
-            return GetLoginController(loginService, userService, sessionService, string.Empty);
-        }
-
-        public static LoginController GetLoginControllerWithAuthenticatedUser
-        (
-            ILoginService loginService,
-            IUserService userService,
-            ISessionService sessionService
-        )
-        {
-            return GetLoginController(loginService, userService, sessionService, "mock");
-        }
-
-        private static LoginController GetLoginController
-        (
-            ILoginService loginService,
-            IUserService userService,
-            ISessionService sessionService,
-            string authenticationType
-        )
-        {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
-            var session = new MockHttpContextSession();
-
-            return new LoginController(loginService, userService, sessionService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = session
-                    }
-                }
-            };
-        }
-
-        public static LoginController GetLoginControllerWithSignInFunctionality
-        (
-            ILoginService loginService,
-            IUserService userService,
-            ISessionService sessionService
-        )
-        {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(""));
-            var session = new MockHttpContextSession();
-
-            var authService = A.Fake<IAuthenticationService>();
-            A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
-                A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
-
-            var urlHelperFactory = A.Fake<IUrlHelperFactory>();
-
-            var services = A.Fake<IServiceProvider>();
-            A.CallTo(() => services.GetService(typeof(IAuthenticationService))).Returns(authService);
-            A.CallTo(() => services.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactory);
-            return new LoginController(loginService, userService, sessionService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = session,
-                        RequestServices = services
-                    }
-                }
             };
         }
     }

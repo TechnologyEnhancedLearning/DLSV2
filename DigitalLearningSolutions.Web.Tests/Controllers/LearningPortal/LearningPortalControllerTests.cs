@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
@@ -14,7 +15,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     public partial class LearningPortalControllerTests
     {
         private LearningPortalController controller;
-        private ICentresService centresService;
+        private ICentresDataService centresDataService;
         private ICourseService courseService;
         private ISelfAssessmentService selfAssessmentService;
         private INotificationService notificationService;
@@ -28,14 +29,14 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         [SetUp]
         public void SetUp()
         {
-            centresService = A.Fake<ICentresService>();
+            centresDataService = A.Fake<ICentresDataService>();
             courseService = A.Fake<ICourseService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             notificationService = A.Fake<INotificationService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
-            
+
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -44,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 new Claim("UserCentreID", CentreId.ToString())
             }, "mock"));
             controller = new LearningPortalController(
-                centresService,
+                centresDataService,
                 courseService,
                 selfAssessmentService,
                 notificationService,

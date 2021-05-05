@@ -29,7 +29,7 @@
             var bannerText = "bannerText";
             A.CallTo(() => courseService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.Current();
@@ -279,7 +279,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var currentViewModel = CurrentCourseHelper.CurrentPageViewModelFromController(controller);

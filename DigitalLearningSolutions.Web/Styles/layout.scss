@@ -100,6 +100,10 @@ nav, .nhsuk-header__navigation, #header-navigation {
   @include mq($from: large-desktop) {
     display: none;
   }
+
+  &.visual-separator-no-nav-bar {
+    display: block;
+  }
 }
 .loading-spinner {
   margin: 0;
