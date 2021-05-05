@@ -67,8 +67,14 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.IsEssential = true;
             });
 
-            var mvcBuilder = services.AddControllersWithViews();
-            mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+            var mvcBuilder = services
+                .AddControllersWithViews()
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                })
+                .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+
             if (env.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();

@@ -1,5 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model CentreConfigurationViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Centre Configuration";
 }
@@ -8,19 +11,17 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre Configuration</h1>
     <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <table class="nhsuk-table">
-          <tbody class="nhsuk-table__body">
-          <tr role="row" class="nhsuk-table__row">
-            <th class="nhsuk-table__cell">Centre Name:</th>
-            <td class="nhsuk-table__cell ">@Model.CentreName</td>
-          </tr>
-          <tr role="row" class="nhsuk-table__row">
-            <th class="nhsuk-table__cell">Region:</th>
-            <td class="nhsuk-table__cell">@Model.RegionName</td>
-          </tr>
-          </tbody>
-        </table>
+      <div class="nhsuk-card__content centre-card-content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row centre-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Centre Name:</dt>
+            <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
+          </div>
+          <div class="nhsuk-summary-list__row centre-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Region:</dt>
+            <dd class="nhsuk-summary-list__value ">@Model.RegionName</dd>
+          </div>
+        </dl>
       </div>
     </div>
   </div>

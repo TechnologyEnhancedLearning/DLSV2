@@ -25,7 +25,7 @@
 
             var model = new CentreConfigurationViewModel(centreDetails.CentreName, centreDetails.RegionName);
 
-            return View("~/Views/TrackingSystem/CentreConfiguration/Index.cshtml", model);
+            return View("Index", model);
         }
     }
 }
