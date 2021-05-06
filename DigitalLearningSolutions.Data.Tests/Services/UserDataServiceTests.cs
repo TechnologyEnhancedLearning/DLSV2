@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
@@ -67,6 +68,67 @@
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
+        }
+
+        [Test]
+        public void UpdateAdminUser_updates_user()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var firstName = "TestFirstName";
+                    var lastName = "TestLastName";
+                    var email = "test@email.com";
+
+                    // When
+                    userDataService.UpdateAdminUser(firstName, lastName, email, 7);
+                    var updatedUser = userDataService.GetAdminUserById(7);
+
+                    // Then
+                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void UpdateDelegateUsers_updates_users()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var firstName = "TestFirstName";
+                    var lastName = "TestLastName";
+                    var email = "test@email.com";
+
+                    // When
+                    userDataService.UpdateDelegateUsers(firstName, lastName, email, new []{2,3});
+                    var updatedUser = userDataService.GetDelegateUserById(2);
+                    var secondUpdatedUser = userDataService.GetDelegateUserById(3);
+
+                    // Then
+                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
+
+                    secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
         }
     }
 }

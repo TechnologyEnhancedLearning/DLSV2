@@ -37,11 +37,10 @@
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
-            (
-                (
-                    new List<AdminUser> { UserTestHelper.GetDefaultAdminUser() },
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
-                ));
+            ((
+                UserTestHelper.GetDefaultAdminUser(),
+                new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
+            ));
 
             passwordResetService = new PasswordResetService(
                 userService,
@@ -55,8 +54,7 @@
         public void Trying_get_null_user_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._))
-                .Returns((new List<AdminUser>(), new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(

@@ -1,7 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.Services;
+    using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -91,6 +92,56 @@
 
             // then
             result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Update_notification_preferences_for_admin_should_update_notification_preferences_for_admin()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // when
+                    var notificationIds = new[] { 2, 3, 4 };
+                    service.SetNotificationPreferencesForAdmin(10, notificationIds);
+                    var result = service.GetNotificationPreferencesForAdmin(10)
+                        .Where(notification => notification.Accepted)
+                        .Select(notification => notification.NotificationId)
+                        .ToList();
+
+                    // then
+                    result.Should().BeEquivalentTo(notificationIds);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void Update_notification_preferences_for_delegate_should_update_notification_preferences_for_delegate()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // when
+                    var notificationIds = new[] { 9, 10 };
+                    service.SetNotificationPreferencesForDelegate(7, notificationIds);
+                    var result = service.GetNotificationPreferencesForDelegate(7)
+                        .Where(notification => notification.Accepted)
+                        .Select(notification => notification.NotificationId)
+                        .ToList();
+
+                    // then
+                    result.Should().BeEquivalentTo(notificationIds);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
         }
     }
 }
