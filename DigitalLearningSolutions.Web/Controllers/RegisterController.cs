@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -148,7 +149,8 @@
                 return View(viewModel);
             }
 
-            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data));
+            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data), baseUrl);
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             return RedirectToAction("Confirmation");
@@ -172,13 +174,13 @@
             var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             return new SummaryViewModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                centre!,
-                jobGroup!
-            );
+            {
+                FirstName = data.RegisterViewModel.FirstName!,
+                LastName = data.RegisterViewModel.LastName!,
+                Email = data.RegisterViewModel.Email!,
+                Centre = centre!,
+                JobGroup = jobGroup!
+            };
         }
 
         private static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)

@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
 
-    public class DelegateRegistrationData
+    internal sealed class DelegateRegistrationData
     {
         public DelegateRegistrationData()
         {
