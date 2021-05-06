@@ -5,10 +5,8 @@
 
 @model ApplicationSelectorViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
-
 @{
-  ViewData["Title"] = "Select Application";
+  ViewData["Title"] = "Switch Application";
 }
 
 <div class="nhsuk-grid-row">
@@ -83,7 +81,7 @@
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
-            <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="MyFrameworks">Frameworks</a>
+            <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="FrameworksDashboard">Frameworks</a>
           </h2>
           <p class="nhsuk-card__description">Create and distribute competency frameworks and role profiles.</p>
         </div>
