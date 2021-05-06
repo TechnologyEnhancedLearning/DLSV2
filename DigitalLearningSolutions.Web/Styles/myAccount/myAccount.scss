@@ -1,23 +1,5 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-.account-card-content {
-  padding: 16px 32px;
-}
-
-.account-summary-list__row:last-child {
-  border: none;
-  margin-bottom: 0;
-}
-
-.account-summary-list__row:last-child .nhsuk-summary-list__key {
-  border: none;
-}
-
-.account-summary-list__row:last-child .nhsuk-summary-list__value {
-  border: none;
-  margin-bottom: 0;
-}
-
 .account-details-list {
   @include govuk-media-query($until: tablet) {
     margin-bottom: 0;
