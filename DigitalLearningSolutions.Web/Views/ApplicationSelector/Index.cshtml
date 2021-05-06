@@ -10,8 +10,11 @@
 }
 
 <div class="nhsuk-grid-row">
-  @if (Model.LearningPortalAccess)
-  {
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">Switch application</h1>
+  </div>
+
+  @if (Model.LearningPortalAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
@@ -23,8 +26,7 @@
       </div>
     </div>
   }
-  @if (Model.TrackingSystemAccess)
-  {
+  @if (Model.TrackingSystemAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
@@ -36,8 +38,7 @@
       </div>
     </div>
   }
-  @if (Model.ContentManagementSystemAccess)
-  {
+  @if (Model.ContentManagementSystemAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
@@ -49,8 +50,7 @@
       </div>
     </div>
   }
-  @if (Model.SuperviseAccess)
-  {
+  @if (Model.SuperviseAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
@@ -62,8 +62,7 @@
       </div>
     </div>
   }
-  @if (Model.ContentCreatorAccess)
-  {
+  @if (Model.ContentCreatorAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
@@ -75,8 +74,7 @@
       </div>
     </div>
   }
-  @if (Model.FrameworksAccess)
-  {
+  @if (Model.FrameworksAccess) {
     <div class="nhsuk-grid-column-one-half">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
