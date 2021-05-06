@@ -46,7 +46,7 @@
 }
 
 .learning-content-item__image-box {
-  box-shadow: 0 0 10px 1px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.05);
   background: $color_nhsuk-white;
   border-radius: 4px;
   padding: 8px;
@@ -68,4 +68,22 @@
 
   // We do this so the containing div won't leave extra space below the image. See https://stackoverflow.com/a/8522087z
   display: block;
+}
+
+.see-more-link {
+  &:visited {
+    color: $nhsuk-link-visited-color;
+  }
+
+  &:link {
+    color: $nhsuk-link-color;
+  }
+
+  &:hover {
+    color: $nhsuk-link-hover-color;
+  }
+
+  &:active {
+    color: $nhsuk-link-active-color;
+  }
 }
