@@ -15,8 +15,8 @@
     public class LoginController : Controller
     {
         private readonly ILoginService loginService;
-        private readonly IUserService userService;
         private readonly ISessionService sessionService;
+        private readonly IUserService userService;
 
         public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
         {
@@ -68,13 +68,19 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
+            var availableCentres = userService.GetUserActiveCentres(verifiedAdminUser, approvedDelegateUsers);
+            if (availableCentres.Count == 0)
+            {
+                return View("CentreInactive");
+            }
+
             if (availableCentres.Count == 1)
             {
                 if (verifiedAdminUser != null)
                 {
                     sessionService.StartAdminSession(verifiedAdminUser.Id);
                 }
+
                 return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
             }
 
@@ -98,6 +104,7 @@
             {
                 sessionService.StartAdminSession(adminAccountForChosenCentre.Id);
             }
+
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 

@@ -78,7 +78,7 @@
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
@@ -100,7 +100,7 @@
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
@@ -215,7 +215,7 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new List<CentreUserDetails>
                 {
                     new CentreUserDetails(1, "Centre 1", true),
@@ -245,7 +245,7 @@
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-            A.CallTo(() => userService.GetUserCentres(
+            A.CallTo(() => userService.GetUserActiveCentres(
                     A<AdminUser>.That.IsEqualTo(expectedAdminUser),
                     A<List<DelegateUser>>.That.IsEmpty()))
                 .MustHaveHappened();
@@ -260,7 +260,7 @@
                 .Returns((expectedAdmin, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new List<CentreUserDetails>
                     { new CentreUserDetails(expectedAdmin.CentreId, expectedAdmin.CentreName, true) });
 
@@ -313,7 +313,7 @@
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userService.GetUserCentres(
+            A.CallTo(() => userService.GetUserActiveCentres(
                     A<AdminUser>.That.IsEqualTo(expectedAdminUser),
                     A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(expectedApprovedDelegateUsers))))
                 .MustHaveHappened();
@@ -330,7 +330,7 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUserActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
