@@ -49,11 +49,7 @@
                 new { adminId }
             ).ToList();
 
-            foreach (var notificationPreference in preferences)
-            {
-                // the notification names in the DB have trailing whitespace
-                notificationPreference.NotificationName = notificationPreference.NotificationName.Trim();
-            }
+            RemoveTrailingNameWhitespace(preferences);
 
             return preferences;
         }
@@ -75,13 +71,18 @@
                 new { delegateId }
             ).ToList();
 
-            foreach (var notificationPreference in preferences)
+            RemoveTrailingNameWhitespace(preferences);
+
+            return preferences;
+        }
+
+        private void RemoveTrailingNameWhitespace(IEnumerable<NotificationPreference> notificationPreferences)
+        {
+            foreach (var notificationPreference in notificationPreferences)
             {
                 // the notification names in the DB have trailing whitespace
                 notificationPreference.NotificationName = notificationPreference.NotificationName.Trim();
             }
-
-            return preferences;
         }
     }
 }
