@@ -32,6 +32,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
         [InlineData("/Register")]
+        [InlineData("/Register/LearnerInformation")]
+        [InlineData("/Register/Password")]
+        [InlineData("/Register/Summary")]
+        [InlineData("/Register/Confirmation")]
         public void Page_has_no_accessibility_errors(string url)
         {
             // when
@@ -48,7 +52,5 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             chromeOptions.AddArgument("--headless");
             return new ChromeDriver(chromeOptions);
         }
-        
-        // TODO HEEDLS-396 Add automated UI tests for registration journey
     }
 }
