@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
     using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,9 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var requestIsValid = await passwordResetService.PasswordResetHashIsValidAsync(email, code);
+            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(email, code);
 
-            if (!requestIsValid)
+            if (!matchingUserRefs.Any())
             {
                 return RedirectToAction("Error");
             }

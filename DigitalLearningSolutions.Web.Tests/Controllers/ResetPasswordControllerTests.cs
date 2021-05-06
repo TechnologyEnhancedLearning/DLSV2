@@ -1,7 +1,9 @@
 namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
+    using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers;
@@ -32,9 +34,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         [Test]
         public async Task Index_should_redirect_to_homepage_if_user_is_authenticated()
         {
-            // Given
-            A.CallTo(() => passwordResetService.PasswordResetHashIsValidAsync("email", "code")).Returns(true);
-
             // When
             var result = await authenticatedController.Index("email", "code");
 
@@ -46,7 +45,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_render_if_user_is_unauthenticated_and_query_params_are_valid()
         {
             // Given
-            A.CallTo(() => passwordResetService.PasswordResetHashIsValidAsync("email", "code")).Returns(true);
+            A.CallTo(() => passwordResetService.GetValidMatchingUserReferencesAsync("email", "code"))
+                .Returns(Task.FromResult(new List<UserReference> { new UserReference() }));
 
             // When
             var result = await unauthenticatedController.Index("email", "code");
@@ -59,7 +59,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_redirect_to_error_page_if_user_is_unauthenticated_and_query_params_are_invalid()
         {
             // Given
-            A.CallTo(() => passwordResetService.PasswordResetHashIsValidAsync("email", "code")).Returns(false);
+            A.CallTo(() => passwordResetService.GetValidMatchingUserReferencesAsync("email", "code"))
+                .Returns(Task.FromResult(new List<UserReference>()));
 
             // When
             var result = await unauthenticatedController.Index("email", "code");

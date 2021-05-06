@@ -24,7 +24,7 @@
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
-            //When
+            // When
             var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
 
             // Then

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
@@ -15,7 +16,7 @@
 
     public interface IPasswordResetService
     {
-        Task<bool> PasswordResetHashIsValidAsync(string emailAddress, string resetHash);
+        Task<List<UserReference>> GetValidMatchingUserReferencesAsync(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
     }
 
@@ -42,27 +43,29 @@
             this.clockService = clockService;
         }
 
-        public async Task<bool> PasswordResetHashIsValidAsync(string emailAddress, string resetHash)
+        public async Task<List<UserReference>> GetValidMatchingUserReferencesAsync(
+            string emailAddress,
+            string resetHash)
         {
-            var (adminUsersWithEmail, delegateUsersWithEmail) = userService.GetUsersByEmailAddress(emailAddress);
+            var matchingResetPasswordEntities =
+                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+                    emailAddress,
+                    resetHash);
 
-            var resetPasswordIdsForEmail = adminUsersWithEmail.Select(user => user.ResetPasswordId)
-                .Concat(delegateUsersWithEmail.Select(user => user.ResetPasswordId))
-                .Where(id => id.HasValue)
-                .Select(id => id.Value);
-
-            var resetPasswordEntitiesInDb = await Task.WhenAll(
-                resetPasswordIdsForEmail.Select(id => passwordResetDataService.FindAsync(id)));
-
-            return resetPasswordEntitiesInDb.Any(
-                entity => entity.ResetPasswordHash == resetHash
-                          && clockService.UtcNow - entity.PasswordResetDateTime < TimeSpan.FromHours(2));
+            return matchingResetPasswordEntities
+                .Where(resetPassword => resetPassword.IsStillValidAt(clockService.UtcNow))
+                .Select(
+                    resetPassword => new UserReference
+                        { Id = resetPassword.UserId, UserType = resetPassword.UserType })
+                .ToList();
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
             (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            user ??= delegateUsers.FirstOrDefault() ?? throw new UserAccountNotFoundException("No user account could be found with the specified email address");
+            user ??= delegateUsers.FirstOrDefault() ??
+                     throw new UserAccountNotFoundException(
+                         "No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
             Email resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,

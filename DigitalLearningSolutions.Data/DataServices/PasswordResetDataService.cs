@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
@@ -7,12 +8,14 @@ namespace DigitalLearningSolutions.Data.DataServices
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Auth;
-    using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
 
     public interface IPasswordResetDataService
     {
-        Task<ResetPassword> FindAsync(int id);
+        Task<List<ResetPasswordWithUserDetails>> FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+            string userEmail,
+            string resetHash);
+
         void CreatePasswordReset(ResetPasswordCreateModel createModel);
     }
 
@@ -29,12 +32,36 @@ namespace DigitalLearningSolutions.Data.DataServices
             this.logger = logger;
         }
 
-        public async Task<ResetPassword> FindAsync(int id)
+        public async Task<List<ResetPasswordWithUserDetails>> FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+            string userEmail,
+            string resetHash)
         {
-            return (await connection.QueryAsync<ResetPassword>(
-                "SELECT * FROM [ResetPassword] WHERE [ID] = @id",
-                new { id }))
-                .Single();
+            var matches = await connection.QueryAsync<ResetPasswordWithUserDetails>(
+                @"SELECT RPAU.UserId, RPAU.Email, RPAU.ID, RPAU.ResetPasswordHash, RPAU.PasswordResetDateTime, RPAU.UserType
+FROM (SELECT AU.AdminID     UserId,
+             AU.Email,
+             RP.ID,
+             RP.ResetPasswordHash,
+             RP.PasswordResetDateTime,
+             'AdminUser' as UserType
+      FROM dbo.AdminUsers AU
+               JOIN [ResetPassword] RP ON AU.ResetPasswordID = RP.ID
+      WHERE AU.Email = @userEmail
+        AND RP.ResetPasswordHash = @resetHash) RPAU
+UNION
+SELECT C.CandidateID,
+       C.EmailAddress,
+       RP.ID,
+       RP.ResetPasswordHash,
+       RP.PasswordResetDateTime,
+       'DelegateUser' as UserType
+FROM dbo.Candidates C
+         JOIN [ResetPassword] RP ON C.ResetPasswordID = RP.ID
+WHERE C.EmailAddress = @userEmail
+  AND RP.ResetPasswordHash = @resetHash;",
+                new { userEmail, resetHash }
+            );
+            return matches.ToList();
         }
 
         public void CreatePasswordReset(ResetPasswordCreateModel createModel)

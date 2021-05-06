@@ -2,8 +2,8 @@ namespace DigitalLearningSolutions.Data.Enums
 {
     public class UserType : Enumeration
     {
-        public static UserType AdminUser = new UserType(0, "AdminUser", "AdminUsers", "AdminID");
-        public static UserType DelegateUser = new UserType(1, "DelegateUser", "Candidates", "CandidateID");
+        public static readonly UserType AdminUser = new UserType(0, nameof(AdminUser), "AdminUsers", "AdminID");
+        public static readonly UserType DelegateUser = new UserType(1, nameof(DelegateUser), "Candidates", "CandidateID");
 
         private UserType(int id, string name, string tableName, string idColumnName) : base(id, name)
         {
@@ -13,5 +13,10 @@ namespace DigitalLearningSolutions.Data.Enums
 
         public readonly string TableName;
         public readonly string IdColumnName;
+
+        public static implicit operator UserType(string value)
+        {
+            return FromName<UserType>(value);
+        }
     }
 }

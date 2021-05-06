@@ -6,8 +6,9 @@
     using System.Threading.Tasks;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.DbModels;
+    using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -37,10 +38,11 @@
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
-            ((
-                UserTestHelper.GetDefaultAdminUser(),
-                new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
-            ));
+            (
+                (
+                    UserTestHelper.GetDefaultAdminUser(),
+                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
+                ));
 
             passwordResetService = new PasswordResetService(
                 userService,
@@ -71,7 +73,7 @@
                 .Build();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((new[] { adminUser }.ToList(), new List<DelegateUser>()));
+                .Returns((adminUser, new List<DelegateUser>()));
 
             // When
             passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
@@ -92,126 +94,65 @@
         }
 
         [Test]
-        public async Task Reset_password_hash_is_invalid_if_125_minutes_old()
+        public async Task Reset_password_is_discounted_if_expired()
         {
             // Given
             var createTime = DateTime.UtcNow;
             var emailAddress = "email";
+            var hash = "hash";
 
-            var resetPasswordModel = Builder<ResetPassword>.CreateNew()
-                .With(m => m.Id = 1)
-                .With(m => m.PasswordResetDateTime = createTime)
-                .With(m => m.ResetPasswordHash = "Old Hash Brown")
+            var resetPasswordWithUserDetails = Builder<ResetPasswordWithUserDetails>.CreateNew()
+                .With(rp => rp.PasswordResetDateTime = createTime)
                 .Build();
-            A.CallTo(() => passwordResetDataService.FindAsync(1)).Returns(Task.FromResult(resetPasswordModel));
+            A.CallTo(
+                    () => passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+                        emailAddress,
+                        hash))
+                .Returns(Task.FromResult(new[] { resetPasswordWithUserDetails }.ToList()));
 
-            var candidate = Builder<DelegateUser>.CreateNew()
-                .With(user => user.ResetPasswordId = resetPasswordModel.Id)
-                .Build();
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
-
-            GivenCurrentTimeIs(createTime.Add(TimeSpan.FromMinutes(125)));
+            GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(125));
 
             // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(emailAddress, "New Hash Brown");
+            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, hash);
 
             // Then
-            isValid.Should().BeFalse();
+            matchingUserRefs.Count.Should().Be(0);
         }
 
         [Test]
-        public async Task New_reset_password_is_valid_115_minutes_later()
+        public async Task User_references_are_correctly_calculated()
         {
             // Given
             var createTime = DateTime.UtcNow;
+            var resetPasswords = Builder<ResetPasswordWithUserDetails>.CreateListOfSize(3)
+                .All().With(rp => rp.PasswordResetDateTime = createTime)
+                .TheFirst(2).With(rp => rp.UserType = UserType.DelegateUser)
+                .TheRest().With(rp => rp.UserType = UserType.AdminUser)
+                .TheFirst(1).With(rp => rp.UserId = 7)
+                .TheNext(1).With(rp => rp.UserId = 2)
+                .TheNext(1).With(rp => rp.UserId = 4)
+                .Build().ToList();
             var emailAddress = "email";
+            var resetHash = "hash";
 
-            var resetPasswordModel = Builder<ResetPassword>.CreateNew()
-                .With(m => m.Id = 1)
-                .With(m => m.PasswordResetDateTime = createTime)
-                .With(m => m.ResetPasswordHash = "New Hash Brown")
-                .Build();
-            GivenResetPasswordExists(resetPasswordModel);
-
-            var candidate = Builder<DelegateUser>.CreateNew()
-                .With(user => user.ResetPasswordId = resetPasswordModel.Id)
-                .Build();
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
-
-            GivenCurrentTimeIs(createTime.Add(TimeSpan.FromMinutes(115)));
-
-            // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(emailAddress, "New Hash Brown");
-
-            // Then
-            isValid.Should().BeTrue();
-        }
-
-        [Test]
-        public async Task Reset_password_hash_is_invalid_if_no_user_matching_email()
-        {
-            // Given
-            var createTime = DateTime.UtcNow;
-
-            var resetPasswordModel = Builder<ResetPassword>.CreateNew()
-                .With(m => m.Id = 1)
-                .With(m => m.PasswordResetDateTime = createTime)
-                .With(m => m.ResetPasswordHash = "New Hash Brown")
-                .Build();
-            GivenResetPasswordExists(resetPasswordModel);
-
-            A.CallTo(() => userService.GetUsersByEmailAddress("Albus.Dumbledore@Hogwarts.com"))
-                .Returns((new List<AdminUser>(), new List<DelegateUser>()));
+            A.CallTo(
+                    () => passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+                        emailAddress,
+                        resetHash))
+                .Returns(Task.FromResult(resetPasswords));
 
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(
-                "Albus.Dumbledore@Hogwarts.com",
-                "New Hash Brown");
+            var matchingUsers = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, resetHash);
 
             // Then
-            isValid.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task Reset_password_hash_is_invalid_if_hash_does_not_match_db_entity()
-        {
-            // Given
-            const string emailAddress = "Albus.Dumbledore@Hogwarts.com";
-
-            var createTime = DateTime.UtcNow;
-            A.CallTo(() => clockService.UtcNow).Returns(createTime + TimeSpan.FromMinutes(2));
-
-            var resetPasswordModel = Builder<ResetPassword>.CreateNew()
-                .With(m => m.Id = 1)
-                .With(m => m.PasswordResetDateTime = createTime)
-                .With(m => m.ResetPasswordHash = "New Hash Brown")
-                .Build();
-            GivenResetPasswordExists(resetPasswordModel);
-
-            var candidate = Builder<DelegateUser>.CreateNew()
-                .With(u => u.ResetPasswordId = resetPasswordModel.Id)
-                .Build();
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((new List<AdminUser>(), new[] { candidate }.ToList()));
-
-            // When
-            var isValid = await passwordResetService.PasswordResetHashIsValidAsync(
-                emailAddress,
-                "Nonexistent Hash");
-
-            // Then
-            isValid.Should().BeFalse();
-        }
-
-        private void GivenResetPasswordExists(ResetPassword resetPasswordModel)
-        {
-            A.CallTo(() => passwordResetDataService.FindAsync(resetPasswordModel.Id))
-                .Returns(Task.FromResult(resetPasswordModel));
-        }
+            matchingUsers.Should().BeEquivalentTo(new List<UserReference>
+            {
+                new UserReference {Id = 7, UserType = UserType.DelegateUser},
+                new UserReference {Id = 2, UserType = UserType.DelegateUser},
+                new UserReference {Id = 4, UserType = UserType.AdminUser},
+            }); }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
