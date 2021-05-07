@@ -72,7 +72,7 @@
 
             var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
             var (adminLoginDetails, delegateLoginDetails) =
-                GetClaimsDetails(verifiedAdminUser, approvedDelegateUsers);
+                GetLoginDetails(verifiedAdminUser, approvedDelegateUsers);
             if (availableCentres.Count == 1)
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
@@ -124,7 +124,7 @@
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetClaimsDetails
+        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails
         (
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
