@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.User;
 
-    public class AdminClaimDetails
+    public class AdminLoginDetails
     {
         public int Id { get; set; }
         public int CentreId { get; set; }
@@ -22,9 +22,9 @@
         public bool IsTrainer { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
 
-        public AdminClaimDetails() { }
+        public AdminLoginDetails() { }
 
-        public AdminClaimDetails(AdminUser adminUser)
+        public AdminLoginDetails(AdminUser adminUser)
         {
             Id = adminUser.Id;
             CentreId = adminUser.CentreId;

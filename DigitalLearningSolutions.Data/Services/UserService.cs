@@ -9,7 +9,7 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(string? adminId, string? delegateId);
-        public List<CentreUserDetails> GetUserCentres(AdminUser adminUser, List<DelegateUser> delegateUsers);
+        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
     }
 
     public class UserService : IUserService

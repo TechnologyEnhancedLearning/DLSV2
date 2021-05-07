@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.User;
 
-    public class DelegateClaimDetails
+    public class DelegateLoginDetails
     {
         public int Id { get; set; }
         public int CentreId { get; set; }
@@ -12,9 +12,9 @@
         public string? EmailAddress { get; set; }
         public string CandidateNumber { get; set; }
 
-        public DelegateClaimDetails() { }
+        public DelegateLoginDetails() { }
 
-        public DelegateClaimDetails(DelegateUser delegateUser)
+        public DelegateLoginDetails(DelegateUser delegateUser)
         {
             Id = delegateUser.Id;
             CentreId = delegateUser.CentreId;

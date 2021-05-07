@@ -13,7 +13,6 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Login;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -119,8 +118,8 @@ namespace DigitalLearningSolutions.Web
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
-            services.AddScoped<RedirectEmptySessionData<ChooseACentreViewModel>>();
-            services.AddScoped<RedirectEmptySessionData<List<DelegateUser>>>();
+            services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
+            services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
