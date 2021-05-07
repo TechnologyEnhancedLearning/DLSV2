@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             foreach(var user in userChecked)
             {
                 frameworkService.InsertFrameworkReview(frameworkId, user);
+                frameworkNotificationService.SendReviewRequest(user, adminId);
             }
             frameworkService.UpdateFrameworkStatus(frameworkId, 2, adminId);
             return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
