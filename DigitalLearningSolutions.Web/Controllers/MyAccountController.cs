@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -77,10 +78,18 @@
                 return View(model);
             }
 
+            if (model.ProfilePicture != null)
+            {
+                ModelState.AddModelError("ProfilePicture", "Preview your new profile picture before saving");
+                return View(model);
+            }
+
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email))
+            var profileImageToSave = model.HasProfileImageBeenRemoved ? null : model.NewProfileImage ?? model.CurrentProfileImage;
+
+            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email, profileImageToSave))
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect.");
                 return View(model);
@@ -91,16 +100,23 @@
 
         private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)
         {
-            // We don't want to display errors in this case
-            foreach (var key in ModelState.Keys)
+            // We don't want to display validation errors on other fields in this case
+            foreach (var key in ModelState.Keys.Where(k => k != "ProfilePicture"))
             {
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
 
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Remove the old new profile image value from the ModelState
+            ModelState.Remove("NewProfileImage");
             if (model.ProfilePicture != null)
             {
-                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
+                model.NewProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
             }
 
             return View(model);
@@ -108,15 +124,17 @@
 
         private IActionResult EditDetailsPostRemoveImage(EditDetailsViewModel model)
         {
-            // We don't want to display errors in this case
+            // We don't want to display validation errors on other fields in this case
             foreach (var key in ModelState.Keys)
             {
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
-
+            
+            ModelState.Remove("HasProfileImageBeenRemoved");
             model.ProfilePicture = null;
-            model.ProfileImage = null;
+            model.NewProfileImage = null;
+            model.HasProfileImageBeenRemoved = true;
 
             return View(model);
         }

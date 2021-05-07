@@ -124,13 +124,13 @@
 
             if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUser(firstName, surname, email, verifiedAdminUser.Id);
+                userDataService.UpdateAdminUser(firstName, surname, email, profileImage, verifiedAdminUser.Id);
             }
 
             if (verifiedDelegateUsers.Count != 0)
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(firstName, surname, email, delegateIds);
+                userDataService.UpdateDelegateUsers(firstName, surname, email, profileImage, delegateIds);
             }
 
             return true;
