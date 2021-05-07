@@ -120,7 +120,7 @@
         }
 
         [Test]
-        public void GetUserActiveCentres_returns_centres_correctly_ordered()
+        public void GetUserCentres_returns_centres_correctly_ordered()
         {
             // Given
             var inputDelegateList = new List<DelegateUser>
@@ -134,29 +134,7 @@
             var expectedIdOrder = new List<int> { 2, 1, 4, 3 };
 
             // When
-            var result = userService.GetUserActiveCentres(inputAdminAccount, inputDelegateList);
-            var resultIdOrder = result.Select(details => details.CentreId).ToList();
-
-            // Then
-            Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
-        }
-
-        [Test]
-        public void GetUserActiveCentres_does_not_return_inactive_centres()
-        {
-            // Given
-            var inputDelegateList = new List<DelegateUser>
-            {
-                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "First Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 3, centreName: "Third Centre", centreActive: false),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre")
-            };
-            var inputAdminAccount = UserTestHelper.GetDefaultAdminUser(centreId: 2, centreName: "Second Centre", centreActive: false);
-            // Expect only active centres
-            var expectedIdOrder = new List<int> { 1, 4 };
-
-            // When
-            var result = userService.GetUserActiveCentres(inputAdminAccount, inputDelegateList);
+            var result = userService.GetUserCentres(inputAdminAccount, inputDelegateList);
             var resultIdOrder = result.Select(details => details.CentreId).ToList();
 
             // Then

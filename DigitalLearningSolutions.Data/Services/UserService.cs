@@ -10,7 +10,7 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
-        public List<CentreUserDetails> GetUserActiveCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
+        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
         public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName,
             string surname, string email);
@@ -64,16 +64,14 @@
             return (adminUser, delegateUser);
         }
 
-        public List<CentreUserDetails> GetUserActiveCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
             var availableCentres = delegateUsers
-                .Where(du => du.CentreActive)
                 .Select(du =>
                     new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true))
                 .ToList();
 
-            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId) &&
-                adminUser.CentreActive)
+            if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
             {
                 availableCentres.Add(new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
             }

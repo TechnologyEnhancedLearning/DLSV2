@@ -68,7 +68,10 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var availableCentres = userService.GetUserActiveCentres(verifiedAdminUser, approvedDelegateUsers);
+            var verifiedAdminUserWithActiveCentre = verifiedAdminUser?.CentreActive == true ? verifiedAdminUser : null;
+            var approvedDelegateUsersWithActiveCentre = approvedDelegateUsers.Where(du => du.CentreActive).ToList();
+
+            var availableCentres = userService.GetUserCentres(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
             if (availableCentres.Count == 0)
             {
                 return View("CentreInactive");
@@ -76,15 +79,15 @@
 
             if (availableCentres.Count == 1)
             {
-                if (verifiedAdminUser != null)
+                if (verifiedAdminUserWithActiveCentre != null)
                 {
-                    sessionService.StartAdminSession(verifiedAdminUser.Id);
+                    sessionService.StartAdminSession(verifiedAdminUserWithActiveCentre.Id);
                 }
 
-                return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
+                return LogIn(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre.FirstOrDefault(), model.RememberMe);
             }
 
-            SetTempDataForChooseACentre(model.RememberMe, verifiedAdminUser, approvedDelegateUsers);
+            SetTempDataForChooseACentre(model.RememberMe, verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
             ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
             return View("ChooseACentre", chooseACentreViewModel);
         }
