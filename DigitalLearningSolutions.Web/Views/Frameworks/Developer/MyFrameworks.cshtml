@@ -108,6 +108,9 @@ else
     }
   </form>
 }
+@if (Model.IsFrameworkDeveloper)
+{
 <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartNewFrameworkSession">
   Create new framework
 </a>
+}

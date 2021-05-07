@@ -8,7 +8,6 @@
     {
         public int FrameworkId { get; set; }
         public string? FrameworkName { get; set; }
-        public SelectList? AdminSelectList { get; set; }
         public IEnumerable<CollaboratorDetail>? Collaborators { get; set; }
         public int AdminID { get; set; }
     }

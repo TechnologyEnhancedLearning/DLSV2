@@ -40,9 +40,15 @@
         {
             return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
         }
-        private bool? GetIsFrameworkDeveloper()
+        private bool GetIsFrameworkDeveloper()
         {
-            return User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
+            var isFrameworkDeveloper = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
+            return isFrameworkDeveloper != null && (bool)isFrameworkDeveloper;
+        }
+        private bool GetIsFrameworkContributor()
+        {
+            var isFrameworkContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor);
+            return isFrameworkContributor != null && (bool)isFrameworkContributor;
         }
         private string? GetUserEmail()
         {

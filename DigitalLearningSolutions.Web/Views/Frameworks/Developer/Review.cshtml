@@ -1,0 +1,68 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model CollaboratorsViewModel;
+@{
+  ViewData["Title"] = Model.FrameworkName;
+  ViewData["Application"] = "Framework Service";
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Send for Review</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+    </div>
+  </nav>
+}
+<h1>Send for review</h1>
+<h2>Who should review this framework?</h2>
+<form method="post">
+  <table class="nhsuk-table-responsive">
+    <caption class="nhsuk-table__caption">Select working group members who need to review/sign-off the framework "@Model.FrameworkName" before it is published.</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+
+        <th role="columnheader" class="" scope="col">
+          User
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Role
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="nhsuk-table__body">
+      @foreach (var collaborator in Model.Collaborators)
+      {
+        <tr role="row" class="nhsuk-table__row collaborator-row">
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">User </span>
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
+                @collaborator.UserEmail
+              </label>
+            </div>
+          </td>
+          <td role="cell" class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Role </span>
+            <span class="framework-collaborator-role">
+              <partial name="Shared/_RoleTag" model="collaborator" />
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+    <div class="nhsuk-grid-column-full">
+      <button class="nhsuk-button" type="submit">Submit</button>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Review" asp-route-frameworkId="@Model.FrameworkId">Manage working group</a>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Cancel</a>
+    </div>
+  </div>
+ 
+</form>
+

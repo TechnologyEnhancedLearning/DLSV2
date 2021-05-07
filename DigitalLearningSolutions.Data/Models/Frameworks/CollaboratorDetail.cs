@@ -2,9 +2,7 @@
 {
     public class CollaboratorDetail : Collaborator
     {
-        public string? Email { get; set; }
-        public string? Forename { get; set; }
-        public string? Surname { get; set; }
+        public string? UserEmail { get; set; }
         public string? FrameworkRole { get; set;  }
     }
 }
