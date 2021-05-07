@@ -27,14 +27,15 @@
             this.sessionService = sessionService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? returnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            return View();
+            var model = new LoginViewModel(returnUrl);
+            return View(model);
         }
 
         [HttpPost]
@@ -87,7 +88,7 @@
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
 
-                return LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe);
+                return LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe, model.ReturnUrl);
             }
 
             var chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
@@ -97,7 +98,8 @@
                 model.RememberMe,
                 adminLoginDetails,
                 delegateLoginDetails,
-                chooseACentreViewModel
+                chooseACentreViewModel,
+                model.ReturnUrl
             );
 
             return RedirectToAction("ChooseACentre", "Login");
@@ -124,6 +126,7 @@
             var rememberMe = (bool)TempData["RememberMe"];
             var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
             var delegateLoginDetails = TempData.Peek<List<DelegateLoginDetails>>();
+            var returnUrl = (string?)TempData["ReturnUrl"];
             TempData.Clear();
 
             var adminAccountForChosenCentre = adminLoginDetails?.CentreId == centreId ? adminLoginDetails : null;
@@ -131,7 +134,7 @@
                 delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
+            return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails
@@ -150,7 +153,8 @@
             bool rememberMe,
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
-            ChooseACentreViewModel chooseACentreViewModel
+            ChooseACentreViewModel chooseACentreViewModel,
+            string? returnUrl
         )
         {
             TempData.Clear();
@@ -158,13 +162,15 @@
             TempData.Set(adminLoginDetails);
             TempData.Set(delegateLoginDetails);
             TempData.Set(chooseACentreViewModel);
+            TempData["ReturnUrl"] = returnUrl;
         }
 
         private IActionResult LogIn
         (
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
-            bool rememberMe
+            bool rememberMe,
+            string? returnUrl
         )
         {
             var claims = GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
@@ -176,6 +182,10 @@
                 IssuedUtc = DateTime.UtcNow
             };
             HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return RedirectToAction("Index", "Home");
         }
 

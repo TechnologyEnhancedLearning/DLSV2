@@ -9,6 +9,14 @@
             Username = string.Empty;
             Password = string.Empty;
             RememberMe = false;
+            ReturnUrl = string.Empty;
+        }
+        public LoginViewModel(string? returnUrl)
+        {
+            Username = string.Empty;
+            Password = string.Empty;
+            RememberMe = false;
+            ReturnUrl = returnUrl;
         }
 
         [Required(ErrorMessage = "Please enter a username to log in.")]
@@ -19,5 +27,7 @@
         public string? Password { get; set; }
 
         public bool RememberMe { get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }
