@@ -2,7 +2,7 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -88,7 +88,37 @@
             var result = centresDataService.GetActiveCentresAlphabetical().ToList();
 
             // Then
-            result.Contains((6, "Closed_Basildon and Thurrock University Hospitals NHS Foundation Trust")).Should().BeFalse();
+            result.Contains((6, "Closed_Basildon and Thurrock University Hospitals NHS Foundation Trust"))
+                .Should().BeFalse();
+        }
+
+        [Test]
+        public void GetCentreDetailsById_should_return_the_correct_values()
+        {
+            // Given
+            var expectedCentreDetails = new Centre
+            {
+                CentreId = 2,
+                CentreName = "North West Boroughs Healthcare NHS Foundation Trust",
+                RegionId = 5,
+                RegionName = "North West"
+            };
+
+            // When
+            var result = centresDataService.GetCentreDetailsById(2);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedCentreDetails);
+        }
+
+        [Test]
+        public void GetCentreDetailsById_should_return_null_when_the_centre_does_not_exist()
+        {
+            // When
+            var result = centresDataService.GetCentreName(1);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }
