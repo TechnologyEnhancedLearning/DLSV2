@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
@@ -70,22 +71,24 @@
                     model.Password);
 
             var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
+            (AdminClaimDetails? adminClaimDetails, List<DelegateClaimDetails> delegateClaimDetails) =
+                GetClaimsDetails(verifiedAdminUser, approvedDelegateUsers);
             if (availableCentres.Count == 1)
             {
-                if (verifiedAdminUser != null)
+                if (adminClaimDetails != null)
                 {
-                    sessionService.StartAdminSession(verifiedAdminUser.Id);
+                    sessionService.StartAdminSession(adminClaimDetails.Id);
                 }
 
-                return LogIn(verifiedAdminUser, approvedDelegateUsers.FirstOrDefault(), model.RememberMe);
+                return LogIn(adminClaimDetails, delegateClaimDetails.FirstOrDefault(), model.RememberMe);
             }
 
             ChooseACentreViewModel chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
             SetTempDataForChooseACentre
             (
                 model.RememberMe,
-                verifiedAdminUser,
-                approvedDelegateUsers,
+                adminClaimDetails,
+                delegateClaimDetails,
                 chooseACentreViewModel
             );
 
@@ -112,13 +115,13 @@
         public IActionResult ChooseCentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
-            var adminAccount = TempData.Peek<AdminUser>();
-            var approvedDelegateAccounts = TempData.Peek<List<DelegateUser>>();
+            var adminClaimDetails = TempData.Peek<AdminClaimDetails>();
+            var delegateClaimDetails = TempData.Peek<List<DelegateClaimDetails>>();
             TempData.Clear();
 
-            var adminAccountForChosenCentre = adminAccount?.CentreId == centreId ? adminAccount : null;
+            var adminAccountForChosenCentre = adminClaimDetails?.CentreId == centreId ? adminClaimDetails : null;
             var delegateAccountForChosenCentre =
-                approvedDelegateAccounts?.FirstOrDefault(du => du.CentreId == centreId);
+                delegateClaimDetails?.FirstOrDefault(du => du.CentreId == centreId);
             if (adminAccountForChosenCentre != null)
             {
                 sessionService.StartAdminSession(adminAccountForChosenCentre.Id);
@@ -127,29 +130,26 @@
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 
-        private void SetTempDataForChooseACentre(bool rememberMe, AdminUser? adminUser,
-            List<DelegateUser> approvedDelegateUsers, ChooseACentreViewModel chooseACentreViewModel)
+        private (AdminClaimDetails?, List<DelegateClaimDetails>) GetClaimsDetails(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            if (adminUser != null)
-            {
-                adminUser.ProfileImage = null;
-            }
+            var adminClaimDetails = adminUser != null ? new AdminClaimDetails(adminUser) : null;
+            var delegateClaimDetails = delegateUsers.Select(du => new DelegateClaimDetails(du)).ToList();
+            return (adminClaimDetails, delegateClaimDetails);
+        }
 
-            foreach (var user in approvedDelegateUsers.Where(du => du.ProfileImage != null))
-            {
-                user.ProfileImage = null;
-            }
-
+        private void SetTempDataForChooseACentre(bool rememberMe, AdminClaimDetails? adminClaimDetails,
+            List<DelegateClaimDetails> delegateClaimDetails, ChooseACentreViewModel chooseACentreViewModel)
+        {
             TempData.Clear();
             TempData["RememberMe"] = rememberMe;
-            TempData.Set(adminUser);
-            TempData.Set(approvedDelegateUsers);
+            TempData.Set(adminClaimDetails);
+            TempData.Set(delegateClaimDetails);
             TempData.Set(chooseACentreViewModel);
         }
 
-        private IActionResult LogIn(AdminUser? adminUser, DelegateUser? delegateUser, bool rememberMe)
+        private IActionResult LogIn(AdminClaimDetails? adminClaimDetails, DelegateClaimDetails? delegateClaimDetails, bool rememberMe)
         {
-            var claims = GetClaimsForSignIn(adminUser, delegateUser);
+            var claims = GetClaimsForSignIn(adminClaimDetails, delegateClaimDetails);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
@@ -161,31 +161,31 @@
             return RedirectToAction("Index", "Home");
         }
 
-        private List<Claim> GetClaimsForSignIn(AdminUser? adminUser, DelegateUser? delegateUser)
+        private List<Claim> GetClaimsForSignIn(AdminClaimDetails? adminClaimDetails, DelegateClaimDetails? delegateClaimDetails)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, adminUser?.EmailAddress ?? delegateUser?.EmailAddress),
+                new Claim(ClaimTypes.Email, adminClaimDetails?.EmailAddress ?? delegateClaimDetails?.EmailAddress),
                 new Claim(CustomClaimTypes.UserCentreId,
-                    adminUser?.CentreId.ToString() ?? delegateUser?.CentreId.ToString()),
-                new Claim(CustomClaimTypes.UserCentreManager, adminUser?.IsCentreManager.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreAdmin, adminUser?.IsCentreAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserUserAdmin, adminUser?.IsUserAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserContentCreator, adminUser?.IsContentCreator.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminUser?.IsContentManager.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserPublishToAll, adminUser?.PublishToAll.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreReports, adminUser?.SummaryReports.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnCandidateId, delegateUser?.Id.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateUser != null).ToString()),
-                new Claim(CustomClaimTypes.AdminCategoryId, adminUser?.CategoryId.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsSupervisor, adminUser?.IsSupervisor.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsTrainer, adminUser?.IsTrainer.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsFrameworkDeveloper, adminUser?.IsFrameworkDeveloper.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreName, adminUser?.CentreName ?? delegateUser?.CentreName)
+                    adminClaimDetails?.CentreId.ToString() ?? delegateClaimDetails?.CentreId.ToString()),
+                new Claim(CustomClaimTypes.UserCentreManager, adminClaimDetails?.IsCentreManager.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreAdmin, adminClaimDetails?.IsCentreAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserUserAdmin, adminClaimDetails?.IsUserAdmin.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserContentCreator, adminClaimDetails?.IsContentCreator.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserAuthenticatedCm, adminClaimDetails?.IsContentManager.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserPublishToAll, adminClaimDetails?.PublishToAll.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreReports, adminClaimDetails?.SummaryReports.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.LearnCandidateId, delegateClaimDetails?.Id.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateClaimDetails != null).ToString()),
+                new Claim(CustomClaimTypes.AdminCategoryId, adminClaimDetails?.CategoryId.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsSupervisor, adminClaimDetails?.IsSupervisor.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsTrainer, adminClaimDetails?.IsTrainer.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.IsFrameworkDeveloper, adminClaimDetails?.IsFrameworkDeveloper.ToString() ?? "False"),
+                new Claim(CustomClaimTypes.UserCentreName, adminClaimDetails?.CentreName ?? delegateClaimDetails?.CentreName)
             };
 
-            var firstName = adminUser?.FirstName ?? delegateUser?.FirstName;
-            var surname = adminUser?.LastName ?? delegateUser?.LastName;
+            var firstName = adminClaimDetails?.FirstName ?? delegateClaimDetails?.FirstName;
+            var surname = adminClaimDetails?.LastName ?? delegateClaimDetails?.LastName;
 
             if (firstName != null)
             {
@@ -197,14 +197,14 @@
                 claims.Add(new Claim(CustomClaimTypes.UserSurname, surname));
             }
 
-            if (delegateUser?.CandidateNumber != null)
+            if (delegateClaimDetails?.CandidateNumber != null)
             {
-                claims.Add(new Claim(CustomClaimTypes.LearnCandidateNumber, delegateUser.CandidateNumber));
+                claims.Add(new Claim(CustomClaimTypes.LearnCandidateNumber, delegateClaimDetails.CandidateNumber));
             }
 
-            if (adminUser?.Id != null)
+            if (adminClaimDetails?.Id != null)
             {
-                claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminUser.Id.ToString()));
+                claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminClaimDetails.Id.ToString()));
             }
 
             return claims;
