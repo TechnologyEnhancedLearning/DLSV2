@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Logging;
 
     public interface ICentresDataService
@@ -10,9 +11,10 @@
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
+        Centre GetCentreDetailsById(int centreId);
     }
 
-    public class CentresDataService: ICentresDataService
+    public class CentresDataService : ICentresDataService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<CentresDataService> logger;
@@ -60,6 +62,17 @@
                         ORDER BY CentreName"
             );
             return centres;
+        }
+
+        public Centre GetCentreDetailsById(int centreId)
+        {
+            return connection.QueryFirstOrDefault<Centre>(
+                @"SELECT c.CentreID, c.CentreName, c.RegionID, r.RegionName
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
         }
     }
 }

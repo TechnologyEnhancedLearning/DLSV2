@@ -7,18 +7,21 @@
     public interface IUserService
     {
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
-        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
-        public (AdminUser?, DelegateUser?) GetUsersById(string? adminId, string? delegateId);
+        public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
+        public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
+        public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName, string surname, string email);
     }
 
     public class UserService : IUserService
     {
         private readonly IUserDataService userDataService;
+        private readonly ILoginService loginService;
 
-        public UserService(IUserDataService userDataService)
+        public UserService(IUserDataService userDataService, ILoginService loginService)
         {
             this.userDataService = userDataService;
+            this.loginService = loginService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
@@ -31,28 +34,28 @@
             return (adminUser, delegateUsers);
         }
 
-        public (List<AdminUser>, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
+        public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
         {
-            List<AdminUser> adminUsers = userDataService.GetAdminUsersByEmailAddress(emailAddress);
-            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+            var adminUser = userDataService.GetAdminUserByEmailAddress(emailAddress);
+            var delegateUsers = userDataService.GetDelegateUsersByEmailAddress(emailAddress);
 
-            return (adminUsers, delegateUsers);
+            return (adminUser, delegateUsers);
         }
 
-        public (AdminUser?, DelegateUser?) GetUsersById(string? userAdminId, string? userDelegateId)
+        public (AdminUser?, DelegateUser?) GetUsersById(int? userAdminId, int? userDelegateId)
         {
             AdminUser? adminUser = null;
 
-            if (int.TryParse(userAdminId, out var adminId))
+            if (userAdminId != null)
             {
-                adminUser = userDataService.GetAdminUserById(adminId);
+                adminUser = userDataService.GetAdminUserById(userAdminId.Value);
             }
 
             DelegateUser? delegateUser = null;
 
-            if (int.TryParse(userDelegateId, out var delegateId))
+            if (userDelegateId != null)
             {
-                delegateUser = userDataService.GetDelegateUserById(delegateId);
+                delegateUser = userDataService.GetDelegateUserById(userDelegateId.Value);
             }
 
             return (adminUser, delegateUser);
@@ -72,6 +75,45 @@
             }
 
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
+        }
+
+        public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName, string surname, string email)
+        {
+            var (verifiedAdminUser, verifiedDelegateUsers) = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
+
+            if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
+            {
+                return false;
+            }
+
+            if (verifiedAdminUser != null)
+            {
+                userDataService.UpdateAdminUser(firstName, surname, email, verifiedAdminUser.Id);
+            }
+
+            if (verifiedDelegateUsers.Count != 0)
+            {
+                var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
+                userDataService.UpdateDelegateUsers(firstName, surname, email, delegateIds);
+            }
+            
+            return true;
+        }
+
+        private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password)
+        {
+            var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
+
+            var signedInEmail = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
+
+            if (signedInEmail == null)
+            {
+                return (null, new List<DelegateUser>());
+            }
+
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
+
+            return loginService.VerifyUsers(password, adminUser, delegateUsers);
         }
     }
 }

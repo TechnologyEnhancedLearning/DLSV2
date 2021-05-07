@@ -1,0 +1,26 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@model CentreConfigurationViewModel
+
+@{
+  ViewData["Title"] = "Centre configuration";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content basic-card-content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Centre Name:</dt>
+            <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Region:</dt>
+            <dd class="nhsuk-summary-list__value ">@Model.RegionName</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

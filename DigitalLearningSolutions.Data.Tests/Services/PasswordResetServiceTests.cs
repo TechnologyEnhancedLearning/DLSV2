@@ -30,7 +30,7 @@
 
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
             ((
-                new List<AdminUser> { UserTestHelper.GetDefaultAdminUser() },
+                UserTestHelper.GetDefaultAdminUser(),
                 new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
             ));
 
@@ -41,7 +41,7 @@
         public void Trying_get_null_user_should_throw_an_exception()
         {
             // Given
-            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((new List<AdminUser>(), new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com"));

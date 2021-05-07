@@ -55,6 +55,8 @@ namespace DigitalLearningSolutions.Web
             {
                 options.AddPolicy(CustomPolicies.UserOnly,
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
+                options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
@@ -67,8 +69,14 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.IsEssential = true;
             });
 
-            var mvcBuilder = services.AddControllersWithViews();
-            mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+            var mvcBuilder = services
+                .AddControllersWithViews()
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                })
+                .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+
             if (env.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
@@ -148,13 +156,13 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home?action=login&app=lp");
+            context.HttpContext.Response.Redirect( "/Login");
             return Task.CompletedTask;
         }
 
         private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home");
+            context.HttpContext.Response.Redirect("/Home");
             return Task.CompletedTask;
         }
     }
