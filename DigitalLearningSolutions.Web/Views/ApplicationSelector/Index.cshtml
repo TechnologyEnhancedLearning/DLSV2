@@ -9,13 +9,13 @@
   ViewData["Title"] = "Switch Application";
 }
 
-<div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row nhsuk-card-group">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Switch application</h1>
   </div>
 
   @if (Model.LearningPortalAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -27,7 +27,7 @@
     </div>
   }
   @if (Model.TrackingSystemAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -39,7 +39,7 @@
     </div>
   }
   @if (Model.ContentManagementSystemAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -51,7 +51,7 @@
     </div>
   }
   @if (Model.SuperviseAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -63,7 +63,7 @@
     </div>
   }
   @if (Model.ContentCreatorAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
@@ -75,7 +75,7 @@
     </div>
   }
   @if (Model.FrameworksAccess) {
-    <div class="nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
