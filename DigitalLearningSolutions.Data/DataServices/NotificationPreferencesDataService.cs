@@ -31,17 +31,14 @@
                 return new List<NotificationPreference>();
             }
 
-            return connection.Query<NotificationPreference>(
+            var preferences = connection.Query<NotificationPreference>(
                 @"DECLARE @CentreAdmin BIT, @IsCentreManager BIT, @ContentManager BIT, @ContentCreator BIT, @Supervisor BIT, @Trainer BIT
 
                     SELECT @CentreAdmin = CentreAdmin, @IsCentreManager = IsCentreManager, @ContentManager = ContentManager, @ContentCreator = ContentCreator, @Supervisor = Supervisor, @Trainer = Trainer
 	                    FROM AdminUsers
 	                    WHERE AdminID = @adminId
 
-                    DECLARE @Whitespace VARCHAR(3)
-                    SET @Whitespace = CHAR(10)+CHAR(13)+CHAR(32)
-
-                    SELECT DISTINCT n.NotificationID, TRIM(@Whitespace FROM n.NotificationName) AS NotificationName, n.Description, CASE WHEN nu.NotificationUserID IS NOT NULL THEN 1 ELSE 0 END AS accepted
+                    SELECT DISTINCT n.NotificationID, n.NotificationName, n.Description, CASE WHEN nu.NotificationUserID IS NOT NULL THEN 1 ELSE 0 END AS accepted
 	                    FROM Notifications AS n
 	                    JOIN NotificationRoles AS nr ON nr.NotificationID = n.NotificationID
 	                    LEFT JOIN NotificationUsers AS nu ON nu.NotificationID = n.NotificationID AND nu.AdminUserID = @adminId
@@ -53,7 +50,11 @@
 	                    OR (nr.RoleID = 7 AND @Trainer = 1)
                         ORDER BY n.NotificationID",
                 new { adminId }
-            );
+            ).ToList();
+
+            RemoveTrailingNameWhitespace(preferences);
+
+            return preferences;
         }
 
         public IEnumerable<NotificationPreference> GetNotificationPreferencesForDelegate(int? delegateId)
@@ -63,18 +64,28 @@
                 return new List<NotificationPreference>();
             }
 
-            return connection.Query<NotificationPreference>(
-                @"DECLARE @Whitespace VARCHAR(3)
-                    SET @Whitespace = CHAR(10)+CHAR(13)+CHAR(32)
-
-                    SELECT DISTINCT n.NotificationID, TRIM(@Whitespace FROM n.NotificationName) AS NotificationName, n.Description, CASE WHEN nu.NotificationUserID IS NOT NULL THEN 1 ELSE 0 END AS accepted
+            var preferences = connection.Query<NotificationPreference>(
+                @"SELECT DISTINCT n.NotificationID, n.NotificationName, n.Description, CASE WHEN nu.NotificationUserID IS NOT NULL THEN 1 ELSE 0 END AS accepted
 	                    FROM Notifications AS n
 	                    JOIN NotificationRoles AS nr ON nr.NotificationID = n.NotificationID
 	                    LEFT JOIN NotificationUsers AS nu ON nu.NotificationID = n.NotificationID AND nu.CandidateID = @delegateId
 	                    WHERE nr.RoleID = 5
                         ORDER BY n.NotificationID",
                 new { delegateId }
-            );
+            ).ToList();
+
+            RemoveTrailingNameWhitespace(preferences);
+
+            return preferences;
+        }
+
+        private void RemoveTrailingNameWhitespace(IEnumerable<NotificationPreference> notificationPreferences)
+        {
+            foreach (var notificationPreference in notificationPreferences)
+            {
+                // the notification names in the DB have trailing whitespace
+                notificationPreference.NotificationName = notificationPreference.NotificationName.Trim();
+            }
         }
 
         public void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds)
