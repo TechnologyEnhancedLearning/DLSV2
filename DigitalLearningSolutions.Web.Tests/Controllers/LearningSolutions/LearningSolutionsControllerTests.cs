@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningSolutions
 {
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
@@ -15,7 +16,7 @@
     class LearningSolutionsControllerTests
     {
         private LearningSolutionsController controller;
-        private ICentresService centresService;
+        private ICentresDataService centresDataService;
         private IConfigService configService;
         private const int CandidateId = 11;
         private const int CentreId = 2;
@@ -23,7 +24,7 @@
         [SetUp]
         public void SetUp()
         {
-            centresService = A.Fake<ICentresService>();
+            centresDataService = A.Fake<ICentresDataService>();
             configService = A.Fake<IConfigService>();
             var logger = A.Fake<ILogger<LearningSolutionsController>>();
 
@@ -35,7 +36,7 @@
             controller = new LearningSolutionsController(
                 configService,
                 logger,
-                centresService
+                centresDataService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
@@ -58,7 +59,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.Error();
@@ -107,7 +108,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.StatusCode(404);
@@ -123,7 +124,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.StatusCode(403);
@@ -139,7 +140,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.StatusCode(500);

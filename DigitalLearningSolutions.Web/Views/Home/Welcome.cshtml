@@ -13,7 +13,7 @@
 
     <div class="welcome-page-button-container">
       @if (Model.UserIsLoggedIn) {
-        <a class="nhsuk-button auth-button auth-button--left" href="@Model.CurrentSiteBaseUrl/Home?action=appselect">
+        <a class="nhsuk-button auth-button auth-button--left" asp-controller="ApplicationSelector" asp-action="Index">
           Switch application
         </a>
       } else {

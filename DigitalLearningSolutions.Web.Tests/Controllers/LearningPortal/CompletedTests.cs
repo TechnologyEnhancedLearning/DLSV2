@@ -20,7 +20,7 @@
             };
             var bannerText = "bannerText";
             A.CallTo(() => courseService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var result = controller.Completed();
@@ -44,7 +44,7 @@
         {
             // Given
             const string bannerText = "Banner text";
-            A.CallTo(() => centresService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
             var completedViewModel = CompletedCourseHelper.CompletedViewModelFromController(controller);

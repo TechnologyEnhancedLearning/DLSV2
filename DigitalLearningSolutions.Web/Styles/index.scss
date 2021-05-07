@@ -92,3 +92,20 @@ h1#page-heading {
   @include nhsuk-responsive-margin(7, 'bottom');
 }
 
+.basic-card-content {
+  padding: 16px 32px;
+}
+
+.basic-summary-list__row:last-child {
+  border: none;
+  margin-bottom: 0;
+}
+
+.basic-summary-list__row:last-child .nhsuk-summary-list__key {
+  border: none;
+}
+
+.basic-summary-list__row:last-child .nhsuk-summary-list__value {
+  border: none;
+  margin-bottom: 0;
+}

@@ -10,6 +10,8 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -52,6 +54,8 @@ namespace DigitalLearningSolutions.Web
             {
                 options.AddPolicy(CustomPolicies.UserOnly,
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
+                options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
@@ -64,8 +68,14 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.IsEssential = true;
             });
 
-            var mvcBuilder = services.AddControllersWithViews();
-            mvcBuilder.AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+            var mvcBuilder = services
+                .AddControllersWithViews()
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                })
+                .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+
             if (env.IsDevelopment())
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
@@ -81,7 +91,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register data services.
-            services.AddScoped<ICentresService, CentresService>();
+            services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -111,6 +121,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsService, CustomPromptsService>();
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
+            services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
@@ -139,14 +151,13 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var url = HttpUtility.UrlEncode(config["AppRootPath"] + context.Request.Path);
-            context.HttpContext.Response.Redirect( $"{config["CurrentSystemBaseUrl"]}/home?action=login&returnurl={url}");
+            context.HttpContext.Response.Redirect( "/Login");
             return Task.CompletedTask;
         }
 
         private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect($"{config["CurrentSystemBaseUrl"]}/home");
+            context.HttpContext.Response.Redirect("/Home");
             return Task.CompletedTask;
         }
     }
