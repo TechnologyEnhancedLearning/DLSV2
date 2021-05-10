@@ -58,17 +58,13 @@
         [HttpPost]
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
-            switch (action)
+            return action switch
             {
-                case "save":
-                    return EditDetailsPostSave(model);
-                case "previewImage":
-                    return EditDetailsPostPreviewImage(model);
-                case "removeImage":
-                    return EditDetailsPostRemoveImage(model);
-                default:
-                    return View(model);
-            }
+                "save" => EditDetailsPostSave(model),
+                "previewImage" => EditDetailsPostPreviewImage(model),
+                "removeImage" => EditDetailsPostRemoveImage(model),
+                _ => View(model),
+            };
         }
 
         private IActionResult EditDetailsPostSave(EditDetailsViewModel model)

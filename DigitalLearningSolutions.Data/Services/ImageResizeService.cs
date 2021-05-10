@@ -22,13 +22,25 @@
             return SquareImageFromMemoryStream(memoryStream, 300);
         }
 
-        private byte[] SquareImageFromMemoryStream(MemoryStream memoryStream, int targetSideLength)
+        private byte[] SquareImageFromMemoryStream(MemoryStream memoryStream, int targetSideLengthPx)
         {
             using var image = Image.FromStream(memoryStream);
+
+            using var squareImage = CropImageToCentredSquare(image);
+
+            using var resizedImage = ResizeSquareImage(squareImage, targetSideLengthPx);
+
+            using var result = new MemoryStream();
+            resizedImage.Save(result, ImageFormat.Jpeg);
+            return result.ToArray();
+        }
+
+        private Image CropImageToCentredSquare(Image image)
+        {
             var minSideLength = Math.Min(image.Height, image.Width);
 
-            using var squareImage = new Bitmap(minSideLength, minSideLength);
-            using var graphics = Graphics.FromImage(squareImage);
+            var returnSquareImage = new Bitmap(minSideLength, minSideLength);
+            using var graphics = Graphics.FromImage(returnSquareImage);
             graphics.FillRectangle(new SolidBrush(Color.White), 0, 0, minSideLength, minSideLength);
 
             // Calculate offsets as half the difference between the longer and shorter side
@@ -50,20 +62,17 @@
                 new Rectangle(leftOffset, topOffset, image.Width - leftOffset * 2, image.Height - topOffset * 2),
                 GraphicsUnit.Pixel);
 
-            using var resizedImage = ResizeSquareImage(squareImage, targetSideLength);
-            using var result = new MemoryStream();
-            resizedImage.Save(result, ImageFormat.Jpeg);
-            return result.ToArray();
+            return returnSquareImage;
         }
 
-        private Image ResizeSquareImage(Image image, int sideLength)
+        private Image ResizeSquareImage(Image image, int sideLengthPx)
         {
-            var destRect = new Rectangle(0, 0, sideLength, sideLength);
-            var destImage = new Bitmap(sideLength, sideLength);
+            var destRect = new Rectangle(0, 0, sideLengthPx, sideLengthPx);
+            var returnImage = new Bitmap(sideLengthPx, sideLengthPx);
 
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            returnImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using var graphics = Graphics.FromImage(destImage);
+            using var graphics = Graphics.FromImage(returnImage);
             graphics.CompositingMode = CompositingMode.SourceCopy;
             graphics.CompositingQuality = CompositingQuality.HighQuality;
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -74,7 +83,7 @@
             wrapMode.SetWrapMode(WrapMode.TileFlipXY);
             graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
 
-            return destImage;
+            return returnImage;
         }
     }
 }
