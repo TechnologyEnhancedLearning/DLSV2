@@ -86,6 +86,7 @@ pipeline {
                     bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
                 }
                 sendSlackMessageToTeamChannel(":tada: Successfully deployed to UAT", "good")
+                sendSlackNotificationToChannel("@kevin.whittaker", ":tada: Successfully deployed to UAT", "good")
             }
         }
     }
