@@ -70,19 +70,19 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var verifiedAdminUserWithActiveCentre = verifiedAdminUser?.CentreActive == true ? verifiedAdminUser : null;
-            var approvedDelegateUsersWithActiveCentre = approvedDelegateUsers.Where(du => du.CentreActive).ToList();
-
-            var availableCentres = userService.GetUserCentres(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
+            var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
+                userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
+            var availableCentres =
+                userService.GetUserCentres(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
 
             if (availableCentres.Count == 0)
             {
                 return View("CentreInactive");
             }
-            
+
             var (adminLoginDetails, delegateLoginDetails) =
                 GetLoginDetails(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
-                
+
             if (availableCentres.Count == 1)
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);

@@ -10,9 +10,24 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
+
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
+        (
+            AdminUser? adminUser,
+            List<DelegateUser> delegateUsers
+        );
+
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
-        public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName,
-            string surname, string email);
+
+        public bool TryUpdateUserAccountDetails
+        (
+            int? adminId,
+            int? delegateId,
+            string password,
+            string firstName,
+            string surname,
+            string email
+        );
     }
 
     public class UserService : IUserService
@@ -61,6 +76,17 @@
             }
 
             return (adminUser, delegateUser);
+        }
+
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
+        (
+            AdminUser? adminUser,
+            List<DelegateUser> delegateUsers
+        )
+        {
+            var adminUserWithActiveCentre = adminUser?.CentreActive == true ? adminUser : null;
+            var delegateUsersWithActiveCentres = delegateUsers.Where(du => du.CentreActive).ToList();
+            return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
         }
 
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
