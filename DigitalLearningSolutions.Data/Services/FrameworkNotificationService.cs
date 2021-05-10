@@ -63,7 +63,7 @@
                         TextBody = $@"Dear {recipient.FirstName},
                                     A comment has been submitted  against the framework, {baseFramework.FrameworkName} by {sender.FirstName} {sender.LastName} ({sender.Email}){(parentComment != null ? " in response to the thread " + parentComment : "")}.
                                     The comment reads: {comment}
-                                    To view or reply to the comment in the framework system, visit this url: {commentUrl.Uri}. You will need to login to DLS to view the framework.",
+                                    To view or reply to the comment in the framework system, visit this url: {commentUrl}. You will need to login to DLS to view the framework.",
                         HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear {recipient.FirstName},</p><p>A comment has been submitted  against the framework, <strong>{baseFramework.FrameworkName}</strong>, by <a href='mailto:{sender.Email}'>{sender.FirstName} {sender.LastName}</a>{(parentComment != null ? " in response to the thread <strong>" + parentComment + "</strong>" : ".")}</p><p>The comment reads: <strong>{comment}</strong></p><p><a href='{commentUrl.Uri}'>Click here</a> to view or reply to the comment in the framework system. You will need to login to DLS to view the framework.</p>"
                     };
                     emailService.SendEmail(new Email(emailSubject, builder, recipient.Email));
