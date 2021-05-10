@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Common;
     using NUnit.Framework;
 
     public class UserServiceTests
@@ -119,19 +120,25 @@
                 .MustHaveHappened();
         }
 
-        [Test]
-        public void GetUsersWithActiveCentres_only_returns_users_with_active_centres()
+        [TestCase(new[] { true, true, true, true })]
+        [TestCase(new[] { false, false, false, false })]
+        [TestCase(new[] { true, false, false, false })]
+        [TestCase(new[] { false, true, true, true })]
+        [TestCase(new[] { false, true, false, true })]
+        [TestCase(new[] { true, false, true, false })]
+        public void GetUsersWithActiveCentres_only_returns_users_with_active_centres(bool[] centreActive)
         {
             // Given
+            var inputAdminAccount =
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: centreActive[0]);
             var inputDelegateList = new List<DelegateUser>
             {
-                UserTestHelper.GetDefaultDelegateUser(1, centreName: "First Centre", centreActive: true),
-                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: false),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true)
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: centreActive[1]),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: centreActive[2]),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: centreActive[3])
             };
-            var inputAdminAccount =
-                UserTestHelper.GetDefaultAdminUser(2, centreName: "Second Centre", centreActive: false);
-            var expectedDelegateIds = new List<int> { 1, 4 };
+            var expectedAdminAccount = inputAdminAccount.CentreActive ? inputAdminAccount : null;
+            var expectedDelegateIds = inputDelegateList.Where(du => du.CentreActive).Select(du => du.Id);
 
             // When
             var (resultAdminUser, resultDelegateUsers) =
@@ -139,7 +146,7 @@
             var resultDelegateIds = resultDelegateUsers.Select(du => du.Id).ToList();
 
             // Then
-            Assert.IsNull(resultAdminUser);
+            Assert.That(resultAdminUser.IsSameOrEqualTo(expectedAdminAccount));
             Assert.That(resultDelegateIds.SequenceEqual(expectedDelegateIds));
         }
 
