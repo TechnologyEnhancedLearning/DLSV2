@@ -24,7 +24,7 @@
         string? GetFrameworkConfigForFrameworkId(int frameworkId);
         //  Collaborators:
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
-        CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId);
+        CollaboratorNotification GetCollaboratorNotification(int id, int invitedByAdminId);
         //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
@@ -48,18 +48,22 @@
         CommentReplies GetCommentRepliesById(int commentId, int adminId);
         Comment GetCommentById(int adminId, int commentId);
         List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId);
+        // Reviews:
+        IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId);
+        IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId);
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
         int InsertCompetency(string name, string? description, int adminId);
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
-        int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify);
+        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
+        void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -72,8 +76,9 @@
         void UpdateAssessmentQuestion(int id, string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
         void ArchiveComment(int commentId);
+        void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId);
         //Delete data
-        void RemoveCollaboratorFromFramework(int frameworkId, int adminId);
+        void RemoveCollaboratorFromFramework(int frameworkId, int id);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
@@ -85,7 +90,7 @@
         private readonly IDbConnection connection;
         private readonly ILogger<FrameworkService> logger;
         private const string BaseFrameworkFields =
-            @"ID, FrameworkName, FrameworkConfig, OwnerAdminID,
+            @"FW.ID, FrameworkName, FrameworkConfig, OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
                  WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID,
@@ -465,56 +470,67 @@
         public IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId)
         {
             return connection.Query<CollaboratorDetail>(
-                $@"SELECT fw.ID AS FrameworkID, au1.AdminID AS AdminID, 1 AS CanModify, au1.Email, au1.Forename, au1.Surname, 'Owner' AS FrameworkRole
+                $@"SELECT 0 AS ID, fw.ID AS FrameworkID, au.AdminID AS AdminID, 1 AS CanModify, au.Email AS UserEmail, 'Owner' AS FrameworkRole
                     FROM   Frameworks AS fw INNER JOIN
-                        AdminUsers AS au1 ON fw.OwnerAdminID = au1.AdminID
+                        AdminUsers AS au ON fw.OwnerAdminID = au.AdminID
                     WHERE (fw.ID = @FrameworkID)
                     UNION ALL
-                   SELECT fwc.FrameworkID, fwc.AdminID, fwc.CanModify, au.Email, au.Forename, au.Surname, CASE WHEN fwc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
-                    FROM   FrameworkCollaborators AS fwc INNER JOIN
-                        AdminUsers AS au ON fwc.AdminID = au.AdminID
-                    WHERE (fwc.FrameworkID = @FrameworkID) AND (au.Active=1)", new { frameworkId });
+                   SELECT ID, FrameworkID, AdminID, CanModify, UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+                    FROM   FrameworkCollaborators
+                    WHERE (FrameworkID = @FrameworkID)", new { frameworkId });
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, int adminId, bool canModify)
+        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify)
         {
             int existingId = (int)connection.ExecuteScalar(
                @"SELECT COALESCE
-                 ((SELECT AdminID
+                 ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)), 0) AS AdminID",
-               new { frameworkId, adminId });
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS ID",
+               new { frameworkId, userEmail });
             if (existingId > 0)
             {
                 return -2;
             }
             else
             {
-                var numberOfAffectedRows = connection.Execute(
-                             @"INSERT INTO FrameworkCollaborators (FrameworkID, AdminID, CanModify)
-                    VALUES (@frameworkId, @adminId, @canModify)",
-                            new { frameworkId, adminId, canModify });
-                if (numberOfAffectedRows < 1)
-                {
-                    logger.LogWarning(
-                        $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, frameworkId: {frameworkId}, canModify: {canModify}"
+                var adminId = (int?)connection.ExecuteScalar(
+                    @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1", new { userEmail }
                     );
-                    return -1;
+                
+                    var numberOfAffectedRows = connection.Execute(
+             @"INSERT INTO FrameworkCollaborators (FrameworkID, AdminID, UserEmail, CanModify)
+                    VALUES (@frameworkId, @adminId, @userEmail, @canModify)",
+            new { frameworkId, adminId, userEmail, canModify });
+                    if (numberOfAffectedRows < 1)
+                    {
+                        logger.LogWarning(
+                            $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, userEmail: {userEmail}, frameworkId: {frameworkId}, canModify: {canModify}"
+                        );
+                        return -1;
+                    }
+                if (adminId > 0)
+                {
+                    connection.Execute(@"UPDATE AdminUsers SET IsFrameworkContributor = 1 WHERE AdminId = @adminId AND IsFrameworkContributor = 0", new { adminId });
                 }
                 existingId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
-                 ((SELECT AdminID
+                 ((SELECT ID
                   FROM    FrameworkCollaborators
-                  WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)), 0) AS AdminID",
-               new { frameworkId, adminId });
+                  WHERE (FrameworkID = @frameworkId) AND (UserEmail = @userEmail)), 0) AS AdminID",
+               new { frameworkId, adminId, userEmail });
                 return existingId;
             }
         }
-        public void RemoveCollaboratorFromFramework(int frameworkId, int adminId)
+        public void RemoveCollaboratorFromFramework(int frameworkId, int id)
         {
+            var adminId = (int?)connection.ExecuteScalar(
+                    @"SELECT AdminID FROM FrameworkCollaborators WHERE  (FrameworkID = @frameworkId) AND (ID = @id)", new { frameworkId, id }
+                    );
             connection.Execute(
-                             @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (AdminID = @adminId)",
-                            new { frameworkId, adminId });
+                             @"DELETE FROM  FrameworkCollaborators WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
+                            new { frameworkId, id, adminId });
+
         }
 
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
@@ -823,7 +839,8 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     WHERE ID = @competencyId", new { adminId, competencyId }
                );
                 numberOfAffectedRows = connection.Execute(
-                    @"DELETE FROM Competencies WHERE ID = @competencyId", new { competencyId }
+                    @"DELETE FROM CompetencyAssessmentQuestions WHERE CompetencyID = @competencyId;
+                        DELETE FROM Competencies WHERE ID = @competencyId", new { competencyId }
                     );
                 if (numberOfAffectedRows < 1)
                 {
@@ -1297,11 +1314,11 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
               new { frameworkId }
           );
         }
-        public CollaboratorNotification GetCollaboratorNotification(int adminId, int frameworkId, int invitedByAdminId)
+        public CollaboratorNotification GetCollaboratorNotification(int id, int invitedByAdminId)
         {
             return connection.Query<CollaboratorNotification>(
 
-                @"SELECT fc.FrameworkID, fc.AdminID, fc.CanModify, au.Email, au.Forename, au.Surname, CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole, f.FrameworkName,
+                @"SELECT fc.FrameworkID, fc.AdminID, fc.CanModify, fc.UserEmail, CASE WHEN fc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole, f.FrameworkName,
                     (SELECT Forename + ' ' + Surname AS Expr1
                          FROM    AdminUsers AS au1
                          WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
@@ -1309,10 +1326,9 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                         FROM    AdminUsers AS au2
                         WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
                     FROM   FrameworkCollaborators AS fc INNER JOIN
-                        AdminUsers AS au ON fc.AdminID = au.AdminID INNER JOIN
                         Frameworks AS f ON fc.FrameworkID = f.ID
-                    WHERE (fc.FrameworkID = @frameworkId) AND (fc.AdminID = @adminId)",
-                new { invitedByAdminId, frameworkId, adminId }
+                    WHERE (fc.ID = @id)",
+                new { invitedByAdminId, id }
                 ).FirstOrDefault();
         }
 
@@ -1348,6 +1364,57 @@ SELECT ID, ReplyToFrameworkCommentID, AdminID, CAST(CASE WHEN AdminID = @adminId
 FROM   FrameworkComments
 WHERE (ID = @commentId)", new { adminId, commentId }
                 );
+        }
+
+        public IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId)
+        {
+            return connection.Query<CollaboratorDetail>(
+                $@"SELECT ID, FrameworkID, AdminID, CanModify, UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+                    FROM   FrameworkCollaborators
+                    WHERE (FrameworkID = @FrameworkID)", new { frameworkId });
+        }
+
+        public void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId)
+        {
+            connection.Query(
+                @"UPDATE Frameworks
+                    SET PublishStatusID = @statusId,
+                    UpdatedByAdminID = @adminId
+                    WHERE ID = @frameworkId",
+                new { frameworkId, statusId, adminId }
+                );
+        }
+
+        public void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId)
+        {
+            var exists = (int?)connection.ExecuteScalar(
+                @"SELECT COUNT(*)
+                    FROM FrameworkReviews
+                    WHERE FrameworkID = @frameworkId
+                    AND FrameworkCollaboratorId = @frameworkCollaboratorId",
+                new { frameworkId, frameworkCollaboratorId }
+                );
+            if (exists == 0)
+            {
+                connection.Query(
+                @"INSERT INTO FrameworkReviews
+                    (FrameworkID, FrameworkCollaboratorId)
+                    VALUES
+                    (@frameworkId, @frameworkCollaboratorId)",
+                new { frameworkId, frameworkCollaboratorId }
+                );
+            }
+        }
+
+        public IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId)
+        {
+            return connection.Query<FrameworkReview>(
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments
+                    FROM   FrameworkReviews AS FR INNER JOIN
+                         FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
+                         FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+                    WHERE FR.FrameworkID = @frameworkId",
+                new { frameworkId });
         }
     }
 }

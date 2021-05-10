@@ -25,25 +25,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            if (isFrameworkDeveloper == false | isFrameworkDeveloper == null)
+            var isFrameworkContributor = GetIsFrameworkContributor();
+            if (!isFrameworkDeveloper && !isFrameworkContributor)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
             }
-
-
             var frameworks = frameworkService.GetFrameworksForAdminId(adminId);
             if (frameworks == null)
             {
                 logger.LogWarning($"Attempt to display frameworks for admin {adminId} returned null.");
                 return StatusCode(403);
             }
-
-            var model = new MyFrameworksViewModel(frameworks,
+            var model = new MyFrameworksViewModel(
+                frameworks,
                 searchString,
                 sortBy,
                 sortDirection,
-                page);
+                page,
+                isFrameworkDeveloper);
             return View("Developer/MyFrameworks", model);
         }
         [Route("/Frameworks/AllFrameworks/{page=1:int}")]
@@ -54,7 +54,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            if (isFrameworkDeveloper == false | isFrameworkDeveloper == null)
+            if (!isFrameworkDeveloper)
             {
                 logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
                 return StatusCode(403);
@@ -147,7 +147,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
         public IActionResult CreateNewFramework(DetailFramework detailFramework, string actionname, int frameworkId = 0)
-        {            
+        {
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(BaseFramework.FrameworkName));
@@ -474,37 +474,35 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult AddCollaborators(string actionname, int frameworkId)
         {
             var adminId = GetAdminID();
-            var centreId = GetCentreId();
-            var adminList = commonService.GetOtherAdministratorsForCentre((int)centreId, adminId).Select(a => new { a.AdminID, a.Email }).ToList();
-            var adminSelectList = new SelectList(adminList, "AdminID", "Email");
-            string frameworkName = "";
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             if (framework.UserRole < 2)
             {
                 return StatusCode(403);
             }
-            frameworkName = (string)framework.FrameworkName;
+            var frameworkName = (string)framework.FrameworkName;
             var model = new CollaboratorsViewModel()
             {
                 FrameworkId = frameworkId,
                 FrameworkName = frameworkName,
-                AdminSelectList = adminSelectList,
                 Collaborators = collaborators
             };
             return View("Developer/Collaborators", model);
         }
         [HttpPost]
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
-        public IActionResult AddCollaborator(string actionname, int adminId, bool canModify, int frameworkId)
+        public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
         {
-            frameworkService.AddCollaboratorToFramework(frameworkId, adminId, canModify);
-            frameworkNotificationService.SendFrameworkCollaboratorInvite(adminId, frameworkId, GetAdminID());
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            if (collaboratorId > 0)
+            {
+                frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminID());
+            }
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
-        public IActionResult RemoveCollaborator(int frameworkId, string actionname, int adminId)
+        public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
         {
-            frameworkService.RemoveCollaboratorFromFramework(frameworkId, adminId);
+            frameworkService.RemoveCollaboratorFromFramework(frameworkId, id);
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         [Route("/Framework/{frameworkId}/{tabname}/")]
@@ -516,7 +514,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             IEnumerable<FrameworkCompetency>? frameworkCompetencies;
             IEnumerable<AssessmentQuestion>? frameworkDefaultQuestions;
             IEnumerable<CommentReplies>? commentReplies;
-var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var model = new FrameworkViewModel()
             {
                 DetailFramework = detailFramework

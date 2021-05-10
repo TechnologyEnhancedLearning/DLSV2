@@ -8,6 +8,7 @@
     public class MyFrameworksViewModel : BaseFrameworksPageViewModel
     {
         public readonly IEnumerable<BrandedFramework> BrandedFrameworks;
+        public readonly bool IsFrameworkDeveloper;
         public override SelectList FrameworkSortByOptions { get; } = new SelectList(new[]
     {
             FrameworkSortByOptionTexts.FrameworkName,
@@ -20,7 +21,8 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            int page
+            int page,
+            bool isFrameworkDeveloper
         ) : base(searchString, sortBy, sortDirection, page)
         {
             var sortedItems = SortingHelper.SortFrameworkItems(
@@ -33,6 +35,7 @@
             SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
             BrandedFrameworks = paginatedItems.Cast<BrandedFramework>();
+            IsFrameworkDeveloper = isFrameworkDeveloper;
         }
     }
 }
