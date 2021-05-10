@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -120,31 +121,19 @@
                 .MustHaveHappened();
         }
 
-        [TestCase(true, true, true, true)]
-        [TestCase(false, false, false, false)]
-        [TestCase(true, false, false, false)]
-        [TestCase(false, true, true, true)]
-        [TestCase(false, true, false, true)]
-        [TestCase(true, false, true, false)]
-        public void GetUsersWithActiveCentres_only_returns_users_with_active_centres
-        (
-            bool firstCentreActive,
-            bool secondCentreActive,
-            bool thirdCentreActive,
-            bool fourthCentreActive
-        )
+        [Test]
+        public void GetUsersWithActiveCentres_returns_users_with_active_centres()
         {
             // Given
             var inputAdminAccount =
-                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: firstCentreActive);
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: true);
             var inputDelegateList = new List<DelegateUser>
             {
-                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: secondCentreActive),
-                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: thirdCentreActive),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: fourthCentreActive)
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: true),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: true),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true)
             };
-            var expectedAdminAccount = inputAdminAccount.CentreActive ? inputAdminAccount : null;
-            var expectedDelegateIds = inputDelegateList.Where(du => du.CentreActive).Select(du => du.Id);
+            var expectedDelegateIds = new List<int> { 2, 3, 4 };
 
             // When
             var (resultAdminUser, resultDelegateUsers) =
@@ -152,8 +141,30 @@
             var resultDelegateIds = resultDelegateUsers.Select(du => du.Id).ToList();
 
             // Then
-            Assert.That(resultAdminUser.IsSameOrEqualTo(expectedAdminAccount));
+            Assert.That(resultAdminUser.IsSameOrEqualTo(inputAdminAccount));
             Assert.That(resultDelegateIds.SequenceEqual(expectedDelegateIds));
+        }
+
+        [Test]
+        public void GetUsersWithActiveCentres_does_not_return_users_with_inactive_centres()
+        {
+            // Given
+            var inputAdminAccount =
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: false);
+            var inputDelegateList = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: false),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: false),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: false)
+            };
+
+            // When
+            var (resultAdminUser, resultDelegateUsers) =
+                userService.GetUsersWithActiveCentres(inputAdminAccount, inputDelegateList);
+
+            // Then
+            Assert.IsNull(resultAdminUser);
+            Assert.That(resultDelegateUsers.IsNullOrEmpty);
         }
 
         [Test]
