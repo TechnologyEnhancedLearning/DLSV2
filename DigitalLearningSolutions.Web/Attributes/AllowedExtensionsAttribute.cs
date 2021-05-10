@@ -5,6 +5,10 @@
     using System.Linq;
     using Microsoft.AspNetCore.Http;
 
+    /// <summary>
+    /// Validates whether an property of type <see cref="IFormFile"/> has an accepted
+    /// file type
+    /// </summary>
     public class AllowedExtensionsAttribute : ValidationAttribute
     {
         private readonly string[] extensions;
