@@ -31,11 +31,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/Home/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
-        [InlineData("/Register")]
-        [InlineData("/Register/LearnerInformation")]
-        [InlineData("/Register/Password")]
-        [InlineData("/Register/Summary")]
-        [InlineData("/Register/Confirmation")]
         public void Page_has_no_accessibility_errors(string url)
         {
             // when
@@ -44,6 +39,34 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
             // then
             axeResult.Violations.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Registration_journey_has_no_accessibility_errors()
+        {
+            // given
+            var registerUrl = "/Register";
+            var learnerInformationUrl = "/Register/LearnerInformation";
+            var passwordUrl = "/Register/Password";
+            var summaryUrl = "/Register/Summary";
+            var confirmationUrl = "/Register/Confirmation";
+
+            // when
+            driver.Navigate().GoToUrl(baseUrl + registerUrl);
+            var registerResult = new AxeBuilder(driver).Analyze();
+            var firstName = driver.FindElement(By.Id("FirstName"));
+            firstName.SendKeys("Test");
+            var lastName = driver.FindElement(By.Id("LastName"));
+            lastName.SendKeys("User");
+            var email = driver.FindElement(By.Id("Email"));
+            email.SendKeys("email@test.com");
+            var registerForm = driver.FindElement(By.TagName("form"));
+            registerForm.Submit();
+
+            var learnerInformationResult = new AxeBuilder(driver).Analyze();
+
+            // then
+            registerResult.Violations.Should().BeEmpty();
         }
 
         private ChromeDriver CreateHeadlessChromeDriver()
