@@ -120,22 +120,28 @@
                 .MustHaveHappened();
         }
 
-        [TestCase(new[] { true, true, true, true })]
-        [TestCase(new[] { false, false, false, false })]
-        [TestCase(new[] { true, false, false, false })]
-        [TestCase(new[] { false, true, true, true })]
-        [TestCase(new[] { false, true, false, true })]
-        [TestCase(new[] { true, false, true, false })]
-        public void GetUsersWithActiveCentres_only_returns_users_with_active_centres(bool[] centreActive)
+        [TestCase(true, true, true, true)]
+        [TestCase(false, false, false, false)]
+        [TestCase(true, false, false, false)]
+        [TestCase(false, true, true, true)]
+        [TestCase(false, true, false, true)]
+        [TestCase(true, false, true, false)]
+        public void GetUsersWithActiveCentres_only_returns_users_with_active_centres
+        (
+            bool firstCentreActive,
+            bool secondCentreActive,
+            bool thirdCentreActive,
+            bool fourthCentreActive
+        )
         {
             // Given
             var inputAdminAccount =
-                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: centreActive[0]);
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: firstCentreActive);
             var inputDelegateList = new List<DelegateUser>
             {
-                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: centreActive[1]),
-                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: centreActive[2]),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: centreActive[3])
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: secondCentreActive),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: thirdCentreActive),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: fourthCentreActive)
             };
             var expectedAdminAccount = inputAdminAccount.CentreActive ? inputAdminAccount : null;
             var expectedDelegateIds = inputDelegateList.Where(du => du.CentreActive).Select(du => du.Id);
