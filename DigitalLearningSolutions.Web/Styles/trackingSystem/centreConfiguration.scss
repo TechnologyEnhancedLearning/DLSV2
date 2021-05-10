@@ -1,0 +1,24 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.centre-detail-image__downsize {
+  display: block;
+  max-width: 500px;
+  max-height: 350px;
+  height: auto;
+  width: auto;
+
+  @include govuk-media-query($until: large-desktop) {
+    max-width: 400px;
+    max-height: 300px;
+  }
+
+  @include govuk-media-query($until: desktop) {
+    max-width: 300px;
+    max-height: 250px;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    max-width: 250px;
+    max-height: 200px;
+  }
+}

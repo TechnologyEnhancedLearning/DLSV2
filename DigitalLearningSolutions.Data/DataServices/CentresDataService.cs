@@ -67,7 +67,14 @@
         public Centre GetCentreDetailsById(int centreId)
         {
             return connection.QueryFirstOrDefault<Centre>(
-                @"SELECT c.CentreID, c.CentreName, c.RegionID, r.RegionName
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.NotifyEmail,
+                            c.BannerText,
+                            c.SignatureImage,
+                            c.CentreLogo
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",

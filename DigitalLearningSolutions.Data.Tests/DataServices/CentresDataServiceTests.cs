@@ -101,11 +101,16 @@
                 CentreId = 2,
                 CentreName = "North West Boroughs Healthcare NHS Foundation Trust",
                 RegionId = 5,
-                RegionName = "North West"
+                RegionName = "North West",
+                NotifyEmail = "notify@test.com",
+                BannerText = "xxxxxxxxxxxxxxxxxxxx",
+                SignatureImage = null,
+                CentreLogo = null
             };
 
             // When
             var result = centresDataService.GetCentreDetailsById(2);
+            result.CentreLogo = null;
 
             // Then
             result.Should().BeEquivalentTo(expectedCentreDetails);

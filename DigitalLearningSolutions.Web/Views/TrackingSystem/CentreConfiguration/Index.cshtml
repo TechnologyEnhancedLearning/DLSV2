@@ -1,6 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model CentreConfigurationViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Centre configuration";
 }
@@ -22,5 +24,56 @@
         </dl>
       </div>
     </div>
+
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          Centre Details
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Notify Email:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.NotifyEmail
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Banner Text:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.BannerText
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre Signature:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @if (Model.SignatureImage != null) {
+                <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture"/>
+              }
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre Logo:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @if (Model.CentreLogo != null) {
+                <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture"/>
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </details>
   </div>
 </div>
