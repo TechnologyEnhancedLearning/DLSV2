@@ -87,7 +87,7 @@
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId})");
             }
             var frameworkUrl = getBaseURL();
-            frameworkUrl.Path += $"Framework/Structure/{collaboratorNotification.FrameworkID}";
+            frameworkUrl.Path += $"Framework/{collaboratorNotification.FrameworkID}/Structure/";
             string emailSubjectLine = $"DLS Digital Framework {collaboratorNotification?.FrameworkRole} Invitation";
             var builder = new BodyBuilder
             {
@@ -107,7 +107,7 @@
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId})");
             }
             var frameworkUrl = getBaseURL();
-            frameworkUrl.Path += $"Framework/Structure/{collaboratorNotification.FrameworkID}";
+            frameworkUrl.Path += $"Framework/{collaboratorNotification.FrameworkID}/Structure/";
             string emailSubjectLine = "DLS Digital Framework Review Request";
             var builder = new BodyBuilder
             {
