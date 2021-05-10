@@ -54,6 +54,20 @@ input:invalid {
   border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
 }
 
+input[type=file] {
+  @include govuk-media-query($until: tablet) {
+    height: 36px;
+  }
+}
+
+input[type=file].nhsuk-input--error {
+  height: 44px;
+
+  @include govuk-media-query($until: tablet) {
+    height: 40px;
+  }
+}
+
 h1#page-heading {
   margin-bottom: 16px;
 }

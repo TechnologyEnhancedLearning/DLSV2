@@ -5,12 +5,12 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: My Details" : "My Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl" id="app-page-heading">My details</h1>
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
   </div>
 </div>
 
@@ -34,19 +34,19 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="FirstName" label="First Name" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="FirstName" label="First name" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half" />
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="LastName" label="Last Name" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="LastName" label="Last name" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half" />
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Email" label="Email Address" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="Email" label="Email address" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half" />
     </div>
   </div>
 
@@ -65,7 +65,7 @@
       }
       <input type="hidden" asp-for="NewProfileImage" />
       <input type="hidden" asp-for="CurrentProfileImage" />
-      <vc:file-input asp-for="ProfilePicture" label="Profile Picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full" />
+      <vc:file-input asp-for="ProfilePicture" label="Profile picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full" />
     </div>
     <div class="nhsuk-grid-column-one-half">
       <input type="hidden" asp-for="HasProfileImageBeenRemoved" />
