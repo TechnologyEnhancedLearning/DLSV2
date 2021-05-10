@@ -6,7 +6,6 @@
     public interface IPasswordDataService
     {
         void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash);
-        void SetPasswordByCandidateId(int candidateId, string passwordHash);
     }
 
     public class PasswordDataService: IPasswordDataService
@@ -25,15 +24,6 @@
                         SET Password = @passwordHash
                         WHERE CandidateNumber = @candidateNumber",
                 new { passwordHash, candidateNumber });
-        }
-
-        public void SetPasswordByCandidateId(int candidateId, string passwordHash)
-        {
-            connection.Query(
-                @"UPDATE Candidates
-                        SET Password = @passwordHash
-                        WHERE CandidateID = @candidateId",
-                new { passwordHash, candidateId });
         }
     }
 }

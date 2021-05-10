@@ -149,7 +149,7 @@
                 return View(viewModel);
             }
 
-            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
             var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data), baseUrl);
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);

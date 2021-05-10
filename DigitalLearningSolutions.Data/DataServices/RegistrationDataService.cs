@@ -38,9 +38,9 @@
                 Answer6 = "",
                 AliasID = "",
                 ExternalReg = 0,
-                SelfReg = 0,
-                NotifyDate = DateTime.Now,
-                Bulk = 1
+                SelfReg = 1,
+                NotifyDate = DateTime.UtcNow,
+                Bulk = 0
             };
 
             return connection.QueryFirstOrDefault<string>(

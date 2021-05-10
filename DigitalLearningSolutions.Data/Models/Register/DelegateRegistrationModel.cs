@@ -2,7 +2,12 @@
 {
     public class DelegateRegistrationModel
     {
-        public DelegateRegistrationModel(string firstName, string lastName, string email, int centre, int jobGroup,
+        public DelegateRegistrationModel(
+            string firstName,
+            string lastName,
+            string email,
+            int centre,
+            int jobGroup,
             string passwordHash)
         {
             FirstName = firstName;
