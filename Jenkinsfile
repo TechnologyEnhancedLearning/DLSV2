@@ -86,6 +86,7 @@ pipeline {
                     bat "DeployToUAT.bat \"Frida.Tveit:$PASSWORD\" 40.69.40.103"
                 }
                 sendSlackMessageToTeamChannel(":tada: Successfully deployed to UAT", "good")
+                sendSlackNotificationToChannel("@kevin.whittaker", ":tada: Successfully deployed to UAT", "good")
             }
         }
     }
@@ -154,7 +155,7 @@ def getSlackUsers() {
 	return [
 		'stella.veski@softwire.com':'@SteVes',
 		'stellaveski@gmail.com':'@SteVes',
-		'alex.jackson@softwire.com':'@AleJac',
+		'alexander.jackson@dorsetsoftware.com':'@AleJac',
 		'daniel.bloxham@softwire.com':'@DanBlo',
 		'david.may-miller@softwire.com':'@DavMay',
 		'jonathan.bloxsom@softwire.com':'@JonBlo',

@@ -80,12 +80,14 @@
                 return LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe);
             }
 
+            var chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
+
             SetTempDataForChooseACentre
             (
                 model.RememberMe,
                 adminLoginDetails,
                 delegateLoginDetails,
-                availableCentres
+                chooseACentreViewModel
             );
 
             return RedirectToAction("ChooseACentre", "Login");
@@ -101,8 +103,7 @@
                 return RedirectToAction("Index", "Home");
             }
 
-            var availableCentres = TempData.Peek<List<CentreUserDetails>>();
-            ChooseACentreViewModel model = new ChooseACentreViewModel(availableCentres);
+            ChooseACentreViewModel model = TempData.Peek<ChooseACentreViewModel>();
             return View("ChooseACentre", model);
         }
 
@@ -140,14 +141,14 @@
             bool rememberMe,
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
-            List<CentreUserDetails> availableCentres
+            ChooseACentreViewModel chooseACentreViewModel
         )
         {
             TempData.Clear();
             TempData["RememberMe"] = rememberMe;
             TempData.Set(adminLoginDetails);
             TempData.Set(delegateLoginDetails);
-            TempData.Set(availableCentres);
+            TempData.Set(chooseACentreViewModel);
         }
 
         private IActionResult LogIn
