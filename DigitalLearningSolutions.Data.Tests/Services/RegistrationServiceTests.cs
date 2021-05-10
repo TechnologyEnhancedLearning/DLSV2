@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FluentAssertions;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -67,6 +68,16 @@
             A.CallTo(() =>
                 passwordDataService.SetPasswordByCandidateNumber(newCandidateNumber, passwordHash)
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_returns_candidate_number()
+        {
+            // When
+            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+
+            // Then
+            candidateNumber.Should().Be(newCandidateNumber);
         }
     }
 }
