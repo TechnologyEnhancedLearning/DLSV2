@@ -16,6 +16,7 @@
         public const string IsSupervisor = "IsSupervisor";
         public const string IsTrainer = "IsTrainer";
         public const string IsFrameworkDeveloper = "IsFrameworkDeveloper";
+        public const string IsFrameworkContributor = "IsFrameworkContributor";
         public const string LearnCandidateNumber = "learnCandidateNumber";
         public const string UserForename = "UserForename";
         public const string UserSurname = "UserSurname";

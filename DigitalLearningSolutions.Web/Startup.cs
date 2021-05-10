@@ -1,11 +1,14 @@
 namespace DigitalLearningSolutions.Web
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using System.Web;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
@@ -71,7 +74,7 @@ namespace DigitalLearningSolutions.Web
                 .AddControllersWithViews()
                 .AddRazorOptions(options =>
                 {
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
@@ -121,10 +124,14 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
-            services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+
+            // Register web service filters.
+            services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
+            services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

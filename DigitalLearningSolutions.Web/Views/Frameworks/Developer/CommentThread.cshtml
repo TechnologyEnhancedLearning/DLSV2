@@ -32,15 +32,3 @@
 <div class="nhsuk-grid-row">
   <partial name="../Shared/_CommentCard.cshtml" model="Model" />
 </div>
-<form method="post">
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="new-comment">
-      Post reply
-    </label>
-    <input type="hidden" value="@Model.Comments" name="parentComment" />
-    <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
-  </div>
-  <button class="nhsuk-button" type="submit">
-    Post
-  </button>
-</form>
