@@ -16,7 +16,7 @@
             var optionsList = new List<string>();
             if (options != null)
             {
-                optionsList.AddRange(options.Split(new char[] { '\r', '\n' },
+                optionsList.AddRange(options.Split(new [] { '\r', '\n' },
                     System.StringSplitOptions.RemoveEmptyEntries));
             }
 
