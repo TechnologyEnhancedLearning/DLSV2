@@ -86,6 +86,13 @@
                 centre.CentreLogo = null;
             }
 
+            if (centre?.CentreLogo == null)
+            {
+                logger.LogWarning(
+                    $"No valid centre logo found for centre id {centreId}"
+                );
+            }
+
             return centre;
         }
     }

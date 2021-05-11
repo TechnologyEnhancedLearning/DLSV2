@@ -117,6 +117,16 @@
         }
 
         [Test]
+        public void GetCentreDetailsById_should_return_null_centre_logo_if_logo_is_empty_image()
+        {
+            // When
+            var result = centresDataService.GetCentreDetailsById(36);
+
+            // Then
+            result.CentreLogo.Should().BeNull();
+        }
+
+        [Test]
         public void GetCentreName_should_return_null_when_the_centre_does_not_exist()
         {
             // When
