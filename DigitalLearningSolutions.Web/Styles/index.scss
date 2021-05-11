@@ -133,7 +133,7 @@ h1#page-heading {
 .right-align-tag-column {
   padding: 0;
 
-  @include govuk-media-query($from: desktop) {
+  @include govuk-media-query($from: tablet) {
     text-align: right;
     padding-left: nhsuk-spacing(3);
   }
@@ -143,9 +143,15 @@ h1#page-heading {
   width: 100%;
   max-width: 10em;
   text-align: center;
-  margin-bottom: nhsuk-spacing(4);
+  margin-bottom: 0;
 
-  @include govuk-media-query($from: desktop) {
+  @include govuk-media-query($until: desktop){
+      margin-top: nhsuk-spacing(2);
+  }
+}
+
+.left-button-mobile-margin-bottom {
+  @include govuk-media-query($until: tablet) {
     margin-bottom: 0;
   }
 }
