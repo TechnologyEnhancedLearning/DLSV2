@@ -33,13 +33,13 @@ namespace DigitalLearningSolutions.Data.Enums
                 return false;
             }
 
-            if (!(obj is Enumeration))
+            if (!(obj is Enumeration objAsEnumeration))
             {
                 return false;
             }
 
             var typeMatches = this.GetType() == obj.GetType();
-            var valueMatches = Id.Equals(((Enumeration)obj).Id);
+            var valueMatches = Id.Equals(objAsEnumeration.Id);
 
             return typeMatches && valueMatches;
         }
