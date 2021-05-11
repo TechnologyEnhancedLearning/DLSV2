@@ -74,20 +74,18 @@
                 return View(model);
             }
 
-            if (model.ProfilePicture != null)
+            if (model.ProfileImageFile != null)
             {
-                ModelState.AddModelError("ProfilePicture", "Preview your new profile picture before saving");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile), "Preview your new profile picture before saving");
                 return View(model);
             }
 
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            var profileImageToSave = model.HasProfileImageBeenRemoved ? null : model.ProfileImage;
-
-            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email, profileImageToSave))
+            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email, model.ProfileImage))
             {
-                ModelState.AddModelError("Password", "The password you have entered is incorrect.");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), "The password you have entered is incorrect.");
                 return View(model);
             }
 
@@ -97,7 +95,7 @@
         private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)
         {
             // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys.Where(k => k != "ProfilePicture"))
+            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditDetailsViewModel.ProfileImageFile)))
             {
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
@@ -108,10 +106,10 @@
                 return View(model);
             }
 
-            if (model.ProfilePicture != null)
+            if (model.ProfileImageFile != null)
             {
-                ModelState.Remove("NewProfileImage");
-                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
+                ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
+                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfileImageFile);
             }
 
             return View(model);
@@ -126,10 +124,7 @@
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
             
-            ModelState.Remove("HasProfileImageBeenRemoved");
-            model.ProfilePicture = null;
             model.ProfileImage = null;
-            model.HasProfileImageBeenRemoved = true;
 
             return View(model);
         }

@@ -39,9 +39,7 @@
 
         public byte[]? ProfileImage { get; set; }
 
-        public bool HasProfileImageBeenRemoved { get; set; }
-
         [AllowedExtensions(new []{".png",".tiff",".jpg",".jpeg",".bmp",".gif"})]
-        public IFormFile? ProfilePicture { get; set; }
+        public IFormFile? ProfileImageFile { get; set; }
     }
 }
