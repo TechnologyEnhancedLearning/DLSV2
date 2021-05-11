@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
     using FluentAssertions;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
+    using OpenQA.Selenium.Support.UI;
     using Selenium.Axe;
     using Xunit;
 
@@ -41,15 +42,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             axeResult.Violations.Should().BeEmpty();
         }
 
-        [Fact]
+        // TODO: enable this test when AutomatedUiTests can connect to the test database
+        // [Fact]
         public void Registration_journey_has_no_accessibility_errors()
         {
             // given
             var registerUrl = "/Register";
-            var learnerInformationUrl = "/Register/LearnerInformation";
-            var passwordUrl = "/Register/Password";
-            var summaryUrl = "/Register/Summary";
-            var confirmationUrl = "/Register/Confirmation";
 
             // when
             driver.Navigate().GoToUrl(baseUrl + registerUrl);
@@ -64,9 +62,28 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             registerForm.Submit();
 
             var learnerInformationResult = new AxeBuilder(driver).Analyze();
+            var centre = new SelectElement(driver.FindElement(By.Id("Centre")));
+            centre.SelectByValue("2");
+            var jobGroup = new SelectElement(driver.FindElement(By.Id("JobGroup")));
+            jobGroup.SelectByValue("1");
+            var learnerInformationForm = driver.FindElement(By.TagName("form"));
+            learnerInformationForm.Submit();
+
+            var passwordResult = new AxeBuilder(driver).Analyze();
+            var password = driver.FindElement(By.Id("Password"));
+            password.SendKeys("password!1");
+            var confirmPassword = driver.FindElement(By.Id("ConfirmPassword"));
+            confirmPassword.SendKeys("password!1");
+            var passwordForm = driver.FindElement(By.TagName("form"));
+            passwordForm.Submit();
+
+            var summaryResult = new AxeBuilder(driver).Analyze();
 
             // then
             registerResult.Violations.Should().BeEmpty();
+            learnerInformationResult.Violations.Should().BeEmpty();
+            passwordResult.Violations.Should().BeEmpty();
+            summaryResult.Violations.Should().BeEmpty();
         }
 
         private ChromeDriver CreateHeadlessChromeDriver()
