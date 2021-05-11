@@ -13,34 +13,30 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
     class NotificationPreferencesViewModelTests
     {
         [Test]
-        [TestCase(UserTypes.Admin)]
-        [TestCase(UserTypes.Delegate)]
-        public void When_only_one_notification_type_is_present_it_is_marked_to_not_show_as_expandable(string userType)
+        public void When_only_admin_notifications_are_present_they_are_marked_to_not_show_as_expandable()
         {
             // given
-            var adminNotifications = new List<NotificationPreference>();
+            var adminNotifications = new List<NotificationPreference> { new NotificationPreference() };
             var delegateNotifications = new List<NotificationPreference>();
-
-            if (userType == UserTypes.Admin)
-            {
-                adminNotifications.Add(new NotificationPreference());
-            } else if (userType == UserTypes.Delegate)
-            {
-                delegateNotifications.Add(new NotificationPreference());
-            }
 
             // when
             var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
 
             // then
-            if (userType == UserTypes.Admin)
-            {
-                returnedModel.AdminNotifications.ShowAsExpandable.Should().BeFalse();
-            }
-            else if (userType == UserTypes.Delegate)
-            {
-                returnedModel.DelegateNotifications.ShowAsExpandable.Should().BeFalse();
-            }
+            returnedModel.AdminNotifications.ShowAsExpandable.Should().BeFalse();
+        }
+        [Test]
+        public void When_only_delegate_notifications_are_present_they_are_marked_to_not_show_as_expandable()
+        {
+            // given
+            var adminNotifications = new List<NotificationPreference>();
+            var delegateNotifications = new List<NotificationPreference> { new NotificationPreference() };
+
+            // when
+            var returnedModel = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
+
+            // then
+            returnedModel.DelegateNotifications.ShowAsExpandable.Should().BeFalse();
         }
 
         [Test]
