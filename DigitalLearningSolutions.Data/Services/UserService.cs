@@ -26,7 +26,8 @@
             string password,
             string firstName,
             string surname,
-            string email
+            string email,
+            byte[]? profileImage
         );
     }
 
@@ -111,7 +112,8 @@
             string password,
             string firstName,
             string surname,
-            string email
+            string email,
+            byte[]? profileImage
         )
         {
             var (verifiedAdminUser, verifiedDelegateUsers) =
