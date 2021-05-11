@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
@@ -39,6 +41,26 @@
                 result.CustomField1.Should().BeEquivalentTo(expectedPrompt1);
                 result.CustomField2.Should().BeEquivalentTo(expectedPrompt2);
                 result.CustomField3.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void GetCustomPrompts_with_options_splits_correctly()
+        {
+            // Given
+            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(29))
+                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
+
+            // When
+            var result = customPromptsService.GetCustomPromptsForCentreByCentreId(29);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.CustomField1.Should().NotBeNull();
+                result.CustomField1.Options.Count.Should().Be(2);
+                result.CustomField1.Options[0].Should().BeEquivalentTo("Clinical");
+                result.CustomField1.Options[1].Should().BeEquivalentTo("Non-Clinical");
             }
         }
     }
