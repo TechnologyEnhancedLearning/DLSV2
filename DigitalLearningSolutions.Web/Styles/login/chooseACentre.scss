@@ -8,6 +8,8 @@
 .nhsuk-table__row {
   td.nhsuk-table__cell {
     &.choose-centre-td {
+        min-width: 200px;
+
       @include govuk-media-query($until: desktop) {
         border-bottom: none;
         justify-content: left;

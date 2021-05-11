@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
@@ -34,6 +34,7 @@
                         au.AdminID AS Id,
                         au.CentreID, 
                         ct.CentreName,
+                        ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -67,6 +68,7 @@
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
+                        ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
@@ -97,6 +99,7 @@
                         au.AdminID AS Id,
                         au.CentreID, 
                         ct.CentreName,
+                        ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -128,8 +131,9 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
-                        ct.CentreName,
                         cd.CentreID,
+                        ct.CentreName,
+                        ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
