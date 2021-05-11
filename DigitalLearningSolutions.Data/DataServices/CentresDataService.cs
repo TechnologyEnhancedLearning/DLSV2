@@ -11,7 +11,7 @@
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
-        Centre GetCentreDetailsById(int centreId);
+        Centre? GetCentreDetailsById(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -64,9 +64,9 @@
             return centres;
         }
 
-        public Centre GetCentreDetailsById(int centreId)
+        public Centre? GetCentreDetailsById(int centreId)
         {
-            return connection.QueryFirstOrDefault<Centre>(
+            var centre = connection.QueryFirstOrDefault<Centre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
                             c.RegionID,
@@ -80,6 +80,13 @@
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
+
+            if (centre?.CentreLogo?.Length < 10)
+            {
+                centre.CentreLogo = null;
+            }
+
+            return centre;
         }
     }
 }

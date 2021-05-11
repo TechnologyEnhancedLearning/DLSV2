@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
@@ -105,19 +106,18 @@
                 NotifyEmail = "notify@test.com",
                 BannerText = "xxxxxxxxxxxxxxxxxxxx",
                 SignatureImage = null,
-                CentreLogo = null
+                CentreLogo = Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String)
             };
 
             // When
             var result = centresDataService.GetCentreDetailsById(2);
-            result.CentreLogo = null;
 
             // Then
             result.Should().BeEquivalentTo(expectedCentreDetails);
         }
 
         [Test]
-        public void GetCentreDetailsById_should_return_null_when_the_centre_does_not_exist()
+        public void GetCentreName_should_return_null_when_the_centre_does_not_exist()
         {
             // When
             var result = centresDataService.GetCentreName(1);
