@@ -65,7 +65,7 @@
                     e,
                     "Could not get notification preferences for user type {UserType}",
                     userType);
-                return RedirectToAction("Error", "LearningSolutions");
+                throw;
             }
         }
 
@@ -90,7 +90,7 @@
                     "Could not save notification preferences {NotificationIds} for user type {UserType}",
                     notificationIds,
                     userType);
-                return RedirectToAction("Error", "LearningSolutions");
+                throw;
             }
         }
     }

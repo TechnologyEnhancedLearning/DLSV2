@@ -1,16 +1,13 @@
 namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System.Collections.Generic;
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class ResetPasswordControllerTests
@@ -24,11 +21,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             passwordResetService = A.Fake<IPasswordResetService>();
 
-            var unauthenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(string.Empty));
-            unauthenticatedController = GetControllerWithUser(unauthenticatedUser);
-
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity("mock"));
-            authenticatedController = GetControllerWithUser(authenticatedUser);
+            unauthenticatedController = new ResetPasswordController(passwordResetService)
+                .WithDefaultContext()
+                .WithMockUser(false);
+            authenticatedController = new ResetPasswordController(passwordResetService)
+                .WithDefaultContext()
+                .WithMockUser(true);
         }
 
         [Test]
@@ -87,22 +85,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("Login").WithActionName("Index");
-        }
-
-        private ResetPasswordController GetControllerWithUser(ClaimsPrincipal user)
-        {
-            var session = new MockHttpContextSession();
-            return new ResetPasswordController(passwordResetService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = session
-                    }
-                }
-            };
         }
     }
 }

@@ -67,7 +67,7 @@
                      throw new UserAccountNotFoundException(
                          "No user account could be found with the specified email address");
             string resetPasswordHash = GenerateResetPasswordHash(user);
-            Email resetPasswordEmail = GeneratePasswordResetEmail(
+            var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
                 resetPasswordHash,
                 user.FirstName,
@@ -107,7 +107,7 @@
 
             string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
-            BodyBuilder body = new BodyBuilder
+            var body = new BodyBuilder
             {
                 TextBody = $@"Dear {firstName},
                             A request has been made to reset the password for your Digital Learning Solutions account.

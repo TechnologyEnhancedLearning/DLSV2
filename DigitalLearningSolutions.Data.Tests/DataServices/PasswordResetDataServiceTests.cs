@@ -15,10 +15,48 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
     public class PasswordResetDataServiceTests
     {
+        [DatapointSource]
+        public UserType[] UserTypes = {UserType.AdminUser, UserType.DelegateUser};
+
         private readonly PasswordResetDataService service =
             new PasswordResetDataService(
                 ServiceTestHelper.GetDatabaseConnection(),
                 new NullLogger<PasswordResetDataService>());
+
+        [Theory]
+        public async Task Can_Create_And_Find_A_Password_Reset_For_User(UserType userType)
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var createTime = new DateTime(2021, 1, 1);
+            var testDelegateUser = userType.Equals(UserType.AdminUser)
+                ? (User)UserTestHelper.GetDefaultAdminUser()
+                : UserTestHelper.GetDefaultDelegateUser();
+            var resetPasswordCreateModel = new ResetPasswordCreateModel(
+                createTime,
+                "ResetPasswordHash",
+                testDelegateUser.Id,
+                userType);
+
+            // When
+            service.CreatePasswordReset(resetPasswordCreateModel);
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+                testDelegateUser.EmailAddress,
+                resetPasswordCreateModel.Hash);
+
+            // Then
+            matches.Count.Should().Be(1);
+            var match = matches.Single();
+
+            match.UserId.Should().Be(testDelegateUser.Id);
+            match.Email.Should().Be(testDelegateUser.EmailAddress);
+            match.UserType.Should().Be(userType);
+
+            match.Id.Should().BeGreaterThan(0);
+            match.ResetPasswordHash.Should().Be(resetPasswordCreateModel.Hash);
+            match.PasswordResetDateTime.Should().Be(resetPasswordCreateModel.CreateTime);
+        }
 
         [Test]
         public async Task Does_Not_Match_Reset_Passwords_If_No_User_With_Given_Email()
@@ -70,52 +108,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             matches.Count.Should().Be(0);
-        }
-
-        [Test]
-        public async Task Can_Create_And_Find_A_Password_Reset_For_Admin_User()
-        {
-            await Can_Create_And_Find_A_Password_Reset_For_User(UserType.AdminUser);
-        }
-
-        [Test]
-        public async Task Can_Create_And_Find_A_Password_Reset_For_Delegate_User()
-        {
-            await Can_Create_And_Find_A_Password_Reset_For_User(UserType.DelegateUser);
-        }
-
-        private async Task Can_Create_And_Find_A_Password_Reset_For_User(UserType userType)
-        {
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            // Given
-            var createTime = new DateTime(2021, 1, 1);
-            var testDelegateUser = userType.Equals(UserType.AdminUser)
-                ? (User)UserTestHelper.GetDefaultAdminUser()
-                : UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel(
-                createTime,
-                "ResetPasswordHash",
-                testDelegateUser.Id,
-                userType);
-
-            // When
-            service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                testDelegateUser.EmailAddress,
-                resetPasswordCreateModel.Hash);
-
-            // Then
-            matches.Count.Should().Be(1);
-            var match = matches.Single();
-
-            match.UserId.Should().Be(testDelegateUser.Id);
-            match.Email.Should().Be(testDelegateUser.EmailAddress);
-            match.UserType.Should().Be(userType);
-
-            match.Id.Should().BeGreaterThan(0);
-            match.ResetPasswordHash.Should().Be(resetPasswordCreateModel.Hash);
-            match.PasswordResetDateTime.Should().Be(resetPasswordCreateModel.CreateTime);
         }
     }
 }
