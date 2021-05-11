@@ -6,6 +6,7 @@
     {
         public const string UserOnly = "UserOnly";
         public const string UserCentreAdminOnly = "UserCentreAdminOnly";
+        public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
@@ -19,6 +20,13 @@
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
                            && context.User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) == true);
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserFrameworksAdminOnly(AuthorizationPolicyBuilder policy)
+        {
+            return policy.RequireAssertion(
+                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
+                           && (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true | context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true));
         }
     }
 }
