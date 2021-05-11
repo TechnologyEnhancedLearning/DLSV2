@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class AuthHelperTests
+    public class ResetPasswordValidationHelperTests
     {
         [Test]
         public void Reset_Password_Is_Valid_119_Minutes_After_Creation()

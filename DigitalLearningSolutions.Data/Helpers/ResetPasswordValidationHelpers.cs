@@ -3,7 +3,7 @@ namespace DigitalLearningSolutions.Data.Helpers
     using System;
     using DigitalLearningSolutions.Data.Models.DbModels;
 
-    public static class AuthHelpers
+    public static class ResetPasswordValidationHelpers
     {
         private static readonly TimeSpan ResetPasswordHashExpiryTime = TimeSpan.FromHours(2);
 
