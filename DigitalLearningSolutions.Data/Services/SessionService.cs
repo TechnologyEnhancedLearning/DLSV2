@@ -7,7 +7,7 @@
     {
         void StartOrUpdateDelegateSession(int candidateId, int customisationId, ISession httpContextSession);
         void StopDelegateSession(int candidateId, ISession httpContextSession);
-        void StartAdminSession(int adminId);
+        void StartAdminSession(int? adminId);
     }
 
     public class SessionService : ISessionService
@@ -43,9 +43,12 @@
             httpContextSession.Clear();
         }
 
-        public void StartAdminSession(int adminId)
+        public void StartAdminSession(int? adminId)
         {
-            sessionDataService.StartAdminSession(adminId);
+            if (adminId != null)
+            {
+                sessionDataService.StartAdminSession((int)adminId);
+            }
         }
     }
 }

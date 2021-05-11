@@ -8,6 +8,8 @@
 
         public string CentreName { get; set; }
 
+        public bool CentreActive { get; set; }
+
         public string? FirstName { get; set; }
 
         public string LastName { get; set; }
