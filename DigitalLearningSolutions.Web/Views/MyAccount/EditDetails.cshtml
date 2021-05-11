@@ -44,15 +44,9 @@
     </div>
   </div>
 
-  <div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
       <vc:text-input asp-for="Email" label="Email address" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half" />
-    </div>
-  </div>
-
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <div class="divider"></div>
     </div>
   </div>
 
@@ -63,8 +57,7 @@
                               If you upload a new profile image and do not preview it before saving, then your profile picture
                               will not be updated.";
       }
-      <input type="hidden" asp-for="NewProfileImage" />
-      <input type="hidden" asp-for="CurrentProfileImage" />
+      <input type="hidden" asp-for="ProfileImage" />
       <vc:file-input asp-for="ProfilePicture" label="Profile picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full" />
     </div>
     <div class="nhsuk-grid-column-one-half">
@@ -72,29 +65,19 @@
       @if (!Model.HasProfileImageBeenRemoved)
       {
         <div class="profile-picture__image-box">
-          @if (Model.NewProfileImage != null)
+          @if (Model.ProfileImage != null)
           {
-            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.NewProfileImage)" alt="Profile Picture" />
-          }
-          else if (Model.CurrentProfileImage != null)
-          {
-            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.CurrentProfileImage)" alt="Profile Picture" />
+            <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
           }
         </div>
       }
     </div>
   </div>
 
-  <div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-one-half">
       <button name="action" class="nhsuk-button" value="previewImage">Preview</button>
       <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeImage">Remove</button>
-    </div>
-  </div>
-
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <div class="divider"></div>
     </div>
   </div>
 

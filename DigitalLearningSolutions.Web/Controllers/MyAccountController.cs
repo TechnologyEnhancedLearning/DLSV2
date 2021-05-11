@@ -83,7 +83,7 @@
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            var profileImageToSave = model.HasProfileImageBeenRemoved ? null : model.NewProfileImage ?? model.CurrentProfileImage;
+            var profileImageToSave = model.HasProfileImageBeenRemoved ? null : model.ProfileImage;
 
             if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email, profileImageToSave))
             {
@@ -108,11 +108,10 @@
                 return View(model);
             }
 
-            // Remove the old new profile image value from the ModelState
-            ModelState.Remove("NewProfileImage");
             if (model.ProfilePicture != null)
             {
-                model.NewProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
+                ModelState.Remove("NewProfileImage");
+                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfilePicture);
             }
 
             return View(model);
@@ -129,7 +128,7 @@
             
             ModelState.Remove("HasProfileImageBeenRemoved");
             model.ProfilePicture = null;
-            model.NewProfileImage = null;
+            model.ProfileImage = null;
             model.HasProfileImageBeenRemoved = true;
 
             return View(model);

@@ -16,7 +16,7 @@
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
-            CurrentProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
+            ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
         }
 
         [Required(ErrorMessage = "Enter a first name.")]
@@ -37,9 +37,7 @@
         [MaxLength(100, ErrorMessage = "Password must be at most 100 characters")]
         public string? Password { get; set; }
 
-        public byte[]? CurrentProfileImage { get; set; }
-
-        public byte[]? NewProfileImage { get; set; }
+        public byte[]? ProfileImage { get; set; }
 
         public bool HasProfileImageBeenRemoved { get; set; }
 
