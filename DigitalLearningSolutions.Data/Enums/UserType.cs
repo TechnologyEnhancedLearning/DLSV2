@@ -1,5 +1,7 @@
 namespace DigitalLearningSolutions.Data.Enums
 {
+    using System;
+
     public class UserType : Enumeration
     {
         public static readonly UserType AdminUser = new UserType(0, nameof(AdminUser), "AdminUsers", "AdminID");
@@ -16,7 +18,16 @@ namespace DigitalLearningSolutions.Data.Enums
 
         public static implicit operator UserType(string value)
         {
-            return FromName<UserType>(value);
+            try
+            {
+                return FromName<UserType>(value);
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidCastException(e.Message);
+            }
         }
+
+        public static implicit operator string(UserType userType) => userType.Name;
     }
 }

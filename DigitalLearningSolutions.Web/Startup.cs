@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web
                 .AddControllersWithViews()
                 .AddRazorOptions(options =>
                 {
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
-            // Register data services.
+            // Register services.
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
@@ -98,6 +98,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkService, FrameworkService>();
