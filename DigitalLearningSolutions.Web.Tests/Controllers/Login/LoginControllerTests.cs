@@ -72,12 +72,14 @@
         public void Successful_sign_in_should_render_home_page()
         {
             //Given
+            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
+            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((UserTestHelper.GetDefaultAdminUser(),
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+                .Returns((expectedAdmin, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((UserTestHelper.GetDefaultAdminUser(),
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
@@ -94,12 +96,14 @@
         public void Successful_sign_in_should_call_SignInAsync()
         {
             //Given
+            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
+            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((UserTestHelper.GetDefaultAdminUser(),
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+                .Returns((expectedAdmin, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((UserTestHelper.GetDefaultAdminUser(),
-                    new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }));
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
@@ -142,8 +146,7 @@
                 .Returns((null, new List<DelegateUser>()));
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
@@ -160,8 +163,7 @@
                 .Returns((null, new List<DelegateUser>()));
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
             result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
@@ -179,8 +181,7 @@
                 .Returns((null, new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: false) }));
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
             result.Should().BeViewResult().WithViewName("AccountNotApproved");
@@ -242,6 +243,8 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdminUser, new List<DelegateUser>()));
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -259,6 +262,8 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new List<CentreUserDetails>
@@ -303,11 +308,13 @@
                 UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true),
                 UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2", approved: false)
             };
+            var expectedApprovedDelegateUsers = expectedDelegateUsers.Where(du => du.Approved).ToList();
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
-            var expectedApprovedDelegateUsers = expectedDelegateUsers.Where(du => du.Approved).ToList();
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdminUser, expectedApprovedDelegateUsers));
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -315,7 +322,7 @@
             // Then
             A.CallTo(() => userService.GetUserCentres(
                     A<AdminUser>.That.IsEqualTo(expectedAdminUser),
-                    A<List<DelegateUser>>.That.Matches(list => list.SequenceEqual(expectedApprovedDelegateUsers))))
+                    A<List<DelegateUser>>.That.IsSameSequenceAs(expectedApprovedDelegateUsers)))
                 .MustHaveHappened();
         }
 
@@ -330,17 +337,74 @@
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
             // When
-            var result =
-                controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            When_user_has_accounts_with_inactive_centres_only_use_active_centre_details_for_login()
+        {
+            // Given
+            var delegateUserAtActiveCentre =
+                UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2", centreActive: true);
+            var expectedAdminUser =
+                UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1", centreActive: false);
+            var expectedDelegateUsers = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", centreActive: false),
+                delegateUserAtActiveCentre
+            };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { delegateUserAtActiveCentre }));
+
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userService.GetUserCentres(
+                    null,
+                    A<List<DelegateUser>>.That.IsSameSequenceAs(delegateUserAtActiveCentre)))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            When_user_has_verified_accounts_only_at_inactive_centres_then_redirect_to_centre_inactive_page()
+        {
+            // Given
+            var expectedAdminUser =
+                UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1", centreActive: false);
+            var expectedDelegateUsers = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", centreActive: false)
+            };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdminUser, expectedDelegateUsers));
+            A.CallTo(() => userService.GetUserCentres(expectedAdminUser, expectedDelegateUsers))
+                .Returns(new List<CentreUserDetails>());
+
+            // When
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            result.Should().BeViewResult().WithViewName("CentreInactive");
         }
     }
 }
