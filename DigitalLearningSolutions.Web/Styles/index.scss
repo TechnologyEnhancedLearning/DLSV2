@@ -130,6 +130,26 @@ h1#page-heading {
   }
 }
 
+.right-align-tag-column {
+  padding: 0;
+
+  @include govuk-media-query($from: desktop) {
+    text-align: right;
+    padding-left: nhsuk-spacing(3);
+  }
+}
+
+.right-align-tag {
+  width: 100%;
+  max-width: 10em;
+  text-align: center;
+  margin-bottom: nhsuk-spacing(4);
+
+  @include govuk-media-query($from: desktop) {
+    margin-bottom: 0;
+  }
+}
+
 ul.no-bullets {
   list-style-type: none;
   padding: 0;

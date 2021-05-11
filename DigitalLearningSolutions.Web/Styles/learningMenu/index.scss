@@ -70,3 +70,9 @@ hr.thick {
 .not-passed-text {
   @extend .nhsuk-u-secondary-text-color;
 }
+
+.left-button-mobile-margin-bottom {
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: 0;
+  }
+}
