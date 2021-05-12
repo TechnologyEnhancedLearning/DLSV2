@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
 {
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FluentAssertions;
     using NUnit.Framework;
@@ -25,6 +22,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.MyAccount
             // then
             returnedModel.AdminNotifications.ShowAsExpandable.Should().BeFalse();
         }
+
         [Test]
         public void When_only_delegate_notifications_are_present_they_are_marked_to_not_show_as_expandable()
         {
