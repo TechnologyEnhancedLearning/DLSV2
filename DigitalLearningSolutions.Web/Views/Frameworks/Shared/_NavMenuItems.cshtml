@@ -1,5 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 <li class="nhsuk-header__navigation-item @Html.IsSelected("FrameworksDashboard")">
+  @* ReSharper disable once Mvc.ActionNotResolved *@
   <a class="nhsuk-header__navigation-link" asp-action="MyFrameworks">
     My Frameworks
     <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -8,6 +9,7 @@
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected("FrameworksViewAll")">
+  @* ReSharper disable once Mvc.ActionNotResolved *@
   <a class="nhsuk-header__navigation-link" asp-action="AllFrameworks">
     All Frameworks
     <svg class="nhsuk-icon nhsuk-icon__chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
