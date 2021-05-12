@@ -83,7 +83,7 @@
                     var email = "test@email.com";
 
                     // When
-                    userDataService.UpdateAdminUser(firstName, lastName, email, 7);
+                    userDataService.UpdateAdminUser(firstName, lastName, email, null, 7);
                     var updatedUser = userDataService.GetAdminUserById(7);
 
                     // Then
@@ -111,7 +111,7 @@
                     var email = "test@email.com";
 
                     // When
-                    userDataService.UpdateDelegateUsers(firstName, lastName, email, new []{2,3});
+                    userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new []{2,3});
                     var updatedUser = userDataService.GetDelegateUserById(2);
                     var secondUpdatedUser = userDataService.GetDelegateUserById(3);
 

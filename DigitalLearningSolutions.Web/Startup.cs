@@ -126,6 +126,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<IImageResizeService, ImageResizeService>();
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
