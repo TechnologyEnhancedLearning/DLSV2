@@ -3,7 +3,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register - Password": "Register - Password";
+  ViewData["Title"] = errorHasOccurred ? "Error: Reset Your Password": "Reset Your Password";
   var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
   var confirmPasswordError = ViewData.ModelState["ConfirmPassword"]?.Errors?.Count > 0;
   var passwordInputErrorClass = passwordError ? "nhsuk-select--error" : "";
