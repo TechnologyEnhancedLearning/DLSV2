@@ -93,7 +93,7 @@
         }
 
         [Test]
-        public void Successful_sign_in_with_return_url_should_redirect_to_return_url()
+        public void Successful_sign_in_with_local_return_url_should_redirect_to_return_url()
         {
             //Given
             var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
@@ -116,6 +116,33 @@
 
             // Then
             result.Should().BeRedirectResult().WithUrl(returnUrl);
+        }
+
+        [Test]
+        public void Successful_sign_in_with_nonlocal_return_url_should_render_home_page()
+        {
+            //Given
+            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
+            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
+
+            // When
+            var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
+            var returnUrl = "www.suspicious.com";
+            loginViewModel.ReturnUrl = returnUrl;
+            var result = controller.Index(loginViewModel);
+
+            // Then
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
         }
 
         [Test]
