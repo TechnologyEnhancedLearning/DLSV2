@@ -58,6 +58,8 @@ namespace DigitalLearningSolutions.Web
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
                 options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
                     policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
+                options.AddPolicy(CustomPolicies.UserFrameworksAdminOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
@@ -126,6 +128,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<IImageResizeService, ImageResizeService>();
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();

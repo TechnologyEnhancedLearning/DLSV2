@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -35,7 +36,7 @@
 
             var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
             var delegateNotifications =
-                notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
+                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
             var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
 

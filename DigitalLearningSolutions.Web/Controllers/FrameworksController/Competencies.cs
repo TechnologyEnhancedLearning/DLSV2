@@ -73,7 +73,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     if (newCompetencyGroupId > 0)
                     {
                         var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
-                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + newFrameworkCompetencyGroupId.ToString());
+                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId = newFrameworkCompetencyGroupId }) + "#fcgroup-" + newFrameworkCompetencyGroupId.ToString());
                     }
                 }
                 logger.LogWarning($"Attempt to add framework competency group failed for admin {adminId}.");
@@ -99,7 +99,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(403);
             }
             frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, GetAdminID());
-            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId}")]
@@ -156,7 +156,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 if (frameworkCompetency.Id > 0)
                 {
                     frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
-                    return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
+                    return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
                 }
                 else
                 {
@@ -164,14 +164,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     if (newCompetencyId > 0)
                     {
                         var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId);
-                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + newFrameworkCompetencyId.ToString());
+                        return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + newFrameworkCompetencyId.ToString());
                     }
                 }
                 logger.LogWarning($"Attempt to add framework competency failed for admin {adminId}.");
                 return StatusCode(403);
             }
         }
-        public IActionResult MoveFrameworkCompetency(int frameworkId, int frameworkCompetencyId, bool step, string direction)
+        public IActionResult MoveFrameworkCompetency(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId, bool step, string direction)
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
             if (userRole < 2)
@@ -179,7 +179,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return StatusCode(403);
             }
             frameworkService.MoveFrameworkCompetency(frameworkCompetencyId, step, direction);
-            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-" + frameworkCompetencyId.ToString());
+            return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
         }
         public IActionResult DeleteFrameworkCompetency(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
@@ -191,7 +191,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminID());
             if (frameworkCompetencyGroupId != null)
             {
-                return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
+                return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId , frameworkCompetencyGroupId}) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }

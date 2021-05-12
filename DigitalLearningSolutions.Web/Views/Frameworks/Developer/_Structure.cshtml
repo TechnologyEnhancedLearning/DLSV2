@@ -25,7 +25,11 @@ else
 </div>
 @if (Model.DetailFramework.UserRole > 1)
 {
-  <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() group</a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() without a group</a>
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() group</a>
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() without a group</a>
+    </div>
+  </div>
 }
 

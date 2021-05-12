@@ -5,54 +5,47 @@
   <div class="nhsuk-card__content">
     @if (Model.FrameworkCompetency.Description != null)
     {
-      <details class="nhsuk-details">
-        <summary class="nhsuk-details__summary">
-          <h4 class=" nhsuk-u-margin-bottom-0">
-            <span class="nhsuk-details__summary-text">
-              @Model.FrameworkCompetency.Name
-            </span>
-          </h4>
-
-        </summary>
-        <div class="nhsuk-details__text">
-          @(Html.Raw(Model.FrameworkCompetency.Description))
-        </div>
-      </details>
-    }
-    else
-    {
       <h4>
         @Model.FrameworkCompetency.Name
       </h4>
-    }
-  <p class="nhsuk-u-secondary-text-color">
-    @if (Model.CanModify)
-    {
-      <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
-        Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
-      </a>
-    }
-    else
-    {
-  <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>
-    }
-  </p>
+    <p class="nhsuk-body">
+      @(Html.Raw(Model.FrameworkCompetency.Description))
+    </p>
+  }
+  else
+  {
+    <h4>
+      @Model.FrameworkCompetency.Name
+    </h4>
+  }
+    <p class="nhsuk-u-secondary-text-color">
+      @if (Model.CanModify)
+      {
+        <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
+          Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
+        </a>
+      }
+      else
+      {
+        <span>@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "No " : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assessment questions assigned</span>
+      }
+    </p>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters">
         @if (Model.CanModify)
         {
           <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Edit <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="UP" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move up <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="MoveFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-step="true" asp-route-direction="DOWN" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Move down <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
           <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="DeleteFrameworkCompetency" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Delete <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
         }
       </div>
       @if (Model.FrameworkCompetency.AssessmentQuestions > 0)
-      { 
-      <div class="nhsuk-grid-column-one-quarter">
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="PreviewCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Preview <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
-      </div>
+      {
+        <div class="nhsuk-grid-column-one-quarter">
+          <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="PreviewCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">Preview <span class="visually-hidden">@ViewData["VocabSingular"].ToString().ToLower()</span></a>
+        </div>
       }
-      </div>
     </div>
+  </div>
   </div>
