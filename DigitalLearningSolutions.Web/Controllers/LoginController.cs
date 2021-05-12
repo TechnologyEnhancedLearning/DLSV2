@@ -13,18 +13,21 @@
     using DigitalLearningSolutions.Web.ViewModels.Login;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
 
     public class LoginController : Controller
     {
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly ILogger<LoginController> logger;
 
-        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService)
+        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService, ILogger<LoginController> logger)
         {
             this.loginService = loginService;
             this.userService = userService;
             this.sessionService = sessionService;
+            this.logger = logger;
         }
 
         public IActionResult Index(string? returnUrl)
@@ -184,7 +187,11 @@
             HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
             if (!string.IsNullOrEmpty(returnUrl))
             {
-                return Redirect(returnUrl);
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
             }
             return RedirectToAction("Index", "Home");
         }
