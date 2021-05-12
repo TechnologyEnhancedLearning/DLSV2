@@ -106,7 +106,11 @@
                 NotifyEmail = "notify@test.com",
                 BannerText = "xxxxxxxxxxxxxxxxxxxx",
                 SignatureImage = null,
-                CentreLogo = Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String)
+                CentreLogo = Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String),
+                ContactForename = "xxxxx",
+                ContactSurname = "xxxx",
+                ContactEmail = "nybwhudkra@ic.vs",
+                ContactTelephone = "xxxxxxxxxxxx"
             };
 
             // When

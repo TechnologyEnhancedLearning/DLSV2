@@ -12,6 +12,10 @@
             BannerText = centre.BannerText;
             SignatureImage = centre.SignatureImage;
             CentreLogo = centre.CentreLogo;
+            ContactForename = centre.ContactForename;
+            ContactSurname = centre.ContactSurname;
+            ContactEmail = centre.ContactEmail;
+            ContactTelephone = centre.ContactTelephone;
         }
 
         public string CentreName { get; set; }
@@ -20,5 +24,9 @@
         public string BannerText { get; set; }
         public byte[]? SignatureImage { get; set; }
         public byte[]? CentreLogo { get; set; }
+        public string? ContactForename { get; set; }
+        public string? ContactSurname { get; set; }
+        public string? ContactEmail { get; set; }
+        public string? ContactTelephone { get; set; }
     }
 }
