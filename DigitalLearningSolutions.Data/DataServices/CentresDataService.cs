@@ -81,16 +81,15 @@
                 new { centreId }
             );
 
-            if (centre?.CentreLogo?.Length < 10)
+            if (centre == null)
             {
-                centre.CentreLogo = null;
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
             }
 
-            if (centre?.CentreLogo == null)
+            if (centre.CentreLogo?.Length < 10)
             {
-                logger.LogWarning(
-                    $"No valid centre logo found for centre id {centreId}"
-                );
+                centre.CentreLogo = null;
             }
 
             return centre;
