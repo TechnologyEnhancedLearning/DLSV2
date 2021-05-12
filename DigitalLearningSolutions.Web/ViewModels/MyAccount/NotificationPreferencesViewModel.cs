@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public class NotificationPreferencesViewModel
     {
@@ -13,11 +13,11 @@
         {
             AdminNotifications = new NotificationPreferenceListViewModel(
                 adminNotifications,
-                UserTypes.Admin,
+                UserType.AdminUser,
                 delegateNotifications.Any());
             DelegateNotifications = new NotificationPreferenceListViewModel(
                 delegateNotifications,
-                UserTypes.Delegate,
+                UserType.DelegateUser,
                 adminNotifications.Any());
         }
 
@@ -28,14 +28,17 @@
 
     public class NotificationPreferenceListViewModel
     {
-        public NotificationPreferenceListViewModel(IEnumerable<NotificationPreference> notifications, string userType, bool showAsExpandable)
+        public NotificationPreferenceListViewModel(
+            IEnumerable<NotificationPreference> notifications,
+            UserType userType,
+            bool showAsExpandable)
         {
             Notifications = notifications;
             UserType = userType;
             ShowAsExpandable = showAsExpandable;
         }
 
-        public string UserType { get; set; }
+        public UserType UserType { get; set; }
 
         public IEnumerable<NotificationPreference> Notifications { get; set; }
 

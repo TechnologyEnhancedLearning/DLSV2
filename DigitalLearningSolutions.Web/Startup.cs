@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web
                 .AddControllersWithViews()
                 .AddRazorOptions(options =>
                 {
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");                    
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
-            // Register data services.
+            // Register services.
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
@@ -103,6 +103,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkService, FrameworkService>();
@@ -116,6 +117,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
+            services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ILoginService, LoginService>();
@@ -132,6 +134,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
+            services.AddScoped<IClockService, ClockService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
