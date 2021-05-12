@@ -11,7 +11,7 @@
     {
         void SendFrameworkCollaboratorInvite(int id, int invitedByAdminId);
         void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment);
-        void SendReviewRequest(int id, int invitedByAdminId);
+        void SendReviewRequest(int id, int invitedByAdminId, bool required);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -89,7 +89,7 @@
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
 
-        public void SendReviewRequest(int id, int invitedByAdminId)
+        public void SendReviewRequest(int id, int invitedByAdminId, bool required)
         {
             var collaboratorNotification = frameworkService.GetCollaboratorNotification(id, invitedByAdminId);
             if (collaboratorNotification == null)
@@ -98,12 +98,13 @@
             }
             var frameworkUrl = GetFrameworkUrl(collaboratorNotification.FrameworkID, "Structure");
             string emailSubjectLine = "DLS Digital Framework Review Request";
+            string signOffRequired = required ? "You are required to sign-off this framework before it can be published." : "You are not required to sign-off this framework before it is published.";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear colleague,
                               You have been requested to review the framework, {collaboratorNotification?.FrameworkName}, by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}).
-                              To review the framework, visit this url: {frameworkUrl}. Click the Review Framework button to submit your review and, if appropriate, sign-off the framework. You will need to be registered on the Digital Learning Solutions platform to review the framework.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear colleague,</p><p>You have been requested to review the framework, {collaboratorNotification?.FrameworkName}, by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl}'>Click here</a> to review the framework. Click the Review Framework button to submit your review and, if appropriate, sign-off the framework. You will need to be registered on the Digital Learning Solutions platform to view the framework.</p>"
+                              To review the framework, visit this url: {frameworkUrl}. Click the Review Framework button to submit your review and, if appropriate, sign-off the framework. {signOffRequired}. You will need to be registered on the Digital Learning Solutions platform to review the framework.",
+                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'><p>Dear colleague,</p><p>You have been requested to review the framework, {collaboratorNotification?.FrameworkName}, by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName}</a>.</p><p><a href='{frameworkUrl}'>Click here</a> to review the framework. Click the Review Framework button to submit your review and, if appropriate, sign-off the framework.</p><p>{signOffRequired}</p><p>You will need to be registered on the Digital Learning Solutions platform to view the framework.</p>"
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }

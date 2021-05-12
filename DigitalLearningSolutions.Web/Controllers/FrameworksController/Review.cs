@@ -27,13 +27,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         [HttpPost]
         [Route("/Framework/{frameworkId}/Review")]
-        public IActionResult SubmitReviewers(int frameworkId, List<int> userChecked)
+        public IActionResult SubmitReviewers(int frameworkId, List<int> userChecked, List<int> signOffRequiredChecked)
         {
             var adminId = GetAdminID();
             foreach(var user in userChecked)
             {
-                frameworkService.InsertFrameworkReview(frameworkId, user);
-                frameworkNotificationService.SendReviewRequest(user, adminId);
+                var required = signOffRequiredChecked.IndexOf(user) != -1;
+                frameworkService.InsertFrameworkReview(frameworkId, user, required);
+                frameworkNotificationService.SendReviewRequest(user, adminId, required);
             }
             frameworkService.UpdateFrameworkStatus(frameworkId, 2, adminId);
             return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
