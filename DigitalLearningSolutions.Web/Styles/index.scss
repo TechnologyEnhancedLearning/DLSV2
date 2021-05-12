@@ -109,3 +109,9 @@ h1#page-heading {
   border: none;
   margin-bottom: 0;
 }
+
+.nhsuk-summary-list__value {
+  @include govuk-media-query($until: tablet) {
+    word-break: break-word;
+  }
+}

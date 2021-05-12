@@ -1,6 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model CentreConfigurationViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Centre configuration";
 }
@@ -12,7 +14,7 @@
       <div class="nhsuk-card__content basic-card-content">
         <dl class="nhsuk-summary-list">
           <div class="nhsuk-summary-list__row basic-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Centre Name:</dt>
+            <dt class="nhsuk-summary-list__key">Centre name:</dt>
             <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
           </div>
           <div class="nhsuk-summary-list__row basic-summary-list__row">
@@ -22,5 +24,56 @@
         </dl>
       </div>
     </div>
+
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          Centre details
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Notify email:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.NotifyEmail
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Banner text:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.BannerText
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre signature:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @if (Model.SignatureImage != null) {
+                <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture"/>
+              }
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre logo:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @if (Model.CentreLogo != null) {
+                <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture"/>
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </details>
   </div>
 </div>
