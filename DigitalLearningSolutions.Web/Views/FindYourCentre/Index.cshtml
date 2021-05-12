@@ -1,7 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
+@model FindYourCentreViewModel
 @{
   ViewData["Title"] = "Find Your Centre";
-  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
+  var url = "https://www.dls.nhs.uk/dev-prev" + "/findyourcentre?nonav=true";
+  url += String.IsNullOrEmpty(Model.CentreId) ? "" : "&centreid=" + Model.CentreId;
 }
 
 <div class="nhsuk-grid-row responsive-iframe-wrapper">
