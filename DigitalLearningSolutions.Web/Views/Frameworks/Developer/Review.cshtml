@@ -20,7 +20,7 @@
 <h2>Who should review this framework?</h2>
 <form method="post">
   <table class="nhsuk-table-responsive">
-    <caption class="nhsuk-table__caption">Select working group members who need to review/sign-off the framework "@Model.FrameworkName" before it is published.</caption>
+    <caption class="nhsuk-table__caption">Select working group members who need to review the framework "@Model.FrameworkName" before it is published. If sign-off is required from a user before the framework is published, ensure that the Sign-off Required column is checked. </caption>
     <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
 
@@ -30,29 +30,41 @@
         <th role="columnheader" class="" scope="col">
           Role
         </th>
+        <th role="columnheader" class="" scope="col">
+          Sign-off Required
+        </th>
       </tr>
     </thead>
 
     <tbody class="nhsuk-table__body">
       @foreach (var collaborator in Model.Collaborators)
       {
-        <tr role="row" class="nhsuk-table__row collaborator-row">
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">User </span>
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
-                @collaborator.UserEmail
-              </label>
-            </div>
-          </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Role </span>
-            <span class="framework-collaborator-role">
-              <partial name="Shared/_RoleTag" model="collaborator" />
-            </span>
-          </td>
-        </tr>
+      <tr role="row" class="nhsuk-table__row collaborator-row">
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">User </span>
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
+              @collaborator.UserEmail
+            </label>
+          </div>
+        </td>
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Role </span>
+          <span class="framework-collaborator-role">
+            <partial name="Shared/_RoleTag" model="collaborator" />
+          </span>
+        </td>
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
+          <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="sign-off-required-check-@collaborator.ID" name="SignOffRequiredChecked" type="checkbox" value="@collaborator.ID">
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
+              Required
+            </label>
+          </div>
+        </td>
+      </tr>
       }
     </tbody>
   </table>

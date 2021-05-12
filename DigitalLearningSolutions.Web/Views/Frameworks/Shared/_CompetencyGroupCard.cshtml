@@ -1,9 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyGroupCardViewModel;
-<span class="nhsuk-caption-l nhsuk-u-font-size-16 nhsuk-u-margin-top-2">
-  @ViewData["VocabSingular"].ToString() group
-</span>
-<details id="fcgroup-@Model.FrameworkCompetencyGroup.ID" class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-0" @(ViewContext.RouteData.Values.ContainsKey("frameworkCompetencyGroupId") ? (ViewContext.RouteData.Values["frameworkCompetencyGroupId"].Equals(Model.FrameworkCompetencyGroup.ID.ToString()) ? "open" : "") : "")>
+<details id="fcgroup-@Model.FrameworkCompetencyGroup.ID" class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3" @((int)ViewData["GroupCount"] == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("frameworkCompetencyGroupId") ? (ViewContext.RouteData.Values["frameworkCompetencyGroupId"].Equals(Model.FrameworkCompetencyGroup.ID.ToString()) ? "open" : "") : ""))>
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
 

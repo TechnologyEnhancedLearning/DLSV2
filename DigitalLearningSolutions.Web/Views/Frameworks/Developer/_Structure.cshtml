@@ -5,7 +5,7 @@
 {
   foreach (var frameworkCompetencyGroup in Model.FrameworkCompetencyGroups)
   {
-    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  } }' />
+    <partial name="../Shared/_CompetencyGroupCard.cshtml" model="new CompetencyGroupCardViewModel { CanModify = Model.DetailFramework.UserRole > 1, FrameworkCompetencyGroup =frameworkCompetencyGroup }" view-data='@new ViewDataDictionary(ViewData) { { "VocabSingular", @Model.VocabSingular() }, {"VocabPlural", @Model.VocabPlural()  }, {"GroupCount", @Model.FrameworkCompetencyGroups.Count()  } }' />
   }
 }
 else
