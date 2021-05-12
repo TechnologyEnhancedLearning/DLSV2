@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public class NotificationPreferencesViewModel
     {
@@ -10,25 +11,37 @@
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications)
         {
-            AdminNotifications = new NotificationPreferenceExpanderViewModel(adminNotifications, UserTypes.Admin);
-            DelegateNotifications = new NotificationPreferenceExpanderViewModel(delegateNotifications, UserTypes.Delegate);
+            AdminNotifications = new NotificationPreferenceListViewModel(
+                adminNotifications,
+                UserType.AdminUser,
+                delegateNotifications.Any());
+            DelegateNotifications = new NotificationPreferenceListViewModel(
+                delegateNotifications,
+                UserType.DelegateUser,
+                adminNotifications.Any());
         }
 
-        public NotificationPreferenceExpanderViewModel AdminNotifications { get; set; }
+        public NotificationPreferenceListViewModel AdminNotifications { get; set; }
 
-        public NotificationPreferenceExpanderViewModel DelegateNotifications { get; set; }
+        public NotificationPreferenceListViewModel DelegateNotifications { get; set; }
     }
 
-    public class NotificationPreferenceExpanderViewModel
+    public class NotificationPreferenceListViewModel
     {
-        public NotificationPreferenceExpanderViewModel(IEnumerable<NotificationPreference> notifications, string userType)
+        public NotificationPreferenceListViewModel(
+            IEnumerable<NotificationPreference> notifications,
+            UserType userType,
+            bool showAsExpandable)
         {
             Notifications = notifications;
             UserType = userType;
+            ShowAsExpandable = showAsExpandable;
         }
 
-        public string UserType { get; set; }
+        public UserType UserType { get; set; }
 
         public IEnumerable<NotificationPreference> Notifications { get; set; }
+
+        public bool ShowAsExpandable { get; set; }
     }
 }

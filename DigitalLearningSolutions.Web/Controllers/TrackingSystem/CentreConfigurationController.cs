@@ -23,7 +23,7 @@
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId);
 
-            var model = new CentreConfigurationViewModel(centreDetails.CentreName, centreDetails.RegionName);
+            var model = new CentreConfigurationViewModel(centreDetails);
 
             return View("Index", model);
         }

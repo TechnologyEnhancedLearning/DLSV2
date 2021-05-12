@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model FileInputViewModel
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <label class="nhsuk-label" for="@Model.Name">
+    @Model.Label
+  </label>
+  @if (Model.HintText != null) {
+    <div class="nhsuk-hint">
+      @Model.HintText
+    </div>
+  }
+  @if (Model.HasError)
+  {
+    <span class="nhsuk-error-message" id="@Model.Name-error">
+      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+    </span>
+  }
+  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
+         id="@Model.Id"
+         name="@Model.Name"
+         type="file"
+         aria-describedby="@Model.Name-error" />
+</div>
