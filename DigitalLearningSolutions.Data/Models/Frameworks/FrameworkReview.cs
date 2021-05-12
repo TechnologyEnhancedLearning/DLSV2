@@ -13,5 +13,6 @@
         public bool SignedOff { get; set; }
         public int? FrameworkCommentID { get; set; }
         public string? Comment { get; set; }
+        public bool SignOffRequired { get; set; }
     }
 }
