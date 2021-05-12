@@ -75,5 +75,52 @@
         </dl>
       </div>
     </details>
+
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          Centre manager details
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              First name:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.ContactForename
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Last name:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.ContactSurname
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Email:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.ContactEmail
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Telephone:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.ContactTelephone
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </details>
   </div>
 </div>

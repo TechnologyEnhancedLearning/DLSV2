@@ -74,7 +74,11 @@
                             c.NotifyEmail,
                             c.BannerText,
                             c.SignatureImage,
-                            c.CentreLogo
+                            c.CentreLogo,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",
