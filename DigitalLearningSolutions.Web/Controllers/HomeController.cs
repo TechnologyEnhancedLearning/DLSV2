@@ -3,11 +3,13 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
     using Microsoft.Extensions.Configuration;
 
+    [DelegateOnlyInaccessible]
     public class HomeController : Controller
     {
         private const string LandingPageMiniHubName = "Digital Learning Solutions";
