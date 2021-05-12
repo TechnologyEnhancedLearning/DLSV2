@@ -32,6 +32,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/Home/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
+        [InlineData("/ResetPassword/Error")]
         public void Page_has_no_accessibility_errors(string url)
         {
             // when

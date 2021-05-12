@@ -63,7 +63,7 @@
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
-        void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId);
+        void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -1385,7 +1385,7 @@ WHERE (ID = @commentId)", new { adminId, commentId }
                 );
         }
 
-        public void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId)
+        public void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required)
         {
             var exists = (int?)connection.ExecuteScalar(
                 @"SELECT COUNT(*)
@@ -1398,10 +1398,10 @@ WHERE (ID = @commentId)", new { adminId, commentId }
             {
                 connection.Query(
                 @"INSERT INTO FrameworkReviews
-                    (FrameworkID, FrameworkCollaboratorId)
+                    (FrameworkID, FrameworkCollaboratorId, SignOffRequired)
                     VALUES
-                    (@frameworkId, @frameworkCollaboratorId)",
-                new { frameworkId, frameworkCollaboratorId }
+                    (@frameworkId, @frameworkCollaboratorId, @required)",
+                new { frameworkId, frameworkCollaboratorId, required }
                 );
             }
         }
@@ -1409,7 +1409,7 @@ WHERE (ID = @commentId)", new { adminId, commentId }
         public IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId)
         {
             return connection.Query<FrameworkReview>(
-                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments, FR.SignOffRequired
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID

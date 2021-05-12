@@ -11,7 +11,7 @@
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
-        Centre GetCentreDetailsById(int centreId);
+        Centre? GetCentreDetailsById(int centreId);
         (string firstName, string lastName, string email) GetContactInfo(int centreId);
     }
 
@@ -65,15 +65,39 @@
             return centres;
         }
 
-        public Centre GetCentreDetailsById(int centreId)
+        public Centre? GetCentreDetailsById(int centreId)
         {
-            return connection.QueryFirstOrDefault<Centre>(
-                @"SELECT c.CentreID, c.CentreName, c.RegionID, r.RegionName
+            var centre = connection.QueryFirstOrDefault<Centre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.NotifyEmail,
+                            c.BannerText,
+                            c.SignatureImage,
+                            c.CentreLogo,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
+
+            if (centre == null)
+            {
+                logger.LogWarning($"No centre found for centre id {centreId}");
+                return null;
+            }
+
+            if (centre.CentreLogo?.Length < 10)
+            {
+                centre.CentreLogo = null;
+            }
+
+            return centre;
         }
 
         public (string firstName, string lastName, string email) GetContactInfo(int centreId)

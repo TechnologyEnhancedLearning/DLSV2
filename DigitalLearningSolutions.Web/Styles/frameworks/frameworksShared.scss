@@ -22,6 +22,10 @@ $nhs-dark-grey: #425563;
   font-size: 12px;
   padding: 4px;
 }
+.status-tag {
+  overflow: hidden;
+  white-space: nowrap;
+}
 .nhsuk-details__text {
   padding-bottom: 0 !important;
 }

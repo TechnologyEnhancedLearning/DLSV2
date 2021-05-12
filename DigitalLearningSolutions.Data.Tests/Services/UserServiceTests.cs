@@ -2,17 +2,20 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Castle.Core.Internal;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Common;
     using NUnit.Framework;
 
     public class UserServiceTests
     {
-        private IUserDataService userDataService;
         private ILoginService loginService;
+        private IUserDataService userDataService;
         private IUserService userService;
 
         [SetUp]
@@ -119,7 +122,53 @@
         }
 
         [Test]
-        public void GetAvailableCentres_returns_centres_correctly_ordered()
+        public void GetUsersWithActiveCentres_returns_users_with_active_centres()
+        {
+            // Given
+            var inputAdminAccount =
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: true);
+            var inputDelegateList = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: true),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: true),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true)
+            };
+            var expectedDelegateIds = new List<int> { 2, 3, 4 };
+
+            // When
+            var (resultAdminUser, resultDelegateUsers) =
+                userService.GetUsersWithActiveCentres(inputAdminAccount, inputDelegateList);
+            var resultDelegateIds = resultDelegateUsers.Select(du => du.Id).ToList();
+
+            // Then
+            Assert.That(resultAdminUser.IsSameOrEqualTo(inputAdminAccount));
+            Assert.That(resultDelegateIds.SequenceEqual(expectedDelegateIds));
+        }
+
+        [Test]
+        public void GetUsersWithActiveCentres_does_not_return_users_with_inactive_centres()
+        {
+            // Given
+            var inputAdminAccount =
+                UserTestHelper.GetDefaultAdminUser(1, centreName: "First Centre", centreActive: false);
+            var inputDelegateList = new List<DelegateUser>
+            {
+                UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: false),
+                UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: false),
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: false)
+            };
+
+            // When
+            var (resultAdminUser, resultDelegateUsers) =
+                userService.GetUsersWithActiveCentres(inputAdminAccount, inputDelegateList);
+
+            // Then
+            Assert.IsNull(resultAdminUser);
+            Assert.That(resultDelegateUsers.IsNullOrEmpty);
+        }
+
+        [Test]
+        public void GetUserCentres_returns_centres_correctly_ordered()
         {
             // Given
             var inputDelegateList = new List<DelegateUser>
@@ -153,19 +202,19 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress))
-                .Returns(new List<DelegateUser> ());
+                .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, adminUser, A<List<DelegateUser>>._))
                 .Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, null, password, firstName, lastName, email);
+            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, null, password, firstName, lastName, email, null);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._))
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
         }
@@ -186,16 +235,16 @@
                 .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, null, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser> { delegateUser }));
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(null, delegateUser.Id, password, firstName, lastName, email);
+            var result = userService.TryUpdateUserAccountDetails(null, delegateUser.Id, password, firstName, lastName, email, null);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._))
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
         }
@@ -219,17 +268,17 @@
                 .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((adminUser, new List<DelegateUser> { delegateUser }));
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._)).DoesNothing();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._)).DoesNothing();
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._)).DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id, password, firstName, lastName, email);
+            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
 
             // Then
             result.Should().BeTrue();
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._))
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustHaveHappened();
         }
 
@@ -254,13 +303,13 @@
                 .Returns((null, new List<DelegateUser>()));
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id,password, firstName, lastName, email);
+            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id,password, firstName, lastName, email, null);
 
             // Then
             result.Should().BeFalse();
-            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, A<int[]>._))
+            A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustNotHaveHappened();
-            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, A<int>._))
+            A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustNotHaveHappened();
         }
     }

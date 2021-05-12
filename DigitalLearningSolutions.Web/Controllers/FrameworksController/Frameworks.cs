@@ -25,12 +25,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            var isFrameworkContributor = GetIsFrameworkContributor();
-            if (!isFrameworkDeveloper && !isFrameworkContributor)
-            {
-                logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
-                return StatusCode(403);
-            }
             var frameworks = frameworkService.GetFrameworksForAdminId(adminId);
             if (frameworks == null)
             {
@@ -505,8 +499,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.RemoveCollaboratorFromFramework(frameworkId, id);
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
+        [Route("/Framework/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
+        [Route("/Framework/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/")]
         [Route("/Framework/{frameworkId}/{tabname}/")]
-        public IActionResult ViewFramework(string tabname, int frameworkId)
+        public IActionResult ViewFramework(string tabname, int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
             var adminId = GetAdminID();
             IEnumerable<CollaboratorDetail> collaboratorDetails;

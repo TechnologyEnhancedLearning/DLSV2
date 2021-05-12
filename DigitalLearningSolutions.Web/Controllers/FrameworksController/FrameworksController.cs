@@ -7,7 +7,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    [Authorize(Policy = CustomPolicies.UserOnly)]
+    [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
     public partial class FrameworksController : Controller
     {
         private readonly IFrameworkService frameworkService;

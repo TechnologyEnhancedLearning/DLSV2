@@ -5,17 +5,23 @@
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
-  @if (Model.HasError) {
+  @if (Model.HintText != null) {
+    <div class="nhsuk-hint">
+      @Model.HintText
+    </div>
+  }
+  @if (Model.HasError)
+  {
     <span class="nhsuk-error-message" id="@Model.Name-error">
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
   }
-  <input class="nhsuk-input nhsuk-u-width-one-half @(Model.HasError ? "nhsuk-input--error" : "")" 
+  <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" 
          id="@Model.Id"
          name="@Model.Name"
          value="@Model.Value"
          type="@Model.Type"
          spellcheck="@Model.SpellCheck"
          autocomplete="@Model.Autocomplete"
-         aria-describedby="@Model.Name-error"/>
+         aria-describedby="@Model.Name-error" />
 </div>

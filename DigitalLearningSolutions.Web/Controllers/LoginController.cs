@@ -70,9 +70,19 @@
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
                     model.Password);
 
-            var availableCentres = userService.GetUserCentres(verifiedAdminUser, approvedDelegateUsers);
+            var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
+                userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
+            var availableCentres =
+                userService.GetUserCentres(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
+
+            if (availableCentres.Count == 0)
+            {
+                return View("CentreInactive");
+            }
+
             var (adminLoginDetails, delegateLoginDetails) =
-                GetLoginDetails(verifiedAdminUser, approvedDelegateUsers);
+                GetLoginDetails(verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre);
+
             if (availableCentres.Count == 1)
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
@@ -121,7 +131,6 @@
                 delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe);
         }
 

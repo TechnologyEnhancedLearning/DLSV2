@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
@@ -9,14 +10,31 @@
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
+
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
+        (
+            AdminUser? adminUser,
+            List<DelegateUser> delegateUsers
+        );
+
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
-        public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName, string surname, string email);
+
+        public bool TryUpdateUserAccountDetails
+        (
+            int? adminId,
+            int? delegateId,
+            string password,
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage
+        );
     }
 
     public class UserService : IUserService
     {
-        private readonly IUserDataService userDataService;
         private readonly ILoginService loginService;
+        private readonly IUserDataService userDataService;
 
         public UserService(IUserDataService userDataService, ILoginService loginService)
         {
@@ -61,6 +79,17 @@
             return (adminUser, delegateUser);
         }
 
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
+        (
+            AdminUser? adminUser,
+            List<DelegateUser> delegateUsers
+        )
+        {
+            var adminUserWithActiveCentre = adminUser?.CentreActive == true ? adminUser : null;
+            var delegateUsersWithActiveCentres = delegateUsers.Where(du => du.CentreActive).ToList();
+            return (adminUserWithActiveCentre, delegateUsersWithActiveCentres);
+        }
+
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
             var availableCentres = delegateUsers
@@ -70,16 +99,25 @@
 
             if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
             {
-                availableCentres.Add(
-                    new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
+                availableCentres.Add(new CentreUserDetails(adminUser.CentreId, adminUser.CentreName, true));
             }
 
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public bool TryUpdateUserAccountDetails(int? adminId, int? delegateId, string password, string firstName, string surname, string email)
+        public bool TryUpdateUserAccountDetails
+        (
+            int? adminId,
+            int? delegateId,
+            string password,
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage
+        )
         {
-            var (verifiedAdminUser, verifiedDelegateUsers) = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
+            var (verifiedAdminUser, verifiedDelegateUsers) =
+                GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -88,19 +126,24 @@
 
             if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUser(firstName, surname, email, verifiedAdminUser.Id);
+                userDataService.UpdateAdminUser(firstName, surname, email, profileImage, verifiedAdminUser.Id);
             }
 
             if (verifiedDelegateUsers.Count != 0)
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(firstName, surname, email, delegateIds);
+                userDataService.UpdateDelegateUsers(firstName, surname, email, profileImage, delegateIds);
             }
-            
+
             return true;
         }
 
-        private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password)
+        private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts
+        (
+            int? adminId,
+            int? delegateId,
+            string password
+        )
         {
             var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
 

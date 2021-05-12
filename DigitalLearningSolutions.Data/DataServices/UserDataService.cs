@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
@@ -14,8 +14,8 @@
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
-        public void UpdateAdminUser(string firstName, string surname, string email, int id);
-        public void UpdateDelegateUsers(string firstName, string surname, string email, int[] ids);
+        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
+        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids);
     }
 
     public class UserDataService : IUserDataService
@@ -34,6 +34,7 @@
                         au.AdminID AS Id,
                         au.CentreID, 
                         ct.CentreName,
+                        ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -67,6 +68,7 @@
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
+                        ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
@@ -97,6 +99,7 @@
                         au.AdminID AS Id,
                         au.CentreID, 
                         ct.CentreName,
+                        ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -128,8 +131,9 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
-                        ct.CentreName,
                         cd.CentreID,
+                        ct.CentreName,
+                        ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
@@ -153,6 +157,7 @@
                         Forename,
                         Surname,
                         Email,
+                        Password,
                         ResetPasswordID
                     FROM AdminUsers
                     WHERE (Email = @emailAddress)",
@@ -168,6 +173,7 @@
                         FirstName,
                         LastName,
                         EmailAddress,
+                        Password,
                         ResetPasswordID
                     FROM Candidates
                     WHERE (EmailAddress = @emailAddress)",
@@ -177,29 +183,31 @@
             return users;
         }
 
-        public void UpdateAdminUser(string firstName, string surname, string email, int id)
+        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id)
         {
             connection.Execute(
                 @"UPDATE AdminUsers
                         SET
                             Forename = @firstName,
                             Surname = @surname,
-                            Email = @email
+                            Email = @email,
+                            ProfileImage = @profileImage
                         WHERE AdminID = @id",
-                new {firstName, surname, email, id}
+                new {firstName, surname, email, profileImage, id}
             );
         }
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, int[] ids)
+        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates
                         SET
                             FirstName = @firstName,
                             LastName = @surname,
-                            EmailAddress = @email
+                            EmailAddress = @email,
+                            ProfileImage = @profileImage
                         WHERE CandidateID in @ids",
-                new { firstName, surname, email, ids }
+                new { firstName, surname, email, profileImage, ids }
             );
         }
     }

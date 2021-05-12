@@ -58,6 +58,8 @@ namespace DigitalLearningSolutions.Web
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
                 options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
                     policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
+                options.AddPolicy(CustomPolicies.UserFrameworksAdminOnly,
+                    policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy));
             });
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
@@ -92,7 +94,7 @@ namespace DigitalLearningSolutions.Web
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
-            // Register data services.
+            // Register services.
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseService, CourseService>();
@@ -101,6 +103,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkService, FrameworkService>();
@@ -114,6 +117,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
+            services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ILoginService, LoginService>();
@@ -124,6 +128,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
@@ -132,6 +137,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
+            services.AddScoped<IClockService, ClockService>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

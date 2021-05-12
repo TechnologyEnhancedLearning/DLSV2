@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -24,7 +24,7 @@
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
-            //When
+            // When
             var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
 
             // Then
@@ -83,7 +83,7 @@
                     var email = "test@email.com";
 
                     // When
-                    userDataService.UpdateAdminUser(firstName, lastName, email, 7);
+                    userDataService.UpdateAdminUser(firstName, lastName, email, null, 7);
                     var updatedUser = userDataService.GetAdminUserById(7);
 
                     // Then
@@ -111,7 +111,7 @@
                     var email = "test@email.com";
 
                     // When
-                    userDataService.UpdateDelegateUsers(firstName, lastName, email, new []{2,3});
+                    userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new []{2,3});
                     var updatedUser = userDataService.GetDelegateUserById(2);
                     var secondUpdatedUser = userDataService.GetDelegateUserById(3);
 
