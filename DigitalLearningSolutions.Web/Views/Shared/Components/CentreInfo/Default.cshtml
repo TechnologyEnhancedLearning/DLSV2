@@ -1,0 +1,5 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model CentreInfoViewModel
+
+<p class="nhsuk-body-l">@Model.BannerText</p>
+<vc:action-link asp-controller="FindYourCentre" asp-action="Index"  asp-all-route-data="@Model.Routes" link-text="More information" />
