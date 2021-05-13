@@ -30,7 +30,7 @@
             this.logger = logger;
         }
 
-        public IActionResult Index(string? returnUrl)
+        public IActionResult Index(string? returnUrl = null)
         {
             if (User.Identity.IsAuthenticated)
             {

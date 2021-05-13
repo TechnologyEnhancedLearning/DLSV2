@@ -50,7 +50,7 @@
         public void Index_should_render_basic_form()
         {
             // When
-            var result = controller.Index(string.Empty);
+            var result = controller.Index();
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -65,7 +65,7 @@
                 .WithMockUser(true);
 
             // When
-            var result = controllerWithAuthenticatedUser.Index(string.Empty);
+            var result = controllerWithAuthenticatedUser.Index();
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -146,19 +146,6 @@
             A.CallTo(() => authenticationService.SignInAsync(
                     A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._, A<AuthenticationProperties>._))
                 .MustHaveHappened();
-        }
-
-        private void GivenSignInIsSuccessful(AdminUser expectedAdmin, List<DelegateUser> expectedDelegates)
-        {
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdmin, expectedDelegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((expectedAdmin, expectedDelegates));
-            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((expectedAdmin, expectedDelegates));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(
-                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
         }
 
         [Test]
@@ -449,6 +436,19 @@
 
             // Then
             result.Should().BeViewResult().WithViewName("CentreInactive");
+        }
+
+        private void GivenSignInIsSuccessful(AdminUser expectedAdmin, List<DelegateUser> expectedDelegates)
+        {
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((expectedAdmin, expectedDelegates));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
         }
     }
 }
