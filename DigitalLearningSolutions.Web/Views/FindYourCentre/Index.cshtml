@@ -3,7 +3,7 @@
 @model FindYourCentreViewModel
 @{
   ViewData["Title"] = "Find Your Centre";
-  var url = "https://www.dls.nhs.uk/dev-prev" + "/findyourcentre?nonav=true";
+  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
   url += String.IsNullOrEmpty(Model.CentreId) ? "" : "&centreid=" + Model.CentreId;
 }
 
