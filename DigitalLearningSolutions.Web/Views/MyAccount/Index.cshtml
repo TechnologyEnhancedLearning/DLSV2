@@ -10,7 +10,8 @@
 @{
   ViewData["Title"] = "My Account";
 }
-@if (!User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId))
+@if (!User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)
+     && (User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false))
 {
   @section NavMenuItems {
     <partial name="../LearningPortal/Shared/_NavMenuItems" />
