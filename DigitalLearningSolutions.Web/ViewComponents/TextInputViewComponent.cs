@@ -13,7 +13,7 @@
             string? hintText,
             string? autocomplete,
             string? cssClass
-            )
+        )
         {
             var model = ViewData.Model;
 
@@ -23,7 +23,18 @@
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
-            var textBoxViewModel = new TextInputViewModel(aspFor, aspFor, label, propertyValue, type, spellCheck, autocomplete, cssClass, hintText, errorMessage, hasError);
+            var textBoxViewModel = new TextInputViewModel(
+                aspFor,
+                aspFor,
+                label,
+                propertyValue,
+                type,
+                spellCheck,
+                autocomplete,
+                cssClass,
+                hintText,
+                errorMessage,
+                hasError);
             return View(textBoxViewModel);
         }
     }
