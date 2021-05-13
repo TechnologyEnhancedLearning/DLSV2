@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 {
+    using System;
     using DigitalLearningSolutions.Data.Models;
 
     public class CentreConfigurationViewModel
     {
         public CentreConfigurationViewModel(Centre centre)
         {
+            CentreId = centre.CentreId;
             CentreName = centre.CentreName;
             RegionName = centre.RegionName;
             NotifyEmail = centre.NotifyEmail;
@@ -16,8 +18,16 @@
             ContactSurname = centre.ContactSurname;
             ContactEmail = centre.ContactEmail;
             ContactTelephone = centre.ContactTelephone;
+            CentreTelephone = centre.CentreTelephone;
+            CentreEmail = centre.CentreEmail;
+            CentrePostcode = centre.CentrePostcode;
+            OpeningHours = centre.OpeningHours;
+            CentreWebAddress = centre.CentreWebAddress;
+            OrganisationsCovered = SplitMultiValuedStringIntoArray(centre.OrganisationsCovered);
+            TrainingVenues = SplitMultiValuedStringIntoArray(centre.TrainingVenues);
+            OtherInformation = centre.OtherInformation;
         }
-
+        public int CentreId { get; set; }
         public string CentreName { get; set; }
         public string RegionName { get; set; }
         public string NotifyEmail { get; set; }
@@ -28,5 +38,20 @@
         public string? ContactSurname { get; set; }
         public string? ContactEmail { get; set; }
         public string? ContactTelephone { get; set; }
+        public string? CentreTelephone { get; set; }
+        public string? CentreEmail { get; set; }
+        public string? CentrePostcode { get; set; }
+        public string? OpeningHours { get; set; }
+        public string? CentreWebAddress { get; set; }
+        public string[] OrganisationsCovered { get; set; }
+        public string[] TrainingVenues { get; set; }
+        public string? OtherInformation { get; set; }
+
+        private string[] SplitMultiValuedStringIntoArray(string? multiValuedString)
+        {
+            return multiValuedString != null ?
+                    multiValuedString.Split("\r\n", StringSplitOptions.RemoveEmptyEntries):
+                    new string[0];
+        }
     }
 }

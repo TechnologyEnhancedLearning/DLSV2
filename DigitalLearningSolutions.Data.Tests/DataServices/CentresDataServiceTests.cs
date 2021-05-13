@@ -110,7 +110,15 @@
                 ContactForename = "xxxxx",
                 ContactSurname = "xxxx",
                 ContactEmail = "nybwhudkra@ic.vs",
-                ContactTelephone = "xxxxxxxxxxxx"
+                ContactTelephone = "xxxxxxxxxxxx",
+                CentreTelephone = "01925 664457",
+                CentreEmail = "5bp.informaticstraining.5bp.nhs.uk",
+                CentrePostcode = "WA2 8WA",
+                OpeningHours = "9.30am - 4.30pm",
+                CentreWebAddress = null,
+                OrganisationsCovered = "Northwest Boroughs Healthcare NHS Foundation Trust",
+                TrainingVenues = "Hollins Park House\nHollins Lane\nWinwick\nWarrington WA2 8WA",
+                OtherInformation = null
             };
 
             // When

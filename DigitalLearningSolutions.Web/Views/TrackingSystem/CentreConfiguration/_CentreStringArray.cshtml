@@ -1,0 +1,11 @@
+﻿@model string[]
+@if (Model.Length == 1) {
+  @Model[0]
+} else {
+  <ul class="no-bullets">
+    @foreach (var value in Model)
+    {
+      <li>@value</li>
+    }
+  </ul>
+}

@@ -14,5 +14,13 @@
         public string? ContactSurname { get; set; }
         public string? ContactEmail { get; set; }
         public string? ContactTelephone { get; set; }
+        public string? CentreTelephone { get; set; }
+        public string? CentreEmail { get; set; }
+        public string? CentrePostcode { get; set; }
+        public string? OpeningHours { get; set; }
+        public string? CentreWebAddress { get; set; }
+        public string? OrganisationsCovered { get; set; }
+        public string? TrainingVenues { get; set; }
+        public string? OtherInformation { get; set; }
     }
 }
