@@ -14,6 +14,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     internal class LoginControllerTests
@@ -23,6 +24,7 @@
         private ILoginService loginService;
         private ISessionService sessionService;
         private IUserService userService;
+        private ILogger<LoginController> logger;
 
         [SetUp]
         public void SetUp()
@@ -30,8 +32,9 @@
             loginService = A.Fake<ILoginService>();
             userService = A.Fake<IUserService>();
             sessionService = A.Fake<ISessionService>();
+            logger = A.Fake<ILogger<LoginController>>();
 
-            controller = new LoginController(loginService, userService, sessionService)
+            controller = new LoginController(loginService, userService, sessionService, logger)
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -56,7 +59,7 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService)
+            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService, logger)
                 .WithDefaultContext()
                 .WithMockUser(true);
 
@@ -108,9 +111,12 @@
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
+            var returnUrl = "/some/other/page";
+            var urlHelper = controller.Url;
+            A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
+
             // When
             var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
-            var returnUrl = "/some/other/page";
             loginViewModel.ReturnUrl = returnUrl;
             var result = controller.Index(loginViewModel);
 
@@ -134,9 +140,12 @@
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
 
+            var returnUrl = "www.suspicious.com";
+            var urlHelper = controller.Url;
+            A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(false);
+
             // When
             var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
-            var returnUrl = "www.suspicious.com";
             loginViewModel.ReturnUrl = returnUrl;
             var result = controller.Index(loginViewModel);
 
