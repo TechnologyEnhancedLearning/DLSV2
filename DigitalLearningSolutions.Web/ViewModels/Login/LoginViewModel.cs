@@ -9,8 +9,8 @@
             Username = string.Empty;
             Password = string.Empty;
             RememberMe = false;
-            ReturnUrl = string.Empty;
         }
+
         public LoginViewModel(string? returnUrl)
         {
             Username = string.Empty;

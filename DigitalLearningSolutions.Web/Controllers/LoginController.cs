@@ -185,6 +185,12 @@
                 IssuedUtc = DateTime.UtcNow
             };
             HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+            return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
+        }
+
+        private IActionResult? RedirectToReturnUrl(string? returnUrl)
+        {
             if (!string.IsNullOrEmpty(returnUrl))
             {
                 if (Url.IsLocalUrl(returnUrl))
@@ -193,7 +199,8 @@
                 }
                 logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
             }
-            return RedirectToAction("Index", "Home");
+
+            return null;
         }
 
         private List<Claim> GetClaimsForSignIn
