@@ -4,17 +4,17 @@
 
     public class CustomPromptManagementViewModel
     {
-        public CustomPromptManagementViewModel(int fieldId, string? prompt, bool mandatory, List<string> options)
+        public CustomPromptManagementViewModel(int fieldId, string promptName, bool mandatory, List<string> options)
         {
             CustomFieldId = fieldId;
-            CustomPrompt = prompt;
+            CustomPromptName = promptName;
             Mandatory = mandatory;
             Options = options;
         }
 
         public int CustomFieldId { get; set; }
 
-        public string? CustomPrompt { get; set; }
+        public string CustomPromptName { get; set; }
 
         public bool Mandatory { get; set; }
 

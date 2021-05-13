@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public class DisplayRegistrationPromptsViewModel
@@ -9,19 +10,11 @@
         {
             CustomFields = new List<CustomPromptManagementViewModel>();
 
-            TryAddCustomPromptManagementViewModelToList(1, customPrompts?.CustomField1);
-            TryAddCustomPromptManagementViewModelToList(2, customPrompts?.CustomField2);
-            TryAddCustomPromptManagementViewModelToList(3, customPrompts?.CustomField3);
-            TryAddCustomPromptManagementViewModelToList(4, customPrompts?.CustomField4);
-            TryAddCustomPromptManagementViewModelToList(5, customPrompts?.CustomField5);
-            TryAddCustomPromptManagementViewModelToList(6, customPrompts?.CustomField6);
-        }
-
-        private void TryAddCustomPromptManagementViewModelToList(int fieldNumber, CustomPrompt? customPrompt)
-        {
-            if (customPrompt != null)
+            if (customPrompts != null)
             {
-                CustomFields.Add(new CustomPromptManagementViewModel(fieldNumber, customPrompt.CustomPromptText, customPrompt.Mandatory, customPrompt.Options));
+                CustomFields = customPrompts.CustomPrompts.Select(cp =>
+                        new CustomPromptManagementViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory,cp.Options))
+                    .ToList();
             }
         }
 

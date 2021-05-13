@@ -1,18 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model DisplayRegistrationPromptsViewModel
 
-@{
-  ViewData["Title"] = "Manage delegate registration prompts";
-}
+@{ ViewData["Title"] = "Manage delegate registration prompts"; }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl" id="page-heading">Manage delegate registration prompts</h1>
+    <h1 class="nhsuk-heading-xl">Manage delegate registration prompt</h1>
   </div>
 </div>
 
-@foreach (var customField in Model.CustomFields)
-{
+@foreach (var customField in Model.CustomFields) {
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <details class="nhsuk-details nhsuk-expander">
@@ -20,7 +17,7 @@
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-three-quarters nhsuk-u-three-quarters-tablet">
               <span class="nhsuk-details__summary-text">
-                @customField.CustomPrompt
+                @customField.CustomPromptName
               </span>
             </div>
             <div class="nhsuk-grid-column-one-quarter nhsuk-u-one-quarter-tablet right-align-tag-column">
@@ -33,16 +30,15 @@
         <div class="nhsuk-details__text">
           <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
             <div class="nhsuk-grid-column-full">
-              @if (customField.Options.Count != 0)
-              {
+              @if (customField.Options.Count != 0) {
                 <p class="nhsuk-u-font-weight-bold">Answers delegate can choose from:</p>
-                @foreach (var answer in customField.Options)
-                {
-                  <p class="nhsuk-u-margin-0">@answer</p>
-                }
-              }
-              else
-              {
+                <ul class="">
+                  @foreach (var answer in customField.Options)
+                  {
+                    <li>@answer</li>
+                  }
+                </ul>
+              } else {
                 <p>This is a free text field. Delegates can input any text.</p>
               }
             </div>
@@ -59,6 +55,16 @@
           </div>
         </div>
       </details>
+    </div>
+  </div>
+}
+
+@if (Model.CustomFields.Count == 0) {
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <p class="nhsuk-body-l">
+        Your centre does not have any delegate registration prompts.
+      </p>
     </div>
   </div>
 }

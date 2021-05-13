@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public static class CustomPromptsTestHelper
@@ -15,26 +16,98 @@
             CustomPrompt? customPrompt6 = null
         )
         {
-            return new CentreCustomPrompts
+            var centreCustomPrompts = new CentreCustomPrompts(centreId, new List<CustomPrompt>());
+
+            if (customPrompt1 != null)
             {
-                CentreId = centreId,
-                CustomField1 = customPrompt1,
-                CustomField2 = customPrompt2,
-                CustomField3 = customPrompt3,
-                CustomField4 = customPrompt4,
-                CustomField5 = customPrompt5,
-                CustomField6 = customPrompt6
-            };
+                centreCustomPrompts.CustomPrompts.Add(customPrompt1);
+            }
+            if (customPrompt2 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt2);
+            }
+            if (customPrompt3 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt3);
+            }
+            if (customPrompt4 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt4);
+            }
+            if (customPrompt5 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt5);
+            }
+            if (customPrompt6 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt6);
+            }
+
+            return centreCustomPrompts;
         }
 
         public static CustomPrompt GetDefaultCustomPrompt
         (
-            string? text = "Custom Prompt",
+            int promptNumber,
+            string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false
         )
         {
-            return new CustomPrompt(text, options, mandatory);
+            return new CustomPrompt(promptNumber, text, options, mandatory);
+        }
+
+        public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers
+        (
+            int centreId = 29,
+            CustomPromptWithAnswer? customPrompt1 = null,
+            CustomPromptWithAnswer? customPrompt2 = null,
+            CustomPromptWithAnswer? customPrompt3 = null,
+            CustomPromptWithAnswer? customPrompt4 = null,
+            CustomPromptWithAnswer? customPrompt5 = null,
+            CustomPromptWithAnswer? customPrompt6 = null
+        )
+        {
+            var centreCustomPrompts = new CentreCustomPromptsWithAnswers(centreId, new List<CustomPromptWithAnswer>());
+
+            if (customPrompt1 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt1);
+            }
+            if (customPrompt2 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt2);
+            }
+            if (customPrompt3 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt3);
+            }
+            if (customPrompt4 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt4);
+            }
+            if (customPrompt5 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt5);
+            }
+            if (customPrompt6 != null)
+            {
+                centreCustomPrompts.CustomPrompts.Add(customPrompt6);
+            }
+
+            return centreCustomPrompts;
+        }
+
+        public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer
+        (
+            int promptNumber,
+            string text = "Custom Prompt",
+            string? options = "",
+            bool mandatory = false,
+            string? answer = null
+        )
+        {
+            return new CustomPromptWithAnswer(promptNumber, text, options, mandatory, answer);
         }
 
         public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult
