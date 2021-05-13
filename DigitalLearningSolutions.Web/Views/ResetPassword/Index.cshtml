@@ -3,13 +3,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Reset Your Password": "Reset Your Password";
-  var passwordError = ViewData.ModelState["Password"]?.Errors?.Count > 0;
-  var confirmPasswordError = ViewData.ModelState["ConfirmPassword"]?.Errors?.Count > 0;
-  var passwordInputErrorClass = passwordError ? "nhsuk-select--error" : "";
-  var passwordFormErrorClass = passwordError ? "nhsuk-form-group--error" : "";
-  var confirmPasswordInputErrorClass = confirmPasswordError ? "nhsuk-select--error" : "";
-  var confirmPasswordFormErrorClass = confirmPasswordError ? "nhsuk-form-group--error" : "";
+  ViewData["Title"] = errorHasOccurred ? "Error: Reset Your Password" : "Reset Your Password";
 }
 
 <div class="nhsuk-grid-row">
@@ -27,32 +21,23 @@
         </p>
       </div>
 
-      <div class="nhsuk-form-group @passwordFormErrorClass">
-        <label class="nhsuk-label" for="Password">
-          Password
-        </label>
-        <div class="nhsuk-hint" id="password-hint">
-          Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol.
-        </div>
-        @if (passwordError) {
-          <span class="nhsuk-error-message" id="password-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Password"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @passwordInputErrorClass" id="Password" spellcheck="false" autocomplete="new-password" aria-describedby="password-error password-hint" asp-for="Password"/>
-      </div>
+      <vc:text-input asp-for="Password"
+                     label="Password"
+                     type="password"
+                     spell-check="false"
+                     hint-text="Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
+                     autocomplete="new-password"
+                     css-class="nhsuk-u-width-one-half"
+                     value=""/>
 
-      <div class="nhsuk-form-group @confirmPasswordFormErrorClass">
-        <label class="nhsuk-label" for="ConfirmPassword">
-          Re-type password
-        </label>
-        @if (confirmPasswordError) {
-          <span class="nhsuk-error-message" id="confirm-password-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["ConfirmPassword"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @confirmPasswordInputErrorClass" id="ConfirmPassword" spellcheck="false" autocomplete="new-password" aria-describedby="confirm-password-error" asp-for="ConfirmPassword"/>
-      </div>
+      <vc:text-input asp-for="ConfirmPassword"
+                     label="Re-type password"
+                     type="password"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="new-password"
+                     css-class="nhsuk-u-width-one-half"
+                     value=""/>
 
       <button class="nhsuk-button" type="submit">Reset password</button>
     </form>

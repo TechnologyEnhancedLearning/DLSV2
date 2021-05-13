@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Error");
             }
 
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [HttpPost]
