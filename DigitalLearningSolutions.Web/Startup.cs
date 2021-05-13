@@ -133,6 +133,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<CustomPromptHelper>();
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();

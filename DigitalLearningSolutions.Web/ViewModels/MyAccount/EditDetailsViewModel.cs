@@ -1,6 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
     using Microsoft.AspNetCore.Http;
@@ -11,12 +14,17 @@
 
         public EditDetailsViewModel(
             AdminUser? adminUser,
-            DelegateUser? delegateUser)
+            DelegateUser? delegateUser,
+            List<(int id, string name)> jobGroups)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
             Email = adminUser?.EmailAddress ?? delegateUser?.EmailAddress;
             ProfileImage = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
+
+            IsDelegateUser = delegateUser != null;
+            JobGroupId = jobGroups.Where(jg => jg.name == delegateUser?.JobGroupName).Select(jg => jg.id)
+                .SingleOrDefault();
         }
 
         [Required(ErrorMessage = "Enter a first name.")]
@@ -41,5 +49,22 @@
 
         [AllowedExtensions(new []{".png",".tiff",".jpg",".jpeg",".bmp",".gif"})]
         public IFormFile? ProfileImageFile { get; set; }
+
+        public bool IsDelegateUser { get; set; }
+
+        [Required(ErrorMessage = "Select a job group")]
+        public int? JobGroupId { get; set; }
+
+        public string? Answer1 { get; set; }
+
+        public string? Answer2 { get; set; }
+
+        public string? Answer3 { get; set; }
+
+        public string? Answer4 { get; set; }
+
+        public string? Answer5 { get; set; }
+
+        public string? Answer6 { get; set; }
     }
 }

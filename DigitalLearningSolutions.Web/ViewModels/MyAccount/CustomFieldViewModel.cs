@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+
     public class CustomFieldViewModel
     {
-        public CustomFieldViewModel(int fieldId, string? prompt, bool mandatory, string? answer)
+        public CustomFieldViewModel(int fieldId, string prompt, bool mandatory, string? answer)
         {
             CustomFieldId = fieldId;
             CustomPrompt = prompt;
@@ -12,7 +15,7 @@
 
         public int CustomFieldId { get; set; }
 
-        public string? CustomPrompt { get; set; }
+        public string CustomPrompt { get; set; }
 
         public bool Mandatory { get; set; }
 

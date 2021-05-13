@@ -54,6 +54,28 @@
     </div>
   </div>
 
+  @if (Model.IsDelegateUser) {
+    <input type="hidden" asp-for="IsDelegateUser"/>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:select-list asp-for="JobGroupId" label="Job group" value="@Model.JobGroupId.ToString()" hint-text="" css-class="nhsuk-u-width-one-half" default-option="Select a job group" select-list-options="@ViewBag.JobGroupOptions"></vc:select-list>
+      </div>
+    </div>
+
+    foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+      <div class="nhsuk-grid-row @(ViewBag.CustomFields.IndexOf(customField) == ViewBag.CustomFields.Count - 1 ? "divider" : "")">
+        <div class="nhsuk-grid-column-full">
+          @if (customField.Options.Any())
+          {
+            <vc:select-list asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" value="@customField.Answer" hint-text="" css-class="nhsuk-u-width-one-half" default-option="Select a @customField.CustomPrompt.ToLower()" select-list-options="@customField.Options"></vc:select-list>
+          } else {
+            <vc:text-input asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" value="@customField.Answer" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half" />
+          }
+        </div>
+      </div>
+    }
+  }
+
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-half">
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
