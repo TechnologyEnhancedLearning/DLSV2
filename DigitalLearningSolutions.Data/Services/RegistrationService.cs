@@ -8,7 +8,7 @@
 
     public interface IRegistrationService
     {
-        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
+        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
     }
     public class RegistrationService: IRegistrationService
     {
@@ -26,16 +26,16 @@
             this.centresDataService = centresDataService;
         }
 
-        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
+        public (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var (candidateNumber, approved) = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
             var contactInfo = centresDataService.GetContactInfo(delegateRegistrationModel.Centre);
             var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
                 delegateRegistrationModel.LastName, baseUrl);
             emailService.SendEmail(approvalEmail);
 
-            return candidateNumber;
+            return (candidateNumber, approved);
         }
 
         private Email GenerateApprovalEmail(string emailAddress, string firstName, string learnerFirstName, string learnerLastName, string baseUrl)

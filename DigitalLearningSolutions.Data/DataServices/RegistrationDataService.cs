@@ -7,7 +7,7 @@
 
     public interface IRegistrationDataService
     {
-        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
     }
 
     public class RegistrationDataService: IRegistrationDataService
@@ -19,8 +19,10 @@
             this.connection = connection;
         }
 
-        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
+        public (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
+            var approved = false;
+
             var values = new
             {
                 FirstName = delegateRegistrationModel.FirstName,
@@ -29,7 +31,7 @@
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
                 Active = 1,
-                Approved = 0,
+                Approved = approved ? 1 : 0,
                 Answer1 = "",
                 Answer2 = "",
                 Answer3 = "",
@@ -43,10 +45,12 @@
                 Bulk = 0
             };
 
-            return connection.QueryFirstOrDefault<string>(
+            var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType:CommandType.StoredProcedure);
+
+            return (candidateNumber, approved);
         }
     }
 }

@@ -19,5 +19,21 @@
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
+    @if (!Model.Approved) {
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            Your registration must be approved
+          </span>
+        </h3>
+        <p>
+          Your registration must be approved by a centre administrator before you can log in.
+          You will receive an email at the addres you registered with when your registration
+          has been approved.
+        </p>
+      </div>
+      <vc:centre-info centre-id="@Model.CentreId.GetValueOrDefault()" banner-text="@Model.BannerText" />
+    }
   </div>
 </div>
