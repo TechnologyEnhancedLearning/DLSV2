@@ -35,7 +35,7 @@
                 "Test", "Approver", approverEmail
             ));
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns(
-                newCandidateNumber
+                (newCandidateNumber, false)
             );
 
             registrationService = new RegistrationService(registrationDataService, passwordDataService, emailService,
@@ -74,7 +74,7 @@
         public void Registering_delegate_returns_candidate_number()
         {
             // When
-            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost").candidateNumber;
 
             // Then
             candidateNumber.Should().Be(newCandidateNumber);
