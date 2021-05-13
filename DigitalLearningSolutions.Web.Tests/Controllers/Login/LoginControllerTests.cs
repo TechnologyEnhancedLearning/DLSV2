@@ -76,9 +76,7 @@
         public void Successful_sign_in_without_return_url_should_render_home_page()
         {
             // Given
-            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
-            GivenSignInIsSuccessful(expectedAdmin, expectedDelegates);
+            GivenSignInIsSuccessful();
 
             // When
             var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -92,9 +90,7 @@
         public void Successful_sign_in_with_local_return_url_should_redirect_to_return_url()
         {
             // Given
-            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
-            GivenSignInIsSuccessful(expectedAdmin, expectedDelegates);
+            GivenSignInIsSuccessful();
 
             var returnUrl = "/some/other/page";
             var urlHelper = controller.Url;
@@ -113,9 +109,7 @@
         public void Successful_sign_in_with_nonlocal_return_url_should_render_home_page()
         {
             // Given
-            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
-            GivenSignInIsSuccessful(expectedAdmin, expectedDelegates);
+            GivenSignInIsSuccessful();
 
             var returnUrl = "www.suspicious.com";
             var urlHelper = controller.Url;
@@ -135,9 +129,7 @@
         public void Successful_sign_in_should_call_SignInAsync()
         {
             // Given
-            var expectedAdmin = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
-            GivenSignInIsSuccessful(expectedAdmin, expectedDelegates);
+            GivenSignInIsSuccessful();
 
             // When
             controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -438,14 +430,17 @@
             result.Should().BeViewResult().WithViewName("CentreInactive");
         }
 
-        private void GivenSignInIsSuccessful(AdminUser expectedAdmin, List<DelegateUser> expectedDelegates)
+        private void GivenSignInIsSuccessful()
         {
+            var admin = UserTestHelper.GetDefaultAdminUser();
+            var delegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
+
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdmin, expectedDelegates));
+                .Returns((admin, delegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((expectedAdmin, expectedDelegates));
+                .Returns((admin, delegates));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((expectedAdmin, expectedDelegates));
+                .Returns((admin, delegates));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) });
