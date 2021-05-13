@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Mvc.Filters;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class DelegateOnlyInaccessibleAttribute : Attribute, IAuthorizationFilter
+    public class RedirectDelegateOnlyToLearningPortalAttribute : Attribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
