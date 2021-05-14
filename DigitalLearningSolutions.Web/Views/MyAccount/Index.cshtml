@@ -10,8 +10,10 @@
 @{
   ViewData["Title"] = "My Account";
 }
+
 @if (User.IsDelegateOnlyAccount())
 {
+  ViewData["Application"] = "Learning Portal";
   @section NavMenuItems {
     <partial name="../LearningPortal/Shared/_NavMenuItems" />
   }
