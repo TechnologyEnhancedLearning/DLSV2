@@ -15,7 +15,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
         public AccessibilityTests(SeleniumServerFactory<Startup> factory)
         {
-            factory.CreateClient();
             baseUrl = factory.RootUri;
             driver = CreateHeadlessChromeDriver();
         }
@@ -43,8 +42,20 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             axeResult.Violations.Should().BeEmpty();
         }
 
-        // TODO: enable this test when AutomatedUiTests can connect to the test database
-        // [Fact]
+        [Theory]
+        [InlineData("/MyAccount")]
+        public void Authenticated_page_has_no_accessibility_errors(string url)
+        {
+            // when
+            LogUserIn();
+            driver.Navigate().GoToUrl(baseUrl + url);
+            var axeResult = new AxeBuilder(driver).Analyze();
+
+            // then
+            axeResult.Violations.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Registration_journey_has_no_accessibility_errors()
         {
             // given
@@ -87,11 +98,24 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             summaryResult.Violations.Should().BeEmpty();
         }
 
-        private ChromeDriver CreateHeadlessChromeDriver()
+        private static ChromeDriver CreateHeadlessChromeDriver()
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--headless");
             return new ChromeDriver(chromeOptions);
+        }
+
+        private void LogUserIn()
+        {
+            driver.Navigate().GoToUrl(baseUrl + "/Login");
+            var username = driver.FindElement(By.Id("Username"));
+            username.SendKeys("admin");
+
+            var password = driver.FindElement(By.Id("Password"));
+            password.SendKeys("password-1");
+
+            var submitButton = driver.FindElement(By.TagName("form"));
+            submitButton.Submit();
         }
     }
 }

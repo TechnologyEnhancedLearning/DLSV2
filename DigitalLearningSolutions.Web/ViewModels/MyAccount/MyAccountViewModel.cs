@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -9,7 +10,7 @@
         public MyAccountViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            CentreCustomPrompts? customPrompts)
+            CentreCustomPromptsWithAnswers? customPrompts)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
@@ -20,20 +21,11 @@
             JobGroup = delegateUser?.JobGroupName;
 
             CustomFields = new List<CustomFieldViewModel>();
-
-            TryAddCustomFieldViewModelToList(1, customPrompts?.CustomField1, delegateUser?.Answer1);
-            TryAddCustomFieldViewModelToList(2, customPrompts?.CustomField2, delegateUser?.Answer2);
-            TryAddCustomFieldViewModelToList(3, customPrompts?.CustomField3, delegateUser?.Answer3);
-            TryAddCustomFieldViewModelToList(4, customPrompts?.CustomField4, delegateUser?.Answer4);
-            TryAddCustomFieldViewModelToList(5, customPrompts?.CustomField5, delegateUser?.Answer5);
-            TryAddCustomFieldViewModelToList(6, customPrompts?.CustomField6, delegateUser?.Answer6);
-        }
-
-        private void TryAddCustomFieldViewModelToList(int fieldNumber, CustomPrompt? customPrompt, string? answer)
-        {
-            if (customPrompt != null)
+            if (customPrompts != null)
             {
-                CustomFields.Add(new CustomFieldViewModel(fieldNumber, customPrompt.CustomPromptText, customPrompt.Mandatory, answer));
+                CustomFields = customPrompts.CustomPrompts.Select(cp =>
+                        new CustomFieldViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory, cp.Answer))
+                    .ToList();
             }
         }
 

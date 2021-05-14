@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -97,21 +96,8 @@
         public void GetCentreDetailsById_should_return_the_correct_values()
         {
             // Given
-            var expectedCentreDetails = new Centre
-            {
-                CentreId = 2,
-                CentreName = "North West Boroughs Healthcare NHS Foundation Trust",
-                RegionId = 5,
-                RegionName = "North West",
-                NotifyEmail = "notify@test.com",
-                BannerText = "xxxxxxxxxxxxxxxxxxxx",
-                SignatureImage = null,
-                CentreLogo = Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String),
-                ContactForename = "xxxxx",
-                ContactSurname = "xxxx",
-                ContactEmail = "nybwhudkra@ic.vs",
-                ContactTelephone = "xxxxxxxxxxxx"
-            };
+            var expectedCentreDetails = CentreTestHelper.GetDefaultCentre(
+                centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String));
 
             // When
             var result = centresDataService.GetCentreDetailsById(2);

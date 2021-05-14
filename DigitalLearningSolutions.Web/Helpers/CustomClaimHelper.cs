@@ -66,5 +66,11 @@
             var customClaimString = user.GetCustomClaim(customClaimType);
             return int.Parse(customClaimString);
         }
+
+        public static bool IsDelegateOnlyAccount(this ClaimsPrincipal user)
+        {
+            return user.GetAdminId() == null
+                   && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false);
+        }
     }
 }

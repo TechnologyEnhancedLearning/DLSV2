@@ -4,8 +4,9 @@
 
     public class CustomPrompt
     {
-        public CustomPrompt(string? text, string? options, bool mandatory)
+        public CustomPrompt(int customPromptNumber, string text, string? options, bool mandatory)
         {
+            CustomPromptNumber = customPromptNumber;
             CustomPromptText = text;
             Options = SplitOptionsString(options);
             Mandatory = mandatory;
@@ -23,7 +24,8 @@
             return optionsList;
         }
 
-        public string? CustomPromptText { get; set; }
+        public int CustomPromptNumber { get; set; } 
+        public string CustomPromptText { get; set; }
         public List<string> Options { get; set; }
         public bool Mandatory { get; set; }
     }

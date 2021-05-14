@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@
     public class CentreConfigurationController : Controller
     {
         private readonly ICentresDataService centresDataService;
+        private readonly ICustomPromptsService customPromptsService;
 
-        public CentreConfigurationController(ICentresDataService centresDataService)
+        public CentreConfigurationController(ICentresDataService centresDataService, ICustomPromptsService customPromptsService)
         {
             this.centresDataService = centresDataService;
+            this.customPromptsService = customPromptsService;
         }
 
         public IActionResult Index()
@@ -26,6 +29,18 @@
             var model = new CentreConfigurationViewModel(centreDetails);
 
             return View("Index", model);
+        }
+
+        [Route("RegistrationPrompts")]
+        public IActionResult RegistrationPrompts()
+        {
+            var centreId = User.GetCentreId();
+
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+
+            var model = new DisplayRegistrationPromptsViewModel(customPrompts);
+
+            return View(model);
         }
     }
 }
