@@ -132,7 +132,9 @@
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = MapToSummary(data);
+            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+            var viewModel = MappingHelper.MapToSummary(data, centre!, jobGroup!);
 
             return View(viewModel);
         }
@@ -144,13 +146,15 @@
             var data = TempData.Peek<DelegateRegistrationData>()!;
             if (!ModelState.IsValid)
             {
-                var viewModel = MapToSummary(data);
+                var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+                var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+                var viewModel = MappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var candidateNumber = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data), baseUrl);
+            var candidateNumber = registrationService.RegisterDelegate(MappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             return RedirectToAction("Confirmation");
@@ -167,33 +171,6 @@
 
             var viewModel = new ConfirmationViewModel(candidateNumber);
             return View(viewModel);
-        }
-
-        private SummaryViewModel MapToSummary(DelegateRegistrationData data)
-        {
-            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
-            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-            return new SummaryViewModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                centre!,
-                jobGroup!
-            );
-        }
-
-        private static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
-        {
-            return new DelegateRegistrationModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                (int)data.LearnerInformationViewModel.Centre!,
-                (int)data.LearnerInformationViewModel.JobGroup!,
-                data.PasswordHash!
-            );
         }
     }
 }
