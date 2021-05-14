@@ -3,10 +3,8 @@
 @model FindYourCentreViewModel
 @{
   ViewData["Title"] = "Find Your Centre";
-  var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
-  url += String.IsNullOrEmpty(Model.CentreId) ? "" : "&centreid=" + Model.CentreId;
 }
 
 <div class="nhsuk-grid-row responsive-iframe-wrapper">
-  <iframe class="responsive-iframe" title="Find Your Centre" src="@url"></iframe>
+  <iframe class="responsive-iframe" title="Find Your Centre" src="@Model.Url"></iframe>
 </div>

@@ -5,9 +5,9 @@
 
     public class FindYourCentreController : Controller
     {
-        public IActionResult Index(string centreId)
+        public IActionResult Index(string? centreId)
         {
-            var model = new FindYourCentreViewModel(centreId);
+            var model = centreId == null ? new FindYourCentreViewModel() : new FindYourCentreViewModel(centreId);
             return View(model);
         }
     }
