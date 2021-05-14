@@ -1,40 +1,49 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public static class CustomPromptsTestHelper
     {
         public static CentreCustomPrompts GetDefaultCentreCustomPrompts
         (
-            int centreId = 29,
-            CustomPrompt? customPrompt1 = null,
-            CustomPrompt? customPrompt2 = null,
-            CustomPrompt? customPrompt3 = null,
-            CustomPrompt? customPrompt4 = null,
-            CustomPrompt? customPrompt5 = null,
-            CustomPrompt? customPrompt6 = null
+            List<CustomPrompt> customPrompts,
+            int centreId = 29
         )
         {
-            return new CentreCustomPrompts
-            {
-                CentreId = centreId,
-                CustomField1 = customPrompt1,
-                CustomField2 = customPrompt2,
-                CustomField3 = customPrompt3,
-                CustomField4 = customPrompt4,
-                CustomField5 = customPrompt5,
-                CustomField6 = customPrompt6
-            };
+            return new CentreCustomPrompts(centreId, customPrompts);
         }
 
         public static CustomPrompt GetDefaultCustomPrompt
         (
-            string? text = "Custom Prompt",
+            int promptNumber,
+            string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false
         )
         {
-            return new CustomPrompt(text, options, mandatory);
+            return new CustomPrompt(promptNumber, text, options, mandatory);
+        }
+
+        public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers
+        (
+            List<CustomPromptWithAnswer> customPrompts,
+            int centreId = 29
+        )
+        {
+            return new CentreCustomPromptsWithAnswers(centreId, customPrompts);
+        }
+
+        public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer
+        (
+            int promptNumber,
+            string text = "Custom Prompt",
+            string? options = "",
+            bool mandatory = false,
+            string? answer = null
+        )
+        {
+            return new CustomPromptWithAnswer(promptNumber, text, options, mandatory, answer);
         }
 
         public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult
