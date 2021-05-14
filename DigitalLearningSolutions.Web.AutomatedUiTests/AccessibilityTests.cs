@@ -14,7 +14,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
         public AccessibilityTests(SeleniumServerFactory<Startup> factory)
         {
-            factory.CreateClient();
             baseUrl = factory.RootUri;
             driver = CreateHeadlessChromeDriver();
         }
@@ -43,7 +42,20 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             axeResult.Violations.Should().BeEmpty();
         }
 
-        private ChromeDriver CreateHeadlessChromeDriver()
+        [Theory]
+        [InlineData("/MyAccount")]
+        public void Authenticated_page_has_no_accessibility_errors(string url)
+        {
+            // when
+            LogUserIn();
+            driver.Navigate().GoToUrl(baseUrl + url);
+            var axeResult = new AxeBuilder(driver).Analyze();
+
+            // then
+            axeResult.Violations.Should().BeEmpty();
+        }
+
+        private static ChromeDriver CreateHeadlessChromeDriver()
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--headless");
@@ -51,5 +63,18 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         }
         
         // TODO HEEDLS-396 Add automated UI tests for registration journey
+
+        private void LogUserIn()
+        {
+            driver.Navigate().GoToUrl(baseUrl + "/Login");
+            var username = driver.FindElement(By.Id("Username"));
+            username.SendKeys("admin");
+
+            var password = driver.FindElement(By.Id("Password"));
+            password.SendKeys("password-1");
+
+            var submitButton = driver.FindElement(By.TagName("form"));
+            submitButton.Submit();
+        }
     }
 }
