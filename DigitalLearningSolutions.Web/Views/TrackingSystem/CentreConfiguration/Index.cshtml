@@ -9,8 +9,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
-    <div class="nhsuk-card">
+  <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
+
+    <div class="nhsuk-card nhsuk-u-margin-top-6 nhsuk-u-margin-bottom-6">
       <div class="nhsuk-card__content basic-card-content">
         <dl class="nhsuk-summary-list">
           <div class="nhsuk-summary-list__row basic-summary-list__row">
@@ -25,7 +26,7 @@
       </div>
     </div>
 
-    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           Centre details
@@ -76,7 +77,7 @@
       </div>
     </details>
 
-    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           Centre manager details
@@ -120,6 +121,99 @@
             </dd>
           </div>
         </dl>
+      </div>
+    </details>
+
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
+      <summary class="nhsuk-details__summary">
+        <span class="nhsuk-details__summary-text">
+          Centre content on DLS website
+        </span>
+      </summary>
+      <div class="nhsuk-details__text">
+        <p>The details below are published on the Digital Learning Solutions website.</p>
+
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre telephone:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.CentreTelephone
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre email:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.CentreEmail
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre postcode:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.CentrePostcode
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Opening hours:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.OpeningHours
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Centre web address:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.CentreWebAddress
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Organisations covered:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              <partial name="_CentreStringArray" model="Model.OrganisationsCovered"/>
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Training venues:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              <partial name="_CentreStringArray" model="Model.TrainingVenues" />
+            </dd>
+          </div>
+
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Other information:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.OtherInformation
+            </dd>
+          </div>
+        </dl>
+        
+        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button">
+          Edit
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
+          Preview on website
+        </a>
+
       </div>
     </details>
   </div>
