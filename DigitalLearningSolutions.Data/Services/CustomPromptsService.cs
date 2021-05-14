@@ -42,7 +42,7 @@
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
         }
 
-        private List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)
+        private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)
         {
             var list = new List<CustomPrompt>();
 
@@ -96,7 +96,7 @@
             return list;
         }
 
-        private List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result, DelegateUser delegateUser)
+        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result, DelegateUser delegateUser)
         {
             var list = new List<CustomPromptWithAnswer>();
 
