@@ -152,7 +152,7 @@
                     </svg>
                   </a>
                 </li>
-                @if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)) {
+                @if (User.GetAdminId() != null) {
                   <li class="nhsuk-header__navigation-item">
                     <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                       Switch application

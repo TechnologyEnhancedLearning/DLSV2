@@ -13,8 +13,7 @@
             var user = context.HttpContext.User;
 
             if (user.Identity.IsAuthenticated
-                && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false)
-                && !user.GetAdminId().HasValue)
+                && user.IsDelegateOnlyAccount())
             {
                 context.Result = new RedirectToActionResult("Current", "LearningPortal", new {});
             }
