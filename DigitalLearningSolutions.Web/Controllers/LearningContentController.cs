@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
     using Microsoft.AspNetCore.Mvc;
 
-    [DelegateOnlyInaccessible]
+    [RedirectDelegateOnlyToLearningPortal]
     public class LearningContentController : Controller
     {
         private const string ItSkillsPathwayBrand = "ITSkillsPathway";

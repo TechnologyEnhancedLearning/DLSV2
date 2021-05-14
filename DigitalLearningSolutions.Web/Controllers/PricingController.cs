@@ -5,7 +5,7 @@
     
     public class PricingController : Controller
     {
-        [DelegateOnlyInaccessible]
+        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult Index()
         {
             return View();

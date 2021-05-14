@@ -1,14 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
 
     public class FindYourCentreController : Controller
     {
-        [DelegateOnlyInaccessible]
-        public IActionResult Index()
+        [RedirectDelegateOnlyToLearningPortal]
+        public IActionResult Index(string? centreId)
         {
-            return View();
+            var model = centreId == null ? new FindYourCentreViewModel() : new FindYourCentreViewModel(centreId);
+            return View(model);
         }
     }
 }
