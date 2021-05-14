@@ -5,7 +5,7 @@
 
     public class FindYourCentreController : Controller
     {
-        [DelegateOnlyInaccessible]
+        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult Index()
         {
             return View();

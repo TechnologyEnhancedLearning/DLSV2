@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.ViewModels.Home;
     using Microsoft.Extensions.Configuration;
 
-    [DelegateOnlyInaccessible]
+    [RedirectDelegateOnlyToLearningPortal]
     public class HomeController : Controller
     {
         private const string LandingPageMiniHubName = "Digital Learning Solutions";
