@@ -17,6 +17,7 @@
                 var userSessionData = controller.TempData.Peek<T>();
                 if (userSessionData == null)
                 {
+                    // ReSharper disable once Mvc.ActionNotResolved
                     context.Result = controller.RedirectToAction("Index");
                 }
             }
