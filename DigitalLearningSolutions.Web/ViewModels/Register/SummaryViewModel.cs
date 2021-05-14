@@ -5,6 +5,16 @@
 
     public class SummaryViewModel: IValidatableObject
     {
+        public SummaryViewModel() { }
+
+        public SummaryViewModel(string firstName, string lastName, string email, string centre, string jobGroup)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Centre = centre;
+            JobGroup = jobGroup;
+        }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
