@@ -18,6 +18,9 @@
       @if (errorHasOccurred) {
         <partial name="_ErrorSummary"/>
       }
+
+      <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl"/>
+
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Log in</h1>
         <p class="nhsuk-body-l">Enter your details to log into your account.</p>
