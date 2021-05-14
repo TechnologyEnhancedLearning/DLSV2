@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;

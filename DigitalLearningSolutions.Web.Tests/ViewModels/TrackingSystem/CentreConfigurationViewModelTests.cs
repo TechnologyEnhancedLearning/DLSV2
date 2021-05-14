@@ -17,7 +17,8 @@
                 CentreTestHelper.GetDefaultCentre(
                     centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String));
             var viewModel = new CentreConfigurationViewModel(centre);
-            var expectedTrainingCentres = new [] { "Hollins Park House", "Hollins Lane", "Winwick", "Warrington WA2 8WA" };
+            var expectedTrainingCentres = new[]
+                { "Hollins Park House", "Hollins Lane", "Winwick", "Warrington WA2 8WA" };
 
             // Then
             using (new AssertionScope())
@@ -51,7 +52,8 @@
             var centre = CentreTestHelper.GetDefaultCentre(
                 trainingVenues: "Address Line 1\r\nAddress Line 2\r\nAddress Line 3\r\nAddress Line 4");
             var viewModel = new CentreConfigurationViewModel(centre);
-            var expectedTrainingCentres = new[] { "Address Line 1", "Address Line 2","Address Line 3","Address Line 4" };
+            var expectedTrainingCentres = new[]
+                { "Address Line 1", "Address Line 2", "Address Line 3", "Address Line 4" };
 
             // Then
             viewModel.TrainingVenues.Should().BeEquivalentTo(expectedTrainingCentres);
