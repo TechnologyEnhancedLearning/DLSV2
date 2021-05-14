@@ -50,7 +50,7 @@
         private string[] SplitMultiValuedStringIntoArray(string? multiValuedString)
         {
             return multiValuedString != null ?
-                    multiValuedString.Split("\r\n", StringSplitOptions.RemoveEmptyEntries):
+                    multiValuedString.Split(new []{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries):
                     new string[0];
         }
     }
