@@ -7,9 +7,9 @@
 
     public interface ICustomPromptsService
     {
-        public CentreCustomPrompts? GetCustomPromptsForCentreByCentreId(int? centreId);
+        public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId);
 
-        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int? centreId,
+        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser);
     }
 
@@ -22,27 +22,22 @@
             this.customPromptsDataService = customPromptsDataService;
         }
 
-        public CentreCustomPrompts? GetCustomPromptsForCentreByCentreId(int? centreId)
+        public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId)
         {
-            if (centreId == null)
-            {
-                return null;
-            }
-
-            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId.Value);
+            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPrompts(result.CentreId, PopulateCustomPromptListFromCentreCustomPromptsResult(result));
         }
 
-        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int? centreId,
+        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser)
         {
-            if (centreId == null || delegateUser == null)
+            if (delegateUser == null)
             {
                 return null;
             }
 
-            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId.Value);
+            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
         }
@@ -155,12 +150,12 @@
             return list;
         }
 
-        private CustomPrompt? PopulateCustomPrompt(int promptNumber, string? prompt, string? options, bool mandatory)
+        private static CustomPrompt? PopulateCustomPrompt(int promptNumber, string? prompt, string? options, bool mandatory)
         {
             return prompt != null ? new CustomPrompt(promptNumber, prompt, options, mandatory) : null;
         }
 
-        private CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(int promptNumber, string? prompt, string? options, bool mandatory, string? answer)
+        private static CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(int promptNumber, string? prompt, string? options, bool mandatory, string? answer)
         {
             return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }

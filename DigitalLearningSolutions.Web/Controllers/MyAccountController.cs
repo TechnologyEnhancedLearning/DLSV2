@@ -31,7 +31,7 @@
             var userDelegateId = User.GetNullableCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var customPrompts = customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(delegateUser?.CentreId, delegateUser);
+            var customPrompts = customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(User.GetCentreId(), delegateUser);
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 

@@ -7,43 +7,11 @@
     {
         public static CentreCustomPrompts GetDefaultCentreCustomPrompts
         (
-            int centreId = 29,
-            CustomPrompt? customPrompt1 = null,
-            CustomPrompt? customPrompt2 = null,
-            CustomPrompt? customPrompt3 = null,
-            CustomPrompt? customPrompt4 = null,
-            CustomPrompt? customPrompt5 = null,
-            CustomPrompt? customPrompt6 = null
+            List<CustomPrompt> customPrompts,
+            int centreId = 29
         )
         {
-            var centreCustomPrompts = new CentreCustomPrompts(centreId, new List<CustomPrompt>());
-
-            if (customPrompt1 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt1);
-            }
-            if (customPrompt2 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt2);
-            }
-            if (customPrompt3 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt3);
-            }
-            if (customPrompt4 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt4);
-            }
-            if (customPrompt5 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt5);
-            }
-            if (customPrompt6 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt6);
-            }
-
-            return centreCustomPrompts;
+            return new CentreCustomPrompts(centreId, customPrompts);
         }
 
         public static CustomPrompt GetDefaultCustomPrompt
@@ -59,43 +27,11 @@
 
         public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers
         (
-            int centreId = 29,
-            CustomPromptWithAnswer? customPrompt1 = null,
-            CustomPromptWithAnswer? customPrompt2 = null,
-            CustomPromptWithAnswer? customPrompt3 = null,
-            CustomPromptWithAnswer? customPrompt4 = null,
-            CustomPromptWithAnswer? customPrompt5 = null,
-            CustomPromptWithAnswer? customPrompt6 = null
+            List<CustomPromptWithAnswer> customPrompts,
+            int centreId = 29
         )
         {
-            var centreCustomPrompts = new CentreCustomPromptsWithAnswers(centreId, new List<CustomPromptWithAnswer>());
-
-            if (customPrompt1 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt1);
-            }
-            if (customPrompt2 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt2);
-            }
-            if (customPrompt3 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt3);
-            }
-            if (customPrompt4 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt4);
-            }
-            if (customPrompt5 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt5);
-            }
-            if (customPrompt6 != null)
-            {
-                centreCustomPrompts.CustomPrompts.Add(customPrompt6);
-            }
-
-            return centreCustomPrompts;
+            return new CentreCustomPromptsWithAnswers(centreId, customPrompts);
         }
 
         public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer

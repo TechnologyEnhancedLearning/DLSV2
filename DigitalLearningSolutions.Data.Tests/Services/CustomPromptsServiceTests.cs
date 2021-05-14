@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
@@ -24,9 +26,10 @@
         public void GetCustomPromptsForCentreByCentreId_Returns_Populated_CentreCustomPrompts()
         {
             // Given
-            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1,options: null, mandatory: true);
-            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2,text: "Department / team", options: null, mandatory: true);
-            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompt1: expectedPrompt1, customPrompt2: expectedPrompt2);
+            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: null, mandatory: true);
+            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Department / team", null, true);
+            var customPromts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
+            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromts);
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(29))
                 .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1Prompt: "Custom Prompt", customField1Options: null));
 
@@ -50,8 +53,9 @@
             var answer1 = "Answer 1";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1, options: null, mandatory: true, answer: answer1);
-            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, text: "Department / team", options: null, mandatory: true);
-            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(customPrompt1: expectedPrompt1, customPrompt2: expectedPrompt2);
+            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
+            var customPrompts = new List<CustomPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
+            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(customPrompts);
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(29))
                 .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(customField1Prompt: "Custom Prompt", customField1Options: null));
 
