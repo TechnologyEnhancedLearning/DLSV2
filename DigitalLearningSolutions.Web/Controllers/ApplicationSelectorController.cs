@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector;
     using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,7 @@
     public class ApplicationSelectorController : Controller
     {
         [Authorize]
+        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult Index()
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
