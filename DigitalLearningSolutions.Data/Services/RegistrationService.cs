@@ -10,7 +10,7 @@
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
     }
-    
+
     public class RegistrationService: IRegistrationService
     {
         private readonly IRegistrationDataService registrationDataService;

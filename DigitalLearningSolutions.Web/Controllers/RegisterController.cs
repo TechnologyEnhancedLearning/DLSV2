@@ -156,8 +156,7 @@
             var candidateNumber = registrationService.RegisterDelegate(MappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
             if (candidateNumber == "-1")
             {
-                Response.StatusCode = 500;
-                return View("../LearningSolutions/Error/UnknownError");
+                return RedirectToAction("Error", "LearningSolutions");
             }
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
