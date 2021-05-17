@@ -123,6 +123,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (frameworkId > 0)
             {
                 detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
+                if (detailFramework == null)
+                {
+                    logger.LogWarning($"Failed to load name page for frameworkID: {frameworkId} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (detailFramework.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
             }
             else
             {
@@ -130,10 +139,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 TempData.Set(sessionNewFramework);
                 detailFramework = sessionNewFramework.DetailFramework;
                 TempData.Set(sessionNewFramework);
-            }
-            if (detailFramework.UserRole < 2)
-            {
-                return StatusCode(403);
             }
             return View("Developer/Name", detailFramework);
         }
