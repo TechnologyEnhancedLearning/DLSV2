@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class UserDataServiceTests
@@ -123,6 +124,46 @@
                     secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
                     secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
                     secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void UpdateDelegateUserCentrePrompts_updates_user()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var jobGroupId = 1;
+                    var jobGroupName = "Nursing / midwifery";
+                    var answer1 = "Answer1";
+                    var answer2 = "Answer2";
+                    var answer3 = "Answer3";
+                    var answer4 = "Answer4";
+                    var answer5 = "Answer5";
+                    var answer6 = "Answer6";
+
+                    // When
+                    userDataService.UpdateDelegateUserCentrePrompts(2, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+                    var updatedUser = userDataService.GetDelegateUserById(2);
+
+                    // Then
+                    using (new AssertionScope())
+                    {
+                        updatedUser.JobGroupName.Should().BeEquivalentTo(jobGroupName);
+                        updatedUser.Answer1.Should().BeEquivalentTo(answer1);
+                        updatedUser.Answer2.Should().BeEquivalentTo(answer2);
+                        updatedUser.Answer3.Should().BeEquivalentTo(answer3);
+                        updatedUser.Answer4.Should().BeEquivalentTo(answer4);
+                        updatedUser.Answer5.Should().BeEquivalentTo(answer5);
+                        updatedUser.Answer6.Should().BeEquivalentTo(answer6);
+                    }
                 }
                 finally
                 {

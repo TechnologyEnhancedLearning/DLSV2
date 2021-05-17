@@ -25,6 +25,13 @@
             IsDelegateUser = delegateUser != null;
             JobGroupId = jobGroups.Where(jg => jg.name == delegateUser?.JobGroupName).Select(jg => jg.id)
                 .SingleOrDefault();
+
+            Answer1 = delegateUser?.Answer1;
+            Answer2 = delegateUser?.Answer2;
+            Answer3 = delegateUser?.Answer3;
+            Answer4 = delegateUser?.Answer4;
+            Answer5 = delegateUser?.Answer5;
+            Answer6 = delegateUser?.Answer6;
         }
 
         [Required(ErrorMessage = "Enter a first name.")]

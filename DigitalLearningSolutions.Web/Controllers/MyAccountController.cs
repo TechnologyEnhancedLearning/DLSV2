@@ -104,7 +104,21 @@
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            if (!userService.TryUpdateUserAccountDetails(userAdminId, userDelegateId, model.Password,  model.FirstName, model.LastName, model.Email, model.ProfileImage))
+            if (!userService.TryUpdateUserAccountDetails(userAdminId,
+                userDelegateId,
+                model.Password!,
+                model.FirstName!,
+                model.LastName!,
+                model.Email!,
+                model.ProfileImage,
+                User.GetCentreId(),
+                model.JobGroupId,
+                model.Answer1,
+                model.Answer2,
+                model.Answer3,
+                model.Answer4,
+                model.Answer5,
+                model.Answer6))
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.Password), "The password you have entered is incorrect.");
                 ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
@@ -187,6 +201,11 @@
                 if (customField.Mandatory && customField.Answer == null)
                 {
                     ModelState.AddModelError("Answer"+customField.CustomFieldId, $"{(customField.Options.Any() ? "Select" : "Enter" )} a {customField.CustomPrompt.ToLower()}");
+                }
+
+                if (customField.Answer?.Length > 100)
+                {
+                    ModelState.AddModelError("Answer" + customField.CustomFieldId, $"{customField.CustomPrompt} must be at most 100 characters");
                 }
             }
         }

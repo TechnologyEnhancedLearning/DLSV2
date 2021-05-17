@@ -27,7 +27,15 @@
             string firstName,
             string surname,
             string email,
-            byte[]? profileImage
+            byte[]? profileImage,
+            int centreId,
+            int? jobGroupId,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6
         );
     }
 
@@ -113,7 +121,15 @@
             string firstName,
             string surname,
             string email,
-            byte[]? profileImage
+            byte[]? profileImage,
+            int centreId,
+            int? jobGroupId,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6
         )
         {
             var (verifiedAdminUser, verifiedDelegateUsers) =
@@ -133,6 +149,15 @@
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
                 userDataService.UpdateDelegateUsers(firstName, surname, email, profileImage, delegateIds);
+
+                var loggedInDelegate = verifiedDelegateUsers
+                    .SingleOrDefault(u => u.Id == delegateId);
+
+                if (loggedInDelegate != null)
+                {
+                    userDataService.UpdateDelegateUserCentrePrompts(delegateId!.Value, jobGroupId!.Value, answer1, answer2, answer3,
+                        answer4, answer5, answer6);
+                }
             }
 
             return true;

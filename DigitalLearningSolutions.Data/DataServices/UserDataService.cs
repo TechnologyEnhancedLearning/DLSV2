@@ -16,6 +16,16 @@
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
         public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids);
+
+        public void UpdateDelegateUserCentrePrompts(
+            int id,
+            int jobGroupId,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6);
     }
 
     public class UserDataService : IUserDataService
@@ -208,6 +218,24 @@
                             ProfileImage = @profileImage
                         WHERE CandidateID in @ids",
                 new { firstName, surname, email, profileImage, ids }
+            );
+        }
+
+        public void UpdateDelegateUserCentrePrompts(int id, int jobGroupId, string? answer1, string? answer2, string? answer3,
+            string? answer4, string? answer5, string? answer6)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                        SET
+                            JobGroupId = @jobGroupId,
+                            Answer1 = @answer1,
+                            Answer2 = @answer2,
+                            Answer3 = @answer3,
+                            Answer4 = @answer4,
+                            Answer5 = @answer5,
+                            Answer6 = @answer6
+                        WHERE CandidateID = @id",
+                new { jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6, id }
             );
         }
     }
