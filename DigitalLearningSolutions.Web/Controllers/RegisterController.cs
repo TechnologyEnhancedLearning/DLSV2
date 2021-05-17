@@ -133,7 +133,7 @@
             var data = TempData.Peek<DelegateRegistrationData>()!;
             var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-            var viewModel = MappingHelper.MapToSummary(data, centre!, jobGroup!);
+            var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
 
             return View(viewModel);
         }
@@ -147,13 +147,13 @@
             {
                 var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
                 var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-                var viewModel = MappingHelper.MapToSummary(data, centre!, jobGroup!);
+                var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var candidateNumber = registrationService.RegisterDelegate(MappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");

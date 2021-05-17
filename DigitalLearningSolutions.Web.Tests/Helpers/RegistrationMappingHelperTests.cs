@@ -6,7 +6,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class MappingHelperTests
+    public class RegistrationMappingHelperTests
     {
         [Test]
         public void MapToDelegateRegistrationModel_returns_correct_DelegateRegistrationModel()
@@ -37,7 +37,7 @@
             };
 
             // When
-            var result = MappingHelper.MapToDelegateRegistrationModel(data);
+            var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
 
             // Then
             result.FirstName.Should().Be(firstName);
@@ -79,7 +79,7 @@
             };
 
             // When
-            var result = MappingHelper.MapToSummary(data, centreName, jobGroupName);
+            var result = RegistrationMappingHelper.MapToSummary(data, centreName, jobGroupName);
 
             // Then
             result.FirstName.Should().Be(firstName);

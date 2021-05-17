@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Register;
 
-    public static class MappingHelper
+    public static class RegistrationMappingHelper
     {
         public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
         {
