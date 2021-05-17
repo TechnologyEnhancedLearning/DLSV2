@@ -319,8 +319,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
             }
         }
-        [Route("/Frameworks/Brand/{actionname}/")]
-        [Route("/Frameworks/Brand/{actionname}/{frameworkId}/")]
+        [Route("/Frameworks/Categorise/{actionname}/")]
+        [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();
@@ -361,8 +361,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/Branding", model);
         }
         [HttpPost]
-        [Route("/Frameworks/Brand/{actionname}/")]
-        [Route("/Frameworks/Brand/{actionname}/{frameworkId}/")]
+        [Route("/Frameworks/Categorise/{actionname}/")]
+        [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(DetailFramework? detailFramework, string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminID();

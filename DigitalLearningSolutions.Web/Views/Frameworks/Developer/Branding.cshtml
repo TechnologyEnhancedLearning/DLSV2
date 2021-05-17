@@ -37,22 +37,23 @@ else
     </nav>
   }
 }
-<h1>Choose Framework Branding</h1>
+<h1>Choose Framework Categorisation</h1>
+<p>This will be visible to Framework Service users when they browse frameworks and help them to identify where the framework is from and what it contains.</p>
 <form method="post">
   <fieldset class="nhsuk-fieldset">
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--xl">
-      <h2>How should the framework, @Model.DetailFramework.FrameworkName, be branded?</h2>
+      <h2>How should the framework, @Model.DetailFramework.FrameworkName, be categorised?</h2>
     </legend>
     <div class="nhsuk-form-group">
       <label class="nhsuk-label" for="brand-select">
-        Brand
+        Provider name
       </label>
       <select class="nhsuk-select" id="brand-select" name="BrandID" asp-for="DetailFramework.BrandID" asp-items="Model.BrandSelectList">
         <option value="0">* New brand *</option>
       </select>
       <div id="new-brand-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
         <label class="nhsuk-label" for="brand-field">
-          New brand name
+          New provider name (available to other users at your DLS centre)
         </label>
         <input type="text" id="brand-field" name="Brand" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="DetailFramework.Brand" />
       </div>
@@ -66,7 +67,7 @@ else
       </select>
       <div id="new-category-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
         <label class="nhsuk-label" for="category-field">
-          New category name
+          New category name (available to other users at your DLS centre)
         </label>
         <input type="text" id="category-field" name="Category" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="DetailFramework.Category" />
       </div>
@@ -80,7 +81,7 @@ else
       </select>
       <div id="new-topic-field" class="non-js-only nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0">
         <label class="nhsuk-label" for="topic-field">
-          New topic name
+          New topic name (available to other users at your DLS centre)
         </label>
         <input type="text" id="topic-field" class="nhsuk-input nhsuk-u-width-two-thirds" name="Topic" asp-for="DetailFramework.Topic" />
       </div>
