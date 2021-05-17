@@ -50,9 +50,6 @@
       </nhs-form-group>
       <input name="ID" type="hidden" asp-for="CompetencyGroupBase.ID" />
       <input name="CompetencyGroupID" type="hidden" asp-for="CompetencyGroupBase.CompetencyGroupID" />
-      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.CompetencyGroupBase.ID" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
-        Cancel
-      </a>
       <button class="nhsuk-button" type="submit">
         Save
       </button>
