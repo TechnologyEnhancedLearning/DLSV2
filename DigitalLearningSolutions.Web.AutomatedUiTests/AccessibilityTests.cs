@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
     using FluentAssertions;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
+    using OpenQA.Selenium.Support.UI;
     using Selenium.Axe;
     using Xunit;
 
@@ -30,7 +31,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/Home/LearningContent")]
         [InlineData("/Login")]
         [InlineData("/ForgotPassword")]
-        [InlineData("/Register")]
         [InlineData("/ResetPassword/Error")]
         public void Page_has_no_accessibility_errors(string url)
         {
@@ -55,14 +55,55 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             axeResult.Violations.Should().BeEmpty();
         }
 
+        [Fact]
+        public void Registration_journey_has_no_accessibility_errors()
+        {
+            // given
+            var registerUrl = "/Register";
+
+            // when
+            driver.Navigate().GoToUrl(baseUrl + registerUrl);
+            var registerResult = new AxeBuilder(driver).Analyze();
+            var firstName = driver.FindElement(By.Id("FirstName"));
+            firstName.SendKeys("Test");
+            var lastName = driver.FindElement(By.Id("LastName"));
+            lastName.SendKeys("User");
+            var email = driver.FindElement(By.Id("Email"));
+            email.SendKeys("email@test.com");
+            var registerForm = driver.FindElement(By.TagName("form"));
+            registerForm.Submit();
+
+            var learnerInformationResult = new AxeBuilder(driver).Analyze();
+            var centre = new SelectElement(driver.FindElement(By.Id("Centre")));
+            centre.SelectByValue("2");
+            var jobGroup = new SelectElement(driver.FindElement(By.Id("JobGroup")));
+            jobGroup.SelectByValue("1");
+            var learnerInformationForm = driver.FindElement(By.TagName("form"));
+            learnerInformationForm.Submit();
+
+            var passwordResult = new AxeBuilder(driver).Analyze();
+            var password = driver.FindElement(By.Id("Password"));
+            password.SendKeys("password!1");
+            var confirmPassword = driver.FindElement(By.Id("ConfirmPassword"));
+            confirmPassword.SendKeys("password!1");
+            var passwordForm = driver.FindElement(By.TagName("form"));
+            passwordForm.Submit();
+
+            var summaryResult = new AxeBuilder(driver).Analyze();
+
+            // then
+            registerResult.Violations.Should().BeEmpty();
+            learnerInformationResult.Violations.Should().BeEmpty();
+            passwordResult.Violations.Should().BeEmpty();
+            summaryResult.Violations.Should().BeEmpty();
+        }
+
         private static ChromeDriver CreateHeadlessChromeDriver()
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--headless");
             return new ChromeDriver(chromeOptions);
         }
-        
-        // TODO HEEDLS-396 Add automated UI tests for registration journey
 
         private void LogUserIn()
         {
