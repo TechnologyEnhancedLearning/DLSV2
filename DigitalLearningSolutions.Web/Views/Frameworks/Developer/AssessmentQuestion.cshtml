@@ -43,55 +43,65 @@
   {
     <partial name="_ErrorSummary" />
   }
-<fieldset class="nhsuk-fieldset">
-  <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-    <h1 class="nhsuk-fieldset__heading">
-      @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
-    </h1>
-  </legend>
-  <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
-    <label class="nhsuk-label" for="tb-question">
-      Question
-    </label>
-    <div class="nhsuk-hint" id="tb-question-hint">
-      What question will the user be asked? Try to choose a generic question that can be asked about multiple @Model.VocabPlural().ToLower().
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <h1 class="nhsuk-fieldset__heading">
+        @(Model.AssessmentQuestionDetail.ID == 0 ? "New" : "Edit") assessment question
+      </h1>
+    </legend>
+    <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.Question">
+      <label class="nhsuk-label" for="tb-question">
+        Question
+      </label>
+      <div class="nhsuk-hint" id="tb-question-hint">
+        What question will the user be asked? Try to choose a generic question that can be asked about multiple @Model.VocabPlural().ToLower().
+      </div>
+      <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
+      <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
+    </nhs-form-group>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="select-input-type">
+        Input type
+      </label>
+      <div class="nhsuk-hint" id="select-input-type-hint">
+        How will the user answer?
+      </div>
+      <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
     </div>
-    <span nhs-validation-for="AssessmentQuestionDetail.Question"></span>
-    <input class="nhsuk-input" id="tb-question" asp-for="AssessmentQuestionDetail.Question" name="Question" error-class-toggle="nhsuk-input--error" type="text">
-  </nhs-form-group>
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="select-input-type">
-      Input type
-    </label>
-    <div class="nhsuk-hint" id="select-input-type-hint">
-      How will the user answer?
-    </div>
-    <select class="nhsuk-input" id="select-input-type" asp-items="Model.InputTypeSelectList" asp-for="AssessmentQuestionDetail.AssessmentQuestionInputTypeID" name="AssessmentQuestionInputTypeID"></select>
-  </div>
-  <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
-  <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
-  <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
-  <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
-  <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
-  <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
-  <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
-  <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
-  <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
-  <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
-</fieldset>
+    <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
+    <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
+    <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
+    <input name="InputTypeName" type="hidden" asp-for="AssessmentQuestionDetail.InputTypeName" />
+    <input name="AddedByAdminId" type="hidden" asp-for="AssessmentQuestionDetail.AddedByAdminId" />
+    <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
+    <input name="MaxValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MaxValueDescription" />
+    <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
+    <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
+    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
+  </fieldset>
   <button class="nhsuk-button" type="submit">
     Next
   </button>
   @if (Model.FrameworkCompetencyId == 0)
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
   else
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
 </form>
