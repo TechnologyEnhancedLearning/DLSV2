@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -155,6 +154,11 @@
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
             var candidateNumber = registrationService.RegisterDelegate(MappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            if (candidateNumber == "-1")
+            {
+                Response.StatusCode = 500;
+                return View("../LearningSolutions/Error/UnknownError");
+            }
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             return RedirectToAction("Confirmation");
