@@ -9,14 +9,11 @@
 
         public CentreManagerDetailsViewModel(Centre centre)
         {
-            CentreId = centre.CentreId;
             FirstName = centre.ContactForename;
             LastName = centre.ContactSurname;
             Email = centre.ContactEmail;
             Telephone = centre.ContactTelephone;
         }
-
-        public int CentreId { get; set; }
 
         [Required(ErrorMessage = "Please enter a first name.")]
         [MaxLength(250, ErrorMessage = "Please enter a first name that is less than 250 characters.")]

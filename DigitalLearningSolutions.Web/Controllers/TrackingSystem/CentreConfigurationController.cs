@@ -69,8 +69,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
                 return View("CentreManagerDetails", model);
             }
 
+            var centreId = User.GetCentreId();
+
             centresDataService
-                .UpdateCentreManagerDetails(model.CentreId, model.FirstName, model.LastName, model.Email, model.Telephone);
+                .UpdateCentreManagerDetails(centreId, model.FirstName, model.LastName, model.Email, model.Telephone);
 
             return RedirectToAction("Index");
         }
