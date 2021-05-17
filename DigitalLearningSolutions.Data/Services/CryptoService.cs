@@ -6,7 +6,8 @@
 
     public interface ICryptoService
     {
-        public bool VerifyHashedPassword(string? hashedPassword, string password);
+        bool VerifyHashedPassword(string? hashedPassword, string password);
+        string GetPasswordHash(string password);
     }
 
     public class CryptoService : ICryptoService
@@ -43,6 +44,22 @@
             var generatedSubkey = deriveBytes.GetBytes(PBKDF2SubkeyLength);
 
             return generatedSubkey.SequenceEqual(storedSubkey);
+        }
+
+        public string GetPasswordHash(string password)
+        {
+            var salt = new byte[SaltSize];
+            new RNGCryptoServiceProvider().GetBytes(salt);
+
+            var deriveBytes = new Rfc2898DeriveBytes(password, salt, PBKDF2IterationCount);
+            var generatedSubkey = deriveBytes.GetBytes(PBKDF2SubkeyLength);
+
+            var hashBytes = new byte[CorrectStoredPasswordLength];
+            hashBytes[0] = CorrectStoredPasswordVersionHeader;
+            Buffer.BlockCopy(salt, 0, hashBytes, 1, SaltSize);
+            Buffer.BlockCopy(generatedSubkey, 0, hashBytes, 1 + SaltSize, PBKDF2SubkeyLength);
+
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }

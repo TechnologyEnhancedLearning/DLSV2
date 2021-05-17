@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -16,11 +17,16 @@
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
+        private readonly ICryptoService cryptoService;
 
-        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService)
+        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
+            IRegistrationService registrationService, ICryptoService cryptoService)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.registrationService = registrationService;
+            this.cryptoService = cryptoService;
         }
 
         public IActionResult Index()
@@ -61,8 +67,8 @@
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>();
-            data!.RegisterViewModel = model;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            data.RegisterViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
@@ -72,8 +78,8 @@
         [HttpGet]
         public IActionResult LearnerInformation()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = data!.LearnerInformationViewModel;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var viewModel = data.LearnerInformationViewModel;
             ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
             ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
 
@@ -91,8 +97,8 @@
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>();
-            data!.LearnerInformationViewModel = model;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            data.LearnerInformationViewModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Password");
@@ -102,10 +108,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = data!.PasswordViewModel;
-
-            return View(viewModel);
+            return View();
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -116,9 +119,8 @@
             {
                 return View(model);
             }
-            var data = TempData.Peek<DelegateRegistrationData>();
-            // TODO HEEDLS-396 only ever store the password hashed
-            data!.PasswordViewModel = model;
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
             return RedirectToAction("Summary");
@@ -128,8 +130,10 @@
         [HttpGet]
         public IActionResult Summary()
         {
-            var data = TempData.Peek<DelegateRegistrationData>();
-            var viewModel = MapToSummary(data!);
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+            var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
 
             return View(viewModel);
         }
@@ -138,30 +142,38 @@
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
+            var data = TempData.Peek<DelegateRegistrationData>()!;
             if (!ModelState.IsValid)
             {
-                var data = TempData.Peek<DelegateRegistrationData>();
-                var viewModel = MapToSummary(data!);
+                var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+                var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+                var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
-            // TODO HEEDLS-396 create new user and redirect to confirmation page
-            return View(model);
+            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
+            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            if (candidateNumber == "-1")
+            {
+                return RedirectToAction("Error", "LearningSolutions");
+            }
+            TempData.Clear();
+            TempData.Add("candidateNumber", candidateNumber);
+            return RedirectToAction("Confirmation");
         }
 
-        private SummaryViewModel MapToSummary(DelegateRegistrationData data)
+        [HttpGet]
+        public IActionResult Confirmation()
         {
-            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
-            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-            return new SummaryViewModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                centre!,
-                jobGroup!
-            );
+            var candidateNumber = (string?)TempData.Peek("candidateNumber");
+            if (candidateNumber == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = new ConfirmationViewModel(candidateNumber);
+            return View(viewModel);
         }
     }
 }

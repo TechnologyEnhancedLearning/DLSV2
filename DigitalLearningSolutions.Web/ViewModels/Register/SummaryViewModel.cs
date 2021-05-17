@@ -5,6 +5,8 @@
 
     public class SummaryViewModel: IValidatableObject
     {
+        public SummaryViewModel() { }
+
         public SummaryViewModel(string firstName, string lastName, string email, string centre, string jobGroup)
         {
             FirstName = firstName;
@@ -13,12 +15,11 @@
             Centre = centre;
             JobGroup = jobGroup;
         }
-
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Centre { get; set; }
-        public string JobGroup { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Centre { get; set; }
+        public string? JobGroup { get; set; }
         public bool Terms { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
