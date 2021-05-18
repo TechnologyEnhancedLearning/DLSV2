@@ -9,6 +9,12 @@
   height: 150px;
 }
 
+.left-button-mobile-margin-bottom {
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: 0;
+  }
+}
+
 .hidden-submit {
     display: none;
 }

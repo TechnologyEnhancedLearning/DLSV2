@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -115,6 +116,41 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             );
 
             return RedirectToAction("Index");
+        }
+    }
+        }
+
+        [HttpGet]
+        [Route("RegistrationPrompts/{promptNumber}/Edit")]
+        public IActionResult EditRegistrationPrompt(int promptNumber)
+        {
+            var centreId = User.GetCentreId();
+
+            var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Single(cp => cp.CustomPromptNumber == promptNumber);
+
+            return View(new EditRegistrationPromptViewModel(customPrompt));
+        }
+
+        [HttpPost]
+        [Route("RegistrationPrompts/{promptNumber}/Edit")]
+        public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
+        {
+            return action switch
+            {
+                "save" => EditRegistrationPromptPostSave(model),
+                "addPrompt" => EditRegistrationPromptPostAddPrompt(model),
+                _ => View(model),
+            };
+        }
+
+        private IActionResult EditRegistrationPromptPostAddPrompt(EditRegistrationPromptViewModel model)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
