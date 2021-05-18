@@ -5,7 +5,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Manage delegate registration prompt</h1>
+    <h1 class="nhsuk-heading-xl">Manage delegate registration prompts</h1>
   </div>
 </div>
 
@@ -14,13 +14,14 @@
     <div class="nhsuk-grid-column-full">
       <details class="nhsuk-details nhsuk-expander">
         <summary class="nhsuk-details__summary">
-          <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-row" role="text">
             <div class="nhsuk-grid-column-three-quarters nhsuk-u-three-quarters-tablet">
               <span class="nhsuk-details__summary-text">
                 @customField.CustomPromptName
               </span>
             </div>
             <div class="nhsuk-grid-column-one-quarter nhsuk-u-one-quarter-tablet right-align-tag-column">
+              <span class="nhsuk-u-visually-hidden">This prompt is:</span>
               <strong class="nhsuk-u-font-size-19 right-align-tag nhsuk-tag @(customField.Mandatory ? "" : "nhsuk-tag--grey")">
                 @(customField.Mandatory ? "Mandatory" : "Optional")
               </strong>
