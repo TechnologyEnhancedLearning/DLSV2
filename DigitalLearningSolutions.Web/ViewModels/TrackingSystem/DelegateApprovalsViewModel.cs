@@ -22,6 +22,6 @@
         public string Email { get; set; }
         public DateTime DateRegistered { get; set; }
         public string JobGroup { get; set; }
-        public List<CustomFieldViewModel> CustomFields { get; set; } // TODO HEEDLS-422 move this into something shared (also check these fields against MyAccount view model for consistency/reasons
+        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; }
     }
 }
