@@ -5,14 +5,34 @@
   ViewData["Title"] = "Approve delegate registrations";
 }
 
-@foreach(var delegateApproval in Model.Delegates)
-  {
-    <partial name="_delegateExpandable" model="delegateApproval" />
-  }
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" href="" role="button">
-      Approve All
-    </a>
+    <h1 class="nhsuk-heading-xl">Approve delegate registrations</h1>
+    @if (Model.Delegates.Any()) {
+      @foreach(var delegateApproval in Model.Delegates)
+      {
+        <partial name="_delegateExpandable" model="delegateApproval" />
+      }
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button" href="" role="button">
+            Approve All
+          </a>
+        </div>
+      </div>
+    } else {
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <p>No accounts need approval.</p>
+        </div>
+      </div>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button" href="" role="button">
+            Manage approved delegates
+          </a>
+        </div>
+      </div>
+    }
   </div>
 </div>
