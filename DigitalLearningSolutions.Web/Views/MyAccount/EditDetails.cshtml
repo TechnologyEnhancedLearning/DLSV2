@@ -69,7 +69,7 @@
           {
             <vc:select-list asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" value="@customField.Answer" hint-text="" css-class="nhsuk-u-width-one-half" default-option="Select a @customField.CustomPrompt.ToLower()" select-list-options="@customField.Options"></vc:select-list>
           } else {
-            <vc:text-input asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" value="@customField.Answer" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <vc:text-input asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" populate-with-current-value="true" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half" />
           }
         </div>
       </div>
