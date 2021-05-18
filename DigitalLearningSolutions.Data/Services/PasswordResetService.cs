@@ -16,8 +16,10 @@
 
     public interface IPasswordResetService
     {
-        Task<List<UserReference>> GetValidMatchingUserReferencesAsync(string emailAddress, string resetHash);
+        Task<bool> EmailAndResetPasswordHashAreValid(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
+        void InvalidateResetPasswordForEmail(string email);
+        void ChangePassword(string email, string newPassword);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -43,7 +45,7 @@
             this.clockService = clockService;
         }
 
-        public async Task<List<UserReference>> GetValidMatchingUserReferencesAsync(
+        public async Task<bool> EmailAndResetPasswordHashAreValid(
             string emailAddress,
             string resetHash)
         {
@@ -52,12 +54,8 @@
                     emailAddress,
                     resetHash);
 
-            return matchingResetPasswordEntities
-                .Where(resetPassword => resetPassword.IsStillValidAt(clockService.UtcNow))
-                .Select(
-                    resetPassword => new UserReference
-                        { Id = resetPassword.UserId, UserType = resetPassword.UserType })
-                .ToList();
+            return matchingResetPasswordEntities.Any(
+                resetPassword => resetPassword.IsStillValidAt(clockService.UtcNow));
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
@@ -73,6 +71,16 @@
                 user.FirstName,
                 baseUrl);
             emailService.SendEmail(resetPasswordEmail);
+        }
+
+        public void InvalidateResetPasswordForEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ChangePassword(string email, string newPassword)
+        {
+            throw new NotImplementedException();
         }
 
         private string GenerateResetPasswordHash(User user)

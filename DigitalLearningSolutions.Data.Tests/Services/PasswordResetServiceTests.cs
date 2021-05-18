@@ -113,10 +113,10 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(125));
 
             // When
-            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, hash);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(emailAddress, hash);
 
             // Then
-            matchingUserRefs.Count.Should().Be(0);
+            hashIsValid.Should().BeFalse();
         }
 
         [Test]
@@ -144,15 +144,11 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
-            var matchingUsers = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, resetHash);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(emailAddress, resetHash);
 
             // Then
-            matchingUsers.Should().BeEquivalentTo(new List<UserReference>
-            {
-                new UserReference {Id = 7, UserType = UserType.DelegateUser},
-                new UserReference {Id = 2, UserType = UserType.DelegateUser},
-                new UserReference {Id = 4, UserType = UserType.AdminUser},
-            }); }
+            hashIsValid.Should().BeTrue();
+        }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
         {

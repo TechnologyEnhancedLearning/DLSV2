@@ -133,12 +133,17 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<IClockService, ClockService>();
 
-            // Register web service filters.
+            RegisterWebServiceFilters(services);
+        }
+
+        private static void RegisterWebServiceFilters(IServiceCollection services)
+        {
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
-            services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)

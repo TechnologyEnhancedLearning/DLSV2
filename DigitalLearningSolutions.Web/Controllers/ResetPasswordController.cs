@@ -1,8 +1,10 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
@@ -28,9 +30,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(email, code);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(email, code);
 
-            if (!matchingUserRefs.Any())
+            this.TempData.Set(new ResetPasswordData(email, code));
+
+            if (!hashIsValid)
             {
                 return RedirectToAction("Error");
             }
@@ -39,14 +43,32 @@ namespace DigitalLearningSolutions.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(PasswordViewModel viewModel)
+        [ServiceFilter(typeof(RedirectEmptySessionData<ResetPasswordData>))]
+        public async Task<IActionResult> Index(PasswordViewModel viewModel)
         {
+            var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
+
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(
+                resetPasswordData.Email,
+                resetPasswordData.ResetPasswordHash);
+
+            if (!hashIsValid)
+            {
+                TempData.Clear();
+                return RedirectToAction("Error");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
 
-            return RedirectToAction("Index", "Home");
+            this.passwordResetService.InvalidateResetPasswordForEmail(resetPasswordData.Email);
+            this.passwordResetService.ChangePassword(resetPasswordData.Email, viewModel.Password!);
+
+            TempData.Clear();
+
+            return View("Success");
         }
 
         [HttpGet]
