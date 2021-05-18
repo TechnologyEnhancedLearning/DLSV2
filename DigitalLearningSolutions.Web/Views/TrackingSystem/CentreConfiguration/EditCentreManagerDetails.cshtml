@@ -3,7 +3,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Centre Manager Details" : "Centre Manager Details";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
 }
 
 <div class="nhsuk-grid-row">
@@ -12,7 +12,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Telephone) })"/>
     }
 
-    <h1 id="page-heading" class="nhsuk-heading-xl">Centre manager details</h1>
+    <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre manager details</h1>
     <form method="post" novalidate asp-action="EditCentreManagerDetails">
 
       <vc:text-input asp-for="FirstName" label="First name" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
