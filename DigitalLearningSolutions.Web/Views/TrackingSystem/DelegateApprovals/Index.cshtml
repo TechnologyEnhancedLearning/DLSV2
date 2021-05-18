@@ -5,7 +5,7 @@
   ViewData["Title"] = "Approve delegate registrations";
 }
 
-@foreach(var delegateApproval in Model.delegates)
+@foreach(var delegateApproval in Model.Delegates)
   {
     <partial name="_delegateExpandable" model="delegateApproval" />
   }

@@ -2,11 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class DelegateApprovalsViewModel
     {
-        public List<ApprovableDelegate> delegates { get; set; }
+        public DelegateApprovalsViewModel(IEnumerable<ApprovableDelegate> delegates)
+        {
+            Delegates = delegates;
+        }
+
+        public IEnumerable<ApprovableDelegate> Delegates { get; set; }
     }
 
     public class ApprovableDelegate
