@@ -15,20 +15,20 @@
             Telephone = centre.ContactTelephone;
         }
 
-        [Required(ErrorMessage = "Please enter a first name.")]
-        [MaxLength(250, ErrorMessage = "Please enter a first name that is less than 250 characters.")]
+        [Required(ErrorMessage = "Enter a first name.")]
+        [MaxLength(250, ErrorMessage = "Enter a first name that is less than 250 characters.")]
         public string? FirstName { get; set; }
 
-        [Required(ErrorMessage = "Please enter a last name.")]
-        [MaxLength(250, ErrorMessage = "Please enter a last name that is less than 250 characters.")]
+        [Required(ErrorMessage = "Enter a last name.")]
+        [MaxLength(250, ErrorMessage = "Enter a last name that is less than 250 characters.")]
         public string? LastName { get; set; }
 
-        [Required(ErrorMessage = "Please enter an email address.")]
-        [MaxLength(250, ErrorMessage = "Please enter an email address that is less than 250 characters.")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Required(ErrorMessage = "Enter an email address.")]
+        [MaxLength(250, ErrorMessage = "Enter an email address that is less than 250 characters.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
         public string? Email { get; set; }
 
-        [MaxLength(250, ErrorMessage = "Please enter a valid phone number")]
+        [MaxLength(250, ErrorMessage = "Enter a valid phone number")]
         public string? Telephone { get; set; }
     }
 }

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -144,10 +145,13 @@
                 var updatedCentre = centresDataService.GetCentreDetailsById(2);
 
                 // Then
-                updatedCentre.ContactForename.Should().BeEquivalentTo(firstName);
-                updatedCentre.ContactSurname.Should().BeEquivalentTo(lastName);
-                updatedCentre.ContactEmail.Should().BeEquivalentTo(email);
-                updatedCentre.ContactTelephone.Should().BeEquivalentTo(telephone);
+                using (new AssertionScope())
+                {
+                    updatedCentre.ContactForename.Should().BeEquivalentTo(firstName);
+                    updatedCentre.ContactSurname.Should().BeEquivalentTo(lastName);
+                    updatedCentre.ContactEmail.Should().BeEquivalentTo(email);
+                    updatedCentre.ContactTelephone.Should().BeEquivalentTo(telephone);
+                }
             }
             finally
             {
