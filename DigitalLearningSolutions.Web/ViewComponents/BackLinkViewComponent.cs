@@ -5,9 +5,13 @@
 
     public class BackLinkViewComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(string aspController, string aspAction)
+        public IViewComponentResult Invoke(string aspController, string aspAction, string linkText)
         {
-            return View(new LinkViewModel(aspController, aspAction));
+            if (string.IsNullOrWhiteSpace(linkText))
+            {
+                linkText = "Go back";
+            }
+            return View(new LinkViewModel(aspController, aspAction, linkText));
         }
     }
 }

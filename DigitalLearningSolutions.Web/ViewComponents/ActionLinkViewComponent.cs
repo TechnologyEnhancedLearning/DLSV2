@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
     {
         public IViewComponentResult Invoke(string aspController, string aspAction, string linkText)
         {
-            return View(new ActionLinkViewModel(aspController, aspAction, linkText));
+            return View(new LinkViewModel(aspController, aspAction, linkText));
         }
     }
 }
