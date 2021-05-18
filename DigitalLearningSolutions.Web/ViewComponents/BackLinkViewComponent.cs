@@ -5,9 +5,9 @@
 
     public class BackLinkViewComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(string aspController, string aspAction)
+        public IViewComponentResult Invoke(string aspController, string aspAction, string linkText)
         {
-            return View(new LinkViewModel(aspController, aspAction));
+            return View(new LinkViewModel(aspController, aspAction, linkText));
         }
     }
 }
