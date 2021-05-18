@@ -9,12 +9,13 @@
 
     public class SelectListHelperTests
     {
+        private const string item1 = "item1";
+        private const string item2 = "item2";
+
         [Test]
         public void GetOptionsWithSelectedText_returns_populated_list()
         {
             // Given
-            var item1 = "item1";
-            var item2 = "item2";
             var inputList = new List<(int id, string name)>
             {
                 (1, item1),
@@ -41,8 +42,6 @@
         public void GetOptionsWithSelectedValue_returns_populated_list()
         {
             // Given
-            var item1 = "item1";
-            var item2 = "item2";
             var inputList = new List<(int id, string name)>
             {
                 (1, item1),
@@ -69,8 +68,6 @@
         public void GetOptionsWithSelectedValue_with_list_of_strings_returns_populated_list()
         {
             // Given
-            var item1 = "item1";
-            var item2 = "item2";
             var inputList = new List<string>
             {
                 item1,

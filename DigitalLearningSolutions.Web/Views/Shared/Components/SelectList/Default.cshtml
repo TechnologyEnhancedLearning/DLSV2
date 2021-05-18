@@ -17,17 +17,12 @@
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
   }
-  <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" aria-describedby="@Model.Name-error" id="@Model.Id" name="@Model.Name" value="@Model.Value" asp-items="Model.SelectListOptions">
+  <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+          aria-describedby="@Model.Name-error"
+          id="@Model.Id"
+          name="@Model.Name"
+          value="@Model.Value"
+          asp-items="Model.SelectListOptions">
     <option value="" disabled selected=@(Model.Value != null ? "" : "selected") >@Model.DefaultOption</option>
   </select>
-@*<select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")" id="@Model.Id" aria-describedby="@Model.Name-error" name="@Model.Name" value="@Model.Value">
-  @if (@Model.DefaultOption != null)
-  {
-    <option value="" disabled Model.Value.HasValue ? "": selected>@Model.DefaultOption</option>
-  }
-  @foreach (var option in Model.SelectListOptions)
-  {
-    <option value="@option.Item1">@option.Item2</option>
-  }
-</select>*@
 </div>

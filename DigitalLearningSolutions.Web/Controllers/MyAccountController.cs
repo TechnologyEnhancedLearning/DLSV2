@@ -73,6 +73,8 @@
         [HttpPost]
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
+            ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
+            ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
             return action switch
             {
                 "save" => EditDetailsPostSave(model),
@@ -88,16 +90,12 @@
 
             if (!ModelState.IsValid)
             {
-                ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-                ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
                 return View(model);
             }
 
             if (model.ProfileImageFile != null)
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile), "Preview your new profile picture before saving");
-                ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-                ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model); ;
                 return View(model);
             }
 
@@ -121,8 +119,6 @@
                 model.Answer6))
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.Password), "The password you have entered is incorrect.");
-                ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-                ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
                 return View(model);
             }
 
@@ -140,8 +136,6 @@
 
             if (!ModelState.IsValid)
             {
-                ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-                ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
                 return View(model);
             }
 
@@ -151,8 +145,6 @@
                 model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfileImageFile);
             }
 
-            ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-            ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
             return View(model);
         }
 
@@ -167,8 +159,6 @@
 
             ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
             model.ProfileImage = null;
-            ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-            ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
             return View(model);
         }
 
