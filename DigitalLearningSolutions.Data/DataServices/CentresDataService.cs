@@ -20,6 +20,7 @@
             string email,
             string? telephone
         );
+        (string firstName, string lastName, string email) GetContactInfo(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -133,6 +134,17 @@
                 WHERE CentreId = @centreId",
                 new {firstName, lastName, email, telephone, centreId}
             );
+        }
+        
+        public (string firstName, string lastName, string email) GetContactInfo(int centreId)
+        {
+            var info = connection.QueryFirstOrDefault<(string, string, string)>(
+                @"SELECT ContactForename, ContactSurname, ContactEmail
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+            return info;
         }
     }
 }
