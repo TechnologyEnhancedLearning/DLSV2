@@ -1372,9 +1372,11 @@ WHERE (ID = @commentId)", new { adminId, commentId }
         public IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId)
         {
             return connection.Query<CollaboratorDetail>(
-                $@"SELECT ID, FrameworkID, AdminID, CanModify, UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
-                    FROM   FrameworkCollaborators
-                    WHERE (FrameworkID = @FrameworkID)", new { frameworkId });
+                $@"SELECT FrameworkCollaborators.ID, FrameworkCollaborators.FrameworkID, FrameworkCollaborators.AdminID, FrameworkCollaborators.CanModify, FrameworkCollaborators.UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+FROM   FrameworkCollaborators LEFT OUTER JOIN
+             FrameworkReviews ON FrameworkCollaborators.ID = FrameworkReviews.FrameworkCollaboratorID
+WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) OR
+             (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL)", new { frameworkId });
         }
 
         public void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId)
