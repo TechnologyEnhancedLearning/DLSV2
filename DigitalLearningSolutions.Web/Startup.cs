@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
@@ -154,6 +155,11 @@ namespace DigitalLearningSolutions.Web
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseRouting();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto
+            });
             app.UseAuthentication();
             app.UseAuthorization();
 
