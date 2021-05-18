@@ -12,6 +12,7 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
+        (string firstName, string lastName, string email) GetContactInfo(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -78,7 +79,15 @@
                             c.ContactForename,
                             c.ContactSurname,
                             c.ContactEmail,
-                            c.ContactTelephone
+                            c.ContactTelephone,
+                            c.pwTelephone AS CentreTelephone,
+                            c.pwEmail AS CentreEmail,
+                            c.pwPostCode AS CentrePostcode,
+                            c.pwHours AS OpeningHours,
+                            c.pwWebURL AS CentreWebAddress,
+                            c.pwTrustsCovered AS OrganisationsCovered,
+                            c.pwTrainingLocations AS TrainingVenues,
+                            c.pwGeneralInfo AS OtherInformation
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",
@@ -97,6 +106,17 @@
             }
 
             return centre;
+        }
+
+        public (string firstName, string lastName, string email) GetContactInfo(int centreId)
+        {
+            var info = connection.QueryFirstOrDefault<(string, string, string)>(
+                @"SELECT ContactForename, ContactSurname, ContactEmail
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+            return info;
         }
     }
 }

@@ -130,6 +130,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
+            services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IPasswordDataService, PasswordDataService>();
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
@@ -165,7 +168,7 @@ namespace DigitalLearningSolutions.Web
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
             var url = HttpUtility.UrlEncode(context.Request.Path);
-            context.HttpContext.Response.Redirect($"/Login?returnUrl={url}");
+            context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}");
             return Task.CompletedTask;
         }
 

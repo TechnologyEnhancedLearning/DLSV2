@@ -1,0 +1,23 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model ConfirmationViewModel
+
+@{
+  ViewData["Title"] = "Registration Confirmation";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">
+      Delegate registration complete
+    </h1>
+    <p class="nhsuk-body-l">
+      You should make a note of your delegate number and keep it safe.
+      You can use it to log in to the Learning Portal and any Digital
+      Learning Solutions courses.
+    </p>
+    <div class="nhsuk-inset-text">
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
+    </div>
+  </div>
+</div>

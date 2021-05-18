@@ -80,7 +80,7 @@
       </div>
     </div>
     @*<input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
-    <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />*@
+      <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />*@
     <input name="ID" type="hidden" asp-for="AssessmentQuestionDetail.ID" />
     <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" />
     <input name="MaxValue" type="hidden" asp-for="AssessmentQuestionDetail.MaxValue" />
@@ -97,15 +97,25 @@
   </button>
   @if (Model.FrameworkCompetencyId == 0)
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
   else
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
 </form>
 @section scripts {

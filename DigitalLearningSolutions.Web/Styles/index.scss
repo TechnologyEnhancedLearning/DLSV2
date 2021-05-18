@@ -129,3 +129,35 @@ h1#page-heading {
     word-break: break-word;
   }
 }
+
+.right-align-tag-column {
+  padding: 0;
+
+  @include govuk-media-query($from: tablet) {
+    text-align: right;
+    padding-left: nhsuk-spacing(3);
+  }
+}
+
+.right-align-tag {
+  width: 100%;
+  max-width: 10em;
+  text-align: center;
+  margin-bottom: 0;
+
+  @include govuk-media-query($until: desktop){
+      margin-top: nhsuk-spacing(2);
+  }
+}
+
+.left-button-mobile-margin-bottom {
+  @include govuk-media-query($until: tablet) {
+    margin-bottom: 0;
+  }
+}
+
+ul.no-bullets {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}

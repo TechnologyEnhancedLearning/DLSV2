@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model EditDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
@@ -6,6 +7,14 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
+}
+
+@if (User.IsDelegateOnlyAccount())
+{
+  ViewData["Application"] = "Learning Portal";
+  @section NavMenuItems {
+    <partial name="../LearningPortal/Shared/_NavMenuItems" />
+  }
 }
 
 <div class="nhsuk-grid-row">

@@ -9,7 +9,7 @@
     public class ApplicationSelectorController : Controller
     {
         [Authorize]
-        [DelegateOnlyInaccessible]
+        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult Index()
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;

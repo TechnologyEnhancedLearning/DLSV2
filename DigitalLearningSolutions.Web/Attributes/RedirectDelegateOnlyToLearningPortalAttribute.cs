@@ -6,13 +6,14 @@
     using Microsoft.AspNetCore.Mvc.Filters;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class DelegateOnlyInaccessibleAttribute : Attribute, IAuthorizationFilter
+    public class RedirectDelegateOnlyToLearningPortalAttribute : Attribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var user = context.HttpContext.User;
 
-            if (user.Identity.IsAuthenticated && !user.GetAdminId().HasValue)
+            if (user.Identity.IsAuthenticated
+                && user.IsDelegateOnlyAccount())
             {
                 context.Result = new RedirectToActionResult("Current", "LearningPortal", new {});
             }

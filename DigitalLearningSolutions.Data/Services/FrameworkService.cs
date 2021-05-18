@@ -562,11 +562,14 @@
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
         {
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.Name, c.Description, fc.Ordering
+                @"SELECT fc.ID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                 	FROM FrameworkCompetencies AS fc 
                 		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
+                        LEFT OUTER JOIN
+                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                 	WHERE fc.FrameworkID = @frameworkId 
                 		AND fc.FrameworkCompetencyGroupID IS NULL
+GROUP BY fc.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fc.Ordering",
                 new { frameworkId }
                 );
