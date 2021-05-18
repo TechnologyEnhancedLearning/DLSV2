@@ -12,17 +12,30 @@ else
 {
   @if (!Model.FrameworkCompetencies.Any())
   {
-    <div class="nhsuk-warning-callout">
-      <h3 class="nhsuk-warning-callout__label">
-        <span role="text">
-          This is an empty framework.
-        </span>
-      </h3>
-      <p>Start adding @Model.VocabSingular().ToLower() groups and @Model.VocabSingular().ToLower() to this framework using the buttons below.</p>
-      <p>Use the <strong>Details</strong> tab above to view and edit the framework details and working group.</p>
-      <p>Use the <strong>Comments</strong> tab to view, add and respond to comments from working group members on this framework.</p>
-      <p>When you are ready, use the <strong>Send for Review</strong> button above to request review and sign off of your framework.</p>
-    </div>
+<div class="nhsuk-warning-callout callout-green">
+  <h3 class="nhsuk-warning-callout__label">
+    <span role="text">
+      This is an empty framework.
+    </span>
+  </h3>
+  @if (Model.DetailFramework.UserRole <= 1)
+  {
+    <p>This framework doesn't contain any @Model.VocabSingular().ToLower() groups or @Model.VocabPlural().ToLower().</p>
+  }
+  @if (Model.DetailFramework.UserRole > 1)
+  {
+    <p>Start adding @Model.VocabSingular().ToLower() groups and @Model.VocabPlural().ToLower() to this framework using the buttons below.</p>
+    <p>Use the <strong>Details</strong> tab above to view and edit the framework details and working group.</p>
+  }
+  @if (Model.DetailFramework.UserRole > 0)
+  {
+    <p>Use the <strong>Comments</strong> tab to view, add and respond to comments from working group members on this framework.</p>
+  }
+  @if (Model.DetailFramework.UserRole > 1)
+  {
+    <p>When you are ready, use the <strong>Send for Review</strong> button above to request review and sign off of your framework.</p>
+  }
+</div>
   }
   else { 
     <p>No @Model.VocabSingular().ToLower() groups in this framework.</p>
