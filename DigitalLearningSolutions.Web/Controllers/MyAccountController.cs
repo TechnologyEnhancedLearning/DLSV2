@@ -123,7 +123,8 @@
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
-            
+
+            ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
             model.ProfileImage = null;
 
             return View(model);

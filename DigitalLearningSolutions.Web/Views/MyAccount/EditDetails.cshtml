@@ -57,8 +57,8 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-half">
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
-                                  If you upload a new profile image and do not preview it before saving, then your profile picture
-                                  will not be updated."; }
+                          To remove your profile picture click the remove button.
+                          Changes will not be made until the Save button below is clicked."; }
       <input type="hidden" asp-for="ProfileImage"/>
       <vc:file-input asp-for="ProfileImageFile" label="Profile picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full"/>
     </div>
