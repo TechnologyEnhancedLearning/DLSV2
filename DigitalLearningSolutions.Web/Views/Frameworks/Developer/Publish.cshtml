@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model PublishViewModel;
 @{
-  ViewData["Title"] = Model.FrameworkName;
+  ViewData["Title"] = Model.BaseFramework.FrameworkName;
   ViewData["Application"] = "Framework Service";
 }
 @section NavBreadcrumbs {
@@ -9,10 +9,10 @@
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__item">Publish</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>
   </nav>
 }
@@ -32,29 +32,60 @@
         <th role="columnheader" class="" scope="col">
           Status
         </th>
+        <th role="columnheader" class="" scope="col">
+          Actions
+        </th>
       </tr>
     </thead>
     <tbody class="nhsuk-table__body">
       @foreach (var review in Model.FrameworkReviews)
       {
         <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">Reviewer </span>@review.UserEmail
-            @if (review.SignOffRequired)
-            {
-              <strong class="nhsuk-tag nhsuk-tag--blue role-tag">
-               Sign-off Required
-              </strong>
-            }
           </td>
-          <td role="cell" class="nhsuk-table__cell">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">Requested </span>@review.ReviewRequested.ToShortDateString()
           </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Status </span>@(review.ReviewComplete == null? "Pending": (review.SignedOff ? "Signed off" : "Revisions required"))
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Status </span>
+            <partial name="Shared/_ApprovalTag" model="review" />
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Actions </span>
+            @if (review.FrameworkCommentID != null)
+            {
+              <text>
+                <a asp-action="ViewThread"
+                   asp-controller="Frameworks"
+                   asp-route-frameworkId="@Model.BaseFramework.ID"
+                   asp-route-commentId="@review.FrameworkCommentID">
+                  View comment
+                </a>
+                &nbsp;
+              </text>
+            }
+            @if (review.ReviewComplete == null)
+            {
+              <a asp-action="ResendRequest" asp-route-reviewId="@review.ID">
+                Resend request
+              </a>
+            }
+            else if (!review.SignedOff)
+            {
+              <a asp-action="RequestReReview" asp-route-reviewId="@review.ID">
+                Request Re-review
+              </a>
+            }
           </td>
         </tr>
       }
     </tbody>
   </table>
 }
+<div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+  <div class="nhsuk-grid-column-full">
+    <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.BaseFramework.ID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
+  </div>
+</div>
+

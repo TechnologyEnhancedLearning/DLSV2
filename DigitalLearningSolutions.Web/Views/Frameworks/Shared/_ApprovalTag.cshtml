@@ -1,0 +1,49 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
+@model FrameworkReview
+@{
+  string? approvalText;
+  approvalText = Model.SignOffRequired ? "Required" : "Optional";
+  approvalText += Model.ReviewComplete == null ? " - Pending" : Model.SignedOff ? " - Approved" : " - Rejected";
+  switch (approvalText)
+  {
+    case "Required - Approved":
+    case "Optional - Approved":
+      // Use the text block below to separate html elements from code
+      <text>
+        <strong class="nhsuk-tag status-tag nhsuk-tag--green">
+          @approvalText
+        </strong></text>
+      break;  // Always break each case
+    case "Optional - Pending":
+      <text>
+        <strong class="nhsuk-tag status-tag">
+          @approvalText
+        </strong>
+      </text>
+
+      break;
+    case "Required - Pending":
+      <text>
+        <strong class="nhsuk-tag status-tag nhsuk-tag--blue">
+          @approvalText
+        </strong>
+      </text>
+
+      break;
+    case "Required - Rejected":
+      <text>
+        <strong class="nhsuk-tag status-tag nhsuk-tag--red">
+          @approvalText
+        </strong>
+
+      </text>
+      break;
+    case "Optional - Rejected":
+      <text>
+        <strong class="nhsuk-tag status-tag nhsuk-tag--yellow">
+          @approvalText
+        </strong>
+      </text>
+      break;
+  }
+}
