@@ -21,9 +21,9 @@
         private static string newCandidateNumber = "TU67";
         private static string passwordHash = "hash";
         private DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
+            "Test", "User", "testuser@email.com", 1, 1, passwordHash, false);
         private DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
-            "Bad", "User", "fail@test.com", 1, 1, passwordHash);
+            "Bad", "User", "fail@test.com", 1, 1, passwordHash, false);
 
         [SetUp]
         public void Setup()

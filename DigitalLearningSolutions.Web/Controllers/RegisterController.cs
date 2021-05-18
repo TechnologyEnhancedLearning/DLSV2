@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -152,8 +153,12 @@
                 return View(viewModel);
             }
 
+            var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            var centreIPPrefixes = centresDataService.GetCentreIPPrefix((int)data.LearnerInformationViewModel.Centre!);
+            var approved = centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
+
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data, approved), baseUrl);
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");

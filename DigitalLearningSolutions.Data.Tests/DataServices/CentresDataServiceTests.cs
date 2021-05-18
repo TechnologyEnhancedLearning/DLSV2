@@ -117,13 +117,24 @@
         }
 
         [Test]
-        public void GetCentreName_should_return_null_when_the_centre_does_not_exist()
+        public void GetCentreIPPrefix_should_return_empty_array_when_the_centre_does_not_exist()
         {
             // When
-            var result = centresDataService.GetCentreName(1);
+            var result = centresDataService.GetCentreIPPrefix(1);
 
             // Then
-            result.Should().BeNull();
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetCentreIPPrefix_should_return_IP_Prefix()
+        {
+            // When
+            var expectedResult = new[] { "194.176.105" };
+            var result = centresDataService.GetCentreIPPrefix(2);
+            
+            // Then
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }

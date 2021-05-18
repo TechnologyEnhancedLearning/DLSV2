@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
@@ -13,6 +14,7 @@
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
         (string firstName, string lastName, string email) GetContactInfo(int centreId);
+        string[] GetCentreIPPrefix(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -117,6 +119,21 @@
                 new { centreId }
             );
             return info;
+        }
+
+        public string[] GetCentreIPPrefix(int centreId)
+        {
+            var IPPrefix = connection.QueryFirstOrDefault<string?>(
+                @"SELECT IPPrefix
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+
+            var IPPrefixes = IPPrefix?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            IPPrefixes ??= new string[0];
+
+            return IPPrefixes;
         }
     }
 }

@@ -6,7 +6,7 @@
 
     public static class RegistrationMappingHelper
     {
-        public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
+        public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data, bool approved)
         {
             return new DelegateRegistrationModel
             (
@@ -15,7 +15,8 @@
                 data.RegisterViewModel.Email!,
                 (int)data.LearnerInformationViewModel.Centre!,
                 (int)data.LearnerInformationViewModel.JobGroup!,
-                data.PasswordHash!
+                data.PasswordHash!,
+                approved
             );
         }
 
