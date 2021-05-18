@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
     public class ResetPasswordController : Controller
@@ -34,7 +35,18 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Error");
             }
 
-            return View();
+            return View(new PasswordViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult Index(PasswordViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
