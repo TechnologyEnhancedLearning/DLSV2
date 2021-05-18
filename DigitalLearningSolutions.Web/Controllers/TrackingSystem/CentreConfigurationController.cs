@@ -48,25 +48,25 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
         }
 
         [HttpGet]
-        [Route("CentreManagerDetails/Edit")]
+        [Route("EditCentreManagerDetails")]
         public IActionResult EditCentreManagerDetails()
         {
             var centreId = User.GetCentreId();
 
             var centreDetails = centresDataService.GetCentreDetailsById(centreId);
 
-            var model = new CentreManagerDetailsViewModel(centreDetails);
+            var model = new EditCentreManagerDetailsViewModel(centreDetails);
 
-            return View("CentreManagerDetails", model);
+            return View(model);
         }
 
         [HttpPost]
-        [Route("CentreManagerDetails/Edit")]
-        public IActionResult EditCentreManagerDetails(CentreManagerDetailsViewModel model)
+        [Route("EditCentreManagerDetails")]
+        public IActionResult EditCentreManagerDetails(EditCentreManagerDetailsViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View("CentreManagerDetails", model);
+                return View(model);
             }
 
             var centreId = User.GetCentreId();

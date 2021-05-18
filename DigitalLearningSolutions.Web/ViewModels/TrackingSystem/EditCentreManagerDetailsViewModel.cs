@@ -3,11 +3,11 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models;
 
-    public class CentreManagerDetailsViewModel
+    public class EditCentreManagerDetailsViewModel
     {
-        public CentreManagerDetailsViewModel(){ }
+        public EditCentreManagerDetailsViewModel(){ }
 
-        public CentreManagerDetailsViewModel(Centre centre)
+        public EditCentreManagerDetailsViewModel(Centre centre)
         {
             FirstName = centre.ContactForename;
             LastName = centre.ContactSurname;

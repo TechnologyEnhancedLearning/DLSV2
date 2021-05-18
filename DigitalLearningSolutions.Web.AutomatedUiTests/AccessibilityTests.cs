@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [Theory]
         [InlineData("/MyAccount")]
         [InlineData("/TrackingSystem/CentreConfiguration")]
-        [InlineData("/TrackingSystem/CentreConfiguration/CentreManagerDetails/Edit")]
+        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails")]
         public void Authenticated_page_has_no_accessibility_errors(string url)
         {
             // when

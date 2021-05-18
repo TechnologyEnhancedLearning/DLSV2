@@ -20,7 +20,7 @@
             string email,
             string? telephone
         );
-        (string firstName, string lastName, string email) GetContactInfo(int centreId);
+        (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -136,7 +136,7 @@
             );
         }
         
-        public (string firstName, string lastName, string email) GetContactInfo(int centreId)
+        public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
             var info = connection.QueryFirstOrDefault<(string, string, string)>(
                 @"SELECT ContactForename, ContactSurname, ContactEmail
