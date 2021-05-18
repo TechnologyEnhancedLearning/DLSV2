@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="aspFor"></param>
         /// <param name="label"></param>
-        /// <param name="value">Leave blank to pass no value to client.</param>
+        /// <param name="populateWithCurrentValue"></param>
         /// <param name="type"></param>
         /// <param name="spellCheck"></param>
         /// <param name="hintText">Leave blank for no hint.</param>
@@ -20,7 +20,7 @@
         public IViewComponentResult Invoke(
             string aspFor,
             string label,
-            string value,
+            bool populateWithCurrentValue,
             string type,
             bool spellCheck,
             string hintText,
@@ -30,6 +30,7 @@
             var model = ViewData.Model;
 
             var property = model.GetType().GetProperty(aspFor);
+            var valueToSet = populateWithCurrentValue ? property?.GetValue(model)?.ToString() : null;
 
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
@@ -38,7 +39,7 @@
                 aspFor,
                 aspFor,
                 label,
-                string.IsNullOrEmpty(value) ? null : value,
+                valueToSet,
                 type,
                 spellCheck,
                 string.IsNullOrEmpty(autocomplete) ? null : autocomplete,

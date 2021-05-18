@@ -23,21 +23,21 @@
 
       <vc:text-input asp-for="Password"
                      label="Password"
+                     populate-with-current-value="false"
                      type="password"
                      spell-check="false"
                      hint-text="Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
                      autocomplete="new-password"
-                     css-class="nhsuk-u-width-one-half"
-                     value=""/>
+                     css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-input asp-for="ConfirmPassword"
                      label="Re-type password"
+                     populate-with-current-value="false"
                      type="password"
                      spell-check="false"
                      hint-text=""
                      autocomplete="new-password"
-                     css-class="nhsuk-u-width-one-half"
-                     value=""/>
+                     css-class="nhsuk-u-width-one-half"/>
 
       <button class="nhsuk-button" type="submit">Reset password</button>
     </form>
