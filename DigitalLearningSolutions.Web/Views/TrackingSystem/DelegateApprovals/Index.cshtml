@@ -4,3 +4,15 @@
 @{
   ViewData["Title"] = "Approve delegate registrations";
 }
+
+@foreach(var delegateApproval in Model.delegates)
+  {
+    <partial name="_delegateExpandable" model="delegateApproval" />
+  }
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <a class="nhsuk-button" href="" role="button">
+      Approve All
+    </a>
+  </div>
+</div>
