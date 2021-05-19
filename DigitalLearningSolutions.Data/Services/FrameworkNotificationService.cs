@@ -11,7 +11,7 @@
     {
         void SendFrameworkCollaboratorInvite(int id, int invitedByAdminId);
         void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment);
-        void SendReviewRequest(int id, int invitedByAdminId, bool required);
+        void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder);
         void SendReviewOutcomeNotification(int reviewId);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
@@ -90,7 +90,7 @@
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
 
-        public void SendReviewRequest(int id, int invitedByAdminId, bool required)
+        public void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder)
         {
             var collaboratorNotification = frameworkService.GetCollaboratorNotification(id, invitedByAdminId);
             if (collaboratorNotification == null)
@@ -98,7 +98,7 @@
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId}");
             }
             var frameworkUrl = GetFrameworkUrl(collaboratorNotification.FrameworkID, "Structure");
-            string emailSubjectLine = "DLS Digital Framework Review Request";
+            string emailSubjectLine = (reminder ? " REMINDER: " : "") + "DLS Digital Framework Review Request";
             string signOffRequired = required ? "You are required to sign-off this framework before it can be published." : "You are not required to sign-off this framework before it is published.";
             var builder = new BodyBuilder
             {

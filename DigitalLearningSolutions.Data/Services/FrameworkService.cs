@@ -80,13 +80,13 @@
         void ArchiveComment(int commentId);
         void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId);
         void SubmitFrameworkReview(int frameworkId, int reviewId, bool signedOff, int? commentId);
+        void UpdateReviewRequestedDate(int reviewId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-
     }
     public class FrameworkService : IFrameworkService
     {
@@ -1463,6 +1463,21 @@ FROM   FrameworkReviews AS FR INNER JOIN
              FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
 WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
                 new { reviewId }).FirstOrDefault();
+        }
+
+        public void UpdateReviewRequestedDate(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"UPDATE FrameworkReviews
+                    SET ReviewRequested = GETUTCDATE()
+                    WHERE ID = @reviewId", new { reviewId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework review requested date as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
         }
     }
 }
