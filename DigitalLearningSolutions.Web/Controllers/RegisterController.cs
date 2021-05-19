@@ -19,14 +19,16 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly ICryptoService cryptoService;
+        private readonly IUserService userService;
 
         public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
-            IRegistrationService registrationService, ICryptoService cryptoService)
+            IRegistrationService registrationService, ICryptoService cryptoService, IUserService userService)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -55,6 +57,12 @@
                 return View();
             }
 
+            var email = delegateRegistrationData.RegisterViewModel.Email;
+            if (email != null && userService.GetUsersByEmailAddress(email).delegateUsers.Count != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+            }
+
             return View(delegateRegistrationData.RegisterViewModel);
         }
 
@@ -62,6 +70,11 @@
         [HttpPost]
         public IActionResult Index(RegisterViewModel model)
         {
+            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -158,6 +171,12 @@
             {
                 return RedirectToAction("Error", "LearningSolutions");
             }
+
+            if (candidateNumber == "-4")
+            {
+                return RedirectToAction("Index");
+            }
+
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             return RedirectToAction("Confirmation");

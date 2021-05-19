@@ -31,7 +31,7 @@
         {
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
-            if (candidateNumber == "-1")
+            if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 return candidateNumber;
             }
