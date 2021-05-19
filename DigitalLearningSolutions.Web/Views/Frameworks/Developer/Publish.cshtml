@@ -24,7 +24,7 @@
     <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
         <th role="columnheader" class="" scope="col">
-        Reviewer
+          Reviewer
         </th>
         <th role="columnheader" class="" scope="col">
           Requested
@@ -45,7 +45,7 @@
             <span class="nhsuk-table-responsive__heading">Reviewer </span>@review.UserEmail
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Requested </span>@review.ReviewRequested.ToShortDateString()
+            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
             <span class="nhsuk-table-responsive__heading">Status </span>
@@ -67,13 +67,21 @@
             }
             @if (review.ReviewComplete == null)
             {
-              <a asp-action="ResendRequest" asp-route-reviewId="@review.ID">
-                Resend request
+              @if (review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+              {
+              <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-frameworkId="@review.FrameworkID" asp-route-frameworkCollaboratorId="@review.FrameworkCollaboratorID">
+                Send reminder
               </a>
+            <text>&nbsp;</text>
+              }
+              <a asp-action="RemoveRequest" asp-route-frameworkId="@review.FrameworkID" asp-route-reviewId="@review.ID">
+                Remove request
+              </a>
+
             }
             else if (!review.SignedOff)
             {
-              <a asp-action="RequestReReview" asp-route-reviewId="@review.ID">
+              <a asp-action="RequestReReview" asp-route-frameworkId="@review.FrameworkID" asp-route-reviewId="@review.ID">
                 Request Re-review
               </a>
             }
