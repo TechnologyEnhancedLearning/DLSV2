@@ -22,6 +22,8 @@
         private static string passwordHash = "hash";
         private DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
             "Test", "User", "testuser@email.com", 1, 1, passwordHash);
+        private DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
+            "Bad", "User", "fail@test.com", 1, 1, passwordHash);
 
         [SetUp]
         public void Setup()
@@ -37,6 +39,7 @@
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns(
                 (newCandidateNumber, false)
             );
+            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns(("-1", false));
 
             registrationService = new RegistrationService(registrationDataService, passwordDataService, emailService,
                 centresDataService);
@@ -78,6 +81,31 @@
 
             // Then
             candidateNumber.Should().Be(newCandidateNumber);
+        }
+
+        [Test]
+        public void Error_when_registering_returns_error_code()
+        {
+            // When
+            var candidateNumber = registrationService.RegisterDelegate(failingRegistrationModel, "localhost").candidateNumber;
+
+            // Then
+            candidateNumber.Should().Be("-1");
+        }
+
+        [Test]
+        public void Error_when_registering_fails_fast()
+        {
+            // When
+            registrationService.RegisterDelegate(failingRegistrationModel, "localhost");
+
+            // Then
+            A.CallTo(() =>
+                emailService.SendEmail(A<Email>._)
+            ).MustNotHaveHappened();
+            A.CallTo(() =>
+                passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+            ).MustNotHaveHappened();
         }
     }
 }

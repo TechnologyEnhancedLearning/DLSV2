@@ -79,7 +79,15 @@
                             c.ContactForename,
                             c.ContactSurname,
                             c.ContactEmail,
-                            c.ContactTelephone
+                            c.ContactTelephone,
+                            c.pwTelephone AS CentreTelephone,
+                            c.pwEmail AS CentreEmail,
+                            c.pwPostCode AS CentrePostcode,
+                            c.pwHours AS OpeningHours,
+                            c.pwWebURL AS CentreWebAddress,
+                            c.pwTrustsCovered AS OrganisationsCovered,
+                            c.pwTrainingLocations AS TrainingVenues,
+                            c.pwGeneralInfo AS OtherInformation
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",

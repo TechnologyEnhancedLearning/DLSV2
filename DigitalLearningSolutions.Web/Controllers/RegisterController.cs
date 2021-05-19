@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -132,7 +131,9 @@
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = MapToSummary(data);
+            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+            var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
 
             return View(viewModel);
         }
@@ -144,13 +145,19 @@
             var data = TempData.Peek<DelegateRegistrationData>()!;
             if (!ModelState.IsValid)
             {
-                var viewModel = MapToSummary(data);
+                var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+                var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+                var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var (candidateNumber, approved) = registrationService.RegisterDelegate(MapToDelegateRegistrationModel(data), baseUrl);
+            var (candidateNumber, approved) = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            if (candidateNumber == "-1")
+            {
+                return RedirectToAction("Error", "LearningSolutions");
+            }
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             TempData.Add("approved", approved);
@@ -183,33 +190,6 @@
                 var viewModel = new ConfirmationViewModel(candidateNumber, approved);
                 return View(viewModel);
             }
-        }
-
-        private SummaryViewModel MapToSummary(DelegateRegistrationData data)
-        {
-            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
-            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-            return new SummaryViewModel
-            {
-                FirstName = data.RegisterViewModel.FirstName!,
-                LastName = data.RegisterViewModel.LastName!,
-                Email = data.RegisterViewModel.Email!,
-                Centre = centre!,
-                JobGroup = jobGroup!
-            };
-        }
-
-        private static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
-        {
-            return new DelegateRegistrationModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                (int)data.LearnerInformationViewModel.Centre!,
-                (int)data.LearnerInformationViewModel.JobGroup!,
-                data.PasswordHash!
-            );
         }
     }
 }

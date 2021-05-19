@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
+    using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
     using System.Web;
     using DigitalLearningSolutions.Data.Factories;
@@ -166,7 +167,8 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect( "/Login");
+            var url = HttpUtility.UrlEncode(context.Request.Path);
+            context.HttpContext.Response.Redirect($"/Login?returnUrl={url}");
             return Task.CompletedTask;
         }
 

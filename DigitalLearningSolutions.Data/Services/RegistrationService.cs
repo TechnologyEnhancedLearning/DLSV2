@@ -10,6 +10,7 @@
     {
         (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
     }
+
     public class RegistrationService: IRegistrationService
     {
         private readonly IRegistrationDataService registrationDataService;
@@ -29,6 +30,11 @@
         public (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
             var (candidateNumber, approved) = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
+            if (candidateNumber == "-1")
+            {
+                return (candidateNumber, false);
+            }
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
             var contactInfo = centresDataService.GetContactInfo(delegateRegistrationModel.Centre);
             var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,

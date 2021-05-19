@@ -17,6 +17,7 @@
             JobGroup = jobGroup;
             PasswordHash = passwordHash;
         }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

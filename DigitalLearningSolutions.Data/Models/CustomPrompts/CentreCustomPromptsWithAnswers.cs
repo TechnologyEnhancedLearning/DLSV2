@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class CentreCustomPrompts
+    public class CentreCustomPromptsWithAnswers
     {
-        public CentreCustomPrompts(int centreId, List<CustomPrompt> customPrompts)
+        public CentreCustomPromptsWithAnswers(int centreId, List<CustomPromptWithAnswer> customPrompts)
         {
             CentreId = centreId;
             CustomPrompts = customPrompts;
@@ -12,6 +12,6 @@
 
         public int CentreId { get; set; }
 
-        public List<CustomPrompt> CustomPrompts { get; set; }
+        public List<CustomPromptWithAnswer> CustomPrompts { get; set; }
     }
 }
