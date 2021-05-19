@@ -14,6 +14,8 @@
     <button name="action" class="nhsuk-button" value="save">Save</button>
   </div>
 
+  <input type="hidden" asp-for="OptionsString"/>
+
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
       <div class="nhsuk-u-font-weight-bold">
@@ -38,11 +40,12 @@
     </div>
   </div>
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <table class="nhsuk-table">
-        <caption class="nhsuk-table__caption">Configured answers:</caption>
-        <thead role="rowgroup" class="nhsuk-table__head">
+  @if (!string.IsNullOrEmpty(Model.OptionsString)) {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <table class="nhsuk-table">
+          <caption class="nhsuk-table__caption">Configured answers:</caption>
+          <thead role="rowgroup" class="nhsuk-table__head">
           <tr role="row">
             <th role="columnheader" class="" scope="col">
               Answer
@@ -51,28 +54,33 @@
               Action
             </th>
           </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-          @foreach (var answer in Model.Options)
-          {
+          </thead>
+          <tbody class="nhsuk-table__body">
+          @foreach (var answer in Model.Options) {
             <tr role="row" class="nhsuk-table__row">
               <td class="nhsuk-table__cell">@answer</td>
-              <td class="nhsuk-table__cell "><a class="nhsuk-action-link">Remove</a></td>
+              <td class="nhsuk-table__cell ">
+                <button name="action" class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0" value="@("delete" + Model.Options.IndexOf(answer))">Remove</button>
+              </td>
             </tr>
           }
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  } else {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <partial name="NoConfiguredAnswers"/>
+      </div>
+    </div>
+  }
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-one-half">
-      <vc:text-input asp-for="Answer" label="Add another answer?" type="text" spell-check="true" autocomplete="" hint-text="" css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
+      <vc:text-input asp-for="Answer" label="Add another answer?" type="text" spell-check="true" autocomplete="" hint-text="" css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
       <button name="action" class="nhsuk-button nhsuk-button--secondary" value="addPrompt">Add</button>
     </div>
-    @*<div class="nhsuk-grid-column-one-half nhsuk-u-padding-top-6">
-      <button name="action" class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-top-0 nhsuk-u-padding-bottom-0" value="addPrompt">Add</button>
-    </div>*@
   </div>
 
   <div class="nhsuk-grid-row">

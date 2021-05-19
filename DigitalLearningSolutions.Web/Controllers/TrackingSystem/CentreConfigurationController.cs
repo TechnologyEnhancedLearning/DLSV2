@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -7,6 +8,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     [Authorize(Policy = CustomPolicies.UserCentreAdminOnly)]
     [Route("/TrackingSystem/CentreConfiguration")]
@@ -126,7 +128,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
         {
             var centreId = User.GetCentreId();
 
-            var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Single(cp => cp.CustomPromptNumber == promptNumber);
+            var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+                .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             return View(new EditRegistrationPromptViewModel(customPrompt));
         }
@@ -135,22 +138,46 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
         [Route("RegistrationPrompts/{promptNumber}/Edit")]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
+            if (action.StartsWith("delete") && int.TryParse(action.Remove(0, 6), out var index))
+            {
+                return EditRegistrationPromptPostRemovePrompt(model, index);
+            }
+
             return action switch
             {
                 "save" => EditRegistrationPromptPostSave(model),
                 "addPrompt" => EditRegistrationPromptPostAddPrompt(model),
-                _ => View(model),
+                _ => View(model)
             };
         }
 
         private IActionResult EditRegistrationPromptPostAddPrompt(EditRegistrationPromptViewModel model)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)
+        {
+            // We don't want to display validation errors on other fields in this case
+            foreach (var key in ModelState.Keys)
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
+
+            var (optionsString, options) =
+                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString, index);
+            model.Options = options;
+            model.OptionsString = optionsString;
+
+            return View(model);
         }
     }
 }
