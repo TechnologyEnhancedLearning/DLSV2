@@ -4,11 +4,11 @@ namespace DigitalLearningSolutions.Web.ViewComponents
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
-    public class CentreInfoViewComponent: ViewComponent
+    public class CentreContactInfoViewComponent: ViewComponent
     {
         private readonly ICentresDataService centresDataService;
 
-        public CentreInfoViewComponent(ICentresDataService centresDataService)
+        public CentreContactInfoViewComponent(ICentresDataService centresDataService)
         {
             this.centresDataService = centresDataService;
         }
@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
         public IViewComponentResult Invoke(int centreId)
         {
             var bannerText = centresDataService.GetBannerText(centreId);
-            var model = new CentreInfoViewModel(centreId, bannerText);
+            var model = new CentreContactInfoViewModel(centreId, bannerText);
             return View(model);
         }
     }

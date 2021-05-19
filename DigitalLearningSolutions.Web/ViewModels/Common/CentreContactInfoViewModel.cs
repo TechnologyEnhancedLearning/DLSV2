@@ -2,9 +2,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     using System.Collections.Generic;
 
-    public class CentreInfoViewModel
+    public class CentreContactInfoViewModel
     {
-        public CentreInfoViewModel(int centreId, string? bannerText)
+        public CentreContactInfoViewModel(int centreId, string? bannerText)
         {
             Routes = new Dictionary<string, string>
             {
