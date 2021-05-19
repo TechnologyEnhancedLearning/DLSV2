@@ -165,7 +165,7 @@ namespace DigitalLearningSolutions.Web
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
             var applicationPath = new Uri(config["AppRootPath"]).AbsolutePath.TrimEnd('/');
-            var url = HttpUtility.UrlEncode(applicationPath) + HttpUtility.UrlEncode(context.Request.Path);
+            var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}");
             return Task.CompletedTask;
         }
