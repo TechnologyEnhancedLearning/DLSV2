@@ -13,6 +13,7 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
+
         void UpdateCentreManagerDetails
         (
             int centreId,
@@ -21,6 +22,7 @@
             string email,
             string? telephone
         );
+
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIPPrefix(int centreId);
     }
@@ -134,10 +136,10 @@
                     ContactEmail = @email,
                     ContactTelephone = @telephone
                 WHERE CentreId = @centreId",
-                new {firstName, lastName, email, telephone, centreId}
+                new { firstName, lastName, email, telephone, centreId }
             );
         }
-        
+
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
             var info = connection.QueryFirstOrDefault<(string, string, string)>(
@@ -148,7 +150,7 @@
             );
             return info;
         }
-        
+
         public string[] GetCentreIPPrefix(int centreId)
         {
             var IPPrefix = connection.QueryFirstOrDefault<string?>(
