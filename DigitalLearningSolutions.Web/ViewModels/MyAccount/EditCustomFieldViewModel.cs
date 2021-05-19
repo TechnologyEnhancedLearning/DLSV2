@@ -12,7 +12,7 @@
             CustomPrompt = prompt;
             Mandatory = mandatory;
             Answer = answer;
-            Options = SelectListHelper.GetOptionsWithSelectedValue(options, answer);
+            Options = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(options, answer);
         }
 
         public int CustomFieldId { get; set; }

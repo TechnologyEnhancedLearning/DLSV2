@@ -198,6 +198,8 @@
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
+            var accountDetailsData =
+                new AccountDetailsData(adminUser.Id, null, password, firstName, lastName, email, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress)).Returns(adminUser);
@@ -209,8 +211,7 @@
                 .DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, null, password, firstName, lastName,
-                email, null, 1, null, null, null, null, null, null, null);
+            var result = userService.TryUpdateUserAccountDetails(accountDetailsData);
 
             // Then
             result.Should().BeTrue();
@@ -230,6 +231,9 @@
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
+            var accountDetailsData =
+                new AccountDetailsData(null, delegateUser.Id, password, firstName, lastName, email, null);
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress)).Returns(null);
@@ -242,8 +246,7 @@
 
             // When
             var result =
-                userService.TryUpdateUserAccountDetails(null, delegateUser.Id, password, firstName, lastName, email,
-                    null, 2, 1, null, null, null, null, null, null);
+                userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
             result.Should().BeTrue();
@@ -267,6 +270,9 @@
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
+            var accountDetailsData =
+                new AccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
@@ -281,8 +287,7 @@
                 .DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id, password, firstName,
-                lastName, email, null, 2, 1, null, null, null, null, null, null);
+            var result = userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
             result.Should().BeTrue();
@@ -305,6 +310,9 @@
             var firstName = "TestFirstName";
             var lastName = "TestLastName";
             var email = "test@email.com";
+            var accountDetailsData =
+                new AccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
+            var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
@@ -315,8 +323,7 @@
                 .Returns((null, new List<DelegateUser>()));
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(adminUser.Id, delegateUser.Id, password, firstName,
-                lastName, email, null, 2, 1, null, null, null, null, null, null);
+            var result = userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
             result.Should().BeFalse();

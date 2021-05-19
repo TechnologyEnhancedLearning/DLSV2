@@ -6,18 +6,17 @@
 
     public static class SelectListHelper
     {
-        public static IEnumerable<SelectListItem> GetOptionsWithSelectedText(List<(int id, string name)> options, string? selectedName)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedText(List<(int id, string value)> options, string? selectedTextValue)
         {
-            var selectedOption = options.Where(o => o.name == selectedName).Select(o => o.id).SingleOrDefault();
-            return options.Select(o => new SelectListItem(o.name, o.id.ToString(), o.id == selectedOption)).ToList();
+            return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.value == selectedTextValue)).ToList();
         }
 
-        public static IEnumerable<SelectListItem> GetOptionsWithSelectedValue(List<(int id, string name)> options, int? selectedId)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(List<(int id, string value)> options, int? selectedId)
         {
-            return options.Select(o => new SelectListItem(o.name, o.id.ToString(), o.id == selectedId)).ToList();
+            return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.id == selectedId)).ToList();
         }
 
-        public static IEnumerable<SelectListItem> GetOptionsWithSelectedValue(List<string> options, string? selected)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(List<string> options, string? selected)
         {
             return options.Select(o => new SelectListItem(o, o, o == selected)).ToList();
         }

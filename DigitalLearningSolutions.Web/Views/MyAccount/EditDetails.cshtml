@@ -9,13 +9,11 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
 }
 
-@if (User.IsDelegateOnlyAccount())
-{
+@if (User.IsDelegateOnlyAccount()) {
   ViewData["Application"] = "Learning Portal";
-  @section NavMenuItems {
-    <partial name="../LearningPortal/Shared/_NavMenuItems" />
-  }
-}
+@section NavMenuItems {
+  <partial name="../LearningPortal/Shared/_NavMenuItems"/>
+}}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -38,19 +36,43 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="FirstName" label="First name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input
+        asp-for="FirstName"
+        label="First name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="given-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="LastName" label="Last name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input
+        asp-for="LastName"
+        label="Last name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="family-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Email" label="Email address" populate-with-current-value="true" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input
+        asp-for="Email"
+        label="Email address"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="email"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
@@ -58,18 +80,40 @@
     <input type="hidden" asp-for="IsDelegateUser"/>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <vc:select-list asp-for="JobGroupId" label="Job group" value="@Model.JobGroupId.ToString()" hint-text="" css-class="nhsuk-u-width-one-half" default-option="Select a job group" select-list-options="@ViewBag.JobGroupOptions"></vc:select-list>
+        <vc:select-list
+          asp-for="JobGroupId"
+          label="Job group"
+          value="@Model.JobGroupId.ToString()"
+          hint-text=""
+          css-class="nhsuk-u-width-one-half"
+          default-option="Select a job group"
+          select-list-options="@ViewBag.JobGroupOptions"/>
       </div>
     </div>
 
     foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
-      <div class="nhsuk-grid-row @(ViewBag.CustomFields.IndexOf(customField) == ViewBag.CustomFields.Count - 1 ? "divider" : "")">
+      var isLast = ViewBag.CustomFields.IndexOf(customField) == ViewBag.CustomFields.Count - 1;
+      <div class="nhsuk-grid-row @(isLast ? "divider" : "")">
         <div class="nhsuk-grid-column-full">
-          @if (customField.Options.Any())
-          {
-            <vc:select-list asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" value="@customField.Answer" hint-text="" css-class="nhsuk-u-width-one-half" default-option="Select a @customField.CustomPrompt.ToLower()" select-list-options="@customField.Options"></vc:select-list>
+          @if (customField.Options.Any()) {
+            <vc:select-list
+              asp-for="@("Answer" + customField.CustomFieldId)"
+              label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+              value="@customField.Answer"
+              hint-text=""
+              css-class="nhsuk-u-width-one-half"
+              default-option="Select a @customField.CustomPrompt.ToLower()"
+              select-list-options="@customField.Options"/>
           } else {
-            <vc:text-input asp-for="@("Answer" + @customField.CustomFieldId)" label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))" populate-with-current-value="true" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half" />
+            <vc:text-input
+              asp-for="@("Answer" + customField.CustomFieldId)"
+              label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+              populate-with-current-value="true"
+              type="text"
+              spell-check="false"
+              autocomplete=""
+              hint-text=""
+              css-class="nhsuk-u-width-one-half"/>
           }
         </div>
       </div>
@@ -104,7 +148,15 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Password" label="Confirm password to save changes:" populate-with-current-value="false" type="password" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input
+        asp-for="Password"
+        label="Confirm password to save changes:"
+        populate-with-current-value="false"
+        type="password"
+        spell-check="false"
+        autocomplete=""
+        hint-text=""
+        css-class="nhsuk-u-width-one-half"/>
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
@@ -112,6 +164,6 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" />
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back"/>
   </div>
 </div>

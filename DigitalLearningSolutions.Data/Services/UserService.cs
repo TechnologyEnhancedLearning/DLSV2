@@ -19,24 +19,9 @@
 
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
-        public bool TryUpdateUserAccountDetails
-        (
-            int? adminId,
-            int? delegateId,
-            string password,
-            string firstName,
-            string surname,
-            string email,
-            byte[]? profileImage,
-            int centreId,
-            int? jobGroupId,
-            string? answer1,
-            string? answer2,
-            string? answer3,
-            string? answer4,
-            string? answer5,
-            string? answer6
-        );
+        public bool TryUpdateUserAccountDetails(
+            AccountDetailsData accountDetailsData,
+            CentreAnswersData? centreAnswersData = null);
     }
 
     public class UserService : IUserService
@@ -113,27 +98,12 @@
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public bool TryUpdateUserAccountDetails
-        (
-            int? adminId,
-            int? delegateId,
-            string password,
-            string firstName,
-            string surname,
-            string email,
-            byte[]? profileImage,
-            int centreId,
-            int? jobGroupId,
-            string? answer1,
-            string? answer2,
-            string? answer3,
-            string? answer4,
-            string? answer5,
-            string? answer6
-        )
+        public bool TryUpdateUserAccountDetails(AccountDetailsData accountDetailsData,
+            CentreAnswersData? centreAnswersData = null)
         {
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
+                GetVerifiedLinkedUsersAccounts(accountDetailsData.AdminId, accountDetailsData.DelegateId,
+                    accountDetailsData.Password);
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -142,18 +112,27 @@
 
             if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUser(firstName, surname, email, profileImage, verifiedAdminUser.Id);
+                userDataService.UpdateAdminUser(accountDetailsData.FirstName, accountDetailsData.Surname,
+                    accountDetailsData.Email, accountDetailsData.ProfileImage, verifiedAdminUser.Id);
             }
 
             if (verifiedDelegateUsers.Count != 0)
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(firstName, surname, email, profileImage, delegateIds);
+                userDataService.UpdateDelegateUsers(accountDetailsData.FirstName, accountDetailsData.Surname,
+                    accountDetailsData.Email, accountDetailsData.ProfileImage, delegateIds);
 
-                if (verifiedDelegateUsers.Any(u => u.Id == delegateId))
+                if (verifiedDelegateUsers.Any(u => u.Id == accountDetailsData.DelegateId) && centreAnswersData != null)
                 {
-                    userDataService.UpdateDelegateUserCentrePrompts(delegateId!.Value, jobGroupId!.Value, answer1, answer2, answer3,
-                        answer4, answer5, answer6);
+                    userDataService.UpdateDelegateUserCentrePrompts(
+                        accountDetailsData.DelegateId!.Value,
+                        centreAnswersData.JobGroupId,
+                        centreAnswersData.Answer1,
+                        centreAnswersData.Answer2,
+                        centreAnswersData.Answer3,
+                        centreAnswersData.Answer4,
+                        centreAnswersData.Answer5,
+                        centreAnswersData.Answer6);
                 }
             }
 

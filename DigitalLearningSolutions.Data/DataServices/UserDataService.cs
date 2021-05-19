@@ -15,7 +15,9 @@
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids);
+
+        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage,
+            int[] ids);
 
         public void UpdateDelegateUserCentrePrompts(
             int id,
@@ -134,7 +136,7 @@
 
             return user;
         }
-        
+
         public List<DelegateUser> GetDelegateUsersByUsername(string username)
         {
             List<DelegateUser> users = connection.Query<DelegateUser>(
@@ -203,7 +205,7 @@
                             Email = @email,
                             ProfileImage = @profileImage
                         WHERE AdminID = @id",
-                new {firstName, surname, email, profileImage, id}
+                new { firstName, surname, email, profileImage, id }
             );
         }
 
@@ -221,8 +223,15 @@
             );
         }
 
-        public void UpdateDelegateUserCentrePrompts(int id, int jobGroupId, string? answer1, string? answer2, string? answer3,
-            string? answer4, string? answer5, string? answer6)
+        public void UpdateDelegateUserCentrePrompts(
+            int id,
+            int jobGroupId,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6)
         {
             connection.Execute(
                 @"UPDATE Candidates

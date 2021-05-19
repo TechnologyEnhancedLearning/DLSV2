@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,11 +15,11 @@
     [Authorize]
     public class MyAccountController : Controller
     {
-        private readonly IUserService userService;
+        private readonly CustomPromptHelper customPromptHelper;
         private readonly ICustomPromptsService customPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly CustomPromptHelper customPromptHelper;
+        private readonly IUserService userService;
 
         public MyAccountController(
             ICustomPromptsService customPromptsService,
@@ -42,7 +41,9 @@
             var userDelegateId = User.GetNullableCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
-            var customPrompts = customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(User.GetCentreId(), delegateUser);
+            var customPrompts =
+                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(User.GetCentreId(),
+                    delegateUser);
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 
@@ -62,7 +63,8 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            ViewBag.JobGroupOptions = SelectListHelper.GetOptionsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
+            ViewBag.JobGroupOptions =
+                SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
 
             var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups);
@@ -74,13 +76,13 @@
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-            ViewBag.CustomFields = GetCustomFieldsWithModelAnswers(model);
+            ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(model);
             return action switch
             {
                 "save" => EditDetailsPostSave(model),
                 "previewImage" => EditDetailsPostPreviewImage(model),
                 "removeImage" => EditDetailsPostRemoveImage(model),
-                _ => View(model),
+                _ => View(model)
             };
         }
 
@@ -95,30 +97,38 @@
 
             if (model.ProfileImageFile != null)
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile), "Preview your new profile picture before saving");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile),
+                    "Preview your new profile picture before saving");
                 return View(model);
             }
 
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            if (!userService.TryUpdateUserAccountDetails(userAdminId,
+            var accountDetailsData = new AccountDetailsData(userAdminId,
                 userDelegateId,
                 model.Password!,
                 model.FirstName!,
                 model.LastName!,
                 model.Email!,
-                model.ProfileImage,
-                User.GetCentreId(),
-                model.JobGroupId,
-                model.Answer1,
-                model.Answer2,
-                model.Answer3,
-                model.Answer4,
-                model.Answer5,
-                model.Answer6))
+                model.ProfileImage);
+
+            var centreAnswersData = userDelegateId == null
+                ? null
+                : new CentreAnswersData(
+                    User.GetCentreId(),
+                    model.JobGroupId!.Value,
+                    model.Answer1,
+                    model.Answer2,
+                    model.Answer3,
+                    model.Answer4,
+                    model.Answer5,
+                    model.Answer6);
+
+            if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), "The password you have entered is incorrect.");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Password),
+                    "The password you have entered is incorrect.");
                 return View(model);
             }
 
@@ -165,10 +175,10 @@
         private IEnumerable<SelectListItem> GetJobGroupItems(int? selectedId)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            return SelectListHelper.GetOptionsWithSelectedValue(jobGroups, selectedId);
+            return SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(jobGroups, selectedId);
         }
 
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithModelAnswers(EditDetailsViewModel model)
+        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
         {
             return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
                 model.Answer1, model.Answer2, model.Answer3, model.Answer4,
@@ -184,18 +194,20 @@
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)
         {
-            var customFields = GetCustomFieldsWithModelAnswers(model);
+            var customFields = GetCustomFieldsWithEnteredAnswers(model);
 
             foreach (var customField in customFields)
             {
                 if (customField.Mandatory && customField.Answer == null)
                 {
-                    ModelState.AddModelError("Answer"+customField.CustomFieldId, $"{(customField.Options.Any() ? "Select" : "Enter" )} a {customField.CustomPrompt.ToLower()}");
+                    var errorMessage = $"{(customField.Options.Any() ? "Select" : "Enter")} a {customField.CustomPrompt.ToLower()}";
+                    ModelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
 
                 if (customField.Answer?.Length > 100)
                 {
-                    ModelState.AddModelError("Answer" + customField.CustomFieldId, $"{customField.CustomPrompt} must be at most 100 characters");
+                    var errorMessage = $"{customField.CustomPrompt} must be at most 100 characters";
+                    ModelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
             }
         }
