@@ -33,7 +33,7 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
 
-            A.CallTo(() => centresDataService.GetContactInfo(A<int>._)).Returns((
+            A.CallTo(() => centresDataService.GetCentreManagerDetails(A<int>._)).Returns((
                 "Test", "Approver", approverEmail
             ));
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns(

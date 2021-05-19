@@ -60,32 +60,42 @@
       <span nhs-validation-for="LevelDescriptor.LevelLabel"></span>
       <input class="nhsuk-input" id="tb-levelLabel-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelLabel" error-class-toggle="nhsuk-input--error" name="LevelLabel" type="text">
     </nhs-form-group>
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="tb-levelDescription-@Model.LevelDescriptor.LevelValue">
-          Option @Model.LevelDescriptor.LevelValue description
-        </label>
-        <div class="nhsuk-hint" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue-hint">
-          What additional description (if any) should be provided for this radio button option?
-        </div>
-        <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelDescription" name="LevelDescription" type="text"></textarea>
+    <div class="nhsuk-form-group">
+      <label class="nhsuk-label" for="tb-levelDescription-@Model.LevelDescriptor.LevelValue">
+        Option @Model.LevelDescriptor.LevelValue description
+      </label>
+      <div class="nhsuk-hint" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue-hint">
+        What additional description (if any) should be provided for this radio button option?
       </div>
-      <input name="ID" type="hidden" asp-for="@Model.LevelDescriptor.ID" />
-      <input name="LevelValue" type="hidden" asp-for="@Model.LevelDescriptor.LevelValue" />
-      <input name="UpdatedByAdminID" type="hidden" asp-for="@Model.LevelDescriptor.UpdatedByAdminID" />
-</fieldset>
+      <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue" asp-for="@Model.LevelDescriptor.LevelDescription" name="LevelDescription" type="text"></textarea>
+    </div>
+    <input name="ID" type="hidden" asp-for="@Model.LevelDescriptor.ID" />
+    <input name="LevelValue" type="hidden" asp-for="@Model.LevelDescriptor.LevelValue" />
+    <input name="UpdatedByAdminID" type="hidden" asp-for="@Model.LevelDescriptor.UpdatedByAdminID" />
+  </fieldset>
   <button class="nhsuk-button" type="submit">
     Next
   </button>
   @if (Model.FrameworkCompetencyId == 0)
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
   else
   {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-      Cancel
-    </a>
+    <div class="nhsuk-back-link">
+      <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+      </a>
+    </div>
   }
 </form>

@@ -48,35 +48,45 @@
 <p class="nhsuk-label">Use this preview to confirm the assessment question appears as expected before submitting.</p>
 <div class="nhsuk-card nhsuk-u-padding-4">
   <partial name="../Shared/_AssessmentQuestionPreview.cshtml" model="Model.AssessmentQuestion" />
-  </div>
-  @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
-  {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-      Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.VocabPlural().ToLower()</span>
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-      Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.VocabPlural().ToLower()</span>
-    </a>
-  }
-  else
-  {
-    <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
-      Submit
-    </a>
-  }
+</div>
+@if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
+{
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+    Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.VocabPlural().ToLower()</span>
+  </a>
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+    Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.VocabPlural().ToLower()</span>
+  </a>
+}
+else
+{
+  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+    Submit
+  </a>
+}
 
-  @if (Model.FrameworkCompetencyId == 0)
-  {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+@if (Model.FrameworkCompetencyId == 0)
+{
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
       Cancel
     </a>
-  }
-  else
-  {
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+  </div>
+}
+else
+{
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
       Cancel
     </a>
-  }
-  @section scripts {
-    <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-  }
+  </div>
+}
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+}

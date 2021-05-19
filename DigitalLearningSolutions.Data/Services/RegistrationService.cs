@@ -36,7 +36,7 @@
                 return (candidateNumber, false);
             }
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
-            var contactInfo = centresDataService.GetContactInfo(delegateRegistrationModel.Centre);
+            var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
             var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
                 delegateRegistrationModel.LastName, baseUrl);
             emailService.SendEmail(approvalEmail);

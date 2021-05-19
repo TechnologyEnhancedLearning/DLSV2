@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
     {
         public IViewComponentResult Invoke(string aspController, string aspAction, Dictionary<string, string> aspAllRouteData, string linkText)
         {
-            return View(new ActionLinkViewModel(aspController, aspAction, aspAllRouteData, linkText));
+            return View(new LinkViewModel(aspController, aspAction, linkText, aspAllRouteData));
         }
     }
 }

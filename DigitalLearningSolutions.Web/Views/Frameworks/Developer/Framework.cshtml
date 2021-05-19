@@ -55,11 +55,16 @@
       }
       else
       {
-          <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Send for review</a>
+        <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Send for review</a>
       }
+    }
+    @if (Model.DetailFramework.FrameworkReviewID != null)
+    {
+      <a role="button" asp-action="LoadReview" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-reviewId="@Model.DetailFramework.FrameworkReviewID" class="nhsuk-button">Submit my review</a>
     }
   </div>
 </div>
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <div class="hee-fwservice--tabs">

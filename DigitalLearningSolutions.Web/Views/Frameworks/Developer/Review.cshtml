@@ -17,64 +17,87 @@
   </nav>
 }
 <h1>Send for review</h1>
-<h2>Who should review this framework?</h2>
-<form method="post">
-  <table class="nhsuk-table-responsive">
-    <caption class="nhsuk-table__caption">Select working group members who need to review the framework "@Model.FrameworkName" before it is published. If sign-off is required from a user before the framework is published, ensure that the Sign-off Required column is checked. </caption>
-    <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
+@if (Model.Collaborators.Any())
+{
+  <h2>Who should review this framework?</h2>
+  <form method="post">
+    <table class="nhsuk-table-responsive">
+      <caption class="nhsuk-table__caption">Select working group members who need to review the framework "@Model.FrameworkName" before it is published. If sign-off is required from a user before the framework is published, ensure that the Sign-off Required column is checked. </caption>
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
 
-        <th role="columnheader" class="" scope="col">
-          User
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Role
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Sign-off Required
-        </th>
-      </tr>
-    </thead>
+          <th role="columnheader" class="" scope="col">
+            User
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Role
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Sign-off Required
+          </th>
+        </tr>
+      </thead>
 
-    <tbody class="nhsuk-table__body">
-      @foreach (var collaborator in Model.Collaborators)
-      {
-      <tr role="row" class="nhsuk-table__row collaborator-row">
-        <td role="cell" class="nhsuk-table__cell">
-          <span class="nhsuk-table-responsive__heading">User </span>
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
-              @collaborator.UserEmail
-            </label>
-          </div>
-        </td>
-        <td role="cell" class="nhsuk-table__cell">
-          <span class="nhsuk-table-responsive__heading">Role </span>
-          <span class="framework-collaborator-role">
-            <partial name="Shared/_RoleTag" model="collaborator" />
-          </span>
-        </td>
-        <td role="cell" class="nhsuk-table__cell">
-          <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" id="sign-off-required-check-@collaborator.ID" name="SignOffRequiredChecked" type="checkbox" value="@collaborator.ID">
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
-              Required
-            </label>
-          </div>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+      <tbody class="nhsuk-table__body">
+        @foreach (var collaborator in Model.Collaborators)
+        {
+          <tr role="row" class="nhsuk-table__row collaborator-row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">User </span>
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="user-check-@collaborator.ID" name="UserChecked" type="checkbox" value="@collaborator.ID">
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
+                  @collaborator.UserEmail
+                </label>
+              </div>
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Role </span>
+              <span class="framework-collaborator-role">
+                <partial name="Shared/_RoleTag" model="collaborator" />
+              </span>
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="sign-off-required-check-@collaborator.ID" name="SignOffRequiredChecked" type="checkbox" value="@collaborator.ID">
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
+                  Required
+                </label>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+      <div class="nhsuk-grid-column-full">
+        <button class="nhsuk-button" type="submit">Submit</button>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Review" asp-route-frameworkId="@Model.FrameworkId">Manage working group</a>
+      </div>
+    </div>
+
+  </form>
+}
+else
+{
+  <p>There are no members of the working group for this framework who haven't already got an open review request. Use the <strong>Manage working group</strong> button below to add some more.</p>
   <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
     <div class="nhsuk-grid-column-full">
-      <button class="nhsuk-button" type="submit">Submit</button>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Review" asp-route-frameworkId="@Model.FrameworkId">Manage working group</a>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Cancel</a>
+      <a class="nhsuk-button" asp-action="AddCollaborators" asp-route-actionname="Review" asp-route-frameworkId="@Model.FrameworkId">Manage working group</a>
+      </div>
     </div>
-  </div>
- 
-</form>
+      }
+
+
+      <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+          <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+          </svg>
+          Cancel
+        </a>
+      </div>
+
+
 
