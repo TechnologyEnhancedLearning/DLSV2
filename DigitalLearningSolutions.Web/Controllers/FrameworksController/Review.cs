@@ -41,8 +41,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
         }
         [Route("/Framework/{frameworkId}/Publish")]
-        [Route("/Framework/{frameworkId}/Publish/{reviewId}")]
-        public IActionResult PublishFramework(int frameworkId, int reviewId = 0)
+        public IActionResult PublishFramework(int frameworkId)
         {
             var adminId = GetAdminID();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
@@ -54,8 +53,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new PublishViewModel()
             {
                 BaseFramework = framework,
-                FrameworkReviews = frameworkReviews,
-                ReminderReviewID = reviewId
+                FrameworkReviews = frameworkReviews
             };
             return View("Developer/Publish", model);
         }
@@ -101,11 +99,21 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminID();
             frameworkNotificationService.SendReviewRequest(frameworkCollaboratorId, adminId, required, true);
             frameworkService.UpdateReviewRequestedDate(reviewId);
-            return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId, reviewId });
+            return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
         }
-        public IActionResult RequestReReview(int reviewId)
+        public IActionResult RequestReReview(int frameworkId, int reviewId)
         {
-            throw new System.NotImplementedException();
+            var adminId = GetAdminID();
+            var newReviewId = frameworkService.InsertFrameworkReReview(reviewId);
+            var review = frameworkService.GetFrameworkReviewNotification(reviewId);
+            frameworkNotificationService.SendReviewRequest(review.FrameworkCollaboratorID, adminId, review.SignOffRequired, false);
+            return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
+        }
+        public IActionResult RemoveRequest(int frameworkId, int reviewId)
+        {
+            var adminId = GetAdminID();
+            frameworkService.ArchiveReviewRequest(reviewId);
+            return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
         }
     }
 }

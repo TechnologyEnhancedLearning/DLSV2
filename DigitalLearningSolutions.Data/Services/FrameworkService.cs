@@ -66,6 +66,7 @@
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
+        int InsertFrameworkReReview(int reviewId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -81,6 +82,7 @@
         void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId);
         void SubmitFrameworkReview(int frameworkId, int reviewId, bool signedOff, int? commentId);
         void UpdateReviewRequestedDate(int reviewId);
+        void ArchiveReviewRequest(int reviewId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -1475,6 +1477,40 @@ WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
             {
                 logger.LogWarning(
                     "Not updating framework review requested date as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
+        }
+
+        public int InsertFrameworkReReview(int reviewId)
+        {
+            ArchiveReviewRequest(reviewId);
+            var id = connection.QuerySingle<int>(
+               @"INSERT INTO FrameworkReviews
+                    (FrameworkID, FrameworkCollaboratorId, SignOffRequired)
+                      OUTPUT INSERTED.ID
+                      SELECT FR1.FrameworkID, FR1.FrameworkCollaboratorId, FR1.SignOffRequired FROM FrameworkReviews AS FR1 WHERE FR1.ID = @reviewId"
+                   , new { reviewId });
+            if (id < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting assessment question as db update failed. " +
+                    $"reviewId: {reviewId}"
+                );
+                return 0;
+            }
+            return id;
+        }
+        public void ArchiveReviewRequest(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+          @"UPDATE FrameworkReviews
+                    SET Archived = GETUTCDATE()
+                    WHERE ID = @reviewId", new { reviewId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not archiving framework review as db update failed. " +
                     $"reviewId: {reviewId}."
                 );
             }

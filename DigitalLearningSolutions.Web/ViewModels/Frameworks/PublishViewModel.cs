@@ -6,6 +6,5 @@
     {
         public BaseFramework BaseFramework { get; set; }
         public IEnumerable<FrameworkReview>? FrameworkReviews { get; set; }
-        public int ReminderReviewID { get; set; }
     }
 }

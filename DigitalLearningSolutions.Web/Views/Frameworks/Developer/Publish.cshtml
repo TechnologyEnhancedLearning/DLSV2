@@ -74,14 +74,14 @@
               </a>
             <text>&nbsp;</text>
               }
-              <a asp-action="RemoveRequest" asp-route-reviewId="@review.ID">
+              <a asp-action="RemoveRequest" asp-route-frameworkId="@review.FrameworkID" asp-route-reviewId="@review.ID">
                 Remove request
               </a>
 
             }
             else if (!review.SignedOff)
             {
-              <a asp-action="RequestReReview" asp-route-reviewId="@review.ID">
+              <a asp-action="RequestReReview" asp-route-frameworkId="@review.FrameworkID" asp-route-reviewId="@review.ID">
                 Request Re-review
               </a>
             }
