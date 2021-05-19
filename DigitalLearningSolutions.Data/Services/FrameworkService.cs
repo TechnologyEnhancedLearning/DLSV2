@@ -52,6 +52,7 @@
         IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId);
         IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId);
         FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId);
+        FrameworkReviewOutcomeNotification? GetFrameworkReviewNotification(int reviewId);
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -1416,7 +1417,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
         public IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId)
         {
             return connection.Query<FrameworkReview>(
-                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments, FR.SignOffRequired
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
@@ -1427,7 +1428,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
         public FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId)
         {
             return connection.Query<FrameworkReview>(
-                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments, FR.SignOffRequired
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
@@ -1448,6 +1449,20 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
                     $"commentId: {commentId}, frameworkId: {frameworkId}, reviewId: {reviewId}, signedOff: {signedOff} ."
                 );
             }
+        }
+        public FrameworkReviewOutcomeNotification? GetFrameworkReviewNotification(int reviewId)
+        {
+            return connection.Query<FrameworkReviewOutcomeNotification>(
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired, 
+             AU.Forename AS ReviewerFirstName, AU.Surname AS ReviewerLastName, AU1.Forename AS OwnerFirstName, AU1.Email AS OwnerEmail, FW.FrameworkName
+FROM   FrameworkReviews AS FR INNER JOIN
+             FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID INNER JOIN
+             AdminUsers AS AU ON FC.AdminID = AU.AdminID INNER JOIN
+             Frameworks AS FW ON FR.FrameworkID = FW.ID INNER JOIN
+             AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID LEFT OUTER JOIN
+             FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
+                new { reviewId }).FirstOrDefault();
         }
     }
 }

@@ -91,6 +91,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             }
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
+            frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
             return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
         }
     }
