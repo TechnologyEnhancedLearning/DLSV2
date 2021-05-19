@@ -181,8 +181,7 @@
 
             if (!approved)
             {
-                var bannerText = centresDataService.GetBannerText(centreId);
-                var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreId, bannerText);
+                var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreId);
                 return View(viewModel);
             }
             else

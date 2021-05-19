@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common
 
     public class CentreInfoViewModel
     {
-        public CentreInfoViewModel(int centreId, string bannerText)
+        public CentreInfoViewModel(int centreId, string? bannerText)
         {
             Routes = new Dictionary<string, string>
             {
@@ -14,6 +14,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common
         }
 
         public Dictionary<string, string> Routes { get; set; }
-        public string BannerText { get; set; }
+        public string? BannerText { get; set; }
     }
 }
