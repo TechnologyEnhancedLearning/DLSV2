@@ -2,10 +2,12 @@
 {
     using System;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -135,6 +137,37 @@
             
             // Then
             result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public void UpdateCentreManagerDetails_updates_centre()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                var firstName = "TestFirstName";
+                var lastName = "TestLastName";
+                var email = "test@email.com";
+                var telephone = "0123456789";
+
+                // When
+                centresDataService.UpdateCentreManagerDetails(2, firstName, lastName, email, telephone);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCentre.ContactForename.Should().BeEquivalentTo(firstName);
+                    updatedCentre.ContactSurname.Should().BeEquivalentTo(lastName);
+                    updatedCentre.ContactEmail.Should().BeEquivalentTo(email);
+                    updatedCentre.ContactTelephone.Should().BeEquivalentTo(telephone);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

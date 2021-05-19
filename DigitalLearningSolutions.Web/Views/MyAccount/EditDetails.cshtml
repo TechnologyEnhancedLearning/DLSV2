@@ -38,19 +38,19 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="FirstName" label="First name" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="FirstName" label="First name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="LastName" label="Last name" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="LastName" label="Last name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Email" label="Email address" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="Email" label="Email address" populate-with-current-value="true" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half"/>
     </div>
   </div>
 
@@ -82,7 +82,7 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="Password" label="Confirm password to save changes:" type="password" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="Password" label="Confirm password to save changes:" populate-with-current-value="false" type="password" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half"/>
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
@@ -90,6 +90,6 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="MyAccount" asp-action="Index"/>
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" />
   </div>
 </div>
