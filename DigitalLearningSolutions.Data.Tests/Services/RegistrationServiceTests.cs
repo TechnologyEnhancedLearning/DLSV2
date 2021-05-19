@@ -16,15 +16,28 @@
         private static readonly string newCandidateNumber = "TU67";
         private static readonly string passwordHash = "hash";
 
-        private readonly DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
-            "Bad", "User", "fail@test.com", 1, 1, passwordHash);
+        private readonly DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel
+        (
+            "Bad",
+            "User",
+            "fail@test.com",
+            1,
+            1,
+            passwordHash
+        );
 
-        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
+        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel
+        (
+            "Test",
+            "User",
+            "testuser@email.com",
+            1,
+            1,
+            passwordHash
+        );
 
         private ICentresDataService centresDataService;
         private IEmailService emailService;
-
         private IPasswordDataService passwordDataService;
         private IRegistrationDataService registrationDataService;
         private RegistrationService registrationService;
