@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
@@ -19,21 +18,18 @@
         private readonly IPasswordDataService passwordDataService;
         private readonly IEmailService emailService;
         private readonly ICentresDataService centresDataService;
-        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService(IRegistrationDataService registrationDataService,
-            IPasswordDataService passwordDataService, IEmailService emailService, ICentresDataService centresDataService, ILogger<RegistrationService> logger)
+            IPasswordDataService passwordDataService, IEmailService emailService, ICentresDataService centresDataService)
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
-            this.logger = logger;
         }
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIP)
         {
-            logger.LogWarning("DAN TEST: User IP during registration retrieved as: " + userIP);
             var centreIPPrefixes = centresDataService.GetCentreIPPrefix(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved = centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
 
@@ -44,10 +40,14 @@
                 return candidateNumber;
             }
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
-            var contactInfo = centresDataService.GetContactInfo(delegateRegistrationModel.Centre);
-            var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName, baseUrl);
-            emailService.SendEmail(approvalEmail);
+
+            if (!delegateRegistrationModel.Approved)
+            {
+                var contactInfo = centresDataService.GetContactInfo(delegateRegistrationModel.Centre);
+                var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
+                    delegateRegistrationModel.LastName, baseUrl);
+                emailService.SendEmail(approvalEmail); 
+            }
 
             return candidateNumber;
         }
