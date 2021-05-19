@@ -6,10 +6,13 @@
 
         public readonly string AspController;
 
-        public LinkViewModel(string aspController, string aspAction)
+        public readonly string LinkText;
+
+        public LinkViewModel(string aspController, string aspAction, string linkText)
         {
             AspAction = aspAction;
             AspController = aspController;
+            LinkText = linkText;
         }
     }
 }

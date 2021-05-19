@@ -19,7 +19,9 @@
             return View(errorSummaryViewModel);
         }
 
-        private static List<ErrorSummaryListItem> GetOrderedErrors(List<ErrorSummaryListItem> errors, string[] orderOfPropertyNames)
+        private static List<ErrorSummaryListItem> GetOrderedErrors(
+            List<ErrorSummaryListItem> errors,
+            string[] orderOfPropertyNames)
         {
             return errors.OrderBy(e => orderOfPropertyNames.ToList().IndexOf(e.Key)).ToList();
         }

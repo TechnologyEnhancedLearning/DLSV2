@@ -12,7 +12,15 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
-        (string firstName, string lastName, string email) GetContactInfo(int centreId);
+        void UpdateCentreManagerDetails
+        (
+            int centreId,
+            string firstName,
+            string lastName,
+            string email,
+            string? telephone
+        );
+        (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -108,7 +116,27 @@
             return centre;
         }
 
-        public (string firstName, string lastName, string email) GetContactInfo(int centreId)
+        public void UpdateCentreManagerDetails
+        (
+            int centreId,
+            string firstName,
+            string lastName,
+            string email,
+            string? telephone
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    ContactForename = @firstName,
+                    ContactSurname = @lastName,
+                    ContactEmail = @email,
+                    ContactTelephone = @telephone
+                WHERE CentreId = @centreId",
+                new {firstName, lastName, email, telephone, centreId}
+            );
+        }
+        
+        public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
             var info = connection.QueryFirstOrDefault<(string, string, string)>(
                 @"SELECT ContactForename, ContactSurname, ContactEmail
