@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(viewModel);
             }
 
-            this.passwordResetService.InvalidateResetPasswordForEmail(resetPasswordData.Email);
+            await this.passwordResetService.InvalidateResetPasswordForEmail(resetPasswordData.Email);
             this.passwordResetService.ChangePassword(resetPasswordData.Email, viewModel.Password!);
 
             TempData.Clear();

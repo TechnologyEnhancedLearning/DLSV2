@@ -18,7 +18,7 @@
     {
         Task<bool> EmailAndResetPasswordHashAreValid(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
-        void InvalidateResetPasswordForEmail(string email);
+        Task InvalidateResetPasswordForEmail(string email);
         void ChangePassword(string email, string newPassword);
     }
 
@@ -73,9 +73,22 @@
             emailService.SendEmail(resetPasswordEmail);
         }
 
-        public void InvalidateResetPasswordForEmail(string email)
+        public async Task InvalidateResetPasswordForEmail(string email)
         {
-            throw new NotImplementedException();
+            var (adminUserIfAny, delegateUsers) = this.userService.GetUsersByEmailAddress(email);
+
+            var resetPasswordIds = delegateUsers
+                .Select(du => (User)du)
+                .Concat(new[] { adminUserIfAny })
+                .Select(u => u?.ResetPasswordId)
+                .Where(rPId => rPId != null)
+                .Select(rPId => rPId.Value)
+                .Distinct();
+
+            foreach (var resetPasswordId in resetPasswordIds)
+            {
+                await this.passwordResetDataService.RemoveResetPassword(resetPasswordId);
+            }
         }
 
         public void ChangePassword(string email, string newPassword)
