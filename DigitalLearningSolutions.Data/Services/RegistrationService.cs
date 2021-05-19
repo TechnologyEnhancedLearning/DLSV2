@@ -12,15 +12,20 @@
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIp);
     }
 
-    public class RegistrationService: IRegistrationService
+    public class RegistrationService : IRegistrationService
     {
-        private readonly IRegistrationDataService registrationDataService;
-        private readonly IPasswordDataService passwordDataService;
-        private readonly IEmailService emailService;
         private readonly ICentresDataService centresDataService;
+        private readonly IEmailService emailService;
+        private readonly IPasswordDataService passwordDataService;
+        private readonly IRegistrationDataService registrationDataService;
 
-        public RegistrationService(IRegistrationDataService registrationDataService,
-            IPasswordDataService passwordDataService, IEmailService emailService, ICentresDataService centresDataService)
+        public RegistrationService
+        (
+            IRegistrationDataService registrationDataService,
+            IPasswordDataService passwordDataService,
+            IEmailService emailService,
+            ICentresDataService centresDataService
+        )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
@@ -28,10 +33,16 @@
             this.centresDataService = centresDataService;
         }
 
-        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIP)
+        public string RegisterDelegate
+        (
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            string userIP
+        )
         {
             var centreIPPrefixes = centresDataService.GetCentreIPPrefix(delegateRegistrationModel.Centre);
-            delegateRegistrationModel.Approved = centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
+            delegateRegistrationModel.Approved =
+                centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
 
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
@@ -39,12 +50,14 @@
             {
                 return candidateNumber;
             }
+
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
 
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
-                var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
+                var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName,
+                    delegateRegistrationModel.FirstName,
                     delegateRegistrationModel.LastName, baseUrl);
                 emailService.SendEmail(approvalEmail);
             }
@@ -52,13 +65,21 @@
             return candidateNumber;
         }
 
-        private Email GenerateApprovalEmail(string emailAddress, string firstName, string learnerFirstName, string learnerLastName, string baseUrl)
+        private Email GenerateApprovalEmail
+        (
+            string emailAddress,
+            string firstName,
+            string learnerFirstName,
+            string learnerLastName,
+            string baseUrl
+        )
         {
             UriBuilder approvalUrl = new UriBuilder(baseUrl);
             if (!approvalUrl.Path.EndsWith('/'))
             {
                 approvalUrl.Path += '/';
             }
+
             approvalUrl.Path += "tracking/approvedelegates";
 
             string emailSubject = "Digital Learning Solutions Registration Requires Approval";

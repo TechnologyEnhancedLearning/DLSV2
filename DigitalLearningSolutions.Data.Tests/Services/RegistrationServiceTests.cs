@@ -15,18 +15,19 @@
         private static readonly string approvedIPPrefix = "123.456.789";
         private static readonly string newCandidateNumber = "TU67";
         private static readonly string passwordHash = "hash";
-        private ICentresDataService centresDataService;
-        private IEmailService emailService;
 
         private readonly DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
             "Bad", "User", "fail@test.com", 1, 1, passwordHash);
 
+        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
+            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
+
+        private ICentresDataService centresDataService;
+        private IEmailService emailService;
+
         private IPasswordDataService passwordDataService;
         private IRegistrationDataService registrationDataService;
         private RegistrationService registrationService;
-
-        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
 
         [SetUp]
         public void Setup()
@@ -35,7 +36,6 @@
             passwordDataService = A.Fake<IPasswordDataService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
-
 
             A.CallTo(() => centresDataService.GetCentreIPPrefix(testRegistrationModel.Centre))
                 .Returns(new[] { approvedIPPrefix });
