@@ -144,6 +144,12 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -155,11 +161,6 @@ namespace DigitalLearningSolutions.Web
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseRouting();
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                   ForwardedHeaders.XForwardedProto
-            });
             app.UseAuthentication();
             app.UseAuthorization();
 

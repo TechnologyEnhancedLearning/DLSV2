@@ -1,14 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
     {
-        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
+        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIp);
     }
 
     public class RegistrationService: IRegistrationService
@@ -17,18 +19,24 @@
         private readonly IPasswordDataService passwordDataService;
         private readonly IEmailService emailService;
         private readonly ICentresDataService centresDataService;
+        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService(IRegistrationDataService registrationDataService,
-            IPasswordDataService passwordDataService, IEmailService emailService, ICentresDataService centresDataService)
+            IPasswordDataService passwordDataService, IEmailService emailService, ICentresDataService centresDataService, ILogger<RegistrationService> logger)
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
+            this.logger = logger;
         }
 
-        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
+        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIP)
         {
+            logger.LogWarning("DAN TEST: User IP during registration retrieved as: " + userIP);
+            var centreIPPrefixes = centresDataService.GetCentreIPPrefix(delegateRegistrationModel.Centre);
+            delegateRegistrationModel.Approved = centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
+
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
             if (candidateNumber == "-1")

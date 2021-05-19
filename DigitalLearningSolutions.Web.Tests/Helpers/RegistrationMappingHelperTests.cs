@@ -37,7 +37,7 @@
             };
 
             // When
-            var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data, false);
+            var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
 
             // Then
             result.FirstName.Should().Be(firstName);

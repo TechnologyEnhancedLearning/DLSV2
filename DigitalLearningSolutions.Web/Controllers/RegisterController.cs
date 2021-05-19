@@ -153,12 +153,9 @@
                 return View(viewModel);
             }
 
-            var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            var centreIPPrefixes = centresDataService.GetCentreIPPrefix((int)data.LearnerInformationViewModel.Centre!);
-            var approved = centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
-
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data, approved), baseUrl);
+            var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl, userIP);
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");

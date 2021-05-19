@@ -29,7 +29,7 @@
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
                 Active = 1,
-                Approved = delegateRegistrationModel.Approved,
+                Approved = delegateRegistrationModel.Approved ? 1 : 0,
                 Answer1 = "",
                 Answer2 = "",
                 Answer3 = "",

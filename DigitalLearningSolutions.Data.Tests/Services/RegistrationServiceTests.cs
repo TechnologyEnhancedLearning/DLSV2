@@ -7,7 +7,9 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using NUnit.Framework.Internal;
 
     public class RegistrationServiceTests
     {
@@ -21,9 +23,9 @@
         private static string newCandidateNumber = "TU67";
         private static string passwordHash = "hash";
         private DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test", "User", "testuser@email.com", 1, 1, passwordHash, false);
+            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
         private DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
-            "Bad", "User", "fail@test.com", 1, 1, passwordHash, false);
+            "Bad", "User", "fail@test.com", 1, 1, passwordHash);
 
         [SetUp]
         public void Setup()
@@ -32,6 +34,7 @@
             passwordDataService = A.Fake<IPasswordDataService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
+            var logger = A.Fake<ILogger<RegistrationService>>();
 
             A.CallTo(() => centresDataService.GetContactInfo(A<int>._)).Returns((
                 "Test", "Approver", approverEmail
@@ -42,14 +45,14 @@
             A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
             registrationService = new RegistrationService(registrationDataService, passwordDataService, emailService,
-                centresDataService);
+                centresDataService, logger);
         }
 
         [Test]
         public void Registering_delegate_sends_approval_email()
         {
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>
@@ -65,7 +68,7 @@
         public void Registering_delegate_should_set_password()
         {
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>
@@ -77,7 +80,7 @@
         public void Registering_delegate_returns_candidate_number()
         {
             // When
-            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
 
             // Then
             candidateNumber.Should().Be(newCandidateNumber);
@@ -87,7 +90,7 @@
         public void Error_when_registering_returns_error_code()
         {
             // When
-            var candidateNumber = registrationService.RegisterDelegate(failingRegistrationModel, "localhost");
+            var candidateNumber = registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty);
 
             // Then
             candidateNumber.Should().Be("-1");
@@ -97,7 +100,7 @@
         public void Error_when_registering_fails_fast()
         {
             // When
-            registrationService.RegisterDelegate(failingRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>

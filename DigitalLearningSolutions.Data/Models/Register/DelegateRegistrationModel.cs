@@ -8,8 +8,7 @@
             string email,
             int centre,
             int jobGroup,
-            string passwordHash,
-            bool approved)
+            string passwordHash)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -17,7 +16,6 @@
             Centre = centre;
             JobGroup = jobGroup;
             PasswordHash = passwordHash;
-            Approved = approved;
         }
 
         public string FirstName { get; set; }
