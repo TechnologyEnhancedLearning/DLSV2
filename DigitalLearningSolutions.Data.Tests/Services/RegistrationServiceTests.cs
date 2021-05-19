@@ -37,9 +37,9 @@
                 "Test", "Approver", approverEmail
             ));
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns(
-                (newCandidateNumber, false)
+                newCandidateNumber
             );
-            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns(("-1", false));
+            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
             registrationService = new RegistrationService(registrationDataService, passwordDataService, emailService,
                 centresDataService);

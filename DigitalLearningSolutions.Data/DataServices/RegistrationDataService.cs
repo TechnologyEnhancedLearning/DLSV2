@@ -7,7 +7,7 @@
 
     public interface IRegistrationDataService
     {
-        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
     }
 
     public class RegistrationDataService: IRegistrationDataService
@@ -19,9 +19,8 @@
             this.connection = connection;
         }
 
-        public (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
+        public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
-            var approved = false;
 
             var values = new
             {
@@ -31,7 +30,7 @@
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
                 Active = 1,
-                Approved = approved ? 1 : 0,
+                Approved = delegateRegistrationModel.Approved ? 1 : 0,
                 Answer1 = "",
                 Answer2 = "",
                 Answer3 = "",
@@ -50,7 +49,7 @@
                 values,
                 commandType:CommandType.StoredProcedure);
 
-            return (candidateNumber, approved);
+            return candidateNumber;
         }
     }
 }

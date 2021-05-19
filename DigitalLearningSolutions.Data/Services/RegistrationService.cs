@@ -29,7 +29,7 @@
 
         public (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            var (candidateNumber, approved) = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
             if (candidateNumber == "-1")
             {
@@ -41,7 +41,7 @@
                 delegateRegistrationModel.LastName, baseUrl);
             emailService.SendEmail(approvalEmail);
 
-            return (candidateNumber, approved);
+            return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
         private Email GenerateApprovalEmail(string emailAddress, string firstName, string learnerFirstName, string learnerLastName, string baseUrl)
