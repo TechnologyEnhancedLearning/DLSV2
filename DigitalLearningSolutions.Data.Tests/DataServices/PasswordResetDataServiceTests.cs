@@ -131,7 +131,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await this.GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.AdminUser));
 
             // When
-            await this.service.RemoveResetPassword(resetPasswordId);
+            await this.service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
             var userAfterRemoval = (await this.connection.QueryAsync<AdminUser>(
@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await this.GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.DelegateUser));
 
             // When
-            await this.service.RemoveResetPassword(resetPasswordId);
+            await this.service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
             var userAfterRemoval = (await this.connection.QueryAsync<AdminUser>(
@@ -175,7 +175,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await this.GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.DelegateUser));
 
             // When
-            await this.service.RemoveResetPassword(resetPasswordId);
+            await this.service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
             var matchingResetPasswords = this.connection.Query<ResetPassword>(

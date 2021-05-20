@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             string resetHash);
 
         void CreatePasswordReset(ResetPasswordCreateModel createModel);
-        Task RemoveResetPassword(int resetPasswordId);
+        Task RemoveResetPasswordAsync(int resetPasswordId);
     }
 
     public class PasswordResetDataService : IPasswordResetDataService
@@ -84,7 +84,7 @@ WHERE C.EmailAddress = @userEmail
             }
         }
 
-        public async Task RemoveResetPassword(int resetPasswordId)
+        public async Task RemoveResetPasswordAsync(int resetPasswordId)
         {
             await this.connection.ExecuteAsync(@"BEGIN TRY
                         BEGIN TRANSACTION

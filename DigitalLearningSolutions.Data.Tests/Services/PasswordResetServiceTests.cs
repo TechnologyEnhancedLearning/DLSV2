@@ -21,21 +21,25 @@
 
     public class PasswordResetServiceTests
     {
-        private IPasswordResetDataService passwordResetDataService;
-        private IEmailService emailService;
-        private ILogger<PasswordResetService> logger;
-        private PasswordResetService passwordResetService;
-        private IUserService userService;
-        private IClockService clockService;
+        private IPasswordResetDataService passwordResetDataService = null!;
+        private IEmailService emailService = null!;
+        private ILogger<PasswordResetService> logger = null!;
+        private PasswordResetService passwordResetService = null!;
+        private IUserService userService = null!;
+        private IClockService clockService = null!;
+        private ICryptoService cryptoService = null!;
+        private IPasswordDataService passwordDataService = null!;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
             userService = A.Fake<IUserService>();
             logger = A.Fake<ILogger<PasswordResetService>>();
             emailService = A.Fake<IEmailService>();
             clockService = A.Fake<IClockService>();
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
+            cryptoService = A.Fake<ICryptoService>();
+            passwordDataService = A.Fake<IPasswordDataService>();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
             (
@@ -49,7 +53,9 @@
                 passwordResetDataService,
                 logger,
                 emailService,
-                clockService);
+                clockService,
+                cryptoService,
+                passwordDataService);
         }
 
         [Test]
@@ -113,7 +119,7 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(125));
 
             // When
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(emailAddress, hash);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash);
 
             // Then
             hashIsValid.Should().BeFalse();
@@ -144,7 +150,7 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(emailAddress, resetHash);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash);
 
             // Then
             hashIsValid.Should().BeTrue();
@@ -166,16 +172,45 @@
             A.CallTo(() => this.userService.GetUsersByEmailAddress("email")).Returns(users);
 
             // When
-            await this.passwordResetService.InvalidateResetPasswordForEmail("email");
+            await this.passwordResetService.InvalidateResetPasswordForEmailAsync("email");
 
             // Then
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(234)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(235)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(236)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(237)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(238)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPassword(A<int>._))
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(234)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(235)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(236)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(237)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(238)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
                 .WhenArgumentsMatch(args => args.Get<int>(0) < 234 || args.Get<int>(0) > 238).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_hashes_password_before_saving()
+        {
+            // Given
+            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+
+            // When
+            await this.passwordResetService.ChangePasswordAsync("email", "new-password1");
+
+            // Then
+            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "hash-of-password"))
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public async Task Changing_password_does_not_save_plain_password()
+        {
+            // Given
+            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+
+            // When
+            await this.passwordResetService.ChangePasswordAsync("email", "new-password1");
+
+            // Then
+            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
+                .MustNotHaveHappened();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)

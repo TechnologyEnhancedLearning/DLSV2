@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(email, code);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(email, code);
 
             this.TempData.Set(new ResetPasswordData(email, code));
 
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
 
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValid(
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                 resetPasswordData.Email,
                 resetPasswordData.ResetPasswordHash);
 
@@ -63,8 +63,8 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(viewModel);
             }
 
-            await this.passwordResetService.InvalidateResetPasswordForEmail(resetPasswordData.Email);
-            this.passwordResetService.ChangePassword(resetPasswordData.Email, viewModel.Password!);
+            await this.passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
+            await this.passwordResetService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
 
             TempData.Clear();
 
