@@ -24,7 +24,7 @@
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
-        string[] GetCentreIPPrefix(int centreId);
+        string[] GetCentreIpPrefixes(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -151,19 +151,17 @@
             return info;
         }
 
-        public string[] GetCentreIPPrefix(int centreId)
+        public string[] GetCentreIpPrefixes(int centreId)
         {
-            var IPPrefix = connection.QueryFirstOrDefault<string?>(
+            var ipPrefixString = connection.QueryFirstOrDefault<string?>(
                 @"SELECT IPPrefix
                         FROM Centres
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
 
-            var IPPrefixes = IPPrefix?.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            IPPrefixes ??= new string[0];
-
-            return IPPrefixes;
+            var ipPrefixes = ipPrefixString?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            return ipPrefixes ?? new string[0];
         }
     }
 }

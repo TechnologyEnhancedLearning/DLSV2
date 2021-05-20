@@ -9,8 +9,12 @@
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel,
-            string baseUrl, string userIp);
+        (string candidateNumber, bool approved) RegisterDelegate
+        (
+            DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl,
+            string userIp
+        );
     }
 
     public class RegistrationService : IRegistrationService
@@ -38,12 +42,12 @@
         (
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
-            string userIP
+            string userIp
         )
         {
-            var centreIPPrefixes = centresDataService.GetCentreIPPrefix(delegateRegistrationModel.Centre);
+            var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved =
-                centreIPPrefixes.Any(ip => userIP.StartsWith(ip.Trim())) || userIP == "::1";
+                centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";
 
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails

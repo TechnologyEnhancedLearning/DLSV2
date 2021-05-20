@@ -12,7 +12,7 @@
     public class RegistrationServiceTests
     {
         private static readonly string approverEmail = "approver@email.com";
-        private static readonly string approvedIPPrefix = "123.456.789";
+        private static readonly string approvedIpPrefix = "123.456.789";
         private static readonly string newCandidateNumber = "TU67";
         private static readonly string passwordHash = "hash";
 
@@ -50,8 +50,8 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
 
-            A.CallTo(() => centresDataService.GetCentreIPPrefix(testRegistrationModel.Centre))
-                .Returns(new[] { approvedIPPrefix });
+            A.CallTo(() => centresDataService.GetCentreIpPrefixes(testRegistrationModel.Centre))
+                .Returns(new[] { approvedIpPrefix });
             A.CallTo(() => centresDataService.GetCentreManagerDetails(A<int>._)).Returns((
                 "Test", "Approver", approverEmail
             ));
@@ -72,14 +72,18 @@
         [Test]
         public void Registering_delegate_with_approved_IP_registers_delegate_as_approved()
         {
+            // Given
+            var clientIp = approvedIpPrefix + ".100";
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "localhost", "123.456.789.100");
+            var (_, approved) = registrationService.RegisterDelegate(testRegistrationModel, "localhost", clientIp);
 
             // Then
             A.CallTo(() =>
                     registrationDataService.RegisterDelegate(
                         A<DelegateRegistrationModel>.That.Matches(d => d.Approved)))
                 .MustHaveHappened();
+            Assert.That(approved);
         }
 
         [Test]

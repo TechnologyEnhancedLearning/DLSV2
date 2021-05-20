@@ -122,7 +122,7 @@
         public void GetCentreIPPrefix_should_return_empty_array_when_the_centre_does_not_exist()
         {
             // When
-            var result = centresDataService.GetCentreIPPrefix(1);
+            var result = centresDataService.GetCentreIpPrefixes(1);
 
             // Then
             result.Should().BeEmpty();
@@ -133,8 +133,8 @@
         {
             // When
             var expectedResult = new[] { "194.176.105" };
-            var result = centresDataService.GetCentreIPPrefix(2);
-            
+            var result = centresDataService.GetCentreIpPrefixes(2);
+
             // Then
             result.Should().BeEquivalentTo(expectedResult);
         }
