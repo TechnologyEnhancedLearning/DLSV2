@@ -8,6 +8,7 @@
     public interface ICustomPromptsDataService
     {
         public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId);
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -62,6 +63,18 @@
             ).Single();
 
             return result;
+        }
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
+        {
+            connection.Execute(
+                @$"UPDATE Centres
+                    SET
+                        F{promptNumber}Mandatory = @mandatory,
+                        F{promptNumber}Options = @options
+                    WHERE CentreID = @centreId",
+                new {mandatory, options, centreId}
+            );
         }
     }
 }

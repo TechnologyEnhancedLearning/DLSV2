@@ -1,7 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model EditRegistrationPromptViewModel
 
-@{ ViewData["Title"] = "Edit delegate registration prompt"; }
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit delegate registration prompt";
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -26,6 +29,14 @@
       @Model.Prompt
     </div>
   </div>
+
+  @if (errorHasOccurred) {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}"/>
+      </div>
+    </div>
+  }
 
   <div class="nhsuk-grid-row nhsuk-u-padding-bottom-4">
     <div class="nhsuk-grid-column-one-half">
@@ -78,7 +89,14 @@
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-one-half">
-      <vc:text-input asp-for="Answer" label="Add another answer?" type="text" spell-check="true" autocomplete="" hint-text="" css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
+      <vc:text-input asp-for="Answer"
+                     label="Add another answer?"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="true"
+                     autocomplete=""
+                     hint-text=""
+                     css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
       <button name="action" class="nhsuk-button nhsuk-button--secondary" value="addPrompt">Add</button>
     </div>
   </div>

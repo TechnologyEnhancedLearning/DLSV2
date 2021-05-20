@@ -172,6 +172,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             model.Options = options;
             model.OptionsString = optionsString;
 
+
             return View(model);
         }
 
@@ -196,7 +197,22 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            throw new NotImplementedException();
+            // We don't want to display validation errors on other fields in this case
+            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditRegistrationPromptViewModel.OptionsString)))
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
+                return View(model);
+            }
+
+            customPromptsService.UpdateCustomPromptForCentre(User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
+
+            return RedirectToAction("RegistrationPrompts");
         }
     }
 }

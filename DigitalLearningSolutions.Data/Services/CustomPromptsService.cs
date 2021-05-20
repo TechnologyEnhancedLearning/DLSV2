@@ -11,6 +11,8 @@
 
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser);
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -40,6 +42,11 @@
             var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
+        }
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCentre(centreId, promptNumber, mandatory, options);
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)

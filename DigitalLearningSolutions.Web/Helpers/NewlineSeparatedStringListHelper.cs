@@ -19,14 +19,14 @@
             return (JoinNewlineSeparatedList(options), options);
         }
 
-        public static List<string> SplitNewlineSeparatedList(string list)
+        public static List<string> SplitNewlineSeparatedList(string? list)
         {
-            return list.Split("/r/n").ToList();
+            return list == null ? new List<string>() : list.Split("\r\n").ToList();
         }
 
         public static string JoinNewlineSeparatedList(IEnumerable<string> strings)
         {
-            return string.Join("/r/n", strings);
+            return string.Join("\r\n", strings);
         }
     }
 }

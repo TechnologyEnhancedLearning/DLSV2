@@ -26,7 +26,8 @@
 
         public bool Mandatory { get; set; }
 
-        public string OptionsString { get; set; }
+        [MaxLength(4000, ErrorMessage = "The complete list of answers must be less than 4000 characters.")]
+        public string? OptionsString { get; set; }
 
         public List<string> Options { get; set; }
 
