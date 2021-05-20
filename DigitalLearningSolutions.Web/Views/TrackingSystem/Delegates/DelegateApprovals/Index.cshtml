@@ -1,8 +1,7 @@
+﻿@inject IConfiguration Configuration
+
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @using Microsoft.Extensions.Configuration
-
-@inject IConfiguration Configuration
-
 @model DelegateApprovalsViewModel
 
 @{
@@ -12,11 +11,9 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Approve delegate registrations</h1>
-    @if (Model.Delegates.Any())
-    {
-      @foreach (var delegateApproval in Model.Delegates)
-      {
-        <partial name="_unapprovedDelegateExpandable" model="delegateApproval" />
+    @if (Model.Delegates.Any()) {
+      @foreach (var delegateApproval in Model.Delegates) {
+        <partial name="_unapprovedDelegateExpandable" model="delegateApproval"/>
       }
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
@@ -25,9 +22,7 @@
           </a>
         </div>
       </div>
-    }
-    else
-    {
+    } else {
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <p>No accounts need approval.</p>
