@@ -119,8 +119,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
             return RedirectToAction("Index");
         }
-    }
-        }
 
         [HttpGet]
         [Route("RegistrationPrompts/{promptNumber}/Edit")]
