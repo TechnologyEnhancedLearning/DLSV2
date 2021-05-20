@@ -10,7 +10,7 @@
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
     }
 
-    public class RegistrationDataService: IRegistrationDataService
+    public class RegistrationDataService : IRegistrationDataService
     {
         private readonly IDbConnection connection;
 
@@ -21,12 +21,11 @@
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
-
             var values = new
             {
-                FirstName = delegateRegistrationModel.FirstName,
-                LastName = delegateRegistrationModel.LastName,
-                Email = delegateRegistrationModel.Email,
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.Email,
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
                 Active = 1,
@@ -47,7 +46,7 @@
             var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
-                commandType:CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure);
 
             return candidateNumber;
         }
