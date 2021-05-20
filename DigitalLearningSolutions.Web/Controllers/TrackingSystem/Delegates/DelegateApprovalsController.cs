@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,7 @@
         public IActionResult Index()
         {
             var model = new DelegateApprovalsViewModel(new List<UnapprovedDelegate>());
-            return View("~/Views/TrackingSystem/Delegates/DelegateApprovals/index.cshtml", model);
+            return View(model);
         }
     }
 }
