@@ -1,0 +1,9 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model CentreContactInfoViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/centreInfo.css")" asp-append-version="true">
+
+@if (Model.BannerText != null) {
+  <p class="nhsuk-body-l">@Model.BannerText</p>
+}
+<vc:action-link asp-controller="FindYourCentre" asp-action="Index" asp-all-route-data="@Model.Routes" link-text="More information" />
