@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -17,9 +16,9 @@
     {
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
+        private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
-        private readonly ICryptoService cryptoService;
 
         public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
             IRegistrationService registrationService, ICryptoService cryptoService)
@@ -120,6 +119,7 @@
             {
                 return View(model);
             }
+
             var data = TempData.Peek<DelegateRegistrationData>()!;
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
@@ -155,12 +155,15 @@
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
             var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            var (candidateNumber, approved) = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl, userIP);
-            
+            var (candidateNumber, approved) =
+                registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                    baseUrl, userIP);
+
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");
             }
+
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             TempData.Add("approved", approved);

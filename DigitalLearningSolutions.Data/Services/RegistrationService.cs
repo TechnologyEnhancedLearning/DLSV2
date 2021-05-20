@@ -9,7 +9,8 @@
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIp);
+        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel,
+            string baseUrl, string userIp);
     }
 
     public class RegistrationService : IRegistrationService
@@ -33,7 +34,7 @@
             this.centresDataService = centresDataService;
         }
 
-        public public (string candidateNumber, bool approved) RegisterDelegate
+        public (string candidateNumber, bool approved) RegisterDelegate
         (
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
