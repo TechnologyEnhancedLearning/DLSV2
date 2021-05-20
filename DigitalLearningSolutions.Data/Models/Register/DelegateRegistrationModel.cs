@@ -16,6 +16,7 @@
             Centre = centre;
             JobGroup = jobGroup;
             PasswordHash = passwordHash;
+            Approved = false;
         }
 
         public string FirstName { get; set; }
@@ -29,5 +30,7 @@
         public int JobGroup { get; set; }
 
         public string PasswordHash { get; set; }
+
+        public bool Approved { get; set; }
     }
 }

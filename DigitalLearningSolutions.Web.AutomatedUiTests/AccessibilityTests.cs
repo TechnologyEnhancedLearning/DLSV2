@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
 
         [Theory]
         [InlineData("/MyAccount")]
+        [InlineData("/MyAccount/EditDetails")]
         [InlineData("/TrackingSystem/CentreConfiguration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails")]
         [InlineData("/TrackingSystem/Delegates/Approve")]

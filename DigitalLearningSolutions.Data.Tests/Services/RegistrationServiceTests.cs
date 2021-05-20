@@ -11,19 +11,36 @@
 
     public class RegistrationServiceTests
     {
-        private IRegistrationDataService registrationDataService;
-        private IPasswordDataService passwordDataService;
-        private IEmailService emailService;
-        private ICentresDataService centresDataService;
-        private RegistrationService registrationService;
+        private static readonly string approverEmail = "approver@email.com";
+        private static readonly string approvedIpPrefix = "123.456.789";
+        private static readonly string newCandidateNumber = "TU67";
+        private static readonly string passwordHash = "hash";
 
-        private static string approverEmail = "approver@email.com";
-        private static string newCandidateNumber = "TU67";
-        private static string passwordHash = "hash";
-        private DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test", "User", "testuser@email.com", 1, 1, passwordHash);
-        private DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
-            "Bad", "User", "fail@test.com", 1, 1, passwordHash);
+        private readonly DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel
+        (
+            "Bad",
+            "User",
+            "fail@test.com",
+            1,
+            1,
+            passwordHash
+        );
+
+        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel
+        (
+            "Test",
+            "User",
+            "testuser@email.com",
+            1,
+            1,
+            passwordHash
+        );
+
+        private ICentresDataService centresDataService;
+        private IEmailService emailService;
+        private IPasswordDataService passwordDataService;
+        private IRegistrationDataService registrationDataService;
+        private RegistrationService registrationService;
 
         [SetUp]
         public void Setup()
@@ -33,6 +50,8 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
 
+            A.CallTo(() => centresDataService.GetCentreIpPrefixes(testRegistrationModel.Centre))
+                .Returns(new[] { approvedIpPrefix });
             A.CallTo(() => centresDataService.GetCentreManagerDetails(A<int>._)).Returns((
                 "Test", "Approver", approverEmail
             ));
@@ -41,15 +60,63 @@
             );
             A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
-            registrationService = new RegistrationService(registrationDataService, passwordDataService, emailService,
-                centresDataService);
+            registrationService = new RegistrationService
+            (
+                registrationDataService,
+                passwordDataService,
+                emailService,
+                centresDataService
+            );
+        }
+
+        [Test]
+        public void Registering_delegate_with_approved_IP_registers_delegate_as_approved()
+        {
+            // Given
+            var clientIp = approvedIpPrefix + ".100";
+
+            // When
+            var (_, approved) = registrationService.RegisterDelegate(testRegistrationModel, "localhost", clientIp);
+
+            // Then
+            A.CallTo(() =>
+                    registrationDataService.RegisterDelegate(
+                        A<DelegateRegistrationModel>.That.Matches(d => d.Approved)))
+                .MustHaveHappened();
+            Assert.That(approved);
+        }
+
+        [Test]
+        public void Registering_delegate_on_localhost_registers_delegate_as_approved()
+        {
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", "::1");
+
+            // Then
+            A.CallTo(() =>
+                    registrationDataService.RegisterDelegate(
+                        A<DelegateRegistrationModel>.That.Matches(d => d.Approved)))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_with_unapproved_IP_registers_delegate_as_unapproved()
+        {
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", "987.654.321.100");
+
+            // Then
+            A.CallTo(() =>
+                    registrationDataService.RegisterDelegate(
+                        A<DelegateRegistrationModel>.That.Matches(d => !d.Approved)))
+                .MustHaveHappened();
         }
 
         [Test]
         public void Registering_delegate_sends_approval_email()
         {
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>
@@ -62,10 +129,21 @@
         }
 
         [Test]
+        public void Registering_automatically_approved_does_not_send_email()
+        {
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", "123.456.789.100");
+
+            // Then
+            A.CallTo(() =>
+                emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
+        }
+
+        [Test]
         public void Registering_delegate_should_set_password()
         {
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>
@@ -77,7 +155,8 @@
         public void Registering_delegate_returns_candidate_number()
         {
             // When
-            var candidateNumber = registrationService.RegisterDelegate(testRegistrationModel, "localhost");
+            var candidateNumber =
+                registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty).candidateNumber;
 
             // Then
             candidateNumber.Should().Be(newCandidateNumber);
@@ -87,7 +166,9 @@
         public void Error_when_registering_returns_error_code()
         {
             // When
-            var candidateNumber = registrationService.RegisterDelegate(failingRegistrationModel, "localhost");
+            var candidateNumber =
+                registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty)
+                    .candidateNumber;
 
             // Then
             candidateNumber.Should().Be("-1");
@@ -97,7 +178,7 @@
         public void Error_when_registering_fails_fast()
         {
             // When
-            registrationService.RegisterDelegate(failingRegistrationModel, "localhost");
+            registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty);
 
             // Then
             A.CallTo(() =>

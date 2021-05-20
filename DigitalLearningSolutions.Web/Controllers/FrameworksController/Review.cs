@@ -35,25 +35,34 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 var required = signOffRequiredChecked.IndexOf(user) != -1;
                 frameworkService.InsertFrameworkReview(frameworkId, user, required);
-                frameworkNotificationService.SendReviewRequest(user, adminId, required);
+                frameworkNotificationService.SendReviewRequest(user, adminId, required, false);
             }
             frameworkService.UpdateFrameworkStatus(frameworkId, 2, adminId);
-            return RedirectToAction("PublishFramework", "Frameworks", new { frameworkId });
+            return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
         }
         [Route("/Framework/{frameworkId}/Publish")]
-        public IActionResult PublishFramework(int frameworkId)
+        public IActionResult ViewFrameworkReviews(int frameworkId)
         {
             var adminId = GetAdminID();
-            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            var framework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
             if (framework.UserRole < 2)
             {
                 return StatusCode(403);
             }
             var frameworkReviews = frameworkService.GetFrameworkReviewsForFrameworkId(frameworkId);
+            bool canPublish = true;
+            foreach(FrameworkReview frameworkReview in frameworkReviews)
+            {
+                if (frameworkReview.SignOffRequired && (frameworkReview.ReviewComplete == null | !frameworkReview.SignedOff))
+                {
+                    canPublish = false;
+                }
+            }
             var model = new PublishViewModel()
             {
-                BaseFramework = framework,
-                FrameworkReviews = frameworkReviews
+                DetailFramework = framework,
+                FrameworkReviews = frameworkReviews,
+                CanPublish = canPublish
             };
             return View("Developer/Publish", model);
         }
@@ -91,7 +100,35 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             }
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
+            frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
             return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
+        }
+        public IActionResult ResendRequest(int reviewId, int frameworkId, int frameworkCollaboratorId, bool required)
+        {
+            var adminId = GetAdminID();
+            frameworkNotificationService.SendReviewRequest(frameworkCollaboratorId, adminId, required, true);
+            frameworkService.UpdateReviewRequestedDate(reviewId);
+            return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
+        }
+        public IActionResult RequestReReview(int frameworkId, int reviewId)
+        {
+            var adminId = GetAdminID();
+            var newReviewId = frameworkService.InsertFrameworkReReview(reviewId);
+            var review = frameworkService.GetFrameworkReviewNotification(reviewId);
+            frameworkNotificationService.SendReviewRequest(review.FrameworkCollaboratorID, adminId, review.SignOffRequired, false);
+            return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
+        }
+        public IActionResult RemoveRequest(int frameworkId, int reviewId)
+        {
+            var adminId = GetAdminID();
+            frameworkService.ArchiveReviewRequest(reviewId);
+            return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
+        }
+        public IActionResult PublishFramework(int frameworkId)
+        {
+            var adminId = GetAdminID();
+            frameworkService.UpdateFrameworkStatus(frameworkId, 3, adminId);
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
         }
     }
 }
