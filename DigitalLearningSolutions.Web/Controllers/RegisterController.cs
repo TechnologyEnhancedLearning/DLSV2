@@ -153,13 +153,15 @@
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var candidateNumber = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            var (candidateNumber, approved) = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");
             }
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
+            TempData.Add("approved", approved);
+            TempData.Add("centreId", data.LearnerInformationViewModel.Centre);
             return RedirectToAction("Confirmation");
         }
 
@@ -167,12 +169,18 @@
         public IActionResult Confirmation()
         {
             var candidateNumber = (string?)TempData.Peek("candidateNumber");
-            if (candidateNumber == null)
+            var approvedNullable = (bool?)TempData.Peek("approved");
+            var centreIdNullable = (int?)TempData.Peek("centreId");
+            if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new ConfirmationViewModel(candidateNumber);
+            var approved = (bool)approvedNullable;
+            var centreId = (int)centreIdNullable;
+
+            var centreIdForContactInformation = approved ? null : (int?)centreId;
+            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
             return View(viewModel);
         }
     }

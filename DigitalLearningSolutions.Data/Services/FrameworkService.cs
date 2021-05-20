@@ -51,6 +51,8 @@
         // Reviews:
         IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId);
         IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId);
+        FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId);
+        FrameworkReviewOutcomeNotification? GetFrameworkReviewNotification(int reviewId);
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
         int InsertCompetencyGroup(string groupName, int adminId);
@@ -64,6 +66,7 @@
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
+        int InsertFrameworkReReview(int reviewId);
         //UPDATE DATA
         BrandedFramework? UpdateFrameworkBranding(int frameworkId, int brandId, int categoryId, int topicId, int adminId);
         bool UpdateFrameworkName(int frameworkId, int adminId, string frameworkName);
@@ -77,13 +80,15 @@
         void UpdateLevelDescriptor(int id, int levelValue, string levelLabel, string? levelDescription, int adminId);
         void ArchiveComment(int commentId);
         void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId);
+        void SubmitFrameworkReview(int frameworkId, int reviewId, bool signedOff, int? commentId);
+        void UpdateReviewRequestedDate(int reviewId);
+        void ArchiveReviewRequest(int reviewId);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-
     }
     public class FrameworkService : IFrameworkService
     {
@@ -99,7 +104,8 @@
                  WHERE (ID = FW.PublishStatusID)) AS PublishStatus, UpdatedByAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers AS AdminUsers_1
-                 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+                 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                 fwr.ID AS FrameworkReviewID";
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
                                  FROM    Brands
@@ -115,7 +121,8 @@
               ,FW.FrameworkConfig";
         private const string FrameworkTables =
             @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId";
+             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId
+LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner";
         private const string AssessmentQuestionDetailFields =
@@ -1360,21 +1367,21 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
 
         public Comment GetCommentById(int adminId, int commentId)
         {
-            return (Comment)connection.QueryFirst(
-                @"DECLARE @adminId int = 1;
-DECLARE @commentId int = 7;
-SELECT ID, ReplyToFrameworkCommentID, AdminID, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, Archived, LastEdit, FrameworkID
+            return connection.Query<Comment>(
+                @"SELECT ID, ReplyToFrameworkCommentID, AdminID, CAST(CASE WHEN AdminID = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsCommenter, AddedDate, Comments, Archived, LastEdit, FrameworkID
 FROM   FrameworkComments
 WHERE (ID = @commentId)", new { adminId, commentId }
-                );
+                ).FirstOrDefault();
         }
 
         public IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId)
         {
             return connection.Query<CollaboratorDetail>(
-                $@"SELECT ID, FrameworkID, AdminID, CanModify, UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
-                    FROM   FrameworkCollaborators
-                    WHERE (FrameworkID = @FrameworkID)", new { frameworkId });
+                $@"SELECT FrameworkCollaborators.ID, FrameworkCollaborators.FrameworkID, FrameworkCollaborators.AdminID, FrameworkCollaborators.CanModify, FrameworkCollaborators.UserEmail, CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+FROM   FrameworkCollaborators LEFT OUTER JOIN
+             FrameworkReviews ON FrameworkCollaborators.ID = FrameworkReviews.FrameworkCollaboratorID
+WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) OR
+             (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL)", new { frameworkId });
         }
 
         public void UpdateFrameworkStatus(int frameworkId, int statusId, int adminId)
@@ -1412,12 +1419,101 @@ WHERE (ID = @commentId)", new { adminId, commentId }
         public IEnumerable<FrameworkReview> GetFrameworkReviewsForFrameworkId(int frameworkId)
         {
             return connection.Query<FrameworkReview>(
-                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments, FR.SignOffRequired
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.FrameworkID = @frameworkId",
+                    WHERE FR.FrameworkID = @frameworkId AND FR.Archived IS NULL",
                 new { frameworkId });
+        }
+
+        public FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId)
+        {
+            return connection.Query<FrameworkReview>(
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
+                    FROM   FrameworkReviews AS FR INNER JOIN
+                         FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
+                         FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId",
+                new { frameworkId, adminId, reviewId }).FirstOrDefault();
+        }
+
+        public void SubmitFrameworkReview(int frameworkId, int reviewId, bool signedOff, int? commentId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+             @"UPDATE FrameworkReviews
+                    SET ReviewComplete = GETUTCDATE(), FrameworkCommentID = @commentId, SignedOff = @signedOff
+                    WHERE ID = @reviewId AND FrameworkID = @frameworkId", new { reviewId, commentId, signedOff, frameworkId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not submitting framework review as db update failed. " +
+                    $"commentId: {commentId}, frameworkId: {frameworkId}, reviewId: {reviewId}, signedOff: {signedOff} ."
+                );
+            }
+        }
+        public FrameworkReviewOutcomeNotification? GetFrameworkReviewNotification(int reviewId)
+        {
+            return connection.Query<FrameworkReviewOutcomeNotification>(
+                @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired, 
+             AU.Forename AS ReviewerFirstName, AU.Surname AS ReviewerLastName, AU1.Forename AS OwnerFirstName, AU1.Email AS OwnerEmail, FW.FrameworkName
+FROM   FrameworkReviews AS FR INNER JOIN
+             FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID INNER JOIN
+             AdminUsers AS AU ON FC.AdminID = AU.AdminID INNER JOIN
+             Frameworks AS FW ON FR.FrameworkID = FW.ID INNER JOIN
+             AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID LEFT OUTER JOIN
+             FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
+                new { reviewId }).FirstOrDefault();
+        }
+
+        public void UpdateReviewRequestedDate(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+            @"UPDATE FrameworkReviews
+                    SET ReviewRequested = GETUTCDATE()
+                    WHERE ID = @reviewId", new { reviewId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework review requested date as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
+        }
+
+        public int InsertFrameworkReReview(int reviewId)
+        {
+            ArchiveReviewRequest(reviewId);
+            var id = connection.QuerySingle<int>(
+               @"INSERT INTO FrameworkReviews
+                    (FrameworkID, FrameworkCollaboratorId, SignOffRequired)
+                      OUTPUT INSERTED.ID
+                      SELECT FR1.FrameworkID, FR1.FrameworkCollaboratorId, FR1.SignOffRequired FROM FrameworkReviews AS FR1 WHERE FR1.ID = @reviewId"
+                   , new { reviewId });
+            if (id < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting assessment question as db update failed. " +
+                    $"reviewId: {reviewId}"
+                );
+                return 0;
+            }
+            return id;
+        }
+        public void ArchiveReviewRequest(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+          @"UPDATE FrameworkReviews
+                    SET Archived = GETUTCDATE()
+                    WHERE ID = @reviewId", new { reviewId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not archiving framework review as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
         }
     }
 }

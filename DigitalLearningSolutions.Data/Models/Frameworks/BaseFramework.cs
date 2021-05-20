@@ -20,5 +20,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public int UpdatedByAdminID { get; set; }
         public string? UpdatedBy { get; set; }
         public int UserRole { get; set; }
+        public int? FrameworkReviewID { get; set; }
     }
 }

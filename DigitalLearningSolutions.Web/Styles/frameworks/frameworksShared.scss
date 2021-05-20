@@ -383,3 +383,13 @@ h1.truncate-overflow::after {
 .text-area-edit-90 {
     height:90px
 }
+.nhsuk-warning-callout {
+  &.callout-green {
+    border-color: #cbe5a2;
+    background-color: #ecf6de;
+
+    .nhsuk-warning-callout__label {
+      background-color: #cbe5a2;
+    }
+  }
+}
