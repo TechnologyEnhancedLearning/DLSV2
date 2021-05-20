@@ -153,12 +153,28 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
         private IActionResult EditRegistrationPromptPostAddPrompt(EditRegistrationPromptViewModel model)
         {
-            throw new NotImplementedException();
-        }
+            // We don't want to display validation errors on other fields in this case
+            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditRegistrationPromptViewModel.Answer)))
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
 
-        private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
-        {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
+                return View(model);
+            }
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
+
+            var (optionsString, options) =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+            model.Options = options;
+            model.OptionsString = optionsString;
+
+            return View(model);
         }
 
         private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)
@@ -178,6 +194,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             model.OptionsString = optionsString;
 
             return View(model);
+        }
+
+        private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
+        {
+            throw new NotImplementedException();
         }
     }
 }
