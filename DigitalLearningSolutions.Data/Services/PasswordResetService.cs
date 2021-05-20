@@ -19,7 +19,6 @@
         Task<bool> EmailAndResetPasswordHashAreValidAsync(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
-        Task ChangePasswordAsync(string email, string newPassword);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -27,8 +26,6 @@
         private readonly IPasswordResetDataService passwordResetDataService;
         private readonly IEmailService emailService;
         private readonly IClockService clockService;
-        private readonly ICryptoService cryptoService;
-        private readonly IPasswordDataService passwordDataService;
         private readonly ILogger<PasswordResetService> logger;
 
         private readonly IUserService userService;
@@ -38,17 +35,13 @@
             IPasswordResetDataService passwordResetDataService,
             ILogger<PasswordResetService> logger,
             IEmailService emailService,
-            IClockService clockService,
-            ICryptoService cryptoService,
-            IPasswordDataService passwordDataService)
+            IClockService clockService)
         {
             this.userService = userService;
             this.passwordResetDataService = passwordResetDataService;
             this.logger = logger;
             this.emailService = emailService;
             this.clockService = clockService;
-            this.cryptoService = cryptoService;
-            this.passwordDataService = passwordDataService;
         }
 
         public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
@@ -87,12 +80,6 @@
             {
                 await this.passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
             }
-        }
-
-        public async Task ChangePasswordAsync(string email, string newPassword)
-        {
-            var hashOfPassword = this.cryptoService.GetPasswordHash(newPassword);
-            await this.passwordDataService.SetPasswordByEmailAsync(email, hashOfPassword);
         }
 
         private string GenerateResetPasswordHash(User user)

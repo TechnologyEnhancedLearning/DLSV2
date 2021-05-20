@@ -11,10 +11,12 @@ namespace DigitalLearningSolutions.Web.Controllers
     public class ResetPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
+        private readonly IPasswordService passwordService;
 
-        public ResetPasswordController(IPasswordResetService passwordResetService)
+        public ResetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService)
         {
             this.passwordResetService = passwordResetService;
+            this.passwordService = passwordService;
         }
 
         [HttpGet]
@@ -64,7 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
 
             await this.passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
-            await this.passwordResetService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
+            await this.passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
 
             TempData.Clear();
 

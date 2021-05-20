@@ -17,17 +17,19 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         private ResetPasswordController authenticatedController;
         private ResetPasswordController unauthenticatedController;
         private IPasswordResetService passwordResetService;
+        private IPasswordService passwordService;
 
         [SetUp]
         public void SetUp()
         {
             passwordResetService = A.Fake<IPasswordResetService>();
+            passwordService = A.Fake<IPasswordService>();
 
-            unauthenticatedController = new ResetPasswordController(passwordResetService)
+            unauthenticatedController = new ResetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(false);
-            authenticatedController = new ResetPasswordController(passwordResetService)
+            authenticatedController = new ResetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(true);
@@ -134,7 +136,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                 new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
-            A.CallTo(() => this.passwordResetService.ChangePasswordAsync("email", "testPass-9"))
+            A.CallTo(() => this.passwordService.ChangePasswordAsync("email", "testPass-9"))
                 .MustHaveHappened(1, Times.Exactly);
         }
 

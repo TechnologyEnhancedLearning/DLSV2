@@ -27,8 +27,6 @@
         private PasswordResetService passwordResetService = null!;
         private IUserService userService = null!;
         private IClockService clockService = null!;
-        private ICryptoService cryptoService = null!;
-        private IPasswordDataService passwordDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -38,8 +36,6 @@
             emailService = A.Fake<IEmailService>();
             clockService = A.Fake<IClockService>();
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
-            cryptoService = A.Fake<ICryptoService>();
-            passwordDataService = A.Fake<IPasswordDataService>();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns
             (
@@ -49,13 +45,11 @@
                 ));
 
             passwordResetService = new PasswordResetService(
-                userService,
-                passwordResetDataService,
-                logger,
-                emailService,
-                clockService,
-                cryptoService,
-                passwordDataService);
+                this.userService,
+                this.passwordResetDataService,
+                this.logger,
+                this.emailService,
+                this.clockService);
         }
 
         [Test]
@@ -176,35 +170,6 @@
                 .MustHaveHappened(1, Times.OrMore);
             A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
                 .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
-        }
-
-        [Test]
-        public async Task Changing_password_hashes_password_before_saving()
-        {
-            // Given
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
-
-            // When
-            await this.passwordResetService.ChangePasswordAsync("email", "new-password1");
-
-            // Then
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "hash-of-password"))
-                .MustHaveHappened(1, Times.Exactly);
-        }
-
-        [Test]
-        public async Task Changing_password_does_not_save_plain_password()
-        {
-            // Given
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
-
-            // When
-            await this.passwordResetService.ChangePasswordAsync("email", "new-password1");
-
-            // Then
-            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
-                .MustNotHaveHappened();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)

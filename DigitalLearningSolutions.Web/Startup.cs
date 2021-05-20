@@ -132,6 +132,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
