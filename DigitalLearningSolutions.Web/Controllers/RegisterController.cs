@@ -57,11 +57,7 @@
                 return View();
             }
 
-            var email = delegateRegistrationData.RegisterViewModel.Email;
-            if (email != null && userService.GetUsersByEmailAddress(email).delegateUsers.Count != 0)
-            {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
-            }
+            ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
 
             return View(delegateRegistrationData.RegisterViewModel);
         }
@@ -70,10 +66,7 @@
         [HttpPost]
         public IActionResult Index(RegisterViewModel model)
         {
-            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
-            {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
-            }
+            ValidateEmailAddress(model);
 
             if (!ModelState.IsValid)
             {
@@ -206,6 +199,14 @@
             var centreIdForContactInformation = approved ? null : (int?)centreId;
             var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
             return View(viewModel);
+        }
+
+        private void ValidateEmailAddress(RegisterViewModel model)
+        {
+            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+            }
         }
     }
 }
