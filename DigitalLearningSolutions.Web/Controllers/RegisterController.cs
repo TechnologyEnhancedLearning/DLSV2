@@ -179,16 +179,9 @@
             var approved = (bool)approvedNullable;
             var centreId = (int)centreIdNullable;
 
-            if (!approved)
-            {
-                var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreId);
-                return View(viewModel);
-            }
-            else
-            {
-                var viewModel = new ConfirmationViewModel(candidateNumber, approved);
-                return View(viewModel);
-            }
+            var centreIdForContactInformation = approved ? null : (int?)centreId;
+            var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
+            return View(viewModel);
         }
     }
 }

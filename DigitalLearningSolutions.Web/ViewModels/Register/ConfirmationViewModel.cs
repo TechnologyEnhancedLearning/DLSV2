@@ -2,7 +2,7 @@
 {
     public class ConfirmationViewModel
     {
-        public ConfirmationViewModel(string candidateNumber, bool approved, int centreId)
+        public ConfirmationViewModel(string candidateNumber, bool approved, int? centreId)
         {
             CandidateNumber = candidateNumber;
             Approved = approved;
