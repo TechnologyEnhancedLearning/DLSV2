@@ -6,19 +6,18 @@
 
     public class DelegateApprovalsViewModel
     {
-        public DelegateApprovalsViewModel(IEnumerable<ApprovableDelegate> delegates)
+        public DelegateApprovalsViewModel(IEnumerable<UnapprovedDelegate> delegates)
         {
             Delegates = delegates;
         }
 
-        public IEnumerable<ApprovableDelegate> Delegates { get; set; }
+        public IEnumerable<UnapprovedDelegate> Delegates { get; set; }
     }
 
-    public class ApprovableDelegate
+    public class UnapprovedDelegate
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get; set; }
         public string Email { get; set; }
         public DateTime DateRegistered { get; set; }
         public string JobGroup { get; set; }
