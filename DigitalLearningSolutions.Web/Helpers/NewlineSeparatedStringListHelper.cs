@@ -12,9 +12,9 @@
             return (JoinNewlineSeparatedList(options), options);
         }
 
-        public static (string, List<string>) AddStringToNewlineSeparatedList(string list, string newItem)
+        public static (string, List<string>) AddStringToNewlineSeparatedList(string? list, string newItem)
         {
-            var options = SplitNewlineSeparatedList(list);
+            var options = list != null ? SplitNewlineSeparatedList(list) : new List<string>();
             options.Add(newItem);
             return (JoinNewlineSeparatedList(options), options);
         }

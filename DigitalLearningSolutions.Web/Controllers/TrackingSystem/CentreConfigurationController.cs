@@ -188,7 +188,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
 
             var (optionsString, options) =
-                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString, index);
+                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
             model.Options = options;
             model.OptionsString = optionsString;
 
