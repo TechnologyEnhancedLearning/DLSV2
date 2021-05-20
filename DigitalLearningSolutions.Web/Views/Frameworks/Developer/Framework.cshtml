@@ -47,7 +47,7 @@
     {
       if (Model.DetailFramework.PublishStatusID == 2)
       {
-        <a role="button" asp-action="PublishFramework" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish</a>
+        <a role="button" asp-action="ViewFrameworkReviews" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish</a>
       }
       else if (Model.DetailFramework.PublishStatusID == 3)
       {
