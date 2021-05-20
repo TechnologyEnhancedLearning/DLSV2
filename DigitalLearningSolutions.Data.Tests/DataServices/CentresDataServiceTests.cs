@@ -169,5 +169,55 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void UpdateCentreWebsiteDetails_updates_centre()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                var telephone = "0118999 88199 9119725   3";
+                var email = "totallyrealemail@noreally.itis";
+                var postcode = "POST CDE";
+                var openingHours = "2:30am - 2:31am Sundays";
+                var webAddress = "really.boring.website";
+                var organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
+                var trainingVenues = "Olympus Mons, Tharsis, Mars";
+                var otherInformation = "This is not the information you're looking for";
+
+                // When
+                centresDataService.UpdateCentreWebsiteDetails
+                (
+                    2,
+                    postcode,
+                    telephone,
+                    email,
+                    openingHours,
+                    webAddress,
+                    organisationsCovered,
+                    trainingVenues,
+                    otherInformation
+                );
+                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
+                    updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
+                    updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
+                    updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
+                    updatedCentre.CentreWebAddress.Should().BeEquivalentTo(webAddress);
+                    updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);
+                    updatedCentre.TrainingVenues.Should().BeEquivalentTo(trainingVenues);
+                    updatedCentre.OtherInformation.Should().BeEquivalentTo(otherInformation);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

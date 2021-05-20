@@ -207,12 +207,12 @@
               Other information:
             </dt>
             <dd class="nhsuk-summary-list__value">
-              @Model.OtherInformation
+              <partial name="_CentreStringArray" model="Model.OtherInformation" />
             </dd>
           </div>
         </dl>
         
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button">
+        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
           Edit
         </a>
         <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
