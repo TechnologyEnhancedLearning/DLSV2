@@ -150,38 +150,32 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash);
+            var hashIsValid =
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash);
 
             // Then
             hashIsValid.Should().BeTrue();
         }
 
         [Test]
-        public async Task Removes_reset_password_from_all_users_matching_email()
+        public async Task Removes_reset_password_for_exact_users_matching_email()
         {
             // Given
             var users = (
-                Builder<AdminUser>.CreateNew().With(u => u.ResetPasswordId = 234).Build(),
-                Builder<DelegateUser>.CreateListOfSize(20)
-                    .TheFirst(1).With(u => u.ResetPasswordId = null)
-                    .TheNext(3).With(u => u.ResetPasswordId = 235)
-                    .TheNext(2).With(u => u.ResetPasswordId = 236)
-                    .TheNext(9).With(u => u.ResetPasswordId = 237)
-                    .TheNext(5).With(u => u.ResetPasswordId = 238)
-                    .Build().ToList());
+                Builder<AdminUser>.CreateNew().With(u => u.ResetPasswordId = 1).Build(),
+                new[] { Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = 4).Build() }.ToList());
             A.CallTo(() => this.userService.GetUsersByEmailAddress("email")).Returns(users);
 
             // When
             await this.passwordResetService.InvalidateResetPasswordForEmailAsync("email");
 
             // Then
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(234)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(235)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(236)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(237)).MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(238)).MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(1))
+                .MustHaveHappened(1, Times.OrMore);
+            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(4))
+                .MustHaveHappened(1, Times.OrMore);
             A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
-                .WhenArgumentsMatch(args => args.Get<int>(0) < 234 || args.Get<int>(0) > 238).MustNotHaveHappened();
+                .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
         }
 
         [Test]

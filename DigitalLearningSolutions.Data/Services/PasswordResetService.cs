@@ -81,15 +81,7 @@
 
         public async Task InvalidateResetPasswordForEmailAsync(string email)
         {
-            var (adminUserIfAny, delegateUsers) = this.userService.GetUsersByEmailAddress(email);
-
-            var resetPasswordIds = delegateUsers
-                .Select(du => (User)du)
-                .Concat(new[] { adminUserIfAny })
-                .Select(u => u?.ResetPasswordId)
-                .Where(rPId => rPId != null)
-                .Select(rPId => rPId.Value)
-                .Distinct();
+            var resetPasswordIds = this.userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
 
             foreach (var resetPasswordId in resetPasswordIds)
             {
