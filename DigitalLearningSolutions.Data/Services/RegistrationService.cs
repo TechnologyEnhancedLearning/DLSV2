@@ -30,11 +30,11 @@
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 return candidateNumber;
             }
+            
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
             var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
             var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName, delegateRegistrationModel.FirstName,
