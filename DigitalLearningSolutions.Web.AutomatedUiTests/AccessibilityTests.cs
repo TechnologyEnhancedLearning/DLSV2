@@ -73,7 +73,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             var lastName = driver.FindElement(By.Id("LastName"));
             lastName.SendKeys("User");
             var email = driver.FindElement(By.Id("Email"));
-            email.SendKeys("email@test.com");
+            email.SendKeys("candidate@test.com");
             var registerForm = driver.FindElement(By.TagName("form"));
             registerForm.Submit();
 
