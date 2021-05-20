@@ -4,7 +4,12 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Centre configuration";
+    ViewData["Title"] = "Centre configuration";
+    ViewData["Application"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">

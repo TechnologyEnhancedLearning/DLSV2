@@ -1,7 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @model DisplayRegistrationPromptsViewModel
 
-@{ ViewData["Title"] = "Manage delegate registration prompts"; }
+@{
+    ViewData["Title"] = "Manage delegate registration prompts";
+    ViewData["Application"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems"/>
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">

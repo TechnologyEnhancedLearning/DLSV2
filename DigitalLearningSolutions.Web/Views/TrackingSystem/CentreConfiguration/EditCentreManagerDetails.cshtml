@@ -2,31 +2,37 @@
 @model EditCentreManagerDetailsViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
+    ViewData["Application"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Telephone) })"/>
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Telephone) })" />
     }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre manager details</h1>
     <form method="post" novalidate asp-action="EditCentreManagerDetails">
 
-      <vc:text-input asp-for="FirstName" label="First name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="FirstName" label="First name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="given-name" hint-text="" css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="LastName" label="Last name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="LastName" label="Last name" populate-with-current-value="true" type="text" spell-check="false" autocomplete="family-name" hint-text="" css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="Email" label="Email" populate-with-current-value="true" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="Email" label="Email" populate-with-current-value="true" type="text" spell-check="false" autocomplete="email" hint-text="" css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="Telephone" label="Telephone (optional)" populate-with-current-value="true" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half"/>
+      <vc:text-input asp-for="Telephone" label="Telephone (optional)" populate-with-current-value="true" type="text" spell-check="false" autocomplete="" hint-text="" css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit" value="save">Save</button>
     </form>
 
-    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel"/>
+    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel" />
 
   </div>
 </div>
