@@ -9,7 +9,7 @@
 
     public interface IRegistrationService
     {
-        string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIp);
+        (string candidateNumber, bool approved) RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel, string baseUrl, string userIp);
     }
 
     public class RegistrationService : IRegistrationService
@@ -33,7 +33,7 @@
             this.centresDataService = centresDataService;
         }
 
-        public string RegisterDelegate
+        public public (string candidateNumber, bool approved) RegisterDelegate
         (
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
@@ -48,7 +48,7 @@
             // TODO HEEDLS-446 Handle return string "-4" for duplicate emails
             if (candidateNumber == "-1")
             {
-                return candidateNumber;
+                return (candidateNumber, false);
             }
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
@@ -62,7 +62,7 @@
                 emailService.SendEmail(approvalEmail);
             }
 
-            return candidateNumber;
+            return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
         private Email GenerateApprovalEmail

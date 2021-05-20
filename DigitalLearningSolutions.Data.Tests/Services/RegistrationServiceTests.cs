@@ -151,8 +151,9 @@
         public void Registering_delegate_returns_candidate_number()
         {
             // When
-            var candidateNumber =
-                registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty);
+            var candidateNumber = 
+                registrationService.RegisterDelegate(testRegistrationModel, "localhost", string.Empty).candidateNumber;
+
 
             // Then
             candidateNumber.Should().Be(newCandidateNumber);
@@ -162,8 +163,9 @@
         public void Error_when_registering_returns_error_code()
         {
             // When
-            var candidateNumber =
-                registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty);
+            var candidateNumber = 
+                registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty).candidateNumber;
+
 
             // Then
             candidateNumber.Should().Be("-1");

@@ -21,6 +21,7 @@
 
         public string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel)
         {
+
             var values = new
             {
                 FirstName = delegateRegistrationModel.FirstName,
@@ -43,10 +44,12 @@
                 Bulk = 0
             };
 
-            return connection.QueryFirstOrDefault<string>(
+            var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType:CommandType.StoredProcedure);
+
+            return candidateNumber;
         }
     }
 }
