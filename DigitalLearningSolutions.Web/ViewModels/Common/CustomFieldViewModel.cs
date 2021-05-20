@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     public class CustomFieldViewModel
     {

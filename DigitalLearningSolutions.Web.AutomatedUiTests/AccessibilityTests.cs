@@ -47,6 +47,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/MyAccount/EditDetails")]
         [InlineData("/TrackingSystem/CentreConfiguration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails")]
+        [InlineData("/TrackingSystem/Delegates/Approve")]
         public void Authenticated_page_has_no_accessibility_errors(string url)
         {
             // when
@@ -72,7 +73,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             var lastName = driver.FindElement(By.Id("LastName"));
             lastName.SendKeys("User");
             var email = driver.FindElement(By.Id("Email"));
-            email.SendKeys("email@test.com");
+            email.SendKeys("candidate@test.com");
             var registerForm = driver.FindElement(By.TagName("form"));
             registerForm.Submit();
 

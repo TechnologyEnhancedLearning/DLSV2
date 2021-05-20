@@ -1,22 +1,24 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model PublishViewModel;
 @{
-  ViewData["Title"] = Model.BaseFramework.FrameworkName;
+  ViewData["Title"] = Model.DetailFramework.FrameworkName;
   ViewData["Application"] = "Framework Service";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__item">Publish</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
     </div>
   </nav>
 }
 <h1>Publish framework</h1>
+<p>Please ensure that all of the reviewers who are required to approve the framework are listed below.</p>
 @if (Model.FrameworkReviews.Any())
 {
   <table role="table" class="nhsuk-table-responsive">
@@ -58,7 +60,7 @@
               <text>
                 <a asp-action="ViewThread"
                    asp-controller="Frameworks"
-                   asp-route-frameworkId="@Model.BaseFramework.ID"
+                   asp-route-frameworkId="@Model.DetailFramework.ID"
                    asp-route-commentId="@review.FrameworkCommentID">
                   View comment
                 </a>
@@ -93,7 +95,37 @@
 }
 <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
   <div class="nhsuk-grid-column-full">
-    <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.BaseFramework.ID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
+    @if (Model.CanPublish && Model.DetailFramework.UserRole > 1)
+    {
+      <div class="nhsuk-warning-callout callout-green">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            Ready to publish
+          </span>
+        </h3>
+        <p>There are no outstanding reviewers whose approval is required before this framework can be published.</p>
+        <p>Once published, this framework and its @Model.VocabPlural().ToLower() can be discovered by Profile Managers and included in national and local job profiles.</p>
+        <p>Please ensure that all of the reviewers who are required to approve the framework are listed above before publishing.</p>
+      </div>
+    }
+    else
+    {
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            Approvals required
+          </span>
+        </h3>
+        <p>There are outstanding reviewers whose approval is required before this framework can be published.</p>
+      </div>
+    }
   </div>
-</div>
+    <div class="nhsuk-grid-column-full">
+      @if (Model.CanPublish)
+      {
+        <a role="button" asp-action="PublishFramework" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish Framework</a>
+      }
+      <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
+    </div>
+  </div>
 
