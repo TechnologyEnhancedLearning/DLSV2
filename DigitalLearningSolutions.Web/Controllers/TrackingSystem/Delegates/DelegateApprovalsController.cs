@@ -12,8 +12,8 @@
     {
         public IActionResult Index()
         {
-            var model = new DelegateApprovalsViewModel(new List<ApprovableDelegate>());
-            return View(model);
+            var model = new DelegateApprovalsViewModel(new List<UnapprovedDelegate>());
+            return View("~/Views/TrackingSystem/Delegates/DelegateApprovals/index.cshtml", model);
         }
     }
 }
