@@ -105,25 +105,7 @@
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetNullableCandidateId();
 
-            var accountDetailsData = new AccountDetailsData(userAdminId,
-                userDelegateId,
-                model.Password!,
-                model.FirstName!,
-                model.LastName!,
-                model.Email!,
-                model.ProfileImage);
-
-            var centreAnswersData = userDelegateId == null
-                ? null
-                : new CentreAnswersData(
-                    User.GetCentreId(),
-                    model.JobGroupId!.Value,
-                    model.Answer1,
-                    model.Answer2,
-                    model.Answer3,
-                    model.Answer4,
-                    model.Answer5,
-                    model.Answer6);
+            var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(model, userAdminId, userDelegateId);
 
             if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
             {
@@ -210,6 +192,30 @@
                     ModelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
             }
+        }
+
+        private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(EditDetailsViewModel model, int? userAdminId, int? userDelegateId)
+        {
+            var accountDetailsData = new AccountDetailsData(userAdminId,
+                userDelegateId,
+                model.Password!,
+                model.FirstName!,
+                model.LastName!,
+                model.Email!,
+                model.ProfileImage);
+
+            var centreAnswersData = userDelegateId == null
+                ? null
+                : new CentreAnswersData(
+                    User.GetCentreId(),
+                    model.JobGroupId!.Value,
+                    model.Answer1,
+                    model.Answer2,
+                    model.Answer3,
+                    model.Answer4,
+                    model.Answer5,
+                    model.Answer6);
+            return (accountDetailsData, centreAnswersData);
         }
     }
 }
