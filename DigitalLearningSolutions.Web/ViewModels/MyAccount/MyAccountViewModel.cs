@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class MyAccountViewModel
     {

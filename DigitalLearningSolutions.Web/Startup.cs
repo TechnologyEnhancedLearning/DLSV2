@@ -1,12 +1,12 @@
 namespace DigitalLearningSolutions.Web
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
     using System.Threading.Tasks;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
-    using System.Web;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.User;
@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
@@ -78,6 +79,7 @@ namespace DigitalLearningSolutions.Web
                 .AddRazorOptions(options =>
                 {
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
@@ -133,6 +135,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<CustomPromptHelper>();
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
@@ -143,6 +146,12 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                   ForwardedHeaders.XForwardedProto
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -167,7 +176,8 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var url = HttpUtility.UrlEncode(context.Request.Path);
+            var applicationPath = new Uri(config["AppRootPath"]).AbsolutePath.TrimEnd('/');
+            var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}");
             return Task.CompletedTask;
         }

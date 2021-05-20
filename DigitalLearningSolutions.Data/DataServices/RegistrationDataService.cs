@@ -10,7 +10,7 @@
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
     }
 
-    public class RegistrationDataService: IRegistrationDataService
+    public class RegistrationDataService : IRegistrationDataService
     {
         private readonly IDbConnection connection;
 
@@ -23,13 +23,13 @@
         {
             var values = new
             {
-                FirstName = delegateRegistrationModel.FirstName,
-                LastName = delegateRegistrationModel.LastName,
-                Email = delegateRegistrationModel.Email,
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.Email,
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
                 Active = 1,
-                Approved = 0,
+                Approved = delegateRegistrationModel.Approved ? 1 : 0,
                 Answer1 = "",
                 Answer2 = "",
                 Answer3 = "",
@@ -43,10 +43,12 @@
                 Bulk = 0
             };
 
-            return connection.QueryFirstOrDefault<string>(
+            var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
-                commandType:CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure);
+
+            return candidateNumber;
         }
     }
 }
