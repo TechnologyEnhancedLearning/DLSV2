@@ -7,9 +7,9 @@
 
     public interface IUserService
     {
-        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
-        public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress);
-        public (AdminUser?, DelegateUser?) GetUsersById(int? adminId, int? delegateId);
+        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
+        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
+        public (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
         public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
         (

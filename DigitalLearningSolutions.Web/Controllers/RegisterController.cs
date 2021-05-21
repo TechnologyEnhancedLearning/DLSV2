@@ -16,17 +16,19 @@
     {
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
+        private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
-        private readonly ICryptoService cryptoService;
+        private readonly IUserService userService;
 
         public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
-            IRegistrationService registrationService, ICryptoService cryptoService)
+            IRegistrationService registrationService, ICryptoService cryptoService, IUserService userService)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -55,6 +57,8 @@
                 return View();
             }
 
+            ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
+
             return View(delegateRegistrationData.RegisterViewModel);
         }
 
@@ -62,6 +66,8 @@
         [HttpPost]
         public IActionResult Index(RegisterViewModel model)
         {
+            ValidateEmailAddress(model);
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -119,6 +125,7 @@
             {
                 return View(model);
             }
+
             var data = TempData.Peek<DelegateRegistrationData>()!;
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
@@ -153,11 +160,21 @@
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var (candidateNumber, approved) = registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data), baseUrl);
+            var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            var (candidateNumber, approved) =
+                registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                    baseUrl, userIP);
+
             if (candidateNumber == "-1")
             {
                 return RedirectToAction("Error", "LearningSolutions");
             }
+
+            if (candidateNumber == "-4")
+            {
+                return RedirectToAction("Index");
+            }
+
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             TempData.Add("approved", approved);
@@ -182,6 +199,14 @@
             var centreIdForContactInformation = approved ? null : (int?)centreId;
             var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
             return View(viewModel);
+        }
+
+        private void ValidateEmailAddress(RegisterViewModel model)
+        {
+            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+            }
         }
     }
 }
