@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -11,6 +13,9 @@
 
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser);
+
+        public List<(DelegateUser, List<CustomPromptWithAnswer>)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+            IEnumerable<DelegateUser> delegateUsers);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -40,6 +45,16 @@
             var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
+        }
+
+        public List<(DelegateUser, List<CustomPromptWithAnswer>)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+            IEnumerable<DelegateUser> delegateUsers)
+        {
+            var customPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+
+            return delegateUsers.Select(user =>
+                (user, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(customPrompts, user)))
+                .ToList();
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)
