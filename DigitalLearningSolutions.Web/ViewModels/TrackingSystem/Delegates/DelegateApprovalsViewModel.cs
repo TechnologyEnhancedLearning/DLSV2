@@ -22,6 +22,7 @@
         public UnapprovedDelegate(DelegateUser delegateUser, List<CustomPromptWithAnswer> customPrompts)
         {
             Id = delegateUser.Id;
+            CandidateNumber = delegateUser.CandidateNumber;
             FullName = $"{delegateUser.FirstName} {delegateUser.LastName}";
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
@@ -32,6 +33,7 @@
         }
 
         public int Id { get; set; }
+        public string CandidateNumber { get; set; }
         public string FullName { get; set; }
         public string? Email { get; set; }
         public DateTime? DateRegistered { get; set; }

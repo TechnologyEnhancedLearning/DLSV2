@@ -183,6 +183,7 @@
             List<DelegateUser> users = connection.Query<DelegateUser>(
                 @"SELECT
                         CandidateID,
+                        CandidateNumber,
                         FirstName,
                         LastName,
                         EmailAddress,
