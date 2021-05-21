@@ -112,7 +112,7 @@
                     var email = "test@email.com";
 
                     // When
-                    userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new []{2,3});
+                    userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new[] { 2, 3 });
                     var updatedUser = userDataService.GetDelegateUserById(2);
                     var secondUpdatedUser = userDataService.GetDelegateUserById(3);
 
@@ -150,7 +150,8 @@
                     var answer6 = "Answer6";
 
                     // When
-                    userDataService.UpdateDelegateUserCentrePrompts(2, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+                    userDataService.UpdateDelegateUserCentrePrompts
+                        (2, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
                     var updatedUser = userDataService.GetDelegateUserById(2);
 
                     // Then
