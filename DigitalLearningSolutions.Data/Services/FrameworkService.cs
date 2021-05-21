@@ -1346,7 +1346,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         public List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId)
         {
             return connection.Query<Recipient>(
-                @"SELECT au.Email, au.Forename, au.Surname, CAST(0 AS bit) AS Owner, CAST(0 AS bit) AS Sender
+                @"SELECT au.Email, au.Forename AS FirstName, au.Surname AS LastName, CAST(0 AS bit) AS Owner, CAST(0 AS bit) AS Sender
                     FROM   FrameworkComments AS fwc INNER JOIN
                          AdminUsers AS au ON fwc.AdminID = au.AdminID INNER JOIN
                          Frameworks AS fw1 ON fwc.FrameworkID = fw1.ID AND fwc.AdminID <> fw1.OwnerAdminID
