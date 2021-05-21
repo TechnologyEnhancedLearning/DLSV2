@@ -8,18 +8,3 @@
   width: 150px;
   height: 150px;
 }
-
-.left-button-mobile-margin-bottom {
-  @include govuk-media-query($until: tablet) {
-    margin-bottom: 0;
-  }
-}
-
-.hidden-submit {
-    display: none;
-}
-
-.divider {
-  border-bottom: 1px solid $nhsuk-border-color;
-  margin-bottom: nhsuk-spacing(3);
-}

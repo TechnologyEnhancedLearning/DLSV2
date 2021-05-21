@@ -32,7 +32,7 @@
         }
 
         [Test]
-        public void UpdateCustomPrompt()
+        public void UpdateCustomPrompt_correctly_updates_custom_prompt()
         {
             using (var transaction = new TransactionScope())
             {

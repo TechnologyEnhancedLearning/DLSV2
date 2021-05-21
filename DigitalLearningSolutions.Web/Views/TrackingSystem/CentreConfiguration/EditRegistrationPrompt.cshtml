@@ -6,6 +6,14 @@
   ViewData["Title"] = "Edit delegate registration prompt";
 }
 
+@if (errorHasOccurred) {
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}"/>
+    </div>
+  </div>
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Edit delegate registration prompt</h1>
@@ -17,7 +25,7 @@
     <button name="action" class="nhsuk-button" value="save">Save</button>
   </div>
 
-  <input type="hidden" asp-for="OptionsString"/>
+  <input type="hidden" asp-for="OptionsString" />
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
@@ -26,18 +34,10 @@
       </div>
     </div>
     <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-normal">
-      <input type="hidden" asp-for="Prompt"/>
+      <input type="hidden" asp-for="Prompt" />
       @Model.Prompt
     </div>
   </div>
-
-  @if (errorHasOccurred) {
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}"/>
-      </div>
-    </div>
-  }
 
   <div class="nhsuk-grid-row nhsuk-u-padding-bottom-4">
     <div class="nhsuk-grid-column-one-half">
@@ -52,7 +52,14 @@
     </div>
   </div>
 
-  @if (!string.IsNullOrEmpty(Model.OptionsString)) {
+  @if (string.IsNullOrEmpty(Model.OptionsString))
+  {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <partial name="NoConfiguredAnswers" />
+      </div>
+    </div>
+  } else{
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <table class="nhsuk-table">
@@ -68,7 +75,8 @@
           </tr>
           </thead>
           <tbody class="nhsuk-table__body">
-          @foreach (var answer in Model.Options) {
+          @foreach (var answer in Model.Options)
+          {
             <tr role="row" class="nhsuk-table__row">
               <td class="nhsuk-table__cell">@answer</td>
               <td class="nhsuk-table__cell ">
@@ -80,18 +88,12 @@
         </table>
       </div>
     </div>
-  } else {
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <partial name="NoConfiguredAnswers"/>
-      </div>
-    </div>
   }
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-one-half">
       <vc:text-input asp-for="Answer"
-                     label="Add another answer?"
+                     label="Add a new answer?"
                      populate-with-current-value="true"
                      type="text"
                      spell-check="true"
