@@ -1402,7 +1402,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
                 @"SELECT COUNT(*)
                     FROM FrameworkReviews
                     WHERE FrameworkID = @frameworkId
-                    AND FrameworkCollaboratorId = @frameworkCollaboratorId",
+                    AND FrameworkCollaboratorId = @frameworkCollaboratorId AND Archived IS NULL",
                 new { frameworkId, frameworkCollaboratorId }
                 );
             if (exists == 0)
@@ -1435,7 +1435,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId",
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL",
                 new { frameworkId, adminId, reviewId }).FirstOrDefault();
         }
 
