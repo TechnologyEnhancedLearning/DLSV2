@@ -5,8 +5,9 @@
 @model DelegateApprovalsViewModel
 
 @{
-  ViewData["Title"] = "Approve delegate registrations";
-  ViewData["Application"] = "Tracking System";
+    ViewData["Title"] = "Approve delegate registrations";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
 }
 
 @section NavMenuItems {
