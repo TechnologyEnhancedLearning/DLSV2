@@ -14,7 +14,6 @@
         /// <param name="rows"></param>
         /// <param name="spellCheck"></param>
         /// <param name="hintText">Leave blank for no hint.</param>
-        /// <param name="autocomplete">Leave blank to set no autocomplete on the input element.</param>
         /// <param name="cssClass"></param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
@@ -24,7 +23,6 @@
             int rows,
             bool spellCheck,
             string hintText,
-            string autocomplete,
             string cssClass)
         {
             var model = ViewData.Model;
@@ -42,7 +40,6 @@
                 valueToSet,
                 rows,
                 spellCheck,
-                string.IsNullOrEmpty(autocomplete) ? null : autocomplete,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,

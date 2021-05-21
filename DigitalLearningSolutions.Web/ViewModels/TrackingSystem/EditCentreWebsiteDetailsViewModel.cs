@@ -22,6 +22,7 @@
         [MaxLength(100, ErrorMessage = "Enter a telephone number that is no more than 100 characters.")]
         public string? CentreTelephone { get; set; }
 
+        [Required(ErrorMessage = "Enter an email address.")]
         [EmailAddress(ErrorMessage = "Enter a valid email address.")]
         [MaxLength(100, ErrorMessage = "Enter an email address that is no more than 100 characters.")]
         public string? CentreEmail { get; set; }

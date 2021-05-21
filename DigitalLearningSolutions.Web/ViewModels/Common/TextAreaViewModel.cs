@@ -10,7 +10,6 @@
             string? value,
             int rows,
             bool spellCheck,
-            string? autocomplete,
             string? cssClass = null,
             string? hintText = null,
             string? errorMessage = null,
@@ -24,7 +23,6 @@
             Value = value;
             Rows = rows;
             SpellCheck = spellCheck;
-            Autocomplete = autocomplete;
             HintText = hintText;
             ErrorMessage = errorMessage;
             HasError = hasError;
@@ -37,7 +35,6 @@
         public string? Value { get; set; }
         public int Rows { get; set; }
         public bool SpellCheck { get; set; }
-        public string? Autocomplete { get; set; }
         public string? HintText { get; set; }
         public string? ErrorMessage { get; set; }
         public bool HasError { get; set; }

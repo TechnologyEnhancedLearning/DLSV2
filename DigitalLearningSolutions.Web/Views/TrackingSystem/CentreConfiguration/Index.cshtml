@@ -11,7 +11,7 @@
   <div class="nhsuk-grid-column-full">
   <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
 
-    <div class="nhsuk-card nhsuk-u-margin-top-6 nhsuk-u-margin-bottom-6">
+    <div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
       <div class="nhsuk-card__content basic-card-content">
         <dl class="nhsuk-summary-list">
           <div class="nhsuk-summary-list__row basic-summary-list__row">
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           Centre details
@@ -77,7 +77,7 @@
       </div>
     </details>
 
-    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           Centre manager details
@@ -122,14 +122,14 @@
           </div>
         </dl>
 
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button" asp-action="EditCentreManagerDetails">
+        <a class="nhsuk-button" role="button" asp-action="EditCentreManagerDetails">
           Edit
         </a>
 
       </div>
     </details>
 
-    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card nhsuk-u-margin-bottom-3">
+    <details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
       <summary class="nhsuk-details__summary">
         <span class="nhsuk-details__summary-text">
           Centre content on DLS website
@@ -212,7 +212,7 @@
           </div>
         </dl>
         
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
+        <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
           Edit
         </a>
         <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
