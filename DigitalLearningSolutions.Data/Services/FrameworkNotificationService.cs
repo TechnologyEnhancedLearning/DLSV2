@@ -40,7 +40,7 @@
                 recipients.RemoveAt(0);
                 string emailSubject = "";
                 var commentUrl = GetFrameworkUrl(frameworkId, "Comments");
-                commentUrl += $"/{(replyToCommentId == null ? commentId : replyToCommentId)}";
+                commentUrl += $"{(replyToCommentId == null ? commentId : replyToCommentId)}";
                 foreach (var recipient in recipients)
                 {
 
