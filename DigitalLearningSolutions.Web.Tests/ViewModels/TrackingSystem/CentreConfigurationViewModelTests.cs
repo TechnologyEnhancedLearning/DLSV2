@@ -41,7 +41,7 @@
                 viewModel.CentreWebAddress.Should().BeEquivalentTo(centre.CentreWebAddress);
                 viewModel.OrganisationsCovered.Should().BeEquivalentTo(centre.OrganisationsCovered);
                 viewModel.TrainingVenues.Should().BeEquivalentTo(expectedTrainingCentres);
-                viewModel.OtherInformation.Should().BeEquivalentTo(centre.OtherInformation);
+                viewModel.OtherInformation.Should().BeEmpty();
             }
         }
 

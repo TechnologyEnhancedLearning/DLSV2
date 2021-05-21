@@ -76,5 +76,45 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        [Route("EditCentreWebsiteDetails")]
+        public IActionResult EditCentreWebsiteDetails()
+        {
+            var centreId = User.GetCentreId();
+
+            var centreDetails = centresDataService.GetCentreDetailsById(centreId);
+
+            var model = new EditCentreWebsiteDetailsViewModel(centreDetails);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditCentreWebsiteDetails")]
+        public IActionResult EditCentreWebsiteDetails(EditCentreWebsiteDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+
+            centresDataService.UpdateCentreWebsiteDetails
+            (
+                centreId,
+                model.CentrePostcode,
+                model.CentreTelephone,
+                model.CentreEmail,
+                model.OpeningHours,
+                model.CentreWebAddress,
+                model.OrganisationsCovered,
+                model.TrainingVenues,
+                model.OtherInformation
+            );
+
+            return RedirectToAction("Index");
+        }
     }
 }

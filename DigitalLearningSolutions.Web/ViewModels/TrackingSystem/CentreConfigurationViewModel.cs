@@ -25,7 +25,7 @@
             CentreWebAddress = centre.CentreWebAddress;
             OrganisationsCovered = SplitMultiValuedStringIntoArray(centre.OrganisationsCovered);
             TrainingVenues = SplitMultiValuedStringIntoArray(centre.TrainingVenues);
-            OtherInformation = centre.OtherInformation;
+            OtherInformation = SplitMultiValuedStringIntoArray(centre.OtherInformation);
         }
         public int CentreId { get; set; }
         public string CentreName { get; set; }
@@ -45,7 +45,7 @@
         public string? CentreWebAddress { get; set; }
         public string[] OrganisationsCovered { get; set; }
         public string[] TrainingVenues { get; set; }
-        public string? OtherInformation { get; set; }
+        public string[] OtherInformation { get; set; }
 
         private string[] SplitMultiValuedStringIntoArray(string? multiValuedString)
         {

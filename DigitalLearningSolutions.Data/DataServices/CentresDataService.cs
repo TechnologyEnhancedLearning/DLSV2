@@ -23,6 +23,19 @@
             string? telephone
         );
 
+        void UpdateCentreWebsiteDetails
+        (
+            int centreId,
+            string postcode,
+            string? telephone,
+            string email,
+            string? openingHours,
+            string? webAddress,
+            string? organisationsCovered,
+            string? trainingVenues,
+            string? otherInformation
+        );
+
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
     }
@@ -137,6 +150,45 @@
                     ContactTelephone = @telephone
                 WHERE CentreId = @centreId",
                 new { firstName, lastName, email, telephone, centreId }
+            );
+        }
+
+        public void UpdateCentreWebsiteDetails
+        (
+            int centreId,
+            string postcode,
+            string? telephone = null,
+            string? email = null,
+            string? openingHours = null,
+            string? webAddress = null,
+            string? organisationsCovered = null,
+            string? trainingVenues = null,
+            string? otherInformation = null
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    pwTelephone = @telephone,
+                    pwEmail = @email,
+                    pwPostCode = @postcode,
+                    pwHours = @openingHours,
+                    pwWebURL = @webAddress,
+                    pwTrustsCovered = @organisationsCovered,
+                    pwTrainingLocations = @trainingVenues,
+                    pwGeneralInfo = @otherInformation
+                WHERE CentreId = @centreId",
+                new
+                {
+                    telephone,
+                    email,
+                    postcode,
+                    openingHours,
+                    webAddress,
+                    organisationsCovered,
+                    trainingVenues,
+                    otherInformation,
+                    centreId
+                }
             );
         }
 
