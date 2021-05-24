@@ -19,7 +19,7 @@
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
-                           && context.User.HasAdminCentrePermissions() == true);
+                           && context.User.HasCentreAdminPermissions() == true);
         }
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserFrameworksAdminOnly(AuthorizationPolicyBuilder policy)

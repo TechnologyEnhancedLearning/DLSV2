@@ -73,10 +73,10 @@
                    && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false);
         }
 
-        public static bool HasAdminCentrePermissions(this ClaimsPrincipal user)
+        public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
             return user.HasClaim
-                (c => c.Type == CustomClaimTypes.UserCentreAdmin || c.Type == CustomClaimTypes.UserCentreManager);
+                (c => c.Type == CustomClaimTypes.UserCentreAdmin || c.Type == CustomClaimTypes.UserCentreManager || c.Type == CustomClaimTypes.UserUserAdmin);
         }
     }
 }

@@ -2,31 +2,31 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
+@if (User.HasCentreAdminPermissions()) {
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/dashboard">
+      Centre
+      <partial name="_NhsChevronRight"/>
+    </a>
+  </li>
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">
+      Delegates
+      <partial name="_NhsChevronRight"/>
+    </a>
+  </li>
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursesetup">
+      Course setup
+      <partial name="_NhsChevronRight"/>
+    </a>
+  </li>
+}
 @if (User.HasClaim(c => c.Type == CustomClaimTypes.UserUserAdmin)) {
-  if (User.HasAdminCentrePermissions()) {
-    <li class="nhsuk-header__navigation-item">
-      <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/dashboard">
-        Centre
-        <partial name="_NhsChevronRight" />
-      </a>
-    </li>
-    <li class="nhsuk-header__navigation-item">
-      <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">
-        Delegates
-        <partial name="_NhsChevronRight" />
-      </a>
-    </li>
-    <li class="nhsuk-header__navigation-item">
-      <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursesetup">
-        Course setup
-        <partial name="_NhsChevronRight" />
-      </a>
-    </li>
-  }
   <li class="nhsuk-header__navigation-item">
     <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
       Admin
-      <partial name="_NhsChevronRight" />
+      <partial name="_NhsChevronRight"/>
     </a>
   </li>
 }
