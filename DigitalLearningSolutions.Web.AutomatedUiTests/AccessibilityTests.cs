@@ -49,6 +49,9 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails")]
         [InlineData("/TrackingSystem/Delegates/Approve")]
+        [InlineData("/NotificationPreferences")]
+        [InlineData("/NotificationPreferences/Edit/AdminUser")]
+        [InlineData("/NotificationPreferences/Edit/DelegateUser")]
         public void Authenticated_page_has_no_accessibility_errors(string url)
         {
             // when

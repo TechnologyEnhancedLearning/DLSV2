@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
 
-<dl class="nhsuk-grid-column-full nhsuk-summary-list preference-list">
+<div class="nhsuk-grid-column-full nhsuk-summary-list preference-list">
   @foreach (var notification in Model.Notifications) {
     <div class="nhsuk-grid-row preference-row">
       <div class="nhsuk-grid-column-three-quarters preference-text-column">
@@ -17,7 +17,7 @@
       </div>
     </div>
   }
-</dl>
+</div>
 <a
   class="nhsuk-button"
   asp-controller="NotificationPreferences"
