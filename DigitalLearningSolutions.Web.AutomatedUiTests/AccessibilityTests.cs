@@ -37,15 +37,9 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         {
             // when
             driver.Navigate().GoToUrl(baseUrl + url);
-            var axeResult = new AxeBuilder(driver).Analyze();
-            var h1Element = driver.FindElement(By.TagName("h1"));
 
             // then
-            using (new AssertionScope())
-            {
-                axeResult.Violations.Should().BeEmpty();
-                h1Element.Text.Should().BeEquivalentTo(pageTitle);
-            }
+            AnalyzePageHeadingAndAccessibility(pageTitle);
         }
 
         [Theory]
@@ -60,15 +54,19 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             // when
             LogUserIn();
             driver.Navigate().GoToUrl(baseUrl + url);
-            var axeResult = new AxeBuilder(driver).Analyze();
-            var h1Element = driver.FindElement(By.TagName("h1"));
 
             // then
-            using (new AssertionScope())
-            {
-                axeResult.Violations.Should().BeEmpty();
-                h1Element.Text.Should().BeEquivalentTo(pageTitle);
-            }
+            AnalyzePageHeadingAndAccessibility(pageTitle);
+        }
+
+        private void AnalyzePageHeadingAndAccessibility(string pageTitle)
+        {
+            var h1Element = driver.FindElement(By.TagName("h1"));
+            h1Element.Text.Should().BeEquivalentTo(pageTitle);
+
+            // then
+            var axeResult = new AxeBuilder(driver).Analyze();
+            axeResult.Violations.Should().BeEmpty();
         }
 
         [Fact]
