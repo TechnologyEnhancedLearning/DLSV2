@@ -75,11 +75,6 @@ namespace DigitalLearningSolutions.Web
                 options.Cookie.IsEssential = true;
             });
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.KnownProxies.Add(IPAddress.Parse("10.210.10.49"));
-            });
-
             var mvcBuilder = services
                 .AddControllersWithViews()
                 .AddRazorOptions(options =>
