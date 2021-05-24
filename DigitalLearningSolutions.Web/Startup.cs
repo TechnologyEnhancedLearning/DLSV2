@@ -4,7 +4,6 @@ namespace DigitalLearningSolutions.Web
     using System.Collections.Generic;
     using System.Data;
     using System.IO;
-    using System.Net;
     using System.Threading.Tasks;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;

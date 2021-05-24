@@ -1,14 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using Castle.Core.Internal;
-    using Castle.Core.Logging;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class RegistrationServiceTests

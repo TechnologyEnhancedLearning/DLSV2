@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
