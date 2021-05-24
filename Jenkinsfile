@@ -69,7 +69,7 @@ pipeline {
         }
         stage('Deploy to test') {
             when {
-                allOf { branch 'master'; not { expression { params.DeployToUAT } } }
+                allOf { branch 'HEEDLS-402-HandleDefaultApprovalsBugFixing'; not { expression { params.DeployToUAT } } }
             }
             steps {
                 withCredentials([string(credentialsId: 'deploy-test-password', variable: 'PASSWORD')]) {

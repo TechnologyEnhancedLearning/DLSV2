@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using Castle.Core.Internal;
+    using Castle.Core.Logging;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -60,12 +62,15 @@
             );
             A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
+            var logger = A.Fake<ILogger<RegistrationService>>();
+
             registrationService = new RegistrationService
             (
                 registrationDataService,
                 passwordDataService,
                 emailService,
-                centresDataService
+                centresDataService,
+                logger
             );
         }
 
