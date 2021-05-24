@@ -24,22 +24,19 @@
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
-        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService
         (
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
             IEmailService emailService,
-            ICentresDataService centresDataService,
-            ILogger<RegistrationService> logger
+            ICentresDataService centresDataService
         )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
-            this.logger = logger;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate
@@ -49,8 +46,6 @@
             string userIp
         )
         {
-            logger.LogWarning("DAN TEST: User Ip: " + userIp);
-
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved =
                 centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";

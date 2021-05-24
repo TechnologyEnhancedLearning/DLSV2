@@ -62,15 +62,12 @@
             );
             A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
-            var logger = A.Fake<ILogger<RegistrationService>>();
-
             registrationService = new RegistrationService
             (
                 registrationDataService,
                 passwordDataService,
                 emailService,
-                centresDataService,
-                logger
+                centresDataService
             );
         }
 
