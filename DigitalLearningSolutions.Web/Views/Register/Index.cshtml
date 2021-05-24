@@ -66,6 +66,15 @@
         <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" type="text" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
       </div>
 
+      <vc:select-list
+        asp-for="Centre"
+        label="Centre"
+        value="@Model.Centre?.ToString()"
+        hint-text=""
+        css-class="nhsuk-u-width-full"
+        default-option="Select a centre"
+        select-list-options="@ViewBag.CentreOptions"/>
+
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 

@@ -6,17 +6,17 @@
 
     public static class SelectListHelper
     {
-        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedText(List<(int id, string value)> options, string? selectedTextValue)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedText(IEnumerable<(int id, string value)> options, string? selectedTextValue)
         {
             return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.value == selectedTextValue)).ToList();
         }
 
-        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(List<(int id, string value)> options, int? selectedId)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(IEnumerable<(int id, string value)> options, int? selectedId)
         {
             return options.Select(o => new SelectListItem(o.value, o.id.ToString(), o.id == selectedId)).ToList();
         }
 
-        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(List<string> options, string? selected)
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItemsWithSelectedValue(IEnumerable<string> options, string? selected)
         {
             return options.Select(o => new SelectListItem(o, o, o == selected)).ToList();
         }
