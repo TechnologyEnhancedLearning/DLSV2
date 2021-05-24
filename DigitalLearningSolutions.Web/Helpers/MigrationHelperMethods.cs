@@ -47,7 +47,8 @@
                         typeof(FixCustomisationUpdateSPs).Assembly,
                         typeof(AddEmailToFrameworkCollaboratorTable).Assembly,
                         typeof(AddFrameworkReviewsTable).Assembly,
-                        typeof(AddArchivedDateToFrameworkReviews).Assembly
+                        typeof(AddArchivedDateToFrameworkReviews).Assembly,
+                        typeof(AddMapDisplayColumnToCentres).Assembly
                     ).For.Migrations()
                 ).AddLogging(lb => lb
                     .AddFluentMigratorConsole()
