@@ -161,6 +161,10 @@
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
             var userIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            if (Request.Headers.ContainsKey("X-Forwarded-For"))
+            {
+                userIP = Request.Headers["X-Forwarded-For"].ToString();
+            }
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
                     baseUrl, userIP);
