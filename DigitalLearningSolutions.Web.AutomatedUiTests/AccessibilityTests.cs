@@ -84,12 +84,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             lastName.SendKeys("User");
             var email = driver.FindElement(By.Id("Email"));
             email.SendKeys("candidate@test.com");
+            var centre = new SelectElement(driver.FindElement(By.Id("Centre")));
+            centre.SelectByValue("2");
             var registerForm = driver.FindElement(By.TagName("form"));
             registerForm.Submit();
 
             var learnerInformationResult = new AxeBuilder(driver).Analyze();
-            var centre = new SelectElement(driver.FindElement(By.Id("Centre")));
-            centre.SelectByValue("2");
             var jobGroup = new SelectElement(driver.FindElement(By.Id("JobGroup")));
             jobGroup.SelectByValue("1");
             var learnerInformationForm = driver.FindElement(By.TagName("form"));
