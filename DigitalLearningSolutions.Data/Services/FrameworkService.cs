@@ -95,7 +95,7 @@
         private readonly IDbConnection connection;
         private readonly ILogger<FrameworkService> logger;
         private const string BaseFrameworkFields =
-            @"FW.ID, FrameworkName, FrameworkConfig, OwnerAdminID,
+            @"FW.ID, FrameworkName, OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
                  WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID,
