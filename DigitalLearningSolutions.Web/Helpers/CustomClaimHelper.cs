@@ -72,5 +72,11 @@
             return user.GetAdminId() == null
                    && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false);
         }
+
+        public static bool HasAdminCentrePermissions(this ClaimsPrincipal user)
+        {
+            return user.HasClaim
+                (c => c.Type == CustomClaimTypes.UserCentreAdmin || c.Type == CustomClaimTypes.UserCentreManager);
+        }
     }
 }
