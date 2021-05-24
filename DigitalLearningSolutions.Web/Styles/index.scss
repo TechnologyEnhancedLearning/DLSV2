@@ -186,3 +186,7 @@ ul.no-bullets {
   border-bottom: 1px solid $nhsuk-border-color;
   margin-bottom: nhsuk-spacing(3);
 }
+
+.word-break {
+  word-break: break-word;
+}

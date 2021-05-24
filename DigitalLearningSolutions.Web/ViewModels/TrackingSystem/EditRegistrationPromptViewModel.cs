@@ -7,9 +7,7 @@
 
     public class EditRegistrationPromptViewModel
     {
-        public EditRegistrationPromptViewModel()
-        {
-        }
+        public EditRegistrationPromptViewModel() { }
 
         public EditRegistrationPromptViewModel(CustomPrompt customPrompt)
         {
@@ -26,10 +24,9 @@
 
         public bool Mandatory { get; set; }
 
-        [MaxLength(4000, ErrorMessage = "The complete list of answers must be less than 4000 characters.")]
         public string? OptionsString { get; set; }
 
-        public List<string> Options { get; set; }
+        public List<string>? Options { get; set; }
 
         [Required(ErrorMessage = "Enter an answer.")]
         [MaxLength(100, ErrorMessage = "Answer must be at most 100 characters")]

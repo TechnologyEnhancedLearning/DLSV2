@@ -3,7 +3,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit delegate registration prompt";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate registration prompt" : "Edit delegate registration prompt";
 }
 
 @if (errorHasOccurred) {
@@ -75,12 +75,16 @@
           </tr>
           </thead>
           <tbody class="nhsuk-table__body">
-          @foreach (var answer in Model.Options)
+          @foreach (var answer in Model.Options!)
           {
             <tr role="row" class="nhsuk-table__row">
-              <td class="nhsuk-table__cell">@answer</td>
+              <td class="nhsuk-table__cell word-break">@answer</td>
               <td class="nhsuk-table__cell ">
-                <button name="action" class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0" value="@("delete" + Model.Options.IndexOf(answer))">Remove</button>
+                <button name="action"
+                        class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0"
+                        value="@("delete" + Model.Options.IndexOf(answer))">
+                  Remove
+                </button>
               </td>
             </tr>
           }

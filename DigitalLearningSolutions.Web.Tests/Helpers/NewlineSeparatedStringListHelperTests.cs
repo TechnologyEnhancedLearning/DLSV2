@@ -13,11 +13,6 @@
         private const string ItemList = "item1\r\nitem2";
         private readonly List<string> items = new List<string> { Item1, Item2 };
 
-        public void Setup()
-        {
-
-        }
-
         [Test]
         public void RemoveStringFromNewlineSeparatedList_returns_expected_values()
         {
@@ -54,10 +49,7 @@
             var resultString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(items);
 
             // Then
-            using (new AssertionScope())
-            {
-                resultString.Should().BeEquivalentTo(ItemList);
-            }
+            resultString.Should().BeEquivalentTo(ItemList);
         }
 
         [Test]

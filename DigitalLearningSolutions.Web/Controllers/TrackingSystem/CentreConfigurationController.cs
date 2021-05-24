@@ -136,7 +136,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
         [Route("RegistrationPrompts/{promptNumber}/Edit")]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
-            if (action.StartsWith("delete") && int.TryParse(action.Remove(0, 6), out var index))
+            if (action.StartsWith("delete") && TryGetAnswerIndexFromAction(action, out var index))
             {
                 return EditRegistrationPromptPostRemovePrompt(model, index);
             }
@@ -145,51 +145,61 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             {
                 "save" => EditRegistrationPromptPostSave(model),
                 "addPrompt" => EditRegistrationPromptPostAddPrompt(model),
-                _ => View(model)
+                _ => RedirectToAction("Error", "LearningSolutions")
             };
+        }
+
+        private bool TryGetAnswerIndexFromAction(string action, out int index)
+        {
+            return int.TryParse(action.Remove(0, 6), out index);
         }
 
         private IActionResult EditRegistrationPromptPostAddPrompt(EditRegistrationPromptViewModel model)
         {
-            // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditRegistrationPromptViewModel.Answer)))
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
-
             if (!ModelState.IsValid)
             {
                 model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
                 return View(model);
             }
 
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-
             var (optionsString, options) =
                 NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
-            model.Options = options;
-            model.OptionsString = optionsString;
 
+            if (model.OptionsString != null && optionsString.Length > 4000)
+            {
+                var remainingLength = 4000 - model.OptionsString.Length - 2;
+                ModelState.AddModelError
+                (
+                    nameof(EditRegistrationPromptViewModel.Answer),
+                    $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
+                );
+
+                ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
+                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
+            }
+            else
+            {
+                ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
+                model.OptionsString = optionsString;
+
+                ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
+                model.Options = options;
+            }
 
             return View(model);
         }
 
         private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)
         {
-            // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys)
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
-
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
-
+            IgnoreAddNewAnswerValidation();
+            
             var (optionsString, options) =
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
             model.Options = options;
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
             model.OptionsString = optionsString;
 
             return View(model);
@@ -197,12 +207,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditRegistrationPromptViewModel.OptionsString)))
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
+            IgnoreAddNewAnswerValidation();
 
             if (!ModelState.IsValid)
             {
@@ -213,6 +218,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             customPromptsService.UpdateCustomPromptForCentre(User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
 
             return RedirectToAction("RegistrationPrompts");
+        }
+
+        private void IgnoreAddNewAnswerValidation()
+        {
+            foreach (var key in ModelState.Keys)
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
         }
     }
 }

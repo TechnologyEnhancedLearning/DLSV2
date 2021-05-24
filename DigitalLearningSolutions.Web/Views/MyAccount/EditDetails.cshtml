@@ -11,10 +11,9 @@
 
 @if (User.IsDelegateOnlyAccount()) {
   ViewData["Application"] = "Learning Portal";
-}
-
-@section NavMenuItems {
+  @section NavMenuItems {
   <partial name="../LearningPortal/Shared/_NavMenuItems"/>
+  }
 }
 
 @if (errorHasOccurred) {

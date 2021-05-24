@@ -34,28 +34,26 @@
         [Test]
         public void UpdateCustomPrompt_correctly_updates_custom_prompt()
         {
-            using (var transaction = new TransactionScope())
+            using var transaction = new TransactionScope();
+            try
             {
-                try
-                {
-                    // Given
-                    var options = "options";
+                // Given
+                const string? options = "options";
 
-                    // When
-                    customPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
-                    var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                // When
+                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
+                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
 
-                    // Then
-                    using (new AssertionScope())
-                    {
-                        centreCustomPrompts.CustomField1Mandatory.Should().BeFalse();
-                        centreCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
-                    }
-                }
-                finally
+                // Then
+                using (new AssertionScope())
                 {
-                    transaction.Dispose();
+                    centreCustomPrompts.CustomField1Mandatory.Should().BeFalse();
+                    centreCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
                 }
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
     }

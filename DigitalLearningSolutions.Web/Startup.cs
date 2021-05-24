@@ -169,9 +169,7 @@ namespace DigitalLearningSolutions.Web
             app.UseSession();
 
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
-            });
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}"));
 
             migrationRunner.MigrateUp();
         }
