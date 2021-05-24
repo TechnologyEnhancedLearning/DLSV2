@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -76,6 +77,8 @@
 
             if (!ModelState.IsValid)
             {
+                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                    (centresDataService.GetActiveCentresAlphabetical(), model.Centre);
                 return View(model);
             }
 
@@ -207,9 +210,17 @@
 
         private void ValidateEmailAddress(RegisterViewModel model)
         {
-            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
+            if (model.Email == null)
             {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+                return;
+            }
+
+            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers.Where
+                (u => u.CentreId == model.Centre);
+
+            if (duplicateUsers.Count() != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user at this centre with this email address already exists");
             }
         }
     }
