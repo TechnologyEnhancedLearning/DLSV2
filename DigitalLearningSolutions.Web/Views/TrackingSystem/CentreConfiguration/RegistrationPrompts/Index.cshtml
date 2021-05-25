@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model DisplayRegistrationPromptsViewModel
 
@@ -56,7 +57,7 @@
           </div>
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button" asp-controller="CentreConfiguration" asp-action="EditRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
+              <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
                 Edit
               </a>
               <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button">

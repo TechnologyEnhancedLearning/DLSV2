@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model CentreConfigurationViewModel
 
@@ -234,6 +235,6 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" asp-controller="CentreConfiguration" asp-action="RegistrationPrompts">Manage registration prompts</a>
+    <a class="nhsuk-button" asp-controller="RegistrationPrompts" asp-action="Index">Manage registration prompts</a>
   </div>
 </div>

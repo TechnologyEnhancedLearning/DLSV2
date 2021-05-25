@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CentreConfiguration
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers.TrackingSystem;
+    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -14,17 +14,15 @@
 
     public class RegistrationPromptsControllerTests
     {
-        private ICentresDataService centresDataService = null!;
         private ICustomPromptsService customPromptsService = null!;
-        private CentreConfigurationController centreConfigurationController = null!;
+        private RegistrationPromptsController registrationPromptsController = null!;
 
         [SetUp]
         public void Setup()
         {
-            centresDataService = A.Fake<ICentresDataService>();
             customPromptsService = A.Fake<ICustomPromptsService>();
 
-            centreConfigurationController = new CentreConfigurationController(centresDataService, customPromptsService)
+            registrationPromptsController = new RegistrationPromptsController(customPromptsService)
                 .WithDefaultContext().WithMockUser(true);
         }
 
@@ -46,11 +44,11 @@
             A.CallTo(() => customPromptsService.UpdateCustomPromptForCentre(ControllerContextHelper.CentreId, 1, false, "Test")).DoesNothing();
 
             // When
-            var result = centreConfigurationController.EditRegistrationPrompt(model, action);
+            var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
             A.CallTo(() => customPromptsService.UpdateCustomPromptForCentre(ControllerContextHelper.CentreId, 1, false, "Test")).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("RegistrationPrompts");
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -71,7 +69,7 @@
             A.CallTo(() => customPromptsService.UpdateCustomPromptForCentre(ControllerContextHelper.CentreId, 1, false, "Test")).DoesNothing();
 
             // When
-            var result = centreConfigurationController.EditRegistrationPrompt(model, action);
+            var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
             using (new AssertionScope())
@@ -98,7 +96,7 @@
             const string action = "delete0";
 
             // When
-            var result = centreConfigurationController.EditRegistrationPrompt(model, action);
+            var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
             using (new AssertionScope())
@@ -125,7 +123,7 @@
             const string action = "deletetest";
 
             // When
-            var result = centreConfigurationController.EditRegistrationPrompt(model, action);
+            var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");

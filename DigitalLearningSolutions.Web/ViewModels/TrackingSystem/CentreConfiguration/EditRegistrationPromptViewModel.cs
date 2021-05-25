@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
