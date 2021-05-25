@@ -12,6 +12,8 @@
 
     public static class ControllerContextHelper
     {
+        public const int CentreId = 2;
+
         public static T WithDefaultContext<T>(this T controller) where T : Controller
         {
             controller.ControllerContext = new ControllerContext
@@ -22,10 +24,20 @@
             return controller;
         }
 
-        public static T WithMockUser<T>(this T controller, bool isAuthenticated) where T : Controller
+        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
-            controller.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(authenticationType));
+            controller.HttpContext.User = new ClaimsPrincipal
+            (
+                new ClaimsIdentity
+                (
+                    new[]
+                    {
+                        new Claim("UserCentreID", centreId.ToString())
+                    },
+                    authenticationType
+                )
+            );
             return controller;
         }
 
@@ -38,10 +50,25 @@
         public static T WithMockServices<T>(this T controller) where T : Controller
         {
             var authService = A.Fake<IAuthenticationService>();
-            A.CallTo(() => authService.SignInAsync(A<HttpContext>._, A<string>._, A<ClaimsPrincipal>._,
-                A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
-            A.CallTo(() => authService.SignOutAsync(A<HttpContext>._, A<string>._,
-                A<AuthenticationProperties>._)).Returns(Task.CompletedTask);
+            A.CallTo
+            (
+                () => authService.SignInAsync
+                (
+                    A<HttpContext>._,
+                    A<string>._,
+                    A<ClaimsPrincipal>._,
+                    A<AuthenticationProperties>._
+                )
+            ).Returns(Task.CompletedTask);
+            A.CallTo
+            (
+                () => authService.SignOutAsync
+                (
+                    A<HttpContext>._,
+                    A<string>._,
+                    A<AuthenticationProperties>._
+                )
+            ).Returns(Task.CompletedTask);
 
             var urlHelperFactory = A.Fake<IUrlHelperFactory>();
             var services = A.Fake<IServiceProvider>();

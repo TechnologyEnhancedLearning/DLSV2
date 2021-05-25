@@ -19,8 +19,10 @@
         public Session? GetSession(int sessionId)
         {
             return connection.QueryFirstOrDefault<Session>(
-                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
-                    FROM Sessions
+                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
+
+                    FROM Sessions
+
                    WHERE SessionID = @sessionId",
                 new { sessionId });
         }
@@ -28,8 +30,10 @@
         public AdminSession? GetAdminSession(int adminSessionId)
         {
             return connection.QueryFirstOrDefault<AdminSession>(
-                @"SELECT AdminSessionID, AdminID, LoginTime, Duration, Active
-                    FROM AdminSessions
+                @"SELECT AdminSessionID, AdminID, LoginTime, Duration, Active
+
+                    FROM AdminSessions
+
                    WHERE AdminSessionID = @adminSessionId",
                 new { adminSessionId });
         }
@@ -37,8 +41,10 @@
         public IEnumerable<Session> GetCandidateSessions(int candidateId)
         {
             return connection.Query<Session>(
-                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
-                    FROM Sessions
+                @"SELECT SessionID, CandidateID, CustomisationID, LoginTime, Duration, Active
+
+                    FROM Sessions
+
                    WHERE CandidateID = @candidateId",
                 new { candidateId });
         }
