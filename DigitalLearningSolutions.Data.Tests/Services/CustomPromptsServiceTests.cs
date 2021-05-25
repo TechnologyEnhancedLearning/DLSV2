@@ -38,13 +38,7 @@
             var result = customPromptsService.GetCustomPromptsForCentreByCentreId(29);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expectedCustomerPrompts);
-                result.CustomPrompts.Count.Should().Be(2);
-                result.CustomPrompts[0].Should().BeEquivalentTo(expectedPrompt1);
-                result.CustomPrompts[1].Should().BeEquivalentTo(expectedPrompt2);
-            }
+            result.Should().BeEquivalentTo(expectedCustomerPrompts);
         }
 
         [Test]
@@ -70,13 +64,7 @@
                 customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(29, delegateUser);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(expectedCustomerPrompts);
-                result.CustomPrompts.Count.Should().Be(2);
-                result.CustomPrompts[0].Should().BeEquivalentTo(expectedPrompt1);
-                result.CustomPrompts[1].Should().BeEquivalentTo(expectedPrompt2);
-            }
+            result.Should().BeEquivalentTo(expectedCustomerPrompts);
         }
 
         [Test]

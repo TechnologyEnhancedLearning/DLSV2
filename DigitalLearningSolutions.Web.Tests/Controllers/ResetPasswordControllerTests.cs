@@ -23,10 +23,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             unauthenticatedController = new ResetPasswordController(passwordResetService)
                 .WithDefaultContext()
-                .WithMockUser(false);
+                .WithMockUser(false, 2);
             authenticatedController = new ResetPasswordController(passwordResetService)
                 .WithDefaultContext()
-                .WithMockUser(true);
+                .WithMockUser(true, 2);
         }
 
         [Test]

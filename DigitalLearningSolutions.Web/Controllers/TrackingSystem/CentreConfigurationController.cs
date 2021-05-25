@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -167,15 +166,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 
             if (model.OptionsString != null && optionsString.Length > 4000)
             {
-                var remainingLength = 4000 - model.OptionsString.Length - 2;
-                ModelState.AddModelError
-                (
-                    nameof(EditRegistrationPromptViewModel.Answer),
-                    $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
-                );
-
-                ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
+                AddTotalStringLengthModelError(model);
             }
             else
             {
@@ -187,6 +178,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             }
 
             return View(model);
+        }
+
+        private void AddTotalStringLengthModelError(EditRegistrationPromptViewModel model)
+        {
+            var remainingLength = 4000 - model.OptionsString!.Length - 2;
+            ModelState.AddModelError
+            (
+                nameof(EditRegistrationPromptViewModel.Answer),
+                $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
+            );
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
+            model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
         }
 
         private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)

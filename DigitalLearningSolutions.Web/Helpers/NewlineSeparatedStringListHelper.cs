@@ -5,6 +5,8 @@
 
     public static class NewlineSeparatedStringListHelper
     {
+        private const string Separator = "\r\n";
+
         public static (string, List<string>) RemoveStringFromNewlineSeparatedList(string list, int index)
         {
             var options = SplitNewlineSeparatedList(list);
@@ -21,12 +23,12 @@
 
         public static List<string> SplitNewlineSeparatedList(string? list)
         {
-            return list == null ? new List<string>() : list.Split("\r\n").ToList();
+            return list == null ? new List<string>() : list.Split(Separator).ToList();
         }
 
         public static string JoinNewlineSeparatedList(IEnumerable<string> strings)
         {
-            return string.Join("\r\n", strings);
+            return string.Join(Separator, strings);
         }
     }
 }

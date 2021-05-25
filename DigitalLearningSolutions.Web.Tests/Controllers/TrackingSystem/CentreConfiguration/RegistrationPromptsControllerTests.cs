@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using FakeItEasy;
     using FluentAssertions;
@@ -35,16 +36,7 @@
             httpContextSession = new MockHttpContextSession();
 
             centreConfigurationController = new CentreConfigurationController(centresDataService, customPromptsService)
-            {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = new DefaultHttpContext
-                    {
-                        User = user,
-                        Session = httpContextSession
-                    }
-                }
-            };
+                .WithDefaultContext().WithMockUser(true, CentreId);
         }
 
         [Test]
@@ -73,7 +65,7 @@
         }
 
         [Test]
-        public void PostEditRegistrationPrompt_add_calls_correct_methods()
+        public void PostEditRegistrationPrompt_add_produces_expected_result()
         {
             // Given
             var model = new EditRegistrationPromptViewModel
@@ -102,7 +94,7 @@
         }
 
         [Test]
-        public void PostEditRegistrationPrompt_delete_calls_correct_methods()
+        public void PostEditRegistrationPrompt_delete_produces_expected_result()
         {
             // Given
             var model = new EditRegistrationPromptViewModel
