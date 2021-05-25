@@ -1,7 +1,17 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@using Microsoft.Extensions.Configuration
 @model DisplayRegistrationPromptsViewModel
 
-@{ ViewData["Title"] = "Manage delegate registration prompts"; }
+@{
+  ViewData["Title"] = "Manage delegate registration prompts";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -34,8 +44,7 @@
               @if (customField.Options.Count != 0) {
                 <p class="nhsuk-u-font-weight-bold">Answers delegate can choose from:</p>
                 <ul>
-                  @foreach (var answer in customField.Options)
-                  {
+                  @foreach (var answer in customField.Options) {
                     <li>@answer</li>
                   }
                 </ul>
