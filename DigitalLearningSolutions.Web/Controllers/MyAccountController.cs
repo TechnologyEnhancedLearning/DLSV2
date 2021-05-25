@@ -108,10 +108,10 @@
             {
                 var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = userService.GetUsersByEmailAddress
                     (model.Email!);
-                if (adminUsersWithNewEmail != null || delegateUsersWithNewEmail.Count != 0)
+                if (adminUsersWithNewEmail != null || delegateUsersWithNewEmail.Count(u => u.CentreId == User.GetCentreId()) != 0)
                 {
                     ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
-                        "A user with this email address already exists");
+                        "A user at this centre with this email address already exists");
                 }
             }
 
