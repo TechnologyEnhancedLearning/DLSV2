@@ -1,8 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.CentreConfiguration
 {
     using System;
     using DigitalLearningSolutions.Data.Tests.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using FluentAssertions;
     using FluentAssertions.Execution;

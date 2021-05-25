@@ -2,7 +2,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
