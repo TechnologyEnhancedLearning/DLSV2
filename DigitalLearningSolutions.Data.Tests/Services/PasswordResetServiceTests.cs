@@ -165,9 +165,9 @@
 
             // Then
             A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(1))
-                .MustHaveHappened(1, Times.OrMore);
+                .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(4))
-                .MustHaveHappened(1, Times.OrMore);
+                .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
                 .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
         }
