@@ -103,16 +103,10 @@
                     "Preview your new profile picture before saving");
             }
 
-            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
-            if (adminUser?.EmailAddress != model.Email || delegateUser?.EmailAddress != model.Email)
+            if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
-                var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = userService.GetUsersByEmailAddress
-                    (model.Email!);
-                if (adminUsersWithNewEmail != null || delegateUsersWithNewEmail.Count(u => u.CentreId == User.GetCentreId()) != 0)
-                {
-                    ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
                         "A user at this centre with this email address already exists");
-                }
             }
 
             if (!ModelState.IsValid)
