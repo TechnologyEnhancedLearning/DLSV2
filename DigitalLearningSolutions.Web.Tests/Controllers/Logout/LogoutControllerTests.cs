@@ -18,7 +18,7 @@
         {
             controller = new LogoutController()
                 .WithDefaultContext()
-                .WithMockUser(true)
+                .WithMockUser(true, 2)
                 .WithMockServices();
 
             authenticationService =

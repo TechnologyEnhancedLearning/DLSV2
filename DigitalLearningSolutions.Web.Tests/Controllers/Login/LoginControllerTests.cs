@@ -37,7 +37,7 @@
 
             controller = new LoginController(loginService, userService, sessionService, logger)
                 .WithDefaultContext()
-                .WithMockUser(false)
+                .WithMockUser(false, 2)
                 .WithMockTempData()
                 .WithMockServices();
 
@@ -62,7 +62,7 @@
             // Given
             var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService, logger)
                 .WithDefaultContext()
-                .WithMockUser(true);
+                .WithMockUser(true, 2);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();
