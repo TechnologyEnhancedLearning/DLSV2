@@ -88,22 +88,37 @@
 
         private IActionResult EditDetailsPostSave(EditDetailsViewModel model)
         {
-            ValidateCustomPrompts(model);
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetNullableCandidateId();
 
-            if (!ModelState.IsValid)
+            if (userDelegateId.HasValue)
             {
-                return View(model);
+                ValidateJobGroup(model);
+                ValidateCustomPrompts(model);
             }
 
             if (model.ProfileImageFile != null)
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile),
                     "Preview your new profile picture before saving");
-                return View(model);
             }
 
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetNullableCandidateId();
+            var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            if (adminUser?.EmailAddress != model.Email || delegateUser?.EmailAddress != model.Email)
+            {
+                var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = userService.GetUsersByEmailAddress
+                    (model.Email!);
+                if (adminUsersWithNewEmail != null || delegateUsersWithNewEmail.Count != 0)
+                {
+                    ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
+                        "A user with this email address already exists");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(model, userAdminId, userDelegateId);
 
@@ -172,6 +187,14 @@
             return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
                 delegateUser?.Answer1, delegateUser?.Answer2, delegateUser?.Answer3, delegateUser?.Answer4,
                 delegateUser?.Answer5, delegateUser?.Answer6);
+        }
+
+        private void ValidateJobGroup(EditDetailsViewModel model)
+        {
+            if (!model.JobGroupId.HasValue)
+            {
+                ModelState.AddModelError(nameof(EditDetailsViewModel.JobGroupId), "Select a job group");
+            }
         }
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)

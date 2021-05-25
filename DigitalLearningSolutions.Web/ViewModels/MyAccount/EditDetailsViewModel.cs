@@ -59,7 +59,6 @@
 
         public bool IsDelegateUser { get; set; }
 
-        [Required(ErrorMessage = "Select a job group")]
         public int? JobGroupId { get; set; }
 
         public string? Answer1 { get; set; }
