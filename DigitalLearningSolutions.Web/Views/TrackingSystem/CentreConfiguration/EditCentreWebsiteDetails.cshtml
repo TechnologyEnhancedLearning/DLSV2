@@ -1,0 +1,108 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@using Microsoft.Extensions.Configuration
+@model EditCentreWebsiteDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit centre content on DLS website" : "Edit centre content on DLS website";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.CentreTelephone),
+                                                   nameof(Model.CentreEmail),
+                                                   nameof(Model.CentrePostcode),
+                                                   nameof(Model.OpeningHours),
+                                                   nameof(Model.CentreWebAddress),
+                                                   nameof(Model.OrganisationsCovered),
+                                                   nameof(Model.TrainingVenues),
+                                                   nameof(Model.OtherInformation)
+                                                 })" />
+    }
+
+    <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre content on DLS website</h1>
+
+    <form method="post" novalidate asp-action="EditCentreWebsiteDetails">
+
+      <vc:text-input asp-for="CentreTelephone"
+                     label="Centre telephone"
+                     populate-with-current-value="true"
+                     type="text" spell-check="false"
+                     autocomplete="" hint-text=""
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="CentreEmail"
+                     label="Centre email"
+                     populate-with-current-value="true"
+                     type="text" spell-check="false"
+                     autocomplete="email"
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="CentrePostcode"
+                     label="Centre postcode"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     autocomplete=""
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="OpeningHours"
+                     label="Opening hours"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     autocomplete=""
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input asp-for="CentreWebAddress"
+                     label="Centre web address"
+                     populate-with-current-value="true"
+                     type="text" spell-check="false"
+                     autocomplete=""
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-area asp-for="OrganisationsCovered"
+                    label="Organisations covered"
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-area asp-for="TrainingVenues"
+                    label="Training venues"
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-area asp-for="OtherInformation"
+                    label="Other information"
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit" value="save">Save</button>
+    </form>
+
+    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel" />
+
+  </div>
+</div>
