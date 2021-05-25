@@ -21,7 +21,7 @@
 
             controller = new ForgotPasswordController(passwordResetService)
                 .WithDefaultContext()
-                .WithMockUser(false, 2);
+                .WithMockUser(false);
         }
 
         [Test]
@@ -40,7 +40,7 @@
             // Given
             var controllerWithAuthenticatedUser = new ForgotPasswordController(passwordResetService)
                 .WithDefaultContext()
-                .WithMockUser(true, 2);
+                .WithMockUser(true);
 
             // When
             var result = controllerWithAuthenticatedUser.Index();

@@ -12,6 +12,8 @@
 
     public static class ControllerContextHelper
     {
+        public const int CentreId = 2;
+
         public static T WithDefaultContext<T>(this T controller) where T : Controller
         {
             controller.ControllerContext = new ControllerContext
@@ -22,7 +24,7 @@
             return controller;
         }
 
-        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId) where T : Controller
+        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
             controller.HttpContext.User = new ClaimsPrincipal
