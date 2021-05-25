@@ -16,23 +16,23 @@
     public class FrameworkServiceTests
     {
         private FrameworkService frameworkService;
-        private const int AdminId = 1;
+        private const int ValidAdminId = 1;
+        private const int InvalidAdminId = 10;
         private SqlConnection connection;
-        private IFrameworkService fakeFrameworkService;
-
+        private const int ValidFrameworkId = 2;
+        private const int InvalidFrameworkId = 22;
         [SetUp]
         public void Setup()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<FrameworkService>>();
             frameworkService = new FrameworkService(connection, logger);
-            fakeFrameworkService = A.Fake<IFrameworkService>();
         }
         [Test]
         public void GetFrameworksForAdminId_should_return_one_framework()
         {
             // When
-            var result = frameworkService.GetFrameworksForAdminId(AdminId);
+            var result = frameworkService.GetFrameworksForAdminId(ValidAdminId);
 
             // Then
             result.Should().HaveCount(1);
@@ -41,7 +41,7 @@
         public void GetFrameworksForAdminId_should_return_no_frameworks_when_there_are_no_frameworks_for_AdminId()
         {
             // When
-            var result = frameworkService.GetFrameworksForAdminId(10);
+            var result = frameworkService.GetFrameworksForAdminId(InvalidAdminId);
 
             // Then
             result.Should().HaveCount(0);
@@ -74,7 +74,7 @@
             };
 
             //When
-            var result = frameworkService.GetFrameworkDetailByFrameworkId(2, AdminId);
+            var result = frameworkService.GetFrameworkDetailByFrameworkId(ValidFrameworkId, ValidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(detailFramework);
@@ -107,7 +107,7 @@
             };
 
             //When
-            var result = frameworkService.GetFrameworkDetailByFrameworkId(2, 22);
+            var result = frameworkService.GetFrameworkDetailByFrameworkId(ValidFrameworkId, InvalidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(detailFramework);
@@ -116,7 +116,7 @@
         public void GetFrameworkDetailByFrameworkId_should_return_null_when_an_invalid_id_is_passed()
         {
             //When
-            var result = frameworkService.GetFrameworkDetailByFrameworkId(22, AdminId);
+            var result = frameworkService.GetFrameworkDetailByFrameworkId(InvalidFrameworkId, ValidAdminId);
 
             //Then
 
@@ -145,7 +145,7 @@
             };
 
             //When
-            var result = frameworkService.GetBaseFrameworkByFrameworkId(2, AdminId);
+            var result = frameworkService.GetBaseFrameworkByFrameworkId(ValidFrameworkId, ValidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(baseFramework);
@@ -182,7 +182,7 @@
         public void GetBaseFrameworkByFrameworkId_should_return_null_when_an_invalid_id_is_passed()
         {
             //When
-            var result = frameworkService.GetBaseFrameworkByFrameworkId(22, AdminId);
+            var result = frameworkService.GetBaseFrameworkByFrameworkId(InvalidFrameworkId, ValidAdminId);
 
             //Then
 
@@ -214,7 +214,7 @@
             };
 
             //When
-            var result = frameworkService.GetBrandedFrameworkByFrameworkId(2, AdminId);
+            var result = frameworkService.GetBrandedFrameworkByFrameworkId(ValidFrameworkId, ValidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(brandedFramework);
@@ -245,7 +245,7 @@
             };
 
             //When
-            var result = frameworkService.GetBrandedFrameworkByFrameworkId(2, 22);
+            var result = frameworkService.GetBrandedFrameworkByFrameworkId(ValidFrameworkId, InvalidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(brandedFramework);
@@ -254,7 +254,7 @@
         public void GetBrandedFrameworkByFrameworkId_should_return_null_when_an_invalid_id_is_passed()
         {
             //When
-            var result = frameworkService.GetBrandedFrameworkByFrameworkId(22, AdminId);
+            var result = frameworkService.GetBrandedFrameworkByFrameworkId(InvalidFrameworkId, ValidAdminId);
 
             //Then
 
@@ -264,7 +264,7 @@
         public void GetFrameworkByFrameworkName_should_have_count_of_1_when_match_exists()
         {
             //When
-            var result = frameworkService.GetFrameworkByFrameworkName("Digital Capability Framework", AdminId);
+            var result = frameworkService.GetFrameworkByFrameworkName("Digital Capability Framework", ValidAdminId);
             // Then
             result.Should().HaveCount(1);
         }
@@ -272,7 +272,7 @@
         public void GetFrameworkByFrameworkName_should_have_count_of_0_when_no_match_exists()
         {
             //When
-            var result = frameworkService.GetFrameworkByFrameworkName("Non-existent Framework", AdminId);
+            var result = frameworkService.GetFrameworkByFrameworkName("Non-existent Framework", ValidAdminId);
             // Then
             result.Should().HaveCount(0);
         }
@@ -280,7 +280,7 @@
         public void GetFrameworkByFrameworkName_should_have_count_of_0_when_empty_string_passed()
         {
             //When
-            var result = frameworkService.GetFrameworkByFrameworkName("", AdminId);
+            var result = frameworkService.GetFrameworkByFrameworkName("", ValidAdminId);
             // Then
             result.Should().HaveCount(0);
         }
@@ -288,7 +288,7 @@
         public void GetAllFrameworks_should_have_count_of_1()
         {
             //When
-            var result = frameworkService.GetAllFrameworks(AdminId);
+            var result = frameworkService.GetAllFrameworks(ValidAdminId);
             // Then
             result.Should().HaveCount(1);
         }
@@ -320,7 +320,7 @@
             };
             var nullFramework = new BrandedFramework();
             //When
-            var result = frameworkService.CreateFramework(detailFramework, AdminId);
+            var result = frameworkService.CreateFramework(detailFramework, ValidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(nullFramework);
@@ -353,7 +353,7 @@
             };
             var nullFramework = new BrandedFramework();
             //When
-            var result = frameworkService.CreateFramework(detailFramework, AdminId);
+            var result = frameworkService.CreateFramework(detailFramework, ValidAdminId);
 
             //Then
             result.Should().BeEquivalentTo(nullFramework);
@@ -362,13 +362,12 @@
         public void UpdateFrameworkBranding_should_return_BrandedFramework_if_valid()
         {
             //Given
-            var frameworkId = 2;
             var brandId = 6;
             var categoryId = 1;
             var topicId = 1;
 
             //When
-            var result = frameworkService.UpdateFrameworkBranding(frameworkId, brandId, categoryId, topicId, AdminId);
+            var result = frameworkService.UpdateFrameworkBranding(ValidFrameworkId, brandId, categoryId, topicId, ValidAdminId);
 
             //Then
             result.Should().BeOfType<BrandedFramework>();
@@ -377,13 +376,12 @@
         public void UpdateFrameworkBranding_should_return_BrandedFramework_if_frameworkId_invalid()
         {
             //Given
-            var frameworkId = 22;
             var brandId = 6;
             var categoryId = 1;
             var topicId = 1;
 
             //When
-            var result = frameworkService.UpdateFrameworkBranding(frameworkId, brandId, categoryId, topicId, AdminId);
+            var result = frameworkService.UpdateFrameworkBranding(InvalidFrameworkId, brandId, categoryId, topicId, ValidAdminId);
 
             //Then
             result.Should().BeNull();
@@ -392,13 +390,12 @@
         public void UpdateFrameworkBranding_should_return_BrandedFramework_if_branding_invalid()
         {
             //Given
-            var frameworkId = 2;
             var brandId = 0;
             var categoryId = 0;
             var topicId = 0;
 
             //When
-            var result = frameworkService.UpdateFrameworkBranding(frameworkId, brandId, categoryId, topicId, AdminId);
+            var result = frameworkService.UpdateFrameworkBranding(ValidFrameworkId, brandId, categoryId, topicId, ValidAdminId);
 
             //Then
             result.Should().BeNull();
@@ -410,7 +407,7 @@
             var groupName = "Technical proficiency";
 
             //When
-            var result = frameworkService.InsertCompetencyGroup(groupName, AdminId);
+            var result = frameworkService.InsertCompetencyGroup(groupName, ValidAdminId);
             //Then
             result.Should().Be(4);
         }
@@ -421,9 +418,221 @@
             var groupName = "";
 
             //When
-            var result = frameworkService.InsertCompetencyGroup(groupName, AdminId);
+            var result = frameworkService.InsertCompetencyGroup(groupName, ValidAdminId);
             //Then
             result.Should().Be(-2);
+        }
+        [Test]
+        public void InsertCompetency_should_return_id_of_existing_competency_if_name_matches()
+        {
+            //Given
+            var name = "I can help others with technical issues";
+            var description = "I can help others with technical issues";
+
+            //When
+            var result = frameworkService.InsertCompetency(name, description, ValidAdminId);
+            //Then
+            result.Should().Be(20);
+        }
+        [Test]
+        public void InsertCompetency_should_return_minus_2_if_name_is_blank()
+        {
+            //Given
+            var name = "";
+            //When
+            var result = frameworkService.InsertCompetency(name, null, ValidAdminId);
+            //Then
+            result.Should().Be(-2);
+        }
+        [Test]
+        public void InsertFrameworkCompetency_should_return_id_of_existing_framework_competency_if_already_exists()
+        {
+            //Given
+            int competencyId = 1;
+            int? frameworkCompetencyGroupId = 1;
+            //When
+            var result = frameworkService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupId, ValidAdminId, ValidFrameworkId);
+            //Then
+            result.Should().Be(1);
+        }
+        [Test]
+        public void InsertFrameworkCompetency_should_return_minus2_if_parameters_are_invalid()
+        {
+            //Given
+            int competencyId = 0;
+            int? frameworkCompetencyGroupId = null;
+            //When
+            var result = frameworkService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupId, ValidAdminId, ValidFrameworkId);
+            //Then
+            result.Should().Be(-2);
+        }
+        [Test]
+        public void GetCollaboratorsForFrameworkId_should_return_list_of_CollaboratorDetail()
+        {
+            //When
+            var result = frameworkService.GetCollaboratorsForFrameworkId(ValidFrameworkId);
+            //Then
+            result.Should().BeOfType<List<CollaboratorDetail>>();
+        }
+        [Test]
+        public void AddCollaboratorToFramework_should_return_minus_3_if_collaborator_email_is_blank()
+        {
+            //Given
+            string userEmail = "";
+            bool canModify = false;
+
+            //When
+            var result = frameworkService.AddCollaboratorToFramework(ValidFrameworkId, userEmail, canModify);
+
+            //Then
+            result.Should().Be(-3);
+        }
+        [Test]
+        public void GetFrameworkCompetencyGroups_returns_list_with_more_than_one_framework_competency_groups_for_valid_framework_id()
+        {
+            //When
+            var result = frameworkService.GetFrameworkCompetencyGroups(ValidFrameworkId);
+
+            //Then
+            result.ToList().Count.Should().BeGreaterThan(0);
+        }
+        [Test]
+        public void GetFrameworkCompetencyGroups_returns_list_with_no_framework_competency_groups_for_invalid_framework_id()
+        {
+            //When
+            var result = frameworkService.GetFrameworkCompetencyGroups(InvalidFrameworkId);
+
+            //Then
+            result.ToList().Count.Should().Be(0);
+        }
+        [Test]
+        public void GetFrameworkCompetenciesUngrouped_returns_list_with_no_framework_competencies_for_valid_framework_id()
+        {
+            //When
+            var result = frameworkService.GetFrameworkCompetenciesUngrouped(InvalidFrameworkId);
+
+            //Then
+            result.ToList().Count.Should().Be(0);
+        }
+        [Test]
+        public void GetFrameworkCompetenciesUngrouped_returns_list_with_no_framework_competencies_for_invalid_framework_id()
+        {
+            //When
+            var result = frameworkService.GetFrameworkCompetenciesUngrouped(InvalidFrameworkId);
+
+            //Then
+            result.ToList().Count.Should().Be(0);
+        }
+        [Test]
+        public void UpdateFrameworkName_returns_false_when_name_is_blank()
+        {
+            //Given
+            string frameworkName = "";
+
+            //When
+            var result = frameworkService.UpdateFrameworkName(ValidFrameworkId, ValidAdminId, frameworkName);
+
+            //Then
+            result.Should().BeFalse();
+        }
+        [Test]
+        public void UpdateFrameworkName_returns_false_when_framework_is_invalid()
+        {
+            //Given
+            string frameworkName = "Digital Capability Framework";
+
+            //When
+            var result = frameworkService.UpdateFrameworkName(InvalidFrameworkId, ValidAdminId, frameworkName);
+
+            //Then
+            result.Should().BeFalse();
+        }
+        [Test]
+        public void UpdateFrameworkName_returns_true_when_params_are_valid()
+        {
+            //Given
+            string frameworkName = "Digital Capability Framework";
+
+            //When
+            var result = frameworkService.UpdateFrameworkName(ValidFrameworkId, ValidAdminId, frameworkName);
+
+            //Then
+            result.Should().BeTrue();
+        }
+        [Test]
+        public void GetCompetencyGroupBaseById_returns_competency_group_base_when_id_is_valid()
+        {
+            //Given
+            int id = 1;
+
+            //When
+            var result = frameworkService.GetCompetencyGroupBaseById(id);
+
+            //Then
+            result.Should().BeOfType<CompetencyGroupBase>();
+        }
+        [Test]
+        public void GetCompetencyGroupBaseById_returns_null_when_id_is_invalid()
+        {
+            //Given
+            int id = 999;
+
+            //When
+            var result = frameworkService.GetCompetencyGroupBaseById(id);
+
+            //Then
+            result.Should().BeNull();
+        }
+        [Test]
+        public void GetFrameworkCompetencyById_returns_framework_competency_when_id_is_valid()
+        {
+            //Given
+            int id = 1;
+
+            //When
+            var result = frameworkService.GetFrameworkCompetencyById(id);
+
+            //Then
+            result.Should().BeOfType<FrameworkCompetency>();
+        }
+        [Test]
+        public void GetFrameworkCompetencyById_returns_null_when_id_is_invalid()
+        {
+            //Given
+            int id = 999;
+
+            //When
+            var result = frameworkService.GetFrameworkCompetencyById(id);
+
+            //Then
+            result.Should().BeNull();
+        }
+        [Test]
+        public void GetAllCompetencyQuestions_returns_list_of_more_than_0()
+        {
+            //When
+            var result = frameworkService.GetAllCompetencyQuestions(ValidAdminId);
+
+            //Then
+            result.ToList().Count.Should().BeGreaterThan(0);
+        }
+        [Test]
+        public void GetAssessmentQuestions_returns_list_of_more_than_0_when_framework_id_invalid()
+        {
+            //When
+            var result = frameworkService.GetAssessmentQuestions(InvalidFrameworkId, ValidAdminId);
+
+            //Then
+            result.ToList().Count.Should().BeGreaterThan(0);
+        }
+        [Test]
+        public void GetAssessmentQuestions_returns_list_of__3_when_framework_id_valid()
+        {
+            //When
+            var result = frameworkService.GetAssessmentQuestions(InvalidFrameworkId, ValidAdminId);
+
+            //Then
+            result.ToList().Count.Should().Be(3);
         }
     }
 }
