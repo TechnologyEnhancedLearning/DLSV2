@@ -177,3 +177,16 @@ ul.no-bullets {
 .nhsuk-details__text>.nhsuk-button{
     margin-bottom: 0;
 }
+
+.hidden-submit {
+  display: none;
+}
+
+.divider {
+  border-bottom: 1px solid $nhsuk-border-color;
+  margin-bottom: nhsuk-spacing(3);
+}
+
+.word-break {
+  word-break: break-word;
+}
