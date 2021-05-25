@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -43,17 +44,21 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var testDelegateUser = userType.Equals(UserType.AdminUser)
                 ? (User)UserTestHelper.GetDefaultAdminUser()
                 : UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel(
+            var resetPasswordCreateModel = new ResetPasswordCreateModel
+            (
                 createTime,
                 "ResetPasswordHash",
                 testDelegateUser.Id,
-                userType);
+                userType
+            );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                testDelegateUser.EmailAddress,
-                resetPasswordCreateModel.Hash);
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
+            (
+                testDelegateUser.EmailAddress!,
+                resetPasswordCreateModel.Hash
+            );
 
             // Then
             matches.Count.Should().Be(1);
@@ -78,17 +83,21 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             var createTime = new DateTime(2021, 1, 1);
             var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel(
+            var resetPasswordCreateModel = new ResetPasswordCreateModel
+            (
                 createTime,
                 "ResetPasswordHash",
                 testDelegateUser.Id,
-                UserType.DelegateUser);
+                UserType.DelegateUser
+            );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
+            (
                 emailToCheck,
-                resetPasswordCreateModel.Hash);
+                resetPasswordCreateModel.Hash
+            );
 
             // Then
             matches.Count.Should().Be(0);
@@ -100,21 +109,24 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var hashToCheck = HashNotYetInDb;
 
             var createTime = new DateTime(2021, 1, 1);
             var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel(
+            var resetPasswordCreateModel = new ResetPasswordCreateModel
+            (
                 createTime,
                 "NormalHash",
                 testDelegateUser.Id,
-                UserType.DelegateUser);
+                UserType.DelegateUser
+            );
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                testDelegateUser.EmailAddress,
-                hashToCheck);
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
+            (
+                testDelegateUser.EmailAddress!,
+                HashNotYetInDb
+            );
 
             // Then
             matches.Count.Should().Be(0);
@@ -126,19 +138,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var hash = HashNotYetInDb;
-            await GivenResetPasswordWithHashExists(hash);
-            var resetPasswordId = await GetResetPasswordIdByHash(hash);
-            var userId = UserTestHelper.GetDefaultAdminUser(resetPasswordId: resetPasswordId).Id;
-            await GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.AdminUser));
+            var userId = UserTestHelper.GetDefaultAdminUser().Id;
+            var userRef = new UserReference(userId, UserType.AdminUser);
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var userAfterRemoval = (await connection.QueryAsync<AdminUser>(
-                "SELECT * FROM AdminUsers WHERE AdminID = @UserId;",
-                new { UserId = userId })).Single();
+            var userAfterRemoval = await GetAdminUserFromDbAsync(userRef.Id);
             userAfterRemoval.ResetPasswordId.Should().BeNull();
         }
 
@@ -148,19 +156,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var hash = HashNotYetInDb;
-            await GivenResetPasswordWithHashExists(hash);
-            var resetPasswordId = await GetResetPasswordIdByHash(hash);
-            var userId = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: resetPasswordId).Id;
-            await GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.DelegateUser));
+            var userId = UserTestHelper.GetDefaultDelegateUser().Id;
+            var userRef = new UserReference(userId, UserType.DelegateUser);
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var userAfterRemoval = (await connection.QueryAsync<DelegateUser>(
-                "SELECT * FROM Candidates WHERE CandidateID = @UserId;",
-                new { UserId = userId })).Single();
+            var userAfterRemoval = await GetDelegateUserFromDbAsync(userRef.Id);
             userAfterRemoval.ResetPasswordId.Should().BeNull();
         }
 
@@ -170,42 +174,82 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var hash = HashNotYetInDb;
-            await GivenResetPasswordWithHashExists(hash);
-            var resetPasswordId = await GetResetPasswordIdByHash(hash);
-            var userId = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: resetPasswordId).Id;
-            await GivenUserHasResetPasswordId(resetPasswordId, new UserReference(userId, UserType.DelegateUser));
+            var userId = UserTestHelper.GetDefaultDelegateUser().Id;
+            var userRef = new UserReference(userId, UserType.DelegateUser);
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var matchingResetPasswords = connection.Query<ResetPassword>(
+            var matchingResetPasswords = connection.Query<ResetPassword>
+            (
                 "SELECT * FROM ResetPassword WHERE ID = @ResetPasswordId",
-                new { ResetPasswordId = resetPasswordId });
+                new { ResetPasswordId = resetPasswordId }
+            );
             matchingResetPasswords.Should().BeEmpty();
         }
 
-        private async Task GivenResetPasswordWithHashExists(string hash)
+        /// <summary>
+        /// Adds reset password entity for a list of users.
+        /// </summary>
+        /// <param name="hash">Reset hash.</param>
+        /// <param name="users">Must contain at least 1 user.</param>
+        /// <returns>The id of the reset password entity.</returns>
+        private async Task<int> GivenResetPasswordWithHashExistsForUsersAsync(string hash, IEnumerable<UserReference> users)
         {
-            await connection.ExecuteAsync(
-                "INSERT INTO ResetPassword (ResetPasswordHash, PasswordResetDateTime) VALUES (@Hash, @CurrentTime);",
-                new { Hash = hash, CurrentTime = DateTime.UtcNow });
-        }
+            var userList = users.ToList();
 
-        private async Task<int> GetResetPasswordIdByHash(string hash)
-        {
-            var resetPasswordId = (await connection.QueryAsync<int>(
-                "SELECT Id FROM ResetPassword WHERE ResetPasswordHash = @Hash;",
-                new { Hash = hash })).Single();
+            var firstUser = userList.First();
+
+            service.CreatePasswordReset
+                (new ResetPasswordCreateModel(DateTime.UtcNow, hash, firstUser.Id, firstUser.UserType));
+
+            var resetPasswordId = await GetResetPasswordIdByHashAsync(hash);
+
+            foreach (var user in userList.Skip(1))
+            {
+                await GivenUserHasResetPasswordIdAsync(resetPasswordId, user);
+            }
+
             return resetPasswordId;
         }
 
-        private async Task GivenUserHasResetPasswordId(int resetPasswordId, UserReference user)
+        private async Task<int> GetResetPasswordIdByHashAsync(string hash)
         {
-            await connection.ExecuteAsync(
+            var resetPasswordId = (await connection.QueryAsync<int>
+            (
+                "SELECT Id FROM ResetPassword WHERE ResetPasswordHash = @Hash;",
+                new { Hash = hash }
+            )).Single();
+            return resetPasswordId;
+        }
+
+        private async Task GivenUserHasResetPasswordIdAsync(int resetPasswordId, UserReference user)
+        {
+            await connection.ExecuteAsync
+            (
                 $"UPDATE {user.UserType.TableName} SET ResetPasswordId = @ResetPasswordId WHERE {user.UserType.IdColumnName} = @UserId;",
-                new { ResetPasswordId = resetPasswordId, UserId = user.Id });
+                new { ResetPasswordId = resetPasswordId, UserId = user.Id }
+            );
+        }
+
+        private async Task<AdminUser> GetAdminUserFromDbAsync(int userId)
+        {
+            return (await connection.QueryAsync<AdminUser>
+            (
+                $"SELECT * FROM AdminUsers WHERE AdminId = @UserId;",
+                new { UserId = userId }
+            )).Single();
+        }
+
+        private async Task<DelegateUser> GetDelegateUserFromDbAsync(int userId)
+        {
+            return (await connection.QueryAsync<DelegateUser>
+            (
+                $"SELECT * FROM Candidates WHERE CandidateId = @UserId;",
+                new { UserId = userId }
+            )).Single();
         }
     }
 }
