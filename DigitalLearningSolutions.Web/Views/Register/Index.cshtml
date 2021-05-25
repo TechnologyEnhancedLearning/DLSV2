@@ -3,15 +3,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register": "Register";
-  var firstNameError = ViewData.ModelState["FirstName"]?.Errors?.Count > 0;
-  var lastNameError = ViewData.ModelState["LastName"]?.Errors?.Count > 0;
-  var emailError = ViewData.ModelState["Email"]?.Errors?.Count > 0;
-  var firstNameInputErrorClass = firstNameError ? "nhsuk-input--error" : "";
-  var firstNameFormErrorClass = firstNameError ? "nhsuk-form-group--error" : "";
-  var lastNameInputErrorClass = lastNameError ? "nhsuk-input--error" : "";
-  var lastNameFormErrorClass = lastNameError ? "nhsuk-form-group--error" : "";
-  var emailInputErrorClass = emailError ? "nhsuk-input--error" : "";
-  var emailFormErrorClass = emailError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">

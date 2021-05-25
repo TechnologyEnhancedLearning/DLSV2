@@ -4,9 +4,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information": "Register - Learner information";
-  var jobGroupError = ViewData.ModelState["JobGroup"]?.Errors?.Count > 0;
-  var jobGroupSelectErrorClass = jobGroupError ? "nhsuk-select--error" : "";
-  var jobGroupFormErrorClass = jobGroupError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
