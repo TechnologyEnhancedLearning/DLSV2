@@ -9,7 +9,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Auth;
-    using DigitalLearningSolutions.Data.Models.DbModels;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using FluentAssertions;
@@ -186,11 +185,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var matchingResetPasswords = connection.Query<ResetPassword>
-            (
-                "SELECT * FROM ResetPassword WHERE ID = @ResetPasswordId",
-                new { ResetPasswordId = resetPasswordId }
-            );
+            var matchingResetPasswords = connection.GetResetPasswordById(resetPasswordId);
             matchingResetPasswords.Should().BeEmpty();
         }
 
@@ -208,11 +203,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var matchingResetPasswords = connection.Query<ResetPassword>
-            (
-                "SELECT * FROM ResetPassword WHERE ID = @ResetPasswordId",
-                new { ResetPasswordId = resetPasswordId }
-            );
+            var matchingResetPasswords = connection.GetResetPasswordById(resetPasswordId);
             matchingResetPasswords.Should().BeEmpty();
         }
 
