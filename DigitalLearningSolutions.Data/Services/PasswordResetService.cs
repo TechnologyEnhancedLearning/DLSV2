@@ -100,7 +100,7 @@
         private static Email GeneratePasswordResetEmail(
             string emailAddress,
             string resetHash,
-            string firstName,
+            string? firstName,
             string baseUrl)
         {
             UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
@@ -114,15 +114,17 @@
 
             string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
+            var nameToUse = firstName ?? "User";
+
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {firstName},
+                TextBody = $@"Dear {nameToUse},
                             A request has been made to reset the password for your Digital Learning Solutions account.
                             To reset your password please follow this link: {resetPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in two hours.
                             Please don’t reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
-                                    <p>Dear {firstName},</p>
+                                    <p>Dear {nameToUse},</p>
                                     <p>A request has been made to reset the password for your Digital Learning Solutions account.</p>
                                     <p>To reset your password please follow this link: <a href=""{resetPasswordUrl.Uri}"">{resetPasswordUrl.Uri}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>
