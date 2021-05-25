@@ -24,6 +24,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [DatapointSource]
         public UserType[] UserTypes = { UserType.AdminUser, UserType.DelegateUser }; // Used by theories - don't remove!
 
+        private UserDataService userDataService = null!;
         private PasswordResetDataService service = null!;
         private SqlConnection connection = null!;
 
@@ -31,6 +32,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
+            userDataService = new UserDataService(connection);
             service = new PasswordResetDataService(connection, new NullLogger<PasswordResetDataService>());
         }
 
@@ -146,8 +148,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var userAfterRemoval = await GetAdminUserFromDbAsync(userRef.Id);
-            userAfterRemoval.ResetPasswordId.Should().BeNull();
+            var userAfterRemoval = userDataService.GetAdminUserById(userId);
+            userAfterRemoval.Should().NotBeNull();
+            userAfterRemoval?.ResetPasswordId.Should().BeNull();
         }
 
         [Test]
@@ -164,8 +167,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             await service.RemoveResetPasswordAsync(resetPasswordId);
 
             // Then
-            var userAfterRemoval = await GetDelegateUserFromDbAsync(userRef.Id);
-            userAfterRemoval.ResetPasswordId.Should().BeNull();
+            var userAfterRemoval = userDataService.GetDelegateUserById(userRef.Id);
+            userAfterRemoval.Should().NotBeNull();
+            userAfterRemoval?.ResetPasswordId.Should().BeNull();
         }
 
         [Test]
@@ -254,24 +258,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 $"UPDATE {user.UserType.TableName} SET ResetPasswordId = @ResetPasswordId WHERE {user.UserType.IdColumnName} = @UserId;",
                 new { ResetPasswordId = resetPasswordId, UserId = user.Id }
             );
-        }
-
-        private async Task<AdminUser> GetAdminUserFromDbAsync(int userId)
-        {
-            return (await connection.QueryAsync<AdminUser>
-            (
-                $"SELECT * FROM AdminUsers WHERE AdminId = @UserId;",
-                new { UserId = userId }
-            )).Single();
-        }
-
-        private async Task<DelegateUser> GetDelegateUserFromDbAsync(int userId)
-        {
-            return (await connection.QueryAsync<DelegateUser>
-            (
-                $"SELECT * FROM Candidates WHERE CandidateId = @UserId;",
-                new { UserId = userId }
-            )).Single();
         }
     }
 }
