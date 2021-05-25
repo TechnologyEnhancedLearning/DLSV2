@@ -82,7 +82,7 @@
                 "save" => EditDetailsPostSave(model),
                 "previewImage" => EditDetailsPostPreviewImage(model),
                 "removeImage" => EditDetailsPostRemoveImage(model),
-                _ => View(model)
+                _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
 
