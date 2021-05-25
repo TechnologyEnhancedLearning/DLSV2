@@ -95,7 +95,8 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
             var viewModel = data.LearnerInformationViewModel;
-            ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                (jobGroupsDataService.GetJobGroupsAlphabetical(), viewModel.JobGroup);
 
             return View(viewModel);
         }
@@ -106,7 +107,8 @@
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+                ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                    (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
                 return View(model);
             }
 

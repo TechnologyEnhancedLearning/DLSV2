@@ -30,41 +30,35 @@
         </p>
       </div>
 
-      <div class="nhsuk-form-group @firstNameFormErrorClass">
-        <label class="nhsuk-label" for="FirstName">
-          First name
-        </label>
-        @if (firstNameError) {
-          <span class="nhsuk-error-message" id="first-name-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["FirstName"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @firstNameInputErrorClass" id="FirstName" spellcheck="false" autocomplete="given-name" aria-describedby="first-name-error" asp-for="FirstName"/>
-      </div>
+      <vc:text-input
+        asp-for="FirstName"
+        label="First name"
+        populate-with-current-value="true"
+        type=""
+        spell-check="false"
+        hint-text=""
+        autocomplete="given-name"
+        css-class="nhsuk-u-width-one-half"/>
 
-      <div class="nhsuk-form-group @lastNameFormErrorClass">
-        <label class="nhsuk-label" for="LastName">
-          Last name
-        </label>
-        @if (lastNameError) {
-          <span class="nhsuk-error-message" id="last-name-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["LastName"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @lastNameInputErrorClass" id="LastName" spellcheck="false" autocomplete="family-name" aria-describedby="last-name-error" asp-for="LastName"/>
-      </div>
+      <vc:text-input
+        asp-for="LastName"
+        label="Last name"
+        populate-with-current-value="true"
+        type=""
+        spell-check="false"
+        hint-text=""
+        autocomplete="family-name"
+        css-class="nhsuk-u-width-one-half"/>
 
-      <div class="nhsuk-form-group @emailFormErrorClass">
-        <label class="nhsuk-label" for="Email">
-          Email
-        </label>
-        @if (emailError) {
-          <span class="nhsuk-error-message" id="email-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Email"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" type="text" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
-      </div>
+      <vc:text-input
+        asp-for="Email"
+        label="Email"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        hint-text=""
+        autocomplete="email"
+        css-class="nhsuk-u-width-one-half"/>
 
       <vc:select-list
         asp-for="Centre"

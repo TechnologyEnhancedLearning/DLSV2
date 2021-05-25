@@ -21,22 +21,14 @@
         <h1 id="page-heading" class="nhsuk-heading-xl">Learner information</h1>
       </div>
 
-      <div class="nhsuk-form-group @jobGroupFormErrorClass">
-        <label class="nhsuk-label" for="JobGroup">
-          Job group
-        </label>
-        @if (jobGroupError) {
-          <span class="nhsuk-error-message" id="job-group-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["JobGroup"].Errors[0].ErrorMessage
-          </span>
-        }
-        <select class="nhsuk-select nhsuk-u-width-full @jobGroupSelectErrorClass" id="JobGroup" aria-describedby="job-group-error" asp-for="JobGroup">
-          <option value="" disabled selected>Select a job group</option>
-          @foreach (var option in ViewBag.JobGroups) {
-            <option value="@option.Item1">@option.Item2</option>
-          }
-        </select>
-      </div>
+      <vc:select-list
+        asp-for="JobGroup"
+        label="Job Group"
+        value="@Model.JobGroup?.ToString()"
+        hint-text=""
+        css-class="nhsuk-u-width-half"
+        default-option="Select a job group"
+        select-list-options="@ViewBag.JobGroupOptions"/>
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
