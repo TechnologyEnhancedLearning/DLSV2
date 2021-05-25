@@ -3,21 +3,21 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
 
-<div class="nhsuk-grid-column-full nhsuk-summary-list preference-list">
+<dl class="nhsuk-grid-column-full nhsuk-summary-list preference-list">
   @foreach (var notification in Model.Notifications) {
     <div class="nhsuk-grid-row preference-row">
-      <div class="nhsuk-grid-column-three-quarters preference-text-column">
-        <div class="nhsuk-heading-xs">@notification.NotificationName</div>
-        <p class="nhsuk-body-m">@Html.Raw(notification.Description)</p>
-      </div>
-      <div class="nhsuk-grid-column-one-quarter preference-tag-column">
+      <dt class="nhsuk-grid-column-three-quarters preference-text-column">
+        <span class="nhsuk-heading-xs">@notification.NotificationName</span>
+        <span class="nhsuk-body-m">@Html.Raw(notification.Description)</span>
+      </dt>
+      <dd class="nhsuk-grid-column-one-quarter nhsuk-u-margin-left-0 preference-tag-column">
         <strong class="nhsuk-u-font-size-19 preference-tag nhsuk-tag @(notification.Accepted ? "" : "nhsuk-tag--grey")">
           @(notification.Accepted ? "Subscribed" : "Unsubscribed")
         </strong>
-      </div>
+      </dd>
     </div>
   }
-</div>
+</dl>
 <a
   class="nhsuk-button"
   asp-controller="NotificationPreferences"
