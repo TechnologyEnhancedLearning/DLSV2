@@ -1,9 +1,17 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+@using Microsoft.Extensions.Configuration
 @model EditCentreManagerDetailsViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
 }
 
 <div class="nhsuk-grid-row">
