@@ -86,7 +86,7 @@ WHERE C.EmailAddress = @userEmail
 
         public async Task RemoveResetPasswordAsync(int resetPasswordId)
         {
-            await this.connection.ExecuteAsync(@"BEGIN TRY
+            await connection.ExecuteAsync(@"BEGIN TRY
                         BEGIN TRANSACTION
                             UPDATE AdminUsers SET ResetPasswordID = null WHERE ResetPasswordID = @ResetPasswordId;
                             UPDATE Candidates SET ResetPasswordID = null WHERE ResetPasswordID = @ResetPasswordId;

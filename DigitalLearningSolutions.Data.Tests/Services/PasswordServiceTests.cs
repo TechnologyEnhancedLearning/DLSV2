@@ -24,14 +24,14 @@
         public async Task Changing_password_hashes_password_before_saving()
         {
             // Given
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
 
             // When
-            await this.passwordService.ChangePasswordAsync("email", "new-password1");
+            await passwordService.ChangePasswordAsync("email", "new-password1");
 
             // Then
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "hash-of-password"))
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, "hash-of-password"))
                 .MustHaveHappened(1, Times.Exactly);
         }
 
@@ -39,13 +39,13 @@
         public async Task Changing_password_does_not_save_plain_password()
         {
             // Given
-            A.CallTo(() => this.cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
 
             // When
-            await this.passwordService.ChangePasswordAsync("email", "new-password1");
+            await passwordService.ChangePasswordAsync("email", "new-password1");
 
             // Then
-            A.CallTo(() => this.passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
                 .MustNotHaveHappened();
         }
     }

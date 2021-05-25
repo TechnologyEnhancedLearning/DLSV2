@@ -11,6 +11,7 @@
     {
         private PasswordDataService passwordDataService;
         private UserDataService userDataService;
+        private const string PasswordHashNotYetInDb = "I haven't used this password before!";
 
         [SetUp]
         public void Setup()
@@ -48,14 +49,14 @@
 
             // Given
             var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var newPasswordHash = "I haven't used this password before!";
+            var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await this.passwordDataService.SetPasswordByEmailAsync(existingAdminUser.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync(existingAdminUser.EmailAddress!, newPasswordHash);
 
             // Then
-            this.userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
-                .Be("I haven't used this password before!");
+            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
+                .Be(PasswordHashNotYetInDb);
         }
 
         [Test]
@@ -66,13 +67,13 @@
             // Given
             var existingAdminUser = UserTestHelper.GetDefaultAdminUser();
             var existingAdminUserPassword = existingAdminUser.Password;
-            var newPasswordHash = "I haven't used this password before!";
+            var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await this.passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
 
             // Then
-            this.userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
+            userDataService.GetAdminUserById(existingAdminUser.Id)?.Password.Should()
                 .Be(existingAdminUserPassword);
         }
 
@@ -83,14 +84,14 @@
 
             // Given
             var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
-            var newPasswordHash = "I haven't used this password before!";
+            var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await this.passwordDataService.SetPasswordByEmailAsync(existingCandidate.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync(existingCandidate.EmailAddress!, newPasswordHash);
 
             // Then
-            this.userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
-                .Be("I haven't used this password before!");
+            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
+                .Be(PasswordHashNotYetInDb);
         }
 
         [Test]
@@ -101,13 +102,13 @@
             // Given
             var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
             var existingCandidatePassword = existingCandidate.Password;
-            var newPasswordHash = "I haven't used this password before!";
+            var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await this.passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
 
             // Then
-            this.userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
+            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
                 .Be(existingCandidatePassword);
         }
     }

@@ -74,11 +74,11 @@
 
         public async Task InvalidateResetPasswordForEmailAsync(string email)
         {
-            var resetPasswordIds = this.userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
+            var resetPasswordIds = userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
 
             foreach (var resetPasswordId in resetPasswordIds)
             {
-                await this.passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
+                await passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
             }
         }
 

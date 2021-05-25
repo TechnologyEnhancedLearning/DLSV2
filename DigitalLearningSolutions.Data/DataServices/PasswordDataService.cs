@@ -32,7 +32,7 @@
             string email,
             string passwordHash)
         {
-            await this.connection.ExecuteAsync(
+            await connection.ExecuteAsync(
                 @"BEGIN TRY
                     BEGIN TRANSACTION
                         UPDATE AdminUsers SET Password = @PasswordHash WHERE Email = @Email;

@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(email, code);
 
-            this.TempData.Set(new ResetPasswordData(email, code));
+            TempData.Set(new ResetPasswordData(email, code));
 
             if (!hashIsValid)
             {
@@ -65,8 +65,8 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(viewModel);
             }
 
-            await this.passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
-            await this.passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
+            await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
+            await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
 
             TempData.Clear();
 

@@ -9,8 +9,8 @@ namespace DigitalLearningSolutions.Data.Models.User
 
         public UserReference(int id, UserType userType)
         {
-            this.Id = id;
-            this.UserType = userType;
+            Id = id;
+            UserType = userType;
         }
     }
 }

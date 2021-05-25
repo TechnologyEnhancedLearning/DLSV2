@@ -21,8 +21,8 @@
 
         public async Task ChangePasswordAsync(string email, string newPassword)
         {
-            var hashOfPassword = this.cryptoService.GetPasswordHash(newPassword);
-            await this.passwordDataService.SetPasswordByEmailAsync(email, hashOfPassword);
+            var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
+            await passwordDataService.SetPasswordByEmailAsync(email, hashOfPassword);
         }
     }
 }

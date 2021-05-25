@@ -4,8 +4,8 @@
     {
         public ResetPasswordData(string email, string resetPasswordHash)
         {
-            this.ResetPasswordHash = resetPasswordHash;
-            this.Email = email;
+            ResetPasswordHash = resetPasswordHash;
+            Email = email;
         }
 
         public readonly string ResetPasswordHash;

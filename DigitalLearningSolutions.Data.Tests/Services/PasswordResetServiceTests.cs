@@ -45,11 +45,11 @@
                 ));
 
             passwordResetService = new PasswordResetService(
-                this.userService,
-                this.passwordResetDataService,
-                this.logger,
-                this.emailService,
-                this.clockService);
+                userService,
+                passwordResetDataService,
+                logger,
+                emailService,
+                clockService);
         }
 
         [Test]
@@ -158,17 +158,17 @@
             var users = (
                 Builder<AdminUser>.CreateNew().With(u => u.ResetPasswordId = 1).Build(),
                 new[] { Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = 4).Build() }.ToList());
-            A.CallTo(() => this.userService.GetUsersByEmailAddress("email")).Returns(users);
+            A.CallTo(() => userService.GetUsersByEmailAddress("email")).Returns(users);
 
             // When
-            await this.passwordResetService.InvalidateResetPasswordForEmailAsync("email");
+            await passwordResetService.InvalidateResetPasswordForEmailAsync("email");
 
             // Then
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(1))
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(1))
                 .MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(4))
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(4))
                 .MustHaveHappened(1, Times.OrMore);
-            A.CallTo(() => this.passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
                 .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
         }
 
