@@ -174,6 +174,28 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
+            var userId = UserTestHelper.GetDefaultAdminUser().Id;
+            var userRef = new UserReference(userId, UserType.AdminUser);
+            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+
+            // When
+            await service.RemoveResetPasswordAsync(resetPasswordId);
+
+            // Then
+            var matchingResetPasswords = connection.Query<ResetPassword>
+            (
+                "SELECT * FROM ResetPassword WHERE ID = @ResetPasswordId",
+                new { ResetPasswordId = resetPasswordId }
+            );
+            matchingResetPasswords.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Removing_reset_hash_from_delegate_user_removes_ResetPassword_entity()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
             var userId = UserTestHelper.GetDefaultDelegateUser().Id;
             var userRef = new UserReference(userId, UserType.DelegateUser);
             var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
