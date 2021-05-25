@@ -1,5 +1,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -164,25 +166,28 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
             var (optionsString, options) =
                 NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
 
-            if (model.OptionsString != null && optionsString.Length > 4000)
+            if (optionsString.Length > 4000)
             {
                 AddTotalStringLengthModelError(model);
-            }
-            else
-            {
-                ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
-                model.OptionsString = optionsString;
-
-                ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-                model.Options = options;
+                return View(model);
             }
 
+            SetModelOptions(model, optionsString, options);
             return View(model);
+        }
+
+        private void SetModelOptions(EditRegistrationPromptViewModel model, string optionsString, List<string> options)
+        {
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
+            model.OptionsString = optionsString;
+
+            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
+            model.Options = options;
         }
 
         private void AddTotalStringLengthModelError(EditRegistrationPromptViewModel model)
         {
-            var remainingLength = 4000 - model.OptionsString!.Length - 2;
+            var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
             ModelState.AddModelError
             (
                 nameof(EditRegistrationPromptViewModel.Answer),
@@ -196,16 +201,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem
         private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)
         {
             IgnoreAddNewAnswerValidation();
-            
+
             var (optionsString, options) =
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
 
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-            model.Options = options;
-
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
-            model.OptionsString = optionsString;
-
+            SetModelOptions(model, optionsString, options);
             return View(model);
         }
 
