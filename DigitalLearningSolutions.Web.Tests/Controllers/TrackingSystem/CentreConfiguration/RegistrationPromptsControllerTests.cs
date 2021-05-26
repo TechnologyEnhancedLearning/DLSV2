@@ -61,7 +61,6 @@
             {
                 Answer = null,
                 Mandatory = false,
-                Options = null,
                 OptionsString = "Test",
                 Prompt = "Test",
                 PromptNumber = 1
@@ -86,7 +85,6 @@
             {
                 Answer = "Answer",
                 Mandatory = false,
-                Options = null,
                 OptionsString = "Test",
                 Prompt = "Test",
                 PromptNumber = 1
@@ -103,7 +101,7 @@
             {
                 result.Should().BeViewResult();
                 result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>();
-                result.As<ViewResult>().Model.As<EditRegistrationPromptViewModel>().Options?.Count.Should().Be(2);
+                result.As<ViewResult>().Model.As<EditRegistrationPromptViewModel>().Options.Count.Should().Be(2);
             }
         }
 
@@ -115,7 +113,6 @@
             {
                 Answer = "Answer",
                 Mandatory = false,
-                Options = null,
                 OptionsString = "Test\r\nAnswer",
                 Prompt = "Test",
                 PromptNumber = 1
@@ -130,7 +127,7 @@
             {
                 result.Should().BeViewResult();
                 result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>();
-                result.As<ViewResult>().Model.As<EditRegistrationPromptViewModel>().Options?.Count.Should().Be(1);
+                result.As<ViewResult>().Model.As<EditRegistrationPromptViewModel>().Options.Count.Should().Be(1);
             }
         }
 
@@ -142,7 +139,6 @@
             {
                 Answer = "Answer",
                 Mandatory = false,
-                Options = null,
                 OptionsString = "Test\r\nAnswer",
                 Prompt = "Test",
                 PromptNumber = 1
