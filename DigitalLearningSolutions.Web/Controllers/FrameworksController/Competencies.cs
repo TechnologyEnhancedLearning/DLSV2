@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/CompetencyGroup")]
         public IActionResult AddEditFrameworkCompetencyGroup(int frameworkId, int frameworkCompetencyGroupId = 0)
         {
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
             var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
             if (userRole < 2)
@@ -31,9 +32,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             var model = new CompetencyGroupViewModel()
             {
-                FrameworkId = frameworkId,
-                CompetencyGroupBase = competencyGroupBase,
-                FrameworkConfig = frameworkConfig
+                DetailFramework = detailFramework,
+                CompetencyGroupBase = competencyGroupBase
             };
             return View("Developer/CompetencyGroup", model);
         }
@@ -47,9 +47,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ModelState.Remove(nameof(CompetencyGroupBase.Name));
                 ModelState.AddModelError(nameof(CompetencyGroupBase.Name), "Please enter a valid competency group name (between 3 and 255 characters)");
                 // do something
+                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
                 var model = new CompetencyGroupViewModel()
                 {
-                    FrameworkId = frameworkId,
+                    DetailFramework = detailFramework,
                     CompetencyGroupBase = competencyGroupBase
                 };
                 return View("Developer/CompetencyGroup", model);
@@ -106,7 +107,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/")]
         public IActionResult AddEditFrameworkCompetency(int frameworkId, int? frameworkCompetencyGroupId, int frameworkCompetencyId = 0)
         {
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var adminId = GetAdminID();
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -116,13 +118,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             }
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
             var model = new FrameworkCompetencyViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyGroupId = frameworkCompetencyGroupId,
-                FrameworkCompetency = frameworkCompetency,
-                FrameworkConfig = frameworkConfig
+                FrameworkCompetency = frameworkCompetency
             };
             return View("Developer/Competency", model);
         }
@@ -137,9 +138,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
                 // do something
+                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
                 var model = new FrameworkCompetencyViewModel()
                 {
-                    FrameworkId = frameworkId,
+                    DetailFramework = detailFramework,
                     FrameworkCompetencyGroupId = frameworkCompetencyId,
                     FrameworkCompetency = frameworkCompetency
                 };

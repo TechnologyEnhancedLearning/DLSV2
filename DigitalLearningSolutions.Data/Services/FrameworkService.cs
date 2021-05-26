@@ -28,8 +28,8 @@
         //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
-        CompetencyGroupBase GetCompetencyGroupBaseById(int Id);
-        FrameworkCompetency GetFrameworkCompetencyById(int Id);
+        CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
+        FrameworkCompetency? GetFrameworkCompetencyById(int Id);
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
         IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId);
@@ -95,7 +95,7 @@
         private readonly IDbConnection connection;
         private readonly ILogger<FrameworkService> logger;
         private const string BaseFrameworkFields =
-            @"FW.ID, FrameworkName, FrameworkConfig, OwnerAdminID,
+            @"FW.ID, FrameworkName, OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
                  WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID,
@@ -489,6 +489,13 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
 
         public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify)
         {
+            if (userEmail.Length == 0)
+            {
+                logger.LogWarning(
+                    $"Not adding collaborator to framework as it failed server side valiidation. frameworkId: {frameworkId}, userEmail: {userEmail}, canModify:{canModify}"
+                );
+                return -3;
+            }
             int existingId = (int)connection.ExecuteScalar(
                @"SELECT COALESCE
                  ((SELECT ID
@@ -642,7 +649,7 @@ GROUP BY fc.ID, c.Name, c.Description, fc.Ordering
                     WHERE ID = @frameworkId",
                new { frameworkConfig, adminId, frameworkId });
         }
-        public CompetencyGroupBase GetCompetencyGroupBaseById(int Id)
+        public CompetencyGroupBase? GetCompetencyGroupBaseById(int Id)
         {
             return connection.QueryFirstOrDefault<CompetencyGroupBase>(
                 @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name
@@ -651,7 +658,7 @@ GROUP BY fc.ID, c.Name, c.Description, fc.Ordering
                     WHERE (fcg.ID = @Id)", new { Id }
                 );
         }
-        public FrameworkCompetency GetFrameworkCompetencyById(int Id)
+        public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
                  @"SELECT fc.ID, c.Name, c.Description, fc.Ordering
@@ -908,6 +915,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     "Not inserting framework default question as db update failed. " +
                     $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
                 );
+                return;
             }
             else if (addToExisting)
             {
@@ -941,6 +949,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                     "Not deleting framework default question as db update failed. " +
                     $"frameworkId: {frameworkId}, assessmentQuestionId: {assessmentQuestionId}"
                 );
+                return;
             }
             else if (deleteFromExisting)
             {

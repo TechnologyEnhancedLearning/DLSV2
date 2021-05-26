@@ -4,17 +4,16 @@
     using DigitalLearningSolutions.Web.Helpers;
     public class FrameworkCompetencyViewModel
     {
-        public int FrameworkId { get; set; }
+        public DetailFramework DetailFramework { get; set; }
         public int? FrameworkCompetencyGroupId { get; set; }
         public FrameworkCompetency FrameworkCompetency { get; set; }
-        public string? FrameworkConfig { get; set; }
         public string VocabSingular()
         {
-            return FrameworkVocabularyHelper.VocabularySingular(FrameworkConfig);
+            return FrameworkVocabularyHelper.VocabularySingular(DetailFramework.FrameworkConfig);
         }
         public string VocabPlural()
         {
-            return FrameworkVocabularyHelper.VocabularyPlural(FrameworkConfig);
+            return FrameworkVocabularyHelper.VocabularyPlural(DetailFramework.FrameworkConfig);
         }
     }
 }

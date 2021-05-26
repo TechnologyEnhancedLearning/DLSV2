@@ -20,8 +20,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var frameworkName = (string)framework.FrameworkName;
             var model = new CollaboratorsViewModel()
             {
-                FrameworkId = frameworkId,
-                FrameworkName = frameworkName,
+                BaseFramework = framework,
                 Collaborators = collaborators
             };
             return View("Developer/Review", model);
