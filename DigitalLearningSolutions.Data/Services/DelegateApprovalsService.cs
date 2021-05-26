@@ -45,7 +45,7 @@
             return usersWithPrompts;
         }
 
-        public async void ApproveDelegate(int delegateId)
+        public void ApproveDelegate(int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
@@ -59,17 +59,17 @@
             }
             else
             {
-                await userDataService.ApproveDelegateUsers(new[] { delegateId });
+                userDataService.ApproveDelegateUsers(new[] { delegateId });
                 var delegateApprovalEmail = GenerateDelegateApprovalEmail(delegateUser.CandidateNumber, delegateUser.EmailAddress);
                 emailService.SendEmail(delegateApprovalEmail);
             }
         }
 
-        public async void ApproveAllUnapprovedDelegatesForCentre(int centreId)
+        public void ApproveAllUnapprovedDelegatesForCentre(int centreId)
         {
             var delegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
 
-            await userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
+            userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
             foreach (var delegateUser in delegateUsers)
             {
                 var delegateApprovalEmail = GenerateDelegateApprovalEmail(delegateUser.CandidateNumber, delegateUser.EmailAddress);

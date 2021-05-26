@@ -31,7 +31,7 @@
             string? answer5,
             string? answer6);
 
-        public Task<int> ApproveDelegateUsers(IEnumerable<int> ids);
+        public void ApproveDelegateUsers(IEnumerable<int> ids);
     }
 
     public class UserDataService : IUserDataService
@@ -286,9 +286,9 @@
             );
         }
 
-        public async Task<int> ApproveDelegateUsers(IEnumerable<int> ids)
+        public void ApproveDelegateUsers(IEnumerable<int> ids)
         {
-            return await connection.ExecuteAsync(
+            connection.Execute(
                 @"UPDATE Candidates
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
