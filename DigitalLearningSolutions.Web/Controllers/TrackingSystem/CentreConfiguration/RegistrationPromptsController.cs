@@ -192,6 +192,7 @@
             data.SelectPromptViewModel = model;
             TempData.Set(data);
 
+            // will redirect to next page in multi page form
             return RedirectToAction("Index");
         }
 
