@@ -216,6 +216,7 @@
                     FROM Candidates AS cd
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE (cd.Approved = 0)
+                    AND (cd.Active = 1)
                     AND (cd.CentreID = @centreId)",
                 new { centreId }
             ).ToList();

@@ -77,8 +77,8 @@
         public void GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers_Returns_Populated_Tuple()
         {
             // Given
-            var answer1 = "Answer 1";
-            var answer2 = "Answer 2";
+            const string answer1 = "Answer 1";
+            const string answer2 = "Answer 2";
             var delegateUser1 = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var delegateUser2 = UserTestHelper.GetDefaultDelegateUser(answer1: answer2);
             var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1, options: null, mandatory: true, answer: answer1);

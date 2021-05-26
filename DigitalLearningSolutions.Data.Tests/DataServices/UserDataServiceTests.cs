@@ -11,7 +11,7 @@
 
     public class UserDataServiceTests
     {
-        private IUserDataService userDataService;
+        private IUserDataService userDataService = null!;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -80,7 +80,6 @@
 
 
         [Test]
-
         public void GetUnapprovedDelegateUsersByCentreId_returns_correct_delegate_users()
         {
             // When

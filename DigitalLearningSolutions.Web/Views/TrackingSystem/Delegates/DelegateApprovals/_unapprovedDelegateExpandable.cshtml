@@ -34,9 +34,9 @@
             @Model.JobGroup
           </dd>
         </div>
-        @foreach (var cf in Model.CustomPrompts)
+        @foreach (var customPrompt in Model.CustomPrompts)
         {
-          <partial name="../Common/_CustomFieldRow" model="cf" />
+          <partial name="../Shared/_CustomPromptSummaryListRow" model="customPrompt" />
         }
       </dl>
     </div>
