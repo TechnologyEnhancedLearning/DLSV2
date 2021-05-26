@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -29,6 +30,8 @@
             string? answer4,
             string? answer5,
             string? answer6);
+
+        public Task<int> ApproveDelegateUsers(IEnumerable<int> ids);
     }
 
     public class UserDataService : IUserDataService
@@ -280,6 +283,16 @@
                             Answer6 = @answer6
                         WHERE CandidateID = @id",
                 new { jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6, id }
+            );
+        }
+
+        public async Task<int> ApproveDelegateUsers(IEnumerable<int> ids)
+        {
+            return await connection.ExecuteAsync(
+                @"UPDATE Candidates
+                        SET Approved = 1
+                        WHERE CandidateID IN @ids",
+                new { ids }
             );
         }
     }

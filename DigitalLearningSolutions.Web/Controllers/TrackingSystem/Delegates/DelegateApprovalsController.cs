@@ -27,8 +27,24 @@
                 .GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(centreId)
                 .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
 
-            var model = new DelegateApprovalsViewModel(delegates);
+            var model = new DelegateApprovalsViewModel(centreId, delegates);
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/Approve")]
+        public IActionResult ApproveDelegate(int delegateId)
+        {
+            // delegateApprovalsService.ApproveDelegate(delegateId);
+            return RedirectToAction("Index", "DelegateApprovals");
+        }
+
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre/{centreId}")]
+        public IActionResult ApproveDelegatesForCentre(int centreId)
+        {
+            // delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
+            return RedirectToAction("Index", "DelegateApprovals");
         }
     }
 }
