@@ -188,7 +188,7 @@
                         EmailAddress,
                         Password,
                         ResetPasswordID
-                    FROM Candidates AS cd
+                    FROM Candidates
                     WHERE (EmailAddress = @emailAddress)",
                 new { emailAddress }
             ).ToList();
