@@ -3,6 +3,7 @@
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningMenuController;
     using FakeItEasy;
     using Microsoft.AspNetCore.Http;

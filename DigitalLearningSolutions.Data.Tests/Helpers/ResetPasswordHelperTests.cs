@@ -6,7 +6,6 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using DigitalLearningSolutions.Data.Models.User;
-    using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;

@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging.Abstractions;

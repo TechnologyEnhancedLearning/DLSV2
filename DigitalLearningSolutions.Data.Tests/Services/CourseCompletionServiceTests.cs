@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.CourseCompletion;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 
