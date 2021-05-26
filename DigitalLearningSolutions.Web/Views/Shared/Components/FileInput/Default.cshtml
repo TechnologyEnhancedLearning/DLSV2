@@ -6,7 +6,7 @@
     @Model.Label
   </label>
   @if (Model.HintText != null) {
-    <div class="nhsuk-hint">
+    <div class="nhsuk-hint" id="@Model.Name-hint">
       @Model.HintText
     </div>
   }
@@ -20,5 +20,5 @@
          id="@Model.Id"
          name="@Model.Name"
          type="file"
-         aria-describedby="@Model.Name-error" />
+         aria-describedby="@Model.Name-error @Model.Name-hint" />
 </div>

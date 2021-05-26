@@ -22,6 +22,8 @@
         public bool TryUpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
             CentreAnswersData? centreAnswersData = null);
+
+        public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
     }
 
     public class UserService : IUserService
@@ -137,6 +139,19 @@
             }
 
             return true;
+        }
+
+        public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId)
+        {
+            var (adminUser, delegateUser) = GetUsersById(adminUserId, delegateUserId);
+            if (adminUser?.EmailAddress == emailAddress && delegateUser?.EmailAddress == emailAddress)
+            {
+                return true;
+            }
+
+            var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
+
+            return adminUsersWithNewEmail == null && delegateUsersWithNewEmail.Count(u => u.CentreId == centreId) == 0;
         }
 
         private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts
