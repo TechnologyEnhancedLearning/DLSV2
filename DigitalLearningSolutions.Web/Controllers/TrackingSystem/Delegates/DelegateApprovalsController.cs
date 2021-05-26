@@ -40,7 +40,7 @@
         }
 
         [HttpPost]
-        [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre/{centreId}")]
+        [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre")]
         public IActionResult ApproveDelegatesForCentre(int centreId)
         {
             // delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);

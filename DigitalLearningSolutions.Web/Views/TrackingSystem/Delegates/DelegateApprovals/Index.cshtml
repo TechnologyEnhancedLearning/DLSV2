@@ -27,9 +27,12 @@
       }
       <div class="nhsuk-grid-row nhsuk-u-margin-top-7">
         <div class="nhsuk-grid-column-full">
-          <a class="nhsuk-button" asp-controller="DelegateApprovals" asp-action="ApproveDelegatesForCentre" asp-route-centreId="@Model.CentreId" role="button">
-            Approve All
-          </a>
+          <form asp-controller="DelegateApprovals" asp-action="ApproveDelegatesForCentre" method="post">
+            <input type="hidden" name="centreId" value="@Model.CentreId"/>
+            <button class="nhsuk-button"  type="submit">
+              Approve All
+            </button>
+          </form>
         </div>
       </div>
     }
