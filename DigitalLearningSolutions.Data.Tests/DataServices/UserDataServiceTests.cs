@@ -240,5 +240,36 @@
                 }
             }
         }
+
+        [Test]
+        public void ApproveDelegateUsers_approves_delegate_users()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var ids = new[] { 16, 28 };
+                    var delegate1 = userDataService.GetDelegateUserById(16);
+                    var delegate2 = userDataService.GetDelegateUserById(28);
+
+                    delegate1.Approved.Should().BeFalse();
+                    delegate2.Approved.Should().BeFalse();
+
+                    // When
+                    userDataService.ApproveDelegateUsers(ids);
+                    delegate1 = userDataService.GetDelegateUserById(16);
+                    delegate2 = userDataService.GetDelegateUserById(28);
+
+                    // Then
+                    delegate1.Approved.Should().BeTrue();
+                    delegate2.Approved.Should().BeTrue();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
     }
 }
