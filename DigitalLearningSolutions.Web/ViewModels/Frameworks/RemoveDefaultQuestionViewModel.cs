@@ -3,7 +3,7 @@
     using DigitalLearningSolutions.Data.Models.Frameworks;
     public class RemoveDefaultQuestionViewModel
     {
-        public int FrameworkId { get; set; }
+        public BaseFramework BaseFramework { get; set; }
         public int AssessmentQuestionId { get; set; }
         public FrameworkDefaultQuestionUsage? FrameworkDefaultQuestionUsage { get; set; }
     }
