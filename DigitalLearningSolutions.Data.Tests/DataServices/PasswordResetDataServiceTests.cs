@@ -5,7 +5,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
-    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Auth;
@@ -222,33 +221,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             service.CreatePasswordReset
                 (new ResetPasswordCreateModel(DateTime.UtcNow, hash, firstUser.Id, firstUser.UserType));
 
-            var resetPasswordId = await GetResetPasswordIdByHashAsync(hash);
+            var resetPasswordId = await connection.GetResetPasswordIdByHashAsync(hash);
 
             foreach (var user in userList.Skip(1))
             {
-                await GivenUserHasResetPasswordIdAsync(resetPasswordId, user);
+                await connection.SetResetPasswordIdForUserAsync(user, resetPasswordId);
             }
 
             return resetPasswordId;
-        }
-
-        private async Task<int> GetResetPasswordIdByHashAsync(string hash)
-        {
-            var resetPasswordId = (await connection.QueryAsync<int>
-            (
-                "SELECT Id FROM ResetPassword WHERE ResetPasswordHash = @Hash;",
-                new { Hash = hash }
-            )).Single();
-            return resetPasswordId;
-        }
-
-        private async Task GivenUserHasResetPasswordIdAsync(int resetPasswordId, UserReference user)
-        {
-            await connection.ExecuteAsync
-            (
-                $"UPDATE {user.UserType.TableName} SET ResetPasswordId = @ResetPasswordId WHERE {user.UserType.IdColumnName} = @UserId;",
-                new { ResetPasswordId = resetPasswordId, UserId = user.Id }
-            );
         }
     }
 }
