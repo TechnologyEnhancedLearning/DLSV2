@@ -27,9 +27,6 @@
         private IUserService userService = null!;
 
         private const string Email = "test@user.com";
-        private const string FirstName = "Test";
-        private const string LastName = "User";
-        private const string Password = "password";
 
         [SetUp]
         public void Setup()
