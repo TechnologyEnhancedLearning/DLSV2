@@ -140,6 +140,7 @@ namespace DigitalLearningSolutions.Web
 
             // Register web service filters.
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<IClockService, ClockService>();
