@@ -144,7 +144,7 @@
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId)
         {
             var (adminUser, delegateUser) = GetUsersById(adminUserId, delegateUserId);
-            if (adminUser?.EmailAddress == emailAddress && delegateUser?.EmailAddress == emailAddress)
+            if ((adminUser == null || adminUser.EmailAddress == emailAddress) && (delegateUser == null || delegateUser.EmailAddress == emailAddress))
             {
                 return true;
             }
