@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Newtonsoft.Json;
-    internal static class TempDataExtension
+    public static class TempDataExtension
     {
         public static T? Peek<T>(this ITempDataDictionary tempData) where T : class
             => tempData.TryPeek(typeof(T).Name, out var data) ? JsonConvert.DeserializeObject<T>(data) : null;

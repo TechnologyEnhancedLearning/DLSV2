@@ -18,6 +18,7 @@ resharper_keep_existing_declaration_parens_arrangement = true
 resharper_place_constructor_initializer_on_same_line = true
 resharper_wrap_before_declaration_rpar = true
 resharper_wrap_before_invocation_rpar = true
+resharper_csharp_instance_members_qualify_members = none
 
 [*.{cs}]
 indent_size = 4

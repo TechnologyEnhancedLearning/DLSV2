@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
     using System.Collections.Generic;

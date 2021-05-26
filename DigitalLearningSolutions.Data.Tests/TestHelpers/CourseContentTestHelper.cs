@@ -1,11 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.CourseContent;
     using Microsoft.Data.SqlClient;
 
     public class CourseContentTestHelper
