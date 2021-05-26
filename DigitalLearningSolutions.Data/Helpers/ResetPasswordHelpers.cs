@@ -22,9 +22,9 @@ namespace DigitalLearningSolutions.Data.Helpers
             return delegateUsers
                 .Select(du => (User)du)
                 .Concat(new[] { adminUserIfAny })
-                .Select(u => u?.ResetPasswordId ?? (int?) null)
+                .Select(u => u?.ResetPasswordId)
                 .Where(rPId => rPId.HasValue)
-                .Select(rPId => rPId.Value)
+                .Select(rPId => rPId!.Value)
                 .Distinct();
         }
     }
