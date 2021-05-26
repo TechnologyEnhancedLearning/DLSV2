@@ -102,15 +102,16 @@
                 ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile),
                     "Preview your new profile picture before saving");
             }
+            
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
                         "A user at this centre with this email address already exists");
-            }
-
-            if (!ModelState.IsValid)
-            {
                 return View(model);
             }
 
