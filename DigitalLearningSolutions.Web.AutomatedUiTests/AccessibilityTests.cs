@@ -132,8 +132,25 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             var selectPromptForm = driver.FindElement(By.TagName("form"));
             selectPromptForm.Submit();
 
+            var configureAnswerInitialResult = new AxeBuilder(driver).Analyze();
+            AddAnswer("Answer 1");
+            AddAnswer("Answer 2");
+            var configureAnswerWithAnswersResult = new AxeBuilder(driver).Analyze();
+            var nextButton = driver.FindElement(By.XPath("//button[.='Next']"));
+            nextButton.Click();
+
             // then
             selectPromptResult.Violations.Should().BeEmpty();
+            configureAnswerInitialResult.Violations.Should().BeEmpty();
+            configureAnswerWithAnswersResult.Violations.Should().BeEmpty();
+        }
+
+        private void AddAnswer(string answerString)
+        {
+            var answer = driver.FindElement(By.Id("Answer"));
+            answer.SendKeys(answerString);
+            var addButton = driver.FindElement(By.XPath("//button[.='Add']"));
+            addButton.Click();
         }
 
         private static ChromeDriver CreateHeadlessChromeDriver()

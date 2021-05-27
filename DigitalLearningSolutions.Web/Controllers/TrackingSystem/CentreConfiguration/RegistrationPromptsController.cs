@@ -216,6 +216,9 @@
         {
             ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.OptionsString));
             model.OptionsString = optionsString;
+
+            ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.Answer));
+            model.Answer = null;
         }
 
         private void AddTotalStringLengthRegistrationPromptAnswersViewModelError(RegistrationPromptAnswersViewModel model)
