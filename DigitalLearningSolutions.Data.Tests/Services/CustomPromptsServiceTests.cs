@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -169,6 +168,108 @@
             // Then
             A.CallTo(() => customPromptsDataService.GetCustomPromptsAlphabetical()).MustHaveHappened();
             result.Contains((1, promptName)).Should().BeTrue();
+        }
+
+        [Test]
+        public void AddCustomPromptToCentre_add_prompt_at_expected_prompt_number()
+        {
+            // Given
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, A<int>._, 1, true, null)
+            ).DoesNothing();
+            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+                .Returns
+                (
+                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult
+                    (
+                        customField1Prompt: "Prompt",
+                        customField2Prompt: "Prompt",
+                        customField3Prompt: null,
+                        customField4Prompt: null,
+                        customField5Prompt: null,
+                        customField6Prompt: null
+                    )
+                );
+
+            // When
+            customPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+
+            // Then
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, 3, 1, true, null)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void AddCustomPromptToCentre_add_prompt_at_expected_prompt_number_with_gaps_in_prompt_numbers()
+        {
+            // Given
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, A<int>._, 1, true, null)
+            ).DoesNothing();
+            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+                .Returns
+                (
+                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult
+                    (
+                        customField1Prompt: "Prompt",
+                        customField2Prompt: null,
+                        customField3Prompt: "Prompt",
+                        customField4Prompt: "Prompt",
+                        customField5Prompt: "Prompt",
+                        customField6Prompt: null
+                    )
+                );
+
+            // When
+            customPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+
+            // Then
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, 2, 1, true, null)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void AddCustomPromptToCentre_add_prompt_with_all_prompts_defined()
+        {
+            // Given
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, A<int>._, 1, true, null)
+            ).DoesNothing();
+            A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+                .Returns
+                (
+                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult
+                    (
+                        customField1Prompt: "Prompt",
+                        customField2Prompt: "Prompt",
+                        customField3Prompt: "Prompt",
+                        customField4Prompt: "Prompt",
+                        customField5Prompt: "Prompt",
+                        customField6Prompt: "Prompt"
+                    )
+                );
+
+            // When
+            customPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+
+            // Then
+            A.CallTo
+            (
+                () => customPromptsDataService.AddCustomPromptToCentre
+                    (1, A<int>._, 1, true, null)
+            ).MustNotHaveHappened();
         }
     }
 }

@@ -20,6 +20,8 @@
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
 
         List<(int id, string value)> GetCustomPromptsAlphabeticalList();
+
+        public void AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -70,6 +72,23 @@
         public List<(int id, string value)> GetCustomPromptsAlphabeticalList()
         {
             return customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+        }
+
+        public void AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options)
+        {
+            var centreCustomPrompts = GetCustomPromptsForCentreByCentreId(centreId);
+            var existingPromptNumbers = centreCustomPrompts.CustomPrompts
+                .Select(c => c.CustomPromptNumber)
+                .OrderBy(n => n);
+
+            var promptNumbers = new List<int> { 1, 2, 3, 4, 5, 6 };
+            promptNumbers.RemoveAll(x => existingPromptNumbers.Contains(x));
+            var promptNumber = promptNumbers.Any() ? promptNumbers.Min() : (int?)null;
+
+            if (promptNumber != null)
+            {
+                customPromptsDataService.AddCustomPromptToCentre(centreId, promptNumber.Value, promptId, mandatory, options);
+            }
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)
