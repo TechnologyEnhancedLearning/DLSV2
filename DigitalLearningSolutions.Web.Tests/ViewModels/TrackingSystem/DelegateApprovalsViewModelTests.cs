@@ -1,11 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using FluentAssertions;
     using FluentAssertions.Execution;
