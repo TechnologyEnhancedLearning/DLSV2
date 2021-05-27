@@ -148,7 +148,7 @@ def extractEmailAddressFromCommitDetails(commitDetails) {
 }
 
 def getSlackUserByEmailAddress(emailAddress) {
-	return getSlackUsers()[emailAddress.toLowerCase()] ?: '#hee-notifications'
+	return getSlackUsers()[emailAddress.toLowerCase()] ?: '@SteVes'
 }
 
 def getSlackUsers() {

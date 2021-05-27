@@ -3,7 +3,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -11,7 +11,13 @@
 
     public class UserDataServiceTests
     {
-        private IUserDataService userDataService;
+        private IUserDataService userDataService = null!;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            MapperHelper.SetUpFluentMapper();
+        }
 
         [SetUp]
         public void Setup()
@@ -65,11 +71,72 @@
             // Given
             var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(jobGroupName: "Nursing / midwifery");
 
-            //When
+            // When
             var returnedDelegateUser = userDataService.GetDelegateUserById(2);
 
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
+        }
+
+        [Test]
+        public void GetUnapprovedDelegateUsersByCentreId_returns_correct_delegate_users()
+        {
+            // When
+            var returnedDelegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(101);
+
+            // Then
+            returnedDelegateUsers.Count.Should().Be(4);
+            returnedDelegateUsers.Select(d => d.Id).Should().BeEquivalentTo(new[] { 28, 16, 115768, 297514 });
+        }
+
+        [Test]
+        public void GetAdminUserByEmailAddress_Returns_admin_user()
+        {
+            // Given
+            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
+
+            // When
+            var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedAdminUser.Should().NotBeNull();
+                returnedAdminUser!.Id.Should().Be(expectedAdminUser.Id);
+                returnedAdminUser!.FirstName.Should().BeEquivalentTo(expectedAdminUser.FirstName);
+                returnedAdminUser!.LastName.Should().BeEquivalentTo(expectedAdminUser.LastName);
+                returnedAdminUser!.EmailAddress.Should().BeEquivalentTo(expectedAdminUser.EmailAddress);
+                returnedAdminUser!.Password.Should().BeEquivalentTo(expectedAdminUser.Password);
+                returnedAdminUser!.ResetPasswordId.Should().Be(expectedAdminUser.ResetPasswordId);
+            }
+        }
+
+        [Test]
+        public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+
+            //When
+            var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
+                returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
+                returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
+                    (expectedDelegateUser.CandidateNumber);
+                returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
+                returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
+                returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
+                returnedDelegateUsers.First().EmailAddress.Should().BeEquivalentTo(expectedDelegateUser.EmailAddress);
+                returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
+                returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
+                returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
+                returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
+                returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+            }
         }
 
         [Test]

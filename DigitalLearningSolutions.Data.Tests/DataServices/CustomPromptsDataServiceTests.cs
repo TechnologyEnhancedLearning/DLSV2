@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.Helpers;
@@ -10,7 +11,7 @@
 
     public class CustomPromptsDataServiceTests
     {
-        private ICustomPromptsDataService customPromptsDataService;
+        private ICustomPromptsDataService customPromptsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -56,6 +57,16 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        [Test]
+        public void Get_custom_prompts_should_contain_a_custom_prompt()
+        {
+            // When
+            var result = customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+
+            // Then
+            result.Contains((1, "Department / team")).Should().BeTrue();
         }
     }
 }

@@ -1,21 +1,29 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CentreConfiguration
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using NUnit.Framework;
 
     public class RegistrationPromptsControllerTests
     {
         private ICustomPromptsService customPromptsService = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
+        private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
+        private HttpContext httpContext = null!;
+        private HttpRequest httpRequest = null!;
+        private IRequestCookieCollection cookieCollection = null!;
 
         [SetUp]
         public void Setup()
@@ -23,7 +31,26 @@
             customPromptsService = A.Fake<ICustomPromptsService>();
 
             registrationPromptsController = new RegistrationPromptsController(customPromptsService)
-                .WithDefaultContext().WithMockUser(true);
+                .WithDefaultContext()
+                .WithMockUser(true);
+
+            httpContext = A.Fake<HttpContext>();
+            httpRequest = A.Fake<HttpRequest>();
+            cookieCollection = A.Fake<IRequestCookieCollection>();
+
+            var cookieList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string,string>("AddRegistrationPromptData", "AddRegistrationPromptData")
+            };
+            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
+            A.CallTo(() => cookieCollection.ContainsKey("AddRegistrationPromptData")).Returns(true);
+            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
+            A.CallTo(() => httpContext.Request).Returns(httpRequest);
+            
+            registrationPromptsControllerWithMockHttpContext = new RegistrationPromptsController(customPromptsService)
+                .WithMockHttpContext(httpContext)
+                .WithMockUser(true);
+            registrationPromptsControllerWithMockHttpContext.TempData = new TempDataDictionary(httpContext, A.Fake<ITempDataProvider>());
         }
 
         [Test]
@@ -127,6 +154,31 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+        }
+
+        [Test]
+        public void AddRegistrationPromptSelectPrompt_sets_new_temp_data()
+        {
+            // When
+            var result = registrationPromptsControllerWithMockHttpContext.AddRegistrationPromptSelectPrompt();
+
+            // Then
+            registrationPromptsControllerWithMockHttpContext.TempData.Peek<AddRegistrationPromptData>().Should().NotBeNull();
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void AddRegistrationPromptSelectPrompt_loads_existing_temp_data()
+        {
+            var expectedTempData = new AddRegistrationPromptData();
+            registrationPromptsControllerWithMockHttpContext.TempData.Set(expectedTempData);
+            
+            // When
+            var result = registrationPromptsControllerWithMockHttpContext.AddRegistrationPromptSelectPrompt();
+
+            // Then
+            registrationPromptsControllerWithMockHttpContext.TempData.Peek<AddRegistrationPromptData>().Should().BeEquivalentTo(expectedTempData);
+            result.Should().BeViewResult().WithDefaultViewName();
         }
     }
 }

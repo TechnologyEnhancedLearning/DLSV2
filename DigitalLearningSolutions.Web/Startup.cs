@@ -137,6 +137,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
 
@@ -146,6 +147,7 @@ namespace DigitalLearningSolutions.Web
         private static void RegisterWebServiceFilters(IServiceCollection services)
         {
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();

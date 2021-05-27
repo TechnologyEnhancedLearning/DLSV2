@@ -1,16 +1,25 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
+﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+@using Microsoft.Extensions.Configuration
 @model EditRegistrationPromptViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate registration prompt" : "Edit delegate registration prompt";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
-@if (errorHasOccurred) {
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@if (errorHasOccurred)
+{
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}"/>
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
     </div>
   </div>
 }
@@ -60,35 +69,37 @@
         <partial name="NoConfiguredAnswers" />
       </div>
     </div>
-  } else{
+  }
+  else
+  {
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <table class="nhsuk-table">
           <caption class="nhsuk-table__caption">Configured answers:</caption>
           <thead role="rowgroup" class="nhsuk-table__head">
-          <tr role="row">
-            <th role="columnheader" class="" scope="col">
-              Answer
-            </th>
-            <th role="columnheader" class="" scope="col">
-              Action
-            </th>
-          </tr>
+            <tr role="row">
+              <th role="columnheader" class="" scope="col">
+                Answer
+              </th>
+              <th role="columnheader" class="" scope="col">
+                Action
+              </th>
+            </tr>
           </thead>
           <tbody class="nhsuk-table__body">
-          @foreach (var answer in Model.Options!)
-          {
-            <tr role="row" class="nhsuk-table__row">
-              <td class="nhsuk-table__cell word-break">@answer</td>
-              <td class="nhsuk-table__cell ">
-                <button name="action"
-                        class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0"
-                        value="@("delete" + Model.Options.IndexOf(answer))">
-                  Remove
-                </button>
-              </td>
-            </tr>
-          }
+            @foreach (var answer in Model.Options!)
+            {
+              <tr role="row" class="nhsuk-table__row">
+                <td class="nhsuk-table__cell word-break">@answer</td>
+                <td class="nhsuk-table__cell ">
+                  <button name="action"
+                          class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0"
+                          value="@("delete" + Model.Options.IndexOf(answer))">
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

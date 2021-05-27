@@ -107,7 +107,7 @@
             </div>
 
             foreach (var customField in Model.CustomFields) {
-              <partial name="MyDetailsCustomField" model="@customField"/>
+              <partial name="../Shared/_CustomPromptSummaryListRow" model="@customField"/>
             }
           }
 
