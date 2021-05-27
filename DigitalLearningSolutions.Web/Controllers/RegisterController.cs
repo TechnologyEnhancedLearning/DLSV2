@@ -21,15 +21,18 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
+        private readonly CustomPromptHelper customPromptHelper;
 
         public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
-            IRegistrationService registrationService, ICryptoService cryptoService, IUserService userService)
+            IRegistrationService registrationService, ICryptoService cryptoService, IUserService userService,
+            CustomPromptHelper customPromptHelper)
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userService = userService;
+            this.customPromptHelper = customPromptHelper;
         }
 
         public IActionResult Index()
@@ -91,25 +94,25 @@
         public IActionResult LearnerInformation()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = data.LearnerInformationViewModel;
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
-                (jobGroupsDataService.GetJobGroupsAlphabetical(), viewModel.JobGroup);
+            var model = data.LearnerInformationViewModel;
 
-            return View(viewModel);
+            SetLearnerInformationViewBag(model, (int)data.RegisterViewModel.Centre!);
+
+            return View(model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+
             if (!ModelState.IsValid)
             {
-                ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
-                    (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
+                SetLearnerInformationViewBag(model, (int)data.RegisterViewModel.Centre!);
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>()!;
             data.LearnerInformationViewModel = model;
             TempData.Set(data);
 
@@ -223,6 +226,23 @@
             {
                 ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists at this centre");
             }
+        }
+
+        private void SetLearnerInformationViewBag(LearnerInformationViewModel model, int centreId)
+        {
+            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre
+            (
+                centreId,
+                model.Answer1,
+                model.Answer2,
+                model.Answer3,
+                model.Answer4,
+                model.Answer5,
+                model.Answer6
+            );
+            ViewBag.CustomFields = customFields;
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
         }
     }
 }
