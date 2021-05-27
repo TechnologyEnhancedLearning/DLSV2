@@ -66,6 +66,51 @@
             };
         }
 
+        [HttpGet]
+        [Route("Add/SelectPrompt")]
+        public IActionResult AddRegistrationPromptSelectPrompt()
+        {
+            SetViewBagCustomPromptNameOptions();
+
+            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>();
+
+            if (addRegistrationPromptData == null || !Request.Cookies.ContainsKey(CookieName))
+            {
+                addRegistrationPromptData = new AddRegistrationPromptData();
+                var id = addRegistrationPromptData.Id;
+
+                Response.Cookies.Append(
+                    CookieName,
+                    id.ToString(),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    });
+                TempData.Set(addRegistrationPromptData);
+            }
+
+            return View(addRegistrationPromptData.SelectPromptViewModel);
+        }
+
+        [HttpPost]
+        [Route("Add/SelectPrompt")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                SetViewBagCustomPromptNameOptions();
+                return View(model);
+            }
+
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            data.SelectPromptViewModel = model;
+            TempData.Set(data);
+
+            // TODO: HEEDLS-453 - redirect to next page
+            return RedirectToAction("Index");
+        }
+
         private bool TryGetAnswerIndexFromAction(string action, out int index)
         {
             return int.TryParse(action.Remove(0, 6), out index);
@@ -147,53 +192,6 @@
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
-        }
-
-        [HttpGet]
-        [Route("Add/SelectPrompt")]
-        public IActionResult AddRegistrationPromptSelectPrompt()
-        {
-            SetViewBagCustomPromptNameOptions();
-
-            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>();
-
-            if (addRegistrationPromptData == null || !Request.Cookies.ContainsKey(CookieName))
-            {
-                addRegistrationPromptData = new AddRegistrationPromptData();
-                var id = addRegistrationPromptData.Id;
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    });
-                TempData.Set(addRegistrationPromptData);
-
-                return View(addRegistrationPromptData.SelectPromptViewModel);
-            }
-
-            return View(addRegistrationPromptData.SelectPromptViewModel);
-        }
-
-        [HttpPost]
-        [Route("Add/SelectPrompt")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                SetViewBagCustomPromptNameOptions();
-                return View(model);
-            }
-
-            var data = TempData.Peek<AddRegistrationPromptData>()!;
-            data.SelectPromptViewModel = model;
-            TempData.Set(data);
-
-            // will redirect to next page in multi page form
-            return RedirectToAction("Index");
         }
 
         private void SetViewBagCustomPromptNameOptions()
