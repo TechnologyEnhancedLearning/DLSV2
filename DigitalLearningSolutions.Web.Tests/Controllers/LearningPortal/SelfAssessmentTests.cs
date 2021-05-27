@@ -6,6 +6,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using FakeItEasy;
     using FluentAssertions;

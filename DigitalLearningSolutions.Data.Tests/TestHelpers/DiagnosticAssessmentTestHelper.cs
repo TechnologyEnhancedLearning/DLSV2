@@ -1,7 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
-    using Dapper;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using Microsoft.Data.SqlClient;
 
