@@ -11,7 +11,7 @@
     <form method="post" asp-action="LearnerInformation">
 
       @if (errorHasOccurred) {
-        <partial name="_ErrorSummary"/>
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup) })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">

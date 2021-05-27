@@ -10,7 +10,7 @@
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
 
       @if (errorHasOccurred) {
-        <partial name="_ErrorSummary"/>
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Centre) })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">

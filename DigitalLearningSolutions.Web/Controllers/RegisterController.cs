@@ -54,11 +54,6 @@
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     });
                 TempData.Set(delegateRegistrationData);
-
-                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
-                    (centresDataService.GetActiveCentresAlphabetical());
-
-                return View(delegateRegistrationData.RegisterViewModel);
             }
 
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
@@ -219,12 +214,12 @@
                 return;
             }
 
-            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers.Where
-                (u => u.CentreId == model.Centre);
+            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
+                .Where(u => u.CentreId == model.Centre);
 
             if (duplicateUsers.Count() != 0)
             {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user at this centre with this email address already exists");
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists at this centre");
             }
         }
     }
