@@ -99,8 +99,10 @@
         public void GetCentreDetailsById_should_return_the_correct_values()
         {
             // Given
-            var expectedCentreDetails = CentreTestHelper.GetDefaultCentre(
-                centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String));
+            var expectedCentreDetails = CentreTestHelper.GetDefaultCentre
+            (
+                centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String)
+            );
 
             // When
             var result = centresDataService.GetCentreDetailsById(2);
@@ -181,6 +183,7 @@
                 var telephone = "0118999 88199 9119725   3";
                 var email = "totallyrealemail@noreally.itis";
                 var postcode = "POST CDE";
+                var showOnMap = false;
                 var openingHours = "2:30am - 2:31am Sundays";
                 var webAddress = "really.boring.website";
                 var organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
@@ -192,6 +195,7 @@
                 (
                     2,
                     postcode,
+                    showOnMap,
                     telephone,
                     email,
                     openingHours,
@@ -208,6 +212,7 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
+                    updatedCentre.ShowCentreOnMap.Should().BeFalse();
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
                     updatedCentre.CentreWebAddress.Should().BeEquivalentTo(webAddress);
                     updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);

@@ -27,6 +27,7 @@
         (
             int centreId,
             string postcode,
+            bool showOnMap,
             string? telephone,
             string email,
             string? openingHours,
@@ -53,7 +54,8 @@
 
         public string? GetBannerText(int centreId)
         {
-            return connection.QueryFirstOrDefault<string?>(
+            return connection.QueryFirstOrDefault<string?>
+            (
                 @"SELECT BannerText
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -63,7 +65,8 @@
 
         public string? GetCentreName(int centreId)
         {
-            var name = connection.QueryFirstOrDefault<string?>(
+            var name = connection.QueryFirstOrDefault<string?>
+            (
                 @"SELECT CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -71,7 +74,8 @@
             );
             if (name == null)
             {
-                logger.LogWarning(
+                logger.LogWarning
+                (
                     $"No centre found for centre id {centreId}"
                 );
             }
@@ -81,7 +85,8 @@
 
         public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
         {
-            var centres = connection.Query<(int, string)>(
+            var centres = connection.Query<(int, string)>
+            (
                 @"SELECT CentreID, CentreName
                         FROM Centres
                         WHERE Active = 1
@@ -92,7 +97,8 @@
 
         public Centre? GetCentreDetailsById(int centreId)
         {
-            var centre = connection.QueryFirstOrDefault<Centre>(
+            var centre = connection.QueryFirstOrDefault<Centre>
+            (
                 @"SELECT c.CentreID,
                             c.CentreName,
                             c.RegionID,
@@ -108,6 +114,7 @@
                             c.pwTelephone AS CentreTelephone,
                             c.pwEmail AS CentreEmail,
                             c.pwPostCode AS CentrePostcode,
+                            c.ShowOnMap AS ShowCentreOnMap,
                             c.pwHours AS OpeningHours,
                             c.pwWebURL AS CentreWebAddress,
                             c.pwTrustsCovered AS OrganisationsCovered,
@@ -142,7 +149,8 @@
             string? telephone
         )
         {
-            connection.Execute(
+            connection.Execute
+            (
                 @"UPDATE Centres SET
                     ContactForename = @firstName,
                     ContactSurname = @lastName,
@@ -157,6 +165,7 @@
         (
             int centreId,
             string postcode,
+            bool showOnMap,
             string? telephone = null,
             string? email = null,
             string? openingHours = null,
@@ -166,11 +175,13 @@
             string? otherInformation = null
         )
         {
-            connection.Execute(
+            connection.Execute
+            (
                 @"UPDATE Centres SET
                     pwTelephone = @telephone,
                     pwEmail = @email,
                     pwPostCode = @postcode,
+                    showOnMap = @showOnMap,
                     pwHours = @openingHours,
                     pwWebURL = @webAddress,
                     pwTrustsCovered = @organisationsCovered,
@@ -182,6 +193,7 @@
                     telephone,
                     email,
                     postcode,
+                    showOnMap,
                     openingHours,
                     webAddress,
                     organisationsCovered,
@@ -194,7 +206,8 @@
 
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
-            var info = connection.QueryFirstOrDefault<(string, string, string)>(
+            var info = connection.QueryFirstOrDefault<(string, string, string)>
+            (
                 @"SELECT ContactForename, ContactSurname, ContactEmail
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -205,7 +218,8 @@
 
         public string[] GetCentreIpPrefixes(int centreId)
         {
-            var ipPrefixString = connection.QueryFirstOrDefault<string?>(
+            var ipPrefixString = connection.QueryFirstOrDefault<string?>
+            (
                 @"SELECT IPPrefix
                         FROM Centres
                         WHERE CentreID = @centreId",

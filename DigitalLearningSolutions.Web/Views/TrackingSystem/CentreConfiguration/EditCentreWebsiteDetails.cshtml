@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model EditCentreWebsiteDetailsViewModel
@@ -12,23 +11,13 @@
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.CentreTelephone),
-                                                   nameof(Model.CentreEmail),
-                                                   nameof(Model.CentrePostcode),
-                                                   nameof(Model.OpeningHours),
-                                                   nameof(Model.CentreWebAddress),
-                                                   nameof(Model.OrganisationsCovered),
-                                                   nameof(Model.TrainingVenues),
-                                                   nameof(Model.OtherInformation)
-                                                 })" />
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CentreTelephone), nameof(Model.CentreEmail), nameof(Model.CentrePostcode), nameof(Model.ShowCentreOnMap), nameof(Model.OpeningHours), nameof(Model.CentreWebAddress), nameof(Model.OrganisationsCovered), nameof(Model.TrainingVenues), nameof(Model.OtherInformation) })"/>
     }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre content on DLS website</h1>
@@ -40,7 +29,7 @@
                      populate-with-current-value="true"
                      type="text" spell-check="false"
                      autocomplete="" hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-input asp-for="CentreEmail"
                      label="Centre email"
@@ -48,7 +37,7 @@
                      type="text" spell-check="false"
                      autocomplete="email"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-input asp-for="CentrePostcode"
                      label="Centre postcode"
@@ -57,7 +46,14 @@
                      spell-check="false"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"/>
+
+      <div class="nhsuk-checkboxes__item nhsuk-form-group">
+        <input class="nhsuk-checkboxes__input" type="checkbox" id="ShowCentreOnMap" spellcheck="false" asp-for="ShowCentreOnMap"/>
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowCentreOnMap">
+          Show centre on map
+        </label>
+      </div>
 
       <vc:text-input asp-for="OpeningHours"
                      label="Opening hours"
@@ -66,7 +62,7 @@
                      spell-check="false"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-input asp-for="CentreWebAddress"
                      label="Centre web address"
@@ -74,7 +70,7 @@
                      type="text" spell-check="false"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+                     css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-area asp-for="OrganisationsCovered"
                     label="Organisations covered"
@@ -82,7 +78,7 @@
                     rows="5"
                     spell-check="false"
                     hint-text=""
-                    css-class="nhsuk-u-width-one-half" />
+                    css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-area asp-for="TrainingVenues"
                     label="Training venues"
@@ -90,7 +86,7 @@
                     rows="5"
                     spell-check="false"
                     hint-text=""
-                    css-class="nhsuk-u-width-one-half" />
+                    css-class="nhsuk-u-width-one-half"/>
 
       <vc:text-area asp-for="OtherInformation"
                     label="Other information"
@@ -98,12 +94,12 @@
                     rows="5"
                     spell-check="false"
                     hint-text=""
-                    css-class="nhsuk-u-width-one-half" />
+                    css-class="nhsuk-u-width-one-half"/>
 
       <button class="nhsuk-button nhsuk-u-margin-top-4" type="submit" value="save">Save</button>
     </form>
 
-    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel" />
+    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel"/>
 
   </div>
 </div>
