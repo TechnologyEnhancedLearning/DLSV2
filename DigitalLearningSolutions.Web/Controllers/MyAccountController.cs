@@ -194,22 +194,9 @@
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)
         {
-            var customFields = GetCustomFieldsWithEnteredAnswers(model);
-
-            foreach (var customField in customFields)
-            {
-                if (customField.Mandatory && customField.Answer == null)
-                {
-                    var errorMessage = $"{(customField.Options.Any() ? "Select" : "Enter")} a {customField.CustomPrompt.ToLower()}";
-                    ModelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
-                }
-
-                if (customField.Answer?.Length > 100)
-                {
-                    var errorMessage = $"{customField.CustomPrompt} must be at most 100 characters";
-                    ModelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
-                }
-            }
+            customPromptHelper.ValidateCustomPrompts(User.GetCentreId(),
+                model.Answer1, model.Answer2, model.Answer3, model.Answer4,
+                model.Answer5, model.Answer6, ModelState);
         }
 
         private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(EditDetailsViewModel model, int? userAdminId, int? userDelegateId)

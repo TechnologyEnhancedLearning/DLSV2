@@ -107,6 +107,19 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
+            customPromptHelper.ValidateCustomPrompts
+            (
+
+                (int)data.RegisterViewModel.Centre!,
+                model.Answer1,
+                model.Answer2,
+                model.Answer3,
+                model.Answer4,
+                model.Answer5,
+                model.Answer6,
+                ModelState
+            );
+
             if (!ModelState.IsValid)
             {
                 SetLearnerInformationViewBag(model, (int)data.RegisterViewModel.Centre!);
