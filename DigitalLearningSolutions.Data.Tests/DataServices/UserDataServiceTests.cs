@@ -76,7 +76,7 @@
         public void GetAdminUserByEmailAddress_Returns_admin_user()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(resetPasswordId: 25);
+            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
             var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
