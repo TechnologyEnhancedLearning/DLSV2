@@ -165,10 +165,10 @@
         {
             return connection.Query<AdminUser>(
                 @"SELECT
-                        AdminID,
-                        Forename,
-                        Surname,
-                        Email,
+                        AdminID AS Id,
+                        Forename AS FirstName,
+                        Surname AS LastName,
+                        Email AS EmailAddress,
                         Password,
                         ResetPasswordID
                     FROM AdminUsers
