@@ -76,13 +76,15 @@
                 addRegistrationPromptData = new AddRegistrationPromptData();
                 var id = addRegistrationPromptData.Id;
 
-                Response.Cookies.Append(
+                Response.Cookies.Append
+                (
                     CookieName,
                     id.ToString(),
                     new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    });
+                    }
+                );
                 TempData.Set(addRegistrationPromptData);
 
                 SetViewBagCustomPromptNameOptions();
@@ -91,7 +93,7 @@
             {
                 SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
             }
-            
+
             return View(addRegistrationPromptData.SelectPromptViewModel);
         }
 
@@ -125,7 +127,8 @@
         [HttpPost]
         [Route("Add/ConfigureAnswers")]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptConfigureAnswers(RegistrationPromptAnswersViewModel model, string action)
+        public IActionResult AddRegistrationPromptConfigureAnswers
+            (RegistrationPromptAnswersViewModel model, string action)
         {
             if (action.StartsWith("delete") && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
@@ -149,12 +152,14 @@
                 return View(model);
             }
 
-            customPromptsService.UpdateCustomPromptForCentre(User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
+            customPromptsService.UpdateCustomPromptForCentre
+                (User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
 
             return RedirectToAction("Index");
         }
 
-        private IActionResult RegistrationPromptAnswersPostAddPrompt(RegistrationPromptAnswersViewModel model, bool saveToTempData = false)
+        private IActionResult RegistrationPromptAnswersPostAddPrompt
+            (RegistrationPromptAnswersViewModel model, bool saveToTempData = false)
         {
             if (!ModelState.IsValid)
             {
@@ -176,11 +181,12 @@
             {
                 UpdateTempDataWithAnswersModelValues(model);
             }
-            
+
             return View(model);
         }
 
-        private IActionResult RegistrationPromptAnswersPostRemovePrompt(RegistrationPromptAnswersViewModel model, int index, bool saveToTempData = false)
+        private IActionResult RegistrationPromptAnswersPostRemovePrompt
+            (RegistrationPromptAnswersViewModel model, int index, bool saveToTempData = false)
         {
             IgnoreAddNewAnswerValidation();
 
@@ -212,7 +218,8 @@
             return RedirectToAction("Index");
         }
 
-        private void SetRegistrationPromptAnswersViewModelOptions(RegistrationPromptAnswersViewModel model, string optionsString)
+        private void SetRegistrationPromptAnswersViewModelOptions
+            (RegistrationPromptAnswersViewModel model, string optionsString)
         {
             ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.OptionsString));
             model.OptionsString = optionsString;
@@ -221,7 +228,8 @@
             model.Answer = null;
         }
 
-        private void AddTotalStringLengthRegistrationPromptAnswersViewModelError(RegistrationPromptAnswersViewModel model)
+        private void AddTotalStringLengthRegistrationPromptAnswersViewModelError
+            (RegistrationPromptAnswersViewModel model)
         {
             var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
             ModelState.AddModelError
@@ -239,6 +247,7 @@
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
         }
+
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
             return int.TryParse(action.Remove(0, 6), out index);
