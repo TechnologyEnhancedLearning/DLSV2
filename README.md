@@ -79,7 +79,7 @@ We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.ht
 ### Add a new migration
 Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. The fluent migrator docs have a good example of what a migration should look like: https://fluentmigrator.github.io/.
 
-Once you've added your migration file you need to make sure it's applied when running the app and when running the data unit tests. Do this by adding the migration to the ScanIn call in RegisterMigrationRunner in MigrationHelperMethods.cs, something like:
+Once you've added your migration file you need to make sure it's applied when running the app and when running the data unit tests. Do this by adding the migration's assembly to the ScanIn call in RegisterMigrationRunner in MigrationHelperMethods.cs. If you created your migration in DigitalLearningSolutions.Data.Migrations, you can skip this step as the assembly DigitalLearningSolutions.Data.Migrations is already in the ScanIn procedure. This step should only be necessary if you are adding migrations outside of that project (which you shouldn't be doing). If you do, the ScanIn changes will need to look something like:
 ```
 .ConfigureRunner(rb => rb
   .AddSqlServer2016()
@@ -91,7 +91,7 @@ The migration should now get applied the next time you run the app or when you r
 
 ### Reversing a migration
 If the migration has already been deployed and therefore has run on any other database than your local one, then you should create a new migration to reverse the effects. However if you've just been running it locally then you can:
-* Remove it from the `ScanIn` statement in MigrationHelperMethods.cs
+* If you added the migration's assembly to the 'ScanIn' statement in MigrationHelperMethods.cs, remove it from that `ScanIn` statement
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
 
