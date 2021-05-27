@@ -198,7 +198,7 @@
         {
             var customPrompts = customPromptsService.GetCustomPromptsAlphabeticalList();
             ViewBag.CustomPromptNameOptions =
-                SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(customPrompts, null);
+                SelectListHelper.MapOptionsToSelectListItems(customPrompts);
         }
     }
 }

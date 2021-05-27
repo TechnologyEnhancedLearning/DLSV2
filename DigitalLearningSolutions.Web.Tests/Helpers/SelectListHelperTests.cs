@@ -51,7 +51,7 @@
             };
 
             // When
-            var result = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(inputList, 1);
+            var result = SelectListHelper.MapOptionsToSelectListItems(inputList, 1);
 
             using (new AssertionScope())
             {
@@ -79,7 +79,7 @@
             };
 
             // When
-            var result = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(inputList, Item1);
+            var result = SelectListHelper.MapOptionsToSelectListItems(inputList, Item1);
 
             using (new AssertionScope())
             {

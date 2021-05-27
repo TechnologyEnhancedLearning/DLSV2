@@ -55,13 +55,13 @@
                     });
                 TempData.Set(delegateRegistrationData);
 
-                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
-                    (centresDataService.GetActiveCentresAlphabetical(), null);
+                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
+                    (centresDataService.GetActiveCentresAlphabetical());
 
                 return View(delegateRegistrationData.RegisterViewModel);
             }
 
-            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
                 (centresDataService.GetActiveCentresAlphabetical(), delegateRegistrationData.RegisterViewModel.Centre);
 
             ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
@@ -77,7 +77,7 @@
 
             if (!ModelState.IsValid)
             {
-                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
                     (centresDataService.GetActiveCentresAlphabetical(), model.Centre);
                 return View(model);
             }
@@ -95,7 +95,7 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
             var viewModel = data.LearnerInformationViewModel;
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
                 (jobGroupsDataService.GetJobGroupsAlphabetical(), viewModel.JobGroup);
 
             return View(viewModel);
@@ -107,7 +107,7 @@
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
                     (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
                 return View(model);
             }

@@ -167,7 +167,7 @@
         private IEnumerable<SelectListItem> GetJobGroupItems(int? selectedId)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            return SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(jobGroups, selectedId);
+            return SelectListHelper.MapOptionsToSelectListItems(jobGroups, selectedId);
         }
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
