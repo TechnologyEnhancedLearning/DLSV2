@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Login
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
