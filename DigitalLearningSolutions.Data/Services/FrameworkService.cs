@@ -958,7 +958,8 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return connection.Query<GenericSelectList>(
                 @"SELECT AQ.ID, CASE WHEN AddedByAdminId = @adminId THEN '* ' ELSE '' END + Question + ' (' + InputTypeName + ' ' + CAST(MinValue AS nvarchar) + ' to ' + CAST(MaxValue As nvarchar) + ')' AS Label
                     FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
-                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM FrameworkDefaultQuestions WHERE FrameworkId = @frameworkId)", new { frameworkId, adminId }
+                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM FrameworkDefaultQuestions WHERE FrameworkId = @frameworkId)
+					ORDER BY Label", new { frameworkId, adminId }
                 );
         }
         public IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId)
@@ -1345,7 +1346,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
         public List<Recipient> GetCommentRecipients(int frameworkId, int adminId, int? replyToCommentId)
         {
             return connection.Query<Recipient>(
-                @"SELECT au.Email, au.Forename, au.Surname, CAST(0 AS bit) AS Owner, CAST(0 AS bit) AS Sender
+                @"SELECT au.Email, au.Forename AS FirstName, au.Surname AS LastName, CAST(0 AS bit) AS Owner, CAST(0 AS bit) AS Sender
                     FROM   FrameworkComments AS fwc INNER JOIN
                          AdminUsers AS au ON fwc.AdminID = au.AdminID INNER JOIN
                          Frameworks AS fw1 ON fwc.FrameworkID = fw1.ID AND fwc.AdminID <> fw1.OwnerAdminID
@@ -1401,7 +1402,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
                 @"SELECT COUNT(*)
                     FROM FrameworkReviews
                     WHERE FrameworkID = @frameworkId
-                    AND FrameworkCollaboratorId = @frameworkCollaboratorId",
+                    AND FrameworkCollaboratorId = @frameworkCollaboratorId AND Archived IS NULL",
                 new { frameworkId, frameworkCollaboratorId }
                 );
             if (exists == 0)
@@ -1434,7 +1435,7 @@ WHERE (FrameworkCollaborators.FrameworkID = @FrameworkID) AND (FrameworkReviews.
                     FROM   FrameworkReviews AS FR INNER JOIN
                          FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
                          FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId",
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL",
                 new { frameworkId, adminId, reviewId }).FirstOrDefault();
         }
 

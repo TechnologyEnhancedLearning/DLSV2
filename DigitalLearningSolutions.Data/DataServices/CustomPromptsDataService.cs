@@ -21,7 +21,8 @@
 
         public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId)
         {
-            var result = connection.Query<CentreCustomPromptsResult>(
+            var result = connection.Query<CentreCustomPromptsResult>
+            (
                 @"SELECT 
 	                    c.CentreID, 
 	                    cp1.CustomPrompt AS CustomField1Prompt,
