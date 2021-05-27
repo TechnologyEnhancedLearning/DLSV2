@@ -55,13 +55,12 @@
             }
             if (delegateUser.Approved)
             {
-                logger.LogWarning($"Approval request sent for already approved delegate user id {delegateId}.");
+                logger.LogWarning($"Delegate user id {delegateId} already approved.");
             }
             else
             {
                 userDataService.ApproveDelegateUsers(new[] { delegateId });
-                var delegateApprovalEmail = GenerateDelegateApprovalEmail(delegateUser.CandidateNumber, delegateUser.EmailAddress);
-                emailService.SendEmail(delegateApprovalEmail);
+                SendApprovalEmail(delegateUser);
             }
         }
 
@@ -71,6 +70,18 @@
 
             userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
             foreach (var delegateUser in delegateUsers)
+            {
+                SendApprovalEmail(delegateUser);
+            }
+        }
+
+        private void SendApprovalEmail(DelegateUser delegateUser)
+        {
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+            {
+                logger.LogWarning($"Delegate user id {delegateUser.Id} has no email associated with their account.");
+            }
+            else
             {
                 var delegateApprovalEmail = GenerateDelegateApprovalEmail(delegateUser.CandidateNumber, delegateUser.EmailAddress);
                 emailService.SendEmail(delegateApprovalEmail);
@@ -83,15 +94,14 @@
         {
             string emailSubject = "Digital Learning Solutions Registration Approved";
 
-            // TODO HEEDLS-423 do we want a 'dear X' salutation here?
             var body = new BodyBuilder
                 {
                     TextBody = $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
-                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>"" & {candidateNumber} & ""</b> and the password you chose during registration.
+                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
                     HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
-                                    <p>You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>"" & {candidateNumber} & ""</b> and the password you chose during registration.</p>
+                                    <p>You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
             };

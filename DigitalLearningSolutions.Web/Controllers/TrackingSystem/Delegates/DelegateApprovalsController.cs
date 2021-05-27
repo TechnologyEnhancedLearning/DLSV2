@@ -35,7 +35,7 @@
         [Route("/TrackingSystem/Delegates/Approve")]
         public IActionResult ApproveDelegate(int delegateId)
         {
-            // delegateApprovalsService.ApproveDelegate(delegateId);
+            delegateApprovalsService.ApproveDelegate(delegateId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
 
