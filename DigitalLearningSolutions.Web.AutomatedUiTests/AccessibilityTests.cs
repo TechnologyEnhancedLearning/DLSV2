@@ -48,7 +48,12 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
+        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts", "Manage delegate registration prompts")]
+        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Edit", "Edit delegate registration prompt")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
+        [InlineData("/NotificationPreferences", "Notification preferences")]
+        [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
+        [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
@@ -110,6 +115,25 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             learnerInformationResult.Violations.Should().BeEmpty();
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void AddRegistrationPrompt_journey_has_no_accessibility_errors()
+        {
+            // given
+            LogUserIn();
+            var startUrl = "/TrackingSystem/CentreConfiguration/RegistrationPrompts/Add/SelectPrompt";
+
+            // when
+            driver.Navigate().GoToUrl(baseUrl + startUrl);
+            var selectPromptResult = new AxeBuilder(driver).Analyze();
+            var dropdown = new SelectElement(driver.FindElement(By.Id("CustomPromptId")));
+            dropdown.SelectByValue("1");
+            var selectPromptForm = driver.FindElement(By.TagName("form"));
+            selectPromptForm.Submit();
+
+            // then
+            selectPromptResult.Violations.Should().BeEmpty();
         }
 
         private static ChromeDriver CreateHeadlessChromeDriver()

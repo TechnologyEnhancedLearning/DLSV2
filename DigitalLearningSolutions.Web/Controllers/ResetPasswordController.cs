@@ -1,18 +1,22 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
     public class ResetPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
+        private readonly IPasswordService passwordService;
 
-        public ResetPasswordController(IPasswordResetService passwordResetService)
+        public ResetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService)
         {
             this.passwordResetService = passwordResetService;
+            this.passwordService = passwordService;
         }
 
         [HttpGet]
@@ -28,9 +32,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(email, code);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(email, code);
 
-            if (!matchingUserRefs.Any())
+            TempData.Set(new ResetPasswordData(email, code));
+
+            if (!hashIsValid)
             {
                 return RedirectToAction("Error");
             }
@@ -39,14 +45,32 @@ namespace DigitalLearningSolutions.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(PasswordViewModel viewModel)
+        [ServiceFilter(typeof(RedirectEmptySessionData<ResetPasswordData>))]
+        public async Task<IActionResult> Index(PasswordViewModel viewModel)
         {
+            var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
+
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                resetPasswordData.Email,
+                resetPasswordData.ResetPasswordHash);
+
+            if (!hashIsValid)
+            {
+                TempData.Clear();
+                return RedirectToAction("Error");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
 
-            return RedirectToAction("Index", "Home");
+            await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
+            await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
+
+            TempData.Clear();
+
+            return View("Success");
         }
 
         [HttpGet]

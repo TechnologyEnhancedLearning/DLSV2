@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningMenu
 {
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
     using FakeItEasy;
     using FluentAssertions;
@@ -153,7 +154,7 @@
 
         [Test]
         public void Post_learning_content_should_parse_scorm_url()
-        { 
+        {
             // Given
             const int currentVersion = 55;
             const string diagnosticAssessmentPath = "https://www.dls.nhs.uk/CMS/CMSContent/Course38/PLAssess/04_Digital_Literacy_PL/imsmanifest.xml";

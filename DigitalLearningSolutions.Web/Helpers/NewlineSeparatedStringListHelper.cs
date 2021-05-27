@@ -1,0 +1,34 @@
+﻿namespace DigitalLearningSolutions.Web.Helpers
+{
+    using System.Collections.Generic;
+    using System.Linq;
+
+    public static class NewlineSeparatedStringListHelper
+    {
+        private const string Separator = "\r\n";
+
+        public static (string, List<string>) RemoveStringFromNewlineSeparatedList(string list, int index)
+        {
+            var options = SplitNewlineSeparatedList(list);
+            options.RemoveAt(index);
+            return (JoinNewlineSeparatedList(options), options);
+        }
+
+        public static (string, List<string>) AddStringToNewlineSeparatedList(string? list, string newItem)
+        {
+            var options = list != null ? SplitNewlineSeparatedList(list) : new List<string>();
+            options.Add(newItem);
+            return (JoinNewlineSeparatedList(options), options);
+        }
+
+        public static List<string> SplitNewlineSeparatedList(string? list)
+        {
+            return list == null ? new List<string>() : list.Split(Separator).ToList();
+        }
+
+        public static string JoinNewlineSeparatedList(IEnumerable<string> strings)
+        {
+            return string.Join(Separator, strings);
+        }
+    }
+}

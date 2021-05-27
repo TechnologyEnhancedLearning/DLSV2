@@ -29,7 +29,7 @@ else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
       <div class="nhsuk-width-container">
           <ol class="nhsuk-breadcrumb__list">
             <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
-            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
             <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Send for Review</a></li>
             <li class="nhsuk-breadcrumb__item">Collaborators</li>
           </ol>
@@ -45,10 +45,10 @@ else
       <div class="nhsuk-width-container">
         <ol class="nhsuk-breadcrumb__list">
           <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
           <li class="nhsuk-breadcrumb__item">Collaborators</li>
         </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Back to framework detail</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to framework detail</a></p>
       </div>
     </nav>
   }
@@ -99,7 +99,7 @@ else
               <span class="nhsuk-table-responsive__heading">Actions </span>
               @if (collaborator.FrameworkRole != "Owner")
               {
-                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.FrameworkId" asp-route-id="@collaborator.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="RemoveCollaborator" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-id="@collaborator.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
                   Remove
                 </a>
               }
@@ -126,10 +126,10 @@ else
       <input class="nhsuk-input" id="userEmail" aria-describedby="add-user-hint" type="email" name="userEmail" />
     </div>
   </div>
-  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.FrameworkId">
+  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-frameworkId="@Model.BaseFramework.ID">
     Add  as Contributor
   </button>
-  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-frameworkId="@Model.FrameworkId">
+  <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-frameworkId="@Model.BaseFramework.ID">
     Add as Reviewer
   </button>
 </form>

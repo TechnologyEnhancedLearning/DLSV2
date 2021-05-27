@@ -75,8 +75,9 @@
 
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
-            return user.HasClaim
-                (c => c.Type == CustomClaimTypes.UserCentreAdmin || c.Type == CustomClaimTypes.UserCentreManager || c.Type == CustomClaimTypes.UserUserAdmin);
+            return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
+                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
+                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
         }
     }
 }

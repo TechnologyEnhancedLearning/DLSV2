@@ -6,8 +6,7 @@
 
     public class DefaultQuestionsViewModel
     {
-        public int FrameworkId { get; set; }
-        public string? FrameworkName { get; set; }
+        public BaseFramework BaseFramework { get; set; }
         public SelectList? QuestionSelectList { get; set; }
         public IEnumerable<AssessmentQuestion>? AssessmentQuestions { get; set; }
         public int assessmentQuestionId { get; set; }

@@ -7,11 +7,18 @@
 
     public interface ILoginService
     {
-        public (AdminUser?, List<DelegateUser>) VerifyUsers(
-            string password, AdminUser? unverifiedAdminUser, List<DelegateUser> unverifiedDelegateUsers);
+        public (AdminUser?, List<DelegateUser>) VerifyUsers
+        (
+            string password,
+            AdminUser? unverifiedAdminUser,
+            List<DelegateUser> unverifiedDelegateUsers
+        );
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser,
-            string password);
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser
+        (
+            DelegateUser delegateUser,
+            string password
+        );
     }
 
     public class LoginService : ILoginService
@@ -25,8 +32,12 @@
             this.cryptoService = cryptoService;
         }
 
-        public (AdminUser?, List<DelegateUser>) VerifyUsers(string password, AdminUser? unverifiedAdminUser,
-            List<DelegateUser> unverifiedDelegateUsers)
+        public (AdminUser?, List<DelegateUser>) VerifyUsers
+        (
+            string password,
+            AdminUser? unverifiedAdminUser,
+            List<DelegateUser> unverifiedDelegateUsers
+        )
         {
             var verifiedAdminUser =
                 cryptoService.VerifyHashedPassword(unverifiedAdminUser?.Password, password)
@@ -46,9 +57,9 @@
                 return null;
             }
 
-            var adminUserAssociatedWithDelegate =
-                userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
-            return cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate?.Password, password)
+            var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
+            return adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
+                   cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate.Password, password)
                 ? adminUserAssociatedWithDelegate
                 : null;
         }

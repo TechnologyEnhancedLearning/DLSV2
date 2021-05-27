@@ -25,14 +25,13 @@
             {
                 return StatusCode(403);
             }
-            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var assessmentQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
             var questionList = frameworkService.GetAssessmentQuestions(frameworkId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
             var model = new DefaultQuestionsViewModel()
             {
-                FrameworkId = frameworkId,
-                FrameworkName = (string)framework.FrameworkName,
+                BaseFramework = baseFramework,
                 AssessmentQuestions = assessmentQuestions,
                 QuestionSelectList = questionSelectList
             };
@@ -68,9 +67,10 @@
             }
             else
             {
+                var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
                 var model = new RemoveDefaultQuestionViewModel()
                 {
-                    FrameworkId = frameworkId,
+                    BaseFramework = baseFramework,
                     AssessmentQuestionId = assessmentQuestionId,
                     FrameworkDefaultQuestionUsage = frameworkDefaultQuestionUsage
                 };
@@ -102,15 +102,14 @@
             var assessmentQuestions = frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId);
             var questionList = frameworkService.GetAssessmentQuestionsForCompetency(frameworkCompetencyId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
             var model = new CompetencyAssessmentQuestionsViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 CompetencyName = (string)competency.Name,
                 AssessmentQuestions = assessmentQuestions,
-                QuestionSelectList = questionSelectList,
-                FrameworkConfig = frameworkConfig
+                QuestionSelectList = questionSelectList
             };
             return View("Developer/CompetencyAssessmentQuestions", model);
         }
@@ -229,15 +228,14 @@
             }
             var inputTypes = frameworkService.GetAssessmentQuestionInputTypes();
             var inputTypeSelectList = new SelectList(inputTypes, "ID", "Label");
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
             var model = new AssessmentQuestionViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = name,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
-                InputTypeSelectList = inputTypeSelectList,
-                FrameworkConfig = frameworkConfig
+                InputTypeSelectList = inputTypeSelectList
             };
             return View("Developer/AssessmentQuestion", model);
         }
@@ -264,9 +262,10 @@
                 }
                 var inputTypes = frameworkService.GetAssessmentQuestionInputTypes();
                 var inputTypeSelectList = new SelectList(inputTypes, "ID", "Label");
+                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
                 var model = new AssessmentQuestionViewModel()
                 {
-                    FrameworkId = frameworkId,
+                    DetailFramework = detailFramework,
                     FrameworkCompetencyId = frameworkCompetencyId,
                     Name = name,
                     AssessmentQuestionDetail = assessmentQuestionDetail,
@@ -295,14 +294,13 @@
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
             var model = new AssessmentQuestionViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = assessmentQuestionDetail.Question,
-                AssessmentQuestionDetail = assessmentQuestionDetail,
-                FrameworkConfig = frameworkConfig
+                AssessmentQuestionDetail = assessmentQuestionDetail
             };
             return View("Developer/AssessmentQuestionScoring", model);
         }
@@ -343,14 +341,13 @@
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
             var model = new AssessmentQuestionViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = assessmentQuestionDetail.Question,
-                AssessmentQuestionDetail = assessmentQuestionDetail,
-                FrameworkConfig = frameworkConfig
+                AssessmentQuestionDetail = assessmentQuestionDetail
             };
             return View("Developer/AssessmentQuestionOptions", model);
         }
@@ -472,15 +469,14 @@
                 IncludeComments = assessmentQuestionDetail.IncludeComments,
                 LevelDescriptors = levelDescriptors
             };
-            var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
             var model = new AssessmentQuestionConfirmViewModel()
             {
-                FrameworkId = frameworkId,
+                DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionInputTypeID = assessmentQuestionDetail.AssessmentQuestionInputTypeID,
-                AssessmentQuestion = assessmentQuestion,
-                FrameworkConfig = frameworkConfig
+                AssessmentQuestion = assessmentQuestion
             };
             return View("Developer/AssessmentQuestionConfirm", model);
         }

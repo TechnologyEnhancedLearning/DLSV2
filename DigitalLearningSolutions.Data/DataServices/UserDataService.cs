@@ -14,6 +14,7 @@
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
+        public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
         public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage,
@@ -165,10 +166,10 @@
         {
             return connection.Query<AdminUser>(
                 @"SELECT
-                        AdminID,
-                        Forename,
-                        Surname,
-                        Email,
+                        AdminID AS Id,
+                        Forename AS FirstName,
+                        Surname AS LastName,
+                        Email AS EmailAddress,
                         Password,
                         ResetPasswordID
                     FROM AdminUsers
@@ -190,11 +191,40 @@
                         cd.FirstName,
                         cd.LastName,
                         cd.Password,
-                        cd.Approved
+                        cd.Approved,
+                        cd.ResetPasswordID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
+            ).ToList();
+
+            return users;
+        }
+
+        public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId)
+        {
+            List<DelegateUser> users = connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID,
+                        cd.CandidateNumber,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.EmailAddress,
+                        cd.DateRegistered,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE (cd.Approved = 0)
+                    AND (cd.Active = 1)
+                    AND (cd.CentreID = @centreId)",
+                new { centreId }
             ).ToList();
 
             return users;

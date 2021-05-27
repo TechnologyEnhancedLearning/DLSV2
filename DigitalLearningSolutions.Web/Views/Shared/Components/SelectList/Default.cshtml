@@ -7,7 +7,7 @@
   </label>
   @if (Model.HintText != null)
   {
-    <div class="nhsuk-hint">
+    <div class="nhsuk-hint" id="@Model.Name-hint">
       @Model.HintText
     </div>
   }
@@ -18,7 +18,7 @@
     </span>
   }
   <select class="nhsuk-select @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
-          aria-describedby="@Model.Name-error"
+          aria-describedby="@Model.Name-error @Model.Name-hint"
           id="@Model.Id"
           name="@Model.Name"
           value="@Model.Value"
