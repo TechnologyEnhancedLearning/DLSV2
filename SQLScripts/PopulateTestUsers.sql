@@ -66,6 +66,12 @@ UPDATE [dbo].[Candidates]
         [CandidateID] = 2
 GO
 
+UPDATE [mbdbx101_test].[dbo].[Candidates] 
+SET 
+	EmailAddress = 'kevin.whittaker1@nhs.net', 
+	Password = 'ADyLcAmuAkPwMkZW+ivvk/GCq/0yn0m08eP2hIPPvjKJwmvj6pBfmDrTv16tMz8xww==' 
+WHERE CandidateID = 3;
+
 UPDATE [dbo].[Centres]
     SET
         NotifyEmail = 'notify@test.com'
