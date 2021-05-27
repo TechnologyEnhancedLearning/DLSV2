@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model EditCentreWebsiteDetailsViewModel
@@ -9,6 +8,7 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Edit centre content on DLS website" : "Edit centre content on DLS website";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
