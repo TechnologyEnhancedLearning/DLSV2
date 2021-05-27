@@ -4,6 +4,8 @@
 @using Microsoft.Extensions.Configuration
 @model DelegateApprovalsViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
 @{
     ViewData["Title"] = "Approve delegate registrations";
     ViewData["Application"] = "Tracking System";
@@ -23,10 +25,10 @@
       {
         <partial name="_unapprovedDelegateExpandable" model="delegateApproval" />
       }
-      <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-row nhsuk-u-margin-top-7">
         <div class="nhsuk-grid-column-full">
           <a class="nhsuk-button" href="" role="button">
-            Approve All
+            Approve all
           </a>
         </div>
       </div>
