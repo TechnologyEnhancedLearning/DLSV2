@@ -254,10 +254,12 @@
                     var delegate2 = userDataService.GetDelegateUserById(28);
 
                     delegate1.Approved.Should().BeFalse();
-                    delegate2.Approved.Should().BeFalse();
-
-                    // When
-                    userDataService.ApproveDelegateUsers(ids);
+                    delegate2.Approved.Should().BeFalse();
+
+                    // When
+
+                    userDataService.ApproveDelegateUsers(ids);
+
                     delegate1 = userDataService.GetDelegateUserById(16);
                     delegate2 = userDataService.GetDelegateUserById(28);
 
