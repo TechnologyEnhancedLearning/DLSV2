@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using MailKit.Net.Smtp;
     using MailKit.Security;

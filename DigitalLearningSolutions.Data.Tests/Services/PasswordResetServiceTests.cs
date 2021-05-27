@@ -13,6 +13,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -21,15 +22,15 @@
 
     public class PasswordResetServiceTests
     {
-        private IPasswordResetDataService passwordResetDataService;
-        private IEmailService emailService;
-        private ILogger<PasswordResetService> logger;
-        private PasswordResetService passwordResetService;
-        private IUserService userService;
-        private IClockService clockService;
+        private IPasswordResetDataService passwordResetDataService = null!;
+        private IEmailService emailService = null!;
+        private ILogger<PasswordResetService> logger = null!;
+        private PasswordResetService passwordResetService = null!;
+        private IUserService userService = null!;
+        private IClockService clockService = null!;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
             userService = A.Fake<IUserService>();
             logger = A.Fake<ILogger<PasswordResetService>>();
@@ -113,10 +114,10 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(125));
 
             // When
-            var matchingUserRefs = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, hash);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash);
 
             // Then
-            matchingUserRefs.Count.Should().Be(0);
+            hashIsValid.Should().BeFalse();
         }
 
         [Test]
@@ -144,15 +145,33 @@
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
-            var matchingUsers = await passwordResetService.GetValidMatchingUserReferencesAsync(emailAddress, resetHash);
+            var hashIsValid =
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash);
 
             // Then
-            matchingUsers.Should().BeEquivalentTo(new List<UserReference>
-            {
-                new UserReference {Id = 7, UserType = UserType.DelegateUser},
-                new UserReference {Id = 2, UserType = UserType.DelegateUser},
-                new UserReference {Id = 4, UserType = UserType.AdminUser},
-            }); }
+            hashIsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Removes_reset_password_for_exact_users_matching_email()
+        {
+            // Given
+            var users = (
+                Builder<AdminUser>.CreateNew().With(u => u.ResetPasswordId = 1).Build(),
+                new[] { Builder<DelegateUser>.CreateNew().With(u => u.ResetPasswordId = 4).Build() }.ToList());
+            A.CallTo(() => userService.GetUsersByEmailAddress("email")).Returns(users);
+
+            // When
+            await passwordResetService.InvalidateResetPasswordForEmailAsync("email");
+
+            // Then
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(1))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(4))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
+                .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
+        }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
         {

@@ -16,6 +16,10 @@
 
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
             IEnumerable<DelegateUser> delegateUsers);
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+
+        List<(int id, string value)> GetCustomPromptsAlphabeticalList();
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -47,6 +51,7 @@
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
         }
 
+
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
             IEnumerable<DelegateUser> delegateUsers)
         {
@@ -55,6 +60,16 @@
             return delegateUsers.Select(user =>
                 (user, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(customPrompts, user)))
                 .ToList();
+        }
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCentre(centreId, promptNumber, mandatory, options);
+        }
+
+        public List<(int id, string value)> GetCustomPromptsAlphabeticalList()
+        {
+            return customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(CentreCustomPromptsResult? result)

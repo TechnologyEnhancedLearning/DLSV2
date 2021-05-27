@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
+    using SelfAssessmentHelper = DigitalLearningSolutions.Data.Tests.TestHelpers.SelfAssessmentHelper;
 
     public class SearchHelperTests
     {
@@ -29,7 +30,7 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "d: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
-                Data.Tests.Helpers.SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
+                SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
             };
             completedCourses = new[]

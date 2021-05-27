@@ -16,8 +16,9 @@
 
     public interface IPasswordResetService
     {
-        Task<List<UserReference>> GetValidMatchingUserReferencesAsync(string emailAddress, string resetHash);
+        Task<bool> EmailAndResetPasswordHashAreValidAsync(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
+        Task InvalidateResetPasswordForEmailAsync(string email);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -43,7 +44,7 @@
             this.clockService = clockService;
         }
 
-        public async Task<List<UserReference>> GetValidMatchingUserReferencesAsync(
+        public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash)
         {
@@ -52,12 +53,8 @@
                     emailAddress,
                     resetHash);
 
-            return matchingResetPasswordEntities
-                .Where(resetPassword => resetPassword.IsStillValidAt(clockService.UtcNow))
-                .Select(
-                    resetPassword => new UserReference
-                        { Id = resetPassword.UserId, UserType = resetPassword.UserType })
-                .ToList();
+            return matchingResetPasswordEntities.Any(
+                resetPassword => resetPassword.IsStillValidAt(clockService.UtcNow));
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
@@ -73,6 +70,16 @@
                 user.FirstName,
                 baseUrl);
             emailService.SendEmail(resetPasswordEmail);
+        }
+
+        public async Task InvalidateResetPasswordForEmailAsync(string email)
+        {
+            var resetPasswordIds = userService.GetUsersByEmailAddress(email).GetDistinctResetPasswordIds();
+
+            foreach (var resetPasswordId in resetPasswordIds)
+            {
+                await passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId);
+            }
         }
 
         private string GenerateResetPasswordHash(User user)
@@ -93,7 +100,7 @@
         private static Email GeneratePasswordResetEmail(
             string emailAddress,
             string resetHash,
-            string firstName,
+            string? firstName,
             string baseUrl)
         {
             UriBuilder resetPasswordUrl = new UriBuilder(baseUrl);
@@ -107,15 +114,17 @@
 
             string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
+            var nameToUse = firstName ?? "User";
+
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {firstName},
+                TextBody = $@"Dear {nameToUse},
                             A request has been made to reset the password for your Digital Learning Solutions account.
                             To reset your password please follow this link: {resetPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in two hours.
                             Please don’t reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
-                                    <p>Dear {firstName},</p>
+                                    <p>Dear {nameToUse},</p>
                                     <p>A request has been made to reset the password for your Digital Learning Solutions account.</p>
                                     <p>To reset your password please follow this link: <a href=""{resetPasswordUrl.Uri}"">{resetPasswordUrl.Uri}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>

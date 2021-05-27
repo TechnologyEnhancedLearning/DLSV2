@@ -166,10 +166,10 @@
         {
             return connection.Query<AdminUser>(
                 @"SELECT
-                        AdminID,
-                        Forename,
-                        Surname,
-                        Email,
+                        AdminID AS Id,
+                        Forename AS FirstName,
+                        Surname AS LastName,
+                        Email AS EmailAddress,
                         Password,
                         ResetPasswordID
                     FROM AdminUsers
@@ -182,14 +182,20 @@
         {
             List<DelegateUser> users = connection.Query<DelegateUser>(
                 @"SELECT
-                        CandidateID,
-                        FirstName,
-                        LastName,
-                        EmailAddress,
-                        Password,
-                        ResetPasswordID
-                    FROM Candidates
-                    WHERE (EmailAddress = @emailAddress)",
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        cd.CentreID,
+                        ct.CentreName,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved,
+                        cd.ResetPasswordID
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
             ).ToList();
 

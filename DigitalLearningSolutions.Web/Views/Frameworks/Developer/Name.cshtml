@@ -84,8 +84,12 @@ else
   }
   else
   {
+    @if (Model.PublishStatusID == 3)
+    {
+      <partial name="Shared/_PublishedWarning" />
+               }
     <button class="nhsuk-button" type="submit">
-      Continue
+      Save
     </button>
     <div class="nhsuk-back-link">
       <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">
@@ -97,4 +101,4 @@ else
     </div>
   }
 
-</form>
+    </form>

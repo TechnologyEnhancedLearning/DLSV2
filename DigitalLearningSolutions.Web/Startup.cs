@@ -79,6 +79,7 @@ namespace DigitalLearningSolutions.Web
                 .AddRazorOptions(options =>
                 {
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -134,23 +135,29 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<CustomPromptHelper>();
+            services.AddScoped<IClockService, ClockService>();
 
-            // Register web service filters.
+            RegisterWebServiceFilters(services);
+        }
+
+        private static void RegisterWebServiceFilters(IServiceCollection services)
+        {
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
+            services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
-            services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                   ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
             if (env.IsDevelopment())

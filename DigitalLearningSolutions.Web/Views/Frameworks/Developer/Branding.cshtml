@@ -106,6 +106,10 @@ else
   }
   else
   {
+    @if (Model.DetailFramework.PublishStatusID == 3)
+    {
+      <partial name="Shared/_PublishedWarning" />
+    }
     <button class="nhsuk-button" type="submit">
       Save
     </button>

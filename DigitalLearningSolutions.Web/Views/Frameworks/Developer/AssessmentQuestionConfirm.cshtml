@@ -17,14 +17,14 @@
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworksDashboard">Frameworks</a></li>
         @if (Model.FrameworkCompetencyId == 0)
         {
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Details">Framework Details</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
           <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Default Questions</a></li>
           <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestion.Id == 0 ? "New" : "Edit") Assessment Question</li>
         }
         else
         {
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">@Model.VocabSingular() Assessment Questions</a></li>
           <li class="nhsuk-breadcrumb__item">@(Model.AssessmentQuestion.Id == 0 ? "New" : "Edit") Assessment Question</li>
         }
 
@@ -35,7 +35,7 @@
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
       }
     </div>
   </nav>
@@ -51,16 +51,20 @@
 </div>
 @if (Model.FrameworkCompetencyId == 0 && Model.AssessmentQuestion.Id == 0)
 {
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+  @if (Model.DetailFramework.PublishStatusID == 3)
+  {
+    <partial name="Shared/_PublishedWarning" />
+  }
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit and apply to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit and apply <span class="nhsuk-u-visually-hidden">to existing @Model.VocabPlural().ToLower()</span>
   </a>
-  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SubmitAssessmentQuestion" title="Submit without applying to existing @Model.VocabPlural().ToLower()" asp-route-addToExisting="True" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit <span class="nhsuk-u-visually-hidden">without applying to existing @Model.VocabPlural().ToLower()</span>
   </a>
 }
 else
 {
-  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId">
+  <a class="nhsuk-button" asp-action="SubmitAssessmentQuestion" asp-route-addToExisting="False" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
     Submit
   </a>
 }
@@ -79,7 +83,7 @@ else
 else
 {
   <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+    <a class="nhsuk-back-link__link" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
       <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
       </svg>
