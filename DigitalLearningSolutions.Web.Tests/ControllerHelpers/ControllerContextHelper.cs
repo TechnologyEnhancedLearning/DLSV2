@@ -27,6 +27,16 @@
             return controller;
         }
 
+        public static T WithMockHttpContext<T>(this T controller, HttpContext context) where T : Controller
+        {
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = context
+            };
+
+            return controller;
+        }
+
         public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId, int? adminId = AdminId, int? delegateId = DelegateId) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;

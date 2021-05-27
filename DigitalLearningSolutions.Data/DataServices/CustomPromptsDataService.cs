@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -9,6 +10,8 @@
     {
         public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId);
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+
+        public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -75,6 +78,17 @@
                     WHERE CentreID = @centreId",
                 new {mandatory, options, centreId}
             );
+        }
+
+        public IEnumerable<(int, string)> GetCustomPromptsAlphabetical()
+        {
+            var jobGroups = connection.Query<(int, string)>(
+                @"SELECT CustomPromptID, CustomPrompt
+                        FROM CustomPrompts
+                        WHERE Active = 1
+                        ORDER BY CustomPrompt"
+            );
+            return jobGroups;
         }
     }
 }

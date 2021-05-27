@@ -1,0 +1,64 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+@using Microsoft.Extensions.Configuration
+@model AddRegistrationPromptSelectPromptViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Add delegate registration prompt" : "Add delegate registration prompt";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+}
+
+@if (errorHasOccurred) {
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:error-summary order-of-property-names="@new []{ nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId)}"/>
+    </div>
+  </div>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Add delegate registration prompt</h1>
+  </div>
+</div>
+
+<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="AddRegistrationPromptSelectPrompt">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <vc:select-list asp-for="CustomPromptId"
+                      label="Prompt name"
+                      value="@Model.CustomPromptId?.ToString()"
+                      hint-text=""
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a prompt name"
+                      select-list-options="@ViewBag.CustomPromptNameOptions"/>
+
+      <p class="nhsuk-body-m">
+        Tick the box below if all users that register with your centre are required to fill in this field.
+      </p>
+
+      <div class="nhsuk-checkboxes nhsuk-u-padding-bottom-4">
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="Mandatory" type="checkbox" asp-for="Mandatory">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="Mandatory">
+            This prompt is mandatory
+          </label>
+        </div>
+      </div>
+
+      <button class="nhsuk-button">Next</button>
+    </div>
+  </div>
+</form>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel"/>
+  </div>
+</div>

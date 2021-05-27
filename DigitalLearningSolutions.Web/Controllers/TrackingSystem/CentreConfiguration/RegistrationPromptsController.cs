@@ -1,11 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -13,6 +18,7 @@
     [Route("/TrackingSystem/CentreConfiguration/RegistrationPrompts")]
     public class RegistrationPromptsController : Controller
     {
+        private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
 
         public RegistrationPromptsController(ICustomPromptsService customPromptsService)
@@ -58,6 +64,51 @@
                 "addPrompt" => EditRegistrationPromptPostAddPrompt(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
+        }
+
+        [HttpGet]
+        [Route("Add/SelectPrompt")]
+        public IActionResult AddRegistrationPromptSelectPrompt()
+        {
+            SetViewBagCustomPromptNameOptions();
+
+            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>();
+
+            if (addRegistrationPromptData == null || !Request.Cookies.ContainsKey(CookieName))
+            {
+                addRegistrationPromptData = new AddRegistrationPromptData();
+                var id = addRegistrationPromptData.Id;
+
+                Response.Cookies.Append(
+                    CookieName,
+                    id.ToString(),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    });
+                TempData.Set(addRegistrationPromptData);
+            }
+
+            return View(addRegistrationPromptData.SelectPromptViewModel);
+        }
+
+        [HttpPost]
+        [Route("Add/SelectPrompt")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSelectPrompt(AddRegistrationPromptSelectPromptViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                SetViewBagCustomPromptNameOptions();
+                return View(model);
+            }
+
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            data.SelectPromptViewModel = model;
+            TempData.Set(data);
+
+            // TODO: HEEDLS-453 - redirect to next page
+            return RedirectToAction("Index");
         }
 
         private bool TryGetAnswerIndexFromAction(string action, out int index)
@@ -141,6 +192,13 @@
                 ModelState[key].Errors.Clear();
                 ModelState[key].ValidationState = ModelValidationState.Valid;
             }
+        }
+
+        private void SetViewBagCustomPromptNameOptions()
+        {
+            var customPrompts = customPromptsService.GetCustomPromptsAlphabeticalList();
+            ViewBag.CustomPromptNameOptions =
+                SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(customPrompts, null);
         }
     }
 }

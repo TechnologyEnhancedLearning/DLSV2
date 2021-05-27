@@ -117,6 +117,25 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             summaryResult.Violations.Should().BeEmpty();
         }
 
+        [Fact]
+        public void AddRegistrationPrompt_journey_has_no_accessibility_errors()
+        {
+            // given
+            LogUserIn();
+            var startUrl = "/TrackingSystem/CentreConfiguration/RegistrationPrompts/Add/SelectPrompt";
+
+            // when
+            driver.Navigate().GoToUrl(baseUrl + startUrl);
+            var selectPromptResult = new AxeBuilder(driver).Analyze();
+            var dropdown = new SelectElement(driver.FindElement(By.Id("CustomPromptId")));
+            dropdown.SelectByValue("1");
+            var selectPromptForm = driver.FindElement(By.TagName("form"));
+            selectPromptForm.Submit();
+
+            // then
+            selectPromptResult.Violations.Should().BeEmpty();
+        }
+
         private static ChromeDriver CreateHeadlessChromeDriver()
         {
             var chromeOptions = new ChromeOptions();
