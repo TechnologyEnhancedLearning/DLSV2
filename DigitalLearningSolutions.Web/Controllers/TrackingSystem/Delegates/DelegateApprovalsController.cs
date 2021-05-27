@@ -25,7 +25,7 @@
 
             var delegates = delegateApprovalsService
                 .GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(centreId)
-                .Select(d => new UnapprovedDelegate(d.Item1, d.Item2));
+                .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
 
             var model = new DelegateApprovalsViewModel(delegates);
             return View(model);

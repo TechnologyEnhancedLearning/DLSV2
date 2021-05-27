@@ -7,7 +7,7 @@
 
     public interface IDelegateApprovalsService
     {
-        public List<(DelegateUser, List<CustomPromptWithAnswer>)>
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
             GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId);
     }
 
@@ -22,7 +22,7 @@
             this.customPromptsService = customPromptsService;
         }
 
-        public List<(DelegateUser, List<CustomPromptWithAnswer>)> GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId)
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId)
         {
             var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
             var usersWithPrompts =

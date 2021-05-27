@@ -16,7 +16,7 @@
       <dl class="nhsuk-summary-list">
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Delegate id:
+            Delegate id
           </dt>
           <dd class="nhsuk-summary-list__value">
             @Model.CandidateNumber
@@ -24,15 +24,15 @@
         </div>
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Date registered:
+            Date registered
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.DateRegistered
+            @Model.DateRegistered?.ToShortDateString()
           </dd>
         </div>
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Job group:
+            Job group
           </dt>
           <dd class="nhsuk-summary-list__value">
             @Model.JobGroup

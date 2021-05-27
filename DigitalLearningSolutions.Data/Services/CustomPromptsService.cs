@@ -14,7 +14,7 @@
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser);
 
-        public List<(DelegateUser, List<CustomPromptWithAnswer>)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
             IEnumerable<DelegateUser> delegateUsers);
     }
 
@@ -47,7 +47,7 @@
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
         }
 
-        public List<(DelegateUser, List<CustomPromptWithAnswer>)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
             IEnumerable<DelegateUser> delegateUsers)
         {
             var customPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
