@@ -9,11 +9,11 @@
         {
             Id = Guid.NewGuid();
             SelectPromptViewModel = new AddRegistrationPromptSelectPromptViewModel();
-            ConfigureAnswersViewModel = new AddRegistrationPromptConfigureAnswersViewModel();
+            ConfigureAnswersViewModel = new RegistrationPromptAnswersViewModel();
         }
 
         public Guid Id { get; set; }
         public AddRegistrationPromptSelectPromptViewModel SelectPromptViewModel { get; set; }
-        public AddRegistrationPromptConfigureAnswersViewModel ConfigureAnswersViewModel { get; set; }
+        public RegistrationPromptAnswersViewModel ConfigureAnswersViewModel { get; set; }
     }
 }
