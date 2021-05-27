@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using NUnit.Framework;
@@ -132,7 +131,7 @@
 
             //When
             var firstDelegateUser = UserTestHelper.GetDefaultDelegateUser(1);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(2);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             var thirdDelegateUser = UserTestHelper.GetDefaultDelegateUser(3);
 
             var delegateUsers = new List<DelegateUser>
