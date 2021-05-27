@@ -417,5 +417,41 @@
             // Then
             result.Should().BeTrue();
         }
+
+        [Test]
+        public void NewEmailAddressIsValid_returns_true_for_admin_only_with_unchanged_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, 7, null, 2);
+
+            // Then
+            result.Should().BeTrue();
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void NewEmailAddressIsValid_returns_true_for_delegate_only_with_unchanged_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, null, 2, 2);
+
+            // Then
+            result.Should().BeTrue();
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+        }
     }
 }

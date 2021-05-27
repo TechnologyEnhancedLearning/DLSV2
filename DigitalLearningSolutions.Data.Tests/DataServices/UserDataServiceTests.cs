@@ -73,6 +73,55 @@
         }
 
         [Test]
+        public void GetAdminUserByEmailAddress_Returns_admin_user()
+        {
+            // Given
+            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
+
+            // When
+            var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedAdminUser.Should().NotBeNull();
+                returnedAdminUser!.Id.Should().Be(expectedAdminUser.Id);
+                returnedAdminUser!.FirstName.Should().BeEquivalentTo(expectedAdminUser.FirstName);
+                returnedAdminUser!.LastName.Should().BeEquivalentTo(expectedAdminUser.LastName);
+                returnedAdminUser!.EmailAddress.Should().BeEquivalentTo(expectedAdminUser.EmailAddress);
+                returnedAdminUser!.Password.Should().BeEquivalentTo(expectedAdminUser.Password);
+                returnedAdminUser!.ResetPasswordId.Should().Be(expectedAdminUser.ResetPasswordId);
+            }
+        }
+
+        [Test]
+        public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+
+            //When
+            var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
+                returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
+                returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo(expectedDelegateUser.CandidateNumber);
+                returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
+                returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
+                returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
+                returnedDelegateUsers.First().EmailAddress.Should().BeEquivalentTo(expectedDelegateUser.EmailAddress);
+                returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
+                returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
+                returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
+                returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
+                returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+            }
+        }
+
+        [Test]
         public void UpdateAdminUser_updates_user()
         {
             using (var transaction = new TransactionScope())
