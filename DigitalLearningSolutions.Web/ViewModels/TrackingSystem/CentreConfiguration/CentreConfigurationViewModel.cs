@@ -21,7 +21,7 @@
             CentreTelephone = centre.CentreTelephone;
             CentreEmail = centre.CentreEmail;
             CentrePostcode = centre.CentrePostcode;
-            ShowCentreOnMap = centre.ShowCentreOnMap ? "Yes" : "No";
+            ShowCentreOnMap = centre.ShowOnMap ? "Yes" : "No";
             OpeningHours = centre.OpeningHours;
             CentreWebAddress = centre.CentreWebAddress;
             OrganisationsCovered = SplitMultiValuedStringIntoArray(centre.OrganisationsCovered);

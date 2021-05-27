@@ -114,7 +114,7 @@
                             c.pwTelephone AS CentreTelephone,
                             c.pwEmail AS CentreEmail,
                             c.pwPostCode AS CentrePostcode,
-                            c.ShowOnMap AS ShowCentreOnMap,
+                            c.ShowOnMap,
                             c.pwHours AS OpeningHours,
                             c.pwWebURL AS CentreWebAddress,
                             c.pwTrustsCovered AS OrganisationsCovered,

@@ -46,7 +46,7 @@
                 CentreTelephone = centreTelephone,
                 CentreEmail = centreEmail,
                 CentrePostcode = centrePostcode,
-                ShowCentreOnMap = showCentreOnMap,
+                ShowOnMap = showCentreOnMap,
                 OpeningHours = openingHours,
                 CentreWebAddress = centreWebAddress,
                 OrganisationsCovered = organisationsCovered,

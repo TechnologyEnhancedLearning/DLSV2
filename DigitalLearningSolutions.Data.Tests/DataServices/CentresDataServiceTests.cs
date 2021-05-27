@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -14,7 +13,7 @@
 
     public class CentresDataServiceTests
     {
-        private CentresDataService centresDataService;
+        private CentresDataService centresDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -115,7 +114,7 @@
         public void GetCentreDetailsById_should_return_null_centre_logo_if_logo_is_empty_image()
         {
             // When
-            var result = centresDataService.GetCentreDetailsById(36);
+            var result = centresDataService.GetCentreDetailsById(36)!;
 
             // Then
             result.CentreLogo.Should().BeNull();
@@ -156,7 +155,7 @@
 
                 // When
                 centresDataService.UpdateCentreManagerDetails(2, firstName, lastName, email, telephone);
-                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
 
                 // Then
                 using (new AssertionScope())
@@ -204,7 +203,7 @@
                     trainingVenues,
                     otherInformation
                 );
-                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
 
                 // Then
                 using (new AssertionScope())
@@ -212,7 +211,7 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
-                    updatedCentre.ShowCentreOnMap.Should().BeFalse();
+                    updatedCentre.ShowOnMap.Should().BeFalse();
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
                     updatedCentre.CentreWebAddress.Should().BeEquivalentTo(webAddress);
                     updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);

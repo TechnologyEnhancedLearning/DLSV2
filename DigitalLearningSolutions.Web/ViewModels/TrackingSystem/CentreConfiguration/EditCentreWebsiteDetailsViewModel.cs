@@ -12,7 +12,7 @@
             CentreTelephone = centre.CentreTelephone;
             CentreEmail = centre.CentreEmail;
             CentrePostcode = centre.CentrePostcode;
-            ShowCentreOnMap = centre.ShowCentreOnMap;
+            ShowCentreOnMap = centre.ShowOnMap;
             OpeningHours = centre.OpeningHours;
             CentreWebAddress = centre.CentreWebAddress;
             OrganisationsCovered = centre.OrganisationsCovered;

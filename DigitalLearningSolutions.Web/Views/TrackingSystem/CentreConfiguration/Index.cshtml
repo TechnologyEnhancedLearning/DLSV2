@@ -23,11 +23,11 @@
   <div class="nhsuk-card__content basic-card-content">
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">Centre name:</dt>
+        <dt class="nhsuk-summary-list__key">Centre name</dt>
         <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
       </div>
       <div class="nhsuk-summary-list__row basic-summary-list__row">
-        <dt class="nhsuk-summary-list__key">Region:</dt>
+        <dt class="nhsuk-summary-list__key">Region</dt>
         <dd class="nhsuk-summary-list__value ">@Model.RegionName</dd>
       </div>
     </dl>
@@ -44,7 +44,7 @@
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Notify email:
+          Notify email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.NotifyEmail
@@ -53,7 +53,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Banner text:
+          Banner text
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.BannerText
@@ -62,7 +62,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre signature:
+          Centre signature
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.SignatureImage != null) {
@@ -73,7 +73,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre logo:
+          Centre logo
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.CentreLogo != null) {
@@ -95,7 +95,7 @@
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          First name:
+          First name
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactForename
@@ -104,7 +104,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Last name:
+          Last name
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactSurname
@@ -113,7 +113,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Email:
+          Email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactEmail
@@ -122,7 +122,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Telephone:
+          Telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactTelephone
@@ -149,7 +149,7 @@
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre telephone:
+          Centre telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreTelephone
@@ -158,7 +158,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre email:
+          Centre email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreEmail
@@ -167,7 +167,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre postcode:
+          Centre postcode
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentrePostcode
@@ -176,7 +176,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Show centre on map:
+          Show centre on map
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ShowCentreOnMap
@@ -185,7 +185,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Opening hours:
+          Opening hours
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.OpeningHours
@@ -194,7 +194,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre web address:
+          Centre web address
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreWebAddress
@@ -203,7 +203,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Organisations covered:
+          Organisations covered
         </dt>
         <dd class="nhsuk-summary-list__value">
           <partial name="_CentreStringArray" model="Model.OrganisationsCovered"/>
@@ -212,7 +212,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Training venues:
+          Training venues
         </dt>
         <dd class="nhsuk-summary-list__value">
           <partial name="_CentreStringArray" model="Model.TrainingVenues"/>
@@ -221,7 +221,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Other information:
+          Other information
         </dt>
         <dd class="nhsuk-summary-list__value">
           <partial name="_CentreStringArray" model="Model.OtherInformation"/>
