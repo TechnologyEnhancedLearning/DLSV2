@@ -83,6 +83,7 @@
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,

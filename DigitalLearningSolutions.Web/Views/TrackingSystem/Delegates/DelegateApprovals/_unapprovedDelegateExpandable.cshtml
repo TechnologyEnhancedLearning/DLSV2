@@ -52,7 +52,11 @@
         Approve
       </button>
     </form>
-    <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" href="" role="button">
+    <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-0"
+       asp-controller="DelegateApprovals"
+       asp-action="DelegateRejectionPage"
+       asp-route-delegateId="@Model.Id"
+       role="button">
       Reject
     </a>
   </div>

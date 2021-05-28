@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
@@ -13,10 +13,12 @@
     public class DelegateApprovalsController : Controller
     {
         private readonly IDelegateApprovalsService delegateApprovalsService;
+        private readonly IUserDataService userDataService;
 
-        public DelegateApprovalsController(IDelegateApprovalsService delegateApprovalsService)
+        public DelegateApprovalsController(IDelegateApprovalsService delegateApprovalsService, IUserDataService userDataService)
         {
             this.delegateApprovalsService = delegateApprovalsService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index()
@@ -46,6 +48,23 @@
         {
             var centreId = User.GetCentreId();
             delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
+            return RedirectToAction("Index", "DelegateApprovals");
+        }
+
+        [HttpGet]
+        [Route("/TrackingSystem/Delegates/{delegateId}/Reject")]
+        public IActionResult DelegateRejectionPage(int delegateId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var model = new RejectDelegateViewModel(delegateUser);
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/{delegateId}/Reject")]
+        public IActionResult RejectDelegate(int delegateId)
+        {
+            // delegateApprovalsService.RejectDelegate(delegateId)
             return RedirectToAction("Index", "DelegateApprovals");
         }
     }
