@@ -14,7 +14,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
@@ -68,7 +68,7 @@
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.SignatureImage != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
           }
         </dd>
       </div>
@@ -79,7 +79,7 @@
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.CentreLogo != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
           }
         </dd>
       </div>
@@ -208,7 +208,7 @@
           Organisations covered
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <partial name="_CentreStringArray" model="Model.OrganisationsCovered"/>
+          <span class="preserve-whitespace">@Model.OrganisationsCovered</span>
         </dd>
       </div>
 
@@ -217,7 +217,7 @@
           Training venues
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <partial name="_CentreStringArray" model="Model.TrainingVenues"/>
+          <span class="preserve-whitespace">@Model.TrainingVenues</span>
         </dd>
       </div>
 
@@ -226,7 +226,7 @@
           Other information
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <partial name="_CentreStringArray" model="Model.OtherInformation"/>
+          <span class="preserve-whitespace">@Model.OtherInformation</span>
         </dd>
       </div>
     </dl>
