@@ -257,15 +257,14 @@
                     delegate2.Approved.Should().BeFalse();
 
                     // When
-
                     userDataService.ApproveDelegateUsers(ids);
 
-                    delegate1 = userDataService.GetDelegateUserById(16);
-                    delegate2 = userDataService.GetDelegateUserById(28);
+                    var delegate1AfterUpdate = userDataService.GetDelegateUserById(16);
+                    var delegate2AfterUpdate = userDataService.GetDelegateUserById(28);
 
                     // Then
-                    delegate1.Approved.Should().BeTrue();
-                    delegate2.Approved.Should().BeTrue();
+                    delegate1AfterUpdate.Approved.Should().BeTrue();
+                    delegate2AfterUpdate.Approved.Should().BeTrue();
                 }
                 finally
                 {
