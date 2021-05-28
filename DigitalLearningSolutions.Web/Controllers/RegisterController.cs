@@ -245,7 +245,7 @@
         private void SetLearnerInformationViewBag(LearnerInformationViewModel model, int centreId)
         {
             AddCustomFieldsToViewBag(model, centreId);
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
                 (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
         }
 
