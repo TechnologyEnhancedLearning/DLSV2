@@ -163,6 +163,7 @@
             var centre = centresDataService.GetCentreName((int)data.RegisterViewModel.Centre!);
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
+            AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
 
             return View(viewModel);
         }
@@ -243,6 +244,13 @@
 
         private void SetLearnerInformationViewBag(LearnerInformationViewModel model, int centreId)
         {
+            AddCustomFieldsToViewBag(model, centreId);
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
+                (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
+        }
+
+        private void AddCustomFieldsToViewBag(LearnerInformationViewModel model, int centreId)
+        {
             var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre
             (
                 centreId,
@@ -254,8 +262,7 @@
                 model.Answer6
             );
             ViewBag.CustomFields = customFields;
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue
-                (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
         }
+
     }
 }

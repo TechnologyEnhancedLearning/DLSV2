@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -83,6 +85,21 @@
           </a>
         </dd>
       </div>
+      @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @customField.Answer
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a class="nhsuk-link" asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
+            </a>
+          </dd>
+        </div>
+      }
     </dl>
 
     <form method="post" asp-action="Summary">
