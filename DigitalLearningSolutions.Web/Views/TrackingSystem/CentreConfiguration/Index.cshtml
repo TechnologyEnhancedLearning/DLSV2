@@ -10,6 +10,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No";
 }
 
 @section NavMenuItems {
@@ -180,7 +181,7 @@
           Show centre on map
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.ShowCentreOnMap
+          @showCentreOnMap
         </dd>
       </div>
 
@@ -233,7 +234,7 @@
     <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
       Edit
     </a>
-    @if (Model.ShowCentreOnMap == "Yes") {
+    @if (Model.ShowCentreOnMap) {
       <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
         Preview on website
       </a>

@@ -40,7 +40,7 @@
                 viewModel.CentreTelephone.Should().BeEquivalentTo(centre.CentreTelephone);
                 viewModel.CentreEmail.Should().BeEquivalentTo(centre.CentreEmail);
                 viewModel.CentrePostcode.Should().BeEquivalentTo(centre.CentrePostcode);
-                viewModel.ShowCentreOnMap.Should().BeEquivalentTo("Yes");
+                viewModel.ShowCentreOnMap.Should().BeTrue();
                 viewModel.OpeningHours.Should().BeEquivalentTo(centre.OpeningHours);
                 viewModel.CentreWebAddress.Should().BeEquivalentTo(centre.CentreWebAddress);
                 viewModel.OrganisationsCovered.Should().BeEquivalentTo(centre.OrganisationsCovered);
