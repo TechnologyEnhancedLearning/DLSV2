@@ -21,7 +21,7 @@
             CentreTelephone = centre.CentreTelephone;
             CentreEmail = centre.CentreEmail;
             CentrePostcode = centre.CentrePostcode;
-            ShowCentreOnMap = centre.ShowOnMap ? "Yes" : "No";
+            ShowCentreOnMap = centre.ShowOnMap;
             OpeningHours = centre.OpeningHours;
             CentreWebAddress = centre.CentreWebAddress;
             OrganisationsCovered = SplitMultiValuedStringIntoArray(centre.OrganisationsCovered);
@@ -43,7 +43,7 @@
         public string? CentreTelephone { get; set; }
         public string? CentreEmail { get; set; }
         public string? CentrePostcode { get; set; }
-        public string? ShowCentreOnMap { get; set; }
+        public bool ShowCentreOnMap { get; set; }
         public string? OpeningHours { get; set; }
         public string? CentreWebAddress { get; set; }
         public string[] OrganisationsCovered { get; set; }
