@@ -148,10 +148,10 @@
             try
             {
                 // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
-                var telephone = "0123456789";
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
+                const string telephone = "0123456789";
 
                 // When
                 centresDataService.UpdateCentreManagerDetails(2, firstName, lastName, email, telephone);
@@ -179,15 +179,15 @@
             try
             {
                 // Given
-                var telephone = "0118999 88199 9119725   3";
-                var email = "totallyrealemail@noreally.itis";
-                var postcode = "POST CDE";
-                var showOnMap = false;
-                var openingHours = "2:30am - 2:31am Sundays";
-                var webAddress = "really.boring.website";
-                var organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
-                var trainingVenues = "Olympus Mons, Tharsis, Mars";
-                var otherInformation = "This is not the information you're looking for";
+                const string telephone = "0118999 88199 9119725   3";
+                const string email = "totallyrealemail@noreally.itis";
+                const string postcode = "POST CDE";
+                const bool showOnMap = false;
+                const string openingHours = "2:30am - 2:31am Sundays";
+                const string webAddress = "really.boring.website";
+                const string organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
+                const string trainingVenues = "Olympus Mons, Tharsis, Mars";
+                const string otherInformation = "This is not the information you're looking for";
 
                 // When
                 centresDataService.UpdateCentreWebsiteDetails
