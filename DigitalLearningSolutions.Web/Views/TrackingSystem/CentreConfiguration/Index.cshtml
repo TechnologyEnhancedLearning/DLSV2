@@ -233,9 +233,11 @@
     <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
       Edit
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
-      Preview on website
-    </a>
+    @if (Model.ShowCentreOnMap == "Yes") {
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
+        Preview on website
+      </a>
+    }
 
   </div>
 </details>
