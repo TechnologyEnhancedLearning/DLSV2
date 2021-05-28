@@ -143,6 +143,37 @@
             };
         }
 
+        [HttpGet]
+        [Route("Add/Summary")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSummary()
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList().
+                Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
+            var model = AddRegistrationPromptMappingHelper.MapToSummary(data, promptName);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("Add/Summary")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSummaryPost()
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+
+            customPromptsService.AddCustomPromptToCentre
+            (
+                User.GetCentreId(),
+                data.SelectPromptViewModel.CustomPromptId!.Value,
+                data.SelectPromptViewModel.Mandatory,
+                data.ConfigureAnswersViewModel.OptionsString
+            );
+
+            return RedirectToAction("Index");
+        }
+
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
             IgnoreAddNewAnswerValidation();
@@ -223,8 +254,7 @@
 
             UpdateTempDataWithAnswersModelValues(model);
 
-            // TODO: HEEDLS-454 - redirect to next page
-            return RedirectToAction("Index");
+            return RedirectToAction("AddRegistrationPromptSummary");
         }
 
         private void SetRegistrationPromptAnswersViewModelOptions(
