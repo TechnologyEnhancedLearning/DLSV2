@@ -36,7 +36,14 @@
 <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id">
   @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
   {
-    <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+    if (question.value.AssessmentQuestionInputTypeID == 1)
+    {
+      <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+    }
+    else
+    {
+      <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+    }
   }
 
   <div class="nhsuk-u-margin-top-4">
