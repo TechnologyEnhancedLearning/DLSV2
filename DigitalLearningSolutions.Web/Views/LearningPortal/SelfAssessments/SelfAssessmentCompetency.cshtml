@@ -36,13 +36,13 @@
 <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id">
   @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
   {
-    if (question.value.AssessmentQuestionInputTypeID == 1)
+    if (question.value.AssessmentQuestionInputTypeID == 2)
     {
-      <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+      <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
     }
     else
     {
-      <partial name="SelfAssessments/_SliderQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
+      <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
     }
   }
 

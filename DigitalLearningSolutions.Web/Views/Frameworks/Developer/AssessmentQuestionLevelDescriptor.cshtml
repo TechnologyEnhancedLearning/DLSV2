@@ -48,11 +48,49 @@
       <p class="nhsuk-fieldset__heading">
         @Model.AssessmentQuestionDetail.Question
       </p>
-      <p class="nhsuk-fieldset__heading">Radio button option @Model.LevelDescriptor.LevelValue</p>
+      <p class="nhsuk-fieldset__heading">
+        @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
+        {
+
+          if (Model.LevelDescriptor.LevelValue == 0)
+          {
+            <text>No or false option
+            </text>
+          }
+          else
+          {
+            <text>Yes or true option
+            </text>
+          }
+        }
+        else
+        {
+          <text>Radio button option @Model.LevelDescriptor.LevelValue</text>
+        }
+
+
+      </p>
     </legend>
     <nhs-form-group nhs-validation-for="LevelDescriptor.LevelLabel">
       <label class="nhsuk-label" for="tb-levelLabel-@Model.LevelDescriptor.LevelValue">
-        Option @Model.LevelDescriptor.LevelValue label
+        @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
+        {
+
+          if (Model.LevelDescriptor.LevelValue == 0)
+                {
+            <text>No or false option label
+            </text>
+          }
+                else
+          {
+            <text>Yes or true option label
+            </text>
+          }
+        }
+        else
+        {
+          <text>Option @Model.LevelDescriptor.LevelValue label</text>
+        }
       </label>
       <div class="nhsuk-hint" id="tb-levelLabel-@Model.LevelDescriptor.LevelValue-hint">
         How will this radio button option be labelled?
@@ -62,7 +100,24 @@
     </nhs-form-group>
     <div class="nhsuk-form-group">
       <label class="nhsuk-label" for="tb-levelDescription-@Model.LevelDescriptor.LevelValue">
-        Option @Model.LevelDescriptor.LevelValue description
+        @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
+        {
+
+          if (Model.LevelDescriptor.LevelValue == 0)
+          {
+            <text>No or false option description
+            </text>
+          }
+          else
+          {
+            <text>Yes or true option description
+            </text>
+          }
+        }
+        else
+        {
+          <text>Option @Model.LevelDescriptor.LevelValue description</text>
+        }
       </label>
       <div class="nhsuk-hint" id="tb-levelDescription-@Model.LevelDescriptor.LevelValue-hint">
         What additional description (if any) should be provided for this radio button option?

@@ -15,7 +15,7 @@
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
-        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue);
+        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased);
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
@@ -399,15 +399,16 @@ CA.LaunchCount, CA.SubmittedDate
             }
         }
 
-        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue)
+        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased)
         {
+            int adjustBy = zeroBased ? -1 : 0;
             return connection.Query<LevelDescriptor>(
                @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, 0 AS UpdatedByAdminID
                     FROM
-                    (SELECT TOP (@maxValue) n = ROW_NUMBER() OVER (ORDER BY number)
+                    (SELECT TOP (@maxValue + @adjustBy) n = ROW_NUMBER() OVER (ORDER BY number) - @adjustBy
                     FROM [master]..spt_values) AS q1
                     LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
-                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, minValue, maxValue }
+                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, minValue, maxValue, adjustBy }
                );
         }
     }
