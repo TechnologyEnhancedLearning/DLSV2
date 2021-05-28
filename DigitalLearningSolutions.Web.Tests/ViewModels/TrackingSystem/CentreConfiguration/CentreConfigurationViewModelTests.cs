@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.CentreConfiguration
 {
     using System;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using FluentAssertions;
@@ -20,8 +19,6 @@
                     centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String)
                 );
             var viewModel = new CentreConfigurationViewModel(centre);
-            var expectedTrainingCentres = new[]
-                { "Hollins Park House", "Hollins Lane", "Winwick", "Warrington WA2 8WA" };
 
             // Then
             using (new AssertionScope())
@@ -44,40 +41,9 @@
                 viewModel.OpeningHours.Should().BeEquivalentTo(centre.OpeningHours);
                 viewModel.CentreWebAddress.Should().BeEquivalentTo(centre.CentreWebAddress);
                 viewModel.OrganisationsCovered.Should().BeEquivalentTo(centre.OrganisationsCovered);
-                viewModel.TrainingVenues.Should().BeEquivalentTo(expectedTrainingCentres);
-                viewModel.OtherInformation.Should().BeEmpty();
+                viewModel.TrainingVenues.Should().BeEquivalentTo(centre.TrainingVenues);
+                viewModel.OtherInformation.Should().BeEquivalentTo(centre.OtherInformation);
             }
-        }
-
-        [Test]
-        public void CentreConfigurationViewModel_should_split_training_venues_on_new_lines()
-        {
-            // When
-            var centre = CentreTestHelper.GetDefaultCentre
-            (
-                trainingVenues: "Address Line 1\r\nAddress Line 2\r\nAddress Line 3\r\nAddress Line 4"
-            );
-            var viewModel = new CentreConfigurationViewModel(centre);
-            var expectedTrainingCentres = new[]
-                { "Address Line 1", "Address Line 2", "Address Line 3", "Address Line 4" };
-
-            // Then
-            viewModel.TrainingVenues.Should().BeEquivalentTo(expectedTrainingCentres);
-        }
-
-        [Test]
-        public void CentreConfigurationViewModel_should_not_split_training_venues_if_no_new_lines_found()
-        {
-            // When
-            var centre = CentreTestHelper.GetDefaultCentre
-            (
-                trainingVenues: "Address Line 1, Address Line 2, Address Line 3, Address Line 4"
-            );
-            var viewModel = new CentreConfigurationViewModel(centre);
-            var expectedTrainingCentres = new[] { "Address Line 1, Address Line 2, Address Line 3, Address Line 4" };
-
-            // Then
-            viewModel.TrainingVenues.Should().BeEquivalentTo(expectedTrainingCentres);
         }
     }
 }
