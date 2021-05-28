@@ -219,14 +219,18 @@
                     userDataService.DeleteAllAnswersForPrompt(User.GetCentreId(), promptNumber);
                     // TODO: HEEDLS-381 Delete the prompt on the centre
                     transaction.Complete();
+                    return RedirectToAction("Index");
+
+                }
+                catch
+                {
+                    return RedirectToAction("Error", "LearningSolutions");
                 }
                 finally
                 {
                     transaction.Dispose();
                 }
             }
-
-            return RedirectToAction("Index");
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
