@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @model EditRegistrationPromptViewModel
 
 @{
@@ -22,7 +23,7 @@
 
 <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditRegistrationPrompt">
   <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="save">Save</button>
+    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveString">Save</button>
   </div>
 
   <input type="hidden" asp-for="OptionsString"/>
@@ -72,13 +73,13 @@
                      autocomplete=""
                      hint-text=""
                      css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="addPrompt">Add</button>
+      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptString">Add</button>
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <button name="action" class="nhsuk-button" value="save">Save</button>
+      <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveString">Save</button>
     </div>
   </div>
 </form>

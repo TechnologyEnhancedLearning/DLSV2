@@ -17,6 +17,10 @@
     [Route("/TrackingSystem/CentreConfiguration/RegistrationPrompts")]
     public class RegistrationPromptsController : Controller
     {
+        public const string DeleteString = "delete";
+        public const string AddPromptString = "addPrompt";
+        public const string NextString = "next";
+        public const string SaveString = "save";
         private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
 
@@ -52,15 +56,15 @@
         [Route("{promptNumber}/Edit")]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
-            if (action.StartsWith("delete") && TryGetAnswerIndexFromDeleteAction(action, out var index))
+            if (action.StartsWith(DeleteString) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
                 return RegistrationPromptAnswersPostRemovePrompt(model, index);
             }
 
             return action switch
             {
-                "save" => EditRegistrationPromptPostSave(model),
-                "addPrompt" => RegistrationPromptAnswersPostAddPrompt(model),
+                SaveString => EditRegistrationPromptPostSave(model),
+                AddPromptString => RegistrationPromptAnswersPostAddPrompt(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
@@ -130,15 +134,15 @@
         public IActionResult AddRegistrationPromptConfigureAnswers
             (RegistrationPromptAnswersViewModel model, string action)
         {
-            if (action.StartsWith("delete") && TryGetAnswerIndexFromDeleteAction(action, out var index))
+            if (action.StartsWith(DeleteString) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
                 return RegistrationPromptAnswersPostRemovePrompt(model, index, true);
             }
 
             return action switch
             {
-                "next" => AddRegistrationPromptConfigureAnswersPostNext(model),
-                "addPrompt" => RegistrationPromptAnswersPostAddPrompt(model, true),
+                NextString => AddRegistrationPromptConfigureAnswersPostNext(model),
+                AddPromptString => RegistrationPromptAnswersPostAddPrompt(model, true),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }

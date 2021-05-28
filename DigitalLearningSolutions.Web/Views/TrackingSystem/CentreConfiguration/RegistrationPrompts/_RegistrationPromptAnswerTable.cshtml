@@ -1,4 +1,5 @@
-﻿@model List<string>
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
+@model List<string>
 
 <table class="nhsuk-table">
   <thead role="rowgroup" class="nhsuk-table__head">
@@ -19,7 +20,7 @@
       <td class="nhsuk-table__cell ">
         <button name="action"
                 class="nhsuk-button nhsuk-button--secondary nhsuk-u-padding-bottom-1 nhsuk-u-padding-top-1 nhsuk-u-margin-bottom-0"
-                value="@("delete" + Model.IndexOf(answer))">
+                value="@(RegistrationPromptsController.DeleteString + Model.IndexOf(answer))">
           Remove
         </button>
       </td>
