@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -10,6 +11,7 @@
     public interface IEmailService
     {
         void SendEmail(Email email);
+        void SendEmails(IEnumerable<Email> emails);
     }
 
     public class EmailService : IEmailService
@@ -30,6 +32,55 @@
 
         public void SendEmail(Email email)
         {
+            var mailConfig = GetMailConfig();
+
+            MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
+
+            try
+            {
+                using var client = smtpClientFactory.GetSmtpClient();
+                client.Timeout = 10000;
+                client.Connect(mailConfig.MailServerAddress, mailConfig.MailServerPort);
+
+                client.Authenticate(mailConfig.MailServerUsername, mailConfig.MailServerPassword);
+
+                client.Send(message);
+                client.Disconnect(true);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Sending an email has failed");
+            }
+        }
+
+        public void SendEmails(IEnumerable<Email> emails)
+        {
+            var mailConfig = GetMailConfig();
+
+            using var client = smtpClientFactory.GetSmtpClient();
+            client.Timeout = 10000;
+            client.Connect(mailConfig.MailServerAddress, mailConfig.MailServerPort);
+            client.Authenticate(mailConfig.MailServerUsername, mailConfig.MailServerPassword);
+
+            foreach (var email in emails)
+            {
+                try
+                {
+                    MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
+                    client.Send(message);
+                }
+                catch (Exception error)
+                {
+                    logger.LogError(error, "Sending an email has failed");
+                }
+            }
+
+            client.Disconnect(true);
+        }
+
+        private (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort,
+            string MailSenderAddress) GetMailConfig()
+        {
             var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername)
                                      ?? throw new ConfigValueMissingException(
                                          configService.GetConfigValueMissingExceptionMessage("MailServerUsername"));
@@ -48,23 +99,7 @@
 
             var mailServerPort = int.Parse(mailServerPortString);
 
-            MimeMessage message = CreateMessage(email, mailSenderAddress);
-
-            try
-            {
-                using var client = smtpClientFactory.GetSmtpClient();
-                client.Timeout = 10000;
-                client.Connect(mailServerAddress, mailServerPort);
-
-                client.Authenticate(mailServerUsername, mailServerPassword);
-
-                client.Send(message);
-                client.Disconnect(true);
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error, "Sending an email has failed");
-            }
+            return (mailServerUsername, mailServerPassword, mailServerAddress, mailServerPort, mailSenderAddress);
         }
 
         private MimeMessage CreateMessage(Email email, string mailSenderAddress)
@@ -91,6 +126,7 @@
             message.Body = GetMultipartAlternativeFromBody(email.Body); 
             return message;
         }
+
         private MultipartAlternative GetMultipartAlternativeFromBody(BodyBuilder body)
         {
             //Sets body content encooding to quoated-printable to avoid rejection by NHS email servers

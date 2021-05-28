@@ -66,7 +66,17 @@
             else
             {
                 userDataService.ApproveDelegateUsers(new[] { delegateId });
-                SendApprovalEmail(delegateUser);
+
+                if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+                {
+                    LogNoEmailWarning(delegateUser.Id);
+                }
+                else
+                {
+                    var delegateApprovalEmail = GenerateDelegateApprovalEmail
+                        (delegateUser.CandidateNumber, delegateUser.EmailAddress);
+                    emailService.SendEmail(delegateApprovalEmail);
+                }
             }
         }
 
@@ -75,24 +85,27 @@
             var delegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
 
             userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
+
+            var approvalEmails = new List<Email>();
             foreach (var delegateUser in delegateUsers)
             {
-                SendApprovalEmail(delegateUser);
+                if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+                {
+                    LogNoEmailWarning(delegateUser.Id);
+                }
+                else
+                {
+                    var delegateApprovalEmail = GenerateDelegateApprovalEmail
+                        (delegateUser.CandidateNumber, delegateUser.EmailAddress);
+                    approvalEmails.Add(delegateApprovalEmail);
+                }
             }
+            emailService.SendEmails(approvalEmails);
         }
 
-        private void SendApprovalEmail(DelegateUser delegateUser)
+        private void LogNoEmailWarning(int id)
         {
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-            {
-                logger.LogWarning($"Delegate user id {delegateUser.Id} has no email associated with their account.");
-            }
-            else
-            {
-                var delegateApprovalEmail = GenerateDelegateApprovalEmail
-                    (delegateUser.CandidateNumber, delegateUser.EmailAddress);
-                emailService.SendEmail(delegateApprovalEmail);
-            }
+            logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
         }
 
         private static Email GenerateDelegateApprovalEmail
@@ -101,7 +114,7 @@
             string emailAddress
         )
         {
-            string emailSubject = "Digital Learning Solutions Registration Approved";
+            const string emailSubject = "Digital Learning Solutions Registration Approved";
 
             var body = new BodyBuilder
             {
