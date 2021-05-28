@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -12,6 +13,9 @@
 
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(int centreId,
             DelegateUser? delegateUser);
+
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+            IEnumerable<DelegateUser> delegateUsers);
 
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
 
@@ -45,6 +49,17 @@
             var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPromptsWithAnswers(result.CentreId, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser));
+        }
+
+
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)> GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(int centreId,
+            IEnumerable<DelegateUser> delegateUsers)
+        {
+            var customPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+
+            return delegateUsers.Select(user =>
+                (user, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(customPrompts, user)))
+                .ToList();
         }
 
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)

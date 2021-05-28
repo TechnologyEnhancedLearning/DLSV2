@@ -85,9 +85,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             centresDataService.UpdateCentreWebsiteDetails
             (
                 centreId,
-                model.CentrePostcode,
+                model.CentrePostcode!,
+                model.ShowCentreOnMap,
                 model.CentreTelephone,
-                model.CentreEmail,
+                model.CentreEmail!,
                 model.OpeningHours,
                 model.CentreWebAddress,
                 model.OrganisationsCovered,

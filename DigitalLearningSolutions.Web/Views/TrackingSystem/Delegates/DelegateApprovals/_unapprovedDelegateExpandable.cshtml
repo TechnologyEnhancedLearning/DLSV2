@@ -1,13 +1,56 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UnapprovedDelegate
 
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <span class="nhsuk-details__summary-text">
-      delegate info 1
-    </span>
-  </summary>
-  <div class="nhsuk-details__text">
-    delegate info 2
+@{
+  var emailString = !string.IsNullOrEmpty(Model.Email) ? $"({Model.Email})" : "";
+}
+
+<div class="card-with-buttons nhsuk-panel" id="@Model.Id-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+      <span class="nhsuk-details__summary-text">
+        @Model.FullName @emailString
+      </span>
+    </summary>
+    <div class="nhsuk-details__text nhsuk-u-padding-left-0">
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Delegate id
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CandidateNumber
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Date registered
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.DateRegistered?.ToShortDateString()
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.JobGroup
+          </dd>
+        </div>
+        @foreach (var customPrompt in Model.CustomPrompts)
+        {
+          <partial name="../Shared/_CustomPromptSummaryListRow" model="customPrompt" />
+        }
+      </dl>
+    </div>
+  </details>
+  <div class="flex-row">
+    <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" href="" role="button">
+      Approve
+    </a>
+    <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" href="" role="button">
+      Reject
+    </a>
   </div>
-</details>
+</div>

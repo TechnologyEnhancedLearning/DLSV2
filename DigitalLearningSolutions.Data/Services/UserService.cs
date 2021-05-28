@@ -144,7 +144,7 @@
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId)
         {
             var (adminUser, delegateUser) = GetUsersById(adminUserId, delegateUserId);
-            if (adminUser?.EmailAddress == emailAddress && delegateUser?.EmailAddress == emailAddress)
+            if (!UserEmailHasChanged(adminUser, emailAddress) && !UserEmailHasChanged(delegateUser, emailAddress))
             {
                 return true;
             }
@@ -152,6 +152,11 @@
             var (adminUsersWithNewEmail, delegateUsersWithNewEmail) = GetUsersByEmailAddress(emailAddress);
 
             return adminUsersWithNewEmail == null && delegateUsersWithNewEmail.Count(u => u.CentreId == centreId) == 0;
+        }
+
+        private static bool UserEmailHasChanged(User? adminUser, string emailAddress)
+        {
+            return adminUser != null && adminUser.EmailAddress != emailAddress;
         }
 
         private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts

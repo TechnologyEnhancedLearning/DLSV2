@@ -137,6 +137,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
 
