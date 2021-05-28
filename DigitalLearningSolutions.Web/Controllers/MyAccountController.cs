@@ -88,22 +88,32 @@
 
         private IActionResult EditDetailsPostSave(EditDetailsViewModel model)
         {
-            ValidateCustomPrompts(model);
+            var userAdminId = User.GetAdminId();
+            var userDelegateId = User.GetNullableCandidateId();
 
-            if (!ModelState.IsValid)
+            if (userDelegateId.HasValue)
             {
-                return View(model);
+                ValidateJobGroup(model);
+                ValidateCustomPrompts(model);
             }
 
             if (model.ProfileImageFile != null)
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile),
                     "Preview your new profile picture before saving");
+            }
+            
+            if (!ModelState.IsValid)
+            {
                 return View(model);
             }
 
-            var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetNullableCandidateId();
+            if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            {
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
+                        "A user at this centre with this email address already exists");
+                return View(model);
+            }
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(model, userAdminId, userDelegateId);
 
@@ -172,6 +182,14 @@
             return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
                 delegateUser?.Answer1, delegateUser?.Answer2, delegateUser?.Answer3, delegateUser?.Answer4,
                 delegateUser?.Answer5, delegateUser?.Answer6);
+        }
+
+        private void ValidateJobGroup(EditDetailsViewModel model)
+        {
+            if (!model.JobGroupId.HasValue)
+            {
+                ModelState.AddModelError(nameof(EditDetailsViewModel.JobGroupId), "Select a job group");
+            }
         }
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)

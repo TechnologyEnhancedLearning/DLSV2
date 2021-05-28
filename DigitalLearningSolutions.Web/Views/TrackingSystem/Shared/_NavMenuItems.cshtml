@@ -22,7 +22,7 @@
     </a>
   </li>
 }
-@if (User.HasClaim(c => c.Type == CustomClaimTypes.UserUserAdmin)) {
+@if (User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false) {
   <li class="nhsuk-header__navigation-item">
     <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
       Admin

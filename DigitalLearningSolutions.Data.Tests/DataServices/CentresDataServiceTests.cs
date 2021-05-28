@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -13,7 +13,7 @@
 
     public class CentresDataServiceTests
     {
-        private CentresDataService centresDataService;
+        private CentresDataService centresDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -98,8 +98,10 @@
         public void GetCentreDetailsById_should_return_the_correct_values()
         {
             // Given
-            var expectedCentreDetails = CentreTestHelper.GetDefaultCentre(
-                centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String));
+            var expectedCentreDetails = CentreTestHelper.GetDefaultCentre
+            (
+                centreLogo: Convert.FromBase64String(CentreLogoTestHelper.DefaultCentreLogoAsBase64String)
+            );
 
             // When
             var result = centresDataService.GetCentreDetailsById(2);
@@ -112,7 +114,7 @@
         public void GetCentreDetailsById_should_return_null_centre_logo_if_logo_is_empty_image()
         {
             // When
-            var result = centresDataService.GetCentreDetailsById(36);
+            var result = centresDataService.GetCentreDetailsById(36)!;
 
             // Then
             result.CentreLogo.Should().BeNull();
@@ -146,14 +148,14 @@
             try
             {
                 // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
-                var telephone = "0123456789";
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
+                const string telephone = "0123456789";
 
                 // When
                 centresDataService.UpdateCentreManagerDetails(2, firstName, lastName, email, telephone);
-                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
 
                 // Then
                 using (new AssertionScope())
@@ -177,20 +179,22 @@
             try
             {
                 // Given
-                var telephone = "0118999 88199 9119725   3";
-                var email = "totallyrealemail@noreally.itis";
-                var postcode = "POST CDE";
-                var openingHours = "2:30am - 2:31am Sundays";
-                var webAddress = "really.boring.website";
-                var organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
-                var trainingVenues = "Olympus Mons, Tharsis, Mars";
-                var otherInformation = "This is not the information you're looking for";
+                const string telephone = "0118999 88199 9119725   3";
+                const string email = "totallyrealemail@noreally.itis";
+                const string postcode = "POST CDE";
+                const bool showOnMap = false;
+                const string openingHours = "2:30am - 2:31am Sundays";
+                const string webAddress = "really.boring.website";
+                const string organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
+                const string trainingVenues = "Olympus Mons, Tharsis, Mars";
+                const string otherInformation = "This is not the information you're looking for";
 
                 // When
                 centresDataService.UpdateCentreWebsiteDetails
                 (
                     2,
                     postcode,
+                    showOnMap,
                     telephone,
                     email,
                     openingHours,
@@ -199,7 +203,7 @@
                     trainingVenues,
                     otherInformation
                 );
-                var updatedCentre = centresDataService.GetCentreDetailsById(2);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
 
                 // Then
                 using (new AssertionScope())
@@ -207,6 +211,7 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
+                    updatedCentre.ShowOnMap.Should().BeFalse();
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
                     updatedCentre.CentreWebAddress.Should().BeEquivalentTo(webAddress);
                     updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);

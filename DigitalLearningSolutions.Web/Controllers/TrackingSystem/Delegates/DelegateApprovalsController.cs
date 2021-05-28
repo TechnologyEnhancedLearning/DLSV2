@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
@@ -10,9 +12,22 @@
     [Route("/TrackingSystem/Delegates/Approve")]
     public class DelegateApprovalsController : Controller
     {
+        private readonly IDelegateApprovalsService delegateApprovalsService;
+
+        public DelegateApprovalsController(IDelegateApprovalsService delegateApprovalsService)
+        {
+            this.delegateApprovalsService = delegateApprovalsService;
+        }
+
         public IActionResult Index()
         {
-            var model = new DelegateApprovalsViewModel(new List<UnapprovedDelegate>());
+            var centreId = User.GetCentreId();
+
+            var delegates = delegateApprovalsService
+                .GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(centreId)
+                .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
+
+            var model = new DelegateApprovalsViewModel(delegates);
             return View(model);
         }
     }

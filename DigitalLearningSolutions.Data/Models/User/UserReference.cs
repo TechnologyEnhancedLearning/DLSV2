@@ -4,7 +4,13 @@ namespace DigitalLearningSolutions.Data.Models.User
 
     public class UserReference
     {
-        public int Id { get; set; }
-        public UserType UserType { get; set; }
+        public readonly int Id;
+        public readonly UserType UserType;
+
+        public UserReference(int id, UserType userType)
+        {
+            Id = id;
+            UserType = userType;
+        }
     }
 }
