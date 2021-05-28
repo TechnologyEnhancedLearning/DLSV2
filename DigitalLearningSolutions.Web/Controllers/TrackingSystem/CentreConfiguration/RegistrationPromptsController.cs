@@ -254,7 +254,7 @@
 
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
-            return int.TryParse(action.Remove(0, 6), out index);
+            return int.TryParse(action.Remove(0, DeleteString.Length), out index);
         }
 
         private void SetViewBagCustomPromptNameOptions(int? selectedId = null)
