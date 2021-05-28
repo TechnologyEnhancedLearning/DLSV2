@@ -17,6 +17,7 @@
         public string? CentreTelephone { get; set; }
         public string? CentreEmail { get; set; }
         public string? CentrePostcode { get; set; }
+        public bool ShowOnMap { get; set; }
         public string? OpeningHours { get; set; }
         public string? CentreWebAddress { get; set; }
         public string? OrganisationsCovered { get; set; }
