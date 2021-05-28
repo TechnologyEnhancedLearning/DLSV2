@@ -43,7 +43,7 @@
         [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre")]
         public IActionResult ApproveDelegatesForCentre(int centreId)
         {
-            // delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
+            delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
     }
