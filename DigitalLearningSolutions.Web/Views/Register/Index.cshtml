@@ -10,16 +10,30 @@
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
 
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Centre) })"/>
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Register</h1>
+
         <p class="nhsuk-body-l">
-          Please enter your personal details to start the registration process
+          Please select your centre to start the registration process
           to access all Digital Learning Solutions services.
         </p>
+
+        <vc:select-list
+          asp-for="Centre"
+          label="Centre"
+          value="@Model.Centre?.ToString()"
+          hint-text=""
+          css-class="nhsuk-u-width-full"
+          default-option="Select a centre"
+          select-list-options="@ViewBag.CentreOptions"/>
       </div>
+      
+      <p class="nhsuk-body-l">
+        Now enter your personal details.
+      </p>
 
       <vc:text-input
         asp-for="FirstName"
@@ -50,15 +64,6 @@
         hint-text=""
         autocomplete="email"
         css-class="nhsuk-u-width-one-half"/>
-
-      <vc:select-list
-        asp-for="Centre"
-        label="Centre"
-        value="@Model.Centre?.ToString()"
-        hint-text=""
-        css-class="nhsuk-u-width-full"
-        default-option="Select a centre"
-        select-list-options="@ViewBag.CentreOptions"/>
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
