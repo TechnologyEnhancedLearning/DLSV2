@@ -264,5 +264,15 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetDelegateCountWithAnswerForPrompt_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetDelegateCountWithAnswerForPrompt(2, 1);
+
+            // Then
+            count.Should().Be(3157);
+        }
     }
 }

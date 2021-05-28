@@ -2,6 +2,8 @@
 {
     using System;
     using System.Linq;
+    using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -23,10 +25,16 @@
         public const string SaveAction = "save";
         private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
+        private readonly IUserDataService userDataService;
 
-        public RegistrationPromptsController(ICustomPromptsService customPromptsService)
+        public RegistrationPromptsController
+        (
+            ICustomPromptsService customPromptsService,
+            IUserDataService userDataService
+        )
         {
             this.customPromptsService = customPromptsService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index()
@@ -80,7 +88,8 @@
                 addRegistrationPromptData = new AddRegistrationPromptData();
                 var id = addRegistrationPromptData.Id;
 
-                Response.Cookies.Append(
+                Response.Cookies.Append
+                (
                     CookieName,
                     id.ToString(),
                     new CookieOptions
@@ -176,6 +185,48 @@
             }
 
             return RedirectToAction("Error", "LearningSolutions");
+        }
+
+        [HttpGet]
+        [Route("{promptNumber}/Remove")]
+        public IActionResult RemoveRegistrationPrompt(int promptNumber)
+        {
+            var delegateWithAnswerCount = userDataService.GetDelegateCountWithAnswerForPrompt
+                (User.GetCentreId(), promptNumber);
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(User.GetCentreId());
+            var promptName = customPrompts.CustomPrompts.Single(c => c.CustomPromptNumber == promptNumber).CustomPromptText;
+
+            var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{promptNumber}/Remove")]
+        public IActionResult RemoveRegistrationPrompt(int promptNumber, RemoveRegistrationPromptViewModel model)
+        {
+            if (!model.Confirm)
+            {
+                ModelState.AddModelError
+                    (nameof(RemoveRegistrationPromptViewModel.Confirm), "You must confirm before deleting this prompt");
+                return View(model);
+            }
+
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    userDataService.DeleteAllAnswersForPrompt(User.GetCentreId(), promptNumber);
+                    // TODO: HEEDLS-381 Delete the prompt on the centre
+                    transaction.Complete();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+
+            return RedirectToAction("Index");
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)

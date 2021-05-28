@@ -31,6 +31,10 @@
             string? answer6);
 
         public void ApproveDelegateUsers(params int[] ids);
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
     }
 
     public class UserDataService : IUserDataService
@@ -292,6 +296,26 @@
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
                 new { ids }
+            );
+        }
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return connection.Query<int>(
+                $@"SELECT COUNT(*)
+                        FROM Candidates
+                        WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
+                new { centreId }
+            ).Single();
+        }
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)
+        {
+            connection.Execute(
+                $@"UPDATE Candidates
+                        SET Answer{promptNumber} = NULL
+                        WHERE CentreID = @centreId",
+                new { centreId }
             );
         }
     }
