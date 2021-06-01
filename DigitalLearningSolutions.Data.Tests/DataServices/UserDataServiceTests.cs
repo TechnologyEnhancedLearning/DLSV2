@@ -79,6 +79,29 @@
         }
 
         [Test]
+        public void GetDelegateUserByIdFromCentre_returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(jobGroupName: "Nursing / midwifery");
+
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateUserByIdFromCentre(2, 2);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
+        }
+
+        [Test]
+        public void GetDelegateUserByIdFromCentre_does_not_return_delegate_user_from_wrong_centre()
+        {
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateUserByIdFromCentre(2, 3);
+
+            // Then
+            returnedDelegateUser.Should().BeNull();
+        }
+
+        [Test]
         public void GetUnapprovedDelegateUsersByCentreId_returns_correct_delegate_users()
         {
             // When
