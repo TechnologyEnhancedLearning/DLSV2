@@ -264,5 +264,29 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void RemoveDelegateUser_deletes_delegate_user()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var id = 16;
+                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+
+                    // When
+                    userDataService.RemoveDelegateUser(id);
+
+                    // Then
+                    userDataService.GetDelegateUserById(id).Should().BeNull();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
     }
 }

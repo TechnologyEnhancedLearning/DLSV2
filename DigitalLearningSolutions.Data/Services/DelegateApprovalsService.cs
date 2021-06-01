@@ -17,7 +17,7 @@
 
         public void ApproveDelegate(int delegateId, int centreId);
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
-        public void RejectDelegate(int delegateId);
+        public void RejectDelegate(int delegateId, int centreId);
     }
 
     public class DelegateApprovalsService : IDelegateApprovalsService
@@ -114,7 +114,7 @@
             }
             else
             {
-                // userDataService.RemoveDelegateUser(delegateId);
+                userDataService.RemoveDelegateUser(delegateId);
                 SendRejectionEmail(delegateUser);
             }
         }
