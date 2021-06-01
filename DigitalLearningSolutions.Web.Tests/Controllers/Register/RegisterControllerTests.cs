@@ -6,6 +6,9 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
@@ -13,6 +16,7 @@
 
     public class RegisterControllerTests
     {
+        private RegisterController controller = null!;
         private ICentresDataService centresDataService = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -27,14 +31,16 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
+            controller = new RegisterController
+                    (centresDataService, jobGroupsDataService, registrationService, cryptoService, userService)
+                .WithDefaultContext()
+                .WithMockTempData();
         }
 
         [Test]
         public void IndexPost_with_existing_user_for_centre_fails_validation()
         {
             // Given
-            var registerController = new RegisterController
-                (centresDataService, jobGroupsDataService, registrationService, cryptoService, userService);
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
             var model = new RegisterViewModel
             {
@@ -44,14 +50,38 @@
                 Email = duplicateUser.EmailAddress
             };
             A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
-                .Returns((null, new List<DelegateUser> {UserTestHelper.GetDefaultDelegateUser()}));
+                .Returns((null, new List<DelegateUser> {duplicateUser}));
 
             // When
-            var result = registerController.Index(model);
+            var result = controller.Index(model);
 
             // Then
             A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void IndexPost_with_existing_user_for_different_centre_is_allowed()
+        {
+            // Given
+            controller.TempData.Set(new DelegateRegistrationData());
+            var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
+            var model = new RegisterViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = duplicateUser.CentreId + 1,
+                Email = duplicateUser.EmailAddress
+            };
+            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
+                .Returns((null, new List<DelegateUser> {duplicateUser}));
+
+            // When
+            var result = controller.Index(model);
+
+            // Then
+            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
     }
 }
