@@ -17,6 +17,7 @@
 
         public void ApproveDelegate(int delegateId, int centreId);
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
+        public void RejectDelegate(int delegateId);
     }
 
     public class DelegateApprovalsService : IDelegateApprovalsService
@@ -99,10 +100,41 @@
 
             emailService.SendEmails(approvalEmails);
         }
+        public void RejectDelegate(int delegateId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+
+            if (delegateUser == null)
+            {
+                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found");
+            }
+            if (delegateUser.Approved)
+            {
+                logger.LogWarning($"Delegate user id {delegateId} already approved.");
+            }
+            else
+            {
+                // userDataService.RejectDelegateUser(delegateId);
+                SendRejectionEmail(delegateUser);
+            }
+        }
 
         private void LogNoEmailWarning(int id)
         {
             logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
+        }
+
+        private void SendRejectionEmail(DelegateUser delegateUser)
+        {
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+            {
+                LogNoEmailWarning(delegateUser.Id);
+            }
+            else
+            {
+                var delegateRejectionEmail = GenerateDelegateRejectionEmail(delegateUser.FirstName, delegateUser.EmailAddress);
+                emailService.SendEmail(delegateRejectionEmail);
+            }
         }
 
         private static Email GenerateDelegateApprovalEmail
@@ -124,6 +156,35 @@
                                     <p>You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
+            };
+
+            return new Email(emailSubject, body, emailAddress);
+        }
+
+        private static Email GenerateDelegateRejectionEmail(
+            string? delegateName,
+            string emailAddress)
+        {
+            string emailSubject = "Digital Learning Solutions registration rejected"; // TODO AIR-424 capitalisation inconsistent with approvals
+
+            var body = new BodyBuilder
+            {
+                TextBody = $@"Dear {delegateName},
+                        Your Digital Learning Solutions (DLS) registration at the centre [Centre Name] has been rejected by an administrator.There are several reasons that this may have happened including:
+                        •You registered with a non-work email address which was not recognised by the administrator
+                        •Your DLS centre chooses to manage delegate registration internally
+                        •You have accidentally chosen the wrong centre during the registration process.
+                        If you need access to the DLS platform, please use the <a>Find Your Centre</a> page to locate your local DLS centre and use the contact details provided to ask for help with registration.",
+                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                                <p>Dear {delegateName},</p>
+                                <p>Your Digital Learning Solutions (DLS) registration at the centre [Centre Name] has been rejected by an administrator.There are several reasons that this may have happened including:
+                                    <ul>
+                                        <li>You registered with a non-work email address which was not recognised by the administrator</li>
+                                        <li>Your DLS centre chooses to manage delegate registration internally</li>
+                                        <li>You have accidentally chosen the wrong centre during the registration process.</li>
+                                    </ul>
+                                If you need access to the DLS platform, please use the <a>Find Your Centre</a> page to locate your local DLS centre and use the contact details provided to ask for help with registration.</p>
+                            </body >"
             };
 
             return new Email(emailSubject, body, emailAddress);

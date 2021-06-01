@@ -61,10 +61,10 @@
         }
 
         [HttpPost]
-        [Route("/TrackingSystem/Delegates/{delegateId}/Reject")]
+        [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult RejectDelegate(int delegateId)
         {
-            // delegateApprovalsService.RejectDelegate(delegateId)
+            delegateApprovalsService.RejectDelegate(delegateId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
     }

@@ -31,6 +31,8 @@
             string? answer6);
 
         public void ApproveDelegateUsers(params int[] ids);
+
+        public void RejectDelegateUser(int delegateId);
     }
 
     public class UserDataService : IUserDataService
@@ -293,6 +295,15 @@
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
                 new { ids }
+            );
+        }
+
+        public void RejectDelegateUser(int delegateId)
+        {
+            connection.Execute(
+                @"DELETE FROM Candidates
+                        WHERE CandidateID = @delegateId",
+                new { delegateId }
             );
         }
     }
