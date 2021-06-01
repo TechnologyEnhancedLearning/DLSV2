@@ -23,5 +23,8 @@
         public string? OrganisationsCovered { get; set; }
         public string? TrainingVenues { get; set; }
         public string? OtherInformation { get; set; }
+        public string IpPrefix { get; set; }
+        public int ContractTypeId { get; set; }
+        public string ContractType { get; set; }
     }
 }

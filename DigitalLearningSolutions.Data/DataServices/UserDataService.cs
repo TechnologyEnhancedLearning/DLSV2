@@ -62,12 +62,14 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.AdminID = @id",
                 new { id }
             ).SingleOrDefault();

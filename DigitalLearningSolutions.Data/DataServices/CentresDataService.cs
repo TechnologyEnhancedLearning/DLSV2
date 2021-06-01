@@ -119,9 +119,13 @@
                             c.pwWebURL AS CentreWebAddress,
                             c.pwTrustsCovered AS OrganisationsCovered,
                             c.pwTrainingLocations AS TrainingVenues,
-                            c.pwGeneralInfo AS OtherInformation
+                            c.pwGeneralInfo AS OtherInformation,
+                            c.IPPrefix,
+                            c.ContractTypeID,
+                            ct.ContractType
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN ContractTypes as ct on ct.ContractTypeID = c.ContractTypeId
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
