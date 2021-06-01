@@ -7,6 +7,15 @@
     {
         public EditRegistrationPromptViewModel() { }
 
+        public EditRegistrationPromptViewModel
+            (int promptNumber, string prompt, bool mandatory, string optionsString, string? answer = null)
+            : base(optionsString, answer)
+        {
+            PromptNumber = promptNumber;
+            Prompt = prompt;
+            Mandatory = mandatory;
+        }
+
         public EditRegistrationPromptViewModel(CustomPrompt customPrompt)
         {
             PromptNumber = customPrompt.CustomPromptNumber;

@@ -6,6 +6,14 @@
 
     public class RegistrationPromptAnswersViewModel
     {
+        public RegistrationPromptAnswersViewModel() { }
+
+        public RegistrationPromptAnswersViewModel(string optionsString, string? answer = null)
+        {
+            OptionsString = optionsString;
+            Answer = answer;
+        }
+
         public string? OptionsString { get; set; }
 
         public List<string> Options => NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(OptionsString);

@@ -33,7 +33,7 @@
 
 <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditRegistrationPrompt">
   <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveString">Save</button>
+    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveAction">Save</button>
   </div>
 
   <input type="hidden" asp-for="OptionsString"/>
@@ -83,13 +83,13 @@
                      autocomplete=""
                      hint-text=""
                      css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptString">Add</button>
+      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
     </div>
   </div>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveString">Save</button>
+      <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveAction">Save</button>
     </div>
   </div>
 </form>

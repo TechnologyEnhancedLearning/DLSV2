@@ -17,10 +17,10 @@
     [Route("/TrackingSystem/CentreConfiguration/RegistrationPrompts")]
     public class RegistrationPromptsController : Controller
     {
-        public const string DeleteString = "delete";
-        public const string AddPromptString = "addPrompt";
-        public const string NextString = "next";
-        public const string SaveString = "save";
+        public const string DeleteAction = "delete";
+        public const string AddPromptAction = "addPrompt";
+        public const string NextAction = "next";
+        public const string SaveAction = "save";
         private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
 
@@ -56,15 +56,15 @@
         [Route("{promptNumber}/Edit")]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
-            if (action.StartsWith(DeleteString) && TryGetAnswerIndexFromDeleteAction(action, out var index))
+            if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
                 return RegistrationPromptAnswersPostRemovePrompt(model, index);
             }
 
             return action switch
             {
-                SaveString => EditRegistrationPromptPostSave(model),
-                AddPromptString => RegistrationPromptAnswersPostAddPrompt(model),
+                SaveAction => EditRegistrationPromptPostSave(model),
+                AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
@@ -90,14 +90,9 @@
                     }
                 );
                 TempData.Set(addRegistrationPromptData);
-
-                SetViewBagCustomPromptNameOptions();
             }
-            else
-            {
-                SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
-            }
-
+            
+            SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
             return View(addRegistrationPromptData.SelectPromptViewModel);
         }
 
@@ -134,15 +129,15 @@
         public IActionResult AddRegistrationPromptConfigureAnswers
             (RegistrationPromptAnswersViewModel model, string action)
         {
-            if (action.StartsWith(DeleteString) && TryGetAnswerIndexFromDeleteAction(action, out var index))
+            if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
                 return RegistrationPromptAnswersPostRemovePrompt(model, index, true);
             }
 
             return action switch
             {
-                NextString => AddRegistrationPromptConfigureAnswersPostNext(model),
-                AddPromptString => RegistrationPromptAnswersPostAddPrompt(model, true),
+                NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
+                AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
@@ -175,7 +170,7 @@
 
             if (optionsString.Length > 4000)
             {
-                AddTotalStringLengthRegistrationPromptAnswersViewModelError(model);
+                SetTotalAnswersLengthTooLongError(model);
                 return View(model);
             }
 
@@ -232,8 +227,7 @@
             model.Answer = null;
         }
 
-        private void AddTotalStringLengthRegistrationPromptAnswersViewModelError
-            (RegistrationPromptAnswersViewModel model)
+        private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
         {
             var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
             ModelState.AddModelError
@@ -254,7 +248,7 @@
 
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
-            return int.TryParse(action.Remove(0, DeleteString.Length), out index);
+            return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
         }
 
         private void SetViewBagCustomPromptNameOptions(int? selectedId = null)
