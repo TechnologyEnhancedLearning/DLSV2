@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -19,20 +20,22 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         public void Setup()
         {
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
-            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService);
+            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService)
+                .WithDefaultContext()
+                .WithMockUser(true); ;
         }
 
         [Test]
         public void PostApproveDelegate_calls_correct_method()
         {
             // Given
-            A.CallTo(() => delegateApprovalsService.ApproveDelegate(2)).DoesNothing();
+            A.CallTo(() => delegateApprovalsService.ApproveDelegate(2, 2)).DoesNothing();
 
             // When
             var result = delegateApprovalsController.ApproveDelegate(2);
 
             // Then
-            A.CallTo(() => delegateApprovalsService.ApproveDelegate(2)).MustHaveHappened();
+            A.CallTo(() => delegateApprovalsService.ApproveDelegate(2, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -43,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             A.CallTo(() => delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(2)).DoesNothing();
 
             // When
-            var result = delegateApprovalsController.ApproveDelegatesForCentre(2);
+            var result = delegateApprovalsController.ApproveDelegatesForCentre();
 
             // Then
             A.CallTo(() => delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(2)).MustHaveHappened();
