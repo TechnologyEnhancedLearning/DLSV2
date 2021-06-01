@@ -91,7 +91,7 @@
                 );
                 TempData.Set(addRegistrationPromptData);
             }
-            
+
             SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
             return View(addRegistrationPromptData.SelectPromptViewModel);
         }
@@ -126,8 +126,10 @@
         [HttpPost]
         [Route("Add/ConfigureAnswers")]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptConfigureAnswers
-            (RegistrationPromptAnswersViewModel model, string action)
+        public IActionResult AddRegistrationPromptConfigureAnswers(
+            RegistrationPromptAnswersViewModel model,
+            string action
+        )
         {
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
@@ -157,8 +159,10 @@
             return RedirectToAction("Index");
         }
 
-        private IActionResult RegistrationPromptAnswersPostAddPrompt
-            (RegistrationPromptAnswersViewModel model, bool saveToTempData = false)
+        private IActionResult RegistrationPromptAnswersPostAddPrompt(
+            RegistrationPromptAnswersViewModel model,
+            bool saveToTempData = false
+        )
         {
             if (!ModelState.IsValid)
             {
@@ -184,8 +188,11 @@
             return View(model);
         }
 
-        private IActionResult RegistrationPromptAnswersPostRemovePrompt
-            (RegistrationPromptAnswersViewModel model, int index, bool saveToTempData = false)
+        private IActionResult RegistrationPromptAnswersPostRemovePrompt(
+            RegistrationPromptAnswersViewModel model,
+            int index,
+            bool saveToTempData = false
+        )
         {
             IgnoreAddNewAnswerValidation();
 
@@ -217,8 +224,10 @@
             return RedirectToAction("Index");
         }
 
-        private void SetRegistrationPromptAnswersViewModelOptions
-            (RegistrationPromptAnswersViewModel model, string optionsString)
+        private void SetRegistrationPromptAnswersViewModelOptions(
+            RegistrationPromptAnswersViewModel model,
+            string optionsString
+        )
         {
             ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.OptionsString));
             model.OptionsString = optionsString;
