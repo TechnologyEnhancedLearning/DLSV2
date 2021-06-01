@@ -241,6 +241,11 @@
 
         private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
         {
+            if (model.OptionsString == null || model.OptionsString.Length < 2)
+            {
+                return;
+            }
+
             var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
