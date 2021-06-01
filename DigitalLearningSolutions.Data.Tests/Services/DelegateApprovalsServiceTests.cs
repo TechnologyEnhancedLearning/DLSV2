@@ -82,7 +82,7 @@
             Action action = () => delegateApprovalsService.ApproveDelegate(2, 2);
 
             // Then
-            action.Should().Throw<UserAccountNotFoundException>().WithMessage("Delegate user id 2 not found");
+            action.Should().Throw<UserAccountNotFoundException>().WithMessage("Delegate user id 2 not found at centre id 2.");
             A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(new[] { 2 }))).MustNotHaveHappened();
         }
 
