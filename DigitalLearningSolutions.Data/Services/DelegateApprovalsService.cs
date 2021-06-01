@@ -56,7 +56,7 @@
 
             if (delegateUser == null)
             {
-                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found");
+                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
             }
 
             if (delegateUser.Approved)
