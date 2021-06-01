@@ -10,6 +10,7 @@
     {
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
+        public DelegateUser? GetDelegateUserByIdFromCentre(int delegateId, int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
@@ -105,6 +106,13 @@
             ).SingleOrDefault();
 
             return user;
+        }
+
+        public DelegateUser? GetDelegateUserByIdFromCentre(int delegateId, int centreId)
+        {
+            var user = GetDelegateUserById(delegateId);
+
+            return user?.CentreId == centreId ? user : null;
         }
 
         public AdminUser? GetAdminUserByUsername(string username)

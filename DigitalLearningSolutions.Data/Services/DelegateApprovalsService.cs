@@ -15,7 +15,7 @@
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
             GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId);
 
-        public void ApproveDelegate(int delegateId);
+        public void ApproveDelegate(int delegateId, int centreId);
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
     }
 
@@ -50,9 +50,9 @@
             return usersWithPrompts;
         }
 
-        public void ApproveDelegate(int delegateId)
+        public void ApproveDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateUser = userDataService.GetDelegateUserByIdFromCentre(delegateId, centreId);
 
             if (delegateUser == null)
             {

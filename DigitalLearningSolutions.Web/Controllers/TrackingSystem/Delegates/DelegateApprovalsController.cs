@@ -35,14 +35,16 @@
         [Route("/TrackingSystem/Delegates/Approve")]
         public IActionResult ApproveDelegate(int delegateId)
         {
-            delegateApprovalsService.ApproveDelegate(delegateId);
+            var centreId = User.GetCentreId();
+            delegateApprovalsService.ApproveDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
 
         [HttpPost]
         [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre")]
-        public IActionResult ApproveDelegatesForCentre(int centreId)
+        public IActionResult ApproveDelegatesForCentre()
         {
+            var centreId = User.GetCentreId();
             delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
