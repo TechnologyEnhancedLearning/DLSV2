@@ -80,8 +80,7 @@
                 addRegistrationPromptData = new AddRegistrationPromptData();
                 var id = addRegistrationPromptData.Id;
 
-                Response.Cookies.Append
-                (
+                Response.Cookies.Append(
                     CookieName,
                     id.ToString(),
                     new CookieOptions
@@ -153,8 +152,12 @@
                 return View(model);
             }
 
-            customPromptsService.UpdateCustomPromptForCentre
-                (User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
+            customPromptsService.UpdateCustomPromptForCentre(
+                User.GetCentreId(),
+                model.PromptNumber,
+                model.Mandatory,
+                model.OptionsString
+            );
 
             return RedirectToAction("Index");
         }
@@ -239,8 +242,7 @@
         private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
         {
             var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
-            ModelState.AddModelError
-            (
+            ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
                 $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
             );

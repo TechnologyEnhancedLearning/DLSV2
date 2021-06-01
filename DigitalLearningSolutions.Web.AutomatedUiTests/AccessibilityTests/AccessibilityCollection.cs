@@ -2,7 +2,7 @@
 {
     using Xunit;
 
-    [CollectionDefinition("Accessibility collection")]
+    [CollectionDefinition("Selenium test collection")]
     public class AccessibilityCollection : ICollectionFixture<SeleniumServerFactory<Startup>>
     {
     }

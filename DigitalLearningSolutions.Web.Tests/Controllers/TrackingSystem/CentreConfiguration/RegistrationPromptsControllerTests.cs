@@ -13,7 +13,6 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using NUnit.Framework;
 
     public class RegistrationPromptsControllerTests
@@ -61,20 +60,26 @@
             var model = new EditRegistrationPromptViewModel(1, "Test", false, "Test");
             const string action = "save";
 
-            A.CallTo
-            (
-                () => customPromptsService.UpdateCustomPromptForCentre
-                    (ControllerContextHelper.CentreId, 1, false, "Test")
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCentre(
+                    ControllerContextHelper.CentreId,
+                    1,
+                    false,
+                    "Test"
+                )
             ).DoesNothing();
 
             // When
             var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
-            A.CallTo
-            (
-                () => customPromptsService.UpdateCustomPromptForCentre
-                    (ControllerContextHelper.CentreId, 1, false, "Test")
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCentre(
+                    ControllerContextHelper.CentreId,
+                    1,
+                    false,
+                    "Test"
+                )
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
@@ -86,10 +91,13 @@
             var model = new EditRegistrationPromptViewModel(1, "Test", false, "Test", "Answer");
             const string action = "addPrompt";
 
-            A.CallTo
-            (
-                () => customPromptsService.UpdateCustomPromptForCentre
-                    (ControllerContextHelper.CentreId, 1, false, "Test")
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCentre(
+                    ControllerContextHelper.CentreId,
+                    1,
+                    false,
+                    "Test"
+                )
             ).DoesNothing();
 
             // When
@@ -165,11 +173,7 @@
         [Test]
         public void AddRegistrationPromptSelectPrompt_post_updates_temp_data_and_redirects()
         {
-            var expectedPromptModel = new AddRegistrationPromptSelectPromptViewModel
-            {
-                CustomPromptId = 1,
-                Mandatory = true
-            };
+            var expectedPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
             var initialTempData = new AddRegistrationPromptData();
             registrationPromptsController.TempData.Set(initialTempData);
 
@@ -192,7 +196,8 @@
             const string action = "next";
 
             // When
-            var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(expectedAnswerModel, action);
+            var result =
+                registrationPromptsController.AddRegistrationPromptConfigureAnswers(expectedAnswerModel, action);
 
             // Then
             AssertSelectPromptViewModelIsExpectedModel(expectedPromptModel);
@@ -205,18 +210,19 @@
         {
             // Given
             var initialSelectPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
-            
+
             var inputAnswersViewModel = new RegistrationPromptAnswersViewModel("Test", "Answer");
             var expectedConfigureAnswerViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
-            
+
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
-            
+
             const string action = "addPrompt";
 
             // When
-            var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(inputAnswersViewModel, action);
+            var result =
+                registrationPromptsController.AddRegistrationPromptConfigureAnswers(inputAnswersViewModel, action);
 
             // Then
             using (new AssertionScope())
@@ -238,11 +244,11 @@
             var expectedViewModel = new RegistrationPromptAnswersViewModel("Answer");
 
             const string action = "delete0";
-            
+
             var initialTempData = new AddRegistrationPromptData
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
-            
+
             // When
             var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(initialViewModel, action);
 
@@ -273,7 +279,8 @@
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
         {
             result.Should().BeViewResult();
-            result.As<ViewResult>().Model.As<RegistrationPromptAnswersViewModel>().Options.Count.Should().Be(expectedCount);
+            result.As<ViewResult>().Model.As<RegistrationPromptAnswersViewModel>().Options.Count.Should()
+                .Be(expectedCount);
         }
 
         private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptViewModel promptModel)

@@ -5,7 +5,7 @@
     using OpenQA.Selenium;
     using Xunit;
 
-    [Collection("Accessibility collection")]
+    [Collection("Selenium test collection")]
     public class AccessibilityTestsBase : IDisposable
     {
         internal readonly string BaseUrl;
