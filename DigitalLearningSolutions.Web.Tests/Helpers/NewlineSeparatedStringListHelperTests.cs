@@ -17,29 +17,20 @@
         public void RemoveStringFromNewlineSeparatedList_returns_expected_values()
         {
             // When
-            var (resultString, resultList) = NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(ItemList, 1);
+            var resultString = NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(ItemList, 1);
 
             // Then
-            using (new AssertionScope())
-            {
-                resultList.Count.Should().Be(1);
-                resultString.Should().BeEquivalentTo(Item1);
-            }
+            resultString.Should().BeEquivalentTo(Item1);
         }
 
         [Test]
         public void AddStringToNewlineSeparatedList_returns_expected_values()
         {
             // When
-            var (resultString, resultList) = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(Item1, Item2);
+            var resultString = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(Item1, Item2);
 
             // Then
-            using (new AssertionScope())
-            {
-                resultList.Count.Should().Be(2);
-                resultList.Should().BeEquivalentTo(items);
-                resultString.Should().BeEquivalentTo(ItemList);
-            }
+            resultString.Should().BeEquivalentTo(ItemList);
         }
 
         [Test]
