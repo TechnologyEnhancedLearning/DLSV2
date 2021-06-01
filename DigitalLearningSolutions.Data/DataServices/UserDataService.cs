@@ -32,7 +32,7 @@
 
         public void ApproveDelegateUsers(params int[] ids);
 
-        public void RejectDelegateUser(int delegateId);
+        public void RemoveDelegateUser(int delegateId);
     }
 
     public class UserDataService : IUserDataService
@@ -298,7 +298,7 @@
             );
         }
 
-        public void RejectDelegateUser(int delegateId)
+        public void RemoveDelegateUser(int delegateId)
         {
             connection.Execute(
                 @"DELETE FROM Candidates

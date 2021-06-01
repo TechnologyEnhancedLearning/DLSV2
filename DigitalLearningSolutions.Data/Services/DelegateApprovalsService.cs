@@ -114,7 +114,7 @@
             }
             else
             {
-                // userDataService.RejectDelegateUser(delegateId);
+                // userDataService.RemoveDelegateUser(delegateId);
                 SendRejectionEmail(delegateUser);
             }
         }
