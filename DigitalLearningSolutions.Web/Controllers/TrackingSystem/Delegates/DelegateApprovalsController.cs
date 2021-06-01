@@ -64,7 +64,8 @@
         [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult RejectDelegate(int delegateId)
         {
-            delegateApprovalsService.RejectDelegate(delegateId);
+            var centreId = User.GetCentreId();
+            delegateApprovalsService.RejectDelegate(delegateId, centreId);
             return RedirectToAction("Index", "DelegateApprovals");
         }
     }

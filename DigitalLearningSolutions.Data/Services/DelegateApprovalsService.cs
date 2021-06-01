@@ -100,28 +100,23 @@
 
             emailService.SendEmails(approvalEmails);
         }
-        public void RejectDelegate(int delegateId)
+        public void RejectDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateUser = userDataService.GetDelegateUserByIdFromCentre(delegateId, centreId);
 
             if (delegateUser == null)
             {
-                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found");
+                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
             }
             if (delegateUser.Approved)
             {
-                logger.LogWarning($"Delegate user id {delegateId} already approved.");
+                logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
             }
             else
             {
                 // userDataService.RemoveDelegateUser(delegateId);
                 SendRejectionEmail(delegateUser);
             }
-        }
-
-        private void LogNoEmailWarning(int id)
-        {
-            logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
         }
 
         private void SendRejectionEmail(DelegateUser delegateUser)
@@ -135,6 +130,11 @@
                 var delegateRejectionEmail = GenerateDelegateRejectionEmail(delegateUser.FirstName, delegateUser.EmailAddress);
                 emailService.SendEmail(delegateRejectionEmail);
             }
+        }
+
+        private void LogNoEmailWarning(int id)
+        {
+            logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
         }
 
         private static Email GenerateDelegateApprovalEmail
