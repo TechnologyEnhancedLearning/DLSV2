@@ -301,7 +301,54 @@
         public void RemoveDelegateUser(int delegateId)
         {
             connection.Execute(
-                @"DELETE FROM Candidates
+                @"
+                    DELETE FROM AssessAttempts
+	                    WHERE CandidateID = @delegateId
+
+                    DELETE FROM NotificationUsers
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM CandidateAssessments
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM FilteredLearningActivity
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM GroupDelegates
+                        WHERE DelegateID = @delegateId
+
+                    DELETE FROM kbVideoTrack
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM ReflectiveAccounts
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM SelfAssessmentComments
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM SelfAssessmentResults
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM Sessions
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM aspProgressLearningLogItems
+	                    WHERE aspProgressID IN (SELECT aspProgressID FROM aspProgress
+                            WHERE ProgressID IN (SELECT ProgressID FROM Progress WHERE CandidateID = @delegateId))
+
+                    DELETE FROM aspProgress
+	                    WHERE ProgressID IN (SELECT ProgressID FROM Progress WHERE CandidateID = @delegateId)
+
+                    DELETE FROM ProgressLearningLogItems
+	                    WHERE ProgressID IN (SELECT ProgressID FROM Progress WHERE CandidateID = @delegateId)
+
+                    DELETE FROM ProgressContributors
+	                    WHERE CandidateID = @delegateId
+
+                    DELETE FROM Progress
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM Candidates
                         WHERE CandidateID = @delegateId",
                 new { delegateId }
             );
