@@ -57,25 +57,32 @@
         {
             var mailConfig = GetMailConfig();
 
-            using var client = smtpClientFactory.GetSmtpClient();
-            client.Timeout = 10000;
-            client.Connect(mailConfig.MailServerAddress, mailConfig.MailServerPort);
-            client.Authenticate(mailConfig.MailServerUsername, mailConfig.MailServerPassword);
-
-            foreach (var email in emails)
+            try
             {
-                try
-                {
-                    MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
-                    client.Send(message);
-                }
-                catch (Exception error)
-                {
-                    logger.LogError(error, "Sending an email has failed");
-                }
-            }
+                using var client = smtpClientFactory.GetSmtpClient();
+                client.Timeout = 10000;
+                client.Connect(mailConfig.MailServerAddress, mailConfig.MailServerPort);
+                client.Authenticate(mailConfig.MailServerUsername, mailConfig.MailServerPassword);
 
-            client.Disconnect(true);
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
+                        client.Send(message);
+                    }
+                    catch (Exception error)
+                    {
+                        logger.LogError(error, "Sending an email has failed");
+                    }
+                }
+
+                client.Disconnect(true);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Sending emails has failed");
+            }
         }
 
         private (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort,

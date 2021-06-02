@@ -52,9 +52,9 @@
 
         public void ApproveDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserByIdFromCentre(delegateId, centreId);
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
-            if (delegateUser == null)
+            if (delegateUser == null || delegateUser.CentreId != centreId)
             {
                 throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
             }
@@ -65,18 +65,10 @@
             }
             else
             {
-                userDataService.ApproveDelegateUsers(new[] { delegateId });
+                var delegateList = new List<DelegateUser>{ delegateUser };
+                userDataService.ApproveDelegateUsers(delegateList.Select(d => d.Id));
 
-                if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
-                {
-                    LogNoEmailWarning(delegateUser.Id);
-                }
-                else
-                {
-                    var delegateApprovalEmail = GenerateDelegateApprovalEmail
-                        (delegateUser.CandidateNumber, delegateUser.EmailAddress);
-                    emailService.SendEmail(delegateApprovalEmail);
-                }
+                SendDelegateApprovalEmails(delegateList);
             }
         }
 
@@ -86,6 +78,11 @@
 
             userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
 
+            SendDelegateApprovalEmails(delegateUsers);
+        }
+
+        private void SendDelegateApprovalEmails(List<DelegateUser> delegateUsers)
+        {
             var approvalEmails = new List<Email>();
             foreach (var delegateUser in delegateUsers)
             {
@@ -100,6 +97,7 @@
                     approvalEmails.Add(delegateApprovalEmail);
                 }
             }
+
             emailService.SendEmails(approvalEmails);
         }
 
