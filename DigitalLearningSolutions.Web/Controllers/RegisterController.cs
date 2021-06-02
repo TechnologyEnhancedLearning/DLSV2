@@ -83,6 +83,12 @@
             }
 
             var data = TempData.Peek<DelegateRegistrationData>()!;
+
+            if (data.RegisterViewModel.Centre != model.Centre)
+            {
+                ClearCustomPromptAnswers(data.LearnerInformationViewModel);
+            }
+
             data.RegisterViewModel = model;
             TempData.Set(data);
 
@@ -262,6 +268,16 @@
                 model.Answer6
             );
             ViewBag.CustomFields = customFields;
+        }
+
+        private void ClearCustomPromptAnswers(LearnerInformationViewModel model)
+        {
+            model.Answer1 = null;
+            model.Answer2 = null;
+            model.Answer3 = null;
+            model.Answer4 = null;
+            model.Answer5 = null;
+            model.Answer6 = null;
         }
 
     }
