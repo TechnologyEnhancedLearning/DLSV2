@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Drawing.Design;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class UserTestHelper
@@ -58,6 +59,7 @@
             bool summaryReports = false,
             bool isUserAdmin = true,
             int categoryId = 1,
+            string? categoryName = "Undefined",
             bool isSupervisor = true,
             bool isTrainer = true,
             bool isFrameworkDeveloper = true
@@ -82,6 +84,7 @@
                 SummaryReports = summaryReports,
                 IsUserAdmin = isUserAdmin,
                 CategoryId = categoryId,
+                CategoryName = categoryName,
                 IsSupervisor = isSupervisor,
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper

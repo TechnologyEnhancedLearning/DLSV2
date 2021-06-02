@@ -129,12 +129,14 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
             ).FirstOrDefault();

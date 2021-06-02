@@ -4,11 +4,25 @@
 
     public class CentreDashboardViewModel
     {
-        public CentreDashboardViewModel(Centre centre, string? firstName, string? categoryName, string userIpAddress)
+        public CentreDashboardViewModel
+        (
+            Centre centre,
+            string? firstName,
+            string? categoryName,
+            string userIpAddress,
+            int delegates,
+            int courses,
+            int admins,
+            int helpTickets
+        )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress);
             FirstName = firstName ?? "User";
             CourseCategory = categoryName ?? "all";
+            Delegates = delegates;
+            Courses = courses;
+            Admins = admins;
+            HelpTickets = helpTickets;
         }
 
         public string FirstName { get; set; }

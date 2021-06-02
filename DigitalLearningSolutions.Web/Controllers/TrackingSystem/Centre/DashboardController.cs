@@ -10,10 +10,11 @@
     [Route("/TrackingSystem/Centre/Dashboard")]
     public class DashboardController : Controller
     {
-        private readonly IUserDataService userDataService;
         private readonly ICentresDataService centresDataService;
+        private readonly IUserDataService userDataService;
 
-        public DashboardController(
+        public DashboardController
+        (
             IUserDataService userDataService,
             ICentresDataService centresDataService
         )
@@ -27,14 +28,18 @@
             var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value);
             var centre = centresDataService.GetCentreDetailsById(User.GetCentreId());
 
-            var model = new CentreDashboardViewModel(centre!, adminUser!.FirstName, adminUser!.CategoryName, Request.GetUserIpAddressFromRequest())
-            {
-                Delegates = 50,
-                Courses = 12,
-                Admins = 2,
-                HelpTickets = 11
-            };
-            
+            // TODO: HEEDLS-473 populate these numbers from the database
+            var model = new CentreDashboardViewModel(
+                centre!,
+                adminUser!.FirstName,
+                adminUser!.CategoryName,
+                Request.GetUserIpAddressFromRequest(),
+                50,
+                12,
+                2,
+                11
+            );
+
             return View(model);
         }
     }
