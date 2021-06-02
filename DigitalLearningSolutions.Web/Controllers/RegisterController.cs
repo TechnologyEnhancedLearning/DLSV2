@@ -59,6 +59,8 @@
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
                 (centresDataService.GetActiveCentresAlphabetical(), delegateRegistrationData.RegisterViewModel.Centre);
 
+            // Check this email and centre combination doesn't already exist in case we were redirected
+            // back here by the user trying to submit the final page of the form
             ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
 
             return View(delegateRegistrationData.RegisterViewModel);
