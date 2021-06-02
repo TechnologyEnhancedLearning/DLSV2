@@ -131,7 +131,7 @@
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(approved: false);
 
-            A.CallTo(() => userDataService.GetDelegateUserByIdFromCentre(2, 2)).Returns(expectedDelegateUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
             A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
@@ -149,7 +149,7 @@
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
-            A.CallTo(() => userDataService.GetDelegateUserByIdFromCentre(2, 2)).Returns(expectedDelegateUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
             A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
