@@ -1,45 +1,45 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
 @model AssessmentQuestion
 
-  <div class="nhsuk-form-group">
-    @if (Model.AssessmentQuestionInputTypeID == 1)
-    {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="Model" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.MinValue } })" />
-    }
-    else
-    {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="Model" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.MinValue } })" />
-    }
-  </div>
-  @if (Model.IncludeComments)
+<div class="nhsuk-form-group">
+  @if (Model.AssessmentQuestionInputTypeID == 2)
   {
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="tb-supportingComments-@Model.Id">
-        Supporting comments:
-      </label>
-      <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@Model.Id" asp-for="@Model.SupportingComments" name="SupportingComments" type="text"></textarea>
-    </div>
+    <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="Model" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.MinValue } })" />
   }
+  else
+  {
+    <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="Model" view-data="@(new ViewDataDictionary(ViewData) { { "index", Model.MinValue } })" />
+  }
+</div>
+@if (Model.IncludeComments)
+{
+  <div class="nhsuk-form-group">
+    <label class="nhsuk-label" for="tb-supportingComments-@Model.Id">
+      Supporting comments:
+    </label>
+    <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@Model.Id" asp-for="@Model.SupportingComments" name="SupportingComments" type="text"></textarea>
+  </div>
+}
 
-  <div class="nhsuk-u-margin-top-4">
-    Question 1 of 1
+<div class="nhsuk-u-margin-top-4">
+  Question 1 of 1
+</div>
+<button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-1" disabled>
+  Save and continue
+</button>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-back-link grid-column-85">
+    <span class="nhsuk-back-link__link">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+      </svg>
+      Previous question
+    </span>
+    <span class="nhsuk-back-link__link skip-link">
+      Skip
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+      </svg>
+    </span>
   </div>
-  <button class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-1" disabled>
-    Save and continue
-  </button>
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-back-link grid-column-85">
-      <span class="nhsuk-back-link__link">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-        </svg>
-        Previous question
-      </span>
-      <span class="nhsuk-back-link__link skip-link">
-        Skip
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" id="skip-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-        </svg>
-      </span>
-    </div>
-  </div>
+</div>

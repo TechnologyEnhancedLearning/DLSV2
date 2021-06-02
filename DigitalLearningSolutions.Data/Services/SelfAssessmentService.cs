@@ -8,12 +8,14 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using Microsoft.Extensions.Logging;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
 
     public interface ISelfAssessmentService
     {
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
+        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased);
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
@@ -144,7 +146,7 @@ CA.LaunchCount, CA.SubmittedDate
         public Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId)
         {
             Competency? competencyResult = null;
-            return connection.Query<Competency, AssessmentQuestion, Competency>(
+            return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
                      (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID) as RowNo,
                              CompetencyID
@@ -173,7 +175,7 @@ CA.LaunchCount, CA.SubmittedDate
 
         public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
         {
-            var assessmentQuestion = connection.QueryFirstOrDefault<AssessmentQuestion>(
+            var assessmentQuestion = connection.QueryFirstOrDefault<Models.SelfAssessments.AssessmentQuestion>(
                 @"SELECT ID, MinValue, MaxValue
                     FROM AssessmentQuestions
                     WHERE ID = @assessmentQuestionId",
@@ -235,7 +237,7 @@ CA.LaunchCount, CA.SubmittedDate
 
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId)
         {
-            var result = connection.Query<Competency, AssessmentQuestion, Competency>(
+            var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables}",
@@ -395,6 +397,19 @@ CA.LaunchCount, CA.SubmittedDate
                     $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
                 );
             }
+        }
+
+        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased)
+        {
+            int adjustBy = zeroBased ? -1 : 0;
+            return connection.Query<LevelDescriptor>(
+               @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, 0 AS UpdatedByAdminID
+                    FROM
+                    (SELECT TOP (@maxValue + @adjustBy) n = ROW_NUMBER() OVER (ORDER BY number) - @adjustBy
+                    FROM [master]..spt_values) AS q1
+                    LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
+                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, minValue, maxValue, adjustBy }
+               );
         }
     }
 }

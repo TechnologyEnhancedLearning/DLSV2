@@ -47,7 +47,7 @@
             var user = connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
-                        au.CentreID, 
+                        au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
@@ -112,7 +112,7 @@
             var user = connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
-                        au.CentreID, 
+                        au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
@@ -155,7 +155,7 @@
                         cd.Password,
                         cd.Approved
                     FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID 
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     WHERE cd.Active = 1 AND
                          (cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username)",
                 new { username }

@@ -33,13 +33,13 @@
 @foreach (var question in @Model.Competency.AssessmentQuestions)
 {
   <div class="nhsuk-form-group">
-    @if (question.AssessmentQuestionInputTypeID == 1)
+    @if (question.AssessmentQuestionInputTypeID == 2)
     {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
+      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
     }
     else
     {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
+      <partial name="~/Views/LearningPortal/SelfAssessments/_RadioQuestion.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
     }
   </div>
   @if (question.IncludeComments)

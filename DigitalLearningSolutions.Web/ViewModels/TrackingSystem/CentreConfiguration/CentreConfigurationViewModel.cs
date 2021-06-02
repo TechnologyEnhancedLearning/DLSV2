@@ -21,12 +21,14 @@
             CentreTelephone = centre.CentreTelephone;
             CentreEmail = centre.CentreEmail;
             CentrePostcode = centre.CentrePostcode;
+            ShowCentreOnMap = centre.ShowOnMap;
             OpeningHours = centre.OpeningHours;
             CentreWebAddress = centre.CentreWebAddress;
-            OrganisationsCovered = SplitMultiValuedStringIntoArray(centre.OrganisationsCovered);
-            TrainingVenues = SplitMultiValuedStringIntoArray(centre.TrainingVenues);
-            OtherInformation = SplitMultiValuedStringIntoArray(centre.OtherInformation);
+            OrganisationsCovered = centre.OrganisationsCovered;
+            TrainingVenues = centre.TrainingVenues;
+            OtherInformation = centre.OtherInformation;
         }
+
         public int CentreId { get; set; }
         public string CentreName { get; set; }
         public string RegionName { get; set; }
@@ -41,17 +43,11 @@
         public string? CentreTelephone { get; set; }
         public string? CentreEmail { get; set; }
         public string? CentrePostcode { get; set; }
+        public bool ShowCentreOnMap { get; set; }
         public string? OpeningHours { get; set; }
         public string? CentreWebAddress { get; set; }
-        public string[] OrganisationsCovered { get; set; }
-        public string[] TrainingVenues { get; set; }
-        public string[] OtherInformation { get; set; }
-
-        private string[] SplitMultiValuedStringIntoArray(string? multiValuedString)
-        {
-            return multiValuedString != null ?
-                    multiValuedString.Split(new []{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries):
-                    new string[0];
-        }
+        public string? OrganisationsCovered { get; set; }
+        public string? TrainingVenues { get; set; }
+        public string? OtherInformation { get; set; }
     }
 }
