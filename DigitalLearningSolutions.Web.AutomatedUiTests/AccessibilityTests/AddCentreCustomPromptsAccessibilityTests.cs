@@ -28,10 +28,14 @@
             var configureAnswerWithAnswersResult = new AxeBuilder(Driver).Analyze();
             Driver.ClickButtonByText("Next");
 
+            var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.SubmitForm();
+
             // then
             selectPromptResult.Violations.Should().BeEmpty();
             configureAnswerInitialResult.Violations.Should().BeEmpty();
             configureAnswerWithAnswersResult.Violations.Should().BeEmpty();
+            summaryResult.Violations.Should().BeEmpty();
         }
 
         private void AddAnswer(string answerString)

@@ -202,7 +202,7 @@
             // Then
             AssertSelectPromptViewModelIsExpectedModel(expectedPromptModel);
             AssertPromptAnswersViewModelIsExpectedModel(expectedAnswerModel);
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptSummary");
         }
 
         [Test]
@@ -274,6 +274,31 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+        }
+
+        [Test]
+        public void AddRegistrationPromptSummary_calls_custom_prompt_service_and_redirects_to_index()
+        {
+            // Given
+            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var initialTempData = new AddRegistrationPromptData
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+            registrationPromptsController.TempData.Set(initialTempData);
+            A.CallTo(
+                () => customPromptsService.AddCustomPromptToCentre(
+                    ControllerContextHelper.CentreId,
+                    1,
+                    true,
+                    "Test\r\nAnswer"
+                )
+            ).DoesNothing();
+
+            // When
+            var result = registrationPromptsController.AddRegistrationPromptSummaryPost();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
