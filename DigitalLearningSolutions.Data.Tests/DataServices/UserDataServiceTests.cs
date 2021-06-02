@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -69,7 +70,10 @@
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(jobGroupName: "Nursing / midwifery");
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(
+                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
+                jobGroupName: "Nursing / midwifery"
+            );
 
             // When
             var returnedDelegateUser = userDataService.GetDelegateUserById(2);
@@ -213,8 +217,16 @@
                 var answer6 = "Answer6";
 
                 // When
-                userDataService.UpdateDelegateUserCentrePrompts
-                    (2, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+                userDataService.UpdateDelegateUserCentrePrompts(
+                    2,
+                    jobGroupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6
+                );
                 var updatedUser = userDataService.GetDelegateUserById(2);
 
                 // Then
