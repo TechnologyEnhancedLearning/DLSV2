@@ -52,7 +52,7 @@
 
                 foreach (var email in emails)
                 {
-                    SendSingleEmailFromClient(email, mailConfig, client);
+                    SendSingleEmailFromClient(email, mailConfig.MailSenderAddress, client);
                 }
 
                 client.Disconnect(true);
@@ -66,14 +66,13 @@
         private void SendSingleEmailFromClient
         (
             Email email,
-            (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort, string
-                MailSenderAddress) mailConfig,
+            string mailSenderAddress,
             ISmtpClient client
         )
         {
             try
             {
-                MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
+                MimeMessage message = CreateMessage(email, mailSenderAddress);
                 client.Send(message);
             }
             catch (Exception error)
