@@ -36,7 +36,7 @@
             var centreId = User.GetCentreId();
             var centre = centresDataService.GetCentreDetailsById(centreId);
             var delegateCount = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(centreId);
-            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId);
+            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId, adminUser!.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var helpTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             

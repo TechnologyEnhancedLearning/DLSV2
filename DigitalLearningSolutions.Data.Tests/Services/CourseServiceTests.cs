@@ -200,10 +200,20 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
         {
             // When
-            var count = courseService.GetNumberOfActiveCoursesAtCentre(2);
+            var count = courseService.GetNumberOfActiveCoursesAtCentre(2,0);
 
             // Then
             count.Should().Be(38);
+        }
+
+        [Test]
+        public void GetNumberOfActiveCoursesAtCentre_with_filtered_category_returns_expected_count()
+        {
+            // When
+            var count = courseService.GetNumberOfActiveCoursesAtCentre(2, 2);
+
+            // Then
+            count.Should().Be(3);
         }
     }
 }
