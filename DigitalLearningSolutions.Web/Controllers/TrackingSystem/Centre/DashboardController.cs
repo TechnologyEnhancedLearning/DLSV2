@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard;
     using Microsoft.AspNetCore.Authorization;
@@ -12,32 +13,42 @@
     {
         private readonly ICentresDataService centresDataService;
         private readonly IUserDataService userDataService;
+        private readonly ICourseService courseService;
+        private readonly ITicketDataService ticketDataService;
 
         public DashboardController
         (
             IUserDataService userDataService,
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            ICourseService courseService,
+            ITicketDataService ticketDataService
         )
         {
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
+            this.courseService = courseService;
+            this.ticketDataService = ticketDataService;
         }
 
         public IActionResult Index()
         {
             var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value);
-            var centre = centresDataService.GetCentreDetailsById(User.GetCentreId());
-
-            // TODO: HEEDLS-473 populate these numbers from the database
+            var centreId = User.GetCentreId();
+            var centre = centresDataService.GetCentreDetailsById(centreId);
+            var delegateCount = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(centreId);
+            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId);
+            var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
+            var helpTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
+            
             var model = new CentreDashboardViewModel(
                 centre!,
                 adminUser!.FirstName,
                 adminUser!.CategoryName,
                 Request.GetUserIpAddressFromRequest(),
-                50,
-                12,
-                2,
-                11
+                delegateCount,
+                courseCount,
+                adminCount,
+                helpTicketCount
             );
 
             return View(model);

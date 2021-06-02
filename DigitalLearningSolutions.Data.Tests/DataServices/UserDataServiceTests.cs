@@ -264,5 +264,25 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetNumberOfActiveAdminsAtCentre_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetNumberOfActiveAdminsAtCentre(2);
+
+            // Then
+            count.Should().Be(3);
+        }
+
+        [Test]
+        public void GetNumberOfActiveApprovedDelegatesAtCentre_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(2);
+
+            // Then
+            count.Should().Be(3420);
+        }
     }
 }

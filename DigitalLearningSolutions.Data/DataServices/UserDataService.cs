@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -17,8 +18,13 @@
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage,
-            int[] ids);
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            int[] ids
+        );
 
         public void UpdateDelegateUserCentrePrompts(
             int id,
@@ -31,6 +37,12 @@
             string? answer6);
 
         public void ApproveDelegateUsers(params int[] ids);
+            string? answer6
+        );
+
+        public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId);
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId);
     }
 
     public class UserDataService : IUserDataService
@@ -272,7 +284,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6
+        )
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -296,6 +309,22 @@
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
                 new { ids }
+            );
+        }
+
+        public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM AdminUsers WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
             );
         }
     }

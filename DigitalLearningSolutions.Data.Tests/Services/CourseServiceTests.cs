@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -195,5 +196,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             }
         }
 
+        [Test]
+        public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
+        {
+            // When
+            var count = courseService.GetNumberOfActiveCoursesAtCentre(2);
+
+            // Then
+            count.Should().Be(38);
+        }
     }
 }
