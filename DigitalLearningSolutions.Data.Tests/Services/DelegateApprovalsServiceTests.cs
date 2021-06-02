@@ -62,14 +62,14 @@
 
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
             A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).DoesNothing();
-            A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
+            A.CallTo(() => emailService.SendEmails(A<IEnumerable<Email>>._)).DoesNothing();
 
             // When
             delegateApprovalsService.ApproveDelegate(2, 2);
 
             // Then
             A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).MustHaveHappened();
-            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappened();
+            A.CallTo(() => emailService.SendEmails(A<IEnumerable<Email>>._)).MustHaveHappened();
         }
 
         [Test]
