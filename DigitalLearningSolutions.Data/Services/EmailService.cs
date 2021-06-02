@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.Email;
     using Microsoft.Extensions.Logging;
     using MimeKit;
+    using MimeKit.Text;
 
     public interface IEmailService
     {
@@ -20,10 +21,12 @@
         private readonly ILogger<EmailService> logger;
         private readonly ISmtpClientFactory smtpClientFactory;
 
-        public EmailService(
+        public EmailService
+        (
             IConfigService configService,
             ISmtpClientFactory smtpClientFactory,
-            ILogger<EmailService> logger)
+            ILogger<EmailService> logger
+        )
         {
             this.configService = configService;
             this.smtpClientFactory = smtpClientFactory;
@@ -89,20 +92,30 @@
             string MailSenderAddress) GetMailConfig()
         {
             var mailServerUsername = configService.GetConfigValue(ConfigService.MailUsername)
-                                     ?? throw new ConfigValueMissingException(
-                                         configService.GetConfigValueMissingExceptionMessage("MailServerUsername"));
+                                     ?? throw new ConfigValueMissingException
+                                     (
+                                         configService.GetConfigValueMissingExceptionMessage("MailServerUsername")
+                                     );
             var mailServerPassword = configService.GetConfigValue(ConfigService.MailPassword)
-                                     ?? throw new ConfigValueMissingException(
-                                         configService.GetConfigValueMissingExceptionMessage("MailServerPassword"));
+                                     ?? throw new ConfigValueMissingException
+                                     (
+                                         configService.GetConfigValueMissingExceptionMessage("MailServerPassword")
+                                     );
             var mailServerAddress = configService.GetConfigValue(ConfigService.MailServer)
-                                    ?? throw new ConfigValueMissingException(
-                                        configService.GetConfigValueMissingExceptionMessage("MailServerAddress"));
+                                    ?? throw new ConfigValueMissingException
+                                    (
+                                        configService.GetConfigValueMissingExceptionMessage("MailServerAddress")
+                                    );
             var mailServerPortString = configService.GetConfigValue(ConfigService.MailPort)
-                                       ?? throw new ConfigValueMissingException(
-                                           configService.GetConfigValueMissingExceptionMessage("MailServerPortString"));
+                                       ?? throw new ConfigValueMissingException
+                                       (
+                                           configService.GetConfigValueMissingExceptionMessage("MailServerPortString")
+                                       );
             var mailSenderAddress = configService.GetConfigValue(ConfigService.MailFromAddress)
-                                    ?? throw new ConfigValueMissingException(
-                                        configService.GetConfigValueMissingExceptionMessage("MailFromAddress"));
+                                    ?? throw new ConfigValueMissingException
+                                    (
+                                        configService.GetConfigValueMissingExceptionMessage("MailFromAddress")
+                                    );
 
             var mailServerPort = int.Parse(mailServerPortString);
 
@@ -130,24 +143,24 @@
             }
 
             message.Subject = email.Subject;
-            message.Body = GetMultipartAlternativeFromBody(email.Body); 
+            message.Body = GetMultipartAlternativeFromBody(email.Body);
             return message;
         }
 
         private MultipartAlternative GetMultipartAlternativeFromBody(BodyBuilder body)
         {
             //Sets body content encooding to quoated-printable to avoid rejection by NHS email servers
-            var htmlPart = new TextPart(MimeKit.Text.TextFormat.Html)
+            var htmlPart = new TextPart(TextFormat.Html)
             {
                 ContentTransferEncoding = ContentEncoding.QuotedPrintable
             };
             htmlPart.SetText(Encoding.UTF8, body.HtmlBody);
-            var textPart = new TextPart(MimeKit.Text.TextFormat.Plain)
+            var textPart = new TextPart(TextFormat.Plain)
             {
                 ContentTransferEncoding = ContentEncoding.QuotedPrintable
             };
             textPart.SetText(Encoding.UTF8, body.TextBody);
-            var multipartAlternative = new MultipartAlternative()
+            var multipartAlternative = new MultipartAlternative
             {
                 textPart,
                 htmlPart
