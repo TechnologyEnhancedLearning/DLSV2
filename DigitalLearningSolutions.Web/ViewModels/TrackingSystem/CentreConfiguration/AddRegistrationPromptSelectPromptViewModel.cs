@@ -4,6 +4,14 @@
 
     public class AddRegistrationPromptSelectPromptViewModel
     {
+        public AddRegistrationPromptSelectPromptViewModel() { }
+
+        public AddRegistrationPromptSelectPromptViewModel(int customPromptId, bool mandatory)
+        {
+            CustomPromptId = customPromptId;
+            Mandatory = mandatory;
+        }
+
         [Required]
         public int? CustomPromptId { get; set; }
 

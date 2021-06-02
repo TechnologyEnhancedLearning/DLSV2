@@ -7,18 +7,18 @@
     {
         private const string Separator = "\r\n";
 
-        public static (string, List<string>) RemoveStringFromNewlineSeparatedList(string list, int index)
+        public static string RemoveStringFromNewlineSeparatedList(string list, int index)
         {
             var options = SplitNewlineSeparatedList(list);
             options.RemoveAt(index);
-            return (JoinNewlineSeparatedList(options), options);
+            return JoinNewlineSeparatedList(options);
         }
 
-        public static (string, List<string>) AddStringToNewlineSeparatedList(string? list, string newItem)
+        public static string AddStringToNewlineSeparatedList(string? list, string newItem)
         {
             var options = list != null ? SplitNewlineSeparatedList(list) : new List<string>();
             options.Add(newItem);
-            return (JoinNewlineSeparatedList(options), options);
+            return JoinNewlineSeparatedList(options);
         }
 
         public static List<string> SplitNewlineSeparatedList(string? list)

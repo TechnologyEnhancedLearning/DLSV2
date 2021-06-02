@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -18,6 +17,10 @@
     [Route("/TrackingSystem/CentreConfiguration/RegistrationPrompts")]
     public class RegistrationPromptsController : Controller
     {
+        public const string DeleteAction = "delete";
+        public const string AddPromptAction = "addPrompt";
+        public const string NextAction = "next";
+        public const string SaveAction = "save";
         private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
 
@@ -53,15 +56,15 @@
         [Route("{promptNumber}/Edit")]
         public IActionResult EditRegistrationPrompt(EditRegistrationPromptViewModel model, string action)
         {
-            if (action.StartsWith("delete") && TryGetAnswerIndexFromAction(action, out var index))
+            if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
-                return EditRegistrationPromptPostRemovePrompt(model, index);
+                return RegistrationPromptAnswersPostRemovePrompt(model, index);
             }
 
             return action switch
             {
-                "save" => EditRegistrationPromptPostSave(model),
-                "addPrompt" => EditRegistrationPromptPostAddPrompt(model),
+                SaveAction => EditRegistrationPromptPostSave(model),
+                AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
@@ -70,8 +73,6 @@
         [Route("Add/SelectPrompt")]
         public IActionResult AddRegistrationPromptSelectPrompt()
         {
-            SetViewBagCustomPromptNameOptions();
-
             var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>();
 
             if (addRegistrationPromptData == null || !Request.Cookies.ContainsKey(CookieName))
@@ -85,10 +86,12 @@
                     new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    });
+                    }
+                );
                 TempData.Set(addRegistrationPromptData);
             }
 
+            SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
             return View(addRegistrationPromptData.SelectPromptViewModel);
         }
 
@@ -103,71 +106,41 @@
                 return View(model);
             }
 
+            UpdateTempDataWithSelectPromptModelValues(model);
+
+            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
+        }
+
+        [HttpGet]
+        [Route("Add/ConfigureAnswers")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptConfigureAnswers()
+        {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            data.SelectPromptViewModel = model;
-            TempData.Set(data);
+            var viewModel = data.ConfigureAnswersViewModel;
 
-            // TODO: HEEDLS-453 - redirect to next page
-            return RedirectToAction("Index");
+            return View(viewModel);
         }
 
-        private bool TryGetAnswerIndexFromAction(string action, out int index)
+        [HttpPost]
+        [Route("Add/ConfigureAnswers")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptConfigureAnswers(
+            RegistrationPromptAnswersViewModel model,
+            string action
+        )
         {
-            return int.TryParse(action.Remove(0, 6), out index);
-        }
-
-        private IActionResult EditRegistrationPromptPostAddPrompt(EditRegistrationPromptViewModel model)
-        {
-            if (!ModelState.IsValid)
+            if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
-                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
-                return View(model);
+                return RegistrationPromptAnswersPostRemovePrompt(model, index, true);
             }
 
-            var (optionsString, options) =
-                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
-
-            if (optionsString.Length > 4000)
+            return action switch
             {
-                AddTotalStringLengthModelError(model);
-                return View(model);
-            }
-
-            SetModelOptions(model, optionsString, options);
-            return View(model);
-        }
-
-        private void SetModelOptions(EditRegistrationPromptViewModel model, string optionsString, List<string> options)
-        {
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.OptionsString));
-            model.OptionsString = optionsString;
-
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-            model.Options = options;
-        }
-
-        private void AddTotalStringLengthModelError(EditRegistrationPromptViewModel model)
-        {
-            var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
-            ModelState.AddModelError
-            (
-                nameof(EditRegistrationPromptViewModel.Answer),
-                $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
-            );
-
-            ModelState.Remove(nameof(EditRegistrationPromptViewModel.Options));
-            model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
-        }
-
-        private IActionResult EditRegistrationPromptPostRemovePrompt(EditRegistrationPromptViewModel model, int index)
-        {
-            IgnoreAddNewAnswerValidation();
-
-            var (optionsString, options) =
-                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
-
-            SetModelOptions(model, optionsString, options);
-            return View(model);
+                NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
+                AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
+                _ => RedirectToAction("Error", "LearningSolutions")
+            };
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
@@ -176,13 +149,108 @@
 
             if (!ModelState.IsValid)
             {
-                model.Options = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString);
                 return View(model);
             }
 
-            customPromptsService.UpdateCustomPromptForCentre(User.GetCentreId(), model.PromptNumber, model.Mandatory, model.OptionsString);
+            customPromptsService.UpdateCustomPromptForCentre(
+                User.GetCentreId(),
+                model.PromptNumber,
+                model.Mandatory,
+                model.OptionsString
+            );
 
             return RedirectToAction("Index");
+        }
+
+        private IActionResult RegistrationPromptAnswersPostAddPrompt(
+            RegistrationPromptAnswersViewModel model,
+            bool saveToTempData = false
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var optionsString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+
+            if (optionsString.Length > 4000)
+            {
+                SetTotalAnswersLengthTooLongError(model);
+                return View(model);
+            }
+
+            SetRegistrationPromptAnswersViewModelOptions(model, optionsString);
+
+            if (saveToTempData)
+            {
+                UpdateTempDataWithAnswersModelValues(model);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult RegistrationPromptAnswersPostRemovePrompt(
+            RegistrationPromptAnswersViewModel model,
+            int index,
+            bool saveToTempData = false
+        )
+        {
+            IgnoreAddNewAnswerValidation();
+
+            var optionsString =
+                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
+
+            SetRegistrationPromptAnswersViewModelOptions(model, optionsString);
+
+            if (saveToTempData)
+            {
+                UpdateTempDataWithAnswersModelValues(model);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
+        {
+            IgnoreAddNewAnswerValidation();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            UpdateTempDataWithAnswersModelValues(model);
+
+            // TODO: HEEDLS-454 - redirect to next page
+            return RedirectToAction("Index");
+        }
+
+        private void SetRegistrationPromptAnswersViewModelOptions(
+            RegistrationPromptAnswersViewModel model,
+            string optionsString
+        )
+        {
+            ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.OptionsString));
+            model.OptionsString = optionsString;
+
+            ModelState.Remove(nameof(RegistrationPromptAnswersViewModel.Answer));
+            model.Answer = null;
+        }
+
+        private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
+        {
+            if (model.OptionsString == null || model.OptionsString.Length < 2)
+            {
+                return;
+            }
+
+            var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
+            ModelState.AddModelError(
+                nameof(RegistrationPromptAnswersViewModel.Answer),
+                $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
+            );
         }
 
         private void IgnoreAddNewAnswerValidation()
@@ -194,11 +262,30 @@
             }
         }
 
-        private void SetViewBagCustomPromptNameOptions()
+        private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
+        {
+            return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
+        }
+
+        private void SetViewBagCustomPromptNameOptions(int? selectedId = null)
         {
             var customPrompts = customPromptsService.GetCustomPromptsAlphabeticalList();
             ViewBag.CustomPromptNameOptions =
-                SelectListHelper.MapOptionsToSelectListItems(customPrompts);
+                SelectListHelper.MapOptionsToSelectListItems(customPrompts, selectedId);
+        }
+
+        private void UpdateTempDataWithSelectPromptModelValues(AddRegistrationPromptSelectPromptViewModel model)
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            data.SelectPromptViewModel = model;
+            TempData.Set(data);
+        }
+
+        private void UpdateTempDataWithAnswersModelValues(RegistrationPromptAnswersViewModel model)
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            data.ConfigureAnswersViewModel = model;
+            TempData.Set(data);
         }
     }
 }

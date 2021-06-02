@@ -211,7 +211,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
-                    assessmentQuestion.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestion.Id, adminId, assessmentQuestion.MinValue, assessmentQuestion.MaxValue).ToList();
+                    assessmentQuestion.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestion.Id, adminId, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
                 }
                 var model = new SelfAssessmentCompetencyViewModel(assessment, competency, 1, 1);
                 return View("Developer/CompetencyPreview", model);

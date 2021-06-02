@@ -12,6 +12,7 @@
             CentreTelephone = centre.CentreTelephone;
             CentreEmail = centre.CentreEmail;
             CentrePostcode = centre.CentrePostcode;
+            ShowCentreOnMap = centre.ShowOnMap;
             OpeningHours = centre.OpeningHours;
             CentreWebAddress = centre.CentreWebAddress;
             OrganisationsCovered = centre.OrganisationsCovered;
@@ -30,6 +31,8 @@
         [Required(ErrorMessage = "Enter a postcode.")]
         [MaxLength(10, ErrorMessage = "Enter a postcode that is no more than 10 characters.")]
         public string? CentrePostcode { get; set; }
+
+        public bool ShowCentreOnMap { get; set; }
 
         [MaxLength(100, ErrorMessage = "Enter no more than 100 characters for the opening hours.")]
         public string? OpeningHours { get; set; }
