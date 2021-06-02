@@ -5,12 +5,13 @@
 @model DelegateApprovalsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateApprovals.css")" asp-append-version="true">
 
 @{
-    ViewData["Title"] = "Approve delegate registrations";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = "Approve delegate registrations";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -28,9 +29,11 @@
       }
       <div class="nhsuk-grid-row nhsuk-u-margin-top-7">
         <div class="nhsuk-grid-column-full">
-          <a class="nhsuk-button" href="" role="button">
-            Approve all
-          </a>
+          <form asp-controller="DelegateApprovals" asp-action="ApproveDelegatesForCentre" method="post">
+            <button class="nhsuk-button" type="submit">
+              Approve all
+            </button>
+          </form>
         </div>
       </div>
     }

@@ -29,6 +29,8 @@
             string? answer4,
             string? answer5,
             string? answer6);
+
+        public void ApproveDelegateUsers(params int[] ids);
     }
 
     public class UserDataService : IUserDataService
@@ -280,6 +282,16 @@
                             Answer6 = @answer6
                         WHERE CandidateID = @id",
                 new { jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6, id }
+            );
+        }
+
+        public void ApproveDelegateUsers(params int[] ids)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                        SET Approved = 1
+                        WHERE CandidateID IN @ids",
+                new { ids }
             );
         }
     }
