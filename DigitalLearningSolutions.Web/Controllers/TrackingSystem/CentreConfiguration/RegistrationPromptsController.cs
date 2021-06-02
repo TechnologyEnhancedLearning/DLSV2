@@ -271,7 +271,7 @@
         {
             var customPrompts = customPromptsService.GetCustomPromptsAlphabeticalList();
             ViewBag.CustomPromptNameOptions =
-                SelectListHelper.MapOptionsToSelectListItemsWithSelectedValue(customPrompts, selectedId);
+                SelectListHelper.MapOptionsToSelectListItems(customPrompts, selectedId);
         }
 
         private void UpdateTempDataWithSelectPromptModelValues(AddRegistrationPromptSelectPromptViewModel model)

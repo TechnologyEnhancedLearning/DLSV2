@@ -5,7 +5,7 @@
     using OpenQA.Selenium.Support.UI;
     using Selenium.Axe;
     using Xunit;
-    
+
     public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase
     {
         public RegistrationJourneyAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
@@ -19,6 +19,8 @@
             // when
             Driver.Navigate().GoToUrl(BaseUrl + registerUrl);
             var registerResult = new AxeBuilder(Driver).Analyze();
+            var centre = new SelectElement(Driver.FindElement(By.Id("Centre")));
+            centre.SelectByValue("2");
             var firstName = Driver.FindElement(By.Id("FirstName"));
             firstName.SendKeys("Test");
             var lastName = Driver.FindElement(By.Id("LastName"));
@@ -29,8 +31,6 @@
             registerForm.Submit();
 
             var learnerInformationResult = new AxeBuilder(Driver).Analyze();
-            var centre = new SelectElement(Driver.FindElement(By.Id("Centre")));
-            centre.SelectByValue("2");
             var jobGroup = new SelectElement(Driver.FindElement(By.Id("JobGroup")));
             jobGroup.SelectByValue("1");
             var learnerInformationForm = Driver.FindElement(By.TagName("form"));

@@ -16,5 +16,8 @@
         [EmailAddress(ErrorMessage = "Enter an email address with an @ in it, such as example@domain.com")]
         [MaxLength(100, ErrorMessage = "Email address must be at most 100 characters")]
         public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Select a centre")]
+        public int? Centre { get; set; }
     }
 }
