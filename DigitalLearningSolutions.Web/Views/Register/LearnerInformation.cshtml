@@ -14,7 +14,9 @@
     <form method="post" asp-action="LearnerInformation">
 
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup) })"/>
+        <vc:error-summary order-of-property-names="@(new[] {
+           nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4),
+           nameof(Model.Answer5), nameof(Model.Answer6), nameof(Model.JobGroup) })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">
