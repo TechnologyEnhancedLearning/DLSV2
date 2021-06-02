@@ -102,9 +102,9 @@
         }
         public void RejectDelegate(int delegateId, int centreId)
         {
-            var delegateUser = userDataService.GetDelegateUserByIdFromCentre(delegateId, centreId);
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
-            if (delegateUser == null)
+            if (delegateUser == null || delegateUser.CentreId != centreId)
             {
                 throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
             }
