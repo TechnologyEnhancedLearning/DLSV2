@@ -36,25 +36,7 @@
 
         public void SendEmail(Email email)
         {
-            var mailConfig = GetMailConfig();
-
-            MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
-
-            try
-            {
-                using var client = smtpClientFactory.GetSmtpClient();
-                client.Timeout = 10000;
-                client.Connect(mailConfig.MailServerAddress, mailConfig.MailServerPort);
-
-                client.Authenticate(mailConfig.MailServerUsername, mailConfig.MailServerPassword);
-
-                client.Send(message);
-                client.Disconnect(true);
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error, "Sending an email has failed");
-            }
+            SendEmails(new [] {email});
         }
 
         public void SendEmails(IEnumerable<Email> emails)
