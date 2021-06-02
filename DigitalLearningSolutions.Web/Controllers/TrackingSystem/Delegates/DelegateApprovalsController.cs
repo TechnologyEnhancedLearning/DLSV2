@@ -27,7 +27,7 @@
                 .GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(centreId)
                 .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
 
-            var model = new DelegateApprovalsViewModel(centreId, delegates);
+            var model = new DelegateApprovalsViewModel(delegates);
             return View(model);
         }
 
@@ -41,7 +41,7 @@
         }
 
         [HttpPost]
-        [Route("/TrackingSystem/Delegates/Approve/ApproveForCentre")]
+        [Route("/TrackingSystem/Delegates/Approve/All")]
         public IActionResult ApproveDelegatesForCentre()
         {
             var centreId = User.GetCentreId();

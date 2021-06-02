@@ -9,13 +9,11 @@
 
     public class DelegateApprovalsViewModel
     {
-        public DelegateApprovalsViewModel(int centreId, IEnumerable<UnapprovedDelegate> delegates)
+        public DelegateApprovalsViewModel(IEnumerable<UnapprovedDelegate> delegates)
         {
-            CentreId = centreId;
             Delegates = delegates;
         }
 
-        public int CentreId { get; set; }
         public IEnumerable<UnapprovedDelegate> Delegates { get; set; }
     }
 

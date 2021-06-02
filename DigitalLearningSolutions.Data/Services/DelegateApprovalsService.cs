@@ -65,23 +65,22 @@
             }
             else
             {
-                var delegateList = new List<DelegateUser>{ delegateUser };
-                userDataService.ApproveDelegateUsers(delegateList.Select(d => d.Id));
+                userDataService.ApproveDelegateUsers(delegateUser.Id);
 
-                SendDelegateApprovalEmails(delegateList);
+                SendDelegateApprovalEmails(delegateUser);
             }
         }
 
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId)
         {
-            var delegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
+            var delegateUsers = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId).ToArray();
 
-            userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id));
+            userDataService.ApproveDelegateUsers(delegateUsers.Select(d => d.Id).ToArray());
 
             SendDelegateApprovalEmails(delegateUsers);
         }
 
-        private void SendDelegateApprovalEmails(List<DelegateUser> delegateUsers)
+        private void SendDelegateApprovalEmails(params DelegateUser[] delegateUsers)
         {
             var approvalEmails = new List<Email>();
             foreach (var delegateUser in delegateUsers)

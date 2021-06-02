@@ -30,7 +30,7 @@
             string? answer5,
             string? answer6);
 
-        public void ApproveDelegateUsers(IEnumerable<int> ids);
+        public void ApproveDelegateUsers(params int[] ids);
     }
 
     public class UserDataService : IUserDataService
@@ -285,7 +285,7 @@
             );
         }
 
-        public void ApproveDelegateUsers(IEnumerable<int> ids)
+        public void ApproveDelegateUsers(params int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates

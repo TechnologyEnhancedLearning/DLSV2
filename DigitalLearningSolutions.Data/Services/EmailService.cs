@@ -5,6 +5,7 @@
     using System.Text;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
+    using MailKit.Net.Smtp;
     using Microsoft.Extensions.Logging;
     using MimeKit;
     using MimeKit.Text;
@@ -69,15 +70,7 @@
 
                 foreach (var email in emails)
                 {
-                    try
-                    {
-                        MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
-                        client.Send(message);
-                    }
-                    catch (Exception error)
-                    {
-                        logger.LogError(error, "Sending an email has failed");
-                    }
+                    SendSingleEmailFromClient(email, mailConfig, client);
                 }
 
                 client.Disconnect(true);
@@ -85,6 +78,25 @@
             catch (Exception error)
             {
                 logger.LogError(error, "Sending emails has failed");
+            }
+        }
+
+        private void SendSingleEmailFromClient
+        (
+            Email email,
+            (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort, string
+                MailSenderAddress) mailConfig,
+            ISmtpClient client
+        )
+        {
+            try
+            {
+                MimeMessage message = CreateMessage(email, mailConfig.MailSenderAddress);
+                client.Send(message);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Sending an email has failed");
             }
         }
 

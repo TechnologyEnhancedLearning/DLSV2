@@ -61,14 +61,14 @@
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(approved: false);
 
             A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).DoesNothing();
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2)).DoesNothing();
             A.CallTo(() => emailService.SendEmails(A<IEnumerable<Email>>._)).DoesNothing();
 
             // When
             delegateApprovalsService.ApproveDelegate(2, 2);
 
             // Then
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).MustHaveHappened();
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2)).MustHaveHappened();
             A.CallTo(() => emailService.SendEmails(A<IEnumerable<Email>>._)).MustHaveHappened();
         }
 
@@ -83,7 +83,7 @@
 
             // Then
             action.Should().Throw<UserAccountNotFoundException>().WithMessage("Delegate user id 2 not found at centre id 2.");
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).MustNotHaveHappened();
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2)).MustNotHaveHappened();
         }
 
         [Test]
@@ -98,7 +98,7 @@
             delegateApprovalsService.ApproveDelegate(2, 2);
 
             // Then
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(2))).MustNotHaveHappened();
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2)).MustNotHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
         }
 
@@ -107,13 +107,12 @@
         {
             // Given
             var expectedDelegateUser1 = UserTestHelper.GetDefaultDelegateUser(approved: false);
-            var expectedDelegateUser2 = UserTestHelper.GetDefaultDelegateUser(id: 3, approved: false);
+            var expectedDelegateUser2 = UserTestHelper.GetDefaultDelegateUser(3, approved: false);
             var expectedUserList = new List<DelegateUser> { expectedDelegateUser1, expectedDelegateUser2 };
-            var expectedUserIds = expectedUserList.Select(du => du.Id);
 
             A.CallTo(() => userDataService.GetUnapprovedDelegateUsersByCentreId(2))
                 .Returns(expectedUserList);
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(expectedUserIds)))
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2, 3))
                 .DoesNothing();
             A.CallTo(() => emailService.SendEmails(A<List<Email>>.That.Matches(s => s.Count == 2))).DoesNothing();
 
@@ -121,7 +120,7 @@
             delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(2);
 
             // Then
-            A.CallTo(() => userDataService.ApproveDelegateUsers(A<IEnumerable<int>>.That.IsSameSequenceAs(expectedUserIds)))
+            A.CallTo(() => userDataService.ApproveDelegateUsers(2, 3))
                 .MustHaveHappened();
             A.CallTo(() => emailService.SendEmails(A<List<Email>>.That.Matches(s => s.Count == 2))).MustHaveHappened();
         }
