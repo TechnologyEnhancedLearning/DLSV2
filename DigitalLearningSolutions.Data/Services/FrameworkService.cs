@@ -41,7 +41,7 @@
         IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId);
         AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
         LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
-        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue);
+        IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue, bool zeroBased);
         Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
@@ -1085,15 +1085,16 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                     WHERE (q1.n = @level)", new { assessmentQuestionId, adminId, level }
                 );
         }
-        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue)
+        public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue, bool zeroBased)
         {
+            int adjustBy = zeroBased ? 1 : 0;
             return connection.Query<LevelDescriptor>(
                @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, COALESCE(UpdatedByAdminID, @adminId) AS UpdatedByAdminID
                     FROM
-                    (SELECT TOP (@maxValue) n = ROW_NUMBER() OVER (ORDER BY number)
+                    (SELECT TOP (@maxValue + @adjustBy) n = ROW_NUMBER() OVER (ORDER BY number) - @adjustBy
                     FROM [master]..spt_values) AS q1
                     LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
-                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, adminId, minValue, maxValue }
+                    WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, adminId, minValue, maxValue, adjustBy }
                );
         }
         public int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId)

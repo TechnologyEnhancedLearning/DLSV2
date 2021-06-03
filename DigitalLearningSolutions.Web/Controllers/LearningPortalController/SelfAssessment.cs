@@ -46,6 +46,13 @@
             {
                 return RedirectToAction("SelfAssessmentReview", new { selfAssessmentId = assessment.Id });
             }
+            else
+            {
+                foreach (AssessmentQuestion assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                }
+            }
 
             selfAssessmentService.UpdateLastAccessed(assessment.Id, User.GetCandidateId());
 
@@ -67,14 +74,17 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                selfAssessmentService.SetResultForCompetency(
-                    competencyId,
-                    assessment.Id,
-                    User.GetCandidateId(),
-                    assessmentQuestion.Id,
-                    assessmentQuestion.Result.Value,
-                    null
-                );
+                if (assessmentQuestion.Result != null)
+                {
+                    selfAssessmentService.SetResultForCompetency(
+                                        competencyId,
+                                        assessment.Id,
+                                        User.GetCandidateId(),
+                                        assessmentQuestion.Id,
+                                        assessmentQuestion.Result.Value,
+                                        null
+                                    );
+                }
             }
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);
             return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });

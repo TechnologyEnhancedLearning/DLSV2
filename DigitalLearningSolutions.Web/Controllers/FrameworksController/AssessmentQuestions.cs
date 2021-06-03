@@ -194,7 +194,7 @@
             if (assessmentQuestionId > 0)
             {
                 assessmentQuestionDetail = frameworkService.GetAssessmentQuestionDetailById(assessmentQuestionId, adminId);
-                levelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestionId, adminId, assessmentQuestionDetail.MinValue, assessmentQuestionDetail.MaxValue).ToList();
+                levelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(assessmentQuestionId, adminId, assessmentQuestionDetail.MinValue, assessmentQuestionDetail.MaxValue, assessmentQuestionDetail.MinValue == 0).ToList();
             }
             sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
             sessionAssessmentQuestion.LevelDescriptors = levelDescriptors;
@@ -278,10 +278,24 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-            sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
-            return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
+            
+            if(assessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
+            {
+                assessmentQuestionDetail.MinValue = 0;
+                assessmentQuestionDetail.MaxValue = 1;
+                SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                TempData.Set(sessionAssessmentQuestion);
+                int level = assessmentQuestionDetail.MinValue;
+                return RedirectToAction("AssessmentQuestionLevelDescriptor", "Frameworks", new { frameworkId, level, assessmentQuestionId, frameworkCompetencyId });
+            }
+            else
+            {
+                SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                TempData.Set(sessionAssessmentQuestion);
+                return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
+            }
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
         public IActionResult EditAssessmentQuestionScoring(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
@@ -322,7 +336,7 @@
             TempData.Set(sessionAssessmentQuestion);
             if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 1)
             {
-                int level = 1;
+                int level = assessmentQuestionDetail.MinValue;
                 return RedirectToAction("AssessmentQuestionLevelDescriptor", "Frameworks", new { frameworkId, level, assessmentQuestionId, frameworkCompetencyId });
             }
             else
@@ -489,7 +503,7 @@
             if (newId > 0)
             {
                 frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
-                if(assessmentQuestion.AssessmentQuestionInputTypeID == 1)
+                if(assessmentQuestion.AssessmentQuestionInputTypeID != 2)
                 {
                     foreach(var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
                     {
@@ -507,7 +521,7 @@
             else
             {
                 newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
-                if(newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID == 1)
+                if(newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID != 2)
                 {
                     foreach (var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
                     {

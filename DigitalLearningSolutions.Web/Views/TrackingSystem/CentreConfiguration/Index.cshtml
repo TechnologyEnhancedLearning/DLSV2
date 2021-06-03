@@ -10,51 +10,52 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No";
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
 <div class="nhsuk-grid-column-full">
 <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
 
-    <div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
-      <div class="nhsuk-card__content basic-card-content">
-        <dl class="nhsuk-summary-list">
-          <div class="nhsuk-summary-list__row basic-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Centre name:</dt>
-            <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
-          </div>
-          <div class="nhsuk-summary-list__row basic-summary-list__row">
-            <dt class="nhsuk-summary-list__key">Region:</dt>
-            <dd class="nhsuk-summary-list__value ">@Model.RegionName</dd>
-          </div>
-        </dl>
+<div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
+  <div class="nhsuk-card__content basic-card-content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Centre name</dt>
+        <dd class="nhsuk-summary-list__value ">@Model.CentreName</dd>
       </div>
-    </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">Region</dt>
+        <dd class="nhsuk-summary-list__value ">@Model.RegionName</dd>
+      </div>
+    </dl>
+  </div>
+</div>
 
-    <details class="nhsuk-details nhsuk-expander">
-      <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">
-          Centre details
-        </span>
-      </summary>
-      <div class="nhsuk-details__text">
-        <dl class="nhsuk-summary-list details-list-with-button">
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">
-              Notify email:
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              @Model.NotifyEmail
-            </dd>
-          </div>
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre details
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Notify email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.NotifyEmail
+        </dd>
+      </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Banner text:
+          Banner text
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.BannerText
@@ -63,22 +64,22 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre signature:
+          Centre signature
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.SignatureImage != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
           }
         </dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre logo:
+          Centre logo
         </dt>
         <dd class="nhsuk-summary-list__value">
           @if (Model.CentreLogo != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
           }
         </dd>
       </div>
@@ -86,26 +87,26 @@
   </div>
 </details>
 
-    <details class="nhsuk-details nhsuk-expander">
-      <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">
-          Centre manager details
-        </span>
-      </summary>
-      <div class="nhsuk-details__text">
-        <dl class="nhsuk-summary-list details-list-with-button">
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">
-              First name:
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              @Model.ContactForename
-            </dd>
-          </div>
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre manager details
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          First name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.ContactForename
+        </dd>
+      </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Last name:
+          Last name
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactSurname
@@ -114,7 +115,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Email:
+          Email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactEmail
@@ -123,7 +124,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Telephone:
+          Telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.ContactTelephone
@@ -131,26 +132,26 @@
       </div>
     </dl>
 
-        <a class="nhsuk-button" role="button" asp-action="EditCentreManagerDetails">
-          Edit
-        </a>
+    <a class="nhsuk-button" role="button" asp-action="EditCentreManagerDetails">
+      Edit
+    </a>
 
   </div>
 </details>
 
-    <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-8">
-      <summary class="nhsuk-details__summary">
-        <span class="nhsuk-details__summary-text">
-          Centre content on DLS website
-        </span>
-      </summary>
-      <div class="nhsuk-details__text">
-        <p>The details below are published on the Digital Learning Solutions website.</p>
+<details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-8">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre content on DLS website
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <p>The details below are published on the Digital Learning Solutions website.</p>
 
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre telephone:
+          Centre telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreTelephone
@@ -159,7 +160,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre email:
+          Centre email
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreEmail
@@ -168,7 +169,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre postcode:
+          Centre postcode
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentrePostcode
@@ -177,7 +178,16 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Opening hours:
+          Show centre on map
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @showCentreOnMap
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Opening hours
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.OpeningHours
@@ -186,7 +196,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Centre web address:
+          Centre web address
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.CentreWebAddress
@@ -195,38 +205,40 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Organisations covered:
+          Organisations covered
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <partial name="_CentreStringArray" model="Model.OrganisationsCovered"/>
+          <span class="preserve-whitespace">@Model.OrganisationsCovered</span>
         </dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Training venues:
+          Training venues
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <partial name="_CentreStringArray" model="Model.TrainingVenues"/>
+          <span class="preserve-whitespace">@Model.TrainingVenues</span>
         </dd>
       </div>
 
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">
-              Other information:
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-              <partial name="_CentreStringArray" model="Model.OtherInformation" />
-            </dd>
-          </div>
-        </dl>
-        
-        <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
-          Edit
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
-          Preview on website
-        </a>
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Other information
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          <span class="preserve-whitespace">@Model.OtherInformation</span>
+        </dd>
+      </div>
+    </dl>
+
+    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
+      Edit
+    </a>
+    @if (Model.ShowCentreOnMap) {
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
+        Preview on website
+      </a>
+    }
 
   </div>
 </details>

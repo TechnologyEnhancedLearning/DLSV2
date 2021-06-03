@@ -3,15 +3,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register": "Register";
-  var firstNameError = ViewData.ModelState["FirstName"]?.Errors?.Count > 0;
-  var lastNameError = ViewData.ModelState["LastName"]?.Errors?.Count > 0;
-  var emailError = ViewData.ModelState["Email"]?.Errors?.Count > 0;
-  var firstNameInputErrorClass = firstNameError ? "nhsuk-input--error" : "";
-  var firstNameFormErrorClass = firstNameError ? "nhsuk-form-group--error" : "";
-  var lastNameInputErrorClass = lastNameError ? "nhsuk-input--error" : "";
-  var lastNameFormErrorClass = lastNameError ? "nhsuk-form-group--error" : "";
-  var emailInputErrorClass = emailError ? "nhsuk-input--error" : "";
-  var emailFormErrorClass = emailError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
@@ -19,52 +10,60 @@
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
 
       @if (errorHasOccurred) {
-        <partial name="_ErrorSummary"/>
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Register</h1>
+
         <p class="nhsuk-body-l">
-          Please enter your personal details to start the registration process
+          Please select your centre to start the registration process
           to access all Digital Learning Solutions services.
         </p>
-      </div>
 
-      <div class="nhsuk-form-group @firstNameFormErrorClass">
-        <label class="nhsuk-label" for="FirstName">
-          First name
-        </label>
-        @if (firstNameError) {
-          <span class="nhsuk-error-message" id="first-name-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["FirstName"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @firstNameInputErrorClass" id="FirstName" spellcheck="false" autocomplete="given-name" aria-describedby="first-name-error" asp-for="FirstName"/>
+        <vc:select-list
+          asp-for="Centre"
+          label="Centre"
+          value="@Model.Centre?.ToString()"
+          hint-text=""
+          css-class="nhsuk-u-width-full"
+          default-option="Select a centre"
+          select-list-options="@ViewBag.CentreOptions"/>
       </div>
+      
+      <p class="nhsuk-body-l">
+        Now enter your personal details.
+      </p>
 
-      <div class="nhsuk-form-group @lastNameFormErrorClass">
-        <label class="nhsuk-label" for="LastName">
-          Last name
-        </label>
-        @if (lastNameError) {
-          <span class="nhsuk-error-message" id="last-name-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["LastName"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @lastNameInputErrorClass" id="LastName" spellcheck="false" autocomplete="family-name" aria-describedby="last-name-error" asp-for="LastName"/>
-      </div>
+      <vc:text-input
+        asp-for="FirstName"
+        label="First name"
+        populate-with-current-value="true"
+        type=""
+        spell-check="false"
+        hint-text=""
+        autocomplete="given-name"
+        css-class="nhsuk-u-width-one-half"/>
 
-      <div class="nhsuk-form-group @emailFormErrorClass">
-        <label class="nhsuk-label" for="Email">
-          Email
-        </label>
-        @if (emailError) {
-          <span class="nhsuk-error-message" id="email-error">
-            <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Email"].Errors[0].ErrorMessage
-          </span>
-        }
-        <input class="nhsuk-input nhsuk-u-width-one-half @emailInputErrorClass" id="Email" type="text" spellcheck="false" autocomplete="email" aria-describedby="email-error" asp-for="Email"/>
-      </div>
+      <vc:text-input
+        asp-for="LastName"
+        label="Last name"
+        populate-with-current-value="true"
+        type=""
+        spell-check="false"
+        hint-text=""
+        autocomplete="family-name"
+        css-class="nhsuk-u-width-one-half"/>
+
+      <vc:text-input
+        asp-for="Email"
+        label="Email"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        hint-text=""
+        autocomplete="email"
+        css-class="nhsuk-u-width-one-half"/>
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>

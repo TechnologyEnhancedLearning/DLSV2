@@ -29,6 +29,8 @@
             string? answer4,
             string? answer5,
             string? answer6);
+
+        public void ApproveDelegateUsers(params int[] ids);
     }
 
     public class UserDataService : IUserDataService
@@ -45,7 +47,7 @@
             var user = connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
-                        au.CentreID, 
+                        au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
@@ -110,7 +112,7 @@
             var user = connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
-                        au.CentreID, 
+                        au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
                         au.Email AS EmailAddress,
@@ -153,7 +155,7 @@
                         cd.Password,
                         cd.Approved
                     FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID 
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     WHERE cd.Active = 1 AND
                          (cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username)",
                 new { username }
@@ -280,6 +282,16 @@
                             Answer6 = @answer6
                         WHERE CandidateID = @id",
                 new { jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6, id }
+            );
+        }
+
+        public void ApproveDelegateUsers(params int[] ids)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                        SET Approved = 1
+                        WHERE CandidateID IN @ids",
+                new { ids }
             );
         }
     }

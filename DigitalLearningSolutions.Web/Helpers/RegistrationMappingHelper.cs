@@ -13,7 +13,7 @@
                 data.RegisterViewModel.FirstName!,
                 data.RegisterViewModel.LastName!,
                 data.RegisterViewModel.Email!,
-                (int)data.LearnerInformationViewModel.Centre!,
+                (int)data.RegisterViewModel.Centre!,
                 (int)data.LearnerInformationViewModel.JobGroup!,
                 data.PasswordHash!
             );

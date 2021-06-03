@@ -22,11 +22,11 @@
             {
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email
+                Email = email,
+                Centre = centreId
             };
             var learnerInformationViewModel = new LearnerInformationViewModel
             {
-                Centre = centreId,
                 JobGroup = jobGroupId
             };
             var data = new DelegateRegistrationData
@@ -64,11 +64,11 @@
             {
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email
+                Email = email,
+                Centre = centreId
             };
             var learnerInformationViewModel = new LearnerInformationViewModel
             {
-                Centre = centreId,
                 JobGroup = jobGroupId
             };
             var data = new DelegateRegistrationData

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -53,10 +54,13 @@
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     });
                 TempData.Set(delegateRegistrationData);
-
-                return View();
             }
 
+            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
+                (centresDataService.GetActiveCentresAlphabetical(), delegateRegistrationData.RegisterViewModel.Centre);
+
+            // Check this email and centre combination doesn't already exist in case we were redirected
+            // back here by the user trying to submit the final page of the form
             ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
 
             return View(delegateRegistrationData.RegisterViewModel);
@@ -70,6 +74,8 @@
 
             if (!ModelState.IsValid)
             {
+                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
+                    (centresDataService.GetActiveCentresAlphabetical(), model.Centre);
                 return View(model);
             }
 
@@ -86,8 +92,8 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
             var viewModel = data.LearnerInformationViewModel;
-            ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
-            ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
+                (jobGroupsDataService.GetJobGroupsAlphabetical(), viewModel.JobGroup);
 
             return View(viewModel);
         }
@@ -98,8 +104,8 @@
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Centres = centresDataService.GetActiveCentresAlphabetical();
-                ViewBag.JobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+                ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
+                    (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
                 return View(model);
             }
 
@@ -138,7 +144,7 @@
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+            var centre = centresDataService.GetCentreName((int)data.RegisterViewModel.Centre!);
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
 
@@ -152,7 +158,7 @@
             var data = TempData.Peek<DelegateRegistrationData>()!;
             if (!ModelState.IsValid)
             {
-                var centre = centresDataService.GetCentreName((int)data.LearnerInformationViewModel.Centre!);
+                var centre = centresDataService.GetCentreName((int)data.RegisterViewModel.Centre!);
                 var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
                 var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
@@ -180,7 +186,7 @@
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             TempData.Add("approved", approved);
-            TempData.Add("centreId", data.LearnerInformationViewModel.Centre);
+            TempData.Add("centreId", data.RegisterViewModel.Centre);
             return RedirectToAction("Confirmation");
         }
 
@@ -205,9 +211,17 @@
 
         private void ValidateEmailAddress(RegisterViewModel model)
         {
-            if (model.Email != null && userService.GetUsersByEmailAddress(model.Email).delegateUsers.Count != 0)
+            if (model.Email == null)
             {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists");
+                return;
+            }
+
+            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
+                .Where(u => u.CentreId == model.Centre);
+
+            if (duplicateUsers.Count() != 0)
+            {
+                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists at this centre");
             }
         }
     }

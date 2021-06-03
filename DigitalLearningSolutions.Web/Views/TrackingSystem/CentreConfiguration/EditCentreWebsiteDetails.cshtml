@@ -17,18 +17,18 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.CentreTelephone),
-                                                   nameof(Model.CentreEmail),
-                                                   nameof(Model.CentrePostcode),
-                                                   nameof(Model.OpeningHours),
-                                                   nameof(Model.CentreWebAddress),
-                                                   nameof(Model.OrganisationsCovered),
-                                                   nameof(Model.TrainingVenues),
-                                                   nameof(Model.OtherInformation)
-                                                 })" />
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names=
+                        "@(new[] {
+                           nameof(Model.CentreTelephone),
+                           nameof(Model.CentreEmail),
+                           nameof(Model.CentrePostcode),
+                           nameof(Model.ShowCentreOnMap),
+                           nameof(Model.OpeningHours),
+                           nameof(Model.CentreWebAddress),
+                           nameof(Model.OrganisationsCovered),
+                           nameof(Model.TrainingVenues),
+                           nameof(Model.OtherInformation) })" />
     }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre content on DLS website</h1>
@@ -58,6 +58,13 @@
                      autocomplete=""
                      hint-text=""
                      css-class="nhsuk-u-width-one-half" />
+
+      <div class="nhsuk-checkboxes__item nhsuk-form-group">
+        <input class="nhsuk-checkboxes__input" type="checkbox" id="ShowCentreOnMap" spellcheck="false" asp-for="ShowCentreOnMap" />
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowCentreOnMap">
+          Show centre on map
+        </label>
+      </div>
 
       <vc:text-input asp-for="OpeningHours"
                      label="Opening hours"
