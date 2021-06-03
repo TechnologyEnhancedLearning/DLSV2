@@ -115,7 +115,6 @@
 
             customPromptHelper.ValidateCustomPrompts
             (
-
                 (int)data.RegisterViewModel.Centre!,
                 model.Answer1,
                 model.Answer2,
@@ -279,6 +278,5 @@
             model.Answer5 = null;
             model.Answer6 = null;
         }
-
     }
 }

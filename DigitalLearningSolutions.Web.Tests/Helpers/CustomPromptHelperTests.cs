@@ -33,9 +33,10 @@
             var answer2 = "Answer2";
             var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: "Clinical\r\nNon-Clinical");
             var customPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2);
-            var centreCustomPrompts =
-                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
-                    new List<CustomPrompt> { customPrompt1, customPrompt2 }, 1);
+            var centreCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
+                new List<CustomPrompt> { customPrompt1, customPrompt2 },
+                1
+            );
             A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
 
             // When
@@ -63,9 +64,10 @@
             var answer2 = "Answer2";
             var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true);
             var customPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, mandatory: true);
-            var centreCustomPrompts =
-                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
-                    new List<CustomPrompt> { customPrompt1, customPrompt2 }, 1);
+            var centreCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
+                new List<CustomPrompt> { customPrompt1, customPrompt2 },
+                1
+            );
             var modelState = new ModelStateDictionary();
             A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
 
