@@ -1,0 +1,32 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
+  var title = ViewData["Title"].ToString();
+  var selectedClass = "side-nav__item--selected";
+
+  var allDelegatesItemClass = title == "All delegates" ? selectedClass : string.Empty;
+  var delegateGroupsItemClass = title == "Delegate groups" ? selectedClass : string.Empty;
+  var courseDelegateItemClass = title == "Course delegates" ? selectedClass : string.Empty;
+  var approvedRegistrationItemClass = title == "Approve delegate registrations" ? selectedClass : string.Empty;
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/sideNavMenus.css")" asp-append-version="true">
+
+<nav class="side-nav-menu">
+  <h2 class="side-nav__heading">Delegates</h2>
+  <ul class="nhsuk-list side-nav__list">
+    <li class="side-nav__item @allDelegatesItemClass">
+      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">All delegates</a>
+    </li>
+    <li class="side-nav__item @delegateGroupsItemClass">
+      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups">Delegate groups</a>
+    </li>
+    <li class="side-nav__item @courseDelegateItemClass">
+      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates">Course delegates</a>
+    </li>
+    <li class="side-nav__item @approvedRegistrationItemClass">
+      <a class="side-nav__link" asp-action="Index" asp-controller="DelegateApprovals">Approve registrations</a>
+    </li>
+  </ul>
+</nav>

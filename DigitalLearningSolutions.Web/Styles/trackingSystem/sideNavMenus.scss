@@ -1,0 +1,49 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.side-nav-menu {
+  @include govuk-media-query($until: desktop) {
+      display: none;
+  }
+}
+
+.side-nav__heading {
+  font-weight: 600;
+  color: #4c6272;
+  margin-bottom: 12px;
+  padding-top: 4px;
+  font-size: 1.1875rem;
+  line-height: 1.25;
+}
+
+.side-nav__link {
+  text-decoration: none;
+  color: #005eb8;
+
+  &:visited {
+    color: #005eb8;
+  }
+
+  &:hover {
+    color: #7C2855;
+    text-decoration: underline;
+  }
+}
+
+.side-nav__list {
+  font-weight: 400;
+  margin-bottom: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.side-nav__item {
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.side-nav__item--selected {
+  border-left: 4px solid #005eb8;
+  margin-left: -12px;
+  padding-left: 8px;
+  font-weight: bold;
+}
