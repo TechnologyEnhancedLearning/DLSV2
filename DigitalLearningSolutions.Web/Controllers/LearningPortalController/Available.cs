@@ -16,7 +16,7 @@
             int page = 1
         )
         {
-            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateId(), User.GetCentreId());
+            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateIdKnownNotNull(), User.GetCentreId());
             var bannerText = GetBannerText();
             var model = new AvailablePageViewModel(
                 availableCourses,
@@ -31,14 +31,14 @@
 
         public IActionResult AllAvailableItems()
         {
-            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateId(), User.GetCentreId());
+            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateIdKnownNotNull(), User.GetCentreId());
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
-            courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateId());
+            courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }
