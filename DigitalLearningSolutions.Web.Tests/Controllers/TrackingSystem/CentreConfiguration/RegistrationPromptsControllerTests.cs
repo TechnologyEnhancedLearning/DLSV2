@@ -298,6 +298,14 @@
             var result = registrationPromptsController.AddRegistrationPromptSummaryPost();
 
             // Then
+            A.CallTo(
+                () => customPromptsService.AddCustomPromptToCentre(
+                    ControllerContextHelper.CentreId,
+                    1,
+                    true,
+                    "Test\r\nAnswer"
+                )
+            ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 

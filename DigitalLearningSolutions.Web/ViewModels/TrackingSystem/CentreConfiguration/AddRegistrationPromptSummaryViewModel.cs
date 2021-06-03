@@ -2,18 +2,16 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
 
     public class AddRegistrationPromptSummaryViewModel
     {
-        public AddRegistrationPromptSummaryViewModel(
-            string promptName,
-            bool mandatory,
-            string? answerString
+        public AddRegistrationPromptSummaryViewModel(AddRegistrationPromptData data, string promptName
         )
         {
             PromptName = promptName;
-            Mandatory = mandatory ? "Yes" : "No";
-            Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(answerString);
+            Mandatory = data.SelectPromptViewModel.Mandatory ? "Yes" : "No";
+            Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(data.ConfigureAnswersViewModel.OptionsString);
         }
 
         public string PromptName { get; set; }

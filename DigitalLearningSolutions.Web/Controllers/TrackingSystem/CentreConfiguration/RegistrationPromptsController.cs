@@ -151,7 +151,7 @@
             var data = TempData.Peek<AddRegistrationPromptData>()!;
             var promptName = customPromptsService.GetCustomPromptsAlphabeticalList().
                 Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
-            var model = AddRegistrationPromptMappingHelper.MapToSummary(data, promptName);
+            var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
             return View(model);
         }
@@ -171,6 +171,7 @@
                 data.ConfigureAnswersViewModel.OptionsString
             );
 
+            TempData.Clear();
             return RedirectToAction("Index");
         }
 
