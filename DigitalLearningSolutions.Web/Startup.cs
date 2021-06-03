@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Web
                 options.AddPolicy(CustomPolicies.UserOnly,
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
                 options.AddPolicy(CustomPolicies.UserCentreAdmin,
-                    policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
+                    policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy));
                 options.AddPolicy(CustomPolicies.UserFrameworksAdminOnly,
                     policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy));
             });

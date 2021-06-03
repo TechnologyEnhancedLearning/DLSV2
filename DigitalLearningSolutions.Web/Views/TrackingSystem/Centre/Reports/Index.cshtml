@@ -1,6 +1,15 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@using Microsoft.Extensions.Configuration
 
 @model ReportsViewModel
+
+@{
+  ViewData["Title"] = "Reports";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
 
 @section NavMenuItems {
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
