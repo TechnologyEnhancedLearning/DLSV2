@@ -8,10 +8,11 @@
     {
         public RegistrationPromptAnswersViewModel() { }
 
-        public RegistrationPromptAnswersViewModel(string optionsString, string? answer = null)
+        public RegistrationPromptAnswersViewModel(string optionsString, string? answer = null, bool isEditScreen = false)
         {
             OptionsString = optionsString;
             Answer = answer;
+            IsEditScreen = isEditScreen;
         }
 
         public string? OptionsString { get; set; }
@@ -21,5 +22,7 @@
         [Required(ErrorMessage = "Enter an answer.")]
         [MaxLength(100, ErrorMessage = "Answer must be at most 100 characters")]
         public string? Answer { get; set; }
+
+        public bool IsEditScreen { get; set; }
     }
 }

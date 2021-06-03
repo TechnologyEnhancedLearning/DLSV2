@@ -68,7 +68,7 @@
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
         <partial name="_NoConfiguredAnswers"/>
       } else {
-        <partial name="_RegistrationPromptAnswerTable" model="(Model.Options, true)"/>
+        <partial name="_RegistrationPromptAnswerTable" model="Model"/>
       }
     </div>
   </div>
