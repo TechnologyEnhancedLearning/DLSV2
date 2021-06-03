@@ -5,7 +5,7 @@
     public class CustomPolicies
     {
         public const string UserOnly = "UserOnly";
-        public const string UserCentreAdminOnly = "UserCentreAdminOnly";
+        public const string UserCentreAdmin = "UserCentreAdminOnly";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
