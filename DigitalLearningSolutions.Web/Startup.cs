@@ -58,8 +58,8 @@ namespace DigitalLearningSolutions.Web
             {
                 options.AddPolicy(CustomPolicies.UserOnly,
                     policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
-                options.AddPolicy(CustomPolicies.UserCentreAdminOnly,
-                    policy => CustomPolicies.ConfigurePolicyUserCentreAdminOnly(policy));
+                options.AddPolicy(CustomPolicies.UserCentreAdmin,
+                    policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy));
                 options.AddPolicy(CustomPolicies.UserFrameworksAdminOnly,
                     policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy));
             });
@@ -79,6 +79,7 @@ namespace DigitalLearningSolutions.Web
                 .AddRazorOptions(options =>
                 {
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
+                    options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                 })

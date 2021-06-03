@@ -13,7 +13,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-    [Authorize(Policy = CustomPolicies.UserCentreAdminOnly)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CentreConfiguration/RegistrationPrompts")]
     public class RegistrationPromptsController : Controller
     {
