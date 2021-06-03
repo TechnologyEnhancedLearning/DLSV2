@@ -3,7 +3,7 @@
 @model RegistrationPromptAnswersViewModel
 
 <table class="nhsuk-table">
-  @if (Model.IsEditScreen) {
+  @if (Model.IncludeAnswersTableCaption) {
     <caption class="nhsuk-table__caption">Configured Answers:</caption>
   }
   <thead role="rowgroup" class="nhsuk-table__head">
@@ -17,7 +17,7 @@
   </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var answer in Model.Options!) {
+  @foreach (var answer in Model.Options) {
     <tr role="row" class="nhsuk-table__row">
       <td class="nhsuk-table__cell word-break">@answer</td>
       <td class="nhsuk-table__cell vertical-align-centre">

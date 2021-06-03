@@ -7,7 +7,7 @@
     {
         public EditRegistrationPromptViewModel()
         {
-            IsEditScreen = true;
+            IncludeAnswersTableCaption = true;
         }
 
         public EditRegistrationPromptViewModel
@@ -25,7 +25,7 @@
             Prompt = customPrompt.CustomPromptText;
             Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
-            IsEditScreen = true;
+            IncludeAnswersTableCaption = true;
         }
 
         public int PromptNumber { get; set; }
