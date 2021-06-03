@@ -1,0 +1,71 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model NumberOfAdministratorsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/numberOfAdministratorsViewComponent.css")" asp-append-version="true">
+
+<details class="nhsuk-details">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Number of administrators
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list">
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Administrators
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Admins
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Supervisors
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Supervisors
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Trainers
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Trainers/@Model.TrainerSpotsAvailable
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          CMS administrators
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CmsAdministrators/@Model.CmsAdministratorSpotsAvailable
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          CMS managers
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CmsManagers/@Model.CmsManagerSpotsAvailable
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Content creators
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CcLicences/@Model.CcLicencesAvailable
+        </dd>
+      </div>
+
+    </dl>
+  </div>
+</details>

@@ -26,7 +26,11 @@
             string? centreWebAddress = null,
             string? organisationsCovered = "Northwest Boroughs Healthcare NHS Foundation Trust",
             string? trainingVenues = "Hollins Park House\nHollins Lane\nWinwick\nWarrington WA2 8WA",
-            string? otherInformation = null
+            string? otherInformation = null,
+            int cmsAdministrators = 5,
+            int cmsManagers = 0,
+            int ccLicences = 0,
+            int trainers = 0
         )
         {
             return new Centre
@@ -51,7 +55,11 @@
                 CentreWebAddress = centreWebAddress,
                 OrganisationsCovered = organisationsCovered,
                 TrainingVenues = trainingVenues,
-                OtherInformation = otherInformation
+                OtherInformation = otherInformation,
+                CmsAdministrators = cmsAdministrators,
+                CmsManagers = cmsManagers,
+                CcLicences = ccLicences,
+                Trainers = trainers
             };
         }
     }

@@ -1,0 +1,21 @@
+﻿@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
+@model int
+
+@{
+  ViewData["Title"] = "Centre Administrators";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Centre administrators</h1>
+    <vc:number-of-administrators centre-id="@Model"/>
+  </div>
+</div>

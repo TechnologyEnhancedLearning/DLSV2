@@ -23,5 +23,9 @@
         public string? OrganisationsCovered { get; set; }
         public string? TrainingVenues { get; set; }
         public string? OtherInformation { get; set; }
+        public int CmsAdministrators { get; set; }
+        public int CmsManagers { get; set; }
+        public int CcLicences { get; set; }
+        public int Trainers { get; set; }
     }
 }
