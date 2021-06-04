@@ -119,7 +119,11 @@
                             c.pwWebURL AS CentreWebAddress,
                             c.pwTrustsCovered AS OrganisationsCovered,
                             c.pwTrainingLocations AS TrainingVenues,
-                            c.pwGeneralInfo AS OtherInformation
+                            c.pwGeneralInfo AS OtherInformation,
+                            c.CMSAdministrators AS CmsAdministratorSpots,
+                            c.CMSManagers AS CmsManagerSpots,
+                            c.CCLicences AS CcLicenceSpots,
+                            c.Trainers AS TrainerSpots
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         WHERE CentreID = @centreId",
