@@ -38,7 +38,7 @@
         public IActionResult Index()
         {
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetNullableCandidateId();
+            var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts =
@@ -59,7 +59,7 @@
             }
 
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetNullableCandidateId();
+            var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
@@ -89,7 +89,7 @@
         private IActionResult EditDetailsPostSave(EditDetailsViewModel model)
         {
             var userAdminId = User.GetAdminId();
-            var userDelegateId = User.GetNullableCandidateId();
+            var userDelegateId = User.GetCandidateId();
 
             if (userDelegateId.HasValue)
             {

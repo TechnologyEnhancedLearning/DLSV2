@@ -66,7 +66,7 @@
                     return Redirect(url);
                 }
             }
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
             {
@@ -102,7 +102,7 @@
         public IActionResult CoursePassword(int customisationId, bool error = false)
         {
             var centreId = User.GetCentreId();
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var courseContent = courseContentService.GetCourseContent(candidateId, customisationId);
             if (courseContent == null)
             {
@@ -120,7 +120,7 @@
         public IActionResult CoursePassword(int customisationId, string? password)
         {
             var centreId = User.GetCentreId();
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var coursePassword = courseContentService.GetCoursePassword(customisationId);
             if(coursePassword == null)
             {
@@ -151,7 +151,7 @@
             [Route("/LearningMenu/Close")]
         public IActionResult Close()
         {
-            sessionService.StopDelegateSession(User.GetCandidateId(), HttpContext.Session);
+            sessionService.StopDelegateSession(User.GetCandidateIdKnownNotNull(), HttpContext.Session);
 
             return RedirectToAction("Current", "LearningPortal");
         }
@@ -159,7 +159,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}")]
         public IActionResult Section(int customisationId, int sectionId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
             var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
 
@@ -224,7 +224,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/Diagnostic")]
         public IActionResult Diagnostic(int customisationId, int sectionId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
             var diagnosticAssessment =
                 diagnosticAssessmentService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
@@ -261,7 +261,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/Diagnostic/Content")]
         public IActionResult DiagnosticContent(int customisationId, int sectionId, List<int> checkedTutorials)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
             var diagnosticContent = diagnosticAssessmentService.GetDiagnosticContent(customisationId, sectionId, checkedTutorials);
 
@@ -303,7 +303,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/PostLearning")]
         public IActionResult PostLearning(int customisationId, int sectionId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
             var postLearningAssessment =
                 postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
@@ -340,7 +340,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/PostLearning/Content")]
         public IActionResult PostLearningContent(int customisationId, int sectionId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
             var postLearningContent = postLearningAssessmentService.GetPostLearningContent(customisationId, sectionId);
 
@@ -381,7 +381,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}")]
         public IActionResult Tutorial(int customisationId, int sectionId, int tutorialId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
             var tutorialInformation =
@@ -419,7 +419,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Tutorial")]
         public IActionResult ContentViewer(int customisationId, int sectionId, int tutorialId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
             var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
@@ -462,7 +462,7 @@
         [Route("/LearningMenu/{customisationId:int}/{sectionId:int}/{tutorialId:int}/Video")]
         public IActionResult TutorialVideo(int customisationId, int sectionId, int tutorialId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
             var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
@@ -502,7 +502,7 @@
         [Route("/LearningMenu/{customisationId:int}/CompletionSummary")]
         public IActionResult CompletionSummary(int customisationId)
         {
-            var candidateId = User.GetCandidateId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
             var courseCompletion = courseCompletionService.GetCourseCompletion(candidateId, customisationId);
