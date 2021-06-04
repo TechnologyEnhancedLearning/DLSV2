@@ -285,7 +285,7 @@
             ViewBag.CustomFields = customFields;
         }
 
-        private void ClearCustomPromptAnswers(LearnerInformationViewModel model)
+        private static void ClearCustomPromptAnswers(LearnerInformationViewModel model)
         {
             model.Answer1 = null;
             model.Answer2 = null;
