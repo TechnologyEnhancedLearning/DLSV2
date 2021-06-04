@@ -5,7 +5,7 @@
     public class CustomPolicies
     {
         public const string UserOnly = "UserOnly";
-        public const string UserCentreAdminOnly = "UserCentreAdminOnly";
+        public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
         public const string UserCentreManagerOrUserUserAdminOnly = "UserCentreManagerOrUserUserAdminOnly";
 
@@ -17,7 +17,7 @@
             );
         }
 
-        public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreAdminOnly(AuthorizationPolicyBuilder policy)
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreAdmin(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null

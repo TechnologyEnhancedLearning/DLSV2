@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserCentreAdminOnly)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CentreConfiguration")]
     public class CentreConfigurationController : Controller
     {
