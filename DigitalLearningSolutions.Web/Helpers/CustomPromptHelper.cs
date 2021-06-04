@@ -26,8 +26,15 @@
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
-            return customPrompts.CustomPrompts.Select((cp, i) => new EditCustomFieldViewModel(cp.CustomPromptNumber,
-                cp.CustomPromptText, cp.Mandatory, cp.Options, answers[i])).ToList();
+            return customPrompts.CustomPrompts.Select(
+                (cp, i) => new EditCustomFieldViewModel(
+                    cp.CustomPromptNumber,
+                    cp.CustomPromptText,
+                    cp.Mandatory,
+                    cp.Options,
+                    answers[cp.CustomPromptNumber - 1]
+                )
+            ).ToList();
         }
     }
 }
