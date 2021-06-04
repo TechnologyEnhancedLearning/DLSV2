@@ -50,7 +50,7 @@
         {
             var userId = ((UserType)userType).Equals(UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateId();
+                : User.GetCandidateIdKnownNotNull();
             var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType, userId);
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
@@ -65,7 +65,7 @@
         {
             var userId = ((UserType)userType).Equals(UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateId();
+                : User.GetCandidateIdKnownNotNull();
 
             notificationPreferencesService.SetNotificationPreferencesForUser(userType, userId, notificationIds);
 
