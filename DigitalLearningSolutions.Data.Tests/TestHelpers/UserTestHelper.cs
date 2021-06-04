@@ -60,7 +60,8 @@
             int categoryId = 1,
             bool isSupervisor = true,
             bool isTrainer = true,
-            bool isFrameworkDeveloper = true
+            bool isFrameworkDeveloper = true,
+            bool importOnly = false
         )
         {
             return new AdminUser
@@ -84,7 +85,8 @@
                 CategoryId = categoryId,
                 IsSupervisor = isSupervisor,
                 IsTrainer = isTrainer,
-                IsFrameworkDeveloper = isFrameworkDeveloper
+                IsFrameworkDeveloper = isFrameworkDeveloper,
+                ImportOnly = importOnly
             };
         }
     }

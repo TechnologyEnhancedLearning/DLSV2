@@ -29,6 +29,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
+        [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
@@ -47,16 +48,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 
             // then
             AnalyzePageHeadingAndAccessibility(pageTitle);
-        }
-
-        private void AnalyzePageHeadingAndAccessibility(string pageTitle)
-        {
-            var h1Element = Driver.FindElement(By.TagName("h1"));
-            h1Element.Text.Should().BeEquivalentTo(pageTitle);
-
-            // then
-            var axeResult = new AxeBuilder(Driver).Analyze();
-            axeResult.Violations.Should().BeEmpty();
         }
     }
 }
