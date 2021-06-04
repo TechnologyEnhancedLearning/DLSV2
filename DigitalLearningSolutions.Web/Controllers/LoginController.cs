@@ -211,7 +211,8 @@
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress),
+                new Claim(ClaimTypes.Email,
+                    adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty),
                 new Claim(CustomClaimTypes.UserCentreId,
                     adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()),
                 new Claim(CustomClaimTypes.UserCentreManager, adminLoginDetails?.IsCentreManager.ToString() ?? "False"),

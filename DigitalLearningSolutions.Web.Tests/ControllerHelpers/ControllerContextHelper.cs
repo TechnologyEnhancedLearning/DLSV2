@@ -16,6 +16,7 @@
         public const int CentreId = 2;
         public const int AdminId = 7;
         public const int DelegateId = 2;
+        public const string EmailAddress = "email";
 
         public static T WithDefaultContext<T>(this T controller) where T : Controller
         {
@@ -37,9 +38,10 @@
             return controller;
         }
 
-        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId, int? adminId = AdminId, int? delegateId = DelegateId) where T : Controller
+        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId, int? adminId = AdminId, int? delegateId = DelegateId, string? emailAddress = EmailAddress) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
+
             controller.HttpContext.User = new ClaimsPrincipal
             (
                 new ClaimsIdentity
@@ -48,11 +50,13 @@
                     {
                         new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
                         new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False")
+                        new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
+                        new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
                     },
                     authenticationType
                 )
             );
+
             return controller;
         }
 

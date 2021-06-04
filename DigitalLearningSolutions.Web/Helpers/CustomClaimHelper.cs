@@ -28,10 +28,13 @@
         {
             return user.FindFirst(customClaimType)?.Value;
         }
+
         public static string? GetEmail(this ClaimsPrincipal user)
         {
-            return user.FindFirst("Email")?.Value;
+            var emailFromClaims = user.FindFirst(ClaimTypes.Email)?.Value;
+            return emailFromClaims == string.Empty ? null : emailFromClaims;
         }
+
         public static int? GetCustomClaimAsInt(this ClaimsPrincipal user, string customClaimType)
         {
             var customClaimString = user.GetCustomClaim(customClaimType);

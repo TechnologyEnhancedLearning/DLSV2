@@ -2,9 +2,11 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public interface IPasswordService
     {
+        Task ChangePasswordAsync(UserReference user, string newPassword);
         Task ChangePasswordAsync(string email, string newPassword);
     }
 
@@ -17,6 +19,12 @@
         {
             this.cryptoService = cryptoService;
             this.passwordDataService = passwordDataService;
+        }
+
+        public async Task ChangePasswordAsync(UserReference user, string newPassword)
+        {
+            var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
+            await passwordDataService.SetPasswordByUserReferenceAsync(user, hashOfPassword);
         }
 
         public async Task ChangePasswordAsync(string email, string newPassword)

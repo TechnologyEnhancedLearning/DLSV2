@@ -2,6 +2,8 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using NUnit.Framework;
@@ -21,7 +23,7 @@
         }
 
         [Test]
-        public async Task Changing_password_hashes_password_before_saving()
+        public async Task Changing_password_by_email_hashes_password_before_saving()
         {
             // Given
             A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
@@ -36,7 +38,7 @@
         }
 
         [Test]
-        public async Task Changing_password_does_not_save_plain_password()
+        public async Task Changing_password_by_email_does_not_save_plain_password()
         {
             // Given
             A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
@@ -46,6 +48,45 @@
 
             // Then
             A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_by_user_ref_hashes_password_before_saving()
+        {
+            // Given
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordAsync(new UserReference(34, UserType.AdminUser), "new-password1");
+
+            // Then
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByUserReferenceAsync(
+                        new UserReference(34, UserType.AdminUser),
+                        "hash-of-password"
+                    )
+                )
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public async Task Changing_password_by_user_ref_does_not_save_plain_password()
+        {
+            // Given
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordAsync(new UserReference(34, UserType.AdminUser), "new-password1");
+
+            // Then
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByUserReferenceAsync(
+                        new UserReference(34, UserType.AdminUser),
+                        "new-password1"
+                    )
+                )
                 .MustNotHaveHappened();
         }
     }

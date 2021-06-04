@@ -3,6 +3,8 @@
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -111,6 +113,46 @@
             // Then
             userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
                 .Be(existingCandidatePassword);
+        }
+
+        [Test]
+        public async Task Setting_password_by_user_reference_changes_password()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
+            var newPasswordHash = PasswordHashNotYetInDb;
+
+            // When
+            await passwordDataService.SetPasswordByUserReferenceAsync(
+                new UserReference(existingCandidate.Id, UserType.DelegateUser),
+                newPasswordHash
+            );
+
+            // Then
+            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
+                .Be(newPasswordHash);
+        }
+
+        [Test]
+        public async Task Setting_password_by_delegate_user_reference_does_not_change_password_for_corresponding_admin()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
+            var newPasswordHash = PasswordHashNotYetInDb;
+
+            // When
+            await passwordDataService.SetPasswordByUserReferenceAsync(
+                new UserReference(existingCandidate.Id, UserType.DelegateUser),
+                newPasswordHash
+            );
+
+            // Then
+            userDataService.GetAdminUserById(existingCandidate.Id)?.Password.Should()
+                .NotBe(newPasswordHash);
         }
     }
 }
