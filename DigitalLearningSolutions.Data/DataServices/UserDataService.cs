@@ -37,8 +37,6 @@
             string? answer6);
 
         public void ApproveDelegateUsers(params int[] ids);
-            string? answer6
-        );
 
         public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId);
 
