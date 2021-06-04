@@ -7,31 +7,32 @@
 
     public class NumberOfAdministratorsViewModel
     {
-        public int Admins { get; set; }
-        public int Supervisors { get; set; }
-        public int Trainers { get; set; }
-        public int TrainerSpotsAvailable { get; set; }
-        public int CmsAdministrators { get; set; }
-        public int CmsAdministratorSpotsAvailable { get; set; }
-        public int CmsManagers { get; set; }
-        public int CmsManagerSpotsAvailable { get; set; }
-        public int CcLicences { get; set; }
-        public int CcLicencesAvailable { get; set; }
+        public string Admins { get; set; }
+        public string Supervisors { get; set; }
+        public string Trainers { get; set; }
+        public string CmsAdministrators { get; set; }
+        public string CmsManagers { get; set; }
+        public string CcLicences { get; set; }
 
         public NumberOfAdministratorsViewModel(Centre centreDetails, List<AdminUser> adminUsers)
         {
-            TrainerSpotsAvailable = centreDetails.TrainerSpots;
-            CmsAdministratorSpotsAvailable = centreDetails.CmsAdministratorSpots;
-            CmsManagerSpotsAvailable = centreDetails.CmsManagerSpots;
-            CcLicencesAvailable = centreDetails.CcLicenceSpots;
+            Admins = adminUsers.Count(a => a.IsCentreAdmin).ToString();
+            Supervisors = adminUsers.Count(a => a.IsSupervisor).ToString();
 
-            Admins = adminUsers.Count(a => a.IsCentreAdmin);
-            Supervisors = adminUsers.Count(a => a.IsSupervisor);
-            Trainers = adminUsers.Count(a => a.IsTrainer);
-            CmsAdministrators = adminUsers.Count(a => a.ImportOnly);
-            CmsManagers = adminUsers.Count(a => a.IsContentManager) - CmsAdministrators;
-            CcLicences = adminUsers.Count(a => a.IsContentCreator);
+            var trainers = adminUsers.Count(a => a.IsTrainer);
+            var cmsAdministrators = adminUsers.Count(a => a.ImportOnly);
+            var cmsManagers = adminUsers.Count(a => a.IsContentManager) - cmsAdministrators;
+            var ccLicences = adminUsers.Count(a => a.IsContentCreator);
+
+            Trainers = GenerateDisplayString(trainers, centreDetails.TrainerSpots);
+            CmsAdministrators = GenerateDisplayString(cmsAdministrators, centreDetails.CmsAdministratorSpots);
+            CmsManagers = GenerateDisplayString(cmsManagers, centreDetails.CmsManagerSpots);
+            CcLicences = GenerateDisplayString(ccLicences, centreDetails.CcLicenceSpots);
         }
 
+        private string GenerateDisplayString(int number, int limit)
+        {
+            return limit == -1 ? number.ToString() : number + " / " + limit;
+        }
     }
 }

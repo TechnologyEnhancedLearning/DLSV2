@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
-    public class CentreAdministratorViewModel
+    public class CentreAdministratorsViewModel
     {
-        public CentreAdministratorViewModel(int centreId)
+        public CentreAdministratorsViewModel(int centreId)
         {
             CentreId = centreId;
         }

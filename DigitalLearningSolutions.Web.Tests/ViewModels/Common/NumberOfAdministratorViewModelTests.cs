@@ -25,16 +25,34 @@
             var viewModel = new NumberOfAdministratorsViewModel(centre, adminUsersAtCentre);
 
             // Then
-            viewModel.CmsAdministratorSpotsAvailable.Should().Be(12);
-            viewModel.CmsManagerSpotsAvailable.Should().Be(13);
-            viewModel.CcLicencesAvailable.Should().Be(14);
-            viewModel.TrainerSpotsAvailable.Should().Be(15);
-            viewModel.Admins.Should().Be(7);
-            viewModel.Supervisors.Should().Be(6);
-            viewModel.CmsAdministrators.Should().Be(4);
-            viewModel.CmsManagers.Should().Be(1);
-            viewModel.CcLicences.Should().Be(2);
-            viewModel.Trainers.Should().Be(1);
+            viewModel.Admins.Should().Be("7");
+            viewModel.Supervisors.Should().Be("6");
+            viewModel.CmsAdministrators.Should().Be("4 / 12");
+            viewModel.CmsManagers.Should().Be("1 / 13");
+            viewModel.CcLicences.Should().Be("2 / 14");
+            viewModel.Trainers.Should().Be("1 / 15");
+        }
+
+        [Test]
+        public void No_limit_should_be_displayed_when_centre_has_no_limit_on_spots_available()
+        {
+            // Given
+            var centre = CentreTestHelper.GetDefaultCentre(
+                cmsAdministratorSpots: -1,
+                cmsManagerSpots: -1,
+                ccLicenceSpots: -1,
+                trainerSpots: -1
+            );
+            var adminUsersAtCentre = GetAdminUsersForTest();
+
+            // When
+            var viewModel = new NumberOfAdministratorsViewModel(centre, adminUsersAtCentre);
+
+            // Then
+            viewModel.CmsAdministrators.Should().Be("4");
+            viewModel.CmsManagers.Should().Be("1");
+            viewModel.CcLicences.Should().Be("2");
+            viewModel.Trainers.Should().Be("1");
         }
 
         private List<AdminUser> GetAdminUsersForTest()

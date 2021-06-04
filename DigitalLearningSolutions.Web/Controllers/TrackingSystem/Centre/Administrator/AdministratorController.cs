@@ -11,7 +11,7 @@
     {
         public IActionResult Index()
         {
-            var model = new CentreAdministratorViewModel(User.GetCentreId());
+            var model = new CentreAdministratorsViewModel(User.GetCentreId());
 
             return View(model);
         }
