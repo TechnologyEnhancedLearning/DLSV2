@@ -18,11 +18,6 @@
             this.userDataService = userDataService;
         }
 
-        /// <summary>
-        /// Render NumberOfAdministrators view component.
-        /// </summary>
-        /// <param name="centreId"></param>
-        /// <returns></returns>
         public IViewComponentResult Invoke(int centreId)
         {
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;

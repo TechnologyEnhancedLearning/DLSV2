@@ -7,7 +7,7 @@
         public const string UserOnly = "UserOnly";
         public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
-        public const string UserCentreManagerOrUserUserAdminOnly = "UserCentreManagerOrUserUserAdminOnly";
+        public const string UserCentreManager = "UserCentreManager";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
@@ -36,7 +36,7 @@
             );
         }
 
-        public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreManagerOrUserUserAdminOnly(
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreManager(
             AuthorizationPolicyBuilder policy
         )
         {

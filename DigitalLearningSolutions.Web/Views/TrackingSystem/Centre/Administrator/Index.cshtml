@@ -1,6 +1,7 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
-@model int
+@model CentreAdministratorViewModel
 
 @{
   ViewData["Title"] = "Centre Administrators";
@@ -14,8 +15,15 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-column-one-quarter">
+    Side bar
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre administrators</h1>
-    <vc:number-of-administrators centre-id="@Model"/>
+    <div class="nhsuk-u-margin-top-8">
+      <vc:number-of-administrators centre-id="@Model.CentreId" />
+    </div>
+
   </div>
 </div>

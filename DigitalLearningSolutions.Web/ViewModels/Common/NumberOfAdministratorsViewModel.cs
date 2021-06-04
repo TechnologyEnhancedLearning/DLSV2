@@ -20,10 +20,10 @@
 
         public NumberOfAdministratorsViewModel(Centre centreDetails, List<AdminUser> adminUsers)
         {
-            TrainerSpotsAvailable = centreDetails.Trainers;
-            CmsAdministratorSpotsAvailable = centreDetails.CmsAdministrators;
-            CmsManagerSpotsAvailable = centreDetails.CmsManagers;
-            CcLicencesAvailable = centreDetails.CcLicences;
+            TrainerSpotsAvailable = centreDetails.TrainerSpots;
+            CmsAdministratorSpotsAvailable = centreDetails.CmsAdministratorSpots;
+            CmsManagerSpotsAvailable = centreDetails.CmsManagerSpots;
+            CcLicencesAvailable = centreDetails.CcLicenceSpots;
 
             Admins = adminUsers.Count(a => a.IsCentreAdmin);
             Supervisors = adminUsers.Count(a => a.IsSupervisor);

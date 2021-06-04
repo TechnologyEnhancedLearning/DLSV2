@@ -1,5 +1,9 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
 dd.nhsuk-summary-list__value {
-    text-align: right;
+  text-align: right;
+
+  @include govuk-media-query($until: tablet) {
+    text-align: left;
+  }
 }

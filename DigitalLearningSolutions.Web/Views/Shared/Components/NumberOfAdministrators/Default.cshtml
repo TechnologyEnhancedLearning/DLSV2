@@ -3,6 +3,13 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/numberOfAdministratorsViewComponent.css")" asp-append-version="true">
 
+@{
+  var trainerDisplay = Model.TrainerSpotsAvailable == -1 ? Model.Trainers.ToString() : Model.Trainers + "/" + Model.TrainerSpotsAvailable;
+  var cmsAdministratorsDisplay = Model.CmsAdministratorSpotsAvailable == -1 ? Model.CmsAdministrators.ToString() : Model.CmsAdministrators + "/" + Model.CmsAdministratorSpotsAvailable;
+  var cmsManagersDisplay = Model.CmsManagerSpotsAvailable == -1 ? Model.CmsManagers.ToString() : Model.CmsManagers + "/" + Model.CmsManagerSpotsAvailable;
+  var ccLicencesDisplay = Model.CcLicencesAvailable == -1 ? Model.CcLicences.ToString() : Model.CcLicences + "/" + Model.CcLicencesAvailable;
+}
+
 <details class="nhsuk-details">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
@@ -35,7 +42,7 @@
           Trainers
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Trainers/@Model.TrainerSpotsAvailable
+          @trainerDisplay
         </dd>
       </div>
 
@@ -44,7 +51,7 @@
           CMS administrators
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CmsAdministrators/@Model.CmsAdministratorSpotsAvailable
+          @cmsAdministratorsDisplay
         </dd>
       </div>
 
@@ -53,7 +60,7 @@
           CMS managers
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CmsManagers/@Model.CmsManagerSpotsAvailable
+          @cmsManagersDisplay
         </dd>
       </div>
 
@@ -62,7 +69,7 @@
           Content creators
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CcLicences/@Model.CcLicencesAvailable
+          @ccLicencesDisplay
         </dd>
       </div>
 
