@@ -112,7 +112,14 @@
             var data = TempData.Peek<DelegateRegistrationData>()!;
             var model = data.LearnerInformationViewModel;
 
-            SetLearnerInformationViewBag(model, (int)data.RegisterViewModel.Centre!);
+            if (data.RegisterViewModel.Centre == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var centreId = (int)data.RegisterViewModel.Centre;
+
+            SetLearnerInformationViewBag(model, centreId);
 
             return View(model);
         }
@@ -123,8 +130,15 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
+            if (data.RegisterViewModel.Centre == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var centreId = (int)data.RegisterViewModel.Centre;
+
             customPromptHelper.ValidateCustomPrompts(
-                (int)data.RegisterViewModel.Centre!,
+                centreId,
                 model.Answer1,
                 model.Answer2,
                 model.Answer3,
@@ -136,7 +150,7 @@
 
             if (!ModelState.IsValid)
             {
-                SetLearnerInformationViewBag(model, (int)data.RegisterViewModel.Centre!);
+                SetLearnerInformationViewBag(model, centreId);
                 return View(model);
             }
 
@@ -187,12 +201,22 @@
         public IActionResult Summary(SummaryViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
+
+            if (data.RegisterViewModel.Centre == null || data.LearnerInformationViewModel.JobGroup == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var centreId = (int)data.RegisterViewModel.Centre;
+            var jobGroupId = (int)data.LearnerInformationViewModel.JobGroup;
+
             if (!ModelState.IsValid)
             {
-                var centre = centresDataService.GetCentreName((int)data.RegisterViewModel.Centre!);
-                var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
+                var centre = centresDataService.GetCentreName(centreId);
+                var jobGroup = jobGroupsDataService.GetJobGroupName(jobGroupId);
                 var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
+                AddCustomFieldsToViewBag(data.LearnerInformationViewModel, centreId);
                 return View(viewModel);
             }
 
@@ -220,7 +244,7 @@
             TempData.Clear();
             TempData.Add("candidateNumber", candidateNumber);
             TempData.Add("approved", approved);
-            TempData.Add("centreId", data.RegisterViewModel.Centre);
+            TempData.Add("centreId", centreId);
             return RedirectToAction("Confirmation");
         }
 
