@@ -58,7 +58,7 @@
         }
 
         [Test]
-        public void ValidateCustomPrompts_adds_errors_to_invalid_answers_only()
+        public void ValidateCustomPrompts_adds_error_for_missing_mandatory_answer()
         {
             // Given
             var answer2 = "Answer2";
@@ -77,6 +77,29 @@
             // Then
             modelState["Answer1"].Errors.Count.Should().Be(1);
             modelState["Answer2"].Should().BeNull();
+        }
+
+        [Test]
+        public void ValidateCustomPrompts_adds_error_for_too_long_answer()
+        {
+            // Given
+            var answer1 = "Answer1";
+            var answer2 = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1);
+            var customPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2);
+            var centreCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
+                new List<CustomPrompt> { customPrompt1, customPrompt2 },
+                1
+            );
+            var modelState = new ModelStateDictionary();
+            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+
+            // When
+            customPromptHelper.ValidateCustomPrompts(1, answer1, answer2, null, null, null, null, modelState);
+
+            // Then
+            modelState["Answer1"].Should().BeNull();
+            modelState["Answer2"].Errors.Count.Should().Be(1);
         }
     }
 }
