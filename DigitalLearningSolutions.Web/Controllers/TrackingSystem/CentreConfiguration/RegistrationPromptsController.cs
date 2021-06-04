@@ -163,16 +163,19 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
-            customPromptsService.AddCustomPromptToCentre
+            if (customPromptsService.AddCustomPromptToCentre
             (
                 User.GetCentreId(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
                 data.ConfigureAnswersViewModel.OptionsString
-            );
+            ))
+            {
+                TempData.Clear();
+                return RedirectToAction("Index");
+            }
 
-            TempData.Clear();
-            return RedirectToAction("Index");
+            return RedirectToAction("Error", "LearningSolutions");
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)

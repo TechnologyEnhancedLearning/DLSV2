@@ -27,14 +27,14 @@
 
         public void AnalyzePageHeadingAndAccessibility(string pageTitle)
         {
-            AnalyzePageHeading(pageTitle);
+            ValidatePageHeading(pageTitle);
 
             // then
             var axeResult = new AxeBuilder(Driver).Analyze();
             axeResult.Violations.Should().BeEmpty();
         }
 
-        public void AnalyzePageHeading(string pageTitle)
+        public void ValidatePageHeading(string pageTitle)
         {
             var h1Element = Driver.FindElement(By.TagName("h1"));
             h1Element.Text.Should().BeEquivalentTo(pageTitle);

@@ -18,24 +18,23 @@
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
-            AnalyzePageHeading("Add delegate registration prompt");
+            ValidatePageHeading("Add delegate registration prompt");
             var selectPromptResult = new AxeBuilder(Driver).Analyze();
             Driver.SelectDropdownItemValue("CustomPromptId", "1");
             Driver.SubmitForm();
 
-            AnalyzePageHeading("Configure answers");
+            ValidatePageHeading("Configure answers");
             var configureAnswerInitialResult = new AxeBuilder(Driver).Analyze();
 
             AddAnswer("Answer 1");
             AddAnswer("Answer 2");
-            AnalyzePageHeading("Configure answers");
+            ValidatePageHeading("Configure answers");
             var configureAnswerWithAnswersResult = new AxeBuilder(Driver).Analyze();
 
             Driver.ClickButtonByText("Next");
 
-            AnalyzePageHeading("Summary");
+            ValidatePageHeading("Summary");
             var summaryResult = new AxeBuilder(Driver).Analyze();
-            Driver.SubmitForm();
 
             // then
             selectPromptResult.Violations.Should().BeEmpty();

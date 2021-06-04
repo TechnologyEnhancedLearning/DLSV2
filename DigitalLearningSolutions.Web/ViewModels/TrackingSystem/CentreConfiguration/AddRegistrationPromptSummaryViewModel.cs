@@ -6,12 +6,16 @@
 
     public class AddRegistrationPromptSummaryViewModel
     {
-        public AddRegistrationPromptSummaryViewModel(AddRegistrationPromptData data, string promptName
+        public AddRegistrationPromptSummaryViewModel(
+            AddRegistrationPromptData data,
+            string promptName
         )
         {
             PromptName = promptName;
             Mandatory = data.SelectPromptViewModel.Mandatory ? "Yes" : "No";
-            Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(data.ConfigureAnswersViewModel.OptionsString);
+            Answers = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(
+                data.ConfigureAnswersViewModel.OptionsString
+            );
         }
 
         public string PromptName { get; set; }

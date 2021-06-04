@@ -292,7 +292,7 @@
                     true,
                     "Test\r\nAnswer"
                 )
-            ).DoesNothing();
+            ).Returns(true);
 
             // When
             var result = registrationPromptsController.AddRegistrationPromptSummaryPost();
