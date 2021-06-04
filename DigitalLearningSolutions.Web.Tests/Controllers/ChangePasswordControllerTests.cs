@@ -16,8 +16,10 @@
 
     public class ChangePasswordControllerTests
     {
+        private const int AdminId = 34;
+        private const int DelegateId = 12;
+
         private ChangePasswordController authenticatedController = null!;
-        private ILoginService loginService = null!;
         private IPasswordService passwordService = null!;
         private IUserService userService = null!;
 
@@ -25,10 +27,10 @@
         public void SetUp()
         {
             userService = A.Fake<IUserService>();
-            loginService = A.Fake<ILoginService>();
             passwordService = A.Fake<IPasswordService>();
-            authenticatedController = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(isAuthenticated: true);
+            authenticatedController = new ChangePasswordController(passwordService, userService)
+                .WithDefaultContext()
+                .WithMockUser(isAuthenticated: true, adminId: AdminId, delegateId: DelegateId);
         }
 
         [Test]
@@ -45,7 +47,7 @@
         }
 
         [Test]
-        public async Task Post_returns_form_if_current_password_does_not_match_email()
+        public async Task Post_returns_form_if_current_password_does_not_match_user_ids()
         {
             // Given
             GivenPasswordVerificationFails();
@@ -58,22 +60,7 @@
         }
 
         [Test]
-        public async Task Post_returns_form_if_current_password_does_not_match_user_ids()
-        {
-            // Given
-            var controllerWithoutEmail = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(true, emailAddress: null, adminId: 54, delegateId: 209);
-            GivenPasswordVerificationFails();
-
-            // When
-            var result = await controllerWithoutEmail.Index(new ChangePasswordViewModel());
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<ChangePasswordViewModel>();
-        }
-
-        [Test]
-        public async Task Post_does_not_change_password_if_current_password_does_not_match_email()
+        public async Task Post_does_not_change_password_if_current_password_does_not_match_user_ids()
         {
             // Given
             GivenPasswordVerificationFails();
@@ -87,26 +74,10 @@
         }
 
         [Test]
-        public async Task Post_does_not_change_password_if_current_password_does_not_match_user_ids()
-        {
-            // Given
-            var controllerWithoutEmail = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(true, emailAddress: null, adminId: 54, delegateId: 209);
-            GivenPasswordVerificationFails();
-
-            // When
-            await controllerWithoutEmail.Index(new ChangePasswordViewModel());
-
-            // Then
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<UserReference>._, A<string>._)).MustNotHaveHappened();
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<string>._, A<string>._)).MustNotHaveHappened();
-        }
-
-        [Test]
         public async Task Post_returns_success_page_if_model_and_password_valid()
         {
             // Given
-            GivenPasswordVerificationSucceedsFor(authenticatedController.User.GetEmailIfAny()!, "current-password");
+            GivenPasswordVerificationSucceedsForLoggedInUser("current-password");
 
             // When
             var result = await authenticatedController.Index(
@@ -122,7 +93,10 @@
         public async Task Post_changes_password_if_model_and_password_valid()
         {
             // Given
-            GivenPasswordVerificationSucceedsFor(authenticatedController.User.GetEmailIfAny()!, "current-password");
+            GivenPasswordVerificationSucceedsForLoggedInUser("current-password");
+            var adminUser = Builder<AdminUser>.CreateNew().Build();
+            var delegateUser = Builder<DelegateUser>.CreateNew().Build();
+            A.CallTo(() => userService.GetUsersById(AdminId, DelegateId)).Returns((adminUser, delegateUser));
 
             // When
             await authenticatedController.Index(
@@ -130,101 +104,54 @@
                     { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
             );
 
-            A.CallTo(() => passwordService.ChangePasswordAsync(authenticatedController.User.GetEmailIfAny()!, "new-password"))
+            A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(adminUser, delegateUser, "new-password"))
                 .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<UserReference>._, A<string>._)).MustNotHaveHappened();
         }
 
         [Test]
-        public async Task Post_changes_password_for_logged_in_user_if_no_email_address_and_admin_only()
+        public async Task Post_changes_password_if_admin_only()
         {
             // Given
-            GivenPasswordVerificationSucceedsFor(null, 209, "current-password");
-            var controller = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(true, emailAddress: null, adminId: null, delegateId: 209);
+            GivenPasswordVerificationSucceedsForLoggedInUser("current-password");
+            var adminUser = Builder<AdminUser>.CreateNew().Build();
+            A.CallTo(() => userService.GetUsersById(AdminId, DelegateId)).Returns((adminUser, null));
 
             // When
-            await controller.Index(
+            await authenticatedController.Index(
                 new ChangePasswordViewModel
                     { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
             );
 
-            // Then
-            A.CallTo(
-                () => passwordService.ChangePasswordAsync(new UserReference(209, UserType.DelegateUser), "new-password")
-            ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordService.ChangePasswordAsync(authenticatedController.User.GetEmailIfAny()!, "new-password"))
-                .MustNotHaveHappened();
-        }
-
-        private ChangePasswordController CreateNewChangePasswordControllerWithDefaultContext()
-        {
-            return new ChangePasswordController(passwordService, loginService, userService).WithDefaultContext();
+            A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(adminUser, null, "new-password"))
+                .MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
-        public async Task Post_changes_password_for_logged_in_user_if_no_email_address_and_delegate_only()
+        public async Task Post_changes_password_if_delegate_only()
         {
             // Given
-            GivenPasswordVerificationSucceedsFor(52, null, "current-password");
-            var controller = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(true, emailAddress: null, adminId: 52, delegateId: null);
+            GivenPasswordVerificationSucceedsForLoggedInUser("current-password");
+            var delegateUser = Builder<DelegateUser>.CreateNew().Build();
+            A.CallTo(() => userService.GetUsersById(AdminId, DelegateId)).Returns((null, delegateUser));
 
             // When
-            await controller.Index(
+            await authenticatedController.Index(
                 new ChangePasswordViewModel
                     { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
             );
 
-            // Then
-            A.CallTo(
-                () => passwordService.ChangePasswordAsync(new UserReference(52, UserType.AdminUser), "new-password")
-            ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordService.ChangePasswordAsync(authenticatedController.User.GetEmailIfAny()!, "new-password"))
-                .MustNotHaveHappened();
+            A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(null, delegateUser, "new-password"))
+                .MustHaveHappened(1, Times.Exactly);
         }
 
-        [Test]
-        public async Task Post_changes_password_for_logged_in_user_if_no_email_address_and_both_admin_and_delegate()
+        private void GivenPasswordVerificationSucceedsForLoggedInUser(string password)
         {
-            // Given
-            GivenPasswordVerificationSucceedsFor(52, 209, "current-password");
-            var controller = CreateNewChangePasswordControllerWithDefaultContext()
-                .WithMockUser(true, emailAddress: null, adminId: 52, delegateId: 209);
-
-            // When
-            await controller.Index(
-                new ChangePasswordViewModel
-                    { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
-            );
-
-            // Then
-            A.CallTo(
-                () => passwordService.ChangePasswordAsync(new UserReference(52, UserType.AdminUser), "new-password")
-            ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(
-                () => passwordService.ChangePasswordAsync(new UserReference(209, UserType.DelegateUser), "new-password")
-            ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordService.ChangePasswordAsync(A<string>._, A<string>._))
-                .MustNotHaveHappened();
-        }
-
-        private void GivenPasswordVerificationSucceedsFor(string email, string password)
-        {
-            A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(email, password))
-                .Returns((Builder<AdminUser>.CreateNew().Build(), new List<DelegateUser>()));
-        }
-
-        private void GivenPasswordVerificationSucceedsFor(int? adminId, int? candidateId, string password)
-        {
-            A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(adminId, candidateId, password))
+            A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(AdminId, DelegateId, password))
                 .Returns((Builder<AdminUser>.CreateNew().Build(), new List<DelegateUser>()));
         }
 
         private void GivenPasswordVerificationFails()
         {
-            A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<string>._, A<string>._))
-                .Returns((null, new List<DelegateUser>()));
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<int>._, A<int>._, A<string>._))
                 .Returns((null, new List<DelegateUser>()));
         }

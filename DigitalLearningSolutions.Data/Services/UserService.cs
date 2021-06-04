@@ -27,7 +27,6 @@
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
 
         (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
-        (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(string signedInEmail, string password);
     }
 
     public class UserService : IUserService
@@ -175,9 +174,9 @@
             return adminUsersWithNewEmail == null && delegateUsersWithNewEmail.Count(u => u.CentreId == centreId) == 0;
         }
 
-        private static bool UserEmailHasChanged(User? adminUser, string emailAddress)
+        private static bool UserEmailHasChanged(User? user, string emailAddress)
         {
-            return adminUser != null && adminUser.EmailAddress != emailAddress;
+            return user != null && user.EmailAddress != emailAddress;
         }
 
         public (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(
@@ -188,9 +187,9 @@
         {
             var (loggedInAdminUser, loggedInDelegateUser) = GetUsersById(adminId, delegateId);
 
-            var signedInEmail = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
+            var signedInEmailIfAny = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
 
-            if (string.IsNullOrWhiteSpace(signedInEmail))
+            if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
             {
                 return loginService.VerifyUsers(
                     password,
@@ -201,12 +200,7 @@
                 );
             }
 
-            return GetVerifiedLinkedUsersAccounts(signedInEmail, password);
-        }
-
-        public (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(string signedInEmail, string password)
-        {
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
             return loginService.VerifyUsers(password, adminUser, delegateUsers);
         }

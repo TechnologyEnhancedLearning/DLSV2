@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using NUnit.Framework;
 
     public class PasswordServiceTests
@@ -88,6 +89,89 @@
                     )
                 )
                 .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_for_linked_accounts_uses_email_if_exists()
+        {
+            // Given
+            var admin = Builder<AdminUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
+
+            // Then
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_for_linked_accounts_uses_admin_email_if_no_delegate_email()
+        {
+            // Given
+            var admin = Builder<AdminUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, null, "new-password");
+
+            // Then
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_for_linked_accounts_uses_delegate_email_if_no_admin_email()
+        {
+            // Given
+            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordForLinkedUserAccounts(null, candidate, "new-password");
+
+            // Then
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Changing_password_for_linked_accounts_uses_user_ids_if_no_email()
+        {
+            // Given
+            var admin = Builder<AdminUser>.CreateNew().With(u => u.EmailAddress = null).With(u => u.Id = 34).Build();
+            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = null).With(u => u.Id = 309)
+                .Build();
+            A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
+
+            // When
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
+
+            // Then
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, A<string>._))
+                .MustNotHaveHappened();
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByUserReferenceAsync(
+                        new UserReference(34, UserType.AdminUser),
+                        "hash-of-password"
+                    )
+                )
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByUserReferenceAsync(
+                        new UserReference(309, UserType.DelegateUser),
+                        "hash-of-password"
+                    )
+                )
+                .MustHaveHappened(1, Times.Exactly);
         }
     }
 }
