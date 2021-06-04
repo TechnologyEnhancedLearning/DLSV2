@@ -45,7 +45,7 @@
 
         private void AddAnswer(string answerString)
         {
-            Driver.FillTextInput(answerString, "Answer");
+            Driver.FillTextInput("Answer", answerString);
             Driver.ClickButtonByText("Add");
         }
     }
