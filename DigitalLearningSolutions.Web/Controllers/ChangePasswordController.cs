@@ -13,10 +13,18 @@
     public class ChangePasswordController : Controller
     {
         private readonly IPasswordService passwordService;
+        private readonly ILoginService loginService;
+        private readonly IUserService userService;
 
-        public ChangePasswordController(IPasswordService passwordService)
+        public ChangePasswordController(
+            IPasswordService passwordService,
+            ILoginService loginService,
+            IUserService userService
+        )
         {
             this.passwordService = passwordService;
+            this.loginService = loginService;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -33,14 +41,43 @@
                 return View(model);
             }
 
-            var email = User.GetEmail();
+            var currentPassword = model.CurrentPassword!;
             var newPassword = model.Password!;
+
+            var email = User.GetEmailIfAny();
+
             if (email != null)
             {
+                var passwordIsValid = userService.GetVerifiedLinkedUsersAccounts(email, currentPassword).Any();
+
+                if (!passwordIsValid)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.CurrentPassword),
+                        "The password you have entered is incorrect."
+                    );
+                    return View(model);
+                }
+
                 await passwordService.ChangePasswordAsync(email, newPassword);
             }
             else
             {
+                var passwordIsValid = userService.GetVerifiedLinkedUsersAccounts(
+                    User.GetAdminId(),
+                    User.GetCandidateId(),
+                    currentPassword
+                ).Any();
+
+                if (!passwordIsValid)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.CurrentPassword),
+                        "The password you have entered is incorrect."
+                    );
+                    return View(model);
+                }
+
                 await ChangePasswordForLoggedInUser(newPassword);
             }
 

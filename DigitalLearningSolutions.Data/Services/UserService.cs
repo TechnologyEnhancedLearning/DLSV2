@@ -1,7 +1,8 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -24,6 +25,9 @@ namespace DigitalLearningSolutions.Data.Services
         );
 
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
+
+        (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
+        (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(string signedInEmail, string password);
     }
 
     public class UserService : IUserService
@@ -176,8 +180,7 @@ namespace DigitalLearningSolutions.Data.Services
             return adminUser != null && adminUser.EmailAddress != emailAddress;
         }
 
-        private (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts
-        (
+        public (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(
             int? adminId,
             int? delegateId,
             string password
@@ -187,11 +190,22 @@ namespace DigitalLearningSolutions.Data.Services
 
             var signedInEmail = loggedInAdminUser?.EmailAddress ?? loggedInDelegateUser?.EmailAddress;
 
-            if (signedInEmail == null)
+            if (string.IsNullOrWhiteSpace(signedInEmail))
             {
-                return (null, new List<DelegateUser>());
+                return loginService.VerifyUsers(
+                    password,
+                    loggedInAdminUser,
+                    loggedInDelegateUser != null
+                        ? new List<DelegateUser> { loggedInDelegateUser }
+                        : new List<DelegateUser>()
+                );
             }
 
+            return GetVerifiedLinkedUsersAccounts(signedInEmail, password);
+        }
+
+        public (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(string signedInEmail, string password)
+        {
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmail);
 
             return loginService.VerifyUsers(password, adminUser, delegateUsers);

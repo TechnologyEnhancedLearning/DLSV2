@@ -52,7 +52,7 @@
         }
         private string? GetUserEmail()
         {
-            return User.GetEmail();
+            return User.GetEmailIfAny();
         }
         private string? GetUserFirstName()
         {
