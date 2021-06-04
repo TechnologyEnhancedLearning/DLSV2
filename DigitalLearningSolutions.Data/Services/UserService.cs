@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -11,8 +11,7 @@
         public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
         public (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
-        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
-        (
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         );
@@ -21,7 +20,8 @@
 
         public bool TryUpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
-            CentreAnswersData? centreAnswersData = null);
+            CentreAnswersData? centreAnswersData = null
+        );
 
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
     }
@@ -74,8 +74,7 @@
             return (adminUser, delegateUser);
         }
 
-        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres
-        (
+        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         )
@@ -88,8 +87,10 @@
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
             var availableCentres = delegateUsers
-                .Select(du =>
-                    new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true))
+                .Select(
+                    du =>
+                        new CentreUserDetails(du.CentreId, du.CentreName, adminUser?.CentreId == du.CentreId, true)
+                )
                 .ToList();
 
             if (adminUser != null && availableCentres.All(c => c.CentreId != adminUser.CentreId))
@@ -100,12 +101,17 @@
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public bool TryUpdateUserAccountDetails(AccountDetailsData accountDetailsData,
-            CentreAnswersData? centreAnswersData = null)
+        public bool TryUpdateUserAccountDetails(
+            AccountDetailsData accountDetailsData,
+            CentreAnswersData? centreAnswersData = null
+        )
         {
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                GetVerifiedLinkedUsersAccounts(accountDetailsData.AdminId, accountDetailsData.DelegateId,
-                    accountDetailsData.Password);
+                GetVerifiedLinkedUsersAccounts(
+                    accountDetailsData.AdminId,
+                    accountDetailsData.DelegateId,
+                    accountDetailsData.Password
+                );
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
@@ -114,15 +120,25 @@
 
             if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUser(accountDetailsData.FirstName, accountDetailsData.Surname,
-                    accountDetailsData.Email, accountDetailsData.ProfileImage, verifiedAdminUser.Id);
+                userDataService.UpdateAdminUser(
+                    accountDetailsData.FirstName,
+                    accountDetailsData.Surname,
+                    accountDetailsData.Email,
+                    accountDetailsData.ProfileImage,
+                    verifiedAdminUser.Id
+                );
             }
 
             if (verifiedDelegateUsers.Count != 0)
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
-                userDataService.UpdateDelegateUsers(accountDetailsData.FirstName, accountDetailsData.Surname,
-                    accountDetailsData.Email, accountDetailsData.ProfileImage, delegateIds);
+                userDataService.UpdateDelegateUsers(
+                    accountDetailsData.FirstName,
+                    accountDetailsData.Surname,
+                    accountDetailsData.Email,
+                    accountDetailsData.ProfileImage,
+                    delegateIds
+                );
 
                 if (verifiedDelegateUsers.Any(u => u.Id == accountDetailsData.DelegateId) && centreAnswersData != null)
                 {
@@ -134,7 +150,8 @@
                         centreAnswersData.Answer3,
                         centreAnswersData.Answer4,
                         centreAnswersData.Answer5,
-                        centreAnswersData.Answer6);
+                        centreAnswersData.Answer6
+                    );
                 }
             }
 
