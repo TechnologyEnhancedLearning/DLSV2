@@ -190,7 +190,7 @@
         }
 
         [Test]
-        public void AddCustomPromptToCentre_add_prompt_at_expected_prompt_number()
+        public void AddCustomPromptToCentre_add_prompt_at_lowest_possible_prompt_number()
         {
             // Given
             A.CallTo
@@ -222,7 +222,7 @@
         }
 
         [Test]
-        public void AddCustomPromptToCentre_add_prompt_at_expected_prompt_number_with_gaps_in_prompt_numbers()
+        public void AddCustomPromptToCentre_add_prompt_at_lowest_possible_prompt_number_with_gaps_in_prompt_numbers()
         {
             // Given
             A.CallTo
@@ -254,7 +254,7 @@
         }
 
         [Test]
-        public void AddCustomPromptToCentre_add_prompt_with_all_prompts_defined()
+        public void AddCustomPromptToCentre_does_not_add_prompt_if_centre_has_all_prompts_defined()
         {
             // Given
             A.CallTo

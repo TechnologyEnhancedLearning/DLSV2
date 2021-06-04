@@ -100,12 +100,11 @@
         {
             var centreCustomPrompts = GetCustomPromptsForCentreByCentreId(centreId);
             var existingPromptNumbers = centreCustomPrompts.CustomPrompts
-                .Select(c => c.CustomPromptNumber)
-                .OrderBy(n => n);
+                .Select(c => c.CustomPromptNumber);
 
             var promptNumbers = new List<int> { 1, 2, 3, 4, 5, 6 };
-            promptNumbers.RemoveAll(x => existingPromptNumbers.Contains(x));
-            var promptNumber = promptNumbers.Any() ? promptNumbers.Min() : (int?)null;
+            var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
+            var promptNumber = unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
 
             if (promptNumber != null)
             {

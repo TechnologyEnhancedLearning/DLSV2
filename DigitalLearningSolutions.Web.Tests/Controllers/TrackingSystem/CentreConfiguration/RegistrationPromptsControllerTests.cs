@@ -215,7 +215,7 @@
             var expectedConfigureAnswerViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
+            { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             const string action = "addPrompt";
@@ -246,7 +246,7 @@
             const string action = "delete0";
 
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
@@ -283,7 +283,7 @@
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
             var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
                 () => customPromptsService.AddCustomPromptToCentre(
@@ -298,6 +298,30 @@
             var result = registrationPromptsController.AddRegistrationPromptSummaryPost();
 
             // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                                () => customPromptsService.AddCustomPromptToCentre(
+                                    ControllerContextHelper.CentreId,
+                                    1,
+                                    true,
+                                    "Test\r\nAnswer"
+                                )
+                            ).MustHaveHappened();
+                registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void AddRegistrationPromptSummary_calls_custom_prompt_service_and_redirects_to_error_on_failure()
+        {
+            // Given
+            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+            var initialTempData = new AddRegistrationPromptData
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+            registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
                 () => customPromptsService.AddCustomPromptToCentre(
                     ControllerContextHelper.CentreId,
@@ -305,8 +329,24 @@
                     true,
                     "Test\r\nAnswer"
                 )
-            ).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            ).Returns(false);
+
+            // When
+            var result = registrationPromptsController.AddRegistrationPromptSummaryPost();
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => customPromptsService.AddCustomPromptToCentre(
+                        ControllerContextHelper.CentreId,
+                        1,
+                        true,
+                        "Test\r\nAnswer"
+                    )
+                ).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            }
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
