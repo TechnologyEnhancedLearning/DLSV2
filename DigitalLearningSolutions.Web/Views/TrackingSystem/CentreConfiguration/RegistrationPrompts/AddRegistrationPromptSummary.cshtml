@@ -1,0 +1,78 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+@using Microsoft.Extensions.Configuration
+@model AddRegistrationPromptSummaryViewModel
+
+@{
+  ViewData["Title"] = "Add delegate registration prompt";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-u-margin-bottom-8">
+      <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+    </div>
+
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Prompt
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.PromptName
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="AddRegistrationPromptSelectPrompt">
+            Change<span class="nhsuk-u-visually-hidden"> prompt</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Is mandatory?
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Mandatory
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="AddRegistrationPromptSelectPrompt">
+            Change<span class="nhsuk-u-visually-hidden"> whether this prompt is mandatory</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Answers
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @if (Model.Answers.Any()) {
+            <ul>
+              @foreach (var answer in Model.Answers)
+              {
+                <li class="word-break">@answer</li>
+              }
+            </ul>
+          } else {
+            <partial name="_NoConfiguredAnswers"/>
+          }
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="AddRegistrationPromptConfigureAnswers">
+            Change<span class="nhsuk-u-visually-hidden"> answers</span>
+          </a>
+        </dd>
+      </div>
+    </dl>
+
+    <form method="post" asp-action="AddRegistrationPromptSummaryPost">
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+  </div>
+</div>

@@ -48,15 +48,5 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             // then
             AnalyzePageHeadingAndAccessibility(pageTitle);
         }
-
-        private void AnalyzePageHeadingAndAccessibility(string pageTitle)
-        {
-            var h1Element = Driver.FindElement(By.TagName("h1"));
-            h1Element.Text.Should().BeEquivalentTo(pageTitle);
-
-            // then
-            var axeResult = new AxeBuilder(Driver).Analyze();
-            axeResult.Violations.Should().BeEmpty();
-        }
     }
 }
