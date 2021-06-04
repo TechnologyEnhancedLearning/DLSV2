@@ -79,7 +79,7 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.AddCustomPromptToCentre(2, 1, 1, false, options);
+                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
                 var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
                 var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1).Item2;
 

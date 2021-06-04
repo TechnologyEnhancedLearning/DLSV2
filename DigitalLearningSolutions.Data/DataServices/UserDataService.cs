@@ -17,8 +17,13 @@
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage,
-            int[] ids);
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            int[] ids
+        );
 
         public void UpdateDelegateUserCentrePrompts(
             int id,
@@ -28,7 +33,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6);
+            string? answer6
+        );
 
         public void ApproveDelegateUsers(params int[] ids);
 
@@ -272,7 +278,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6
+        )
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -301,12 +308,12 @@
 
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
         {
-            return connection.Query<int>(
-                $@"SELECT COUNT(*)
+            return connection.Query<string>(
+                $@"SELECT Answer{promptNumber}
                         FROM Candidates
                         WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
                 new { centreId }
-            ).Single();
+            ).Count(x => !string.IsNullOrWhiteSpace(x));
         }
 
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)

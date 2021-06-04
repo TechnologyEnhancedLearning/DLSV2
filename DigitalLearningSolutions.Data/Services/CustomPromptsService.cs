@@ -27,6 +27,8 @@
         List<(int id, string value)> GetCustomPromptsAlphabeticalList();
 
         public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
+
+        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -108,7 +110,7 @@
 
             if (promptNumber != null)
             {
-                customPromptsDataService.AddCustomPromptToCentre(
+                customPromptsDataService.UpdateCustomPromptForCentre(
                     centreId,
                     promptNumber.Value,
                     promptId,
@@ -120,6 +122,17 @@
 
             logger.LogWarning($"Custom prompt not added to centre ID {centreId}. The centre already had 6 prompts");
             return false;
+        }
+
+        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber)
+        {
+            customPromptsDataService.UpdateCustomPromptForCentre(
+                centreId,
+                promptNumber,
+                0,
+                false,
+                null
+            );
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(

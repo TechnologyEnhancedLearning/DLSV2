@@ -27,8 +27,7 @@
         private readonly ICustomPromptsService customPromptsService;
         private readonly IUserDataService userDataService;
 
-        public RegistrationPromptsController
-        (
+        public RegistrationPromptsController(
             ICustomPromptsService customPromptsService,
             IUserDataService userDataService
         )
@@ -88,8 +87,7 @@
                 addRegistrationPromptData = new AddRegistrationPromptData();
                 var id = addRegistrationPromptData.Id;
 
-                Response.Cookies.Append
-                (
+                Response.Cookies.Append(
                     CookieName,
                     id.ToString(),
                     new CookieOptions
@@ -158,8 +156,8 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList().
-                Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
+            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList()
+                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
             return View(model);
@@ -172,8 +170,7 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
-            if (customPromptsService.AddCustomPromptToCentre
-            (
+            if (customPromptsService.AddCustomPromptToCentre(
                 User.GetCentreId(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
@@ -191,10 +188,11 @@
         [Route("{promptNumber}/Remove")]
         public IActionResult RemoveRegistrationPrompt(int promptNumber)
         {
-            var delegateWithAnswerCount = userDataService.GetDelegateCountWithAnswerForPrompt
-                (User.GetCentreId(), promptNumber);
+            var delegateWithAnswerCount =
+                userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreId(), promptNumber);
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(User.GetCentreId());
-            var promptName = customPrompts.CustomPrompts.Single(c => c.CustomPromptNumber == promptNumber).CustomPromptText;
+            var promptName = customPrompts.CustomPrompts.Single(c => c.CustomPromptNumber == promptNumber)
+                .CustomPromptText;
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
@@ -207,29 +205,28 @@
         {
             if (!model.Confirm)
             {
-                ModelState.AddModelError
-                    (nameof(RemoveRegistrationPromptViewModel.Confirm), "You must confirm before deleting this prompt");
+                ModelState.AddModelError(
+                    nameof(RemoveRegistrationPromptViewModel.Confirm),
+                    "You must confirm before deleting this prompt"
+                );
                 return View(model);
             }
 
-            using (var transaction = new TransactionScope())
+            using var transaction = new TransactionScope();
+            try
             {
-                try
-                {
-                    userDataService.DeleteAllAnswersForPrompt(User.GetCentreId(), promptNumber);
-                    // TODO: HEEDLS-381 Delete the prompt on the centre
-                    transaction.Complete();
-                    return RedirectToAction("Index");
-
-                }
-                catch
-                {
-                    return RedirectToAction("Error", "LearningSolutions");
-                }
-                finally
-                {
-                    transaction.Dispose();
-                }
+                userDataService.DeleteAllAnswersForPrompt(User.GetCentreId(), promptNumber);
+                customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+                transaction.Complete();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Error", "LearningSolutions");
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
 

@@ -53,24 +53,24 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <div class="nhsuk-form-group @confirmFormErrorClass">
-        <fieldset class="nhsuk-fieldset" aria-describedby="terms-error">
+        <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
           @if (confirmError)
           {
-            <span class="nhsuk-error-message" id="terms-error">
+            <span class="nhsuk-error-message" id="confirm-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(RemoveRegistrationPromptViewModel.Confirm)].Errors[0].ErrorMessage
             </span>
           }
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="terms" name="terms" asp-for="Confirm" />
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="terms">
+              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
                 I am sure that I wish to delete this prompt and all @Model.DelegateCount delegate responses
               </label>
             </div>
           </div>
         </fieldset>
       </div>
-
+      <input type="hidden" asp-for="DelegateCount"/>
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete prompt</button>
     </div>
   </div>

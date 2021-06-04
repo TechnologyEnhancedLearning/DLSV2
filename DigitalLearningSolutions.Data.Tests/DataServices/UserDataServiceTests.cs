@@ -269,10 +269,10 @@
         public void GetDelegateCountWithAnswerForPrompt_returns_expected_count()
         {
             // When
-            var count = userDataService.GetDelegateCountWithAnswerForPrompt(2, 1);
+            var count = userDataService.GetDelegateCountWithAnswerForPrompt(101, 1);
 
             // Then
-            count.Should().Be(3157);
+            count.Should().Be(124);
         }
     }
 }

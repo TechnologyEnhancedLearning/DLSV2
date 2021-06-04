@@ -13,8 +13,13 @@
 
         public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
 
-        public void AddCustomPromptToCentre
-            (int centreId, int promptNumber, int promptId, bool mandatory, string? options);
+        public void UpdateCustomPromptForCentre(
+            int centreId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        );
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -28,8 +33,7 @@
 
         public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId)
         {
-            var result = connection.Query<CentreCustomPromptsResult>
-            (
+            var result = connection.Query<CentreCustomPromptsResult>(
                 @"SELECT 
 	                    c.CentreID, 
 	                    cp1.CustomPrompt AS CustomField1Prompt,
@@ -73,8 +77,7 @@
 
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @$"UPDATE Centres
                     SET
                         F{promptNumber}Mandatory = @mandatory,
@@ -96,11 +99,15 @@
             return jobGroups;
         }
 
-        public void AddCustomPromptToCentre
-            (int centreId, int promptNumber, int promptId, bool mandatory, string? options)
+        public void UpdateCustomPromptForCentre(
+            int centreId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        )
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @$"UPDATE Centres
                     SET
                         CustomField{promptNumber}PromptId = @promptId,

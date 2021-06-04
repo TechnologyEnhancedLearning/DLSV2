@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CentreConfiguration
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
     using DigitalLearningSolutions.Web.Extensions;
@@ -19,6 +20,7 @@
     {
         private IRequestCookieCollection cookieCollection = null!;
         private ICustomPromptsService customPromptsService = null!;
+        private IUserDataService userDataService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
@@ -28,8 +30,9 @@
         public void Setup()
         {
             customPromptsService = A.Fake<ICustomPromptsService>();
+            userDataService = A.Fake<IUserDataService>();
 
-            registrationPromptsController = new RegistrationPromptsController(customPromptsService)
+            registrationPromptsController = new RegistrationPromptsController(customPromptsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockTempData();
@@ -47,7 +50,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
 
-            registrationPromptsControllerWithMockHttpContext = new RegistrationPromptsController(customPromptsService)
+            registrationPromptsControllerWithMockHttpContext = new RegistrationPromptsController(customPromptsService, userDataService)
                 .WithMockHttpContext(httpContext)
                 .WithMockUser(true)
                 .WithMockTempData();
