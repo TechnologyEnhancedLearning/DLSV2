@@ -23,9 +23,14 @@
         private readonly IUserService userService;
         private readonly CustomPromptHelper customPromptHelper;
 
-        public RegisterController(ICentresDataService centresDataService, IJobGroupsDataService jobGroupsDataService,
-            IRegistrationService registrationService, ICryptoService cryptoService, IUserService userService,
-            CustomPromptHelper customPromptHelper)
+        public RegisterController(
+            ICentresDataService centresDataService,
+            IJobGroupsDataService jobGroupsDataService,
+            IRegistrationService registrationService,
+            ICryptoService cryptoService,
+            IUserService userService,
+            CustomPromptHelper customPromptHelper
+        )
         {
             this.centresDataService = centresDataService;
             this.jobGroupsDataService = jobGroupsDataService;
@@ -55,12 +60,15 @@
                     new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    });
+                    }
+                );
                 TempData.Set(delegateRegistrationData);
             }
 
-            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
-                (centresDataService.GetActiveCentresAlphabetical(), delegateRegistrationData.RegisterViewModel.Centre);
+            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
+                centresDataService.GetActiveCentresAlphabetical(),
+                delegateRegistrationData.RegisterViewModel.Centre
+            );
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
@@ -77,8 +85,10 @@
 
             if (!ModelState.IsValid)
             {
-                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems
-                    (centresDataService.GetActiveCentresAlphabetical(), model.Centre);
+                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
+                    centresDataService.GetActiveCentresAlphabetical(),
+                    model.Centre
+                );
                 return View(model);
             }
 
@@ -113,8 +123,7 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
-            customPromptHelper.ValidateCustomPrompts
-            (
+            customPromptHelper.ValidateCustomPrompts(
                 (int)data.RegisterViewModel.Centre!,
                 model.Answer1,
                 model.Answer2,
@@ -188,12 +197,15 @@
             }
 
             var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var userIp = Request.Headers.ContainsKey("X-Forwarded-For") ?
-                Request.Headers["X-Forwarded-For"].ToString() :
-                Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            var userIp = Request.Headers.ContainsKey("X-Forwarded-For")
+                ? Request.Headers["X-Forwarded-For"].ToString()
+                : Request.HttpContext.Connection.RemoteIpAddress.ToString();
             var (candidateNumber, approved) =
-                registrationService.RegisterDelegate(RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
-                    baseUrl, userIp);
+                registrationService.RegisterDelegate(
+                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                    baseUrl,
+                    userIp
+                );
 
             if (candidateNumber == "-1")
             {
@@ -243,21 +255,25 @@
 
             if (duplicateUsers.Count() != 0)
             {
-                ModelState.AddModelError(nameof(RegisterViewModel.Email), "A user with this email address already exists at this centre");
+                ModelState.AddModelError(
+                    nameof(RegisterViewModel.Email),
+                    "A user with this email address already exists at this centre"
+                );
             }
         }
 
         private void SetLearnerInformationViewBag(LearnerInformationViewModel model, int centreId)
         {
             AddCustomFieldsToViewBag(model, centreId);
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems
-                (jobGroupsDataService.GetJobGroupsAlphabetical(), model.JobGroup);
+            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                model.JobGroup
+            );
         }
 
         private void AddCustomFieldsToViewBag(LearnerInformationViewModel model, int centreId)
         {
-            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre
-            (
+            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
