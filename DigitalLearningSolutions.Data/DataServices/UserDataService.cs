@@ -338,12 +338,12 @@
 
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
         {
-            return connection.Query<int>(
-                $@"SELECT COUNT(*)
+            return connection.Query<string>(
+                $@"SELECT Answer{promptNumber}
                         FROM Candidates
                         WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
                 new { centreId }
-            ).Single();
+            ).Count(x => !string.IsNullOrWhiteSpace(x)); ;
         }
 
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)
