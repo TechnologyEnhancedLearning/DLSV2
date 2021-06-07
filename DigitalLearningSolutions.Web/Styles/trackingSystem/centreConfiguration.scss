@@ -23,6 +23,27 @@
   }
 }
 
+.centre-detail--placeholder-image__downsize {
+  display: block;
+  width: 400px;
+  height: 200px;
+
+  @include govuk-media-query($until: large-desktop) {
+    width: 320px;
+    height: 160px;
+  }
+
+  @include govuk-media-query($until: desktop) {
+    width: 240px;
+    height: 120px;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    width: 200px;
+    height: 100px;
+  }
+}
+
 .preserve-whitespace{
     white-space: pre-wrap;
 }

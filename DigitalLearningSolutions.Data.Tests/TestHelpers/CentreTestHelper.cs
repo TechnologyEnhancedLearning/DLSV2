@@ -27,6 +27,10 @@
             string? organisationsCovered = "Northwest Boroughs Healthcare NHS Foundation Trust",
             string? trainingVenues = "Hollins Park House\nHollins Lane\nWinwick\nWarrington WA2 8WA",
             string? otherInformation = null,
+            int cmsAdministratorSpots = 5,
+            int cmsManagerSpots = 0,
+            int ccLicenceSpots = 0,
+            int trainerSpots = 0,
             string? ipPrefix = "194.176.105",
             int contractTypeId = 1,
             string? contractType = "Basic"
@@ -55,6 +59,10 @@
                 OrganisationsCovered = organisationsCovered,
                 TrainingVenues = trainingVenues,
                 OtherInformation = otherInformation,
+                CmsAdministratorSpots = cmsAdministratorSpots,
+                CmsManagerSpots = cmsManagerSpots,
+                CcLicenceSpots = ccLicenceSpots,
+                TrainerSpots = trainerSpots,
                 IpPrefix = ipPrefix,
                 ContractTypeId = contractTypeId,
                 ContractType = contractType

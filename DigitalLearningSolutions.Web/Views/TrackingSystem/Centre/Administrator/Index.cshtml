@@ -1,0 +1,29 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+@using Microsoft.Extensions.Configuration
+@model CentreAdministratorsViewModel
+
+@{
+  ViewData["Title"] = "Centre Administrators";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    Side bar
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Centre administrators</h1>
+    <div class="nhsuk-u-margin-top-8">
+      <vc:number-of-administrators centre-id="@Model.CentreId" />
+    </div>
+
+  </div>
+</div>

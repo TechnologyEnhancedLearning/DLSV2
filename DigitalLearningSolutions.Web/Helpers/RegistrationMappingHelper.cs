@@ -15,7 +15,13 @@
                 data.RegisterViewModel.Email!,
                 (int)data.RegisterViewModel.Centre!,
                 (int)data.LearnerInformationViewModel.JobGroup!,
-                data.PasswordHash!
+                data.PasswordHash!,
+                data.LearnerInformationViewModel.Answer1,
+                data.LearnerInformationViewModel.Answer2,
+                data.LearnerInformationViewModel.Answer3,
+                data.LearnerInformationViewModel.Answer4,
+                data.LearnerInformationViewModel.Answer5,
+                data.LearnerInformationViewModel.Answer6
             );
         }
 

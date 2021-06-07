@@ -68,5 +68,34 @@
             // Then
             result.Contains((1, "Department / team")).Should().BeTrue();
         }
+
+        [Test]
+        public void AddCustomPromptToCentre_correctly_adds_custom_prompt()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string? options = "options";
+
+                // When
+                customPromptsDataService.AddCustomPromptToCentre(2, 1, 1, false, options);
+                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1).Item2;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    centreCustomPrompts.CustomField1Prompt.Should().BeEquivalentTo(customPrompt);
+                    centreCustomPrompts.CustomField1Mandatory.Should().BeFalse();
+                    centreCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
     }
 }
