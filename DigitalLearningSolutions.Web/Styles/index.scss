@@ -191,6 +191,10 @@ ul.no-bullets {
   word-break: break-word;
 }
 
+.vertical-align-centre {
+    vertical-align: middle
+}
+
 .side-nav-menu {
   @include govuk-media-query($until: desktop) {
     display: none;

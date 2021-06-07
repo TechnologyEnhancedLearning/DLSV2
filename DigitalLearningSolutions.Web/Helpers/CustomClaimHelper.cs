@@ -9,12 +9,12 @@
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
         }
 
-        public static int? GetNullableCandidateId(this ClaimsPrincipal user)
+        public static int? GetCandidateId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
         }
 
-        public static int GetCandidateId(this ClaimsPrincipal user)
+        public static int GetCandidateIdKnownNotNull(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
         }

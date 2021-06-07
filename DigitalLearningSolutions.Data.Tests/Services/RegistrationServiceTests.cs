@@ -23,7 +23,13 @@
             "fail@test.com",
             1,
             1,
-            passwordHash
+            passwordHash,
+            "answer1",
+            "answer2",
+            "answer3",
+            "answer4",
+            "answer5",
+            "answer6"
         );
 
         private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel
@@ -33,7 +39,13 @@
             "testuser@email.com",
             1,
             1,
-            passwordHash
+            passwordHash,
+            "answer1",
+            "answer2",
+            "answer3",
+            "answer4",
+            "answer5",
+            "answer6"
         );
 
         private ICentresDataService centresDataService;
