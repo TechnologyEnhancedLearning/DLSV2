@@ -32,7 +32,6 @@
             int ccLicenceSpots = 0,
             int trainerSpots = 0,
             string? ipPrefix = "194.176.105",
-            int contractTypeId = 1,
             string? contractType = "Basic"
         )
         {
@@ -64,7 +63,6 @@
                 CcLicenceSpots = ccLicenceSpots,
                 TrainerSpots = trainerSpots,
                 IpPrefix = ipPrefix,
-                ContractTypeId = contractTypeId,
                 ContractType = contractType
             };
         }

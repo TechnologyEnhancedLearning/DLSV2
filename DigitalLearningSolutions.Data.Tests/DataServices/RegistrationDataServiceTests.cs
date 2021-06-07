@@ -20,7 +20,6 @@
             service = new RegistrationDataService(connection);
         }
 
-        [Ignore("Clashes with existing test data")]
         [Test]
         public async Task Sets_all_fields_correctly_on_registration()
         {

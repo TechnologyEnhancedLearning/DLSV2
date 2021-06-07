@@ -39,7 +39,7 @@
 
         public void ApproveDelegateUsers(params int[] ids);
 
-        public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId);
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
         public int GetNumberOfActiveAdminsAtCentre(int centreId);
     }
@@ -340,7 +340,7 @@
             );
         }
 
-        public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId)
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",

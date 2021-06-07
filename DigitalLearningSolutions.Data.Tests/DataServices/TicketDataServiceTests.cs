@@ -7,13 +7,13 @@
 
     public class TicketDataServiceTests
     {
-        private ITicketDataService ticketDataService = null!;
+        private ISupportTicketDataService ticketDataService = null!;
         
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            ticketDataService = new TicketDataService(connection);
+            ticketDataService = new SupportTicketDataService(connection);
         }
 
         [Test]

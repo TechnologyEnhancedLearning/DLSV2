@@ -125,7 +125,6 @@
                             c.CCLicences AS CcLicenceSpots,
                             c.Trainers AS TrainerSpots,
                             c.IPPrefix,
-                            c.ContractTypeID,
                             ct.ContractType
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID

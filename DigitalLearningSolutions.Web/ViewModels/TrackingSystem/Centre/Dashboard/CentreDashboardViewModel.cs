@@ -19,23 +19,23 @@
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress);
             FirstName = firstName ?? "User";
             CourseCategory = categoryName ?? "all";
-            Delegates = delegates;
-            Courses = courses;
-            Admins = admins;
-            SupportTickets = supportTickets;
+            NumberOfDelegates = delegates;
+            NumberOfCourses = courses;
+            NumberOfAdmins = admins;
+            NumberOfSupportTickets = supportTickets;
         }
 
         public string FirstName { get; set; }
 
         public string CourseCategory { get; set; }
 
-        public int Delegates { get; set; }
+        public int NumberOfDelegates { get; set; }
 
-        public int Courses { get; set; }
+        public int NumberOfCourses { get; set; }
 
-        public int Admins { get; set; }
+        public int NumberOfAdmins { get; set; }
 
-        public int SupportTickets { get; set; }
+        public int NumberOfSupportTickets { get; set; }
 
         public DashboardCentreDetailsViewModel CentreDetails { get; set; }
     }

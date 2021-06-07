@@ -14,14 +14,14 @@
         private readonly ICentresDataService centresDataService;
         private readonly IUserDataService userDataService;
         private readonly ICourseService courseService;
-        private readonly ITicketDataService ticketDataService;
+        private readonly ISupportTicketDataService ticketDataService;
 
         public DashboardController
         (
             IUserDataService userDataService,
             ICentresDataService centresDataService,
             ICourseService courseService,
-            ITicketDataService ticketDataService
+            ISupportTicketDataService ticketDataService
         )
         {
             this.userDataService = userDataService;
@@ -35,10 +35,10 @@
             var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value)!;
             var centreId = User.GetCentreId();
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
-            var delegateCount = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(centreId);
-            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId, adminUser.CategoryId);
+            var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
+            var courseCount = courseService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
-            var helpTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
+            var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             
             var model = new CentreDashboardViewModel(
                 centre,
@@ -48,7 +48,7 @@
                 delegateCount,
                 courseCount,
                 adminCount,
-                helpTicketCount
+                supportTicketCount
             );
 
             return View(model);

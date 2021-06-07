@@ -2,17 +2,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
     using System.Linq;
-    using System.Threading;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
-    using NUnit.Framework;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
+    using NUnit.Framework;
 
     public class CourseServiceTests
     {
@@ -85,7 +83,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 HasLearning = true,
                 Passes = 1,
                 Sections = 2,
-                ProgressID = 251571,
+                ProgressID = 251571
             };
             result.Should().HaveCount(15);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -171,7 +169,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             {
                 // When
                 courseService.SetCompleteByDate(progressId, candidateId, newCompleteByDate);
-                var modifiedCourse = courseService.GetCurrentCourses(candidateId).ToList().First(c => c.ProgressID == progressId);
+                var modifiedCourse = courseService.GetCurrentCourses(candidateId).ToList()
+                    .First(c => c.ProgressID == progressId);
 
                 // Then
                 modifiedCourse.CompleteByDate.Should().Be(newCompleteByDate);
@@ -189,7 +188,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
                 // When
                 courseService.RemoveCurrentCourse(progressId, candidateId);
-                var courseReturned = courseService.GetCurrentCourses(candidateId).ToList().Any(c => c.ProgressID == progressId);
+                var courseReturned = courseService.GetCurrentCourses(candidateId).ToList()
+                    .Any(c => c.ProgressID == progressId);
 
                 // Then
                 courseReturned.Should().BeFalse();
@@ -200,7 +200,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
         {
             // When
-            var count = courseService.GetNumberOfActiveCoursesAtCentre(2,0);
+            var count = courseService.GetNumberOfActiveCoursesAtCentreForCategory(2, 0);
 
             // Then
             count.Should().Be(38);
@@ -210,7 +210,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void GetNumberOfActiveCoursesAtCentre_with_filtered_category_returns_expected_count()
         {
             // When
-            var count = courseService.GetNumberOfActiveCoursesAtCentre(2, 2);
+            var count = courseService.GetNumberOfActiveCoursesAtCentreForCategory(2, 2);
 
             // Then
             count.Should().Be(3);

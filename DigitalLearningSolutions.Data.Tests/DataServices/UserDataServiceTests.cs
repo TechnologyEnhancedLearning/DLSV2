@@ -294,7 +294,7 @@
         public void GetNumberOfActiveApprovedDelegatesAtCentre_returns_expected_count()
         {
             // When
-            var count = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(2);
+            var count = userDataService.GetNumberOfApprovedDelegatesAtCentre(2);
 
             // Then
             count.Should().Be(3420);

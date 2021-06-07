@@ -24,7 +24,7 @@
 
         public string Region { get; set; }
 
-        public string ContractType { get; set; }
+        public string? ContractType { get; set; }
 
         public string CentreManager { get; set; }
 
@@ -36,6 +36,6 @@
 
         public string IpAddress { get; set; }
 
-        public string ApprovedIps { get; set; }
+        public string? ApprovedIps { get; set; }
     }
 }

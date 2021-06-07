@@ -28,7 +28,6 @@
         public int CcLicenceSpots { get; set; }
         public int TrainerSpots { get; set; }
         public string? IpPrefix { get; set; }
-        public int ContractTypeId { get; set; }
         public string? ContractType { get; set; }
     }
 }

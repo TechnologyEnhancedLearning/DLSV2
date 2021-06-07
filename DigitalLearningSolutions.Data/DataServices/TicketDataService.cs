@@ -3,16 +3,16 @@
     using System.Data;
     using Dapper;
 
-    public interface ITicketDataService
+    public interface ISupportTicketDataService
     {
         public int GetNumberOfUnarchivedTicketsForCentreId(int centreId);
     }
 
-    public class TicketDataService : ITicketDataService
+    public class SupportTicketDataService : ISupportTicketDataService
     {
         private readonly IDbConnection connection;
 
-        public TicketDataService(IDbConnection connection)
+        public SupportTicketDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

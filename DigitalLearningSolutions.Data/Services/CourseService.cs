@@ -15,7 +15,7 @@
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
         void RemoveCurrentCourse(int progressId, int candidateId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
-        int GetNumberOfActiveCoursesAtCentre(int centreId, int adminCategoryId);
+        int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -107,7 +107,7 @@
             }
         }
 
-        public int GetNumberOfActiveCoursesAtCentre(int centreId, int adminCategoryId)
+        public int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int adminCategoryId)
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*)
