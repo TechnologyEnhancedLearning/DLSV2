@@ -160,6 +160,6 @@ def getSlackUsers() {
 		'david.may-miller@softwire.com':'@DavMay',
 		'jonathan.bloxsom@softwire.com':'@JonBlo',
 		'stephen.jackson@softwire.com':'@SteJac',
-        'ibrahimmunir14@gmail.com' : '@IbrMun'
+		'ibrahimmunir14@gmail.com' : '@IbrMun'
 	]
 }
