@@ -20,14 +20,13 @@
             service = new RegistrationDataService(connection);
         }
 
-        [Ignore("Clashes with existing test data")]
         [Test]
         public async Task Sets_all_fields_correctly_on_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var delegateRegistrationModel = UserTestHelper.GetDefaultDelegateRegistrationModel();
+            var delegateRegistrationModel = UserTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
             var candidateNumber = service.RegisterDelegate(delegateRegistrationModel);
