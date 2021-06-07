@@ -27,7 +27,7 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var delegateRegistrationModel = UserTestHelper.GetDefaultDelegateRegistrationModel();
+            var delegateRegistrationModel = UserTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
             var candidateNumber = service.RegisterDelegate(delegateRegistrationModel);
