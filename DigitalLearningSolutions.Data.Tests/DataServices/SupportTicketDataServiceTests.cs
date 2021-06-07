@@ -5,22 +5,22 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class TicketDataServiceTests
+    public class SupportTicketDataServiceTests
     {
-        private ISupportTicketDataService ticketDataService = null!;
+        private ISupportTicketDataService supportTicketDataService = null!;
         
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            ticketDataService = new SupportTicketDataService(connection);
+            supportTicketDataService = new SupportTicketDataService(connection);
         }
 
         [Test]
         public void GetNumberOfUnarchivedTicketsForCentreId_returns_expected_count()
         {
             // When
-            var count = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(2);
+            var count = supportTicketDataService.GetNumberOfUnarchivedTicketsForCentreId(2);
 
             // Then
             count.Should().Be(0);
