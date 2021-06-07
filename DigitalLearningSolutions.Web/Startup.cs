@@ -83,7 +83,6 @@ namespace DigitalLearningSolutions.Web
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
                     options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                 })
                 .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));

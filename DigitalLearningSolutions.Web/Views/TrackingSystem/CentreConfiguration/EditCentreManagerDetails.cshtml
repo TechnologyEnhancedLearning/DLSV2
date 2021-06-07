@@ -7,7 +7,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Manager Details" : "Edit Centre Manager Details";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/tracking/dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
 }
 

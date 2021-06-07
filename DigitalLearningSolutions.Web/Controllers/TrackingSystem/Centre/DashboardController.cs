@@ -32,18 +32,18 @@
 
         public IActionResult Index()
         {
-            var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value);
+            var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value)!;
             var centreId = User.GetCentreId();
-            var centre = centresDataService.GetCentreDetailsById(centreId);
+            var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfActiveApprovedDelegatesAtCentre(centreId);
-            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId, adminUser!.CategoryId);
+            var courseCount = courseService.GetNumberOfActiveCoursesAtCentre(centreId, adminUser.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var helpTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             
             var model = new CentreDashboardViewModel(
-                centre!,
-                adminUser!.FirstName,
-                adminUser!.CategoryName,
+                centre,
+                adminUser.FirstName,
+                adminUser.CategoryName,
                 Request.GetUserIpAddressFromRequest(),
                 delegateCount,
                 courseCount,

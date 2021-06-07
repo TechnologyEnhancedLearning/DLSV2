@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -35,7 +34,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6);
+            string? answer6
+        );
 
         public void ApproveDelegateUsers(params int[] ids);
 
@@ -343,7 +343,7 @@
         public int GetNumberOfActiveApprovedDelegatesAtCentre(int centreId)
         {
             return (int)connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND CentreID = @centreId",
+                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
                 new { centreId }
             );
         }

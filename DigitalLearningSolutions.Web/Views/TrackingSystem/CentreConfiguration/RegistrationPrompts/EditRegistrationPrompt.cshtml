@@ -8,7 +8,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate registration prompt" : "Edit delegate registration prompt";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/tracking/dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
 }
 

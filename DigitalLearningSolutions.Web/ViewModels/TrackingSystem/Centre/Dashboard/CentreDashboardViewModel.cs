@@ -13,7 +13,7 @@
             int delegates,
             int courses,
             int admins,
-            int helpTickets
+            int supportTickets
         )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress);
@@ -22,7 +22,7 @@
             Delegates = delegates;
             Courses = courses;
             Admins = admins;
-            HelpTickets = helpTickets;
+            SupportTickets = supportTickets;
         }
 
         public string FirstName { get; set; }
@@ -35,7 +35,7 @@
 
         public int Admins { get; set; }
 
-        public int HelpTickets { get; set; }
+        public int SupportTickets { get; set; }
 
         public DashboardCentreDetailsViewModel CentreDetails { get; set; }
     }
