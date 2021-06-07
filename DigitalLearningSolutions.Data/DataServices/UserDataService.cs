@@ -10,6 +10,7 @@
     {
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
@@ -115,6 +116,35 @@
             ).SingleOrDefault();
 
             return user;
+        }
+
+        public List<AdminUser> GetAdminUsersByCentreId(int centreId)
+        {
+            var users = connection.Query<AdminUser>(
+                @"SELECT
+                        AdminID AS Id,
+                        CentreID,
+                        Email AS EmailAddress,
+                        Forename AS FirstName,
+                        Surname AS LastName,
+                        Password,
+                        CentreAdmin AS IsCentreAdmin,
+                        IsCentreManager,
+                        ContentCreator AS IsContentCreator,
+                        ContentManager AS IsContentManager,
+                        PublishToAll,
+                        SummaryReports,
+                        UserAdmin AS IsUserAdmin,
+                        CategoryID,
+                        Supervisor AS IsSupervisor,
+                        Trainer AS IsTrainer,
+                        ImportOnly
+                    FROM AdminUsers
+                    WHERE Active = 1 AND Approved = 1 AND CentreId = @centreId",
+                new { centreId }
+            ).ToList();
+
+            return users;
         }
 
         public AdminUser? GetAdminUserByUsername(string username)

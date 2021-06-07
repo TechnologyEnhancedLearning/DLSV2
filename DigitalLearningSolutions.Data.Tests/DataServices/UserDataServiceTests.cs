@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -273,6 +274,20 @@
 
             // Then
             count.Should().Be(124);
+        }
+
+        [Test]
+        public void GetAdminUsersByCentreId_gets_all_admins_at_centre()
+        {
+            // Given
+            var expectedAdminIds = new List<int> { 7, 1408, 2464 };
+
+            // When
+            var admins = userDataService.GetAdminUsersByCentreId(2);
+            var returnedIds = admins.Select(a => a.Id);
+
+            // Then
+            Assert.That(returnedIds.SequenceEqual(expectedAdminIds));
         }
     }
 }
