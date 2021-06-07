@@ -28,9 +28,7 @@
                     adminLoginDetails?.IsContentManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserPublishToAll, adminLoginDetails?.PublishToAll.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreReports, adminLoginDetails?.SummaryReports.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails?.Id.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateLoginDetails != null).ToString()),
-                new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails?.CategoryId.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsSupervisor, adminLoginDetails?.IsSupervisor.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsTrainer, adminLoginDetails?.IsTrainer.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsFrameworkDeveloper,
@@ -60,6 +58,16 @@
             if (adminLoginDetails?.Id != null)
             {
                 claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminLoginDetails.Id.ToString()));
+            }
+
+            if (delegateLoginDetails?.Id != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails.Id.ToString()));
+            }
+
+            if (adminLoginDetails?.CategoryId != null)
+            {
+                claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails.CategoryId.ToString()));
             }
 
             return claims;
