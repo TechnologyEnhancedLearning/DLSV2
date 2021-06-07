@@ -11,9 +11,7 @@
   var approvedRegistrationItemClass = title == "Approve delegate registrations" ? selectedClass : string.Empty;
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/sideNavMenus.css")" asp-append-version="true">
 
-<nav class="side-nav-menu">
   <h2 class="side-nav__heading">Delegates</h2>
   <ul class="nhsuk-list side-nav__list">
     <li class="side-nav__item @allDelegatesItemClass">
@@ -29,4 +27,4 @@
       <a class="side-nav__link" asp-action="Index" asp-controller="DelegateApprovals">Approve registrations</a>
     </li>
   </ul>
-</nav>
+
