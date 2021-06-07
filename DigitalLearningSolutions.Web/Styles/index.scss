@@ -202,6 +202,8 @@ ul.no-bullets {
 }
 
 .side-nav-menu-bottom {
+  @include nhsuk-responsive-padding(0, "left");
+
   @include govuk-media-query($from: desktop) {
     display: none;
   }
@@ -215,47 +217,49 @@ ul.no-bullets {
   font-size: 1.1875rem;
   line-height: 1.25;
 
-  @include govuk-media-query($from: tablet) {
-    @include govuk-media-query($until: desktop) {
+  @include govuk-media-query($until: desktop) {
+    color: $nhsuk-text-color;
+
+    @include govuk-media-query($from: tablet) {
       font-size: 1.5rem;
     }
   }
 }
 
-.side-nav__link {
-  text-decoration: none;
+  .side-nav__link {
+    text-decoration: none;
 
-  &:visited {
-    color: $nhsuk-link-color;
-  }
+    &:visited {
+      color: $nhsuk-link-color;
+    }
 
-  &:hover {
-    color: $nhsuk-link-hover-color;
-    text-decoration: underline;
-  }
-}
-
-.side-nav__list {
-  font-weight: 400;
-  @include nhsuk-responsive-margin(0, "bottom");
-  line-height: 1.3;
-}
-
-.side-nav__item {
-  @include nhsuk-responsive-padding(1, "bottom");
-  @include nhsuk-responsive-padding(1, "top");
-  font-size: 1rem;
-
-  @include govuk-media-query($from: tablet) {
-    @include govuk-media-query($until: desktop) {
-      font-size: 1.1875rem;
+    &:hover {
+      color: $nhsuk-link-hover-color;
+      text-decoration: underline;
     }
   }
-}
 
-.side-nav__item--selected {
-  border-left: 4px solid $nhsuk-link-color;
-  margin-left: -0px;
-  @include nhsuk-responsive-padding(1, "left");
-  font-weight: bold;
-}
+  .side-nav__list {
+    font-weight: 400;
+    @include nhsuk-responsive-margin(0, "bottom");
+    line-height: 1.3;
+  }
+
+  .side-nav__item {
+    @include nhsuk-responsive-padding(1, "bottom");
+    @include nhsuk-responsive-padding(1, "top");
+    font-size: 1rem;
+
+    @include govuk-media-query($from: tablet) {
+      @include govuk-media-query($until: desktop) {
+        font-size: 1.1875rem;
+      }
+    }
+  }
+
+  .side-nav__item--selected {
+    border-left: 4px solid $nhsuk-link-color;
+    margin-left: -0px;
+    @include nhsuk-responsive-padding(1, "left");
+    font-weight: bold;
+  }
