@@ -38,14 +38,20 @@
             return controller;
         }
 
-        public static T WithMockUser<T>(this T controller, bool isAuthenticated, int centreId = CentreId, int? adminId = AdminId, int? delegateId = DelegateId, string? emailAddress = EmailAddress) where T : Controller
+        public static T WithMockUser<T>(
+            this T controller,
+            bool isAuthenticated,
+            int centreId = CentreId,
+            int? adminId = AdminId,
+            int? delegateId = DelegateId,
+            string? emailAddress = EmailAddress
+        ) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
 
             controller.HttpContext.User = new ClaimsPrincipal
             (
-                new ClaimsIdentity
-                (
+                new ClaimsIdentity(
                     new[]
                     {
                         new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
@@ -71,8 +77,7 @@
             var authService = A.Fake<IAuthenticationService>();
             A.CallTo
             (
-                () => authService.SignInAsync
-                (
+                () => authService.SignInAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<ClaimsPrincipal>._,
@@ -81,8 +86,7 @@
             ).Returns(Task.CompletedTask);
             A.CallTo
             (
-                () => authService.SignOutAsync
-                (
+                () => authService.SignOutAsync(
                     A<HttpContext>._,
                     A<string>._,
                     A<AuthenticationProperties>._

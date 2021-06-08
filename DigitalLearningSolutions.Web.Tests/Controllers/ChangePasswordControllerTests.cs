@@ -2,11 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FakeItEasy;
@@ -82,7 +80,9 @@
             // When
             var result = await authenticatedController.Index(
                 new ChangePasswordViewModel
-                    { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
+                {
+                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password"
+                }
             );
 
             // Then
@@ -101,7 +101,9 @@
             // When
             await authenticatedController.Index(
                 new ChangePasswordViewModel
-                    { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
+                {
+                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password"
+                }
             );
 
             A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(adminUser, delegateUser, "new-password"))
@@ -119,7 +121,9 @@
             // When
             await authenticatedController.Index(
                 new ChangePasswordViewModel
-                    { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
+                {
+                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password"
+                }
             );
 
             A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(adminUser, null, "new-password"))
@@ -137,7 +141,9 @@
             // When
             await authenticatedController.Index(
                 new ChangePasswordViewModel
-                    { Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password" }
+                {
+                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password"
+                }
             );
 
             A.CallTo(() => passwordService.ChangePasswordForLinkedUserAccounts(null, delegateUser, "new-password"))

@@ -16,13 +16,15 @@
         private readonly IConfigService configService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
+
         public FrameworksController(
             IFrameworkService frameworkService,
             ICommonService commonService,
             IFrameworkNotificationService frameworkNotificationService,
-           IConfigService configService,
+            IConfigService configService,
             ILogger<FrameworksController> logger,
-            IConfiguration config)
+            IConfiguration config
+        )
         {
             this.frameworkService = frameworkService;
             this.commonService = commonService;
@@ -36,28 +38,34 @@
         {
             return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
         }
+
         private int GetAdminID()
         {
             return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
         }
+
         private bool GetIsFrameworkDeveloper()
         {
             var isFrameworkDeveloper = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper);
             return isFrameworkDeveloper != null && (bool)isFrameworkDeveloper;
         }
+
         private bool GetIsFrameworkContributor()
         {
             var isFrameworkContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor);
             return isFrameworkContributor != null && (bool)isFrameworkContributor;
         }
+
         private string? GetUserEmail()
         {
             return User.GetEmailIfAny();
         }
+
         private string? GetUserFirstName()
         {
             return User.GetCustomClaim(CustomClaimTypes.UserForename);
         }
+
         private string? GetUserLastName()
         {
             return User.GetCustomClaim(CustomClaimTypes.UserSurname);

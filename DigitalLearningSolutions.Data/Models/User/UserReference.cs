@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Data.Models.User
         {
             unchecked
             {
-                return 93 + 37*(Id.GetHashCode() + 23*UserType.GetHashCode());
+                return 93 + 37 * (Id.GetHashCode() + 23 * UserType.GetHashCode());
             }
         }
     }

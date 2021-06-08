@@ -22,7 +22,12 @@
         private readonly IUserService userService;
         private readonly ILogger<LoginController> logger;
 
-        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService, ILogger<LoginController> logger)
+        public LoginController(
+            ILoginService loginService,
+            IUserService userService,
+            ISessionService sessionService,
+            ILogger<LoginController> logger
+        )
         {
             this.loginService = loginService;
             this.userService = userService;
@@ -71,8 +76,10 @@
             }
 
             verifiedAdminUser ??=
-                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
-                    model.Password);
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    verifiedDelegateUsers.First(),
+                    model.Password
+                );
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
                 userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
@@ -91,13 +98,17 @@
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
 
-                return LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe, model.ReturnUrl);
+                return LogIn(
+                    adminLoginDetails,
+                    delegateLoginDetails.FirstOrDefault(),
+                    model.RememberMe,
+                    model.ReturnUrl
+                );
             }
 
             var chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
 
-            SetTempDataForChooseACentre
-            (
+            SetTempDataForChooseACentre(
                 model.RememberMe,
                 adminLoginDetails,
                 delegateLoginDetails,
@@ -140,8 +151,7 @@
             return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
         }
 
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails
-        (
+        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         )
@@ -151,8 +161,7 @@
             return (adminLoginDetails, delegateLoginDetails);
         }
 
-        private void SetTempDataForChooseACentre
-        (
+        private void SetTempDataForChooseACentre(
             bool rememberMe,
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
@@ -168,8 +177,7 @@
             TempData["ReturnUrl"] = returnUrl;
         }
 
-        private IActionResult LogIn
-        (
+        private IActionResult LogIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
             bool rememberMe,
@@ -197,31 +205,39 @@
                 {
                     return Redirect(returnUrl);
                 }
+
                 logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
             }
 
             return null;
         }
 
-        private List<Claim> GetClaimsForSignIn
-        (
+        private List<Claim> GetClaimsForSignIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails
         )
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email,
-                    adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty),
-                new Claim(CustomClaimTypes.UserCentreId,
-                    adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()),
+                new Claim(
+                    ClaimTypes.Email,
+                    adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty
+                ),
+                new Claim(
+                    CustomClaimTypes.UserCentreId,
+                    adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()
+                ),
                 new Claim(CustomClaimTypes.UserCentreManager, adminLoginDetails?.IsCentreManager.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreAdmin, adminLoginDetails?.IsCentreAdmin.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserUserAdmin, adminLoginDetails?.IsUserAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserContentCreator,
-                    adminLoginDetails?.IsContentCreator.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserAuthenticatedCm,
-                    adminLoginDetails?.IsContentManager.ToString() ?? "False"),
+                new Claim(
+                    CustomClaimTypes.UserContentCreator,
+                    adminLoginDetails?.IsContentCreator.ToString() ?? "False"
+                ),
+                new Claim(
+                    CustomClaimTypes.UserAuthenticatedCm,
+                    adminLoginDetails?.IsContentManager.ToString() ?? "False"
+                ),
                 new Claim(CustomClaimTypes.UserPublishToAll, adminLoginDetails?.PublishToAll.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.UserCentreReports, adminLoginDetails?.SummaryReports.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails?.Id.ToString() ?? "False"),
@@ -229,10 +245,14 @@
                 new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails?.CategoryId.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsSupervisor, adminLoginDetails?.IsSupervisor.ToString() ?? "False"),
                 new Claim(CustomClaimTypes.IsTrainer, adminLoginDetails?.IsTrainer.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsFrameworkDeveloper,
-                    adminLoginDetails?.IsFrameworkDeveloper.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreName,
-                    adminLoginDetails?.CentreName ?? delegateLoginDetails?.CentreName)
+                new Claim(
+                    CustomClaimTypes.IsFrameworkDeveloper,
+                    adminLoginDetails?.IsFrameworkDeveloper.ToString() ?? "False"
+                ),
+                new Claim(
+                    CustomClaimTypes.UserCentreName,
+                    adminLoginDetails?.CentreName ?? delegateLoginDetails?.CentreName
+                )
             };
 
             var firstName = adminLoginDetails?.FirstName ?? delegateLoginDetails?.FirstName;
