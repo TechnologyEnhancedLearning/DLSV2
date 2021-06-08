@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -13,6 +12,7 @@
     using Microsoft.Extensions.Logging;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class DelegateApprovalsServiceTests
@@ -21,6 +21,7 @@
         private ICustomPromptsService customPromptsService = null!;
         private IEmailService emailService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
+        private IConfiguration config;
         private IDelegateApprovalsService delegateApprovalsService = null!;
 
         [SetUp]
@@ -30,7 +31,8 @@
             customPromptsService = A.Fake<ICustomPromptsService>();
             emailService = A.Fake<IEmailService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
-            delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, logger);
+            config = A.Fake<IConfiguration>();
+            delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, logger, config);
         }
 
         [Test]
