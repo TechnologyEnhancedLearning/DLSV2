@@ -8,7 +8,7 @@
 @{
   ViewData["Title"] = "Centre configuration";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No";
 }
