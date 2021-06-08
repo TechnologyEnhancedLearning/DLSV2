@@ -153,13 +153,13 @@
         private void GivenPasswordVerificationSucceedsForLoggedInUser(string password)
         {
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(AdminId, DelegateId, password))
-                .Returns((Builder<AdminUser>.CreateNew().Build(), new List<DelegateUser>()));
+                .Returns(new UserAccountSet(Builder<AdminUser>.CreateNew().Build(), new List<DelegateUser>()));
         }
 
         private void GivenPasswordVerificationFails()
         {
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<int>._, A<int>._, A<string>._))
-                .Returns((null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
         }
     }
 }

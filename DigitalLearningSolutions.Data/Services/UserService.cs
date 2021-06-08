@@ -1,9 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection.PortableExecutable;
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
@@ -26,7 +28,7 @@
 
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
 
-        (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
+        UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
     }
 
     public class UserService : IUserService
@@ -179,7 +181,7 @@
             return user != null && user.EmailAddress != emailAddress;
         }
 
-        public (AdminUser?, List<DelegateUser>) GetVerifiedLinkedUsersAccounts(
+        public UserAccountSet GetVerifiedLinkedUsersAccounts(
             int? adminId,
             int? delegateId,
             string password
