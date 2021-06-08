@@ -3,7 +3,7 @@
 @model CompletedPageViewModel
 @inject IConfiguration Configuration
 
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")" asp-append-version="true">
 
 @{
@@ -35,7 +35,7 @@
       {
         <partial name="Shared/_SearchResultsCount" model="Model" />
 
-        <div id="course-cards">
+        <div id="searchable-elements">
           @foreach (var completedCourse in Model.CompletedCourses)
           {
             <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />

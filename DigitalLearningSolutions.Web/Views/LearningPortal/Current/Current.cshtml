@@ -4,7 +4,7 @@
 @model CurrentPageViewModel
 @inject IConfiguration Configuration
 
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/coursesShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/current.css")" asp-append-version="true">
 
 @{
@@ -36,7 +36,7 @@
         <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
         <partial name="Shared/_SearchResultsCount" model="Model" />
 
-        <div id="course-cards">
+        <div id="searchable-elements">
           @foreach (var currentLearningItem in Model.CurrentCourses)
           {
             if (currentLearningItem is SelfAssessmentCardViewModel)
