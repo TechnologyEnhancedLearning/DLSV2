@@ -1,14 +1,15 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
+@using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
+@model SelectedPage
 
 @{
-  var title = ViewData["Title"].ToString();
-  var selectedClass = "side-nav__item--selected";
+  const string selectedClass = "side-nav__item--selected";
 
-  var allDelegatesItemClass = title == "All delegates" ? selectedClass : string.Empty;
-  var delegateGroupsItemClass = title == "Delegate groups" ? selectedClass : string.Empty;
-  var courseDelegateItemClass = title == "Course delegates" ? selectedClass : string.Empty;
-  var approvedRegistrationItemClass = title == "Approve delegate registrations" ? selectedClass : string.Empty;
+  var allDelegatesItemClass = Model == SelectedPage.AllDelegates ? selectedClass : string.Empty;
+  var delegateGroupsItemClass = Model == SelectedPage.DelegateGroups ? selectedClass : string.Empty;
+  var courseDelegateItemClass = Model == SelectedPage.CourseDelegates ? selectedClass : string.Empty;
+  var approvedRegistrationItemClass = Model == SelectedPage.ApproveDelegateRegistrations ? selectedClass : string.Empty;
 }
 
 

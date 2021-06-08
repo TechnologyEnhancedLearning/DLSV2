@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @using Microsoft.Extensions.Configuration
 @model DelegateApprovalsViewModel
@@ -20,7 +21,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="~/Views/TrackingSystem/Shared/_DelegatesSideNavMenu.cshtml" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="SelectedPage.ApproveDelegateRegistrations" />
     </nav>
   </div>
 
@@ -61,7 +62,7 @@
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="~/Views/TrackingSystem/Shared/_DelegatesSideNavMenu.cshtml" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="SelectedPage.ApproveDelegateRegistrations" />
     </nav>
   </div>
 </div>
