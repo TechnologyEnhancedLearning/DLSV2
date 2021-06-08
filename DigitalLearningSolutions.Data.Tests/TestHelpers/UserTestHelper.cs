@@ -1,11 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Data.Common;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Dapper;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class UserTestHelper
     {
-        public static DelegateUser GetDefaultDelegateUser
-        (
+        public static DelegateUser GetDefaultDelegateUser(
             int id = 2,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
@@ -39,8 +43,7 @@
             };
         }
 
-        public static AdminUser GetDefaultAdminUser
-        (
+        public static AdminUser GetDefaultAdminUser(
             int id = 7,
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
@@ -58,6 +61,7 @@
             bool summaryReports = false,
             bool isUserAdmin = true,
             int categoryId = 1,
+            string? categoryName = "Undefined",
             bool isSupervisor = true,
             bool isTrainer = true,
             bool isFrameworkDeveloper = true,
@@ -83,11 +87,71 @@
                 SummaryReports = summaryReports,
                 IsUserAdmin = isUserAdmin,
                 CategoryId = categoryId,
+                CategoryName = categoryName,
                 IsSupervisor = isSupervisor,
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper,
                 ImportOnly = importOnly
             };
+        }
+
+        public static DelegateRegistrationModel GetDefaultDelegateRegistrationModel(
+            string firstName = "FirstName",
+            string lastName = "Test",
+            string email = "email@test.com",
+            int centre = 2,
+            int jobGroup = 3,
+            string passwordHash = "APasswordHash",
+            string? answer1 = "Answer1",
+            string? answer2 = "Answer2",
+            string? answer3 = "Answer3",
+            string? answer4 = "Answer4",
+            string? answer5 = "Answer5",
+            string? answer6 = "Answer6",
+            bool approved = false
+        )
+        {
+            return new DelegateRegistrationModel(
+                firstName,
+                lastName,
+                email,
+                centre,
+                jobGroup,
+                passwordHash,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6
+            ) { Approved = approved };
+        }
+
+        public static async Task<DelegateUser> GetDelegateUserByCandidateNumberAsync(
+            this DbConnection connection,
+            string candidateNumber
+        )
+        {
+            var users = await connection.QueryAsync<DelegateUser>(
+                @"SELECT
+                        FirstName,
+                        LastName,
+                        EmailAddress,
+                        CentreID,
+                        Password,
+                        Approved,
+                        Answer1,
+                        Answer2,
+                        Answer3,
+                        Answer4,
+                        Answer5,
+                        Answer6
+                    FROM Candidates
+                    WHERE CandidateNumber = @candidateNumber",
+                new { candidateNumber }
+            );
+
+            return users.Single();
         }
     }
 }

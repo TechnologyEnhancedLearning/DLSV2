@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -22,6 +23,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserService userService = null!;
+        private CustomPromptHelper customPromptHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -31,8 +33,9 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
+            customPromptHelper = A.Fake<CustomPromptHelper>();
             controller = new RegisterController
-                    (centresDataService, jobGroupsDataService, registrationService, cryptoService, userService)
+                    (centresDataService, jobGroupsDataService, registrationService, cryptoService, userService, customPromptHelper)
                 .WithDefaultContext()
                 .WithMockTempData();
         }

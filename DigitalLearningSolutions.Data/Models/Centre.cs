@@ -27,5 +27,7 @@
         public int CmsManagerSpots { get; set; }
         public int CcLicenceSpots { get; set; }
         public int TrainerSpots { get; set; }
+        public string? IpPrefix { get; set; }
+        public string? ContractType { get; set; }
     }
 }
