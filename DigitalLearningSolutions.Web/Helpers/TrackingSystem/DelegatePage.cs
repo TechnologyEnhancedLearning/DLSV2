@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers.TrackingSystem
 {
-    public enum SelectedPage
+    public enum DelegatePage
     {
         AllDelegates,
         DelegateGroups,

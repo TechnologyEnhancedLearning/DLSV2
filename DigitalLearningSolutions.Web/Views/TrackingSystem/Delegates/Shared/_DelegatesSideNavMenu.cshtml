@@ -1,15 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-@model SelectedPage
+@model DelegatePage
 
 @{
   const string selectedClass = "side-nav__item--selected";
 
-  var allDelegatesItemClass = Model == SelectedPage.AllDelegates ? selectedClass : string.Empty;
-  var delegateGroupsItemClass = Model == SelectedPage.DelegateGroups ? selectedClass : string.Empty;
-  var courseDelegateItemClass = Model == SelectedPage.CourseDelegates ? selectedClass : string.Empty;
-  var approvedRegistrationItemClass = Model == SelectedPage.ApproveDelegateRegistrations ? selectedClass : string.Empty;
+  var allDelegatesItemClass = Model == DelegatePage.AllDelegates ? selectedClass : string.Empty;
+  var delegateGroupsItemClass = Model == DelegatePage.DelegateGroups ? selectedClass : string.Empty;
+  var courseDelegateItemClass = Model == DelegatePage.CourseDelegates ? selectedClass : string.Empty;
+  var approvedRegistrationItemClass = Model == DelegatePage.ApproveDelegateRegistrations ? selectedClass : string.Empty;
 }
 
 
