@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -300,8 +301,11 @@
 
         public void RemoveDelegateUser(int delegateId)
         {
-            connection.Execute(
-                @"
+            using var transaction = new TransactionScope();
+            try
+            {
+                connection.Execute(
+                    @"
                     DELETE FROM AssessAttempts
 	                    WHERE CandidateID = @delegateId
 
@@ -350,8 +354,14 @@
 
                     DELETE FROM Candidates
                         WHERE CandidateID = @delegateId",
-                new { delegateId }
-            );
+                    new { delegateId }
+                );
+                transaction.Complete();
+            }
+            catch
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

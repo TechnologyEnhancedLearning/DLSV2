@@ -8,9 +8,10 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateApprovals.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Reject delegate registration";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+    ViewData["Title"] = "Reject delegate registration";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+    ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -20,7 +21,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Reject delegate registration</h1>
-    <h1 class="nhsuk-body-l">Are you sure you want to reject this user's registration?</h1>
+    <p class="nhsuk-body-l">Are you sure you want to reject this user's registration?</p>
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
