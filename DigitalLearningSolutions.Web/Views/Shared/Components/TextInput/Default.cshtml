@@ -10,11 +10,12 @@
       @Model.HintText
     </div>
   }
-  @if (Model.HasError)
-  {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
+  @if (Model.HasError) {
+    foreach (var errorMessage in Model.ErrorMessages) {
+      <span class="nhsuk-error-message" id="@Model.Name-error">
+        <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+      </span>
+    }
   }
   <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
          id="@Model.Id"

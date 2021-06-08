@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TextInputViewModel
     {
-        public TextInputViewModel
-        (
+        public TextInputViewModel(
             string id,
             string name,
             string label,
@@ -11,12 +13,13 @@
             string type,
             bool spellCheck,
             string? autocomplete,
+            IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null,
-            string? errorMessage = null,
-            bool hasError = false
+            string? hintText = null
         )
         {
+            var errorMessageList = errorMessages.ToList();
+
             Id = id;
             Class = cssClass;
             Name = name;
@@ -26,8 +29,8 @@
             SpellCheck = spellCheck;
             Autocomplete = autocomplete;
             HintText = hintText;
-            ErrorMessage = errorMessage;
-            HasError = hasError;
+            ErrorMessages = errorMessageList;
+            HasError = errorMessageList.Any(message => !string.IsNullOrWhiteSpace(message));
         }
 
         public string Id { get; set; }
@@ -39,7 +42,7 @@
         public bool SpellCheck { get; set; }
         public string? Autocomplete { get; set; }
         public string? HintText { get; set; }
-        public string? ErrorMessage { get; set; }
-        public bool HasError { get; set; }
+        public IEnumerable<string> ErrorMessages { get; set; }
+        public readonly bool HasError;
     }
 }
