@@ -30,7 +30,9 @@
             int cmsAdministratorSpots = 5,
             int cmsManagerSpots = 0,
             int ccLicenceSpots = 0,
-            int trainerSpots = 0
+            int trainerSpots = 0,
+            string? ipPrefix = "194.176.105",
+            string? contractType = "Basic"
         )
         {
             return new Centre
@@ -59,7 +61,9 @@
                 CmsAdministratorSpots = cmsAdministratorSpots,
                 CmsManagerSpots = cmsManagerSpots,
                 CcLicenceSpots = ccLicenceSpots,
-                TrainerSpots = trainerSpots
+                TrainerSpots = trainerSpots,
+                IpPrefix = ipPrefix,
+                ContractType = contractType
             };
         }
     }

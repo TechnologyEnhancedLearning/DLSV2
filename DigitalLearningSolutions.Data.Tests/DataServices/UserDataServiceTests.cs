@@ -279,5 +279,25 @@
             // Then
             Assert.That(returnedIds.SequenceEqual(expectedAdminIds));
         }
+
+        [Test]
+        public void GetNumberOfActiveAdminsAtCentre_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetNumberOfActiveAdminsAtCentre(2);
+
+            // Then
+            count.Should().Be(3);
+        }
+
+        [Test]
+        public void GetNumberOfActiveApprovedDelegatesAtCentre_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetNumberOfApprovedDelegatesAtCentre(2);
+
+            // Then
+            count.Should().Be(3420);
+        }
     }
 }
