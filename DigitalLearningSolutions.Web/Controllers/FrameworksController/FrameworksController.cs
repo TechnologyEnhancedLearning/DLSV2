@@ -56,11 +56,6 @@
             return isFrameworkContributor != null && (bool)isFrameworkContributor;
         }
 
-        private string? GetUserEmail()
-        {
-            return User.GetEmailIfAny();
-        }
-
         private string? GetUserFirstName()
         {
             return User.GetCustomClaim(CustomClaimTypes.UserForename);

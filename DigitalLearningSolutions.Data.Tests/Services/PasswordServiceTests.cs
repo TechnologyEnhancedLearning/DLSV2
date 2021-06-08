@@ -34,8 +34,7 @@
 
             // Then
             A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, "hash-of-password"))
-                .MustHaveHappened(1, Times.Exactly);
+            ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
         }
 
         [Test]
@@ -48,8 +47,7 @@
             await passwordService.ChangePasswordAsync("email", "new-password1");
 
             // Then
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, "new-password1"))
-                .MustNotHaveHappened();
+            ThenHasNotSetPasswordForAnyUser("new-password1");
         }
 
         [Test]
@@ -63,13 +61,7 @@
 
             // Then
             A.CallTo(() => cryptoService.GetPasswordHash("new-password1")).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(
-                    () => passwordDataService.SetPasswordByUserReferenceAsync(
-                        new UserReference(34, UserType.AdminUser),
-                        "hash-of-password"
-                    )
-                )
-                .MustHaveHappened(1, Times.Exactly);
+            ThenHasSetPasswordForUserOnce(new UserReference(34, UserType.AdminUser), "hash-of-password");
         }
 
         [Test]
@@ -82,13 +74,7 @@
             await passwordService.ChangePasswordAsync(new UserReference(34, UserType.AdminUser), "new-password1");
 
             // Then
-            A.CallTo(
-                    () => passwordDataService.SetPasswordByUserReferenceAsync(
-                        new UserReference(34, UserType.AdminUser),
-                        "new-password1"
-                    )
-                )
-                .MustNotHaveHappened();
+            ThenHasNotSetPasswordForAnyUser("new-password1");
         }
 
         [Test]
@@ -103,10 +89,8 @@
             await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
 
             // Then
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
-                .MustNotHaveHappened();
+            ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
+            ThenHasNotSetPasswordByUserRef();
         }
 
         [Test]
@@ -120,10 +104,8 @@
             await passwordService.ChangePasswordForLinkedUserAccounts(admin, null, "new-password");
 
             // Then
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
-                .MustNotHaveHappened();
+            ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
+            ThenHasNotSetPasswordByUserRef();
         }
 
         [Test]
@@ -137,10 +119,8 @@
             await passwordService.ChangePasswordForLinkedUserAccounts(null, candidate, "new-password");
 
             // Then
-            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync("email", "hash-of-password"))
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
-                .MustNotHaveHappened();
+            ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
+            ThenHasNotSetPasswordByUserRef();
         }
 
         [Test]
@@ -156,22 +136,46 @@
             await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
 
             // Then
+            ThenHasNotSetPasswordByEmail();
+            ThenHasSetPasswordForUserOnce(new UserReference(34, UserType.AdminUser), "hash-of-password");
+            ThenHasSetPasswordForUserOnce(new UserReference(309, UserType.DelegateUser), "hash-of-password");
+        }
+
+        private void ThenHasSetPasswordForEmailOnce(string email, string passwordHash)
+        {
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(email, passwordHash))
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        private void ThenHasSetPasswordForUserOnce(UserReference userRef, string passwordHash)
+        {
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByUserReferenceAsync(
+                        userRef,
+                        passwordHash
+                    )
+                )
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        private void ThenHasNotSetPasswordByEmail()
+        {
             A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, A<string>._))
                 .MustNotHaveHappened();
-            A.CallTo(
-                    () => passwordDataService.SetPasswordByUserReferenceAsync(
-                        new UserReference(34, UserType.AdminUser),
-                        "hash-of-password"
-                    )
-                )
-                .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(
-                    () => passwordDataService.SetPasswordByUserReferenceAsync(
-                        new UserReference(309, UserType.DelegateUser),
-                        "hash-of-password"
-                    )
-                )
-                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        private void ThenHasNotSetPasswordByUserRef()
+        {
+            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, A<string>._))
+                .MustNotHaveHappened();
+        }
+
+        private void ThenHasNotSetPasswordForAnyUser(string passwordHash)
+        {
+            A.CallTo(() => passwordDataService.SetPasswordByEmailAsync(A<string>._, passwordHash))
+                .MustNotHaveHappened();
+            A.CallTo(() => passwordDataService.SetPasswordByUserReferenceAsync(A<UserReference>._, passwordHash))
+                .MustNotHaveHappened();
         }
     }
 }

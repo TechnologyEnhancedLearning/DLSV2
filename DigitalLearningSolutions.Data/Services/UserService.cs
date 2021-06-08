@@ -191,13 +191,11 @@
 
             if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
             {
-                return loginService.VerifyUsers(
-                    password,
-                    loggedInAdminUser,
-                    loggedInDelegateUser != null
-                        ? new List<DelegateUser> { loggedInDelegateUser }
-                        : new List<DelegateUser>()
-                );
+                var loggedInDelegateUsers = loggedInDelegateUser != null
+                    ? new List<DelegateUser> { loggedInDelegateUser }
+                    : new List<DelegateUser>();
+
+                return loginService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
             }
 
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
