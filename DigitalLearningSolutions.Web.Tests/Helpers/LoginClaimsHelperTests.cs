@@ -13,9 +13,14 @@
         [Test]
         public void Delegate_user_forename_and_surname_set_correctly()
         {
+            // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: "fname", lastName: "lname");
             var delegateLoginDetails = new DelegateLoginDetails(delegateUser);
+
+            // When
             var claims = LoginClaimsHelper.GetClaimsForSignIn(null, delegateLoginDetails);
+
+            // Then
             claims.Should().Contain((claim) => claim.Type == CustomClaimTypes.UserForename);
             claims.Should().Contain((claim) => claim.Type == CustomClaimTypes.UserSurname);
             var forenameClaim = claims.Find((claim) => claim.Type == CustomClaimTypes.UserForename);
@@ -25,33 +30,47 @@
         }
         
         [Test]
-        public void User_without_email_should_have_empty_string_email_claim()
+        public void User_without_email_has_empty_string_email_claim()
         {
-            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress:"");
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: string.Empty);
             var adminLoginDetails = new AdminLoginDetails(adminUser);
+
+            // When
             var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, null);
+
+            // Then
             claims.Should().Contain((claim) => claim.Type == ClaimTypes.Email);
             var emailClaim = claims.Find((claim) => claim.Type == ClaimTypes.Email);
-            emailClaim.Value.Should().Be("");
+            emailClaim.Value.Should().Be(string.Empty);
         }
 
         [Test]
-        public void Admin_only_user_should_have_not_have_learn_candidate_id_or_learn_candidate_number()
+        public void Admin_only_user_does_not_have_learn_candidate_id_or_learn_candidate_number()
         {
+            // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var adminLoginDetails = new AdminLoginDetails(adminUser);
+
+            // When
             var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, null);
+
+            // Then
             claims.Should().NotContain((claim) => claim.Type == CustomClaimTypes.LearnCandidateId);
             claims.Should().NotContain((claim) => claim.Type == CustomClaimTypes.LearnCandidateNumber);
         }
 
         [Test]
-        public void Delegate_only_user_should_have_not_have_user_admin_id_or_admin_category_id()
+        public void Delegate_only_user_does_not_have_user_admin_id_or_admin_category_id()
         {
-            var x = 2l;
+            // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var delegateLoginDetails = new DelegateLoginDetails(delegateUser);
+
+            // When
             var claims = LoginClaimsHelper.GetClaimsForSignIn(null, delegateLoginDetails);
+
+            // Then
             claims.Should().NotContain((claim) => claim.Type == CustomClaimTypes.UserAdminId);
             claims.Should().NotContain((claim) => claim.Type == CustomClaimTypes.AdminCategoryId);
         }

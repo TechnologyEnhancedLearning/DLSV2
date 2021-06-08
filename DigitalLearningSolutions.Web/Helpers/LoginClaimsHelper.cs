@@ -16,7 +16,7 @@
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? ""),
+                new Claim(ClaimTypes.Email, adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty),
                 new Claim(CustomClaimTypes.UserCentreId,
                     adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()),
                 new Claim(CustomClaimTypes.UserCentreManager, adminLoginDetails?.IsCentreManager.ToString() ?? "False"),
@@ -65,7 +65,7 @@
                 claims.Add(new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails.Id.ToString()));
             }
 
-            if (adminLoginDetails?.CategoryId != null)
+            if (adminLoginDetails != null)
             {
                 claims.Add(new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails.CategoryId.ToString()));
             }
