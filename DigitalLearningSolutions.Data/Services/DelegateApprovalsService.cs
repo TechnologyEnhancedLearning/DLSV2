@@ -124,11 +124,11 @@
             {
                 TextBody =
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
-                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.
+                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the url: {loginUrl} .
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
-                                    <p>You can now <a href=""{loginUrl}"">login</a> to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
+                                    <p>You can now <a href=""{loginUrl}"">log in using this link</a> to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
             };
