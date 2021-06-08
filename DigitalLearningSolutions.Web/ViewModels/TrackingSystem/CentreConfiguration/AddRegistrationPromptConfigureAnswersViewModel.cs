@@ -19,8 +19,8 @@
 
         public List<string> Options => NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(OptionsString);
 
-        [Required(ErrorMessage = "Enter an answer.")]
-        [MaxLength(100, ErrorMessage = "Answer must be at most 100 characters")]
+        [Required(ErrorMessage = "Enter an answer")]
+        [MaxLength(100, ErrorMessage = "Answer must be 100 characters or fewer")]
         public string? Answer { get; set; }
 
         public bool IncludeAnswersTableCaption { get; set; }

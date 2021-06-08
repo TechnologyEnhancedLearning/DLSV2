@@ -4,8 +4,9 @@
 
     public class ForgotPasswordViewModel
     {
-        [Required(ErrorMessage = "Please enter a valid email address.")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "The email address must be a valid email address, such as example@domain.com")]
+        [Required(ErrorMessage = "Enter your email address")]
+        [MaxLength(100, ErrorMessage = "Email address must be 100 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         public string EmailAddress { get; set; }
 
         public ForgotPasswordViewModel() { }
