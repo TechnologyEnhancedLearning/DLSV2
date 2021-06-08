@@ -30,6 +30,10 @@
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\nhsuk.ts" />
+    <None Remove="Scripts\searchSortAndPaginate\paginate.ts" />
+    <None Remove="Scripts\searchSortAndPaginate\search.ts" />
+    <None Remove="Scripts\searchSortAndPaginate\searchSortAndPaginate.ts" />
+    <None Remove="Scripts\searchSortAndPaginate\sort.ts" />
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
   </ItemGroup>
@@ -78,12 +82,21 @@
     <TypeScriptCompile Include="Scripts\learningPortal\searchCourses.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+    <TypeScriptCompile Include="Scripts\searchSortAndPaginate\paginate.ts" />
+    <TypeScriptCompile Include="Scripts\searchSortAndPaginate\search.ts" />
+    <TypeScriptCompile Include="Scripts\searchSortAndPaginate\searchSortAndPaginate.ts" />
+    <TypeScriptCompile Include="Scripts\searchSortAndPaginate\sort.ts" />
     <TypeScriptCompile Include="Scripts\spec\getCourseCards.ts" />
     <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchCourses.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sortCourses.spec.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Scripts\trackingSystem\" />
   </ItemGroup>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
