@@ -20,7 +20,10 @@ export function sortSearchableElements(
   );
 }
 
-export function getSortValue(searchableElement: SearchableElement, sortBy: string): string | number | Date {
+export function getSortValue(
+  searchableElement: SearchableElement,
+  sortBy: string,
+): string | number | Date {
   switch (sortBy) {
     case 'Name':
     case 'Activity Name':

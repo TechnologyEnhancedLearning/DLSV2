@@ -91,7 +91,9 @@ export class SearchSortAndPaginate {
       return;
     }
     searchableElementsContainer.textContent = '';
-    searchableElements.forEach((searchableElement) => searchableElementsContainer.appendChild(searchableElement.element));
+    searchableElements.forEach(
+      (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
+    );
     // This is required to polyfill the new elements in IE
     Details();
   }
