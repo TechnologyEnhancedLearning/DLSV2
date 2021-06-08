@@ -22,13 +22,14 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6
+        )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
             return customPrompts.CustomPrompts.Select(
-                (cp, i) => new EditCustomFieldViewModel(
+                cp => new EditCustomFieldViewModel(
                     cp.CustomPromptNumber,
                     cp.CustomPromptText,
                     cp.Mandatory,
@@ -46,10 +47,10 @@
             string? answer4,
             string? answer5,
             string? answer6,
-            ModelStateDictionary modelState)
+            ModelStateDictionary modelState
+        )
         {
-            var customFields = GetCustomFieldViewModelsForCentre
-            (
+            var customFields = GetCustomFieldViewModelsForCentre(
                 centreId,
                 answer1,
                 answer2,
@@ -63,7 +64,8 @@
             {
                 if (customField.Mandatory && customField.Answer == null)
                 {
-                    var errorMessage = $"{(customField.Options.Any() ? "Select" : "Enter")} a {customField.CustomPrompt.ToLower()}";
+                    var errorMessage =
+                        $"{(customField.Options.Any() ? "Select" : "Enter")} a {customField.CustomPrompt.ToLower()}";
                     modelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
 
