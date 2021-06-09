@@ -11,7 +11,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <partial name="_ErrorSummary"/>
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })"/>
     }
 
     <div class="nhsuk-u-margin-bottom-8">
