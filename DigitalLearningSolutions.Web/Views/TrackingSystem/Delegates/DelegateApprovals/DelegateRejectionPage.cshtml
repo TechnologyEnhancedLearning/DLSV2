@@ -4,13 +4,12 @@
 @using Microsoft.Extensions.Configuration
 @model RejectDelegateViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateApprovals.css")" asp-append-version="true">
 
 @{
     ViewData["Title"] = "Reject delegate registration";
     ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/tracking/dashboard";
     ViewData["HeaderPathName"] = "Tracking System";
 }
 
@@ -50,7 +49,7 @@
     </dl>
     <form asp-controller="DelegateApprovals" asp-action="RejectDelegate" method="post">
       <input type="hidden" name="delegateId" value="@Model.Id" />
-      <button class="nhsuk-button delete-button" type="submit">
+      <button class="nhsuk-button delete-button nhsuk-u-margin-bottom-6" type="submit">
         Reject
       </button>
     </form>

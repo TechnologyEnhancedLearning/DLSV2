@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -100,6 +101,7 @@
 
             emailService.SendEmails(approvalEmails);
         }
+
         public void RejectDelegate(int delegateId, int centreId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
@@ -111,6 +113,7 @@
             if (delegateUser.Approved)
             {
                 logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
+                throw new UserAccountInvalidStateException($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
             }
             else
             {
@@ -166,25 +169,25 @@
             string centreName,
             string emailAddress)
         {
-            string emailSubject = "Digital Learning Solutions registration rejected"; // TODO AIR-424 capitalisation inconsistent with approvals
+            string emailSubject = "Digital Learning Solutions Registration Rejected";
 
             var body = new BodyBuilder
             {
                 TextBody = $@"Dear {delegateName},
-                        Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.There are several reasons that this may have happened including:
-                        •You registered with a non-work email address which was not recognised by the administrator
-                        •Your DLS centre chooses to manage delegate registration internally
-                        •You have accidentally chosen the wrong centre during the registration process.
-                        If you need access to the DLS platform, please use the <a>Find Your Centre</a> page to locate your local DLS centre and use the contact details provided to ask for help with registration.",
+                        Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
+                        -You registered with a non-work email address which was not recognised by the administrator
+                        -Your DLS centre chooses to manage delegate registration internally
+                        -You have accidentally chosen the wrong centre during the registration process.
+                        If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided to ask for help with registration.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                 <p>Dear {delegateName},</p>
-                                <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.There are several reasons that this may have happened including:
+                                <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
                                     <ul>
                                         <li>You registered with a non-work email address which was not recognised by the administrator</li>
                                         <li>Your DLS centre chooses to manage delegate registration internally</li>
                                         <li>You have accidentally chosen the wrong centre during the registration process.</li>
                                     </ul>
-                                If you need access to the DLS platform, please use the <a>Find Your Centre</a> page to locate your local DLS centre and use the contact details provided to ask for help with registration.</p>
+                                If you need access to the DLS platform, please use the <a href="""">Find Your Centre</a> page to locate your local DLS centre and use the contact details provided to ask for help with registration.</p>
                             </body >"
             };
 
