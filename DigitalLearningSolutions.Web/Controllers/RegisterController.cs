@@ -164,7 +164,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
