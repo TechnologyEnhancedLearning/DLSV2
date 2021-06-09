@@ -28,7 +28,7 @@
         private readonly IUserDataService userDataService;
         private readonly IConfiguration config;
 
-        private string? LoginUrl => config["AppRootPath"] + "/Login";
+        private string LoginUrl => config["AppRootPath"] + "/Login";
 
         public DelegateApprovalsService
         (
@@ -128,7 +128,7 @@
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
-                                    <p>You can now <a href=""{loginUrl}"">log in using this link</a> to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
+                                    <p>You can now <a href=""{loginUrl}"">log in to the Digital Learning Solutions learning materials</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
             };
