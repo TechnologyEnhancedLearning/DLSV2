@@ -27,7 +27,7 @@
             var expectedModel = new AvailablePageViewModel(
                 availableCourses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 "",
                 1

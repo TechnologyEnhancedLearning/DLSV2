@@ -2,9 +2,10 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -14,8 +15,8 @@
         [Route("/LearningPortal/Current/{page=1:int}")]
         public IActionResult Current(
             string? searchString = null,
-            string sortBy = SortByOptionTexts.LastAccessed,
-            string sortDirection = BaseCoursePageViewModel.DescendingText,
+            string sortBy = nameof(CurrentCourse.LastAccessed),
+            string sortDirection = BaseSearchablePageViewModel.DescendingText,
             int page = 1
         )
         {

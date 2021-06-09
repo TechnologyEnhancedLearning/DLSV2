@@ -26,7 +26,7 @@
             var expectedModel = new MyFrameworksViewModel(
                 dashboardFrameworks,
                 null,
-                "Created Date",
+                "CreatedDate",
                 "Descending",
                 1,
                 true
@@ -53,7 +53,7 @@
             var expectedModel = new AllFrameworksViewModel(
                 dashboardFrameworks,
                 null,
-                "Framework Name",
+                "FrameworkName",
                 "Ascending",
                 1
             );

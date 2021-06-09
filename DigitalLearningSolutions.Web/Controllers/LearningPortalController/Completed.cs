@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +11,8 @@
         [Route("/LearningPortal/Completed/{page=1:int}")]
         public IActionResult Completed(
             string? searchString = null,
-            string sortBy = SortByOptionTexts.CompletedDate,
-            string sortDirection = BaseCoursePageViewModel.DescendingText,
+            string sortBy = nameof(CompletedCourse.Completed),
+            string sortDirection = BaseSearchablePageViewModel.DescendingText,
             int page = 1
         )
         {

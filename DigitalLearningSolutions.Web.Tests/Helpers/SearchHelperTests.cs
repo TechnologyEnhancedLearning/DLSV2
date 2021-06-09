@@ -3,19 +3,18 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
     using SelfAssessmentHelper = DigitalLearningSolutions.Data.Tests.TestHelpers.SelfAssessmentHelper;
 
-    public class SearchHelperTests
+    public class GenericSearchHelperTests
     {
-        private CurrentCourse[] currentCourses;
-        private CurrentLearningItem[] currentCoursesWithSelfAssessment;
-        private CompletedCourse[] completedCourses;
-        private AvailableCourse[] availableCourses;
+        private AvailableCourse[] availableCourses = null!;
+        private CompletedCourse[] completedCourses = null!;
+        private CurrentCourse[] currentCourses = null!;
+        private CurrentLearningItem[] currentCoursesWithSelfAssessment = null!;
 
         [SetUp]
         public void SetUp()
@@ -51,14 +50,14 @@
         [TestCase(null, new[] { 71, 72, 73 })]
         [TestCase("course", new[] { 71, 72, 73 })]
         [TestCase("Course", new[] { 71, 72, 73 })]
-        [TestCase("self", new int[] {})]
+        [TestCase("self", new int[] { })]
         public void Current_courses_should_be_filtered_correctly(
             string searchString,
             int[] expectedIds
         )
         {
             // When
-            var result = SearchHelper.FilterLearningItems(currentCourses, searchString);
+            var result = GenericSearchHelper.SearchItems(currentCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -76,7 +75,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterLearningItems(currentCoursesWithSelfAssessment, searchString);
+            var result = GenericSearchHelper.SearchItems(currentCoursesWithSelfAssessment, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -96,7 +95,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterLearningItems(completedCourses, searchString);
+            var result = GenericSearchHelper.SearchItems(completedCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then
@@ -115,7 +114,7 @@
         )
         {
             // When
-            var result = SearchHelper.FilterLearningItems(availableCourses, searchString);
+            var result = GenericSearchHelper.SearchItems(availableCourses, searchString);
             var filteredIds = result.Select(course => course.Id);
 
             // Then

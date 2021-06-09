@@ -1,18 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public partial class LearningPortalController
     {
         [Route("/LearningPortal/Available/{page=1:int}")]
         public IActionResult Available(
             string? searchString = null,
-            string sortBy = SortByOptionTexts.Name,
-            string sortDirection = BaseCoursePageViewModel.AscendingText,
+            string sortBy = nameof(AvailableCourse.Name),
+            string sortDirection = BaseSearchablePageViewModel.AscendingText,
             int page = 1
         )
         {

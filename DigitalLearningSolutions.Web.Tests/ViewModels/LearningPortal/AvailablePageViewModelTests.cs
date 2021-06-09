@@ -23,7 +23,7 @@
             model = new AvailablePageViewModel(
                 courses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -60,7 +60,7 @@
             model = new AvailablePageViewModel(
                 courses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -90,7 +90,7 @@
             model = new AvailablePageViewModel(
                 courses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 2

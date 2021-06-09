@@ -20,7 +20,7 @@
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
-                adminUsers,
+                adminUsers.AsQueryable(),
                 sortBy,
                 sortDirection
             );
@@ -33,7 +33,7 @@
 
         public int CentreId { get; set; }
 
-        public override SelectList SortByOptions { get; } = new SelectList(new[] { "Name" });
+        public override List<SelectListItem> SortByOptions { get; } = new List<SelectListItem>{new SelectListItem("Name", "Name")};
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }
     }

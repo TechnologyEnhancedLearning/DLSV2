@@ -1,35 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class GenericSortingHelperTests
     {
-        private readonly SortableItem[] inputItems = new[] { new SortableItem("b"), new SortableItem("a"), new SortableItem("c") };
-        private readonly SortableItem[] ascendingExpectedItems = new[] { new SortableItem("a"), new SortableItem("b"), new SortableItem("c") };
-        private readonly SortableItem[] descendingExpectedItems = new[] { new SortableItem("c"), new SortableItem("b"), new SortableItem("a") };
-
-        [Test]
-        public void OrderBy_returns_item_in_expected_order()
-        {
-            // When
-            var result = inputItems.OrderBy(nameof(SortableItem.Name)).ToArray();
-
-            // Then
-            result.Should().BeEquivalentTo(ascendingExpectedItems.AsQueryable());
-        }
-
-        [Test]
-        public void OrderByDescending_returns_item_in_expected_order()
-        {
-            // When
-            var result = inputItems.OrderByDescending(nameof(SortableItem.Name)).ToArray();
-
-            // Then
-            result.Should().BeEquivalentTo(descendingExpectedItems.AsQueryable());
-        }
+        private readonly IQueryable<SortableItem> inputItems = new[] { new SortableItem("b"), new SortableItem("a"), new SortableItem("c") }.AsQueryable();
+        private readonly IQueryable<SortableItem> ascendingExpectedItems = new[] { new SortableItem("a"), new SortableItem("b"), new SortableItem("c") }.AsQueryable();
+        private readonly IQueryable<SortableItem> descendingExpectedItems = new[] { new SortableItem("c"), new SortableItem("b"), new SortableItem("a") }.AsQueryable();
 
         [Test]
         public void SortAllItems_by_ascending_returns_item_in_expected_order()
@@ -38,7 +19,7 @@
             var result = GenericSortingHelper.SortAllItems(inputItems, nameof(SortableItem.Name), "Ascending");
 
             // Then
-            result.Should().BeEquivalentTo(ascendingExpectedItems.AsQueryable());
+            result.Should().BeEquivalentTo(ascendingExpectedItems);
         }
 
         [Test]
@@ -48,10 +29,10 @@
             var result = GenericSortingHelper.SortAllItems(inputItems, nameof(SortableItem.Name), "Descending");
 
             // Then
-            result.Should().BeEquivalentTo(descendingExpectedItems.AsQueryable());
+            result.Should().BeEquivalentTo(descendingExpectedItems);
         }
 
-        private class SortableItem
+        private class SortableItem : BaseSearchableItem
         {
             public SortableItem(string name)
             {
@@ -59,6 +40,12 @@
             }
 
             public string Name { get; set; }
+
+            public override string SearchableName
+            {
+                get => SearchableNameValue ?? Name;
+                set => SearchableNameValue = value;
+            }
         }
     }
 }

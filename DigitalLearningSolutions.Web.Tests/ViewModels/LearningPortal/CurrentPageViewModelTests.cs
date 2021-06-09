@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             model = new CurrentPageViewModel(
                 currentCourses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 selfAssessments,
                 null,
@@ -200,7 +200,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             model = new CurrentPageViewModel(
                 courses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 selfAssessments,
                 null,
@@ -237,7 +237,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             model = new CurrentPageViewModel(
                 courses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 selfAssessments,
                 null,
@@ -273,7 +273,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             model = new CurrentPageViewModel(
                 courses,
                 "Course",
-                "Activity Name",
+                "Name",
                 "Ascending",
                 selfAssessments,
                 null,

@@ -1,61 +1,49 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public static class GenericSortingHelper
     {
+        /// <summary>
+        /// Sorts a list of items by property name or names.
+        /// </summary>
+        /// <typeparam name="T">Type which implements BaseSearchableItem</typeparam>
+        /// <param name="items">The items to be sorted</param>
+        /// <param name="sortBy">Ordered comma separated list of property names to sort by</param>
+        /// <param name="sortDirection">Direction to sort</param>
+        /// <returns>Sorted list of items</returns>
         public static IEnumerable<T> SortAllItems<T>(
-            IEnumerable<T> items,
+            IQueryable<T> items,
             string sortBy,
             string sortDirection
-        )
+        ) where T : BaseSearchableItem
         {
-            return sortDirection == BaseSearchablePageViewModel.DescendingText
-                ? items.OrderByDescending(sortBy)
-                : items.OrderBy(sortBy);
-        }
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                return items;
+            }
 
-        public static IOrderedQueryable<T> OrderBy<T>(this IEnumerable<T> source, string propertyName)
-        {
-            return source.ApplyOrdering(propertyName, "OrderBy");
-        }
+            var sortByArray = sortBy.Split(',');
 
-        public static IOrderedQueryable<T> OrderByDescending<T>(this IEnumerable<T> source, string propertyName)
-        {
-            return source.ApplyOrdering(propertyName, "OrderByDescending");
-        }
+            var result = sortDirection == BaseSearchablePageViewModel.DescendingText
+                ? items.OrderByDescending(sortByArray[0])
+                : items.OrderBy(sortByArray[0]);
 
-        private static IOrderedQueryable<T> ApplyOrdering<T>(
-            this IEnumerable<T> source,
-            string propertyName,
-            string methodName
-        )
-        {
-            var type = typeof(T);
-            var propertyInfo = type.GetProperty(propertyName)!;
+            if (sortByArray.Length > 1)
+            {
+                for (var i = 1; i < sortByArray.Length; i++)
+                {
+                    result = sortDirection == BaseSearchablePageViewModel.DescendingText
+                        ? result.ThenByDescending(sortByArray[1])
+                        : result.ThenBy(sortByArray[1]);
+                }
+            }
 
-            var arg = Expression.Parameter(type);
-            Expression expr = arg;
-            expr = Expression.Property(expr, propertyInfo);
-            type = propertyInfo.PropertyType;
-
-            Type delegateType = typeof(Func<,>).MakeGenericType(typeof(T), type);
-            LambdaExpression lambda = Expression.Lambda(delegateType, expr, arg);
-
-            var result = typeof(Queryable).GetMethods().Single(
-                    method => method.Name == methodName
-                              && method.IsGenericMethodDefinition
-                              && method.GetGenericArguments().Length == 2
-                              && method.GetParameters().Length == 2
-                )
-                .MakeGenericMethod(typeof(T), type)
-                .Invoke(null, new object[] { source.AsQueryable(), lambda })!;
-
-            return (IOrderedQueryable<T>)result;
+            return result;
         }
     }
 }

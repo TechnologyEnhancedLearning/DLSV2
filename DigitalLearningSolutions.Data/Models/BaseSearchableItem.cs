@@ -2,7 +2,7 @@
 {
     public abstract class BaseSearchableItem
     {
-        internal string? SearchableNameValue;
+        public string? SearchableNameValue;
 
         public abstract string SearchableName { get; set; }
     }

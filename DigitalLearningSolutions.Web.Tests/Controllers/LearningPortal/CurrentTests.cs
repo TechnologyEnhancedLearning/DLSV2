@@ -38,7 +38,7 @@
             var expectedModel = new CurrentPageViewModel(
                 currentCourses,
                 null,
-                "Last Accessed Date",
+                "LastAccessed",
                 "Descending",
                 selfAssessments,
                 bannerText,

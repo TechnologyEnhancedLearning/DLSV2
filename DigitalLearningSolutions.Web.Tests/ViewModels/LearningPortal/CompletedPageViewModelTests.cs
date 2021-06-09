@@ -69,7 +69,7 @@
                 completedCourses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -169,7 +169,7 @@
                 courses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -200,7 +200,7 @@
                 courses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 2
