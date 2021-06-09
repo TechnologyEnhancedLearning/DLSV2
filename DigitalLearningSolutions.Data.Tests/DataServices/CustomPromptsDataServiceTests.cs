@@ -70,7 +70,7 @@
         }
 
         [Test]
-        public void AddCustomPromptToCentre_correctly_adds_custom_prompt()
+        public void UpdateCustomPromptForCentre_correctly_adds_custom_prompt()
         {
             using var transaction = new TransactionScope();
             try

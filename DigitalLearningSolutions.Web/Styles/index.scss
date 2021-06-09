@@ -15,32 +15,33 @@ ul > li > ul > li {
 .js-enabled .non-js-only {
   display: none;
 }
+
 a.delete-button {
   background-color: #d5281b;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
-}
 
-a.delete-button:hover {
-  background-color: #aa2016;
-}
+  &:hover{
+    background-color: #aa2016;
+  }
 
-a.delete-button:active {
-  background-color: #6b140e;
+  &:active{
+    background-color: #6b140e;
+  }
 }
 
 button.delete-button {
   background-color: #d5281b;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
-}
 
-button.delete-button:hover {
-  background-color: #aa2016;
-}
+  &:hover {
+    background-color: #aa2016;
+  }
 
-button.delete-button:active {
-  background-color: #6b140e;
+  &:active {
+    background-color: #6b140e;
+  }
 }
 
 .js-only-block {

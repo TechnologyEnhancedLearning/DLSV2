@@ -190,6 +190,12 @@
         {
             var delegateWithAnswerCount =
                 userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreId(), promptNumber);
+
+            if (delegateWithAnswerCount == 0)
+            {
+                return TryRemoveRegistrationPrompt(promptNumber);
+            }
+
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(User.GetCentreId());
             var promptName = customPrompts.CustomPrompts.Single(c => c.CustomPromptNumber == promptNumber)
                 .CustomPromptText;
@@ -198,7 +204,7 @@
 
             return View(model);
         }
-
+        
         [HttpPost]
         [Route("{promptNumber}/Remove")]
         public IActionResult RemoveRegistrationPrompt(int promptNumber, RemoveRegistrationPromptViewModel model)
@@ -212,22 +218,7 @@
                 return View(model);
             }
 
-            using var transaction = new TransactionScope();
-            try
-            {
-                userDataService.DeleteAllAnswersForPrompt(User.GetCentreId(), promptNumber);
-                customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
-                transaction.Complete();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return RedirectToAction("Error", "LearningSolutions");
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            return TryRemoveRegistrationPrompt(promptNumber);
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
@@ -311,6 +302,19 @@
             UpdateTempDataWithAnswersModelValues(model);
 
             return RedirectToAction("AddRegistrationPromptSummary");
+        }
+
+        private IActionResult TryRemoveRegistrationPrompt(int promptNumber)
+        {
+            try
+            {
+                customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Error", "LearningSolutions");
+            }
         }
 
         private void SetRegistrationPromptAnswersViewModelOptions(

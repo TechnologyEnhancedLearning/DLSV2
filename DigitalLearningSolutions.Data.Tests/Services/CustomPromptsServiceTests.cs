@@ -17,13 +17,15 @@
         private ICustomPromptsDataService customPromptsDataService = null!;
         private ICustomPromptsService customPromptsService = null!;
         private ILogger<CustomPromptsService> logger = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             customPromptsDataService = A.Fake<ICustomPromptsDataService>();
             logger = A.Fake<ILogger<CustomPromptsService>>();
-            customPromptsService = new CustomPromptsService(customPromptsDataService, logger);
+            userDataService = A.Fake<IUserDataService>();
+            customPromptsService = new CustomPromptsService(customPromptsDataService, logger, userDataService);
         }
 
         [Test]
@@ -278,10 +280,8 @@
             var result = customPromptsService.AddCustomPromptToCentre(1, 1, true, null);
 
             // Then
-            A.CallTo
-            (
-                () => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
-            ).MustNotHaveHappened();
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null))
+                .MustNotHaveHappened();
             result.Should().BeFalse();
         }
 
@@ -289,10 +289,8 @@
         public void RemoveCustomPromptFromCentre_calls_data_service_with_correct_values()
         {
             // Given
-            A.CallTo
-            (
-                () => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)
-            ).DoesNothing();
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)).DoesNothing();
+            A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).DoesNothing();
 
             // When
             customPromptsService.RemoveCustomPromptFromCentre(1, 1);
@@ -301,6 +299,7 @@
             A.CallTo(
                 () => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)
             ).MustHaveHappened();
+            A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).MustHaveHappened();
         }
     }
 }
