@@ -144,7 +144,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
-
+            services.AddScoped<IRoleProfileService, RoleProfileService>();
             RegisterWebServiceFilters(services);
         }
 
