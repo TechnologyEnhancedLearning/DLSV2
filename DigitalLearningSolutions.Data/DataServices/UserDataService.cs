@@ -39,6 +39,10 @@
 
         public void ApproveDelegateUsers(params int[] ids);
 
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId);
+
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
 
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
@@ -73,12 +77,14 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.AdminID = @id",
                 new { id }
             ).SingleOrDefault();
@@ -167,12 +173,14 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
             ).FirstOrDefault();
@@ -333,6 +341,22 @@
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
                 new { ids }
+            );
+        }
+
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM AdminUsers WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
             );
         }
 

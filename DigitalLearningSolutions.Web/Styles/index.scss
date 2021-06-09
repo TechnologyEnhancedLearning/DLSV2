@@ -208,3 +208,59 @@ ul.no-bullets {
 .vertical-align-centre {
     vertical-align: middle
 }
+
+.side-nav-menu {
+  @include govuk-media-query($until: desktop) {
+    display: none;
+  }
+}
+
+.side-nav-menu-bottom {
+  @include nhsuk-responsive-padding(0, "left");
+
+  @include govuk-media-query($from: desktop) {
+    display: none;
+  }
+}
+
+.side-nav__heading {
+  @extend .nhsuk-u-font-weight-bold;
+  color: $color_nhsuk-grey-1;
+  @include nhsuk-responsive-margin(3, "bottom");
+  @include nhsuk-responsive-padding(1, "top");
+  @extend .nhsuk-u-font-size-19;
+
+  @include govuk-media-query($until: desktop) {
+    color: $nhsuk-text-color;
+  }
+}
+
+ .side-nav__link {
+   text-decoration: none;
+
+   &:visited {
+     color: $nhsuk-link-color;
+   }
+
+   &:hover {
+     color: $nhsuk-link-hover-color;
+     text-decoration: underline;
+   }
+ }
+
+ .side-nav__list {
+   @include nhsuk-responsive-margin(0, "bottom");
+ }
+
+.side-nav__item {
+  @include nhsuk-responsive-padding(1, "bottom");
+  @include nhsuk-responsive-padding(1, "top");
+  @extend .nhsuk-u-font-size-16;
+}
+
+ .side-nav__item--selected {
+   border-left: 4px solid $nhsuk-link-color;
+   margin-left: -12px;
+   @include nhsuk-responsive-padding(2, "left");
+   @extend .nhsuk-u-font-weight-bold;
+ }

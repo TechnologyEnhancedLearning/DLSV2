@@ -143,6 +143,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
 
             RegisterWebServiceFilters(services);
         }
