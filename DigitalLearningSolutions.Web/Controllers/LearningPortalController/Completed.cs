@@ -15,7 +15,7 @@
             int page = 1
         )
         {
-            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateId());
+            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
@@ -31,7 +31,7 @@
 
         public IActionResult AllCompletedItems()
         {
-            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateId());
+            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
             var model = new AllCompletedItemsPageViewModel(completedCourses, config);
             return View("Completed/AllCompletedItems", model);
         }

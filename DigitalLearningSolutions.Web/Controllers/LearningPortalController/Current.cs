@@ -19,9 +19,9 @@
             int page = 1
         )
         {
-            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();
-            var selfAssessments = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateId());
+            var selfAssessments = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -36,8 +36,8 @@
 
         public IActionResult AllCurrentItems()
         {
-            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateId());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment);
             return View("Current/AllCurrentItems", model);
         }
@@ -48,7 +48,7 @@
         {
             if (day == 0 && month == 0 && year == 0)
             {
-                courseService.SetCompleteByDate(progressId, User.GetCandidateId(), null);
+                courseService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
             }
 
@@ -59,18 +59,18 @@
             }
 
             var completeByDate = new DateTime(year, month, day);
-            courseService.SetCompleteByDate(progressId, User.GetCandidateId(), completeByDate);
+            courseService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCurrentCourseCompleteByDate(int id, int? day, int? month, int? year)
         {
-            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
-                logger.LogWarning($"Attempt to set complete by date for course with id {id} which is not a current course for user with id {User.GetCandidateId()}");
+                logger.LogWarning($"Attempt to set complete by date for course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -78,7 +78,7 @@
             if (model.CompleteByDate != null && !model.SelfEnrolled)
             {
                 logger.LogWarning(
-                    $"Attempt to set complete by date for course with id {id} for user with id ${User.GetCandidateId()} " +
+                    $"Attempt to set complete by date for course with id {id} for user with id ${User.GetCandidateIdKnownNotNull()} " +
                     "but the complete by date has already been set and the user has not self enrolled"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -95,11 +95,11 @@
         [Route("/LearningPortal/Current/Remove/{id:int}")]
         public IActionResult RemoveCurrentCourseConfirmation(int id)
         {
-            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
-                logger.LogWarning($"Attempt to remove course with id {id} which is not a current course for user with id {User.GetCandidateId()}");
+                logger.LogWarning($"Attempt to remove course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -111,20 +111,20 @@
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseService.RemoveCurrentCourse(progressId, User.GetCandidateId());
+            courseService.RemoveCurrentCourse(progressId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/Current/RequestUnlock/{progressId:int}")]
         public IActionResult RequestUnlock(int progressId)
         {
-            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateId());
+            var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.ProgressID == progressId && c.PLLocked);
             if (course == null)
             {
                 logger.LogWarning(
                     $"Attempt to unlock course with progress id {progressId} however found no course with that progress id " +
-                    $"and PLLocked for user with id {User.GetCandidateId()}"
+                    $"and PLLocked for user with id {User.GetCandidateIdKnownNotNull()}"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }

@@ -8,7 +8,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Add delegate registration prompt" : "Add delegate registration prompt";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
 }
 
@@ -42,7 +42,7 @@
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
         <partial name="_NoConfiguredAnswers"/>
       } else {
-        <partial name="_RegistrationPromptAnswerTable" model="Model.Options"/>
+        <partial name="_RegistrationPromptAnswerTable" model="Model"/>
       }
     </div>
   </div>

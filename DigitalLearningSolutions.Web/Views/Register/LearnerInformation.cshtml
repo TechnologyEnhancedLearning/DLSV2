@@ -1,9 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using DigitalLearningSolutions.Web.ViewModels.Register
 @model LearnerInformationViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information": "Register - Learner information";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
 }
 
 <div class="nhsuk-grid-row">
@@ -11,7 +12,15 @@
     <form method="post" asp-action="LearnerInformation">
 
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup) })"/>
+        <vc:error-summary order-of-property-names="@(new[] {
+           nameof(Model.JobGroup),
+           nameof(Model.Answer1),
+           nameof(Model.Answer2),
+           nameof(Model.Answer3),
+           nameof(Model.Answer4),
+           nameof(Model.Answer5),
+           nameof(Model.Answer6)
+        })"/>
       }
 
       <div class="nhsuk-u-margin-bottom-8">
@@ -23,9 +32,32 @@
         label="Job Group"
         value="@Model.JobGroup?.ToString()"
         hint-text=""
-        css-class="nhsuk-u-width-half"
+        css-class="nhsuk-u-width-one-half"
         default-option="Select a job group"
-        select-list-options="@ViewBag.JobGroupOptions"/>
+        select-list-options="@ViewBag.JobGroupOptions" />
+
+      @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+        if (customField.Options.Any()) {
+          <vc:select-list
+            asp-for="@("Answer" + customField.CustomFieldId)"
+            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+            value="@customField.Answer"
+            hint-text=""
+            css-class="nhsuk-u-width-one-half"
+            default-option="Select a @customField.CustomPrompt.ToLower()"
+            select-list-options="@customField.Options" />
+        } else {
+          <vc:text-input
+            asp-for="@("Answer" + customField.CustomFieldId)"
+            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+            populate-with-current-value="true"
+            type="text"
+            spell-check="false"
+            hint-text=""
+            autocomplete=""
+            css-class="nhsuk-u-width-one-half" />
+        }
+      }
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>

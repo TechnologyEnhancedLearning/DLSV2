@@ -13,7 +13,7 @@
             return new ChromeDriver(chromeOptions);
         }
 
-        public static void FillTextInput(this IWebDriver driver, string inputText, string inputId)
+        public static void FillTextInput(this IWebDriver driver, string inputId, string inputText)
         {
             var answer = driver.FindElement(By.Id(inputId));
             answer.SendKeys(inputText);

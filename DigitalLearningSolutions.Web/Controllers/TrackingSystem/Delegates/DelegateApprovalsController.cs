@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserCentreAdminOnly)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Approve")]
     public class DelegateApprovalsController : Controller
     {

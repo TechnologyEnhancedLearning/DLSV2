@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
 
@@ -27,19 +28,24 @@
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
+        private readonly IConfiguration config;
+
+        private string LoginUrl => config["AppRootPath"] + "/Login";
 
         public DelegateApprovalsService
         (
             IUserDataService userDataService,
             ICustomPromptsService customPromptsService,
             IEmailService emailService,
-            ILogger<DelegateApprovalsService> logger
+            ILogger<DelegateApprovalsService> logger,
+            IConfiguration config
         )
         {
             this.userDataService = userDataService;
             this.customPromptsService = customPromptsService;
             this.emailService = emailService;
             this.logger = logger;
+            this.config = config;
         }
 
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
@@ -94,7 +100,7 @@
                 else
                 {
                     var delegateApprovalEmail = GenerateDelegateApprovalEmail
-                        (delegateUser.CandidateNumber, delegateUser.EmailAddress);
+                        (delegateUser.CandidateNumber, delegateUser.EmailAddress, LoginUrl);
                     approvalEmails.Add(delegateApprovalEmail);
                 }
             }
@@ -143,7 +149,8 @@
         private static Email GenerateDelegateApprovalEmail
         (
             string candidateNumber,
-            string emailAddress
+            string emailAddress,
+            string? loginUrl
         )
         {
             const string emailSubject = "Digital Learning Solutions Registration Approved";
@@ -152,11 +159,11 @@
             {
                 TextBody =
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
-                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.
+                            You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
-                                    <p>You can now login to the Digital Learning Solutions learning materials using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
+                                    <p>You can now <a href=""{loginUrl}"">log in to the Digital Learning Solutions learning materials</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
             };
