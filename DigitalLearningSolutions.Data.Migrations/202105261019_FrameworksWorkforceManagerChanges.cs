@@ -562,6 +562,12 @@
             Alter.Table("RoleProfiles").AddColumn("NRPProfessionalGroupID").AsInt32().Nullable().ForeignKey("NRPProfessionalGroups", "ID");
             Alter.Table("RoleProfiles").AddColumn("NRPSubGroupID").AsInt32().Nullable().ForeignKey("NRPSubGroups", "ID");
             Alter.Table("RoleProfiles").AddColumn("NRPRoleID").AsInt32().Nullable().ForeignKey("NRPRoles", "ID");
+            Alter.Table("RoleProfiles").AddColumn("PublishStatusID").AsInt32().NotNullable().ForeignKey("PublishStatus", "ID").WithDefaultValue(1);
+
+            Delete.ForeignKey("FK_RoleProfiles_CategoryID_CourseCategories_CourseCategoryID").OnTable("RoleProfiles");
+            Delete.ForeignKey("FK_RoleProfiles_TopicID_CourseTopics_CourseTopicID").OnTable("RoleProfiles");
+            Delete.Column("CategoryID").FromTable("RoleProfiles");
+            Delete.Column("TopicID").FromTable("RoleProfiles");
         }
 
         public override void Down()
@@ -569,6 +575,9 @@
             Delete.Column("NRPProfessionalGroupID").FromTable("RoleProfiles");
             Delete.Column("NRPSubGroupID").FromTable("RoleProfiles");
             Delete.Column("NRPRoleID").FromTable("RoleProfiles");
+
+            Alter.Table("RoleProfiles").AddColumn("CategoryID").AsInt32().NotNullable().ForeignKey("CourseCategories", "CourseCategoryID").WithDefaultValue(1);
+            Alter.Table("RoleProfiles").AddColumn("TopicID").AsInt32().NotNullable().ForeignKey("CourseTopics", "CourseTopicID").WithDefaultValue(1);
 
             Delete.Table("NRPRoles");
             Delete.Table("NRPSubGroups");
