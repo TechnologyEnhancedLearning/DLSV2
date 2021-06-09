@@ -1,8 +1,6 @@
-.nhsuk-error-message.validation-errors-container__message {
-  margin-bottom: 4px;
-}
+@import "~nhsuk-frontend/packages/core/all";
 
-.validation-errors-container {
-  padding-top: 4px;
-  padding-bottom: 16px;
+.nhsuk-error-message.error-message {
+  // Below class not set on elements directly because margin setting would get superseded by nhsuk-error-message rules.
+  @extend .nhsuk-u-margin-bottom-1;
 }
