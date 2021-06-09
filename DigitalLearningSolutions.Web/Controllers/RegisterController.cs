@@ -62,12 +62,15 @@
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     }
                 );
+
+                TempData.Set(delegateRegistrationData);
             }
 
             // if no centreId param, then use general registration process
             if (centreId == null)
             {
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
+                TempData.Set(delegateRegistrationData);
             }
             else
             {
@@ -81,12 +84,11 @@
                     return RedirectToAction("Index");
                 }
                 // otherwise use a centre-specific registration process
+                // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
                 delegateRegistrationData.RegisterViewModel.Centre = centreId;
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecific = true;
             }
-
-            TempData.Set(delegateRegistrationData);
 
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
                 centresDataService.GetActiveCentresAlphabetical(),
