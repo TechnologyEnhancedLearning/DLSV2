@@ -63,10 +63,24 @@
                     }
                 );
             }
-            
-            if (centreId != null)
+
+            // if no centreId param, then use general registration process
+            if (centreId == null)
+            {
+                delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
+            }
+            else
             {
                 var centreName = centresDataService.GetCentreName(centreId.Value);
+                // if centreId invalid, then clear centre, redirect to general registration process
+                if (centreName == null)
+                {
+                    delegateRegistrationData.RegisterViewModel.Centre = null;
+                    delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
+                    TempData.Set(delegateRegistrationData);
+                    return RedirectToAction("Index");
+                }
+                // otherwise use a centre-specific registration process
                 ViewBag.CentreName = centreName;
                 delegateRegistrationData.RegisterViewModel.Centre = centreId;
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecific = true;
