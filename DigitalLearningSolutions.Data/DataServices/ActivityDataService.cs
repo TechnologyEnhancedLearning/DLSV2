@@ -4,10 +4,11 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IActivityDataService
     {
-        int GetActivityForMonthAndYear(int year, int month, string activityType);
+        MonthOfActivity GetActivityForMonthAndYear(int year, int month);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -19,15 +20,19 @@
             this.connection = connection;
         }
 
-        public int GetActivityForMonthAndYear(int year, int month, string activityType)
+        public MonthOfActivity GetActivityForMonthAndYear(int year, int month)
         {
-            return connection.Query<int>(
-                @"SELECT COUNT (LogID)
-                        FROM tActivityLog
-                        WHERE @activityType = 1
-                        AND LogYear = @year
+            return connection.Query<MonthOfActivity>(
+                @"SELECT
+                        @year AS Year,
+                        @month AS Month,
+                        SUM(CONVERT(INT, Completed)) AS Completions,
+                        SUM(CONVERT(INT, Evaluated)) AS Evaluations,
+                        SUM(CONVERT(INT, Registered)) AS Registrations 
+                    FROM tActivityLog
+                        WHERE LogYear = @year
                         AND LogMonth = @month",
-            new {year, month, activityType}
+            new {year, month}
             ).First();
         }
     }
