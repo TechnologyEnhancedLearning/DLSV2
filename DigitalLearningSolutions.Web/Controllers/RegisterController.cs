@@ -39,8 +39,8 @@
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
         }
-
-        public IActionResult Index()
+        
+        public IActionResult Index(int? centreId)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -62,8 +62,17 @@
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     }
                 );
-                TempData.Set(delegateRegistrationData);
             }
+            
+            if (centreId != null)
+            {
+                var centreName = centresDataService.GetCentreName(centreId.Value);
+                ViewBag.CentreName = centreName;
+                delegateRegistrationData.RegisterViewModel.Centre = centreId;
+                delegateRegistrationData.RegisterViewModel.IsCentreSpecific = true;
+            }
+
+            TempData.Set(delegateRegistrationData);
 
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
                 centresDataService.GetActiveCentresAlphabetical(),

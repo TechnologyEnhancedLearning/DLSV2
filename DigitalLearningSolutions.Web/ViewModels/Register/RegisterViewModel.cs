@@ -19,5 +19,7 @@
 
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
+
+        public bool IsCentreSpecific { get; set; }
     }
 }
