@@ -30,7 +30,7 @@
             Autocomplete = autocomplete;
             HintText = hintText;
             ErrorMessages = errorMessageList;
-            HasError = errorMessageList.Any(message => !string.IsNullOrWhiteSpace(message));
+            HasError = errorMessageList.Any();
         }
 
         public string Id { get; set; }
