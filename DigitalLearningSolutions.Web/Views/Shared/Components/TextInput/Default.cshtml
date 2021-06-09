@@ -15,7 +15,7 @@
   @if (Model.HasError) {
     <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
       @foreach (var errorMessage in Model.ErrorMessages) {
-        <span class="error-message nhsuk-error-message">
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
           <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
         </span>
       }
