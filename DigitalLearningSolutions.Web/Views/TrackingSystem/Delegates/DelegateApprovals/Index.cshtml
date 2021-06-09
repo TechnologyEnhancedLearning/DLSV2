@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @using Microsoft.Extensions.Configuration
 @model DelegateApprovalsViewModel
@@ -19,12 +19,16 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.ApproveDelegateRegistrations" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
     <h1 class="nhsuk-heading-xl">Approve delegate registrations</h1>
-    @if (Model.Delegates.Any())
-    {
-      @foreach (var delegateApproval in Model.Delegates)
-      {
+    @if (Model.Delegates.Any()) {
+      @foreach (var delegateApproval in Model.Delegates) {
         <partial name="_unapprovedDelegateExpandable" model="delegateApproval" />
       }
       <div class="nhsuk-grid-row nhsuk-u-margin-top-7">
@@ -36,9 +40,7 @@
           </form>
         </div>
       </div>
-    }
-    else
-    {
+    } else {
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <p>No accounts need approval.</p>
@@ -58,5 +60,9 @@
         </div>
       </div>
     }
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.ApproveDelegateRegistrations" />
+    </nav>
   </div>
 </div>
