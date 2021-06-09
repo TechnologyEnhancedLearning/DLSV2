@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 @using Microsoft.Extensions.Configuration
 @model CentreDashboardViewModel
@@ -17,7 +18,11 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter">Side bar</div>
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.CentreDashboard" />
+    </nav>
+  </div>
   <div class="nhsuk-grid-column-three-quarters">
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Centre dashboard</h1>
     <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.FirstName</span>. You are managing <span class="nhsuk-u-font-weight-bold">@Model.CourseCategory</span> courses.</p>
@@ -176,55 +181,59 @@
       </div>
     </details>
 
-    <ul class="nhsuk-grid-row nhsuk-card-group">
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+  <ul class="nhsuk-grid-row nhsuk-card-group">
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
 
-        <div class="nhsuk-card nhsuk-card--clickable">
-          <div class="nhsuk-card__content">
-            <h2 class="nhsuk-card__heading nhsuk-heading-m">
-              <a class="nhsuk-card__link" href="#">Contract details</a>
-            </h2>
-            <p class="nhsuk-card__description">See details about your contract type</p>
-          </div>
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="#">Contract details</a>
+          </h2>
+          <p class="nhsuk-card__description">See details about your contract type</p>
         </div>
+      </div>
 
-      </li>
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    </li>
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
 
-        <div class="nhsuk-card nhsuk-card--clickable">
-          <div class="nhsuk-card__content">
-            <h2 class="nhsuk-card__heading nhsuk-heading-m">
-              <a class="nhsuk-card__link" href="#">Reports</a>
-            </h2>
-            <p class="nhsuk-card__description">See reports about your usage and evaluations</p>
-          </div>
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="#">Reports</a>
+          </h2>
+          <p class="nhsuk-card__description">See reports about your usage and evaluations</p>
         </div>
+      </div>
 
-      </li>
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    </li>
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
 
-        <div class="nhsuk-card nhsuk-card--clickable">
-          <div class="nhsuk-card__content">
-            <h2 class="nhsuk-card__heading nhsuk-heading-m">
-              <a class="nhsuk-card__link" href="#">Top courses</a>
-            </h2>
-            <p class="nhsuk-card__description">See information about your top courses</p>
-          </div>
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="#">Top courses</a>
+          </h2>
+          <p class="nhsuk-card__description">See information about your top courses</p>
         </div>
+      </div>
 
-      </li>
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    </li>
+    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
 
-        <div class="nhsuk-card nhsuk-card--clickable">
-          <div class="nhsuk-card__content">
-            <h2 class="nhsuk-card__heading nhsuk-heading-m">
-              <a class="nhsuk-card__link" href="#">Centre ranking</a>
-            </h2>
-            <p class="nhsuk-card__description">See centre rankings by week, month, or year</p>
-          </div>
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <a class="nhsuk-card__link" href="#">Centre ranking</a>
+          </h2>
+          <p class="nhsuk-card__description">See centre rankings by week, month, or year</p>
         </div>
+      </div>
 
-      </li>
-    </ul>
+    </li>
+  </ul>
+
+  <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+    <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.CentreDashboard" />
+  </nav>
   </div>
 </div>

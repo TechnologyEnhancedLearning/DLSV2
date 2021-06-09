@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model CentreConfigurationViewModel
@@ -18,7 +19,13 @@
 }
 
 <div class="nhsuk-grid-row">
-<div class="nhsuk-grid-column-full">
+<div class="nhsuk-grid-column-one-quarter">
+  <nav class="side-nav-menu" aria-label="Side navigation bar">
+    <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.CentreConfiguration" />
+  </nav>
+</div>
+
+<div class="nhsuk-grid-column-three-quarters">
 <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
 
 <div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
@@ -67,12 +74,9 @@
           Centre signature
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (Model.SignatureImage != null)
-          {
+          @if (Model.SignatureImage != null) {
             <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.SignatureImage)" alt="Centre Signature Picture" />
-          }
-          else
-          {
+          } else {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
         </dd>
@@ -249,11 +253,12 @@
 
   </div>
 </details>
+
+<a class="nhsuk-button" asp-controller="RegistrationPrompts" asp-action="Index">Manage registration prompts</a>
+
+<nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+  <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.CentreConfiguration" />
+</nav>
 </div>
 </div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" asp-controller="RegistrationPrompts" asp-action="Index">Manage registration prompts</a>
-  </div>
-</div>

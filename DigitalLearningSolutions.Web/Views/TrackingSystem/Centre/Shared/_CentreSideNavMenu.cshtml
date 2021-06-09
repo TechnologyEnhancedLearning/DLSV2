@@ -1,0 +1,36 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model CentrePage
+
+@{
+  const string selectedClass = "side-nav__item--selected";
+
+  var centreDashboardItemClass = Model == CentrePage.CentreDashboard ? selectedClass : string.Empty;
+  var centreConfigurationItemClass = Model == CentrePage.CentreConfiguration ? selectedClass : string.Empty;
+  var centreLoginsItemClass = Model == CentrePage.CentreAdministrators ? selectedClass : string.Empty;
+  var reportsItemClass = Model == CentrePage.Reports ? selectedClass : string.Empty;
+}
+
+
+<h2 class="side-nav__heading">Centre</h2>
+<ul class="nhsuk-list side-nav__list">
+  <li class="side-nav__item @centreDashboardItemClass">
+    <a class="side-nav__link" asp-action="Index" asp-controller="Dashboard">Centre dashboard</a>
+  </li>
+  <li class="side-nav__item @centreConfigurationItemClass">
+    <a class="side-nav__link" asp-action="Index" asp-controller="CentreConfiguration">Centre configuration</a>
+  </li>
+
+  @if(User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true || User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
+  {
+    <li class="side-nav__item @centreLoginsItemClass">
+      <a class="side-nav__link" asp-action="Index" asp-controller="Administrator">Administrators</a>
+    </li>
+  }
+
+  <li class="side-nav__item @reportsItemClass">
+    <a class="side-nav__link" asp-action="Index" asp-controller="Reports">Reports</a>
+  </li>
+</ul>
