@@ -430,6 +430,29 @@
             result.Should().BeViewResult().WithViewName("CentreInactive");
         }
 
+        [Test]
+        public void User_without_email_address_can_still_login()
+        {
+            // Given
+            var delegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(emailAddress: null) };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._))
+                .Returns((null, delegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, delegates));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, delegates));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", false, true) });
+
+            // When
+            var result = controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
+        }
+
         private void GivenSignInIsSuccessful()
         {
             var admin = UserTestHelper.GetDefaultAdminUser();
