@@ -7,7 +7,7 @@
         public override void Up()
         {
             Create.Table("RoleProfileCollaborators").WithColumn("ID").AsInt32().NotNullable().PrimaryKey().Identity()
-                .WithColumn("RoleProfileID").AsInt32().NotNullable().PrimaryKey().ForeignKey("RoleProfile", "ID")
+                .WithColumn("RoleProfileID").AsInt32().NotNullable().PrimaryKey().ForeignKey("RoleProfiles", "ID")
                 .WithColumn("UserEmail").AsString(255).NotNullable()
                 .WithColumn("AdminID").AsInt32().NotNullable().PrimaryKey().ForeignKey("AdminUsers", "AdminID")
                 .WithColumn("CanModify").AsBoolean().NotNullable().WithDefaultValue(false);
