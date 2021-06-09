@@ -17,7 +17,7 @@
         )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress);
-            FirstName = firstName ?? "User";
+            FirstName = string.IsNullOrWhiteSpace(firstName) ? "User" : firstName;
             CourseCategory = categoryName ?? "all";
             NumberOfDelegates = delegates;
             NumberOfCourses = courses;

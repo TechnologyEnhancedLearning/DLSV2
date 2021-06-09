@@ -184,7 +184,7 @@
             string? returnUrl
         )
         {
-            var claims = GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
+            var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
             var claimsIdentity = new ClaimsIdentity(claims, "Identity.Application");
             var authProperties = new AuthenticationProperties
             {
@@ -210,75 +210,6 @@
             }
 
             return null;
-        }
-
-        private List<Claim> GetClaimsForSignIn(
-            AdminLoginDetails? adminLoginDetails,
-            DelegateLoginDetails? delegateLoginDetails
-        )
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(
-                    ClaimTypes.Email,
-                    adminLoginDetails?.EmailAddress ?? delegateLoginDetails?.EmailAddress ?? string.Empty
-                ),
-                new Claim(
-                    CustomClaimTypes.UserCentreId,
-                    adminLoginDetails?.CentreId.ToString() ?? delegateLoginDetails?.CentreId.ToString()
-                ),
-                new Claim(CustomClaimTypes.UserCentreManager, adminLoginDetails?.IsCentreManager.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreAdmin, adminLoginDetails?.IsCentreAdmin.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserUserAdmin, adminLoginDetails?.IsUserAdmin.ToString() ?? "False"),
-                new Claim(
-                    CustomClaimTypes.UserContentCreator,
-                    adminLoginDetails?.IsContentCreator.ToString() ?? "False"
-                ),
-                new Claim(
-                    CustomClaimTypes.UserAuthenticatedCm,
-                    adminLoginDetails?.IsContentManager.ToString() ?? "False"
-                ),
-                new Claim(CustomClaimTypes.UserPublishToAll, adminLoginDetails?.PublishToAll.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.UserCentreReports, adminLoginDetails?.SummaryReports.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnCandidateId, delegateLoginDetails?.Id.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.LearnUserAuthenticated, (delegateLoginDetails != null).ToString()),
-                new Claim(CustomClaimTypes.AdminCategoryId, adminLoginDetails?.CategoryId.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsSupervisor, adminLoginDetails?.IsSupervisor.ToString() ?? "False"),
-                new Claim(CustomClaimTypes.IsTrainer, adminLoginDetails?.IsTrainer.ToString() ?? "False"),
-                new Claim(
-                    CustomClaimTypes.IsFrameworkDeveloper,
-                    adminLoginDetails?.IsFrameworkDeveloper.ToString() ?? "False"
-                ),
-                new Claim(
-                    CustomClaimTypes.UserCentreName,
-                    adminLoginDetails?.CentreName ?? delegateLoginDetails?.CentreName
-                )
-            };
-
-            var firstName = adminLoginDetails?.FirstName ?? delegateLoginDetails?.FirstName;
-            var surname = adminLoginDetails?.LastName ?? delegateLoginDetails?.LastName;
-
-            if (firstName != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserForename, firstName));
-            }
-
-            if (surname != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserSurname, surname));
-            }
-
-            if (delegateLoginDetails?.CandidateNumber != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.LearnCandidateNumber, delegateLoginDetails.CandidateNumber));
-            }
-
-            if (adminLoginDetails?.Id != null)
-            {
-                claims.Add(new Claim(CustomClaimTypes.UserAdminId, adminLoginDetails.Id.ToString()));
-            }
-
-            return claims;
         }
     }
 }
