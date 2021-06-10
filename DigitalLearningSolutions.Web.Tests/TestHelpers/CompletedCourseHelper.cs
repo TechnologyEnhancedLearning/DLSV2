@@ -45,7 +45,7 @@
         public static CompletedPageViewModel CompletedViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Completed() as ViewResult;
-            return result.Model as CompletedPageViewModel;
+            return (CompletedPageViewModel)result!.Model;
         }
     }
 }

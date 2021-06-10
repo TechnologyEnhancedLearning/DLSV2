@@ -3,14 +3,12 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
-    using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class AvailablePageViewModelTests
     {
-        private AvailablePageViewModel model;
+        private AvailablePageViewModel model = null!;
 
         [SetUp]
         public void SetUp()

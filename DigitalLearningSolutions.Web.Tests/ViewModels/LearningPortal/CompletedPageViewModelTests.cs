@@ -13,8 +13,8 @@
     public class CompletedPageViewModelTests
     {
         private readonly IConfiguration config = A.Fake<IConfiguration>();
-        private CompletedPageViewModel model;
-        private CompletedCourse[] completedCourses;
+        private CompletedPageViewModel model = null!;
+        private CompletedCourse[] completedCourses = null!;
 
         [SetUp]
         public void SetUp()

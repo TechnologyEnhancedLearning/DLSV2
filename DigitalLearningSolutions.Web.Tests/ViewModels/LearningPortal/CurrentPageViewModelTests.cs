@@ -11,9 +11,9 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 
     public class CurrentPageViewModelTests
     {
-        private CurrentPageViewModel model;
-        private CurrentCourse[] currentCourses;
-        private SelfAssessment[] selfAssessments;
+        private CurrentPageViewModel model = null!;
+        private CurrentCourse[] currentCourses = null!;
+        private SelfAssessment[] selfAssessments = null!;
 
         [SetUp]
         public void SetUp()
@@ -160,7 +160,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             bool expectedIsGroup)
         {
             var course = model.CurrentCourses.ElementAt(index) as CurrentCourseViewModel;
-            course.Id.Should().Be(expectedId);
+            course!.Id.Should().Be(expectedId);
             course.Name.Should().Be(expectedName);
             course.HasDiagnosticAssessment.Should().Be(expectedDiagnostic);
             course.HasLearningContent.Should().Be(expectedLearning);
