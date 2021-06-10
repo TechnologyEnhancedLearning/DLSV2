@@ -114,6 +114,22 @@
                     centresDataService.GetActiveCentresAlphabetical(),
                     model.Centre
                 );
+
+                if (model.IsCentreSpecific)
+                {
+                    var centreName = centresDataService.GetCentreName(model.Centre.Value);
+                    // if centreId invalid, then clear centre specific details
+                    if (centreName == null)
+                    {
+                        model.Centre = null;
+                        model.IsCentreSpecific = false;
+                    }
+                    else
+                    {
+                        // otherwise continue centre-specific registration process
+                        ViewBag.CentreName = centreName;
+                    }
+                }
                 return View(model);
             }
 
