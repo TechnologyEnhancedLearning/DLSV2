@@ -15,25 +15,37 @@
 
       <div class="nhsuk-u-margin-bottom-8">
         <h1 id="page-heading" class="nhsuk-heading-xl">Register</h1>
+        <input type="hidden" asp-for="IsCentreSpecific" value=@Model.IsCentreSpecific/>
 
-        <p class="nhsuk-body-l">
-          Please select your centre to start the registration process
-          to access all Digital Learning Solutions services.
-        </p>
+        @if (Model.IsCentreSpecific)
+        {
+          <p class="nhsuk-body-l">
+            Please enter your personal details to start the registration process
+            to access all Digital Learning Solutions services at @ViewBag.CentreName.
+          </p>
+          <input type="hidden" asp-for="Centre"/>
+        } else {
+          <p class="nhsuk-body-l">
+            Please select your centre to start the registration process
+            to access all Digital Learning Solutions services.
+          </p>
 
-        <vc:select-list
-          asp-for="Centre"
-          label="Centre"
-          value="@Model.Centre?.ToString()"
-          hint-text=""
-          css-class="nhsuk-u-width-full"
-          default-option="Select a centre"
-          select-list-options="@ViewBag.CentreOptions"/>
+          <vc:select-list
+            asp-for="Centre"
+            label="Centre"
+            value="@Model.Centre?.ToString()"
+            hint-text=""
+            css-class="nhsuk-u-width-full"
+            default-option="Select a centre"
+            select-list-options="@ViewBag.CentreOptions"/>
+        }
       </div>
-      
-      <p class="nhsuk-body-l">
-        Now enter your personal details.
-      </p>
+
+      @if (!Model.IsCentreSpecific) {
+        <p class="nhsuk-body-l">
+          Now enter your personal details.
+        </p>
+      }
 
       <vc:text-input
         asp-for="FirstName"
