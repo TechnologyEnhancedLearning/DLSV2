@@ -51,8 +51,8 @@
             return RedirectToAction("Index", "DelegateApprovals");
         }
 
-        [HttpGet]
-        [Route("/TrackingSystem/Delegates/{delegateId}/Reject")]
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/Reject")]
         public IActionResult DelegateRejectionPage(int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
@@ -61,7 +61,7 @@
         }
 
         [HttpPost]
-        [Route("/TrackingSystem/Delegates/Reject")]
+        [Route("/TrackingSystem/Delegates/ConfirmReject")]
         public IActionResult RejectDelegate(int delegateId)
         {
             var centreId = User.GetCentreId();
