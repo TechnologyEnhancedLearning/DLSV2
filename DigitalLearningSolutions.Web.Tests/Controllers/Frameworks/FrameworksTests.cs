@@ -9,7 +9,7 @@
     public partial class FrameworkControllerTests
     {
         [Test]
-        public void FrameworksDashboard_action_should_return_view_result()
+        public void ViewFrameworks_action_should_return_view_result()
         {
             // Given
             var dashboardFrameworks = new[]
@@ -20,7 +20,7 @@
             A.CallTo(() => frameworkService.GetFrameworksForAdminId(AdminId)).Returns(dashboardFrameworks);
 
             // When
-            var result = controller.FrameworksDashboard();
+            var result = controller.ViewFrameworks();
 
             // Then
             var expectedModel = new MyFrameworksViewModel(

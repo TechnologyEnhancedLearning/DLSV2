@@ -17,8 +17,29 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     public partial class FrameworksController
     {
         private const string CookieName = "DLSFrameworkService";
-        [Route("/Frameworks/MyFrameworks/{page=1:int}")]
-        public IActionResult FrameworksDashboard(string? searchString = null,
+        public IActionResult Index()
+        {
+            var adminId = GetAdminID();
+            var username = GetUserFirstName();
+            var isFrameworkDeveloper = GetIsFrameworkDeveloper();
+            var isFrameworkContributor = GetIsFrameworkContributor();
+            var isWorkforceManager = GetIsWorkforceManager();
+            var isWorkforceContributor = GetIsWorkforceContributor();
+            var dashboardData = frameworkService.GetDashboardDataForAdminID(adminId);
+            var dashboardToDoItems = frameworkService.GetDashboardToDoItems(adminId);
+            var model = new DashboardViewModel(
+                username,
+                isFrameworkDeveloper,
+                isFrameworkContributor,
+                isWorkforceManager,
+                isWorkforceContributor,
+                dashboardData,
+                dashboardToDoItems
+                );
+            return View(model);
+        }
+        [Route("/Frameworks/ViewFrameworks/{page=1:int}")]
+        public IActionResult ViewFrameworks(string? searchString = null,
             string sortBy = FrameworkSortByOptionTexts.FrameworkCreatedDate,
             string sortDirection = BaseFrameworksPageViewModel.DescendingText,
             int page = 1)
@@ -464,7 +485,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
             if(sessionNewFramework == null)
             {
-                return RedirectToAction("FrameworksDashboard");
+                return RedirectToAction("MyDashboard");
             }
             TempData.Set(sessionNewFramework);
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
