@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
     {
@@ -33,7 +32,10 @@
 
         public int CentreId { get; set; }
 
-        public override List<SelectListItem> SortByOptions { get; } = new List<SelectListItem>{new SelectListItem("Name", "Name")};
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            DefaultSortByOptionTexts.Name
+        };
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }
     }

@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -45,5 +47,35 @@
 
             return result;
         }
+    }
+
+    public static class FrameworkSortByOptionTexts
+    {
+        public static readonly (string DisplayText, string PropertyName) FrameworkName = ("Framework Name", nameof(BaseFramework.FrameworkName));
+        public static readonly (string DisplayText, string PropertyName) FrameworkOwner = ("Owner", nameof(BaseFramework.Owner));
+        public static readonly (string DisplayText, string PropertyName) FrameworkCreatedDate = ("Created Date", nameof(BaseFramework.CreatedDate));
+        public static readonly (string DisplayText, string PropertyName) FrameworkPublishStatus = ("Publish Status", nameof(BaseFramework.PublishStatus));
+        public static readonly (string DisplayText, string PropertyName) FrameworkBrand = ("Brand", nameof(BrandedFramework.Brand));
+        public static readonly (string DisplayText, string PropertyName) FrameworkCategory = ("Category", nameof(BrandedFramework.Category));
+        public static readonly (string DisplayText, string PropertyName) FrameworkTopic = ("Topic", nameof(BrandedFramework.Topic));
+    }
+
+    public static class CourseSortByOptionTexts
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Activity Name", nameof(BaseLearningItem.Name));
+        public static readonly (string DisplayText, string PropertyName) StartedDate = ("Enrolled Date", nameof(CompletedCourse.StartedDate));
+        public static readonly (string DisplayText, string PropertyName) LastAccessed = ("Last Accessed Date", nameof(CompletedCourse.LastAccessed));
+        public static readonly (string DisplayText, string PropertyName) CompleteByDate = ("Complete By Date", nameof(CurrentCourse.CompleteByDate));
+        public static readonly (string DisplayText, string PropertyName) CompletedDate = ("Completed Date", nameof(CompletedCourse.Completed));
+        public static readonly (string DisplayText, string PropertyName) DiagnosticScore = ("Diagnostic Score", $"{nameof(BaseLearningItem.HasDiagnostic)},{nameof(CurrentCourse.DiagnosticScore)}");
+        public static readonly (string DisplayText, string PropertyName) PassedSections = ("Passed Sections", $"{nameof(BaseLearningItem.IsAssessed)},{nameof(CurrentCourse.Passes)}");
+        public static readonly (string DisplayText, string PropertyName) Brand = ("Brand", nameof(AvailableCourse.Brand));
+        public static readonly (string DisplayText, string PropertyName) Category = ("Category", nameof(AvailableCourse.Category));
+        public static readonly (string DisplayText, string PropertyName) Topic = ("Topic", nameof(AvailableCourse.Topic));
+    }
+
+    public static class DefaultSortByOptionTexts
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("SearchableName", nameof(BaseSearchableItem.SearchableName));
     }
 }

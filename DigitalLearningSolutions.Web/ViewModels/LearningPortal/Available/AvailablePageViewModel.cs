@@ -5,21 +5,10 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class AvailablePageViewModel : BaseSearchablePageViewModel
     {
         public readonly IEnumerable<AvailableCourseViewModel> AvailableCourses;
-
-        public override List<SelectListItem> SortByOptions { get; } = new List<SelectListItem>
-        {
-            item1,  item2, item3, item4
-        };
-
-        private static SelectListItem item1 = new SelectListItem(SortByOptionTexts.Name, nameof(AvailableCourse.Name));
-        private static SelectListItem item2 = new SelectListItem(SortByOptionTexts.Brand, nameof(AvailableCourse.Brand));
-        private static SelectListItem item3 = new SelectListItem(SortByOptionTexts.Category, nameof(AvailableCourse.Category));
-        private static SelectListItem item4 = new SelectListItem(SortByOptionTexts.Topic, nameof(AvailableCourse.Topic));
 
         //public override SelectList SortByOptions { get; } = new SelectList()
 
@@ -43,5 +32,13 @@
             var paginatedItems = PaginateItems(filteredItems);
             AvailableCourses = paginatedItems.Select(c => new AvailableCourseViewModel(c));
         }
+
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            CourseSortByOptionTexts.Name,
+            CourseSortByOptionTexts.Brand,
+            CourseSortByOptionTexts.Category,
+            CourseSortByOptionTexts.Topic
+        };
     }
 }

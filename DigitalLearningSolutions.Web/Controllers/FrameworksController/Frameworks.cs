@@ -22,11 +22,13 @@
         [Route("/Frameworks/MyFrameworks/{page=1:int}")]
         public IActionResult FrameworksDashboard(
             string? searchString = null,
-            string sortBy = nameof(BaseFramework.CreatedDate),
+            string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.DescendingText,
             int page = 1
         )
         {
+            sortBy ??= FrameworkSortByOptionTexts.FrameworkCreatedDate.PropertyName;
+
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var frameworks = frameworkService.GetFrameworksForAdminId(adminId);
@@ -50,11 +52,13 @@
         [Route("/Frameworks/AllFrameworks/{page=1:int}")]
         public IActionResult FrameworksViewAll(
             string? searchString = null,
-            string sortBy = nameof(BaseFramework.FrameworkName),
+            string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.AscendingText,
             int page = 1
         )
         {
+            sortBy ??= FrameworkSortByOptionTexts.FrameworkName.PropertyName;
+
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             if (!isFrameworkDeveloper)
@@ -224,7 +228,7 @@
             var frameworks = frameworkService.GetAllFrameworks(adminId);
             var sortedItems = GenericSortingHelper.SortAllItems(
                 frameworks.AsQueryable(),
-                nameof(BaseFramework.FrameworkName),
+                FrameworkSortByOptionTexts.FrameworkName.PropertyName,
                 BaseSearchablePageViewModel.AscendingText
             );
             var similarItems = GenericSearchHelper.SearchItems(sortedItems, frameworkname, 55, true);

@@ -61,7 +61,7 @@
 //        private int OffsetFromPageNumber(int pageNumber) =>
 //            (pageNumber - 1) * ItemsPerPage;
 //    }
-//    public static class SortByOptionTexts
+//    public static class CourseSortByOptionTexts
 //    {
 //        public const string
 //            Name = "Activity Name",

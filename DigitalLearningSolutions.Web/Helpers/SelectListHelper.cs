@@ -20,5 +20,15 @@
         {
             return options.Select(o => new SelectListItem(o, o, o == selected)).ToList();
         }
+
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItems(IEnumerable<(string, string)> options)
+        {
+            return options.Select(NewSelectListItemFromTupleString);
+        }
+
+        private static SelectListItem NewSelectListItemFromTupleString((string Text, string Value) item)
+        {
+            return new SelectListItem(item.Text, item.Value);
+        }
     }
 }

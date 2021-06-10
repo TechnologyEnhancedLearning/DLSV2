@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -41,7 +42,9 @@
 
         public int TotalPages { get; protected set; }
 
-        public abstract List<SelectListItem> SortByOptions { get; }
+        public IEnumerable<SelectListItem> SortByOptions => SelectListHelper.MapOptionsToSelectListItems(SortOptions);
+
+        public abstract IEnumerable<(string, string)> SortOptions { get; }
 
         protected IEnumerable<T> PaginateItems<T>(IList<T> items)
         {
@@ -66,20 +69,5 @@
         {
             return (pageNumber - 1) * ItemsPerPage;
         }
-    }
-
-    public static class SortByOptionTexts
-    {
-        public const string
-            Name = "Activity Name",
-            StartedDate = "Enrolled Date",
-            LastAccessed = "Last Accessed Date",
-            CompleteByDate = "Complete By Date",
-            CompletedDate = "Completed Date",
-            DiagnosticScore = "Diagnostic Score",
-            PassedSections = "Passed Sections",
-            Brand = "Brand",
-            Category = "Category",
-            Topic = "Topic";
     }
 }

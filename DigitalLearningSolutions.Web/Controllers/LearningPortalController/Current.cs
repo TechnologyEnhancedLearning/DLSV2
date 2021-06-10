@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -15,14 +14,17 @@
         [Route("/LearningPortal/Current/{page=1:int}")]
         public IActionResult Current(
             string? searchString = null,
-            string sortBy = nameof(CurrentCourse.LastAccessed),
+            string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.DescendingText,
             int page = 1
         )
         {
+            sortBy ??= CourseSortByOptionTexts.LastAccessed.PropertyName;
+
             var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();
-            var selfAssessments = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
+            var selfAssessments =
+                selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -38,7 +40,8 @@
         public IActionResult AllCurrentItems()
         {
             var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
+            var selfAssessment =
+                selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment);
             return View("Current/AllCurrentItems", model);
         }
@@ -71,7 +74,9 @@
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
-                logger.LogWarning($"Attempt to set complete by date for course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}");
+                logger.LogWarning(
+                    $"Attempt to set complete by date for course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
@@ -100,7 +105,9 @@
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
             if (course == null)
             {
-                logger.LogWarning($"Attempt to remove course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}");
+                logger.LogWarning(
+                    $"Attempt to remove course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
