@@ -24,7 +24,7 @@
         public string? CentreTelephone { get; set; }
 
         [Required(ErrorMessage = "Enter an email address")]
-        [MaxLength(100, ErrorMessage = "Email address must be 250 characters or fewer")]
+        [MaxLength(100, ErrorMessage = "Email address must be 100 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         public string? CentreEmail { get; set; }
 
