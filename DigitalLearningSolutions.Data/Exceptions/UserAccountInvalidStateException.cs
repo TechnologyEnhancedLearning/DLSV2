@@ -2,7 +2,7 @@
 {
     using System;
 
-    class UserAccountInvalidStateException : Exception
+    public class UserAccountInvalidStateException : Exception
     {
         public UserAccountInvalidStateException(string message)
             : base(message) { }

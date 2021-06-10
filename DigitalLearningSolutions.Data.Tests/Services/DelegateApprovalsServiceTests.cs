@@ -156,9 +156,10 @@
             A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
 
             // When
-            delegateApprovalsService.RejectDelegate(2, 2);
+            Action action = () => delegateApprovalsService.RejectDelegate(2, 2);
 
             // Then
+            action.Should().Throw<UserAccountInvalidStateException>();
             A.CallTo(() => userDataService.RemoveDelegateUser(2)).MustNotHaveHappened();
             A.CallTo(() => emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
         }
