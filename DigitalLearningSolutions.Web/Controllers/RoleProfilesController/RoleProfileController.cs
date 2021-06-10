@@ -8,7 +8,7 @@
     using Microsoft.Extensions.Logging;
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
-    public class RoleProfileController : Controller
+    public partial class RoleProfileController : Controller
     {
         private readonly IRoleProfileService roleProfileService;
         private readonly ICommonService commonService;
