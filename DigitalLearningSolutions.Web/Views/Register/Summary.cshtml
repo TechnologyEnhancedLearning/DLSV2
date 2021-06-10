@@ -6,6 +6,7 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Summary" : "Register - Summary";
   var termsError = ViewData.ModelState["Terms"]?.Errors?.Count > 0;
   var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
+  var linkCentreId = ViewBag.IsCentreSpecific ? ViewBag.CentreId : null;
 }
 
 <div class="nhsuk-grid-row">
@@ -42,7 +43,7 @@
           @Model.FirstName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="Index">
+          <a asp-action="Index" asp-route-centreId="@linkCentreId">
             Change<span class="nhsuk-u-visually-hidden"> first name</span>
           </a>
         </dd>
@@ -55,7 +56,7 @@
           @Model.LastName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="Index">
+          <a asp-action="Index" asp-route-centreId="@linkCentreId">
             Change<span class="nhsuk-u-visually-hidden"> last name</span>
           </a>
         </dd>
@@ -68,7 +69,7 @@
           @Model.Email
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="Index">
+          <a asp-action="Index" asp-route-centreId="@linkCentreId">
             Change<span class="nhsuk-u-visually-hidden"> email address</span>
           </a>
         </dd>

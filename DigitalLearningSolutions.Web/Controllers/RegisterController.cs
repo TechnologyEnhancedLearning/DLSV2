@@ -161,6 +161,8 @@
             var centreId = (int)data.RegisterViewModel.Centre;
 
             SetLearnerInformationViewBag(model, centreId);
+            ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
+            ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
 
             return View(model);
         }
@@ -192,6 +194,8 @@
             if (!ModelState.IsValid)
             {
                 SetLearnerInformationViewBag(model, centreId);
+                ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
+                ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
                 return View(model);
             }
 
@@ -234,6 +238,7 @@
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
             AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
             ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
+            ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
 
             return View(viewModel);
         }

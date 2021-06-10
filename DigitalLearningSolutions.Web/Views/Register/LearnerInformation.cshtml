@@ -5,6 +5,13 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
+  var routeDict = new Dictionary<string, string>() {
+    {
+      "centreId",
+      ViewBag.CentreId.ToString()
+    }
+  };
+  var routeData = ViewBag.IsCentreSpecific ? routeDict : null;
 }
 
 <div class="nhsuk-grid-row">
@@ -62,6 +69,6 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="Register" asp-action="Index" link-text="Go back" />
+    <vc:back-link asp-controller="Register" asp-action="Index" asp-all-route-data="@routeData" link-text="Go back" />
   </div>
 </div>
