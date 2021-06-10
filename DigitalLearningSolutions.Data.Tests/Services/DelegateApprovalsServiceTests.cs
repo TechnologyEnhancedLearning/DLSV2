@@ -21,7 +21,7 @@
         private ICustomPromptsService customPromptsService = null!;
         private IEmailService emailService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
-        private IConfiguration config;
+        private IConfiguration config = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
 
         [SetUp]
