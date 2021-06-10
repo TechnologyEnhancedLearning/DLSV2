@@ -233,6 +233,7 @@
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
             AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
+            ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
 
             return View(viewModel);
         }
