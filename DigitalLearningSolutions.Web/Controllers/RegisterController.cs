@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using System.Linq;
@@ -40,7 +40,7 @@
             this.customPromptHelper = customPromptHelper;
         }
         
-        public IActionResult Index(int? centreId)
+        public IActionResult Index(string? centreId)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -66,7 +66,7 @@
                 TempData.Set(delegateRegistrationData);
             }
 
-            // if no centreId param, then use general registration process
+            // if no centreId param, then use general registration process, keeping all responses
             if (centreId == null)
             {
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
@@ -74,9 +74,10 @@
             }
             else
             {
-                var centreName = centresDataService.GetCentreName(centreId.Value);
+                bool centreIdIsInt = int.TryParse(centreId, out var centreIdInt);
+                var centreName = centresDataService.GetCentreName(centreIdInt);
                 // if centreId invalid, then clear centre, redirect to general registration process
-                if (centreName == null)
+                if (!centreIdIsInt || centreName == null)
                 {
                     delegateRegistrationData.RegisterViewModel.Centre = null;
                     delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
@@ -86,7 +87,7 @@
                 // otherwise use a centre-specific registration process
                 // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
-                delegateRegistrationData.RegisterViewModel.Centre = centreId;
+                delegateRegistrationData.RegisterViewModel.Centre = centreIdInt;
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecific = true;
             }
 
