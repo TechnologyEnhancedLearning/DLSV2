@@ -5,11 +5,14 @@
 
     public class EditRegistrationPromptViewModel : RegistrationPromptAnswersViewModel
     {
-        public EditRegistrationPromptViewModel() { }
+        public EditRegistrationPromptViewModel()
+        {
+            IncludeAnswersTableCaption = true;
+        }
 
         public EditRegistrationPromptViewModel
             (int promptNumber, string prompt, bool mandatory, string optionsString, string? answer = null)
-            : base(optionsString, answer)
+            : base(optionsString, answer, true)
         {
             PromptNumber = promptNumber;
             Prompt = prompt;
@@ -22,6 +25,7 @@
             Prompt = customPrompt.CustomPromptText;
             Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
+            IncludeAnswersTableCaption = true;
         }
 
         public int PromptNumber { get; set; }

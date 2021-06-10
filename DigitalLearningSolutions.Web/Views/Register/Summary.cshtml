@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using DigitalLearningSolutions.Web.ViewModels.Register
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -20,13 +21,26 @@
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
+          Centre
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Centre
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="Index">
+            Change<span class="nhsuk-u-visually-hidden"> centre</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
           First name
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.FirstName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a class="nhsuk-link" asp-action="Index">
+          <a asp-action="Index">
             Change<span class="nhsuk-u-visually-hidden"> first name</span>
           </a>
         </dd>
@@ -39,7 +53,7 @@
           @Model.LastName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a class="nhsuk-link" asp-action="Index">
+          <a asp-action="Index">
             Change<span class="nhsuk-u-visually-hidden"> last name</span>
           </a>
         </dd>
@@ -52,7 +66,7 @@
           @Model.Email
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a class="nhsuk-link" asp-action="Index">
+          <a asp-action="Index">
             Change<span class="nhsuk-u-visually-hidden"> email address</span>
           </a>
         </dd>
@@ -65,24 +79,26 @@
           @Model.JobGroup
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a class="nhsuk-link" asp-action="LearnerInformation">
+          <a asp-action="LearnerInformation">
             Change<span class="nhsuk-u-visually-hidden"> job group</span>
           </a>
         </dd>
       </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.Centre
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a class="nhsuk-link" asp-action="LearnerInformation">
-            Change<span class="nhsuk-u-visually-hidden"> centre</span>
-          </a>
-        </dd>
-      </div>
+      @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @customField.Answer
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
+            </a>
+          </dd>
+        </div>
+      }
     </dl>
 
     <form method="post" asp-action="Summary">

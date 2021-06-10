@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Policy = CustomPolicies.UserCentreAdminOnly)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Approve")]
     public class DelegateApprovalsController : Controller
     {
@@ -29,6 +29,24 @@
 
             var model = new DelegateApprovalsViewModel(delegates);
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/Approve")]
+        public IActionResult ApproveDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            delegateApprovalsService.ApproveDelegate(delegateId, centreId);
+            return RedirectToAction("Index", "DelegateApprovals");
+        }
+
+        [HttpPost]
+        [Route("/TrackingSystem/Delegates/Approve/All")]
+        public IActionResult ApproveDelegatesForCentre()
+        {
+            var centreId = User.GetCentreId();
+            delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(centreId);
+            return RedirectToAction("Index", "DelegateApprovals");
         }
     }
 }

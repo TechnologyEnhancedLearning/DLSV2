@@ -4,7 +4,7 @@
 
 @if (User.HasCentreAdminPermissions()) {
   <li class="nhsuk-header__navigation-item">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/dashboard">
+    <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre
       <partial name="_NhsChevronRight"/>
     </a>

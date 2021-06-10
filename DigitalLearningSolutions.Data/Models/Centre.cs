@@ -25,5 +25,11 @@
         public string? OrganisationsCovered { get; set; }
         public string? TrainingVenues { get; set; }
         public string? OtherInformation { get; set; }
+        public int CmsAdministratorSpots { get; set; }
+        public int CmsManagerSpots { get; set; }
+        public int CcLicenceSpots { get; set; }
+        public int TrainerSpots { get; set; }
+        public string? IpPrefix { get; set; }
+        public string? ContractType { get; set; }
     }
 }
