@@ -80,5 +80,11 @@
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
         }
+
+        public static bool HasCentreManagerPermissions(this ClaimsPrincipal user)
+        {
+            return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
+                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
+        }
     }
 }
