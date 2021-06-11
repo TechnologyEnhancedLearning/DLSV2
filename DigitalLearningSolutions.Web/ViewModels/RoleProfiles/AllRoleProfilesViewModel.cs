@@ -24,8 +24,7 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            int page,
-            bool isWorkforceManager
+            int page
         ) : base(searchString, sortBy, sortDirection, page)
         {
             var sortedItems = SortingHelper.SortRoleProfileItems(
@@ -38,7 +37,6 @@
             SetTotalPages();
             var paginatedItems = PaginateItems(filteredItems);
             RoleProfiles = paginatedItems.Cast<RoleProfile>();
-            IsWorkforceManager = isWorkforceManager;
         }
     }
 }

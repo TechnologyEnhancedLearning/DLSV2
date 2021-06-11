@@ -38,7 +38,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
             return View(model);
         }
-        [Route("/Frameworks/ViewFrameworks/{tabname}/{page=1:int}")]
+        [Route("/Frameworks/View/{tabname}/{page=1:int}")]
         public IActionResult ViewFrameworks(string? searchString = null,
             string sortBy = FrameworkSortByOptionTexts.FrameworkName,
             string sortDirection = BaseFrameworksPageViewModel.AscendingText,

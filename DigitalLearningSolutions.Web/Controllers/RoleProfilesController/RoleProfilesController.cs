@@ -8,20 +8,20 @@
     using Microsoft.Extensions.Logging;
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
-    public partial class RoleProfileController : Controller
+    public partial class RoleProfilesController : Controller
     {
         private readonly IRoleProfileService roleProfileService;
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IConfigService configService;
-        private readonly ILogger<RoleProfileController> logger;
+        private readonly ILogger<RoleProfilesController> logger;
         private readonly IConfiguration config;
-        public RoleProfileController(
+        public RoleProfilesController(
            IRoleProfileService roleProfileService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
           IConfigService configService,
-           ILogger<RoleProfileController> logger,
+           ILogger<RoleProfilesController> logger,
            IConfiguration config)
         {
             this.roleProfileService = roleProfileService;

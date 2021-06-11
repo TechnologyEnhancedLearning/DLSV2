@@ -1,0 +1,47 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.RoleProfiles
+@model RoleProfilesViewModel
+
+@{
+  ViewData["Title"] = (string)ViewContext.RouteData.Values["tabname"] == "Mine" ? "My Role Profiles" : "All Role Profiles";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">Role Profiles</li>
+      </ol>
+    </div>
+  </nav>
+}
+<div class="nhsuk-back-link">
+  @if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
+  {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <div class="hee-fwservice--tabs">
+          <ul role="tablist">
+            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Mine"? "active" : "")><a role="tab" asp-action="ViewFrameworks" asp-route-tabname="Mine">My Role Profiles</a></li>
+            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "All"? "active" : "")><a role="tab" asp-action="ViewFrameworks" asp-route-tabname="All">All Role Profiles</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")
+    {
+      <partial name="_MyRoleProfiles.cshtml" model="Model.MyRoleProfilesViewModel" />
+    }
+    else if ((string)ViewContext.RouteData.Values["tabname"] == "All")
+    {
+      <partial name="_AllRoleProfiles.cshtml" model="Model.AllRoleProfilesViewModel" />
+    }
+  </div>
+</div>

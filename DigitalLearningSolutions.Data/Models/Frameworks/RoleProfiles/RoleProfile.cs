@@ -10,6 +10,7 @@
         public string RoleProfileName { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int BrandID { get; set; }
         public string? Brand
         {
             get => brand;
@@ -31,6 +32,8 @@
         public string? NRPRole { get; set; }
         public int PublishStatusID { get; set; }
         public string? PublishStatus { get; set; }
+        public int UserRole { get; set; }
+        public int? RoleProfileReviewID { get; set; }
         private string? brand;
         private static string? GetValidOrNull(string? toValidate)
         {

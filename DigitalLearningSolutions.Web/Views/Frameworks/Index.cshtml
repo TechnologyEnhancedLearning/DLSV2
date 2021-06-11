@@ -47,9 +47,9 @@
         <ul class="nhsuk-contents-list__list">
           @if (Model.IsWorkforceManager | Model.IsWorkforceContributor)
           {
-            <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="MyRoleProfiles">Manage My Role Profiles (@Model.DashboardData.MyRoleProfileCount)</a></li>
+            <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Manage My Role Profiles (@Model.DashboardData.MyRoleProfileCount)</a></li>
           }
-            <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="AllRoleProfiles">View All Role Profiles</a></li>
+            <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfiles" asp-route-tabname="All">View All Role Profiles</a></li>
           </ul>
       </div>
     </div>
