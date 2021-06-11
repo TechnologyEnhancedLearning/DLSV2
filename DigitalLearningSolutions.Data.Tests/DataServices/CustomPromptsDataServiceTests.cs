@@ -97,5 +97,14 @@
             }
         }
 
+        [Test]
+        public void Get()
+        {
+            // When
+            var result = customPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
+
+            // Then
+            result.Should().BeEquivalentTo("Role type");
+        }
     }
 }

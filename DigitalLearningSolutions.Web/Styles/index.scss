@@ -16,32 +16,18 @@ ul > li > ul > li {
   display: none;
 }
 
-a.delete-button {
-  background-color: #d5281b;
+.delete-button {
+  background-color: $nhsuk-error-color;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
-
-  &:hover{
-    background-color: #aa2016;
-  }
-
-  &:active{
-    background-color: #6b140e;
-  }
 }
 
-button.delete-button {
-  background-color: #d5281b;
-  box-shadow: 0 4px 0 #6b140e;
-  margin-bottom: 16px !important;
+.delete-button:hover {
+  background-color: #aa2016;
+}
 
-  &:hover {
-    background-color: #aa2016;
-  }
-
-  &:active {
-    background-color: #6b140e;
-  }
+.delete-button:active {
+  background-color: #6b140e;
 }
 
 .js-only-block {

@@ -30,6 +30,8 @@
         public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
 
         public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -147,6 +149,11 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
+        {
+            return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(

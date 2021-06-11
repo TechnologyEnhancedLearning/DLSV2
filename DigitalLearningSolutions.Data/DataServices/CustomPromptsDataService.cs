@@ -20,6 +20,8 @@
             bool mandatory,
             string? options
         );
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -116,6 +118,19 @@
                     WHERE CentreID = @centreId",
                 new { promptId, mandatory, options, centreId }
             );
+        }
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
+        {
+            return connection.Query<string>(
+                @$"SELECT
+                        cp.CustomPrompt  
+                    FROM Centres c
+                    LEFT JOIN CustomPrompts cp
+                        ON c.CustomField{promptNumber}PromptID = cp.CustomPromptID
+                    WHERE CentreID = @centreId",
+                new { centreId }
+            ).Single();
         }
     }
 }

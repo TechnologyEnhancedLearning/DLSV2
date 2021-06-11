@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -48,7 +47,7 @@
         }
 
         [HttpGet]
-        [Route("{promptNumber}/Edit")]
+        [Route("{promptNumber:int}/Edit")]
         public IActionResult EditRegistrationPrompt(int promptNumber)
         {
             var centreId = User.GetCentreId();
@@ -156,8 +155,10 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList()
-                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
+            var promptName = customPromptsService.GetPromptNameForCentreAndPromptNumber(
+                User.GetCentreId(),
+                data.SelectPromptViewModel.CustomPromptId!.Value
+            );
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
             return View(model);
@@ -185,7 +186,7 @@
         }
 
         [HttpGet]
-        [Route("{promptNumber}/Remove")]
+        [Route("{promptNumber:int}/Remove")]
         public IActionResult RemoveRegistrationPrompt(int promptNumber)
         {
             var delegateWithAnswerCount =
@@ -193,12 +194,11 @@
 
             if (delegateWithAnswerCount == 0)
             {
-                return TryRemoveRegistrationPrompt(promptNumber);
+                return RemoveRegistrationPromptAndRedirect(promptNumber);
             }
 
-            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(User.GetCentreId());
-            var promptName = customPrompts.CustomPrompts.Single(c => c.CustomPromptNumber == promptNumber)
-                .CustomPromptText;
+            var promptName =
+                customPromptsService.GetPromptNameForCentreAndPromptNumber(User.GetCentreId(), promptNumber);
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
@@ -206,7 +206,7 @@
         }
         
         [HttpPost]
-        [Route("{promptNumber}/Remove")]
+        [Route("{promptNumber:int}/Remove")]
         public IActionResult RemoveRegistrationPrompt(int promptNumber, RemoveRegistrationPromptViewModel model)
         {
             if (!model.Confirm)
@@ -218,7 +218,7 @@
                 return View(model);
             }
 
-            return TryRemoveRegistrationPrompt(promptNumber);
+            return RemoveRegistrationPromptAndRedirect(promptNumber);
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
@@ -304,17 +304,10 @@
             return RedirectToAction("AddRegistrationPromptSummary");
         }
 
-        private IActionResult TryRemoveRegistrationPrompt(int promptNumber)
+        private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
         {
-            try
-            {
-                customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return RedirectToAction("Error", "LearningSolutions");
-            }
+            customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+            return RedirectToAction("Index");
         }
 
         private void SetRegistrationPromptAnswersViewModelOptions(
