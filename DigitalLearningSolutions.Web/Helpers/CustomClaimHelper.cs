@@ -11,7 +11,8 @@
 
         public static int? GetCandidateId(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+            var id = user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+            return id == 0 ? null : id;
         }
 
         public static int GetCandidateIdKnownNotNull(this ClaimsPrincipal user)

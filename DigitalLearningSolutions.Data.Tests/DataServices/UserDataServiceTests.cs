@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -70,7 +72,10 @@
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(jobGroupName: "Nursing / midwifery");
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(
+                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
+                jobGroupName: "Nursing / midwifery"
+            );
 
             // When
             var returnedDelegateUser = userDataService.GetDelegateUserById(2);
@@ -214,8 +219,16 @@
                 var answer6 = "Answer6";
 
                 // When
-                userDataService.UpdateDelegateUserCentrePrompts
-                    (2, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+                userDataService.UpdateDelegateUserCentrePrompts(
+                    2,
+                    jobGroupId,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6
+                );
                 var updatedUser = userDataService.GetDelegateUserById(2);
 
                 // Then
@@ -263,6 +276,54 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void RemoveDelegateUser_deletes_delegate_user()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var id = 610;
+                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+
+                    // When
+                    userDataService.RemoveDelegateUser(id);
+
+                    // Then
+                    userDataService.GetDelegateUserById(id).Should().BeNull();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void RemoveDelegateUser_cannot_remove_delegate_user_with_started_session()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var id = 16;
+                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+
+                    // When
+                    Action action = () => userDataService.RemoveDelegateUser(id);
+
+                    // Then
+                    action.Should().Throw<UserAccountInvalidStateException>();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
             }
         }
 
