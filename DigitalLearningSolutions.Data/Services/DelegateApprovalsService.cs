@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -18,6 +19,7 @@
 
         public void ApproveDelegate(int delegateId, int centreId);
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
+        public void RejectDelegate(int delegateId, int centreId);
     }
 
     public class DelegateApprovalsService : IDelegateApprovalsService
@@ -29,6 +31,7 @@
         private readonly IConfiguration config;
 
         private string LoginUrl => config["AppRootPath"] + "/Login";
+        private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
 
         public DelegateApprovalsService
         (
@@ -106,6 +109,39 @@
             emailService.SendEmails(approvalEmails);
         }
 
+        public void RejectDelegate(int delegateId, int centreId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
+            }
+            if (delegateUser.Approved)
+            {
+                logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
+                throw new UserAccountInvalidStateException($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
+            }
+            else
+            {
+                userDataService.RemoveDelegateUser(delegateId);
+                SendRejectionEmail(delegateUser);
+            }
+        }
+
+        private void SendRejectionEmail(DelegateUser delegateUser)
+        {
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+            {
+                LogNoEmailWarning(delegateUser.Id);
+            }
+            else
+            {
+                var delegateRejectionEmail = GenerateDelegateRejectionEmail(delegateUser.FirstName, delegateUser.CentreName, delegateUser.EmailAddress, FindCentreUrl);
+                emailService.SendEmail(delegateRejectionEmail);
+            }
+        }
+
         private void LogNoEmailWarning(int id)
         {
             logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
@@ -131,6 +167,37 @@
                                     <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
                                 </body >"
+            };
+
+            return new Email(emailSubject, body, emailAddress);
+        }
+
+        private static Email GenerateDelegateRejectionEmail(
+            string? delegateName,
+            string centreName,
+            string emailAddress,
+            string findCentreUrl)
+        {
+            string emailSubject = "Digital Learning Solutions Registration Rejected";
+
+            var body = new BodyBuilder
+            {
+                TextBody = $@"Dear {delegateName},
+                        Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
+                        -You registered with a non-work email address which was not recognised by the administrator
+                        -Your DLS centre chooses to manage delegate registration internally
+                        -You have accidentally chosen the wrong centre during the registration process.
+                        If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided there to ask for help with registration. The Find Your Centre page can be found at this URL: {findCentreUrl}",
+                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                                <p>Dear {delegateName},</p>
+                                <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
+                                    <ul>
+                                        <li>You registered with a non-work email address which was not recognised by the administrator</li>
+                                        <li>Your DLS centre chooses to manage delegate registration internally</li>
+                                        <li>You have accidentally chosen the wrong centre during the registration process.</li>
+                                    </ul>
+                                If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre page</a> to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
+                            </body >"
             };
 
             return new Email(emailSubject, body, emailAddress);
