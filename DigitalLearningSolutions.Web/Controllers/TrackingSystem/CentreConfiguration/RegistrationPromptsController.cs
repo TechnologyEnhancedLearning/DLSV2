@@ -155,10 +155,8 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = customPromptsService.GetPromptNameForCentreAndPromptNumber(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value
-            );
+            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList()
+                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
             return View(model);
