@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -38,6 +41,8 @@
         );
 
         public void ApproveDelegateUsers(params int[] ids);
+
+        public void RemoveDelegateUser(int delegateId);
 
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
@@ -96,6 +101,7 @@
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
@@ -338,6 +344,44 @@
                         WHERE CandidateID IN @ids",
                 new { ids }
             );
+        }
+
+        public void RemoveDelegateUser(int delegateId)
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                var existingSessions = connection.Query<int>(
+                    @"SELECT SessionID FROM Sessions WHERE CandidateID = @delegateId",
+                    new { delegateId }
+                );
+
+                if (existingSessions.Any())
+                {
+                    throw new UserAccountInvalidStateException(
+                        $"Delegate user id {delegateId} cannot be removed as they have already started a session."
+                        );
+                }
+
+                connection.Execute(
+                    @"
+                    DELETE FROM NotificationUsers
+                        WHERE CandidateID = @delegateId
+
+                    DELETE FROM GroupDelegates
+                        WHERE DelegateID = @delegateId
+
+                    DELETE FROM Candidates
+                        WHERE CandidateID = @delegateId",
+                    new { delegateId }
+                );
+                transaction.Complete();
+            }
+            catch
+            {
+                transaction.Dispose();
+                throw;
+            }
         }
 
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId)

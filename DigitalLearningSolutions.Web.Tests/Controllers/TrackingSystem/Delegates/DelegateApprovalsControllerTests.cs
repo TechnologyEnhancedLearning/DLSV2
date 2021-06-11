@@ -4,6 +4,7 @@ using System.Text;
 
 namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -13,14 +14,16 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 
     public class DelegateApprovalsControllerTests
     {
+        private IUserDataService userDataService = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
         private DelegateApprovalsController delegateApprovalsController = null!;
 
         [SetUp]
         public void Setup()
         {
+            userDataService = A.Fake<IUserDataService>();
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
-            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService)
+            delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true); ;
         }
@@ -50,6 +53,20 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 
             // Then
             A.CallTo(() => delegateApprovalsService.ApproveAllUnapprovedDelegatesForCentre(2)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void PostRejectDelegate_calls_correct_method()
+        {
+            // Given
+            A.CallTo(() => delegateApprovalsService.RejectDelegate(2, 2)).DoesNothing();
+
+            // When
+            var result = delegateApprovalsController.RejectDelegate(2);
+
+            // Then
+            A.CallTo(() => delegateApprovalsService.RejectDelegate(2, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }

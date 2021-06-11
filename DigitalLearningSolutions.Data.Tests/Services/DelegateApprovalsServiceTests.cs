@@ -21,7 +21,7 @@
         private ICustomPromptsService customPromptsService = null!;
         private IEmailService emailService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
-        private IConfiguration config;
+        private IConfiguration config = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
 
         [SetUp]
@@ -125,6 +125,43 @@
             A.CallTo(() => userDataService.ApproveDelegateUsers(2, 3))
                 .MustHaveHappened();
             A.CallTo(() => emailService.SendEmails(A<List<Email>>.That.Matches(s => s.Count == 2))).MustHaveHappened();
+        }
+
+        [Test]
+        public void RejectDelegate_deletes_delegate_and_sends_email()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(approved: false);
+
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
+            A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
+
+            // When
+            delegateApprovalsService.RejectDelegate(2, 2);
+
+            // Then
+            A.CallTo(() => userDataService.RemoveDelegateUser(2)).MustHaveHappened();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustHaveHappened();
+        }
+
+        [Test]
+        public void RejectDelegate_does_not_reject_approved_delegate()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+
+            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(expectedDelegateUser);
+            A.CallTo(() => userDataService.RemoveDelegateUser(2)).DoesNothing();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).DoesNothing();
+
+            // When
+            Action action = () => delegateApprovalsService.RejectDelegate(2, 2);
+
+            // Then
+            action.Should().Throw<UserAccountInvalidStateException>();
+            A.CallTo(() => userDataService.RemoveDelegateUser(2)).MustNotHaveHappened();
+            A.CallTo(() => emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
         }
     }
 }
