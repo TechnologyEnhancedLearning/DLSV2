@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -27,20 +28,27 @@
         List<(int id, string value)> GetCustomPromptsAlphabeticalList();
 
         public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
+
+        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
     }
 
     public class CustomPromptsService : ICustomPromptsService
     {
         private readonly ICustomPromptsDataService customPromptsDataService;
         private readonly ILogger<CustomPromptsService> logger;
+        private readonly IUserDataService userDataService;
 
         public CustomPromptsService(
             ICustomPromptsDataService customPromptsDataService,
-            ILogger<CustomPromptsService> logger
+            ILogger<CustomPromptsService> logger,
+            IUserDataService userDataService
         )
         {
             this.customPromptsDataService = customPromptsDataService;
             this.logger = logger;
+            this.userDataService = userDataService;
         }
 
         public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId)
@@ -108,7 +116,7 @@
 
             if (promptNumber != null)
             {
-                customPromptsDataService.AddCustomPromptToCentre(
+                customPromptsDataService.UpdateCustomPromptForCentre(
                     centreId,
                     promptNumber.Value,
                     promptId,
@@ -120,6 +128,32 @@
 
             logger.LogWarning($"Custom prompt not added to centre ID {centreId}. The centre already had 6 prompts");
             return false;
+        }
+
+        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber)
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                userDataService.DeleteAllAnswersForPrompt(centreId, promptNumber);
+                customPromptsDataService.UpdateCustomPromptForCentre(
+                    centreId,
+                    promptNumber,
+                    0,
+                    false,
+                    null
+                );
+                transaction.Complete();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
+        {
+            return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(

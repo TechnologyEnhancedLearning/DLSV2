@@ -328,6 +328,16 @@
         }
 
         [Test]
+        public void GetDelegateCountWithAnswerForPrompt_returns_expected_count()
+        {
+            // When
+            var count = userDataService.GetDelegateCountWithAnswerForPrompt(101, 1);
+
+            // Then
+            count.Should().Be(124);
+        }
+
+        [Test]
         public void GetAdminUsersByCentreId_gets_all_admins_at_centre()
         {
             // Given

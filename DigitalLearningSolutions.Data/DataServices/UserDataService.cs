@@ -47,6 +47,10 @@
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
 
         public int GetNumberOfActiveAdminsAtCentre(int centreId);
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
     }
 
     public class UserDataService : IUserDataService
@@ -396,6 +400,26 @@
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM AdminUsers WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return connection.Query<string>(
+                $@"SELECT Answer{promptNumber}
+                        FROM Candidates
+                        WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
+                new { centreId }
+            ).Count(x => !string.IsNullOrWhiteSpace(x)); ;
+        }
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)
+        {
+            connection.Execute(
+                $@"UPDATE Candidates
+                        SET Answer{promptNumber} = NULL
+                        WHERE CentreID = @centreId",
                 new { centreId }
             );
         }
