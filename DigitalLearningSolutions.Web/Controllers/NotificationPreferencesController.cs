@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpGet]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult UpdateNotificationPreferences(string userType)
+        public IActionResult UpdateNotificationPreferences(UserType userType)
         {
             var userId = ((UserType)userType).Equals(UserType.AdminUser)
                 ? User.GetAdminId()
@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpPost]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(string userType, IEnumerable<int> notificationIds)
+        public IActionResult SaveNotificationPreferences(UserType userType, IEnumerable<int> notificationIds)
         {
             var userId = ((UserType)userType).Equals(UserType.AdminUser)
                 ? User.GetAdminId()
