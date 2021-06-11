@@ -154,7 +154,7 @@
         }
 
         [Test]
-        public void GetCandidateIdHandlesZeroAsNull()
+        public void GetCandidateId_handles_zero_as_null()
         {
             // Given
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
