@@ -7,25 +7,25 @@
 @{
   const string selectedClass = "side-nav__item--selected";
 
-  var centreDashboardItemClass = Model == CentrePage.CentreDashboard ? selectedClass : string.Empty;
-  var centreConfigurationItemClass = Model == CentrePage.CentreConfiguration ? selectedClass : string.Empty;
-  var centreLoginsItemClass = Model == CentrePage.CentreAdministrators ? selectedClass : string.Empty;
+  var dashboardItemClass = Model == CentrePage.Dashboard ? selectedClass : string.Empty;
+  var configurationItemClass = Model == CentrePage.Configuration ? selectedClass : string.Empty;
+  var administratorsItemClass = Model == CentrePage.Administrators ? selectedClass : string.Empty;
   var reportsItemClass = Model == CentrePage.Reports ? selectedClass : string.Empty;
 }
 
 
 <h2 class="side-nav__heading">Centre</h2>
 <ul class="nhsuk-list side-nav__list">
-  <li class="side-nav__item @centreDashboardItemClass">
+  <li class="side-nav__item @dashboardItemClass">
     <a class="side-nav__link" asp-action="Index" asp-controller="Dashboard">Centre dashboard</a>
   </li>
-  <li class="side-nav__item @centreConfigurationItemClass">
+  <li class="side-nav__item @configurationItemClass">
     <a class="side-nav__link" asp-action="Index" asp-controller="CentreConfiguration">Centre configuration</a>
   </li>
 
   @if(User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true || User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
   {
-    <li class="side-nav__item @centreLoginsItemClass">
+    <li class="side-nav__item @administratorsItemClass">
       <a class="side-nav__link" asp-action="Index" asp-controller="Administrator">Administrators</a>
     </li>
   }

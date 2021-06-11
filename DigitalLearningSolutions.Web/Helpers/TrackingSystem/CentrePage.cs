@@ -2,9 +2,9 @@
 {
     public enum CentrePage
     {
-        CentreDashboard,
-        CentreConfiguration,
-        CentreAdministrators,
+        Dashboard,
+        Configuration,
+        Administrators,
         Reports
     }
 }
