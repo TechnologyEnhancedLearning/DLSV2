@@ -40,8 +40,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         [Route("/Frameworks/ViewFrameworks/{tabname}/{page=1:int}")]
         public IActionResult ViewFrameworks(string? searchString = null,
-            string sortBy = FrameworkSortByOptionTexts.FrameworkCreatedDate,
-            string sortDirection = BaseFrameworksPageViewModel.DescendingText,
+            string sortBy = FrameworkSortByOptionTexts.FrameworkName,
+            string sortDirection = BaseFrameworksPageViewModel.AscendingText,
             int page = 1,
             string tabname = "All")
         {
@@ -56,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             else
             {
-                if(!isFrameworkDeveloper && !isFrameworkContributor)
+                if (!isFrameworkDeveloper && !isFrameworkContributor)
                 {
                     return RedirectToAction("ViewFrameworks", "Frameworks", new { tabname = "All" });
                 }
@@ -109,7 +109,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
             return View("Developer/Frameworks", frameworksViewModel);
         }
-
         public IActionResult StartNewFrameworkSession()
         {
             var adminId = GetAdminID();

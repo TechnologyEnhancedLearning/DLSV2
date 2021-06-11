@@ -1,15 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Tests.TestHelpers.Frameworks;
-    using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
+    using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
+    using System.Collections.Generic;
+
     public partial class FrameworkControllerTests
     {
         [Test]
-        public void ViewFrameworks_action_should_return_view_result()
+        public void ViewFrameworks_Mine_action_should_return_view_result()
         {
             // Given
             var dashboardFrameworks = new[]
@@ -20,22 +23,34 @@
             A.CallTo(() => frameworkService.GetFrameworksForAdminId(AdminId)).Returns(dashboardFrameworks);
 
             // When
-            var result = controller.ViewFrameworks();
+            var result = controller.ViewFrameworks(null, "Created Date", "Descending", 1, "Mine");
 
             // Then
-            var expectedModel = new MyFrameworksViewModel(
+            var allFrameworksViewModel = new AllFrameworksViewModel(
+                new List<BrandedFramework>(),
+                null,
+                "Created Date",
+                "Descending",
+                1
+            );
+            var myFrameworksViewModel = new MyFrameworksViewModel(
                 dashboardFrameworks,
                 null,
                 "Created Date",
                 "Descending",
                 1,
-                true
+                true);
+            var expectedModel = new FrameworksViewModel(
+                true,
+                false,
+                myFrameworksViewModel,
+                allFrameworksViewModel
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
         [Test]
-        public void FrameworksViewAll_action_should_return_view_result()
+        public void ViewFrameworks_All_action_should_return_view_result()
         {
             // Given
             var dashboardFrameworks = new[]
@@ -47,15 +62,28 @@
             A.CallTo(() => frameworkService.GetAllFrameworks(AdminId)).Returns(dashboardFrameworks);
 
             // When
-            var result = controller.FrameworksViewAll();
+            var result = controller.ViewFrameworks();
 
             // Then
-            var expectedModel = new AllFrameworksViewModel(
+            var allFrameworksViewModel = new AllFrameworksViewModel(
                 dashboardFrameworks,
                 null,
                 "Framework Name",
                 "Ascending",
                 1
+            );
+            var myFrameworksViewModel = new MyFrameworksViewModel(
+                new List<BrandedFramework>(),
+                null,
+                "Framework Name",
+                "Ascending",
+                1,
+                true);
+            var expectedModel = new FrameworksViewModel(
+                true,
+                false,
+                myFrameworksViewModel,
+                allFrameworksViewModel
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
