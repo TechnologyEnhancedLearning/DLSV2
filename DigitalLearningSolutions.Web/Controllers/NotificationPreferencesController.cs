@@ -50,7 +50,9 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var userId = Equals(userType, UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateId();
+                : Equals(userType, UserType.DelegateUser)
+                    ? User.GetCandidateId()
+                    : null;
             if (userId == null)
             {
                 return NotFound();
@@ -70,7 +72,9 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var userId = Equals(userType, UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateId();
+                : Equals(userType, UserType.DelegateUser)
+                    ? User.GetCandidateId()
+                    : null;
             if (userId == null)
             {
                 return NotFound();
