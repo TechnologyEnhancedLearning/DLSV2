@@ -178,6 +178,14 @@
             return RedirectToAction("Error", "LearningSolutions");
         }
 
+        [HttpGet]
+        [Route("Add/Cancel")]
+        public IActionResult AddRegistrationPromptCancel()
+        {
+            TempData.Clear();
+            return RedirectToAction("Index");
+        }
+
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
             IgnoreAddNewAnswerValidation();
