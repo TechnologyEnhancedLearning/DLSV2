@@ -20,24 +20,24 @@
             OtherInformation = centre.OtherInformation;
         }
 
-        [MaxLength(100, ErrorMessage = "Enter a telephone number that is no more than 100 characters.")]
+        [MaxLength(100, ErrorMessage = "Telephone number must be 100 characters or fewer")]
         public string? CentreTelephone { get; set; }
 
-        [Required(ErrorMessage = "Enter an email address.")]
-        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
-        [MaxLength(100, ErrorMessage = "Enter an email address that is no more than 100 characters.")]
+        [Required(ErrorMessage = "Enter an email address")]
+        [MaxLength(100, ErrorMessage = "Email address must be 100 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         public string? CentreEmail { get; set; }
 
-        [Required(ErrorMessage = "Enter a postcode.")]
-        [MaxLength(10, ErrorMessage = "Enter a postcode that is no more than 10 characters.")]
+        [Required(ErrorMessage = "Enter a postcode")]
+        [MaxLength(10, ErrorMessage = "Postcode must be 10 characters or fewer")]
         public string? CentrePostcode { get; set; }
 
         public bool ShowCentreOnMap { get; set; }
 
-        [MaxLength(100, ErrorMessage = "Enter no more than 100 characters for the opening hours.")]
+        [MaxLength(100, ErrorMessage = "Opening hours must be 100 characters or fewer")]
         public string? OpeningHours { get; set; }
 
-        [MaxLength(100, ErrorMessage = "Enter a web address that is no more than 100 characters.")]
+        [MaxLength(100, ErrorMessage = "Web address must be 100 characters or fewer")]
         public string? CentreWebAddress { get; set; }
 
         public string? OrganisationsCovered { get; set; }

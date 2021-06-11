@@ -279,7 +279,7 @@
             {
                 ModelState.AddModelError(
                     nameof(RegisterViewModel.Email),
-                    "A user with this email address already exists at this centre"
+                    "A user with this email address is already registered at this centre"
                 );
             }
         }
