@@ -98,7 +98,7 @@
         }
 
         [Test]
-        public void Get()
+        public void GetPromptNameForCentreAndPromptNumber_returns_expected_prompt_name()
         {
             // When
             var result = customPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
