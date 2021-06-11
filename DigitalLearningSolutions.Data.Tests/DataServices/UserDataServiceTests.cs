@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -286,7 +287,7 @@
                 try
                 {
                     // Given
-                    var id = 16;
+                    var id = 610;
                     userDataService.GetDelegateUserById(id).Should().NotBeNull();
 
                     // When
@@ -294,6 +295,30 @@
 
                     // Then
                     userDataService.GetDelegateUserById(id).Should().BeNull();
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void RemoveDelegateUser_cannot_remove_delegate_user_with_started_session()
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Given
+                    var id = 16;
+                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+
+                    // When
+                    Action action = () => userDataService.RemoveDelegateUser(id);
+
+                    // Then
+                    action.Should().Throw<UserAccountInvalidStateException>();
                 }
                 finally
                 {

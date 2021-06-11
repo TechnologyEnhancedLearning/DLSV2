@@ -187,7 +187,7 @@
                         -You registered with a non-work email address which was not recognised by the administrator
                         -Your DLS centre chooses to manage delegate registration internally
                         -You have accidentally chosen the wrong centre during the registration process.
-                        If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided to ask for help with registration. The Find Your Centre page can be found at this URL: {findCentreUrl}",
+                        If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided there to ask for help with registration. The Find Your Centre page can be found at this URL: {findCentreUrl}",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                 <p>Dear {delegateName},</p>
                                 <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
@@ -196,7 +196,7 @@
                                         <li>Your DLS centre chooses to manage delegate registration internally</li>
                                         <li>You have accidentally chosen the wrong centre during the registration process.</li>
                                     </ul>
-                                If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre page</a> to locate your local DLS centre and use the contact details provided to ask for help with registration.</p>
+                                If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre page</a> to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
                             </body >"
             };
 

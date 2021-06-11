@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -349,6 +351,18 @@
             using var transaction = new TransactionScope();
             try
             {
+                var existingSessions = connection.Query<int>(
+                    @"SELECT SessionID FROM Sessions WHERE CandidateID = @delegateId",
+                    new { delegateId }
+                );
+
+                if (existingSessions.Any())
+                {
+                    throw new UserAccountInvalidStateException(
+                        $"Delegate user id {delegateId} cannot be removed as they have already started a session."
+                        );
+                }
+
                 connection.Execute(
                     @"
                     DELETE FROM NotificationUsers
@@ -366,6 +380,7 @@
             catch
             {
                 transaction.Dispose();
+                throw;
             }
         }
 
