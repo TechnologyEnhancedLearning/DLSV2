@@ -1,23 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model MyFrameworksViewModel
-
-@{
-  ViewData["Title"] = "My Frameworks";
-  ViewData["Application"] = "Framework Service";
-}
-<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-@section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
-}
-@section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Frameworks</li>
-      </ol>
-    </div>
-  </nav>
-}
 <h1>My Frameworks</h1>
 @if (!Model.BrandedFrameworks.Any() && Model.SearchString == null)
 {
@@ -27,7 +9,7 @@
 }
 else
 {
-  <form method="get" role="search" asp-action="ViewFrameworks" asp-route-page="@Model.Page">
+  <form method="get" role="search" asp-action="ViewFrameworks" asp-route-tabname="Mine" asp-route-page="@Model.Page">
     <div class="nhsuk-grid-row sort-and-search">
       <partial name="Shared/_FrameworkPageSearch" model="Model" />
       <partial name="Shared/_FrameworkPageSort" model="Model" />

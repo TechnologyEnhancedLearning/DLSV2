@@ -38,50 +38,78 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
             return View(model);
         }
-        [Route("/Frameworks/ViewFrameworks/{page=1:int}")]
+        [Route("/Frameworks/ViewFrameworks/{tabname}/{page=1:int}")]
         public IActionResult ViewFrameworks(string? searchString = null,
             string sortBy = FrameworkSortByOptionTexts.FrameworkCreatedDate,
             string sortDirection = BaseFrameworksPageViewModel.DescendingText,
-            int page = 1)
+            int page = 1,
+            string tabname = "All")
         {
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            var frameworks = frameworkService.GetFrameworksForAdminId(adminId);
+            var isFrameworkContributor = GetIsFrameworkContributor();
+            IEnumerable<BrandedFramework> frameworks;
+
+            if (tabname == "All")
+            {
+                frameworks = frameworkService.GetAllFrameworks(adminId);
+            }
+            else
+            {
+                if(!isFrameworkDeveloper && !isFrameworkContributor)
+                {
+                    return RedirectToAction("ViewFrameworks", "Frameworks", new { tabname = "All" });
+                }
+                frameworks = frameworkService.GetFrameworksForAdminId(adminId);
+            }
             if (frameworks == null)
             {
                 logger.LogWarning($"Attempt to display frameworks for admin {adminId} returned null.");
                 return StatusCode(403);
             }
-            var model = new MyFrameworksViewModel(
-                frameworks,
+            MyFrameworksViewModel myFrameworksViewModel;
+            AllFrameworksViewModel allFrameworksViewModel;
+            if (tabname == "All")
+            {
+                myFrameworksViewModel = new MyFrameworksViewModel(
+                new List<BrandedFramework>(),
                 searchString,
                 sortBy,
                 sortDirection,
                 page,
                 isFrameworkDeveloper);
-            return View("Developer/MyFrameworks", model);
-        }
-        [Route("/Frameworks/AllFrameworks/{page=1:int}")]
-        public IActionResult FrameworksViewAll(string? searchString = null,
-            string sortBy = FrameworkSortByOptionTexts.FrameworkName,
-            string sortDirection = BaseFrameworksPageViewModel.AscendingText,
-            int page = 1)
-        {
-            var adminId = GetAdminID();
-            var isFrameworkDeveloper = GetIsFrameworkDeveloper();
-            if (!isFrameworkDeveloper)
-            {
-                logger.LogWarning($"Attempt to access framework developer interface for admin {adminId} without Framework Developer role.");
-                return StatusCode(403);
-            }
-            var frameworks = frameworkService.GetAllFrameworks(adminId);
-            var model = new AllFrameworksViewModel(frameworks,
+                allFrameworksViewModel = new AllFrameworksViewModel(
+                    frameworks,
                 searchString,
                 sortBy,
                 sortDirection,
                 page);
-            return View("Developer/AllFrameworks", model);
+            }
+            else
+            {
+                myFrameworksViewModel = new MyFrameworksViewModel(
+                frameworks,
+                 searchString,
+                 sortBy,
+                 sortDirection,
+                 page,
+                 isFrameworkDeveloper);
+                allFrameworksViewModel = new AllFrameworksViewModel(
+                     new List<BrandedFramework>(),
+                searchString,
+                sortBy,
+                sortDirection,
+                page);
+            }
+            var frameworksViewModel = new FrameworksViewModel(
+                isFrameworkDeveloper,
+                isFrameworkContributor,
+                myFrameworksViewModel,
+                allFrameworksViewModel
+                );
+            return View("Developer/Frameworks", frameworksViewModel);
         }
+
         public IActionResult StartNewFrameworkSession()
         {
             var adminId = GetAdminID();
@@ -483,9 +511,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult FrameworkSummary()
         {
             SessionNewFramework sessionNewFramework = TempData.Peek<SessionNewFramework>();
-            if(sessionNewFramework == null)
+            if (sessionNewFramework == null)
             {
-                return RedirectToAction("MyDashboard");
+                return RedirectToAction("Index");
             }
             TempData.Set(sessionNewFramework);
             return View("Developer/Summary", sessionNewFramework.DetailFramework);
