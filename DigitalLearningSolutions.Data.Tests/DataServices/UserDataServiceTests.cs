@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class UserDataServiceTests
@@ -318,7 +319,7 @@
                     Action action = () => userDataService.RemoveDelegateUser(id);
 
                     // Then
-                    action.Should().Throw<UserAccountInvalidStateException>();
+                    action.Should().Throw<SqlException>();
                 }
                 finally
                 {

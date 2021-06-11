@@ -351,18 +351,6 @@
             using var transaction = new TransactionScope();
             try
             {
-                var existingSessions = connection.Query<int>(
-                    @"SELECT SessionID FROM Sessions WHERE CandidateID = @delegateId",
-                    new { delegateId }
-                );
-
-                if (existingSessions.Any())
-                {
-                    throw new UserAccountInvalidStateException(
-                        $"Delegate user id {delegateId} cannot be removed as they have already started a session."
-                        );
-                }
-
                 connection.Execute(
                     @"
                     DELETE FROM NotificationUsers
