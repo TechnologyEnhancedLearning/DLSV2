@@ -48,9 +48,14 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(UserType userType)
         {
-            var userId = ((UserType)userType).Equals(UserType.AdminUser)
+            var userId = Equals(userType, UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateIdKnownNotNull();
+                : User.GetCandidateId();
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
             var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType, userId);
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
@@ -63,9 +68,13 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult SaveNotificationPreferences(UserType userType, IEnumerable<int> notificationIds)
         {
-            var userId = ((UserType)userType).Equals(UserType.AdminUser)
+            var userId = Equals(userType, UserType.AdminUser)
                 ? User.GetAdminId()
-                : User.GetCandidateIdKnownNotNull();
+                : User.GetCandidateId();
+            if (userId == null)
+            {
+                return NotFound();
+            }
 
             notificationPreferencesService.SetNotificationPreferencesForUser(userType, userId, notificationIds);
 
