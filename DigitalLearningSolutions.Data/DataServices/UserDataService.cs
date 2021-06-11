@@ -353,39 +353,19 @@
         public void RemoveDelegateUser(int delegateId)
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                var existingSessions = connection.Query<int>(
-                    @"SELECT SessionID FROM Sessions WHERE CandidateID = @delegateId",
-                    new { delegateId }
-                );
+            connection.Execute(
+                @"
+                DELETE FROM NotificationUsers
+                    WHERE CandidateID = @delegateId
 
-                if (existingSessions.Any())
-                {
-                    throw new UserAccountInvalidStateException(
-                        $"Delegate user id {delegateId} cannot be removed as they have already started a session."
-                        );
-                }
+                DELETE FROM GroupDelegates
+                    WHERE DelegateID = @delegateId
 
-                connection.Execute(
-                    @"
-                    DELETE FROM NotificationUsers
-                        WHERE CandidateID = @delegateId
-
-                    DELETE FROM GroupDelegates
-                        WHERE DelegateID = @delegateId
-
-                    DELETE FROM Candidates
-                        WHERE CandidateID = @delegateId",
-                    new { delegateId }
-                );
-                transaction.Complete();
-            }
-            catch
-            {
-                transaction.Dispose();
-                throw;
-            }
+                DELETE FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+            transaction.Complete();
         }
 
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
