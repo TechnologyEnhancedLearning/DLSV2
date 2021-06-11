@@ -349,27 +349,19 @@
         public void RemoveDelegateUser(int delegateId)
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                connection.Execute(
-                    @"
-                    DELETE FROM NotificationUsers
-                        WHERE CandidateID = @delegateId
+            connection.Execute(
+                @"
+                DELETE FROM NotificationUsers
+                    WHERE CandidateID = @delegateId
 
-                    DELETE FROM GroupDelegates
-                        WHERE DelegateID = @delegateId
+                DELETE FROM GroupDelegates
+                    WHERE DelegateID = @delegateId
 
-                    DELETE FROM Candidates
-                        WHERE CandidateID = @delegateId",
-                    new { delegateId }
-                );
-                transaction.Complete();
-            }
-            catch
-            {
-                transaction.Dispose();
-                throw;
-            }
+                DELETE FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+            transaction.Complete();
         }
 
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
