@@ -18,10 +18,10 @@ namespace DigitalLearningSolutions.Web.Controllers
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
+        private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
-        private readonly CustomPromptHelper customPromptHelper;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
         }
-        
+
         public IActionResult Index(string? centreId)
         {
             if (User.Identity.IsAuthenticated)
@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
             else
             {
-                bool centreIdIsInt = int.TryParse(centreId, out var centreIdInt);
+                var centreIdIsInt = int.TryParse(centreId, out var centreIdInt);
                 var centreName = centresDataService.GetCentreName(centreIdInt);
                 // if centreId invalid, then clear centre, redirect to general registration process
                 if (!centreIdIsInt || centreName == null)
@@ -84,6 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                     TempData.Set(delegateRegistrationData);
                     return RedirectToAction("Index");
                 }
+
                 // otherwise use a centre-specific registration process
                 // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
@@ -120,6 +121,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 {
                     ViewBag.CentreName = centresDataService.GetCentreName(model.Centre.Value);
                 }
+
                 return View(model);
             }
 
