@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Attributes;
 
     public class RegisterViewModel
     {
@@ -15,6 +16,7 @@
         [Required(ErrorMessage = "Enter your email address")]
         [MaxLength(250, ErrorMessage = "Email address must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
+        [NoWhitespace("Email address must not contain any whitespace characters")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Select a centre")]

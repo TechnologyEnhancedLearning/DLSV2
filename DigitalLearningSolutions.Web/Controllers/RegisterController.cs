@@ -272,14 +272,6 @@
                 return;
             }
 
-            if (model.Email.Any(char.IsWhiteSpace))
-            {
-                ModelState.AddModelError(
-                    nameof(RegisterViewModel.Email),
-                    "Email address must not contain any whitespace characters"
-                );
-            }
-
             var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
                 .Where(u => u.CentreId == model.Centre);
 
