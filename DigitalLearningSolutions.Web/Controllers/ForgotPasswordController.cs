@@ -40,7 +40,7 @@
             {
                 passwordResetService.GenerateAndSendPasswordResetLink
                 (
-                    model.EmailAddress,
+                    model.EmailAddress.Trim(),
                     baseUrl
                 );
             }
