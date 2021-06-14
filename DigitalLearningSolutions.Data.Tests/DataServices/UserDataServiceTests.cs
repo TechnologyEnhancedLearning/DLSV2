@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class UserDataServiceTests
@@ -282,49 +283,33 @@
         [Test]
         public void RemoveDelegateUser_deletes_delegate_user()
         {
-            using (var transaction = new TransactionScope())
-            {
-                try
-                {
-                    // Given
-                    var id = 610;
-                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+            using var transaction = new TransactionScope();
 
-                    // When
-                    userDataService.RemoveDelegateUser(id);
+            // Given
+            var id = 610;
+            userDataService.GetDelegateUserById(id).Should().NotBeNull();
 
-                    // Then
-                    userDataService.GetDelegateUserById(id).Should().BeNull();
-                }
-                finally
-                {
-                    transaction.Dispose();
-                }
-            }
+            // When
+            userDataService.RemoveDelegateUser(id);
+
+            // Then
+            userDataService.GetDelegateUserById(id).Should().BeNull();
         }
 
         [Test]
         public void RemoveDelegateUser_cannot_remove_delegate_user_with_started_session()
         {
-            using (var transaction = new TransactionScope())
-            {
-                try
-                {
-                    // Given
-                    var id = 16;
-                    userDataService.GetDelegateUserById(id).Should().NotBeNull();
+            using var transaction = new TransactionScope();
 
-                    // When
-                    Action action = () => userDataService.RemoveDelegateUser(id);
+            // Given
+            var id = 16;
+            userDataService.GetDelegateUserById(id).Should().NotBeNull();
 
-                    // Then
-                    action.Should().Throw<UserAccountInvalidStateException>();
-                }
-                finally
-                {
-                    transaction.Dispose();
-                }
-            }
+            // When
+            Action action = () => userDataService.RemoveDelegateUser(id);
+
+            // Then
+            action.Should().Throw<SqlException>();
         }
 
         [Test]

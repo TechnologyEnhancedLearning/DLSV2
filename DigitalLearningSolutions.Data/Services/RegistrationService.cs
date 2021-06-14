@@ -84,7 +84,7 @@
                 approvalUrl.Path += '/';
             }
 
-            approvalUrl.Path += "tracking/approvedelegates";
+            approvalUrl.Path += "TrackingSystem/Delegates/Approve";
 
             string emailSubject = "Digital Learning Solutions Registration Requires Approval";
 
