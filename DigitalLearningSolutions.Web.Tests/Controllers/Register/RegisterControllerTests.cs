@@ -86,5 +86,30 @@
             A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
+
+        [TestCase(" white@space.com")]
+        [TestCase("\twhite@space.com")]
+        [TestCase("whi te@space.com")]
+        [TestCase("white@ space.com")]
+        [TestCase("white@space.com ")]
+        [TestCase("white@space.com\t")]
+        public void IndexPost_with_whitespace_in_email_fails_validation(string emailAddress)
+        {
+            // Given
+            controller.TempData.Set(new DelegateRegistrationData());
+            var model = new RegisterViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = CentreTestHelper.GetDefaultCentre().CentreId,
+                Email = emailAddress
+            };
+
+            // When
+            var result = controller.Index(model);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
     }
 }
