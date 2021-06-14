@@ -253,6 +253,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 AddCustomFieldsToViewBag(data.LearnerInformationViewModel, centreId);
+                AddCentreSpecificToViewBag(data.RegisterViewModel);
                 return View(viewModel);
             }
 
