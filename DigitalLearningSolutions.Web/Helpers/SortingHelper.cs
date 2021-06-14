@@ -75,8 +75,8 @@
                     ? frameworks.OrderByDescending(framework => framework.CreatedDate)
                     : frameworks.OrderBy(framework => framework.CreatedDate),
                 FrameworkSortByOptionTexts.FrameworkPublishStatus => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.PublishStatus)
-                    : frameworks.OrderBy(framework => framework.PublishStatus),
+                    ? frameworks.OrderByDescending(framework => framework.PublishStatusID)
+                    : frameworks.OrderBy(framework => framework.PublishStatusID),
                 FrameworkSortByOptionTexts.FrameworkBrand => sortDirection == BaseFrameworksPageViewModel.DescendingText
                     ? frameworks.OrderByDescending(framework => framework.Brand)
                     : frameworks.OrderBy(framework => framework.Brand),
@@ -107,8 +107,8 @@
                     ? roleProfiles.OrderByDescending(roleProfile => roleProfile.CreatedDate)
                     : roleProfiles.OrderBy(roleProfile => roleProfile.CreatedDate),
                 RoleProfileSortByOptionTexts.RoleProfilePublishStatus => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
-                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.PublishStatus)
-                    : roleProfiles.OrderBy(roleProfile => roleProfile.PublishStatus),
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.PublishStatusID)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.PublishStatusID),
                 RoleProfileSortByOptionTexts.RoleProfileBrand => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
                     ? roleProfiles.OrderByDescending(roleProfile => roleProfile.Brand)
                     : roleProfiles.OrderBy(roleProfile => roleProfile.Brand),

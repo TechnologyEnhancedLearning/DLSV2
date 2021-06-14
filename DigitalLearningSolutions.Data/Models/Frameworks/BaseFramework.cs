@@ -16,7 +16,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public int TopicID { get; set; }
         public DateTime CreatedDate { get; set; }
         public int PublishStatusID { get; set; }
-        public string? PublishStatus { get; set; }
         public int UpdatedByAdminID { get; set; }
         public string? UpdatedBy { get; set; }
         public int UserRole { get; set; }

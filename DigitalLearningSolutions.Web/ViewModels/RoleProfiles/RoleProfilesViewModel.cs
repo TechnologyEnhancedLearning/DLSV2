@@ -6,6 +6,8 @@
         {
             IsWorkforceManager = isWorkforceManager;
             IsWorkforceContributor = isWorkforceContributor;
+            MyRoleProfilesViewModel = myRoleProfiles;
+            AllRoleProfilesViewModel = allRoleProfiles;
         }
 
         public bool IsWorkforceManager { get; set; }

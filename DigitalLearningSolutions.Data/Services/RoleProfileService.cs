@@ -18,29 +18,31 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<RoleProfileService> logger;
+        public RoleProfileService(IDbConnection connection, ILogger<RoleProfileService> logger)
+        {
+            this.connection = connection;
+            this.logger = logger;
+        }
         private const string RoleProfileFields =
-            @"rp.ID, RoleProfileName, Description, CreatedDate, BrandID,
+            @"rp.ID, rp.RoleProfileName, rp.Description, rp.CreatedDate, rp.BrandID,
                  (SELECT BrandName
                  FROM    Brands
-                 WHERE (BrandID = rp.BrandID)) AS Brand, ParentRoleProfileID,
+                 WHERE (BrandID = rp.BrandID)) AS Brand, rp.ParentRoleProfileID,
                  (SELECT RoleProfileName
                  FROM    RoleProfiles AS rp2
-                 WHERE (ID = rp.ParentRoleProfileID)) AS ParentRoleProfile, [National], [Public], OwnerAdminID,
+                 WHERE (ID = rp.ParentRoleProfileID)) AS ParentRoleProfile, rp.[National], rp.[Public], rp.OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = rp.OwnerAdminID)) AS Owner, Archived, LastEdit, NRPProfessionalGroupID,
+                 WHERE (AdminID = rp.OwnerAdminID)) AS Owner, rp.Archived, rp.LastEdit, rp.NRPProfessionalGroupID,
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
-                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, NRPSubGroupID,
+                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, rp.NRPSubGroupID,
                  (SELECT SubGroup
                  FROM    NRPSubGroups
-                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, NRPRoleID,
+                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, rp.NRPRoleID,
                  (SELECT RoleProfile
                  FROM    NRPRoles
-                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, PublishStatusID,
-                 (SELECT Status
-                 FROM    PublishStatus
-                 WHERE (ID = rp.PublishStatusID)) AS PublishStatus, CASE WHEN rp.OwnerAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole, rpr.ID AS RoleProfileReviewID";
+                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, rp.PublishStatusID, CASE WHEN rp.OwnerAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole, rpr.ID AS RoleProfileReviewID";
         private const string RoleProfileTables =
             @"RoleProfiles AS rp LEFT OUTER JOIN
              RoleProfileCollaborators AS rpc ON rpc.RoleProfileID = rp.ID AND rpc.AdminID = @adminId LEFT OUTER JOIN
@@ -66,5 +68,6 @@
                new { adminId }
            );
         }
+
     }
 }

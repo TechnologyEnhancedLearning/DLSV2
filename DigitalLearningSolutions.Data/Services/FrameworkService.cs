@@ -100,10 +100,7 @@
             @"FW.ID, FrameworkName, OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID,
-                 (SELECT Status
-                 FROM    PublishStatus
-                 WHERE (ID = FW.PublishStatusID)) AS PublishStatus, UpdatedByAdminID,
+                 WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID, UpdatedByAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers AS AdminUsers_1
                  WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,

@@ -12,31 +12,81 @@
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
-    public partial class RoleProfileController
+    public partial class RoleProfilesController
     {
         private const string CookieName = "DLSFrameworkService";
-        [Route("/WorkforceManager/MyRoleProfiles/{page=1:int}")]
-        public IActionResult MyRoleProfiles(string? searchString = null,
-            string sortBy = RoleProfileSortByOptionTexts.RoleProfileCreatedDate,
-            string sortDirection = BaseRoleProfilesPageViewModel.DescendingText,
-            int page = 1)
+        [Route("/RoleProfiles/View/{tabname}/{page=1:int}")]
+        public IActionResult ViewRoleProfiles(string tabname, string? searchString = null,
+            string sortBy = RoleProfileSortByOptionTexts.RoleProfileName,
+            string sortDirection = BaseRoleProfilesPageViewModel.AscendingText,
+            int page = 1
+            )
         {
             var adminId = GetAdminID();
             var isWorkforceManager = GetIsWorkforceManager();
-            var roleProfiles = roleProfileService.GetRoleProfilesForAdminId(adminId);
+            var isWorkforceContributor = GetIsWorkforceContributor();
+            IEnumerable<RoleProfile> roleProfiles;
+            if (tabname == "All")
+            {
+                roleProfiles = roleProfileService.GetAllRoleProfiles(adminId);
+            }
+            else
+            {
+                if (!isWorkforceContributor && !isWorkforceManager)
+                {
+                    return RedirectToAction("ViewRoleProfiles", "RoleProfiles", new { tabname = "All" });
+                }
+                roleProfiles = roleProfileService.GetRoleProfilesForAdminId(adminId);
+            }
             if (roleProfiles == null)
             {
                 logger.LogWarning($"Attempt to display role profiles for admin {adminId} returned null.");
                 return StatusCode(403);
             }
-            var model = new MyRoleProfilesViewModel(
+            MyRoleProfilesViewModel myRoleProfiles;
+            AllRoleProfilesViewModel allRoleProfiles;
+            if (tabname == "Mine")
+            {
+                myRoleProfiles = new MyRoleProfilesViewModel(
                 roleProfiles,
                 searchString,
                 sortBy,
                 sortDirection,
                 page,
                 isWorkforceManager);
-            return View("WorkforceManager/MyRoleProfiles", model);
+                allRoleProfiles = new AllRoleProfilesViewModel(
+                    new List<RoleProfile>(),
+                    searchString,
+                    sortBy,
+                    sortDirection,
+                    page
+                    );
+            }
+            else
+            {
+                allRoleProfiles = new AllRoleProfilesViewModel(
+                                roleProfiles,
+                                searchString,
+                                sortBy,
+                                sortDirection,
+                                page);
+                myRoleProfiles = new MyRoleProfilesViewModel(
+                   new List<RoleProfile>(),
+                   searchString,
+                   sortBy,
+                   sortDirection,
+                   page,
+                               isWorkforceManager
+                   );
+            }
+
+            RoleProfilesViewModel? model = new RoleProfilesViewModel(
+                isWorkforceManager,
+                isWorkforceContributor,
+                allRoleProfiles,
+                myRoleProfiles
+                );
+            return View("Index", model);
         }
     }
 }

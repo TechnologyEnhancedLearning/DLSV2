@@ -16,7 +16,7 @@
             get => brand;
             set => brand = GetValidOrNull(value);
         }
-        public int ParentRoleProfileID { get; set; }
+        public int? ParentRoleProfileID { get; set; }
         public string? ParentRoleProfile { get; set; }
         public bool National { get; set; }
         public bool Public { get; set; }
@@ -31,7 +31,6 @@
         public int? NRPRoleID { get; set; }
         public string? NRPRole { get; set; }
         public int PublishStatusID { get; set; }
-        public string? PublishStatus { get; set; }
         public int UserRole { get; set; }
         public int? RoleProfileReviewID { get; set; }
         private string? brand;
