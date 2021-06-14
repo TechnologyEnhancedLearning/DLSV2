@@ -118,18 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
                 if (model.IsCentreSpecific)
                 {
-                    var centreName = centresDataService.GetCentreName(model.Centre.Value);
-                    // if centreId invalid, then clear centre specific details
-                    if (centreName == null)
-                    {
-                        model.Centre = null;
-                        model.IsCentreSpecific = false;
-                    }
-                    else
-                    {
-                        // otherwise continue centre-specific registration process
-                        ViewBag.CentreName = centreName;
-                    }
+                    ViewBag.CentreName = centresDataService.GetCentreName(model.Centre.Value);
                 }
                 return View(model);
             }
@@ -162,8 +151,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var centreId = (int)data.RegisterViewModel.Centre;
 
             SetLearnerInformationViewBag(model, centreId);
-            ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
-            ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
+            AddCentreSpecificToViewBag(data.RegisterViewModel);
 
             return View(model);
         }
@@ -195,8 +183,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             if (!ModelState.IsValid)
             {
                 SetLearnerInformationViewBag(model, centreId);
-                ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
-                ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
+                AddCentreSpecificToViewBag(data.RegisterViewModel);
                 return View(model);
             }
 
@@ -238,8 +225,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
             AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
-            ViewBag.IsCentreSpecific = data.RegisterViewModel.IsCentreSpecific;
-            ViewBag.CentreId = data.RegisterViewModel.Centre.Value;
+            AddCentreSpecificToViewBag(data.RegisterViewModel);
 
             return View(viewModel);
         }
@@ -339,6 +325,12 @@ namespace DigitalLearningSolutions.Web.Controllers
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
+        }
+
+        private void AddCentreSpecificToViewBag(RegisterViewModel model)
+        {
+            ViewBag.IsCentreSpecific = model.IsCentreSpecific;
+            ViewBag.CentreId = model.Centre.Value;
         }
 
         private void AddCustomFieldsToViewBag(LearnerInformationViewModel model, int centreId)
