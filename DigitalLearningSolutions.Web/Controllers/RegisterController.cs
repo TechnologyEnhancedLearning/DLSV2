@@ -46,27 +46,39 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            
+
             if (!CheckCentreIdValid(centreId, out var centreIdInt, out var centreName))
             {
                 return NotFound();
             }
-
-            var delegateRegistrationData = GetOrCreateDelegateRegistrationData();
             
-            // if no centreId param, then use general registration process, keeping all responses
+            var delegateRegistrationData = CreateDelegateRegistrationData();
+            
             if (centreId == null)
             {
+                delegateRegistrationData.RegisterViewModel.Centre = null;
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = false;
-                TempData.Set(delegateRegistrationData);
             }
             else
             {
-                // otherwise use a centre-specific registration process
-                // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
                 delegateRegistrationData.RegisterViewModel.Centre = centreIdInt;
                 delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = true;
+            }
+
+            TempData.Set(delegateRegistrationData);
+
+            return RedirectToAction("PersonalInformation");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [HttpGet]
+        public IActionResult PersonalInformation()
+        {
+            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
+            if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
+            {
+                return RedirectToAction("Index");
             }
 
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
@@ -83,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult Index(RegisterViewModel model)
+        public IActionResult PersonalInformation(RegisterViewModel model)
         {
             ValidateEmailAddress(model);
 
@@ -279,27 +291,21 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(viewModel);
         }
 
-        private DelegateRegistrationData GetOrCreateDelegateRegistrationData()
+        private DelegateRegistrationData CreateDelegateRegistrationData()
         {
-            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
+            
+            var delegateRegistrationData = new DelegateRegistrationData();
+            var id = delegateRegistrationData.Id;
 
-            if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
-            {
-                delegateRegistrationData = new DelegateRegistrationData();
-                var id = delegateRegistrationData.Id;
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    }
+            Response.Cookies.Append(
+                CookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                }
                 );
-
-                TempData.Set(delegateRegistrationData);
-            }
-
+            
             return delegateRegistrationData;
         }
 

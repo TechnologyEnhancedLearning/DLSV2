@@ -7,7 +7,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="Index">
+    <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="PersonalInformation">
 
       @if (errorHasOccurred) {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })" />
