@@ -160,8 +160,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
-            services.AddScoped<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
+
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
 
             RegisterWebServiceFilters(services);
         }

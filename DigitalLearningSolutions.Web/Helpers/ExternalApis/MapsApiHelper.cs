@@ -12,19 +12,22 @@
 
     public class MapsApiHelper : IMapsApiHelper
     {
-        private static readonly HttpClient Client = new HttpClient();
+        private readonly HttpClient client;
+        private readonly string mapsApiBaseUrl;
+
+        public MapsApiHelper(HttpClient httpClient)
+        {
+            var mapsApiKey = ConfigHelper.GetAppConfig()["MapsAPIKey"];
+            mapsApiBaseUrl =
+                $"https://maps.googleapis.com/maps/api/geocode/json?key={mapsApiKey}&components=country:GB|postal_code:";
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            client = httpClient;
+        }
 
         public async Task<MapsResponse> GetPostcodeCoordinates(string postcode)
         {
-            var mapsApiKey = ConfigHelper.GetAppConfig()["MapsAPIKey"];
-            var mapsApiUrl =
-                $"https://maps.googleapis.com/maps/api/geocode/json?components=postal_code:{postcode}|country:GB&key={mapsApiKey}";
-
-            Client.DefaultRequestHeaders.Accept.Clear();
-
-            var response = await Client.GetStringAsync(mapsApiUrl);
+            var response = await client.GetStringAsync(mapsApiBaseUrl + postcode);
             var result = JsonConvert.DeserializeObject<MapsResponse>(response);
-
             return result;
         }
     }
