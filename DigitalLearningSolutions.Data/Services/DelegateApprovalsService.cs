@@ -29,6 +29,7 @@
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
         private readonly IConfiguration config;
+        private readonly ICentresDataService centresDataService;
 
         private string LoginUrl => config["AppRootPath"] + "/Login";
         private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
@@ -39,7 +40,8 @@
             ICustomPromptsService customPromptsService,
             IEmailService emailService,
             ILogger<DelegateApprovalsService> logger,
-            IConfiguration config
+            IConfiguration config,
+            ICentresDataService centresDataService
         )
         {
             this.userDataService = userDataService;
@@ -47,6 +49,7 @@
             this.emailService = emailService;
             this.logger = logger;
             this.config = config;
+            this.centresDataService = centresDataService;
         }
 
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
@@ -100,8 +103,15 @@
                 }
                 else
                 {
-                    var delegateApprovalEmail = GenerateDelegateApprovalEmail
-                        (delegateUser.CandidateNumber, delegateUser.EmailAddress, LoginUrl);
+                    var centreUrl = centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
+                        ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
+                        : null;
+                    var delegateApprovalEmail = GenerateDelegateApprovalEmail(
+                        delegateUser.CandidateNumber,
+                        delegateUser.EmailAddress,
+                        LoginUrl,
+                        centreUrl
+                    );
                     approvalEmails.Add(delegateApprovalEmail);
                 }
             }
@@ -151,7 +161,8 @@
         (
             string candidateNumber,
             string emailAddress,
-            string? loginUrl
+            string? loginUrl,
+            string? centreUrl
         )
         {
             const string emailSubject = "Digital Learning Solutions Registration Approved";
@@ -161,11 +172,13 @@
                 TextBody =
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
                             You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
-                            For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
+                            For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
+                            {(centreUrl == null ? "" : $@"View centre contact information: {centreUrl}")}",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
                                     <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
+                                    {(centreUrl == null ? "" : $@"<p><a href=""{centreUrl}"">View centre contact information</a></p>")}
                                 </body >"
             };
 
