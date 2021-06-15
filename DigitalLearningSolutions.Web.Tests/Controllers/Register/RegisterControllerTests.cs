@@ -56,7 +56,7 @@
                 .Returns((null, new List<DelegateUser> {duplicateUser}));
 
             // When
-            var result = controller.Index(model);
+            var result = controller.PersonalInformation(model);
 
             // Then
             A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
@@ -80,7 +80,7 @@
                 .Returns((null, new List<DelegateUser> {duplicateUser}));
 
             // When
-            var result = controller.Index(model);
+            var result = controller.PersonalInformation(model);
 
             // Then
             A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
