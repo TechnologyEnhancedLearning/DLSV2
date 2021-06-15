@@ -21,5 +21,11 @@
         public int? Centre { get; set; }
 
         public bool IsCentreSpecificRegistration { get; set; }
+
+        public void SetCentreSpecificRegistration(int? centreId)
+        {
+            IsCentreSpecificRegistration = centreId != null;
+            Centre = centreId;
+        }
     }
 }

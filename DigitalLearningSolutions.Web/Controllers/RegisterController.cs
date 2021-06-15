@@ -53,19 +53,8 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
             
             var delegateRegistrationData = CreateDelegateRegistrationData();
-            
-            if (centreId == null)
-            {
-                delegateRegistrationData.RegisterViewModel.Centre = null;
-                delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = false;
-            }
-            else
-            {
-                ViewBag.CentreName = centreName;
-                delegateRegistrationData.RegisterViewModel.Centre = centreIdInt;
-                delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = true;
-            }
-
+            delegateRegistrationData.RegisterViewModel.SetCentreSpecificRegistration(centreIdInt);
+            ViewBag.CentreName = centreName;
             TempData.Set(delegateRegistrationData);
 
             return RedirectToAction("PersonalInformation");
