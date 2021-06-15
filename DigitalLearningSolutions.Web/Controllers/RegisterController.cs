@@ -46,9 +46,14 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            
+            if (!CheckCentreIdValid(centreId, out var centreIdInt, out var centreName))
+            {
+                return NotFound();
+            }
 
             var delegateRegistrationData = GetOrCreateDelegateRegistrationData();
-
+            
             // if no centreId param, then use general registration process, keeping all responses
             if (centreId == null)
             {
@@ -57,17 +62,6 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
             else
             {
-                var centreIdIsInt = int.TryParse(centreId, out var centreIdInt);
-                var centreName = centresDataService.GetCentreName(centreIdInt);
-                // if centreId invalid, then clear centre, redirect to general registration process
-                if (!centreIdIsInt || centreName == null)
-                {
-                    delegateRegistrationData.RegisterViewModel.Centre = null;
-                    delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
-                    TempData.Set(delegateRegistrationData);
-                    return RedirectToAction("Index");
-                }
-
                 // otherwise use a centre-specific registration process
                 // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
@@ -308,6 +302,22 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             return delegateRegistrationData;
         }
+
+        private bool CheckCentreIdValid(string? centreId, out int? centreIdInt, out string? centreName)
+        {
+            if (centreId == null)
+            {
+                centreIdInt = null;
+                centreName = null;
+                return true;
+            }
+            
+            var centreIdIsInt = int.TryParse(centreId, out var tempInt);
+            centreIdInt = tempInt;
+            centreName = centresDataService.GetCentreName(tempInt);
+            return centreIdIsInt && centreName != null;
+        }
+        
 
         private void ValidateEmailAddress(RegisterViewModel model)
         {
