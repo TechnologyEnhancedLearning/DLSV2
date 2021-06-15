@@ -6,7 +6,7 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Summary" : "Register - Summary";
   var termsError = ViewData.ModelState["Terms"]?.Errors?.Count > 0;
   var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
-  var linkCentreId = ViewBag.IsCentreSpecific ? ViewBag.CentreId : null;
+  var linkCentreId = ViewBag.IsCentreSpecificRegistration ? ViewBag.CentreId : null;
 }
 
 <div class="nhsuk-grid-row">
@@ -28,7 +28,7 @@
           @Model.Centre
         </dd>
         <dd class="nhsuk-summary-list__actions">
-        @if (!ViewBag.IsCentreSpecific) {
+        @if (!ViewBag.IsCentreSpecificRegistration) {
           <a asp-action="Index">
             Change<span class="nhsuk-u-visually-hidden"> centre</span>
           </a>

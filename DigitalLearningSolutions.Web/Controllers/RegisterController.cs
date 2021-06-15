@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             // if no centreId param, then use general registration process, keeping all responses
             if (centreId == null)
             {
-                delegateRegistrationData.RegisterViewModel.IsCentreSpecific = false;
+                delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = false;
                 TempData.Set(delegateRegistrationData);
             }
             else
@@ -66,7 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 // note: do not store the centre-specific properties until user clicks next
                 ViewBag.CentreName = centreName;
                 delegateRegistrationData.RegisterViewModel.Centre = centreIdInt;
-                delegateRegistrationData.RegisterViewModel.IsCentreSpecific = true;
+                delegateRegistrationData.RegisterViewModel.IsCentreSpecificRegistration = true;
             }
 
             ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                     model.Centre
                 );
 
-                if (model.IsCentreSpecific)
+                if (model.IsCentreSpecificRegistration)
                 {
                     ViewBag.CentreName = centresDataService.GetCentreName(model.Centre.Value);
                 }
@@ -130,7 +130,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var centreId = (int)data.RegisterViewModel.Centre;
 
             SetLearnerInformationViewBag(model, centreId);
-            AddCentreSpecificToViewBag(data.RegisterViewModel);
+            AddCentreSpecificRegistrationToViewBag(data.RegisterViewModel);
 
             return View(model);
         }
@@ -162,7 +162,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             if (!ModelState.IsValid)
             {
                 SetLearnerInformationViewBag(model, centreId);
-                AddCentreSpecificToViewBag(data.RegisterViewModel);
+                AddCentreSpecificRegistrationToViewBag(data.RegisterViewModel);
                 return View(model);
             }
 
@@ -204,7 +204,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
             var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
             AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
-            AddCentreSpecificToViewBag(data.RegisterViewModel);
+            AddCentreSpecificRegistrationToViewBag(data.RegisterViewModel);
 
             return View(viewModel);
         }
@@ -230,7 +230,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
                 viewModel.Terms = model.Terms;
                 AddCustomFieldsToViewBag(data.LearnerInformationViewModel, centreId);
-                AddCentreSpecificToViewBag(data.RegisterViewModel);
+                AddCentreSpecificRegistrationToViewBag(data.RegisterViewModel);
                 return View(viewModel);
             }
 
@@ -347,9 +347,9 @@ namespace DigitalLearningSolutions.Web.Controllers
             );
         }
 
-        private void AddCentreSpecificToViewBag(RegisterViewModel model)
+        private void AddCentreSpecificRegistrationToViewBag(RegisterViewModel model)
         {
-            ViewBag.IsCentreSpecific = model.IsCentreSpecific;
+            ViewBag.IsCentreSpecificRegistration = model.IsCentreSpecificRegistration;
             ViewBag.CentreId = model.Centre.Value;
         }
 
