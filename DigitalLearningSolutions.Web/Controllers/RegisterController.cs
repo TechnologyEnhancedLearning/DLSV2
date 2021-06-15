@@ -46,15 +46,20 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-
-            if (!CheckCentreIdValid(centreId, out var centreIdInt, out var centreName))
+            
+            if (!CheckCentreIdValid(centreId))
             {
                 return NotFound();
             }
-            
+
+            int? centreIdInt = null;
+            if (centreId != null)
+            {
+                centreIdInt = int.Parse(centreId);
+            }
+
             var delegateRegistrationData = CreateDelegateRegistrationData();
             delegateRegistrationData.RegisterViewModel.SetCentreSpecificRegistration(centreIdInt);
-            ViewBag.CentreName = centreName;
             TempData.Set(delegateRegistrationData);
 
             return RedirectToAction("PersonalInformation");
@@ -74,6 +79,10 @@ namespace DigitalLearningSolutions.Web.Controllers
                 centresDataService.GetActiveCentresAlphabetical(),
                 delegateRegistrationData.RegisterViewModel.Centre
             );
+            if (delegateRegistrationData.RegisterViewModel.Centre.HasValue)
+            {
+                ViewBag.CentreName = centresDataService.GetCentreName(delegateRegistrationData.RegisterViewModel.Centre.Value)!;
+            }
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
@@ -298,19 +307,14 @@ namespace DigitalLearningSolutions.Web.Controllers
             return delegateRegistrationData;
         }
 
-        private bool CheckCentreIdValid(string? centreId, out int? centreIdInt, out string? centreName)
+        private bool CheckCentreIdValid(string? centreId)
         {
             if (centreId == null)
             {
-                centreIdInt = null;
-                centreName = null;
                 return true;
             }
-            
-            var centreIdIsInt = int.TryParse(centreId, out var tempInt);
-            centreIdInt = tempInt;
-            centreName = centresDataService.GetCentreName(tempInt);
-            return centreIdIsInt && centreName != null;
+            return int.TryParse(centreId, out var centreIdInt) &&
+                   centresDataService.GetCentreName(centreIdInt) != null;
         }
         
 
