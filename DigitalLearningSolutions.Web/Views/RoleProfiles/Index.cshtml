@@ -25,8 +25,8 @@
       <div class="nhsuk-grid-column-full">
         <div class="hee-fwservice--tabs">
           <ul role="tablist">
-            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Mine"? "active" : "")><a role="tab" asp-action="ViewFrameworks" asp-route-tabname="Mine">My Role Profiles</a></li>
-            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "All"? "active" : "")><a role="tab" asp-action="ViewFrameworks" asp-route-tabname="All">All Role Profiles</a></li>
+            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "Mine"? "active" : "")><a role="tab" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">My Role Profiles</a></li>
+            <li role="presentation" class=@((string)ViewContext.RouteData.Values["tabname"] == "All"? "active" : "")><a role="tab" asp-action="ViewRoleProfiles" asp-route-tabname="All">All Role Profiles</a></li>
           </ul>
         </div>
       </div>
