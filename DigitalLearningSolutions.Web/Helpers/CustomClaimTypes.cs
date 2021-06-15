@@ -24,5 +24,6 @@
         public const string UserAdminId = "UserAdminID";
         public const string IsWorkforceManager = "IsWorkforceManager";
         public const string IsWorkforceContributor = "IsWorkforceContributor";
+        public const string IsLocalWorkforceManager = "IsLocalWorkforceManager";
     }
 }
