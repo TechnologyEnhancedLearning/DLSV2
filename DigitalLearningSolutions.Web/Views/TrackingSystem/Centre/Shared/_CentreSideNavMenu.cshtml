@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
+@using DigitalLearningSolutions.Web.Helpers.TrackingSystem.Centre
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @model CentrePage
@@ -16,21 +16,21 @@
 
 <h2 class="side-nav__heading">Centre</h2>
 <ul class="nhsuk-list side-nav__list">
-  <li class="side-nav__item @dashboardItemClass">
+  <li class="side-nav__item @dashboardItemClass" aria-current="@(Model == CentrePage.Dashboard ? "page" : null)">
     <a class="side-nav__link" asp-action="Index" asp-controller="Dashboard">Centre dashboard</a>
   </li>
-  <li class="side-nav__item @configurationItemClass">
+  <li class="side-nav__item @configurationItemClass" aria-current="@(Model == CentrePage.Configuration ? "page" : null)">
     <a class="side-nav__link" asp-action="Index" asp-controller="CentreConfiguration">Centre configuration</a>
   </li>
 
   @if(User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true || User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
   {
-    <li class="side-nav__item @administratorsItemClass">
+    <li class="side-nav__item @administratorsItemClass" aria-current="@(Model == CentrePage.Administrators ? "page" : null)">
       <a class="side-nav__link" asp-action="Index" asp-controller="Administrator">Administrators</a>
     </li>
   }
 
-  <li class="side-nav__item @reportsItemClass">
+  <li class="side-nav__item @reportsItemClass" aria-current="@(Model == CentrePage.Reports ? "page" : null)">
     <a class="side-nav__link" asp-action="Index" asp-controller="Reports">Reports</a>
   </li>
 </ul>

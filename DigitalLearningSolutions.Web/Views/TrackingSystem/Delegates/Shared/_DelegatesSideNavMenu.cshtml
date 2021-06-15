@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
+﻿@using DigitalLearningSolutions.Web.Helpers.TrackingSystem.Delegates
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @model DelegatePage
@@ -15,16 +15,16 @@
 
   <h2 class="side-nav__heading">Delegates</h2>
   <ul class="nhsuk-list side-nav__list">
-    <li class="side-nav__item @allDelegatesItemClass">
+    <li class="side-nav__item @allDelegatesItemClass" aria-current="@(Model == DelegatePage.AllDelegates ? "page" : null)">
       <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">All delegates</a>
     </li>
-    <li class="side-nav__item @delegateGroupsItemClass">
+    <li class="side-nav__item @delegateGroupsItemClass" aria-current="@(Model == DelegatePage.DelegateGroups ? "page" : null)">
       <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups">Delegate groups</a>
     </li>
-    <li class="side-nav__item @courseDelegateItemClass">
+    <li class="side-nav__item @courseDelegateItemClass" aria-current="@(Model == DelegatePage.CourseDelegates ? "page" : null)">
       <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates">Course delegates</a>
     </li>
-    <li class="side-nav__item @approvedRegistrationItemClass">
+    <li class="side-nav__item @approvedRegistrationItemClass" aria-current="@(Model == DelegatePage.ApproveDelegateRegistrations ? "page" : null)">
       <a class="side-nav__link" asp-action="Index" asp-controller="DelegateApprovals">Approve registrations</a>
     </li>
   </ul>
