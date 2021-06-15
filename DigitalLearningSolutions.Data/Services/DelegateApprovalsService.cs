@@ -39,17 +39,17 @@
             IUserDataService userDataService,
             ICustomPromptsService customPromptsService,
             IEmailService emailService,
+            ICentresDataService centresDataService,
             ILogger<DelegateApprovalsService> logger,
-            IConfiguration config,
-            ICentresDataService centresDataService
+            IConfiguration config
         )
         {
             this.userDataService = userDataService;
             this.customPromptsService = customPromptsService;
             this.emailService = emailService;
+            this.centresDataService = centresDataService;
             this.logger = logger;
             this.config = config;
-            this.centresDataService = centresDataService;
         }
 
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
