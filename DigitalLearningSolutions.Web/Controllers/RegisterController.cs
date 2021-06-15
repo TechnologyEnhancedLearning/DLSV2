@@ -47,24 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
-
-            if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
-            {
-                delegateRegistrationData = new DelegateRegistrationData();
-                var id = delegateRegistrationData.Id;
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    }
-                );
-
-                TempData.Set(delegateRegistrationData);
-            }
+            var delegateRegistrationData = GetOrCreateDelegateRegistrationData();
 
             // if no centreId param, then use general registration process, keeping all responses
             if (centreId == null)
@@ -300,6 +283,30 @@ namespace DigitalLearningSolutions.Web.Controllers
             var centreIdForContactInformation = approved ? null : (int?)centreId;
             var viewModel = new ConfirmationViewModel(candidateNumber, approved, centreIdForContactInformation);
             return View(viewModel);
+        }
+
+        private DelegateRegistrationData GetOrCreateDelegateRegistrationData()
+        {
+            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
+
+            if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
+            {
+                delegateRegistrationData = new DelegateRegistrationData();
+                var id = delegateRegistrationData.Id;
+
+                Response.Cookies.Append(
+                    CookieName,
+                    id.ToString(),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    }
+                );
+
+                TempData.Set(delegateRegistrationData);
+            }
+
+            return delegateRegistrationData;
         }
 
         private void ValidateEmailAddress(RegisterViewModel model)
