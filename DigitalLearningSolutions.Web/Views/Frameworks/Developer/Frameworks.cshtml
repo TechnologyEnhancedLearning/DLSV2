@@ -18,7 +18,6 @@
   </nav>
 }
 
-<div class="nhsuk-back-link">
   @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
   {
     <div class="nhsuk-grid-row">
@@ -32,7 +31,6 @@
       </div>
     </div>
   }
-</div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")

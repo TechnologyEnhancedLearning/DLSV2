@@ -12,7 +12,7 @@
     {
         IEnumerable<RoleProfile> GetAllRoleProfiles(int adminId);
         IEnumerable<RoleProfile> GetRoleProfilesForAdminId(int adminId);
-        
+        RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId);
     }
     public class RoleProfileService : IRoleProfileService
     {
@@ -23,43 +23,52 @@
             this.connection = connection;
             this.logger = logger;
         }
+        private const string RoleProfileBaseFields = @"rp.ID, rp.RoleProfileName, rp.Description, rp.BrandID,
+                rp.ParentRoleProfileID,
+                rp.[National], rp.[Public], rp.OwnerAdminID,
+                rp.NRPProfessionalGroupID,
+                 rp.NRPSubGroupID,
+                 rp.NRPRoleID,
+                 rp.PublishStatusID, CASE WHEN rp.OwnerAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
         private const string RoleProfileFields =
-            @"rp.ID, rp.RoleProfileName, rp.Description, rp.CreatedDate, rp.BrandID,
+            @", rp.CreatedDate,
                  (SELECT BrandName
                  FROM    Brands
-                 WHERE (BrandID = rp.BrandID)) AS Brand, rp.ParentRoleProfileID,
+                 WHERE (BrandID = rp.BrandID)) AS Brand, 
                  (SELECT RoleProfileName
                  FROM    RoleProfiles AS rp2
-                 WHERE (ID = rp.ParentRoleProfileID)) AS ParentRoleProfile, rp.[National], rp.[Public], rp.OwnerAdminID,
+                 WHERE (ID = rp.ParentRoleProfileID)) AS ParentRoleProfile, 
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = rp.OwnerAdminID)) AS Owner, rp.Archived, rp.LastEdit, rp.NRPProfessionalGroupID,
+                 WHERE (AdminID = rp.OwnerAdminID)) AS Owner, rp.Archived, rp.LastEdit, 
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
-                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, rp.NRPSubGroupID,
+                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, 
                  (SELECT SubGroup
                  FROM    NRPSubGroups
-                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, rp.NRPRoleID,
+                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, 
                  (SELECT RoleProfile
                  FROM    NRPRoles
-                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, rp.PublishStatusID, CASE WHEN rp.OwnerAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole, rpr.ID AS RoleProfileReviewID";
-        private const string RoleProfileTables =
+                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, rpr.ID AS RoleProfileReviewID";
+        private const string RoleProfileBaseTables =
             @"RoleProfiles AS rp LEFT OUTER JOIN
-             RoleProfileCollaborators AS rpc ON rpc.RoleProfileID = rp.ID AND rpc.AdminID = @adminId LEFT OUTER JOIN
+             RoleProfileCollaborators AS rpc ON rpc.RoleProfileID = rp.ID AND rpc.AdminID = @adminId";
+        private const string RoleProfileTables =
+            @" LEFT OUTER JOIN
              RoleProfileReviews AS rpr ON rpc.ID = rpr.RoleProfileCollaboratorID AND rpr.Archived IS NULL AND rpr.ReviewComplete IS NULL";
         public IEnumerable<RoleProfile> GetAllRoleProfiles(int adminId)
         {
             return connection.Query<RoleProfile>(
-               $@"SELECT {RoleProfileFields}
-                      FROM {RoleProfileTables}", new { adminId }
+               $@"SELECT {RoleProfileBaseFields} {RoleProfileFields}
+                      FROM {RoleProfileBaseTables} {RoleProfileTables}", new { adminId }
           );
         }
 
         public IEnumerable<RoleProfile> GetRoleProfilesForAdminId(int adminId)
         {
             return connection.Query<RoleProfile>(
-                $@"SELECT {RoleProfileFields}
-                      FROM {RoleProfileTables}
+                $@"SELECT {RoleProfileBaseFields} {RoleProfileFields}
+                      FROM {RoleProfileBaseTables} {RoleProfileTables}
                       WHERE (rp.OwnerAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
@@ -69,5 +78,14 @@
            );
         }
 
+        public RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId)
+        {
+            return connection.Query<RoleProfileBase>(
+               $@"SELECT {RoleProfileBaseFields} 
+                      FROM {RoleProfileBaseTables}
+                      WHERE (rp.ID = @roleProfileId)",
+              new { roleProfileId, adminId }
+          ).FirstOrDefault();
+        }
     }
 }

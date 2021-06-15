@@ -7,9 +7,9 @@
         public SessionNewRoleProfile()
         {
             Id = new Guid();
-            RoleProfile = new RoleProfile();
+            RoleProfileBase = new RoleProfileBase();
         }
         public Guid Id { get; set; }
-        public RoleProfile RoleProfile { get; set; }
+        public RoleProfileBase RoleProfileBase { get; set; }
     }
 }

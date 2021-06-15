@@ -88,5 +88,85 @@
                 );
             return View("Index", model);
         }
+        public IActionResult StartNewRoleProfileSession()
+        {
+            var adminId = GetAdminID();
+            TempData.Clear();
+            var sessionNewRoleProfile = new SessionNewRoleProfile();
+            if (!Request.Cookies.ContainsKey(CookieName))
+            {
+                var id = Guid.NewGuid();
+
+                Response.Cookies.Append(
+                    CookieName,
+                    id.ToString(),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    });
+
+                sessionNewRoleProfile.Id = id;
+            }
+            else
+            {
+                if (Request.Cookies.TryGetValue(CookieName, out string idString))
+                {
+                    sessionNewRoleProfile.Id = Guid.Parse(idString);
+                }
+                else
+                {
+                    var id = Guid.NewGuid();
+
+                    Response.Cookies.Append(
+                        CookieName,
+                        id.ToString(),
+                        new CookieOptions
+                        {
+                            Expires = DateTimeOffset.UtcNow.AddDays(30)
+                        });
+                    sessionNewRoleProfile.Id = id;
+                }
+            }
+            RoleProfileBase roleProfileBase = new RoleProfileBase()
+            {
+                BrandID = 6,
+                OwnerAdminID = adminId,
+                National = true,
+                Public = true,
+                PublishStatusID = 1,
+                UserRole = 3
+            };
+            sessionNewRoleProfile.RoleProfileBase = roleProfileBase;
+            TempData.Set(sessionNewRoleProfile);
+            return RedirectToAction("RoleProfileName", "RoleProfiles", new { actionname = "New" });
+        }
+        [Route("/RoleProfiles/Name/{actionname}/{roleProfileId}")]
+        [Route("/RoleProfiles/Name/{actionname}")]
+        public IActionResult RoleProfileName(string actionname, int roleProfileId = 0)
+        {
+            var adminId = GetAdminID();
+            RoleProfileBase? roleProfileBase;
+            if (roleProfileId > 0)
+            {
+                roleProfileBase = roleProfileService.GetRoleProfileBaseById(roleProfileId, adminId);
+                if (roleProfileBase == null)
+                {
+                    logger.LogWarning($"Failed to load name page for roleProfileId: {roleProfileId} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (roleProfileBase.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
+            }
+            else
+            {
+                SessionNewRoleProfile sessionNewRoleProfile = TempData.Peek<SessionNewRoleProfile>();
+                TempData.Set(sessionNewRoleProfile);
+                roleProfileBase = sessionNewRoleProfile.RoleProfileBase;
+                TempData.Set(sessionNewRoleProfile);
+            }
+            return View("Name", roleProfileBase);
+        }
     }
 }
