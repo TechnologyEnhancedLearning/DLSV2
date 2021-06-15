@@ -453,6 +453,16 @@
                 .WithControllerName("Home").WithActionName("Index");
         }
 
+        [Test]
+        public void Leading_trailing_whitespaces_in_username_are_ignored()
+        {
+            // When
+            controller.Index(LoginTestHelper.GetDefaultLoginViewModel("\ttest@example.com "));
+
+            // Then
+            A.CallTo(() => userService.GetUsersByUsername("test@example.com")).MustHaveHappened(1, Times.Exactly);
+        }
+
         private void GivenSignInIsSuccessful()
         {
             var admin = UserTestHelper.GetDefaultAdminUser();
