@@ -86,5 +86,10 @@
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
         }
+
+        public static bool HasSuperAdminPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false;
+        }
     }
 }

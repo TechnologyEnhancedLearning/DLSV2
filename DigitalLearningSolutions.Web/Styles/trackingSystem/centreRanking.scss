@@ -1,0 +1,15 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.current-centre {
+  background-color: $color_nhsuk-grey-3;
+}
+
+.cell-left-padding {
+  padding-left: nhsuk-spacing(2);
+}
+
+.cell-right-padding {
+  @include govuk-media-query($until: desktop) {
+    padding-right: nhsuk-spacing(2) !important;
+  }
+}
