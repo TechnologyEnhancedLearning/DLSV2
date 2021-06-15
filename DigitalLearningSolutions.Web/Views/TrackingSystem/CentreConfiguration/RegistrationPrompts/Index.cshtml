@@ -57,7 +57,7 @@
           </div>
           <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
+              <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="EditRegistrationPromptStart" asp-route-promptNumber="@customField.CustomFieldId">
                 Edit
               </a>
               <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="RemoveRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
@@ -84,7 +84,7 @@
 @if (Model.CustomFields.Count < 6) {
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button" asp-action="AddRegistrationPromptSelectPrompt">Add a new prompt</a>
+      <a class="nhsuk-button" asp-action="AddRegistrationPromptNew">Add a new prompt</a>
     </div>
   </div>
 }

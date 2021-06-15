@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -59,6 +62,97 @@
 
             // Then
             context.Result.Should().BeNull();
+        }
+
+        [Test]
+        public void RedirectEmptySessionDataXor_redirects_to_index_if_no_temp_data_matching_either_model()
+        {
+            // Given
+            var context = new ActionExecutingContext(
+                new ActionContext(
+                    new DefaultHttpContext(),
+                    new RouteData(new RouteValueDictionary()),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                new RegistrationPromptsController(A.Fake<ICustomPromptsService>(), A.Fake<IUserDataService>()).WithDefaultContext().WithMockTempData());
+
+            // When
+            new RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>().OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void RedirectEmptySessionDataXor_does_not_set_action_result_if_there_is_temp_data_matching_the_first_model()
+        {
+            // Given
+            var controller = new RegistrationPromptsController(A.Fake<ICustomPromptsService>(), A.Fake<IUserDataService>()).WithDefaultContext().WithMockTempData();
+            var context = new ActionExecutingContext(
+                new ActionContext(
+                    new DefaultHttpContext(),
+                    new RouteData(new RouteValueDictionary()),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                controller);
+            controller.TempData["AddRegistrationPromptData"] =
+                JsonConvert.SerializeObject(new AddRegistrationPromptData());
+
+            // When
+            new RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>().OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeNull();
+        }
+
+        [Test]
+        public void RedirectEmptySessionDataXor_does_not_set_action_result_if_there_is_temp_data_matching_the_second_model()
+        {
+            // Given
+            var controller = new RegistrationPromptsController(A.Fake<ICustomPromptsService>(), A.Fake<IUserDataService>()).WithDefaultContext().WithMockTempData();
+            var context = new ActionExecutingContext(
+                new ActionContext(
+                    new DefaultHttpContext(),
+                    new RouteData(new RouteValueDictionary()),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                controller);
+            controller.TempData["EditRegistrationPromptData"] =
+                JsonConvert.SerializeObject(new EditRegistrationPromptData());
+
+            // When
+            new RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>().OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeNull();
+        }
+
+        [Test]
+        public void RedirectEmptySessionDataXor_redirects_to_index_if_there_is_temp_data_matching_both_models()
+        {
+            // Given
+            var controller = new RegistrationPromptsController(A.Fake<ICustomPromptsService>(), A.Fake<IUserDataService>()).WithDefaultContext().WithMockTempData();
+            var context = new ActionExecutingContext(
+                new ActionContext(
+                    new DefaultHttpContext(),
+                    new RouteData(new RouteValueDictionary()),
+                    new ActionDescriptor()),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                controller);
+            controller.TempData["AddRegistrationPromptData"] =
+                JsonConvert.SerializeObject(new AddRegistrationPromptData());
+            controller.TempData["EditRegistrationPromptData"] =
+                JsonConvert.SerializeObject(new EditRegistrationPromptData());
+
+            // When
+            new RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>().OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }
