@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
 @model CentreAdministratorsViewModel
@@ -16,7 +17,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
-    Side bar
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
+    </nav>
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
@@ -25,5 +28,8 @@
       <vc:number-of-administrators centre-id="@Model.CentreId" />
     </div>
 
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
+    </nav>
   </div>
 </div>
