@@ -251,3 +251,7 @@ ul.no-bullets {
    @include nhsuk-responsive-padding(2, "left");
    @extend .nhsuk-u-font-weight-bold;
  }
+
+.nhsuk-error-message.error-message--margin-bottom-1 {
+  margin-bottom: nhsuk-spacing(1);
+}

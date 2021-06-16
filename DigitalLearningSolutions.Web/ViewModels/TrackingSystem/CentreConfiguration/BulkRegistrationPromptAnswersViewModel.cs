@@ -2,7 +2,7 @@
 {
     public class BulkRegistrationPromptAnswersViewModel
     {
-        public BulkRegistrationPromptAnswersViewModel(){}
+        public BulkRegistrationPromptAnswersViewModel() { }
 
         public BulkRegistrationPromptAnswersViewModel(string? optionsString, bool isAddPromptJourney, int? promptNumber)
         {

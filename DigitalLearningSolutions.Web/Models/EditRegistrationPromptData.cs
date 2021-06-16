@@ -5,10 +5,10 @@
 
     public class EditRegistrationPromptData
     {
-        public EditRegistrationPromptData()
+        public EditRegistrationPromptData(EditRegistrationPromptViewModel model)
         {
             Id = Guid.NewGuid();
-            EditModel = new EditRegistrationPromptViewModel();
+            EditModel = model;
         }
 
         public Guid Id { get; set; }

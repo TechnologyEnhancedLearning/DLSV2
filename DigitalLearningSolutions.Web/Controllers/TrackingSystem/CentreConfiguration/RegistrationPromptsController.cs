@@ -23,8 +23,9 @@
         public const string NextAction = "next";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private const string CookieName = "AddRegistrationPromptData";
-        private const string EditCookieName = "EditRegistrationPromptData";
+        private const string AddPromptCookieName = "AddRegistrationPromptData";
+        private const string EditPromptCookieName = "EditRegistrationPromptData";
+        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICustomPromptsService customPromptsService;
         private readonly IUserDataService userDataService;
 
@@ -66,13 +67,11 @@
             var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
-            var data = TempData.Peek<EditRegistrationPromptData>();
+            var data = TempData.Get<EditRegistrationPromptData>();
 
             var model = data != null
                 ? data.EditModel!
                 : new EditRegistrationPromptViewModel(customPrompt);
-
-            TempData.Clear();
 
             return View(model);
         }
@@ -148,11 +147,11 @@
             var id = addRegistrationPromptData.Id;
 
             Response.Cookies.Append(
-                CookieName,
+                AddPromptCookieName,
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    Expires = CookieExpiry
                 }
             );
             TempData.Set(addRegistrationPromptData);
@@ -396,21 +395,25 @@
 
         private IActionResult EditRegistrationPromptBulk(EditRegistrationPromptViewModel model)
         {
-            var data = new EditRegistrationPromptData();
+            SetEditRegistrationPromptTempData(model);
+
+            return RedirectToAction("EditRegistrationPromptBulk", new { promptNumber = model.PromptNumber });
+        }
+
+        private void SetEditRegistrationPromptTempData(EditRegistrationPromptViewModel model)
+        {
+            var data = new EditRegistrationPromptData(model);
             var id = data.Id;
-            data.EditModel = model;
 
             Response.Cookies.Append(
-                EditCookieName,
+                EditPromptCookieName,
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    Expires = CookieExpiry
                 }
             );
             TempData.Set(data);
-
-            return RedirectToAction("EditRegistrationPromptBulk", new { promptNumber = model.PromptNumber });
         }
 
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)

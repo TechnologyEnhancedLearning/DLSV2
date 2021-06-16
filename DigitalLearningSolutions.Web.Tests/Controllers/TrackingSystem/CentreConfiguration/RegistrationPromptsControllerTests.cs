@@ -20,11 +20,11 @@
     {
         private IRequestCookieCollection cookieCollection = null!;
         private ICustomPromptsService customPromptsService = null!;
-        private IUserDataService userDataService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,10 +50,11 @@
             A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
 
-            registrationPromptsControllerWithMockHttpContext = new RegistrationPromptsController(customPromptsService, userDataService)
-                .WithMockHttpContext(httpContext)
-                .WithMockUser(true)
-                .WithMockTempData();
+            registrationPromptsControllerWithMockHttpContext =
+                new RegistrationPromptsController(customPromptsService, userDataService)
+                    .WithMockHttpContext(httpContext)
+                    .WithMockUser(true)
+                    .WithMockTempData();
         }
 
         [Test]
@@ -236,7 +237,7 @@
             var expectedConfigureAnswerViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
+                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             const string action = "addPrompt";
@@ -267,7 +268,7 @@
             const string action = "delete0";
 
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
@@ -304,7 +305,7 @@
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
             var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
                 () => customPromptsService.AddCustomPromptToCentre(
@@ -322,13 +323,13 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                                () => customPromptsService.AddCustomPromptToCentre(
-                                    ControllerContextHelper.CentreId,
-                                    1,
-                                    true,
-                                    "Test\r\nAnswer"
-                                )
-                            ).MustHaveHappened();
+                    () => customPromptsService.AddCustomPromptToCentre(
+                        ControllerContextHelper.CentreId,
+                        1,
+                        true,
+                        "Test\r\nAnswer"
+                    )
+                ).MustHaveHappened();
                 registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
@@ -366,7 +367,8 @@
                         "Test\r\nAnswer"
                     )
                 ).MustHaveHappened();
-                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                    .WithActionName("Error");
             }
         }
 
@@ -377,8 +379,8 @@
             var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", false, 1);
             var initialEditViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test");
             var expectedViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test\r\nAnswer");
-            var initialTempData = new EditRegistrationPromptData { EditModel = initialEditViewModel };
-            
+            var initialTempData = new EditRegistrationPromptData(initialEditViewModel);
+
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
@@ -400,9 +402,11 @@
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
             var initialConfigureAnswersViewModel = new RegistrationPromptAnswersViewModel("Test");
             var expectedViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
-            
+
             var initialTempData = new AddRegistrationPromptData
-                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialConfigureAnswersViewModel };
+            {
+                SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialConfigureAnswersViewModel
+            };
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
@@ -438,7 +442,8 @@
 
         private void AssertEditTempDataIsExpected(EditRegistrationPromptViewModel expectedData)
         {
-            registrationPromptsController.TempData.Peek<EditRegistrationPromptData>()!.EditModel.Should().BeEquivalentTo(expectedData);
+            registrationPromptsController.TempData.Peek<EditRegistrationPromptData>()!.EditModel.Should()
+                .BeEquivalentTo(expectedData);
         }
     }
 }
