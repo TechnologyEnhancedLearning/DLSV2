@@ -40,8 +40,8 @@
                 for (var i = 1; i < sortByArray.Length; i++)
                 {
                     result = sortDirection == BaseSearchablePageViewModel.DescendingText
-                        ? result.ThenByDescending(sortByArray[1])
-                        : result.ThenBy(sortByArray[1]);
+                        ? result.ThenByDescending(sortByArray[i])
+                        : result.ThenBy(sortByArray[i]);
                 }
             }
 

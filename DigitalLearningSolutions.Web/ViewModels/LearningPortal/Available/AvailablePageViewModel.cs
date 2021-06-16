@@ -10,8 +10,6 @@
     {
         public readonly IEnumerable<AvailableCourseViewModel> AvailableCourses;
 
-        //public override SelectList SortByOptions { get; } = new SelectList()
-
         public AvailablePageViewModel(
             IEnumerable<AvailableCourse> availableCourses,
             string? searchString,
