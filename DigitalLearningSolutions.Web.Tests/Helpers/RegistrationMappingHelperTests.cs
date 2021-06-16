@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
+    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -8,85 +9,147 @@
 
     public class RegistrationMappingHelperTests
     {
+        private const string FirstName = "Test";
+        private const string LastName = "User";
+        private const string Email = "test@email.com";
+        private const int CentreId = 5;
+        private const int JobGroupId = 10;
+        private const string PasswordHash = "password hash";
+        private const string Answer1 = "a1";
+        private const string Answer2 = "a2";
+        private const string Answer3 = "a3";
+        private const bool IsCentreSpecificRegistration = true;
+
         [Test]
         public void MapToDelegateRegistrationModel_returns_correct_DelegateRegistrationModel()
         {
             // Given
-            var firstName = "Test";
-            var lastName = "User";
-            var email = "test@email.com";
-            var centreId = 5;
-            var jobGroupId = 10;
-            var passwordHash = "password hash";
-            var registerViewModel = new PersonalInformationViewModel
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                Centre = centreId
-            };
-            var learnerInformationViewModel = new LearnerInformationViewModel
-            {
-                JobGroup = jobGroupId
-            };
-            var data = new DelegateRegistrationData
-            {
-                RegisterViewModel = registerViewModel,
-                LearnerInformationViewModel = learnerInformationViewModel,
-                PasswordHash = passwordHash
-            };
+            var data = SampleData();
 
             // When
             var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
 
             // Then
-            result.FirstName.Should().Be(firstName);
-            result.LastName.Should().Be(lastName);
-            result.Email.Should().Be(email);
-            result.Centre.Should().Be(centreId);
-            result.JobGroup.Should().Be(jobGroupId);
-            result.PasswordHash.Should().Be(passwordHash);
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+            result.Centre.Should().Be(CentreId);
+            result.JobGroup.Should().Be(JobGroupId);
+            result.PasswordHash.Should().Be(PasswordHash);
+            result.Answer1.Should().Be(Answer1);
+            result.Answer2.Should().Be(Answer2);
+            result.Answer3.Should().Be(Answer3);
         }
 
         [Test]
-        public void MapToSummary_returns_correct_SummaryViewModel()
+        public void MapDataToPersonalInformation_returns_correct_ViewModel()
         {
             // Given
-            var firstName = "Test";
-            var lastName = "User";
-            var email = "test@email.com";
-            var centreId = 5;
-            var centreName = "A centre";
-            var jobGroupId = 10;
-            var jobGroupName = "A job group";
-            var passwordHash = "password hash";
-            var registerViewModel = new PersonalInformationViewModel
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                Centre = centreId
-            };
-            var learnerInformationViewModel = new LearnerInformationViewModel
-            {
-                JobGroup = jobGroupId
-            };
-            var data = new DelegateRegistrationData
-            {
-                RegisterViewModel = registerViewModel,
-                LearnerInformationViewModel = learnerInformationViewModel,
-                PasswordHash = passwordHash
-            };
+            var data = SampleData();
 
             // When
-            var result = RegistrationMappingHelper.MapToSummary(data, centreName, jobGroupName);
+            var result = RegistrationMappingHelper.MapDataToPersonalInformation(data);
 
             // Then
-            result.FirstName.Should().Be(firstName);
-            result.LastName.Should().Be(lastName);
-            result.Email.Should().Be(email);
-            result.Centre.Should().Be(centreName);
-            result.JobGroup.Should().Be(jobGroupName);
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+            result.Centre.Should().Be(CentreId);
+            result.IsCentreSpecificRegistration.Should().Be(IsCentreSpecificRegistration);
+        }
+
+        [Test]
+        public void MapDataToLearnerInformation_returns_correct_ViewModel()
+        {
+            // Given
+            var data = SampleData();
+
+            // When
+            var result = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+
+            // Then
+            result.JobGroup.Should().Be(JobGroupId);
+            result.Answer1.Should().Be(Answer1);
+            result.Answer2.Should().Be(Answer2);
+            result.Answer3.Should().Be(Answer3);
+        }
+
+        [Test]
+        public void MapDataToSummary_returns_correct_ViewModel()
+        {
+            // Given
+            var data = SampleData();
+
+            // When
+            var result = RegistrationMappingHelper.MapDataToSummary(data);
+
+            // Then
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+        }
+
+        [Test]
+        public void MapPersonalInformationToData_returns_correct_Data()
+        {
+            // Given
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                Centre = CentreId,
+                Email = Email,
+            };
+            var data = new DelegateRegistrationData();
+
+            // When
+            var result = RegistrationMappingHelper.MapPersonalInformationToData(model, data);
+
+            // Then
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+            result.Centre.Should().Be(CentreId);
+        }
+
+        [Test]
+        public void MapLearnerInformationToData_returns_correct_Data()
+        {
+            // Given
+            var model = new LearnerInformationViewModel
+            {
+                JobGroup = JobGroupId,
+                Answer1 = Answer1,
+                Answer2 = Answer2,
+                Answer3 = Answer3,
+            };
+            var data = new DelegateRegistrationData();
+
+            // When
+            var result = RegistrationMappingHelper.MapLearnerInformationToData(model, data);
+
+            // Then
+            result.JobGroup.Should().Be(JobGroupId);
+            result.Answer1.Should().Be(Answer1);
+            result.Answer2.Should().Be(Answer2);
+            result.Answer3.Should().Be(Answer3);
+        }
+
+        private static DelegateRegistrationData SampleData()
+        {
+            return new DelegateRegistrationData
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                Centre = CentreId,
+                JobGroup = JobGroupId,
+                PasswordHash = PasswordHash,
+                Answer1 = Answer1,
+                Answer2 = Answer2,
+                Answer3 = Answer3,
+                IsCentreSpecificRegistration = IsCentreSpecificRegistration,
+            };
         }
     }
 }
