@@ -91,15 +91,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             }
 
             model.CentrePostcode = model.CentrePostcode!.Trim();
-            var mapsResponse = mapsApiHelper.GetPostcodeCoordinates(model.CentrePostcode).Result;
+            var mapsResponse = mapsApiHelper.GeocodePostcode(model.CentrePostcode).Result;
 
-            if (mapsResponse.Status == "ZERO_RESULTS")
+            if (mapsResponse.HasNoResults())
             {
-                ModelState.AddModelError(nameof(model.CentrePostcode), "Enter a valid postcode.");
+                ModelState.AddModelError(nameof(model.CentrePostcode), "Enter a valid postcode");
                 return View(model);
             }
 
-            if (mapsResponse.Status != "OK")
+            if (mapsResponse.ApiErrorOccurred())
             {
                 logger.LogWarning
                 (
