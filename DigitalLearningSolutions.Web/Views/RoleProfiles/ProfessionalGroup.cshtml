@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Data.Models.RoleProfiles;
-@model RoleProfileBase;
+﻿@using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
+@model ProfessionalGroupViewModel;
 @{
   ViewData["Title"] = "New Role Profiles";
   ViewData["Application"] = "Framework Service";
@@ -29,51 +29,54 @@ else
       <div class="nhsuk-width-container">
         <ol class="nhsuk-breadcrumb__list">
           <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Role Profiles</a></li>
-          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Role Profile Details</a></li>
+          <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Role Profile Details</a></li>
           <li class="nhsuk-breadcrumb__item">Name</li>
         </ol>
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewRoleProfile" asp-route-roleProfileId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">Back to role profile detail</a></p>
       </div>
     </nav>
   }
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
-{
-  <h1>Create a new role profile</h1>
-}
-else
-{
-  <h1>Edit role profile name</h1>
-}
+<h1>National job profile - professional group</h1>
 <form method="post">
   @if (!ViewData.ModelState.IsValid)
   {
     <partial name="_ErrorSummary" />}
-  <nhs-form-group nhs-validation-for="RoleProfileName">
+  <nhs-form-group nhs-validation-for="RoleProfileBase.NRPProfessionalGroupID">
     <label class="nhsuk-label" for="framework-name-hint">
-      <h2>What is the name of your role profile?</h2>
+      <h2>Which professional group does this role profile match to?</h2>
     </label>
-    <div class="nhsuk-hint" id="framework-name-hint">
-      Choose a title that identifies the job role or roles that this profile applies to and the scope of capabilities covered.
+    <span nhs-validation-for="RoleProfileBase.NRPProfessionalGroupID"></span>
+    <div class="nhsuk-radios nhsuk-u-margin-bottom-3 nhsuk-u-margin-top-3">
+      @foreach (var professionalGroup in Model.NRPProfessionalGroups)
+      {
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" name="RoleProfileBase.NRPProfessionalGroupID" id="radio-@professionalGroup.ID" checked="@(Model.RoleProfileBase.NRPProfessionalGroupID == professionalGroup.ID)" type="radio" value="@professionalGroup.ID" aria-describedby="radio-@professionalGroup.ID-item-hint">
+          <label class="nhsuk-label nhsuk-radios__label" for="radio-@professionalGroup.ID">
+            @professionalGroup.ProfessionalGroup
+          </label>
+        </div>
+      }
     </div>
-    <span nhs-validation-for="RoleProfileName"></span>
-    <input class="nhsuk-input" asp-for="RoleProfileName" id="roleprofilename" name="RoleProfileName" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="framework-name-hint">
   </nhs-form-group>
-  <input name="ID" type="hidden" asp-for="ID" />
-  <input name="Description" type="hidden" asp-for="Description" />
-  <input name="brandId" type="hidden" asp-for="BrandID" />
-  <input name="ownerAdminId" type="hidden" asp-for="OwnerAdminID" />
-  <input name="parentRoleProfileID" type="hidden" asp-for="ParentRoleProfileID" />
-  <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
-  <input name="national" type="hidden" asp-for="National" />
-  <input name="public" type="hidden" asp-for="Public" />
-  <input name="publishStatusId" type="hidden" asp-for="PublishStatusID" />
-  <input name="nrpProfessionalGroupID" type="hidden" asp-for="NRPProfessionalGroupID" />
-  <input name="nrpSubGroupID" type="hidden" asp-for="NRPSubGroupID" />
-  <input name="nrpRoleID" type="hidden" asp-for="NRPRoleID" />
-  <input name="userRole" type="hidden" asp-for="UserRole" />
+  <input name="ID" type="hidden" asp-for="RoleProfileBase.ID" />
+  <input name="ID" type="hidden" asp-for="RoleProfileBase.RoleProfileName" />
+  <input name="Description" type="hidden" asp-for="RoleProfileBase.Description" />
+  <input name="brandId" type="hidden" asp-for="RoleProfileBase.BrandID" />
+  <input name="ownerAdminId" type="hidden" asp-for="RoleProfileBase.OwnerAdminID" />
+  <input name="parentRoleProfileID" type="hidden" asp-for="RoleProfileBase.ParentRoleProfileID" />
+  <input name="publishStatusId" type="hidden" asp-for="RoleProfileBase.PublishStatusID" />
+  <input name="national" type="hidden" asp-for="RoleProfileBase.National" />
+  <input name="public" type="hidden" asp-for="RoleProfileBase.Public" />
+  <input name="publishStatusId" type="hidden" asp-for="RoleProfileBase.PublishStatusID" />
+  <input name="nrpSubGroupID" type="hidden" asp-for="RoleProfileBase.NRPSubGroupID" />
+  <input name="nrpRoleID" type="hidden" asp-for="RoleProfileBase.NRPRoleID" />
+  <input name="userRole" type="hidden" asp-for="RoleProfileBase.UserRole" />
   @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
   {
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="RoleProfileName" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+      Back
+    </a>
     <button class="nhsuk-button" type="submit">
       Continue
     </button>
@@ -88,7 +91,7 @@ else
   }
   else
   {
-    @if (Model.PublishStatusID == 3)
+    @if (Model.RoleProfileBase.PublishStatusID == 3)
     {
       <partial name="Shared/_PublishedWarning" />
     }
@@ -96,7 +99,7 @@ else
       Save
     </button>
     <div class="nhsuk-back-link">
-      <a class="nhsuk-back-link__link" asp-action="ViewRoleProfile" asp-route-frameworkId="@Model.ID" asp-route-tabname="Details">
+      <a class="nhsuk-back-link__link" asp-action="ViewRoleProfile" asp-route-frameworkId="@Model.RoleProfileBase.ID" asp-route-tabname="Details">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
         </svg>

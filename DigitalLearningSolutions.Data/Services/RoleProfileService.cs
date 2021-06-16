@@ -10,9 +10,19 @@
     using DigitalLearningSolutions.Data.Models.Email;
     public interface IRoleProfileService
     {
+        //GET DATA
         IEnumerable<RoleProfile> GetAllRoleProfiles(int adminId);
         IEnumerable<RoleProfile> GetRoleProfilesForAdminId(int adminId);
         RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId);
+        RoleProfileBase? GetRoleProfileByName(string roleProfileName, int adminId);
+        IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
+        //UPDATE DATA
+        bool UpdateRoleProfileName(int roleProfileId, int adminId, string roleProfileName);
+        //INSERT DATA
+
+        //DELETE DATA
+
+
     }
     public class RoleProfileService : IRoleProfileService
     {
@@ -85,6 +95,61 @@
                       FROM {RoleProfileBaseTables}
                       WHERE (rp.ID = @roleProfileId)",
               new { roleProfileId, adminId }
+          ).FirstOrDefault();
+        }
+
+        public bool UpdateRoleProfileName(int roleProfileId, int adminId, string roleProfileName)
+        {
+            if (roleProfileName.Length == 0 | adminId < 1 | roleProfileId < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating role profile name as it failed server side validation. AdminId: {adminId}, roleProfileName: {roleProfileName}, roleProfileId: {roleProfileId}"
+                );
+                return false;
+            }
+            int existingRoleProfiles = (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM RoleProfiles WHERE RoleProfileName = @roleProfileName AND ID <> @roleProfileId",
+                new { roleProfileName, roleProfileId });
+            if (existingRoleProfiles > 0)
+            {
+                return false;
+            }
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE RoleProfiles SET RoleProfileName = @roleProfileName, UpdatedByAdminID = @adminId
+                    WHERE ID = @roleProfileId",
+               new { roleProfileName, adminId, roleProfileId }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating role profile name as db update failed. " +
+                    $"RoleProfileName: {roleProfileName}, admin id: {adminId}, roleProfileId: {roleProfileId}"
+                );
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups()
+        {
+            return connection.Query<NRPProfessionalGroups>(
+                $@"SELECT ID, ProfessionalGroup, Active
+                    FROM   NRPProfessionalGroups
+                    WHERE (Active = 1)
+                    ORDER BY ProfessionalGroup"
+           );
+        }
+
+        public RoleProfileBase? GetRoleProfileByName(string roleProfileName, int adminId)
+        {
+            return connection.Query<RoleProfileBase>(
+               $@"SELECT {RoleProfileBaseFields} 
+                      FROM {RoleProfileBaseTables}
+                      WHERE (rp.RoleProfileName = @roleProfileName)",
+              new { roleProfileName, adminId }
           ).FirstOrDefault();
         }
     }

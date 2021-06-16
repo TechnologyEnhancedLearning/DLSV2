@@ -168,5 +168,86 @@
             }
             return View("Name", roleProfileBase);
         }
+        [HttpPost]
+        [Route("/RoleProfiles/Name/{actionname}/{roleProfileId}")]
+        [Route("/RoleProfiles/Name/{actionname}")]
+        public IActionResult SaveProfileName(RoleProfileBase roleProfileBase, string actionname, int roleProfileId = 0)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.Remove(nameof(RoleProfileBase.RoleProfileName));
+                ModelState.AddModelError(nameof(RoleProfileBase.RoleProfileName), "Please enter a valid role profile name (between 3 and 255 characters)");
+                // do something
+                return View("Name", roleProfileBase);
+            }
+            else
+            {
+                if (actionname == "New")
+                {
+                    var sameItems = roleProfileService.GetRoleProfileByName(roleProfileBase.RoleProfileName, GetAdminID());
+                    if (sameItems != null)
+                    {
+                        ModelState.Remove(nameof(RoleProfileBase.RoleProfileName));
+                        ModelState.AddModelError(nameof(RoleProfileBase.RoleProfileName), "Another role profile exists with that name. Please choose a different name.");
+                        // do something
+                        return View("Name", roleProfileBase);
+                    }
+                    SessionNewRoleProfile sessionNewRoleProfile = TempData.Peek<SessionNewRoleProfile>();
+                    sessionNewRoleProfile.RoleProfileBase = roleProfileBase;
+                    TempData.Set(sessionNewRoleProfile);
+                    return RedirectToAction("RoleProfileNationalProfessionalGroup", "RoleProfiles", new { actionname });
+                }
+                else
+                {
+                    var adminId = GetAdminID();
+                    var isUpdated = roleProfileService.UpdateRoleProfileName(roleProfileBase.ID, adminId, roleProfileBase.RoleProfileName);
+                    if (isUpdated)
+                    {
+                        return RedirectToAction("ViewRoleProfile", new { tabname = "Details", roleProfileId });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(nameof(RoleProfileBase.RoleProfileName), "Another role profile exists with that name. Please choose a different name.");
+                        // do something
+                        return View("Name", roleProfileBase);
+                    }
+                }
+
+            }
+        }
+        [Route("/RoleProfiles/ProfessionalGroup/{actionname}/{roleProfileId}")]
+        [Route("/RoleProfiles/ProfessionalGroup/{actionname}")]
+        public IActionResult RoleProfileNationalProfessionalGroup(string actionname, int roleProfileId = 0)
+        {
+            var adminId = GetAdminID();
+            RoleProfileBase? roleProfileBase;
+            if (roleProfileId > 0)
+            {
+                roleProfileBase = roleProfileService.GetRoleProfileBaseById(roleProfileId, adminId);
+                if (roleProfileBase == null)
+                {
+                    logger.LogWarning($"Failed to load Professional Group page for roleProfileId: {roleProfileId} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (roleProfileBase.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
+            }
+            else
+            {
+                SessionNewRoleProfile sessionNewRoleProfile = TempData.Peek<SessionNewRoleProfile>();
+                TempData.Set(sessionNewRoleProfile);
+                roleProfileBase = sessionNewRoleProfile.RoleProfileBase;
+                TempData.Set(sessionNewRoleProfile);
+            }
+            var professionalGroups = roleProfileService.GetNRPProfessionalGroups();
+            var model = new ProfessionalGroupViewModel()
+            {
+                NRPProfessionalGroups = professionalGroups,
+                RoleProfileBase = roleProfileBase
+            };
+            return View("ProfessionalGroup", model);
+        }
     }
 }
