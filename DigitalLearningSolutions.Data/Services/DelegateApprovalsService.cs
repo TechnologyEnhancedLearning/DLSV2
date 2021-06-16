@@ -205,13 +205,13 @@
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                 <p>Dear {delegateName},</p>
                                 <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.</p>
-                                <p>There are several reasons that this may have happened including:
-                                    <ul>
-                                        <li>You registered with a non-work email address which was not recognised by the administrator</li>
-                                        <li>Your DLS centre chooses to manage delegate registration internally</li>
-                                        <li>You have accidentally chosen the wrong centre during the registration process.</li>
-                                    </ul>
-                                If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre</a> page to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
+                                <p>There are several reasons that this may have happened including:</p>
+                                <ul>
+                                    <li>You registered with a non-work email address which was not recognised by the administrator</li>
+                                    <li>Your DLS centre chooses to manage delegate registration internally</li>
+                                    <li>You have accidentally chosen the wrong centre during the registration process.</li>
+                                </ul>
+                                <p>If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre</a> page to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
                             </body >"
             };
 
