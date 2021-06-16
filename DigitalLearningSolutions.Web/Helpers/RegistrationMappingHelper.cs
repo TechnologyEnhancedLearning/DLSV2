@@ -24,7 +24,7 @@
             );
         }
 
-        public static SummaryViewModel MapDataToSummaryViewModel(DelegateRegistrationData data)
+        public static SummaryViewModel MapDataToSummary(DelegateRegistrationData data)
         {
             return new SummaryViewModel
             {
@@ -35,7 +35,7 @@
             };
         }
 
-        public static PersonalInformationViewModel MapDataToRegisterViewModel(DelegateRegistrationData data)
+        public static PersonalInformationViewModel MapDataToPersonalInformation(DelegateRegistrationData data)
         {
             return new PersonalInformationViewModel
             {
@@ -47,7 +47,7 @@
             };
         }
 
-        public static LearnerInformationViewModel MapDataToLearnerInformationViewModel(
+        public static LearnerInformationViewModel MapDataToLearnerInformation(
             DelegateRegistrationData data
         )
         {
@@ -63,7 +63,7 @@
             };
         }
 
-        public static DelegateRegistrationData MapRegisterViewModelToData(
+        public static DelegateRegistrationData MapPersonalInformationToData(
             PersonalInformationViewModel model,
             DelegateRegistrationData data
         )
@@ -75,7 +75,7 @@
             return data;
         }
 
-        public static DelegateRegistrationData MapLearnerInformationViewModelToData(
+        public static DelegateRegistrationData MapLearnerInformationToData(
             LearnerInformationViewModel model,
             DelegateRegistrationData data
         )

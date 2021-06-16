@@ -68,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
-            var model = RegistrationMappingHelper.MapDataToRegisterViewModel(data);
+            var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
             PopulatePersonalInformationExtraFields(model);
 
             // Check this email and centre combination doesn't already exist in case we were redirected
@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 ClearCustomPromptAnswers(data);
             }
 
-            data = RegistrationMappingHelper.MapRegisterViewModelToData(model, data);
+            data = RegistrationMappingHelper.MapPersonalInformationToData(model, data);
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
@@ -114,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var model = RegistrationMappingHelper.MapDataToLearnerInformationViewModel(data);
+            var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
             PopulateLearnerInformationExtraFields(model, data);
             return View(model);
         }
@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(model);
             }
 
-            data = RegistrationMappingHelper.MapLearnerInformationViewModelToData(model, data);
+            data = RegistrationMappingHelper.MapLearnerInformationToData(model, data);
             TempData.Set(data);
 
             return RedirectToAction("Password");
@@ -183,7 +183,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = RegistrationMappingHelper.MapDataToSummaryViewModel(data);
+            var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
             PopulateSummaryExtraFields(viewModel, data);
             return View(viewModel);
         }
@@ -201,7 +201,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                var viewModel = RegistrationMappingHelper.MapDataToSummaryViewModel(data);
+                var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
                 PopulateSummaryExtraFields(viewModel, data);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);
