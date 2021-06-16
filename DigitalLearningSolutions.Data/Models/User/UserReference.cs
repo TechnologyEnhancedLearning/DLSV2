@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.Models.User
 {
+    using System;
     using DigitalLearningSolutions.Data.Enums;
 
     public class UserReference
@@ -15,20 +16,32 @@ namespace DigitalLearningSolutions.Data.Models.User
 
         public override bool Equals(object? obj)
         {
-            if (obj is UserReference ur)
+            if (ReferenceEquals(null, obj))
             {
-                return Id == ur.Id && UserType.Equals(ur.UserType);
+                return false;
             }
 
-            return false;
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            return Equals((UserReference)obj);
+        }
+
+        private bool Equals(UserReference other)
+        {
+            return Id == other.Id && UserType.Equals(other.UserType);
         }
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return 93 + 37 * (Id.GetHashCode() + 23 * UserType.GetHashCode());
-            }
+            return HashCode.Combine(Id, UserType);
         }
     }
 }
