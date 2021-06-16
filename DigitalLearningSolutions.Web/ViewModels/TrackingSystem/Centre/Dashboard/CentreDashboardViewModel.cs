@@ -13,10 +13,11 @@
             int delegates,
             int courses,
             int admins,
-            int supportTickets
+            int supportTickets,
+            int centreRank
         )
         {
-            CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress);
+            CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress, centreRank);
             FirstName = string.IsNullOrWhiteSpace(firstName) ? "User" : firstName;
             CourseCategory = categoryName ?? "all";
             NumberOfDelegates = delegates;

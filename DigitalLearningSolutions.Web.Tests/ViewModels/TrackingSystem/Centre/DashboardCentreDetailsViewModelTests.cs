@@ -14,7 +14,7 @@
             const string userIp = "1.1.1.1";
             var centre =
                 CentreTestHelper.GetDefaultCentre();
-            var viewModel = new DashboardCentreDetailsViewModel(centre, userIp);
+            var viewModel = new DashboardCentreDetailsViewModel(centre, userIp, 12);
 
             // Then
             using (new AssertionScope())
@@ -29,6 +29,7 @@
                 viewModel.ApprovedIps.Should().BeEquivalentTo(centre.IpPrefix);
                 viewModel.Telephone.Should().BeEquivalentTo(centre.ContactTelephone);
                 viewModel.Email.Should().BeEquivalentTo(centre.ContactEmail);
+                viewModel.CentreRank.Should().Be(12);
             }
         }
     }

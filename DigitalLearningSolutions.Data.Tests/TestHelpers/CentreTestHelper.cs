@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DbModels;
 
     public static class CentreTestHelper
     {
@@ -64,6 +65,17 @@
                 TrainerSpots = trainerSpots,
                 IpPrefix = ipPrefix,
                 ContractType = contractType
+            };
+        }
+
+        public static CentreRank GetCentreRank(int rank)
+        {
+            return new CentreRank
+            {
+                CentreId = rank,
+                Rank = rank,
+                CentreName = $"Centre {rank}",
+                Sum = 10000-rank*10
             };
         }
     }

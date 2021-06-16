@@ -1,7 +1,13 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
+$current-centre-highlight: $color_nhsuk-pale-yellow;
+
 .current-centre {
-  background-color: $color_nhsuk-grey-3;
+  background-color: $current-centre-highlight;
+
+  &:hover {
+    background-color: $current-centre-highlight;
+  }
 }
 
 .cell-left-padding {

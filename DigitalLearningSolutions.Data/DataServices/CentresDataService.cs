@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
 
     public interface ICentresDataService
@@ -14,8 +15,7 @@
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
 
-        void UpdateCentreManagerDetails
-        (
+        void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
             string lastName,
@@ -23,8 +23,7 @@
             string? telephone
         );
 
-        void UpdateCentreWebsiteDetails
-        (
+        void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
             bool showOnMap,
@@ -39,6 +38,8 @@
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
+
+        IEnumerable<CentreRank> GetCentreRanks(DateTime dateSince, int regionId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -54,8 +55,7 @@
 
         public string? GetBannerText(int centreId)
         {
-            return connection.QueryFirstOrDefault<string?>
-            (
+            return connection.QueryFirstOrDefault<string?>(
                 @"SELECT BannerText
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -65,8 +65,7 @@
 
         public string? GetCentreName(int centreId)
         {
-            var name = connection.QueryFirstOrDefault<string?>
-            (
+            var name = connection.QueryFirstOrDefault<string?>(
                 @"SELECT CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -97,8 +96,7 @@
 
         public Centre? GetCentreDetailsById(int centreId)
         {
-            var centre = connection.QueryFirstOrDefault<Centre>
-            (
+            var centre = connection.QueryFirstOrDefault<Centre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
                             c.RegionID,
@@ -147,8 +145,7 @@
             return centre;
         }
 
-        public void UpdateCentreManagerDetails
-        (
+        public void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
             string lastName,
@@ -156,8 +153,7 @@
             string? telephone
         )
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @"UPDATE Centres SET
                     ContactForename = @firstName,
                     ContactSurname = @lastName,
@@ -168,8 +164,7 @@
             );
         }
 
-        public void UpdateCentreWebsiteDetails
-        (
+        public void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
             bool showOnMap,
@@ -182,8 +177,7 @@
             string? otherInformation = null
         )
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @"UPDATE Centres SET
                     pwTelephone = @telephone,
                     pwEmail = @email,
@@ -213,8 +207,7 @@
 
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
-            var info = connection.QueryFirstOrDefault<(string, string, string)>
-            (
+            var info = connection.QueryFirstOrDefault<(string, string, string)>(
                 @"SELECT ContactForename, ContactSurname, ContactEmail
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -225,8 +218,7 @@
 
         public string[] GetCentreIpPrefixes(int centreId)
         {
-            var ipPrefixString = connection.QueryFirstOrDefault<string?>
-            (
+            var ipPrefixString = connection.QueryFirstOrDefault<string?>(
                 @"SELECT IPPrefix
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -235,6 +227,30 @@
 
             var ipPrefixes = ipPrefixString?.Split(',', StringSplitOptions.RemoveEmptyEntries);
             return ipPrefixes ?? new string[0];
+        }
+
+        public IEnumerable<CentreRank> GetCentreRanks(DateTime dateSince, int regionId)
+        {
+            return connection.Query<CentreRank>(
+                @"SELECT 
+                        RANK() over (ORDER BY tc.CentreIDCount DESC) as [Rank],
+                        c.CentreID,
+                        c.CentreName,
+                        tc.CentreIDCount as [Sum]
+                    FROM 
+	                ( 
+	                    SELECT
+                            Count(c.CentreID) as CentreIDCount,
+                            c.CentreID
+	                    FROM [Sessions] s 
+	                    INNER JOIN Candidates c on s.CandidateID = c.CandidateID 
+	                    INNER JOIN Centres ct on c.CentreID = ct.CentreID
+	                    WHERE s.LoginTime > @dateSince AND c.CentreID <> 101 AND (ct.RegionID = @RegionID OR @RegionID = -1)
+	                    GROUP BY c.CentreID
+                    ) as tc 
+                    INNER JOIN Centres c ON tc.CentreID = c.CentreID",
+                new { dateSince, regionId }
+            );
         }
     }
 }
