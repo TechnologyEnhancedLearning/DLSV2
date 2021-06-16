@@ -36,10 +36,10 @@
             var currentPassword = model.CurrentPassword!;
 
             var adminId = User.GetAdminId();
-            var candidateId = User.GetCandidateId();
+            var delegateId = User.GetCandidateId();
 
             var passwordIsValid =
-                userService.GetVerifiedLinkedUsersAccounts(adminId, candidateId, currentPassword).Any();
+                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword).Any();
 
             if (!passwordIsValid)
             {
@@ -47,12 +47,12 @@
                 return View(model);
             }
 
-            var (admin, candidate) = userService.GetUsersById(adminId, candidateId);
+            var (admin, delegateUser) = userService.GetUsersById(adminId, delegateId);
 
 
             var newPassword = model.Password!;
 
-            await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, newPassword);
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, delegateUser, newPassword);
 
             return View("Success");
         }

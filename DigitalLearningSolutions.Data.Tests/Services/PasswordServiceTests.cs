@@ -82,11 +82,11 @@
         {
             // Given
             var admin = Builder<AdminUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
-            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            var delegateUser = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
             A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
 
             // When
-            await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, delegateUser, "new-password");
 
             // Then
             ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
@@ -112,11 +112,11 @@
         public async Task Changing_password_for_linked_accounts_uses_delegate_email_if_no_admin_email()
         {
             // Given
-            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
+            var delegateUser = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = "email").Build();
             A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
 
             // When
-            await passwordService.ChangePasswordForLinkedUserAccounts(null, candidate, "new-password");
+            await passwordService.ChangePasswordForLinkedUserAccounts(null, delegateUser, "new-password");
 
             // Then
             ThenHasSetPasswordForEmailOnce("email", "hash-of-password");
@@ -128,12 +128,12 @@
         {
             // Given
             var admin = Builder<AdminUser>.CreateNew().With(u => u.EmailAddress = null).With(u => u.Id = 34).Build();
-            var candidate = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = null).With(u => u.Id = 309)
+            var delegateUser = Builder<DelegateUser>.CreateNew().With(u => u.EmailAddress = null).With(u => u.Id = 309)
                 .Build();
             A.CallTo(() => cryptoService.GetPasswordHash("new-password")).Returns("hash-of-password");
 
             // When
-            await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, "new-password");
+            await passwordService.ChangePasswordForLinkedUserAccounts(admin, delegateUser, "new-password");
 
             // Then
             ThenHasNotSetPasswordByEmail();

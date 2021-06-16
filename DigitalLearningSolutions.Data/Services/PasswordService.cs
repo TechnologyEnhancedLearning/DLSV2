@@ -12,7 +12,7 @@
 
         Task ChangePasswordForLinkedUserAccounts(
             AdminUser? admin,
-            DelegateUser? candidate,
+            DelegateUser? delegateUser,
             string newPassword
         );
     }
@@ -42,11 +42,11 @@
 
         public async Task ChangePasswordForLinkedUserAccounts(
             AdminUser? admin,
-            DelegateUser? candidate,
+            DelegateUser? delegateUser,
             string newPassword
         )
         {
-            var emailIfAny = admin?.EmailAddress ?? candidate?.EmailAddress;
+            var emailIfAny = admin?.EmailAddress ?? delegateUser?.EmailAddress;
 
             if (!string.IsNullOrWhiteSpace(emailIfAny))
             {
@@ -59,9 +59,9 @@
                     await ChangePasswordAsync(new UserReference(admin.Id, UserType.AdminUser), newPassword);
                 }
 
-                if (candidate != null)
+                if (delegateUser != null)
                 {
-                    await ChangePasswordAsync(new UserReference(candidate.Id, UserType.DelegateUser), newPassword);
+                    await ChangePasswordAsync(new UserReference(delegateUser.Id, UserType.DelegateUser), newPassword);
                 }
             }
         }
