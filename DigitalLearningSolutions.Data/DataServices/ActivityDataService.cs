@@ -8,7 +8,7 @@
 
     public interface IActivityDataService
     {
-        MonthOfActivity GetActivityForMonthAndYear(int year, int month);
+        IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int year, IEnumerable<int> months);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -20,19 +20,20 @@
             this.connection = connection;
         }
 
-        public MonthOfActivity GetActivityForMonthAndYear(int year, int month)
+        public IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int year, IEnumerable<int> months)
         {
-            return connection.Query<MonthOfActivity>(
+            return connection.Query<IEnumerable<MonthOfActivity>>(
                 @"SELECT
-                        @year AS Year,
-                        @month AS Month,
+                        LogYear AS Year,
+                        LogMonth AS Month,
                         SUM(CONVERT(INT, Completed)) AS Completions,
                         SUM(CONVERT(INT, Evaluated)) AS Evaluations,
                         SUM(CONVERT(INT, Registered)) AS Registrations 
                     FROM tActivityLog
-                        WHERE LogYear = @year
-                        AND LogMonth = @month",
-            new {year, month}
+                        WHERE (LogYear = @year AND LogMonth IN @months)
+                    GROUP BY LogYear, LogMonth
+                    ORDER BY LogYear, LogMonth",
+            new {year, months}
             ).First();
         }
     }
