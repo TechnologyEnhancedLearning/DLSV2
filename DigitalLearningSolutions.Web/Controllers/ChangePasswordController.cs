@@ -34,7 +34,6 @@
             }
 
             var currentPassword = model.CurrentPassword!;
-            var newPassword = model.Password!;
 
             var adminId = User.GetAdminId();
             var candidateId = User.GetCandidateId();
@@ -44,11 +43,15 @@
 
             if (!passwordIsValid)
             {
-                ModelState.AddModelError(nameof(model.CurrentPassword), "The password you have entered is incorrect.");
+                ModelState.AddModelError(nameof(model.CurrentPassword), "The password you have entered is incorrect");
                 return View(model);
             }
 
             var (admin, candidate) = userService.GetUsersById(adminId, candidateId);
+
+
+            var newPassword = model.Password!;
+
             await passwordService.ChangePasswordForLinkedUserAccounts(admin, candidate, newPassword);
 
             return View("Success");
