@@ -20,7 +20,7 @@
         @if (Model.IsCentreSpecificRegistration) {
           <p class="nhsuk-body-l">
             Please enter your personal details to start the registration process
-            to access all Digital Learning Solutions services at <b>@ViewBag.CentreName</b>.
+            to access all Digital Learning Solutions services at <b>@Model.CentreName</b>.
             <a class="nhsuk-action-link__link nhsuk-link--no-visited-state nhsuk-u-padding-left-0 nhsuk-body-m nhsuk-u-margin-top-2" asp-action="Index">
               Not the right centre? Click here to change.
             </a>
@@ -39,7 +39,7 @@
             hint-text=""
             css-class="nhsuk-u-width-full"
             default-option="Select a centre"
-            select-list-options="@ViewBag.CentreOptions" />
+            select-list-options="@Model.CentreOptions" />
         }
       </div>
 

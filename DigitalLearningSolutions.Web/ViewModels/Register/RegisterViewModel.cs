@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class RegisterViewModel
     {
@@ -22,10 +24,8 @@
 
         public bool IsCentreSpecificRegistration { get; set; }
 
-        public void SetCentreSpecificRegistration(int? centreId)
-        {
-            IsCentreSpecificRegistration = centreId != null;
-            Centre = centreId;
-        }
+        public string? CentreName { get; set; }
+
+        public IEnumerable<SelectListItem>? CentreOptions { get; set; }
     }
 }

@@ -34,9 +34,9 @@
         hint-text=""
         css-class="nhsuk-u-width-one-half"
         default-option="Select a job group"
-        select-list-options="@ViewBag.JobGroupOptions" />
+        select-list-options="@Model.JobGroupOptions" />
 
-      @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+      @foreach (EditCustomFieldViewModel customField in Model.CustomFields) {
         if (customField.Options.Any()) {
           <vc:select-list
             asp-for="@("Answer" + customField.CustomFieldId)"

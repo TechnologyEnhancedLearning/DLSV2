@@ -1,6 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class LearnerInformationViewModel
     {
@@ -18,5 +21,9 @@
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
+
+        public List<EditCustomFieldViewModel>? CustomFields { get; set; }
+
+        public IEnumerable<SelectListItem>? JobGroupOptions { get; set; }
     }
 }
