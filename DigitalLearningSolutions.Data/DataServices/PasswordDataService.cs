@@ -10,7 +10,6 @@
 
     public interface IPasswordDataService
     {
-        Task SetPasswordByUserReferenceAsync(UserReference userRef, string passwordHash);
         void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash);
         Task SetPasswordByEmailAsync(string email, string passwordHash);
         Task SetPasswordForUsersAsync(IEnumerable<UserReference> users, string passwordHash);
@@ -23,16 +22,6 @@
         public PasswordDataService(IDbConnection connection)
         {
             this.connection = connection;
-        }
-
-        public async Task SetPasswordByUserReferenceAsync(UserReference userRef, string passwordHash)
-        {
-            await connection.ExecuteAsync(
-                $@"UPDATE {userRef.UserType.TableName}
-                    SET Password = @Password
-                    WHERE {userRef.UserType.IdColumnName} = @UserId;",
-                new { Password = passwordHash, UserId = userRef.Id }
-            );
         }
 
         public void SetPasswordByCandidateNumber(string candidateNumber, string passwordHash)

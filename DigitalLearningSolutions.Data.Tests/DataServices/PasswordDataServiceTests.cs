@@ -3,9 +3,6 @@
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -34,7 +31,7 @@
                 var password = "hashedPassword";
                 var candidateNumber = "KW1";
                 passwordDataService.SetPasswordByCandidateNumber(candidateNumber, password);
-                var result = userDataService.GetDelegateUserById(1)?.Password;
+                var result = userDataService.GetDelegateUserById(1)!.Password;
 
                 // Then
                 result.Should().Be(password);
@@ -116,42 +113,46 @@
         }
 
         [Test]
-        public async Task Setting_password_by_user_reference_changes_password()
+        public async Task Setting_password_for_user_account_set_changes_password()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
+            var existingCandidateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
+            var existingAdminRef = UserTestHelper.GetDefaultAdminUser().ToUserReference();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByUserReferenceAsync(
-                new UserReference(existingCandidate.Id, UserType.DelegateUser),
+            await passwordDataService.SetPasswordForUsersAsync(
+                new[] { existingCandidateRef, existingAdminRef },
                 newPasswordHash
             );
 
             // Then
-            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
+            userDataService.GetAdminUserById(existingAdminRef.Id)?.Password.Should().Be(newPasswordHash);
+            userDataService.GetDelegateUserById(existingCandidateRef.Id)?.Password.Should()
                 .Be(newPasswordHash);
         }
 
         [Test]
-        public async Task Setting_password_by_delegate_user_reference_does_not_change_password_for_corresponding_admin()
+        public async Task Can_set_password_for_delegate_only()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
+            var existingCandidateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByUserReferenceAsync(
-                new UserReference(existingCandidate.Id, UserType.DelegateUser),
+            await passwordDataService.SetPasswordForUsersAsync(
+                new[] { existingCandidateRef },
                 newPasswordHash
             );
 
             // Then
-            userDataService.GetAdminUserById(existingCandidate.Id)?.Password.Should()
+            userDataService.GetDelegateUserById(UserTestHelper.GetDefaultDelegateUser().Id)?.Password.Should()
+                .Be(newPasswordHash);
+            userDataService.GetAdminUserById(UserTestHelper.GetDefaultAdminUser().Id)?.Password.Should()
                 .NotBe(newPasswordHash);
         }
     }

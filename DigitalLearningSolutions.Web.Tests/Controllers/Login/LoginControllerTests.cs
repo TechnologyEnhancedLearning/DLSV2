@@ -438,7 +438,7 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, delegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((null, delegates));
+                .Returns(new UserAccountSet(null, delegates));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, delegates));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
