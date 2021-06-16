@@ -7,23 +7,17 @@
 <h2 class="side-nav__heading">Delegates</h2>
 <ul class="nhsuk-list side-nav__list">
 
-  <vc:side-menu-link
-    asp-action=""
-    asp-controller=""
+  <vc:side-menu-link-with-href
     href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates"
     link-text="All delegates"
     is-current-page="Model == DelegatePage.AllDelegates" />
 
-  <vc:side-menu-link
-    asp-action=""
-    asp-controller=""
+  <vc:side-menu-link-with-href
     href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups"
     link-text="Delegate groups"
     is-current-page="Model == DelegatePage.DelegateGroups" />
 
-  <vc:side-menu-link
-    asp-action=""
-    asp-controller=""
+  <vc:side-menu-link-with-href
     href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates"
     link-text="Course delegates"
     is-current-page="Model == DelegatePage.CourseDelegates" />
@@ -31,7 +25,6 @@
   <vc:side-menu-link
     asp-action="Index"
     asp-controller="DelegateApprovals"
-    href=""
     link-text="Approve registrations"
     is-current-page="Model == DelegatePage.ApproveDelegateRegistrations" />
 

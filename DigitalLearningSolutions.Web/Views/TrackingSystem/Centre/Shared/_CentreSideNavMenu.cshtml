@@ -9,27 +9,23 @@
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Dashboard"
-                     href=""
                      link-text="Centre dashboard"
                      is-current-page="Model == CentrePage.Dashboard" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="CentreConfiguration"
-                     href=""
                      link-text="Centre configuration"
                      is-current-page="Model == CentrePage.Configuration" />
 
   @if (User.HasCentreManagerPermissions()) {
     <vc:side-menu-link asp-action="Index"
                        asp-controller="Administrator"
-                       href=""
                        link-text="Administrators"
                        is-current-page="Model == CentrePage.Administrators" /> 
   }
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Reports"
-                     href=""
                      link-text="Reports"
                      is-current-page="Model == CentrePage.Reports" />
 

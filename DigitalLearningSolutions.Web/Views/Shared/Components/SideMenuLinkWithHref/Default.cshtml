@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@model SideMenuLinkViewModel
+@model SideMenuLinkWithHrefViewModel
 
 @{
   var selectedClass = Model.IsCurrentPage ? "side-nav__item--selected" : string.Empty;
@@ -7,5 +7,5 @@
 }
 
 <li class="side-nav__item @selectedClass" aria-current="@ariaCurrent">
-  <a class="side-nav__link" asp-action="@Model.AspAction" asp-controller="@Model.AspController" asp-all-route-data="@Model.AspAllRouteData">@Model.LinkText</a> 
+  <a class="side-nav__link" href="@Model.Href" asp-all-route-data="@Model.AspAllRouteData">@Model.LinkText</a>
 </li>
