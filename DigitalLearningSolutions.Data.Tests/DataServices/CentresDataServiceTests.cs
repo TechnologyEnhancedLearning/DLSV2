@@ -183,8 +183,8 @@
                 const string email = "totallyrealemail@noreally.itis";
                 const string postcode = "POST CDE";
                 const bool showOnMap = false;
-                const double longitude = -1.1493326;
                 const double latitude = 52.9534611;
+                const double longitude = -1.1493326;
                 const string openingHours = "2:30am - 2:31am Sundays";
                 const string webAddress = "really.boring.website";
                 const string organisationsCovered = "Megadodo Publications, Infinidim Enterprises";
@@ -197,8 +197,8 @@
                     2,
                     postcode,
                     showOnMap,
-                    longitude,
                     latitude,
+                    longitude,
                     telephone,
                     email,
                     openingHours,
@@ -216,8 +216,8 @@
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
                     updatedCentre.ShowOnMap.Should().BeFalse();
-                    updatedCentre.Longitude.Should().Be(longitude);
                     updatedCentre.Latitude.Should().Be(latitude);
+                    updatedCentre.Longitude.Should().Be(longitude);
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
                     updatedCentre.CentreWebAddress.Should().BeEquivalentTo(webAddress);
                     updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);

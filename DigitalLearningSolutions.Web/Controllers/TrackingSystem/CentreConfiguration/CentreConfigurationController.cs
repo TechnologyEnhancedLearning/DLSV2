@@ -109,8 +109,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
                 return RedirectToAction("Error", "LearningSolutions");
             }
 
-            var longitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Longitude);
             var latitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Latitude);
+            var longitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Longitude);
 
             var centreId = User.GetCentreId();
 
@@ -118,8 +118,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
                 centreId,
                 model.CentrePostcode,
                 model.ShowCentreOnMap,
-                longitude,
                 latitude,
+                longitude,
                 model.CentreTelephone,
                 model.CentreEmail!,
                 model.OpeningHours,

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CentreConfiguration
 {
+    using System.Globalization;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.External.Maps;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
@@ -13,20 +14,18 @@
 
     public class CentreConfigurationControllerTests
     {
-        private ICentresDataService centresDataService = null!;
+        private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
+        private readonly IMapsApiHelper mapsApiHelper = A.Fake<IMapsApiHelper>();
+        private readonly ILogger<CentreConfigurationController> logger =
+            A.Fake<ILogger<CentreConfigurationController>>();
         private CentreConfigurationController controller = null!;
-        private ILogger<CentreConfigurationController> logger = null!;
-        private IMapsApiHelper mapsApiHelper = null!;
 
         [SetUp]
         public void Setup()
         {
-            centresDataService = A.Fake<ICentresDataService>();
-            mapsApiHelper = A.Fake<IMapsApiHelper>();
-            logger = A.Fake<ILogger<CentreConfigurationController>>();
-
             controller =
-                new CentreConfigurationController(centresDataService, mapsApiHelper, logger).WithDefaultContext()
+                new CentreConfigurationController(centresDataService, mapsApiHelper, logger)
+                    .WithDefaultContext()
                     .WithMockUser(true);
 
             A.CallTo(
@@ -88,21 +87,10 @@
         {
             // Given
             var model = new EditCentreWebsiteDetailsViewModel { CentrePostcode = "AA123" };
+            const double latitude = 50.123;
+            const double longitude = -3.01;
             A.CallTo(() => mapsApiHelper.GeocodePostcode(A<string>._))
-                .Returns(
-                    new MapsResponse
-                    {
-                        Status = "OK",
-                        Results = new[]
-                        {
-                            new Map
-                            {
-                                Geometry = new Geometry
-                                    { Location = new Coordinates { Latitude = "50.123", Longitude = "-3.01" } }
-                            }
-                        }
-                    }
-                );
+                .Returns(CreateSuccessfulMapsResponse(latitude, longitude));
 
             // When
             var result = controller.EditCentreWebsiteDetails(model);
@@ -114,8 +102,8 @@
                     A<int>._,
                     "AA123",
                     A<bool>._,
-                    -3.01,
-                    50.123,
+                    latitude,
+                    longitude,
                     A<string>._,
                     A<string>._,
                     A<string>._,
@@ -125,6 +113,28 @@
                     A<string>._
                 )
             ).MustHaveHappened();
+        }
+
+        private MapsResponse CreateSuccessfulMapsResponse(double latitude, double longitude)
+        {
+            return new MapsResponse
+            {
+                Status = "OK",
+                Results = new[]
+                {
+                    new Map
+                    {
+                        Geometry = new Geometry
+                        {
+                            Location = new Coordinates
+                            {
+                                Latitude = latitude.ToString(CultureInfo.CreateSpecificCulture("en-GB")),
+                                Longitude = longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"))
+                            }
+                        }
+                    }
+                }
+            };
         }
     }
 }
