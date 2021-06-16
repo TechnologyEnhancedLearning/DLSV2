@@ -1,0 +1,111 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
+@using Microsoft.Extensions.Configuration
+@model CentreDashboardViewModel
+
+<details class="nhsuk-details nhsuk-expander bottom-margin-nhsuk-card">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre details
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list details-list-with-button">
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.CentreName
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre number
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.CentreId
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Region
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.Region
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Contract type
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.ContractType
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre manager
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.CentreManager
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.Email
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Contact number
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.Telephone
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre support details
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.BannerText
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Your IP address
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.IpAddress
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Pre-approved IPs
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CentreDetails.ApprovedIps
+        </dd>
+      </div>
+
+    </dl>
+
+    <a class="nhsuk-button" role="button" asp-controller="CentreConfiguration" asp-action="Index">
+      Edit centre details
+    </a>
+  </div>
+</details>

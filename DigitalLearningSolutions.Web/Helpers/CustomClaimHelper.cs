@@ -11,7 +11,8 @@
 
         public static int? GetCandidateId(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+            var id = user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+            return id == 0 ? null : id;
         }
 
         public static int GetCandidateIdKnownNotNull(this ClaimsPrincipal user)
@@ -74,6 +75,12 @@
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
+                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
+        }
+
+        public static bool HasCentreManagerPermissions(this ClaimsPrincipal user)
+        {
+            return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
         }
     }

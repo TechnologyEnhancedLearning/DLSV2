@@ -40,13 +40,13 @@
             {
                 passwordResetService.GenerateAndSendPasswordResetLink
                 (
-                    model.EmailAddress,
+                    model.EmailAddress.Trim(),
                     baseUrl
                 );
             }
             catch (UserAccountNotFoundException)
             {
-                ModelState.AddModelError("EmailAddress", "User with this email address does not exist. Please try again.");
+                ModelState.AddModelError("EmailAddress", "A user with this email address could not be found");
 
                 return View(model);
             }

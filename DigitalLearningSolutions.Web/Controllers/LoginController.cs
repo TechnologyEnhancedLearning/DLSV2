@@ -54,10 +54,10 @@
                 return View("Index", model);
             }
 
-            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username);
+            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
             if (adminUser == null && delegateUsers.Count == 0)
             {
-                ModelState.AddModelError("Username", "No account with that email address or user ID could be found.");
+                ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
                 return View("Index", model);
             }
 
@@ -65,7 +65,7 @@
                 loginService.VerifyUsers(model.Password, adminUser, delegateUsers);
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
-                ModelState.AddModelError("Password", "The password you have entered is incorrect.");
+                ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
             }
 

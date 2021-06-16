@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -23,10 +24,15 @@
         public const string SaveAction = "save";
         private const string CookieName = "AddRegistrationPromptData";
         private readonly ICustomPromptsService customPromptsService;
+        private readonly IUserDataService userDataService;
 
-        public RegistrationPromptsController(ICustomPromptsService customPromptsService)
+        public RegistrationPromptsController(
+            ICustomPromptsService customPromptsService,
+            IUserDataService userDataService
+        )
         {
             this.customPromptsService = customPromptsService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index()
@@ -41,7 +47,7 @@
         }
 
         [HttpGet]
-        [Route("{promptNumber}/Edit")]
+        [Route("{promptNumber:int}/Edit")]
         public IActionResult EditRegistrationPrompt(int promptNumber)
         {
             var centreId = User.GetCentreId();
@@ -149,8 +155,8 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList().
-                Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
+            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList()
+                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
             return View(model);
@@ -163,8 +169,7 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
-            if (customPromptsService.AddCustomPromptToCentre
-            (
+            if (customPromptsService.AddCustomPromptToCentre(
                 User.GetCentreId(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
@@ -176,6 +181,42 @@
             }
 
             return RedirectToAction("Error", "LearningSolutions");
+        }
+
+        [HttpGet]
+        [Route("{promptNumber:int}/Remove")]
+        public IActionResult RemoveRegistrationPrompt(int promptNumber)
+        {
+            var delegateWithAnswerCount =
+                userDataService.GetDelegateCountWithAnswerForPrompt(User.GetCentreId(), promptNumber);
+
+            if (delegateWithAnswerCount == 0)
+            {
+                return RemoveRegistrationPromptAndRedirect(promptNumber);
+            }
+
+            var promptName =
+                customPromptsService.GetPromptNameForCentreAndPromptNumber(User.GetCentreId(), promptNumber);
+
+            var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
+
+            return View(model);
+        }
+        
+        [HttpPost]
+        [Route("{promptNumber:int}/Remove")]
+        public IActionResult RemoveRegistrationPrompt(int promptNumber, RemoveRegistrationPromptViewModel model)
+        {
+            if (!model.Confirm)
+            {
+                ModelState.AddModelError(
+                    nameof(RemoveRegistrationPromptViewModel.Confirm),
+                    "You must confirm before deleting this prompt"
+                );
+                return View(model);
+            }
+
+            return RemoveRegistrationPromptAndRedirect(promptNumber);
         }
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
@@ -261,6 +302,12 @@
             return RedirectToAction("AddRegistrationPromptSummary");
         }
 
+        private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
+        {
+            customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+            return RedirectToAction("Index");
+        }
+
         private void SetRegistrationPromptAnswersViewModelOptions(
             RegistrationPromptAnswersViewModel model,
             string optionsString
@@ -283,7 +330,7 @@
             var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                $"The complete list of answers must be less than 4000 characters. The new answer can be maximum {remainingLength} characters long."
+                $"The complete list of answers must be 4000 characters or fewer ({remainingLength} characters remaining for the new answer)"
             );
         }
 

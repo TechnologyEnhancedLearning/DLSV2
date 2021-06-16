@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System;
     using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
@@ -14,6 +15,7 @@
             int centreId = 2,
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
             bool centreActive = true,
+            DateTime? dateRegistered = null,
             string firstName = "Firstname",
             string lastName = "Test",
             string emailAddress = "email@test.com",
@@ -31,6 +33,7 @@
                 CentreId = centreId,
                 CentreName = centreName,
                 CentreActive = centreActive,
+                DateRegistered = dateRegistered,
                 FirstName = firstName,
                 LastName = lastName,
                 EmailAddress = emailAddress,
