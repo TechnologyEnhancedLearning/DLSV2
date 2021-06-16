@@ -1,36 +1,36 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.Helpers.TrackingSystem.Centre
+@using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 @model CentrePage
 
-@{
-  const string selectedClass = "side-nav__item--selected";
-
-  var dashboardItemClass = Model == CentrePage.Dashboard ? selectedClass : string.Empty;
-  var configurationItemClass = Model == CentrePage.Configuration ? selectedClass : string.Empty;
-  var administratorsItemClass = Model == CentrePage.Administrators ? selectedClass : string.Empty;
-  var reportsItemClass = Model == CentrePage.Reports ? selectedClass : string.Empty;
-}
-
-
 <h2 class="side-nav__heading">Centre</h2>
 <ul class="nhsuk-list side-nav__list">
-  <li class="side-nav__item @dashboardItemClass" aria-current="@(Model == CentrePage.Dashboard ? "page" : null)">
-    <a class="side-nav__link" asp-action="Index" asp-controller="Dashboard">Centre dashboard</a>
-  </li>
-  <li class="side-nav__item @configurationItemClass" aria-current="@(Model == CentrePage.Configuration ? "page" : null)">
-    <a class="side-nav__link" asp-action="Index" asp-controller="CentreConfiguration">Centre configuration</a>
-  </li>
 
-  @if(User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true || User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
-  {
-    <li class="side-nav__item @administratorsItemClass" aria-current="@(Model == CentrePage.Administrators ? "page" : null)">
-      <a class="side-nav__link" asp-action="Index" asp-controller="Administrator">Administrators</a>
-    </li>
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Dashboard"
+                     href=""
+                     link-text="Centre dashboard"
+                     is-current-page="Model == CentrePage.Dashboard" />
+
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="CentreConfiguration"
+                     href=""
+                     link-text="Centre configuration"
+                     is-current-page="Model == CentrePage.Configuration" />
+
+  @if (User.HasCentreManagerPermissions()) {
+    <vc:side-menu-link asp-action="Index"
+                       asp-controller="Administrator"
+                       href=""
+                       link-text="Administrators"
+                       is-current-page="Model == CentrePage.Administrators" /> 
   }
 
-  <li class="side-nav__item @reportsItemClass" aria-current="@(Model == CentrePage.Reports ? "page" : null)">
-    <a class="side-nav__link" asp-action="Index" asp-controller="Reports">Reports</a>
-  </li>
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Reports"
+                     href=""
+                     link-text="Reports"
+                     is-current-page="Model == CentrePage.Reports" />
+
 </ul>

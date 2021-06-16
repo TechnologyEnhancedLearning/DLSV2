@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Helpers.TrackingSystem.Centre
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 @using Microsoft.Extensions.Configuration
 @model CentreDashboardViewModel
@@ -27,15 +27,15 @@
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Centre dashboard</h1>
     <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.FirstName</span>. You are managing <span class="nhsuk-u-font-weight-bold">@Model.CourseCategory</span> courses.</p>
 
-    <partial name="_DashboardTopCardGroup" model="Model"/>
+    <partial name="_DashboardTopCardGroup" model="Model" />
 
-    <partial name="_DashboardCentreDetails" model="Model"/>
+    <partial name="_DashboardCentreDetails" model="Model" />
 
-    <partial name="_DashboardBottomCardGroup"/>
+    <partial name="_DashboardBottomCardGroup" />
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Dashboard" />
     </nav>
-    
+
   </div>
 </div>

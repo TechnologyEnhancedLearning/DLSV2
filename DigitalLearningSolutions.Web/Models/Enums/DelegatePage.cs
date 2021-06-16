@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
     public enum DelegatePage
     {

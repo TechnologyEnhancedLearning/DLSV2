@@ -1,0 +1,15 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model SideMenuLinkViewModel
+
+@{
+  var selectedClass = Model.IsCurrentPage ? "side-nav__item--selected" : string.Empty;
+  var ariaCurrent = Model.IsCurrentPage ? "page" : null;
+}
+
+<li class="side-nav__item @selectedClass" aria-current="@ariaCurrent">
+  @if (Model.HRef == null) {
+    <a class="side-nav__link" asp-action="@Model.AspAction" asp-controller="@Model.AspController" asp-all-route-data="@Model.AspAllRouteData">@Model.LinkText</a> 
+  } else {
+    <a class="side-nav__link" href="@Model.HRef" asp-all-route-data="@Model.AspAllRouteData">@Model.LinkText</a> 
+  }
+</li>

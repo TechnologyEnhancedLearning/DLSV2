@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers.TrackingSystem.Centre
+﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
     public enum CentrePage
     {
