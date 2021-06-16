@@ -38,21 +38,19 @@
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
-            var passwordIsValid =
-                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword).Any();
+            var verifiedLinkedUsersAccounts = userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword);
 
-            if (!passwordIsValid)
+            var passwordIsInvalid = !verifiedLinkedUsersAccounts.Any();
+
+            if (passwordIsInvalid)
             {
                 ModelState.AddModelError(nameof(model.CurrentPassword), "The password you have entered is incorrect");
                 return View(model);
             }
 
-            var (admin, delegateUser) = userService.GetUsersById(adminId, delegateId);
-
-
             var newPassword = model.Password!;
 
-            await passwordService.ChangePasswordForLinkedUserAccounts(admin, delegateUser, newPassword);
+            await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
 
             return View("Success");
         }

@@ -20,6 +20,13 @@
             return AdminAccount != null || DelegateAccounts.Any();
         }
 
+        public List<UserReference> GetUserRefs()
+        {
+            var candidateRefs = DelegateAccounts.Select(user => user.ToUserReference());
+            return AdminAccount == null
+                ? candidateRefs.ToList()
+                : candidateRefs.Concat(new[] { AdminAccount.ToUserReference() }).ToList();
+        }
 
         public void Deconstruct(out AdminUser? adminUser, out List<DelegateUser> delegateUsers)
         {

@@ -21,5 +21,7 @@
         public int? ResetPasswordId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
+
+        public abstract UserReference ToUserReference();
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -9,6 +10,7 @@
     {
         Task ChangePasswordAsync(UserReference user, string newPassword);
         Task ChangePasswordAsync(string email, string newPassword);
+        Task ChangePasswordAsync(IEnumerable<UserReference> users, string newPassword);
 
         Task ChangePasswordForLinkedUserAccounts(
             AdminUser? admin,
@@ -38,6 +40,12 @@
         {
             var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
             await passwordDataService.SetPasswordByEmailAsync(email, hashOfPassword);
+        }
+
+        public async Task ChangePasswordAsync(IEnumerable<UserReference> users, string newPassword)
+        {
+            var hashOfPassword = cryptoService.GetPasswordHash(newPassword);
+            await passwordDataService.SetPasswordForUsersAsync(users, hashOfPassword);
         }
 
         public async Task ChangePasswordForLinkedUserAccounts(
