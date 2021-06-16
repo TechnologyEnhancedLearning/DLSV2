@@ -4,7 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class RegisterViewModel
+    public class PersonalInformationViewModel
     {
         [Required(ErrorMessage = "Enter your first name")]
         [MaxLength(100, ErrorMessage = "First name must be at most 100 characters")]

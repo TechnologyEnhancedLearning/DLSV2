@@ -80,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult PersonalInformation(RegisterViewModel model)
+        public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
             ValidateEmailAddress(model);
 
@@ -284,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return centresDataService.GetCentreName(centreId.Value) != null;
         }
 
-        private void ValidateEmailAddress(RegisterViewModel model)
+        private void ValidateEmailAddress(PersonalInformationViewModel model)
         {
             if (model.Email == null)
             {
@@ -297,7 +297,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             if (duplicateUsers.Count() != 0)
             {
                 ModelState.AddModelError(
-                    nameof(RegisterViewModel.Email),
+                    nameof(PersonalInformationViewModel.Email),
                     "A user with this email address already exists at this centre"
                 );
             }
@@ -344,7 +344,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             data.Answer6 = null;
         }
 
-        private void PopulatePersonalInformationExtraFields(RegisterViewModel model)
+        private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
         {
             model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(

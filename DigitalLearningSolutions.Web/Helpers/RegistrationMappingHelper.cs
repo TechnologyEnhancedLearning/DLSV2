@@ -35,9 +35,9 @@
             };
         }
 
-        public static RegisterViewModel MapDataToRegisterViewModel(DelegateRegistrationData data)
+        public static PersonalInformationViewModel MapDataToRegisterViewModel(DelegateRegistrationData data)
         {
-            return new RegisterViewModel
+            return new PersonalInformationViewModel
             {
                 FirstName = data.FirstName,
                 LastName = data.LastName,
@@ -64,7 +64,7 @@
         }
 
         public static DelegateRegistrationData MapRegisterViewModelToData(
-            RegisterViewModel model,
+            PersonalInformationViewModel model,
             DelegateRegistrationData data
         )
         {

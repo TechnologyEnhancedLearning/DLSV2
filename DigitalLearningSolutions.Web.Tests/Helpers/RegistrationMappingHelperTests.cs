@@ -18,7 +18,7 @@
             var centreId = 5;
             var jobGroupId = 10;
             var passwordHash = "password hash";
-            var registerViewModel = new RegisterViewModel
+            var registerViewModel = new PersonalInformationViewModel
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -60,7 +60,7 @@
             var jobGroupId = 10;
             var jobGroupName = "A job group";
             var passwordHash = "password hash";
-            var registerViewModel = new RegisterViewModel
+            var registerViewModel = new PersonalInformationViewModel
             {
                 FirstName = firstName,
                 LastName = lastName,

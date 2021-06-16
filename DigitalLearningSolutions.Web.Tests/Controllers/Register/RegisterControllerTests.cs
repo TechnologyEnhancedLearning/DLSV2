@@ -45,7 +45,7 @@
         {
             // Given
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new RegisterViewModel
+            var model = new PersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
@@ -69,7 +69,7 @@
             // Given
             controller.TempData.Set(new DelegateRegistrationData());
             var duplicateUser = UserTestHelper.GetDefaultDelegateUser();
-            var model = new RegisterViewModel
+            var model = new PersonalInformationViewModel
             {
                 FirstName = "Test",
                 LastName = "User",
