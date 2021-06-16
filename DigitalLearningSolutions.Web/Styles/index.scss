@@ -15,17 +15,18 @@ ul > li > ul > li {
 .js-enabled .non-js-only {
   display: none;
 }
-a.delete-button {
-  background-color: #d5281b;
+
+.delete-button {
+  background-color: $nhsuk-error-color;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
 }
 
-a.delete-button:hover {
+.delete-button:hover {
   background-color: #aa2016;
 }
 
-a.delete-button:active {
+.delete-button:active {
   background-color: #6b140e;
 }
 

@@ -152,5 +152,21 @@
             // Then
             Assert.Throws<FormatException>(() => user.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId));
         }
+
+        [Test]
+        public void GetCandidateId_handles_zero_as_null()
+        {
+            // Given
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(CustomClaimTypes.LearnCandidateId, "0"),
+            }, "mock"));
+
+            // When
+            var result = user.GetCandidateId();
+
+            // Then
+            result.Should().BeNull();
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
@@ -34,7 +34,7 @@
             var adminNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.AdminUser, adminId);
 
-            var delegateId = User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);
+            var delegateId = User.GetCandidateId();
             var delegateNotifications =
                  notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 

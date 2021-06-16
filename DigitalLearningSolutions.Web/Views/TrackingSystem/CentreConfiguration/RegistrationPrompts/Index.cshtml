@@ -71,7 +71,7 @@
               <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
                 Edit
               </a>
-              <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button">
+              <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button" asp-controller="RegistrationPrompts" asp-action="RemoveRegistrationPrompt" asp-route-promptNumber="@customField.CustomFieldId">
                 Remove
               </a>
             </div>

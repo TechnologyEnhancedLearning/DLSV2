@@ -1,6 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @model TextInputViewModel
 
+<link rel="stylesheet" href="css/viewComponents/textInput.css" />
+
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
@@ -10,11 +12,14 @@
       @Model.HintText
     </div>
   }
-  @if (Model.HasError)
-  {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
+  @if (Model.HasError) {
+    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+      @foreach (var errorMessage in Model.ErrorMessages) {
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+        </span>
+      }
+    </div>
   }
   <input class="nhsuk-input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
          id="@Model.Id"
