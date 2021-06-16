@@ -40,26 +40,20 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.customPromptHelper = customPromptHelper;
         }
 
-        public IActionResult Index(string? centreId)
+        public IActionResult Index(int? centreId)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
-            
+
             if (!CheckCentreIdValid(centreId))
             {
                 return NotFound();
             }
-
-            int? centreIdInt = null;
-            if (centreId != null)
-            {
-                centreIdInt = int.Parse(centreId);
-            }
-
+            
             var delegateRegistrationData = CreateDelegateRegistrationData();
-            delegateRegistrationData.RegisterViewModel.SetCentreSpecificRegistration(centreIdInt);
+            delegateRegistrationData.RegisterViewModel.SetCentreSpecificRegistration(centreId);
             TempData.Set(delegateRegistrationData);
 
             return RedirectToAction("PersonalInformation");
@@ -307,16 +301,15 @@ namespace DigitalLearningSolutions.Web.Controllers
             return delegateRegistrationData;
         }
 
-        private bool CheckCentreIdValid(string? centreId)
+        private bool CheckCentreIdValid(int? centreId)
         {
             if (centreId == null)
             {
                 return true;
             }
-            return int.TryParse(centreId, out var centreIdInt) &&
-                   centresDataService.GetCentreName(centreIdInt) != null;
+
+            return centresDataService.GetCentreName(centreId.Value) != null;
         }
-        
 
         private void ValidateEmailAddress(RegisterViewModel model)
         {
