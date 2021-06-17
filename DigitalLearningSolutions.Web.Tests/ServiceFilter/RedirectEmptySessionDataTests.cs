@@ -26,10 +26,12 @@
                 new ActionContext(
                     new DefaultHttpContext(),
                     new RouteData(new RouteValueDictionary()),
-                    new ActionDescriptor()),
+                    new ActionDescriptor()
+                ),
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-                new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData());
+                new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
+            );
 
             // When
             new RedirectEmptySessionData<ResetPasswordData>().OnActionExecuting(context);
@@ -47,10 +49,12 @@
                 new ActionContext(
                     new DefaultHttpContext(),
                     new RouteData(new RouteValueDictionary()),
-                    new ActionDescriptor()),
+                    new ActionDescriptor()
+                ),
                 new List<IFilterMetadata>(),
                 new Dictionary<string, object>(),
-                homeController);
+                homeController
+            );
             homeController.TempData["ResetPasswordData"] =
                 JsonConvert.SerializeObject(new ResetPasswordData("email", "hash"));
 

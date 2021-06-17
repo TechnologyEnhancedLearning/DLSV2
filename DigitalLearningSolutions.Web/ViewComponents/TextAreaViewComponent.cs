@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
@@ -30,8 +31,8 @@
             var property = model.GetType().GetProperty(aspFor);
             var valueToSet = populateWithCurrentValue ? property?.GetValue(model)?.ToString() : null;
 
-            var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
-            var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
+            var errorMessages = ViewData.ModelState[property?.Name]?.Errors.Select(e => e.ErrorMessage) ??
+                                new string[] { };
 
             var textBoxViewModel = new TextAreaViewModel(
                 aspFor,
@@ -40,10 +41,9 @@
                 valueToSet,
                 rows,
                 spellCheck,
+                errorMessages,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText,
-                errorMessage,
-                hasError);
+                string.IsNullOrEmpty(hintText) ? null : hintText);
             return View(textBoxViewModel);
         }
     }
