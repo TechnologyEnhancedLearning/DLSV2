@@ -111,9 +111,9 @@
         }
 
         [HttpPost]
-        [Route("Bulk")]
+        [Route("Edit/Bulk")]
         [ServiceFilter(typeof(RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>))]
-        public IActionResult RegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        public IActionResult EditRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
         {
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
@@ -121,20 +121,29 @@
                 return View("BulkRegistrationPromptAnswers", model);
             }
 
-            if (model.IsAddPromptJourney)
-            {
-                var addData = TempData.Peek<AddRegistrationPromptData>()!;
-                addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
-                TempData.Set(addData);
-
-                return RedirectToAction("AddRegistrationPromptConfigureAnswers");
-            }
-
             var editData = TempData.Peek<EditRegistrationPromptData>()!;
             editData.EditModel!.OptionsString = model.OptionsString;
             TempData.Set(editData);
 
             return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
+        }
+
+        [HttpPost]
+        [Route("Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        {
+            ValidateBulkOptionsString(model.OptionsString);
+            if (!ModelState.IsValid)
+            {
+                return View("BulkRegistrationPromptAnswers", model);
+            }
+
+            var addData = TempData.Peek<AddRegistrationPromptData>()!;
+            addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
+            TempData.Set(addData);
+
+            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
         }
 
         [HttpGet]
