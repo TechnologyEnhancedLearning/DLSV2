@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpGet]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult UpdateNotificationPreferences(UserType userType)
+        public IActionResult UpdateNotificationPreferences(UserType? userType)
         {
             var userId = GetUserId(userType);
             if (userId == null)
@@ -54,9 +54,9 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return NotFound();
             }
 
-            var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType, userId);
+            var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType!, userId);
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!);
 
             return View(model);
         }
@@ -64,7 +64,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpPost]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(UserType userType, IEnumerable<int> notificationIds)
+        public IActionResult SaveNotificationPreferences(UserType? userType, IEnumerable<int> notificationIds)
         {
             var userId = GetUserId(userType);
             if (userId == null)
@@ -72,12 +72,12 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return NotFound();
             }
 
-            notificationPreferencesService.SetNotificationPreferencesForUser(userType, userId, notificationIds);
+            notificationPreferencesService.SetNotificationPreferencesForUser(userType!, userId, notificationIds);
 
             return RedirectToAction("Index", "NotificationPreferences");
         }
 
-        private int? GetUserId(UserType userType)
+        private int? GetUserId(UserType? userType)
         {
             if (Equals(userType, UserType.AdminUser))
             {
