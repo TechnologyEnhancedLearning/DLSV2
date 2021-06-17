@@ -119,8 +119,7 @@
 
             if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Password),
-                    "The password you have entered is incorrect");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), CommonValidationErrorMessages.IncorrectPassword);
                 return View(model);
             }
 

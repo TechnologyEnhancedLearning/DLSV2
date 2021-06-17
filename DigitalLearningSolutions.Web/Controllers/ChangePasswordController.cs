@@ -38,13 +38,17 @@
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
-            var verifiedLinkedUsersAccounts = userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword);
+            var verifiedLinkedUsersAccounts =
+                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword);
 
             var passwordIsInvalid = !verifiedLinkedUsersAccounts.Any();
 
             if (passwordIsInvalid)
             {
-                ModelState.AddModelError(nameof(model.CurrentPassword), "The password you have entered is incorrect");
+                ModelState.AddModelError(
+                    nameof(model.CurrentPassword),
+                    CommonValidationErrorMessages.IncorrectPassword
+                );
                 return View(model);
             }
 
