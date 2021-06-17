@@ -112,7 +112,7 @@
 
         [HttpPost]
         [Route("Edit/Bulk")]
-        [ServiceFilter(typeof(RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>))]
+        [ServiceFilter(typeof(RedirectEmptySessionData<EditRegistrationPromptData>))]
         public IActionResult EditRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
         {
             ValidateBulkOptionsString(model.OptionsString);
@@ -126,24 +126,6 @@
             TempData.Set(editData);
 
             return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
-        }
-
-        [HttpPost]
-        [Route("Add/Bulk")]
-        [ServiceFilter(typeof(RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
-        {
-            ValidateBulkOptionsString(model.OptionsString);
-            if (!ModelState.IsValid)
-            {
-                return View("BulkRegistrationPromptAnswers", model);
-            }
-
-            var addData = TempData.Peek<AddRegistrationPromptData>()!;
-            addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
-            TempData.Set(addData);
-
-            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
         }
 
         [HttpGet]
@@ -241,6 +223,24 @@
             );
 
             return View("BulkRegistrationPromptAnswers", model);
+        }
+
+        [HttpPost]
+        [Route("Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        {
+            ValidateBulkOptionsString(model.OptionsString);
+            if (!ModelState.IsValid)
+            {
+                return View("BulkRegistrationPromptAnswers", model);
+            }
+
+            var addData = TempData.Peek<AddRegistrationPromptData>()!;
+            addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
+            TempData.Set(addData);
+
+            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
         }
 
         [HttpGet]

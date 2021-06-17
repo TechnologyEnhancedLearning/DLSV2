@@ -172,7 +172,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
-            services.AddScoped<RedirectEmptySessionDataXor<AddRegistrationPromptData, EditRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
