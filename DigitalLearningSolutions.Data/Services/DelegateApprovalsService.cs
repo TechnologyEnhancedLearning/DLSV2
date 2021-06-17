@@ -103,14 +103,14 @@
                 }
                 else
                 {
-                    var centreUrl = centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
+                    var centreInformationUrl = centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
                         ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
                         : null;
                     var delegateApprovalEmail = GenerateDelegateApprovalEmail(
                         delegateUser.CandidateNumber,
                         delegateUser.EmailAddress,
                         LoginUrl,
-                        centreUrl
+                        centreInformationUrl
                     );
                     approvalEmails.Add(delegateApprovalEmail);
                 }
@@ -162,7 +162,7 @@
             string candidateNumber,
             string emailAddress,
             string? loginUrl,
-            string? centreUrl
+            string? centreInformationUrl
         )
         {
             const string emailSubject = "Digital Learning Solutions Registration Approved";
@@ -173,12 +173,12 @@
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
                             You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
-                            {(centreUrl == null ? "" : $@"View centre contact information: {centreUrl}")}",
+                            {(centreInformationUrl == null ? "" : $@"View centre contact information: {centreInformationUrl}")}",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
                                     <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
-                                    {(centreUrl == null ? "" : $@"<p><a href=""{centreUrl}"">View centre contact information</a></p>")}
+                                    {(centreInformationUrl == null ? "" : $@"<p><a href=""{centreInformationUrl}"">View centre contact information</a></p>")}
                                 </body >"
             };
 
