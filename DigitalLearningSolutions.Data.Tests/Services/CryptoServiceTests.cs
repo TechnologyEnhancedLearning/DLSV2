@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using DigitalLearningSolutions.Data.Services;
+    using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
 
     public class CryptoServiceTests
@@ -10,7 +11,7 @@
         [SetUp]
         public void Setup()
         {
-            cryptoService = new CryptoService();
+            cryptoService = new CryptoService(new NullLogger<CryptoService>());
         }
 
         [Test]
