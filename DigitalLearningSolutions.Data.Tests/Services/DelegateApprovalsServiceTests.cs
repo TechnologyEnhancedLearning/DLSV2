@@ -17,23 +17,17 @@
 
     public class DelegateApprovalsServiceTests
     {
-        private IUserDataService userDataService = null!;
-        private ICustomPromptsService customPromptsService = null!;
-        private IEmailService emailService = null!;
-        private ICentresDataService centresDataService = null!;
-        private ILogger<DelegateApprovalsService> logger = null!;
-        private IConfiguration config = null!;
+        private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
+        private readonly ICustomPromptsService customPromptsService = A.Fake<ICustomPromptsService>();
+        private readonly IEmailService emailService = A.Fake<IEmailService>();
+        private readonly ICentresDataService centresDataService = A.Fake<ICentresDataService>();
+        private readonly ILogger<DelegateApprovalsService> logger = A.Fake<ILogger<DelegateApprovalsService>>();
+        private readonly IConfiguration config = A.Fake<IConfiguration>();
         private IDelegateApprovalsService delegateApprovalsService = null!;
 
         [SetUp]
         public void SetUp()
         {
-            userDataService = A.Fake<IUserDataService>();
-            customPromptsService = A.Fake<ICustomPromptsService>();
-            emailService = A.Fake<IEmailService>();
-            centresDataService = A.Fake<ICentresDataService>();
-            logger = A.Fake<ILogger<DelegateApprovalsService>>();
-            config = A.Fake<IConfiguration>();
             delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, centresDataService, logger, config);
         }
 
