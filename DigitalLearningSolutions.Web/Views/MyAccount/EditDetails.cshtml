@@ -74,6 +74,7 @@
                         label="Job group"
                         value="@Model.JobGroupId.ToString()"
                         hint-text=""
+                        deselectable="false"
                         css-class="nhsuk-u-width-one-half"
                         default-option="Select a job group"
                         select-list-options="@ViewBag.JobGroupOptions"/>
@@ -84,6 +85,7 @@
                             label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
                             value="@customField.Answer"
                             hint-text=""
+                            deselectable="@(!customField.Mandatory)"
                             css-class="nhsuk-u-width-one-half"
                             default-option="Select a @customField.CustomPrompt.ToLower()"
                             select-list-options="@customField.Options"/>
