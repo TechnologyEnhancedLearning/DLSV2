@@ -384,7 +384,7 @@
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
-            var result = registrationPromptsController.RegistrationPromptBulkPost(inputViewModel);
+            var result = registrationPromptsController.EditRegistrationPromptBulkPost(inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -410,7 +410,7 @@
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
-            var result = registrationPromptsController.RegistrationPromptBulkPost(inputViewModel);
+            var result = registrationPromptsController.AddRegistrationPromptBulkPost(inputViewModel);
 
             // Then
             using (new AssertionScope())
