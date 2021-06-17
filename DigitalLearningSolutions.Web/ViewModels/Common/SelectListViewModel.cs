@@ -16,7 +16,8 @@
             string? cssClass = null,
             string? hintText = null,
             string? errorMessage = null,
-            bool hasError = false
+            bool hasError = false,
+            bool deselectable = false
         )
         {
             Id = id;
@@ -29,6 +30,7 @@
             HintText = hintText;
             ErrorMessage = errorMessage;
             HasError = hasError;
+            Deselectable = deselectable;
         }
 
         public string Id { get; set; }
@@ -41,5 +43,6 @@
         public string? HintText { get; set; }
         public string? ErrorMessage { get; set; }
         public bool HasError { get; set; }
+        public bool Deselectable { get; set; }
     }
 }

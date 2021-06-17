@@ -22,7 +22,10 @@
         public const string AddPromptAction = "addPrompt";
         public const string NextAction = "next";
         public const string SaveAction = "save";
-        private const string CookieName = "AddRegistrationPromptData";
+        public const string BulkAction = "bulk";
+        private const string AddPromptCookieName = "AddRegistrationPromptData";
+        private const string EditPromptCookieName = "EditRegistrationPromptData";
+        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICustomPromptsService customPromptsService;
         private readonly IUserDataService userDataService;
 
@@ -47,6 +50,15 @@
         }
 
         [HttpGet]
+        [Route("{promptNumber:int}/Edit/Start")]
+        public IActionResult EditRegistrationPromptStart(int promptNumber)
+        {
+            TempData.Clear();
+
+            return RedirectToAction("EditRegistrationPrompt", new { promptNumber });
+        }
+
+        [HttpGet]
         [Route("{promptNumber:int}/Edit")]
         public IActionResult EditRegistrationPrompt(int promptNumber)
         {
@@ -55,7 +67,13 @@
             var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
-            return View(new EditRegistrationPromptViewModel(customPrompt));
+            var data = TempData.Get<EditRegistrationPromptData>();
+
+            var model = data != null
+                ? data.EditModel!
+                : new EditRegistrationPromptViewModel(customPrompt);
+
+            return View(model);
         }
 
         [HttpPost]
@@ -71,31 +89,73 @@
             {
                 SaveAction => EditRegistrationPromptPostSave(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
+                BulkAction => EditRegistrationPromptBulk(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
         }
 
         [HttpGet]
+        [Route("{promptNumber:int}/Edit/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<EditRegistrationPromptData>))]
+        public IActionResult EditRegistrationPromptBulk(int promptNumber)
+        {
+            var data = TempData.Peek<EditRegistrationPromptData>()!;
+
+            var model = new BulkRegistrationPromptAnswersViewModel(
+                data.EditModel.OptionsString,
+                false,
+                promptNumber
+            );
+
+            return View("BulkRegistrationPromptAnswers", model);
+        }
+
+        [HttpPost]
+        [Route("Edit/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<EditRegistrationPromptData>))]
+        public IActionResult EditRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        {
+            ValidateBulkOptionsString(model.OptionsString);
+            if (!ModelState.IsValid)
+            {
+                return View("BulkRegistrationPromptAnswers", model);
+            }
+
+            var editData = TempData.Peek<EditRegistrationPromptData>()!;
+            editData.EditModel!.OptionsString = model.OptionsString;
+            TempData.Set(editData);
+
+            return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
+        }
+
+        [HttpGet]
+        [Route("Add/New")]
+        public IActionResult AddRegistrationPromptNew()
+        {
+            TempData.Clear();
+
+            var addRegistrationPromptData = new AddRegistrationPromptData();
+            var id = addRegistrationPromptData.Id;
+
+            Response.Cookies.Append(
+                AddPromptCookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
+            TempData.Set(addRegistrationPromptData);
+
+            return RedirectToAction("AddRegistrationPromptSelectPrompt");
+        }
+
+        [HttpGet]
         [Route("Add/SelectPrompt")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
         public IActionResult AddRegistrationPromptSelectPrompt()
         {
-            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>();
-
-            if (addRegistrationPromptData == null || !Request.Cookies.ContainsKey(CookieName))
-            {
-                addRegistrationPromptData = new AddRegistrationPromptData();
-                var id = addRegistrationPromptData.Id;
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    }
-                );
-                TempData.Set(addRegistrationPromptData);
-            }
+            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>()!;
 
             SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
             return View(addRegistrationPromptData.SelectPromptViewModel);
@@ -145,8 +205,42 @@
             {
                 NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
+                BulkAction => AddRegistrationPromptBulk(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
+        }
+
+        [HttpGet]
+        [Route("Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptBulk()
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            var model = new BulkRegistrationPromptAnswersViewModel(
+                data.ConfigureAnswersViewModel.OptionsString,
+                true,
+                null
+            );
+
+            return View("BulkRegistrationPromptAnswers", model);
+        }
+
+        [HttpPost]
+        [Route("Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        {
+            ValidateBulkOptionsString(model.OptionsString);
+            if (!ModelState.IsValid)
+            {
+                return View("BulkRegistrationPromptAnswers", model);
+            }
+
+            var addData = TempData.Peek<AddRegistrationPromptData>()!;
+            addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
+            TempData.Set(addData);
+
+            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
         }
 
         [HttpGet]
@@ -202,7 +296,7 @@
 
             return View(model);
         }
-        
+
         [HttpPost]
         [Route("{promptNumber:int}/Remove")]
         public IActionResult RemoveRegistrationPrompt(int promptNumber, RemoveRegistrationPromptViewModel model)
@@ -302,6 +396,35 @@
             return RedirectToAction("AddRegistrationPromptSummary");
         }
 
+        private IActionResult AddRegistrationPromptBulk(RegistrationPromptAnswersViewModel model)
+        {
+            UpdateTempDataWithAnswersModelValues(model);
+            return RedirectToAction("AddRegistrationPromptBulk");
+        }
+
+        private IActionResult EditRegistrationPromptBulk(EditRegistrationPromptViewModel model)
+        {
+            SetEditRegistrationPromptTempData(model);
+
+            return RedirectToAction("EditRegistrationPromptBulk", new { promptNumber = model.PromptNumber });
+        }
+
+        private void SetEditRegistrationPromptTempData(EditRegistrationPromptViewModel model)
+        {
+            var data = new EditRegistrationPromptData(model);
+            var id = data.Id;
+
+            Response.Cookies.Append(
+                EditPromptCookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
+            TempData.Set(data);
+        }
+
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
         {
             customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
@@ -367,6 +490,26 @@
             var data = TempData.Peek<AddRegistrationPromptData>()!;
             data.ConfigureAnswersViewModel = model;
             TempData.Set(data);
+        }
+
+        private void ValidateBulkOptionsString(string? optionsString)
+        {
+            if (optionsString != null && optionsString.Length > 4000)
+            {
+                ModelState.AddModelError(
+                    nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
+                    "The complete list of answers must be 4000 characters or fewer"
+                );
+            }
+
+            var optionsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(optionsString);
+            if (optionsList.Any(o => o.Length > 100))
+            {
+                ModelState.AddModelError(
+                    nameof(BulkRegistrationPromptAnswersViewModel.OptionsString),
+                    "Each answer must be 100 characters or fewer"
+                );
+            }
         }
     }
 }

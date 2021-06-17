@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
 @using Microsoft.Extensions.Configuration
 @model CentreConfigurationViewModel
@@ -17,7 +18,13 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Configuration" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre configuration</h1>
 
     <div class="nhsuk-card nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
@@ -40,11 +47,11 @@
     <partial name="_CentreConfigurationCentreManagerDetails" model="Model"/>
 
     <partial name="_CentreConfigurationCentreContentDetails" model="Model"/>
-  </div>
-</div>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
     <a class="nhsuk-button" asp-controller="RegistrationPrompts" asp-action="Index">Manage registration prompts</a>
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Configuration" />
+    </nav>
   </div>
 </div>

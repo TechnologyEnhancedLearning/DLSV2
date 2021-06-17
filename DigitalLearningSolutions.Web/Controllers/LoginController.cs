@@ -49,7 +49,7 @@
                 return View("Index", model);
             }
 
-            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username);
+            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
             if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");

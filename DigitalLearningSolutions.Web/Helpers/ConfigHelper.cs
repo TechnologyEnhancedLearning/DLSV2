@@ -10,6 +10,7 @@
         public const string DefaultConnectionStringName = "DefaultConnection";
         public const string UnitTestConnectionStringName = "UnitTestConnection";
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
+        public const string MapsApiKey = "MapsAPIKey";
 
         public static IConfigurationRoot GetAppConfig()
         {
@@ -55,6 +56,11 @@
         public static string GetConsolidationPathUrl(this IConfiguration config, string consolidationPath)
         {
             return $"{config[CurrentSystemBaseUrlName]}/tracking/dlconsolidation?client={consolidationPath}";
+        }
+
+        public static string GetMapsApiKey(this IConfiguration config)
+        {
+            return config[MapsApiKey];
         }
     }
 }
