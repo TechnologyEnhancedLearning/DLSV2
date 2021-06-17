@@ -11,9 +11,12 @@
         {
             if (applicationName == "TrackingSystem" || applicationName == "Frameworks")
             {
-                return View("/Views/LearningSolutions/Support.cshtml" ,new SupportViewModel(applicationName, SupportPage.Support));
+                return View(
+                    "/Views/LearningSolutions/Support.cshtml",
+                    new SupportViewModel(applicationName, SupportPage.Support)
+                );
             }
-            
+
             return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
         }
     }
