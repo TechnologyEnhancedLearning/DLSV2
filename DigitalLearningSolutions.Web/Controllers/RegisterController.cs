@@ -164,7 +164,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -220,7 +220,7 @@
                 return View(viewModel);
             }
 
-            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
+            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
             var userIp = Request.GetUserIpAddressFromRequest();
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(

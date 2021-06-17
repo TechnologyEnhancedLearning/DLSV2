@@ -1,31 +1,31 @@
-﻿@using DigitalLearningSolutions.Web.Helpers.TrackingSystem
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
 @model DelegatePage
 
-@{
-  const string selectedClass = "side-nav__item--selected";
 
-  var allDelegatesItemClass = Model == DelegatePage.AllDelegates ? selectedClass : string.Empty;
-  var delegateGroupsItemClass = Model == DelegatePage.DelegateGroups ? selectedClass : string.Empty;
-  var courseDelegateItemClass = Model == DelegatePage.CourseDelegates ? selectedClass : string.Empty;
-  var approvedRegistrationItemClass = Model == DelegatePage.ApproveDelegateRegistrations ? selectedClass : string.Empty;
-}
+<h2 class="side-nav__heading">Delegates</h2>
+<ul class="nhsuk-list side-nav__list">
 
+  <vc:side-menu-link-with-href
+    href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates"
+    link-text="All delegates"
+    is-current-page="Model == DelegatePage.AllDelegates" />
 
-  <h2 class="side-nav__heading">Delegates</h2>
-  <ul class="nhsuk-list side-nav__list">
-    <li class="side-nav__item @allDelegatesItemClass">
-      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">All delegates</a>
-    </li>
-    <li class="side-nav__item @delegateGroupsItemClass">
-      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups">Delegate groups</a>
-    </li>
-    <li class="side-nav__item @courseDelegateItemClass">
-      <a class="side-nav__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates">Course delegates</a>
-    </li>
-    <li class="side-nav__item @approvedRegistrationItemClass">
-      <a class="side-nav__link" asp-action="Index" asp-controller="DelegateApprovals">Approve registrations</a>
-    </li>
-  </ul>
+  <vc:side-menu-link-with-href
+    href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups"
+    link-text="Delegate groups"
+    is-current-page="Model == DelegatePage.DelegateGroups" />
 
+  <vc:side-menu-link-with-href
+    href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates"
+    link-text="Course delegates"
+    is-current-page="Model == DelegatePage.CourseDelegates" />
+
+  <vc:side-menu-link
+    asp-action="Index"
+    asp-controller="DelegateApprovals"
+    link-text="Approve registrations"
+    is-current-page="Model == DelegatePage.ApproveDelegateRegistrations" />
+
+</ul>

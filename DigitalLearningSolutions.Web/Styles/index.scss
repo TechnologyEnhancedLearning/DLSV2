@@ -245,13 +245,16 @@ ul.no-bullets {
   @extend .nhsuk-u-font-size-16;
 }
 
- .side-nav__item--selected {
-   border-left: 4px solid $nhsuk-link-color;
-   margin-left: -12px;
-   @include nhsuk-responsive-padding(2, "left");
-   @extend .nhsuk-u-font-weight-bold;
- }
+.side-nav__item--selected {
+  border-left: 4px solid $nhsuk-link-color;
+  @include nhsuk-responsive-padding(2, "left");
+  @extend .nhsuk-u-font-weight-bold;
+
+  @include govuk-media-query($from: desktop) {
+    margin-left: -12px;
+  }
+}
 
 .nhsuk-error-message.error-message--margin-bottom-1 {
-  margin-bottom: nhsuk-spacing(1);
+    margin-bottom: nhsuk-spacing(1);
 }
