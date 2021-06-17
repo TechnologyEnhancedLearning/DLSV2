@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/Login", "Log in")]
         [InlineData("/ForgotPassword", "Reset your password")]
         [InlineData("/ResetPassword/Error", "Something went wrong...")]
-        [InlineData("/TrackingSystem/Support","Support")]
+        [InlineData("/TrackingSystem/Support", "Support")]
         public void Page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
