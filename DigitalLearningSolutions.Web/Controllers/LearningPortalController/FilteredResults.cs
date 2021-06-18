@@ -55,7 +55,7 @@
              {
                  SelfAssessment = assessment,
                  CompetencyPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchCompetencyPlaylists"),
-                 RecommendedPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchBifrostPlaylists"),
+                 RecommendedPlayLists = await filteredApiHelperService.GetPlayListsPoll<IEnumerable<PlayList>>(filteredToken, "playlist.FetchNexRexPlaylists"),
                  FavouritePlayList = favouritePlayList
             };
             return View("SelfAssessments/FilteredMgp/FilteredResults", model);
