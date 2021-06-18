@@ -161,9 +161,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
-
+            services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
-
             RegisterWebServiceFilters(services);
         }
 

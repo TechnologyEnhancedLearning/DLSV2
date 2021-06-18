@@ -5,8 +5,10 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
 
     public static class SortingHelper
     {
@@ -73,8 +75,8 @@
                     ? frameworks.OrderByDescending(framework => framework.CreatedDate)
                     : frameworks.OrderBy(framework => framework.CreatedDate),
                 FrameworkSortByOptionTexts.FrameworkPublishStatus => sortDirection == BaseFrameworksPageViewModel.DescendingText
-                    ? frameworks.OrderByDescending(framework => framework.PublishStatus)
-                    : frameworks.OrderBy(framework => framework.PublishStatus),
+                    ? frameworks.OrderByDescending(framework => framework.PublishStatusID)
+                    : frameworks.OrderBy(framework => framework.PublishStatusID),
                 FrameworkSortByOptionTexts.FrameworkBrand => sortDirection == BaseFrameworksPageViewModel.DescendingText
                     ? frameworks.OrderByDescending(framework => framework.Brand)
                     : frameworks.OrderBy(framework => framework.Brand),
@@ -85,6 +87,38 @@
                 ? frameworks.OrderByDescending(framework => framework.Topic)
                 : frameworks.OrderBy(framework => framework.Topic),
                 _ => frameworks
+            };
+        }
+        public static IEnumerable<RoleProfile> SortRoleProfileItems(
+            IEnumerable<RoleProfile> roleProfiles,
+            string sortBy,
+            string sortDirection
+        )
+        {
+            return sortBy switch
+            {
+                RoleProfileSortByOptionTexts.RoleProfileName => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.RoleProfileName)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.RoleProfileName),
+                RoleProfileSortByOptionTexts.RoleProfileOwner => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.Owner)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.Owner),
+                RoleProfileSortByOptionTexts.RoleProfileCreatedDate => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.CreatedDate)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.CreatedDate),
+                RoleProfileSortByOptionTexts.RoleProfilePublishStatus => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.PublishStatusID)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.PublishStatusID),
+                RoleProfileSortByOptionTexts.RoleProfileBrand => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                    ? roleProfiles.OrderByDescending(roleProfile => roleProfile.Brand)
+                    : roleProfiles.OrderBy(roleProfile => roleProfile.Brand),
+                RoleProfileSortByOptionTexts.RoleProfileNationalRoleProfile => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                ? roleProfiles.OrderByDescending(roleProfile => roleProfile.NRPRole)
+                : roleProfiles.OrderBy(roleProfile => roleProfile.NRPRole),
+                RoleProfileSortByOptionTexts.RoleProfileNationalRoleGroup => sortDirection == BaseRoleProfilesPageViewModel.DescendingText
+                ? roleProfiles.OrderByDescending(roleProfile => roleProfile.NRPProfessionalGroup)
+                : roleProfiles.OrderBy(roleProfile => roleProfile.NRPProfessionalGroup),
+                _ => roleProfiles
             };
         }
     }
