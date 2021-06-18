@@ -3,6 +3,7 @@
     using System.Globalization;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.External.Maps;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -18,13 +19,14 @@
         private readonly IMapsApiHelper mapsApiHelper = A.Fake<IMapsApiHelper>();
         private readonly ILogger<CentreConfigurationController> logger =
             A.Fake<ILogger<CentreConfigurationController>>();
+        private readonly IImageResizeService imageResizeService = A.Fake<IImageResizeService>();
         private CentreConfigurationController controller = null!;
 
         [SetUp]
         public void Setup()
         {
             controller =
-                new CentreConfigurationController(centresDataService, mapsApiHelper, logger)
+                new CentreConfigurationController(centresDataService, mapsApiHelper, logger, imageResizeService)
                     .WithDefaultContext()
                     .WithMockUser(true);
 
