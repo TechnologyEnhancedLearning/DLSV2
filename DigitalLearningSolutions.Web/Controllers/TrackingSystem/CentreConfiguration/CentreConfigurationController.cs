@@ -211,7 +211,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             if (model.CentreSignatureFile != null)
             {
                 ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreSignature));
-                model.CentreSignature = imageResizeService.ResizeProfilePicture(model.CentreSignatureFile);
+                model.CentreSignature = imageResizeService.ResizeCentreImage(model.CentreSignatureFile);
             }
 
             return View(model);
@@ -238,7 +238,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             if (model.CentreLogoFile != null)
             {
                 ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreLogo));
-                model.CentreLogo = imageResizeService.ResizeProfilePicture(model.CentreLogoFile);
+                model.CentreLogo = imageResizeService.ResizeCentreImage(model.CentreLogoFile);
             }
 
             return View(model);
