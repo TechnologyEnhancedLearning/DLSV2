@@ -20,6 +20,7 @@
         private IUserDataService userDataService = null!;
         private ICustomPromptsService customPromptsService = null!;
         private IEmailService emailService = null!;
+        private ICentresDataService centresDataService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
         private IConfiguration config = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
@@ -30,9 +31,10 @@
             userDataService = A.Fake<IUserDataService>();
             customPromptsService = A.Fake<ICustomPromptsService>();
             emailService = A.Fake<IEmailService>();
+            centresDataService = A.Fake<ICentresDataService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
             config = A.Fake<IConfiguration>();
-            delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, logger, config);
+            delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, centresDataService, logger, config);
         }
 
         [Test]

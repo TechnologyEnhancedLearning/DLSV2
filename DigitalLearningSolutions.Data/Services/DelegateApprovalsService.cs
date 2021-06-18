@@ -29,6 +29,7 @@
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
         private readonly IConfiguration config;
+        private readonly ICentresDataService centresDataService;
 
         private string LoginUrl => config["AppRootPath"] + "/Login";
         private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
@@ -38,6 +39,7 @@
             IUserDataService userDataService,
             ICustomPromptsService customPromptsService,
             IEmailService emailService,
+            ICentresDataService centresDataService,
             ILogger<DelegateApprovalsService> logger,
             IConfiguration config
         )
@@ -45,6 +47,7 @@
             this.userDataService = userDataService;
             this.customPromptsService = customPromptsService;
             this.emailService = emailService;
+            this.centresDataService = centresDataService;
             this.logger = logger;
             this.config = config;
         }
@@ -100,8 +103,15 @@
                 }
                 else
                 {
-                    var delegateApprovalEmail = GenerateDelegateApprovalEmail
-                        (delegateUser.CandidateNumber, delegateUser.EmailAddress, LoginUrl);
+                    var centreInformationUrl = centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
+                        ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
+                        : null;
+                    var delegateApprovalEmail = GenerateDelegateApprovalEmail(
+                        delegateUser.CandidateNumber,
+                        delegateUser.EmailAddress,
+                        LoginUrl,
+                        centreInformationUrl
+                    );
                     approvalEmails.Add(delegateApprovalEmail);
                 }
             }
@@ -151,7 +161,8 @@
         (
             string candidateNumber,
             string emailAddress,
-            string? loginUrl
+            string? loginUrl,
+            string? centreInformationUrl
         )
         {
             const string emailSubject = "Digital Learning Solutions Registration Approved";
@@ -161,11 +172,13 @@
                 TextBody =
                     $@"Your Digital Learning Solutions registration has been approved by your centre administrator.
                             You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
-                            For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.",
+                            For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
+                            {(centreInformationUrl == null ? "" : $@"View centre contact information: {centreInformationUrl}")}",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
                                     <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
+                                    {(centreInformationUrl == null ? "" : $@"<p><a href=""{centreInformationUrl}"">View centre contact information</a></p>")}
                                 </body >"
             };
 
@@ -183,20 +196,22 @@
             var body = new BodyBuilder
             {
                 TextBody = $@"Dear {delegateName},
-                        Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
+                        Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.
+                        There are several reasons that this may have happened including:
                         -You registered with a non-work email address which was not recognised by the administrator
                         -Your DLS centre chooses to manage delegate registration internally
                         -You have accidentally chosen the wrong centre during the registration process.
                         If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided there to ask for help with registration. The Find Your Centre page can be found at this URL: {findCentreUrl}",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                 <p>Dear {delegateName},</p>
-                                <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator. There are several reasons that this may have happened including:
-                                    <ul>
-                                        <li>You registered with a non-work email address which was not recognised by the administrator</li>
-                                        <li>Your DLS centre chooses to manage delegate registration internally</li>
-                                        <li>You have accidentally chosen the wrong centre during the registration process.</li>
-                                    </ul>
-                                If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre page</a> to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
+                                <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.</p>
+                                <p>There are several reasons that this may have happened including:</p>
+                                <ul>
+                                    <li>You registered with a non-work email address which was not recognised by the administrator</li>
+                                    <li>Your DLS centre chooses to manage delegate registration internally</li>
+                                    <li>You have accidentally chosen the wrong centre during the registration process.</li>
+                                </ul>
+                                <p>If you need access to the DLS platform, please use the <a href=""{findCentreUrl}"">Find Your Centre</a> page to locate your local DLS centre and use the contact details provided there to ask for help with registration.</p>
                             </body >"
             };
 
