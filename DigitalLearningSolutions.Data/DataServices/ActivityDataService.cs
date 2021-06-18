@@ -22,8 +22,12 @@
 
         public IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int year, IEnumerable<int> months)
         {
-            return connection.Query<IEnumerable<MonthOfActivity>>(
-                @"SELECT
+            return connection.Query<MonthOfActivity>(
+                @"DECLARE @monthTable TABLE (Month INT)
+                    INSERT @monthTable VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12)
+                    
+                    DECLARE @activity TABLE (Year INT, Month INT, Completions INT, Evaluations INT, Registrations INT)
+                    INSERT @activity SELECT
                         LogYear AS Year,
                         LogMonth AS Month,
                         SUM(CONVERT(INT, Completed)) AS Completions,
@@ -32,9 +36,14 @@
                     FROM tActivityLog
                         WHERE (LogYear = @year AND LogMonth IN @months)
                     GROUP BY LogYear, LogMonth
-                    ORDER BY LogYear, LogMonth",
+                    
+                    SELECT @year AS Year, m.Month, COALESCE(a.Completions, 0) AS Completions, COALESCE(a.Evaluations, 0) AS Evaluations, COALESCE(a.Registrations, 0) AS Registrations
+                    FROM @monthTable m
+	                    LEFT JOIN @activity a ON m.Month = a.Month
+                    WHERE m.Month IN @months
+                    ORDER BY m.Month DESC",
             new {year, months}
-            ).First();
+            );
         }
     }
 }

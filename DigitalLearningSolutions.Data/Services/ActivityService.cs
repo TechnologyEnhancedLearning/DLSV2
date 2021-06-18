@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -30,9 +30,9 @@
 
             if (date.Month < 12)
             {
-                var monthsLastYear = Enumerable.Range(date.Month + 1, 12);
+                var monthsLastYear = Enumerable.Range(date.Month + 1, 12 - date.Month);
                 var lastYearActivity = activityDataService.GetActivityForMonthsInYear(currentYear - 1, monthsLastYear);
-                activity = lastYearActivity.Concat(activity);
+                activity = activity.Concat(lastYearActivity);
             }
 
             return activity;
