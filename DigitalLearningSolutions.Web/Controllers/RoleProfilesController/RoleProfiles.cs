@@ -195,7 +195,7 @@
                     SessionNewRoleProfile sessionNewRoleProfile = TempData.Peek<SessionNewRoleProfile>();
                     sessionNewRoleProfile.RoleProfileBase = roleProfileBase;
                     TempData.Set(sessionNewRoleProfile);
-                    return RedirectToAction("RoleProfileNationalProfessionalGroup", "RoleProfiles", new { actionname });
+                    return RedirectToAction("RoleProfileProfessionalGroup", "RoleProfiles", new { actionname });
                 }
                 else
                 {
@@ -217,7 +217,7 @@
         }
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}")]
-        public IActionResult RoleProfileNationalProfessionalGroup(string actionname, int roleProfileId = 0)
+        public IActionResult RoleProfileProfessionalGroup(string actionname, int roleProfileId = 0)
         {
             var adminId = GetAdminID();
             RoleProfileBase? roleProfileBase;
@@ -248,6 +248,45 @@
                 RoleProfileBase = roleProfileBase
             };
             return View("ProfessionalGroup", model);
+        }
+        [HttpPost]
+        [Route("/RoleProfiles/ProfessionalGroup/{actionname}/{roleProfileId}")]
+        [Route("/RoleProfiles/ProfessionalGroup/{actionname}")]
+        public IActionResult SaveProfessionalGroup(RoleProfileBase roleProfileBase, string actionname, int roleProfileId = 0)
+        {
+            if (roleProfileBase.NRPProfessionalGroupID == null)
+            {
+                ModelState.Remove(nameof(RoleProfileBase.NRPProfessionalGroupID));
+                ModelState.AddModelError(nameof(RoleProfileBase.NRPProfessionalGroupID), "Please choose a professional group" + (roleProfileId == 0 ? "or Skip this step" : "") + ".");
+                // do something
+                return View("Name", roleProfileBase);
+            }
+            if (actionname == "New")
+            {
+                SessionNewRoleProfile sessionNewRoleProfile = TempData.Peek<SessionNewRoleProfile>();
+                sessionNewRoleProfile.RoleProfileBase = roleProfileBase;
+                TempData.Set(sessionNewRoleProfile);
+                return RedirectToAction("RoleProfileSubGroup", "RoleProfiles", new { actionname });
+            }
+            else
+            {
+                var adminId = GetAdminID();
+                var isUpdated = roleProfileService.UpdateRoleProfileProfessionalGroup(roleProfileBase.ID, adminId, roleProfileBase.NRPProfessionalGroupID);
+                if (isUpdated)
+                {
+                    return RedirectToAction("RoleProfileSubGroup", "RoleProfiles", new { actionname, roleProfileId });
+                }
+                else
+                {
+                    return RedirectToAction("ViewRoleProfile", new { tabname = "Details", roleProfileId });
+                }
+            }
+        }
+        [Route("/RoleProfiles/SubGroup/{actionname}/{roleProfileId}")]
+        [Route("/RoleProfiles/SubGroup/{actionname}")]
+        public IActionResult RoleProfileSubGroup(string actionname, int roleProfileId = 0)
+        {
+            return View("SubGroup");
         }
     }
 }

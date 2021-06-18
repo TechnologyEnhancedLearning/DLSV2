@@ -51,13 +51,36 @@ else
       @foreach (var professionalGroup in Model.NRPProfessionalGroups)
       {
         <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" name="RoleProfileBase.NRPProfessionalGroupID" id="radio-@professionalGroup.ID" checked="@(Model.RoleProfileBase.NRPProfessionalGroupID == professionalGroup.ID)" type="radio" value="@professionalGroup.ID" aria-describedby="radio-@professionalGroup.ID-item-hint">
+          <input class="nhsuk-radios__input" name="RoleProfileBase.NRPProfessionalGroupID" id="radio-@professionalGroup.ID" checked="@(Model.RoleProfileBase.NRPProfessionalGroupID == professionalGroup.ID)" type="radio" value="@professionalGroup.ID">
           <label class="nhsuk-label nhsuk-radios__label" for="radio-@professionalGroup.ID">
             @professionalGroup.ProfessionalGroup
           </label>
         </div>
       }
-    </div>
+      <hr />
+      
+      <div class="nhsuk-radios__item">
+        <input class="nhsuk-radios__input" name="RoleProfileBase.NRPProfessionalGroupID" id="radio-null" checked="@(Model.RoleProfileBase.NRPProfessionalGroupID == null)" type="radio" value="">
+        <text class="nhsuk-label nhsuk-radios__label" for="radio-null">
+          @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+          {
+            <text>
+            Skip professional group and job role linking.
+          </text>
+
+
+                }
+          else
+          {
+            <text>
+              Don't link to professional group and job role.
+            </text>
+
+          }
+          </label>
+</div>
+
+      </div>
   </nhs-form-group>
   <input name="ID" type="hidden" asp-for="RoleProfileBase.ID" />
   <input name="ID" type="hidden" asp-for="RoleProfileBase.RoleProfileName" />

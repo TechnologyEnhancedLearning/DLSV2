@@ -18,6 +18,7 @@
         IEnumerable<NRPProfessionalGroups> GetNRPProfessionalGroups();
         //UPDATE DATA
         bool UpdateRoleProfileName(int roleProfileId, int adminId, string roleProfileName);
+        bool UpdateRoleProfileProfessionalGroup(int roleProfileId, int adminId, int? nrpProfessionalGroupID);
         //INSERT DATA
 
         //DELETE DATA
@@ -151,6 +152,36 @@
                       WHERE (rp.RoleProfileName = @roleProfileName)",
               new { roleProfileName, adminId }
           ).FirstOrDefault();
+        }
+
+        public bool UpdateRoleProfileProfessionalGroup(int roleProfileId, int adminId, int? nrpProfessionalGroupID)
+        {
+            var sameCount = (int)connection.ExecuteScalar(
+                 @"SELECT COUNT(*) FROM RoleProfiles WHERE ID = @roleProfileId AND NRPProfessionalGroupID = @nrpProfessionalGroupID",
+                 new { roleProfileId, nrpProfessionalGroupID }
+                );
+            if (sameCount > 0)
+            {
+                //same so don't update:
+                return false;
+            }
+            else
+            {
+                //needs updating:
+                var numberOfAffectedRows = connection.Execute(
+               @"UPDATE RoleProfiles SET NRPProfessionalGroupID = @nrpProfessionalGroupID, NRPSubGroupID = NULL, NRPRoleID = NULL, UpdatedByAdminID = @adminId
+                    WHERE ID = @roleProfileId",
+              new { nrpProfessionalGroupID, adminId, roleProfileId }
+              );
+                if(numberOfAffectedRows > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }
