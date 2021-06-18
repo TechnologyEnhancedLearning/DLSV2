@@ -33,23 +33,25 @@
       </div>
 
       <div class="nhsuk-grid-row divider">
-        <vc:text-input asp-for="NotifyEmail"
-                       label="Notify email"
-                       populate-with-current-value="true"
-                       type="text"
-                       spell-check="false"
-                       autocomplete="email"
-                       hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+        <div class="nhsuk-grid-column-full">
+          <vc:text-input asp-for="NotifyEmail"
+                         label="Notify email"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="false"
+                         autocomplete="email"
+                         hint-text=""
+                         css-class="nhsuk-u-width-one-half" />
 
-        <vc:text-input asp-for="BannerText"
-                       label="Centre support details"
-                       populate-with-current-value="true"
-                       type="text"
-                       spell-check="true"
-                       autocomplete="off"
-                       hint-text=""
-                       css-class="nhsuk-u-width-one-half" />
+          <vc:text-input asp-for="BannerText"
+                         label="Centre support details"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="true"
+                         autocomplete="off"
+                         hint-text=""
+                         css-class="nhsuk-u-width-one-half" />
+        </div>
       </div>
 
       <div class="nhsuk-grid-row">
@@ -67,7 +69,7 @@
       </div>
 
       <div class="nhsuk-grid-row divider">
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-one-half">
           <button name="action" class="nhsuk-button" value="previewSignature">Preview</button>
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeSignature">Remove</button>
         </div>
@@ -88,7 +90,7 @@
       </div>
 
       <div class="nhsuk-grid-row divider">
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-one-half">
           <button name="action" class="nhsuk-button" value="previewLogo">Preview</button>
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeLogo">Remove</button>
         </div>

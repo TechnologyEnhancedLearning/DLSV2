@@ -144,7 +144,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
         {
             var centreId = User.GetCentreId();
 
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId);
+            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
 
             var model = new EditCentreDetailsViewModel(centreDetails);
 
