@@ -129,7 +129,10 @@
                             c.CCLicences AS CcLicenceSpots,
                             c.Trainers AS TrainerSpots,
                             c.IPPrefix,
-                            ct.ContractType
+                            ct.ContractType,
+                            c.CustomCourses,
+                            c.ServerSpaceUsed,
+                            c.ServerSpaceBytes
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes as ct on ct.ContractTypeID = c.ContractTypeId
