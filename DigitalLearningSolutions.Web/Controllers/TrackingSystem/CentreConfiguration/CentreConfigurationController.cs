@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
@@ -130,6 +131,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             );
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("EditCentreDetails")]
+        public IActionResult EditCentreDetails()
+        {
+            var centreId = User.GetCentreId();
+
+            var centreDetails = centresDataService.GetCentreDetailsById(centreId);
+
+            var model = new EditCentreDetailsViewModel(centreDetails);
+
+            return View(model);
         }
     }
 }

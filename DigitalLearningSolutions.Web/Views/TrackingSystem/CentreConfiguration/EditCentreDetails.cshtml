@@ -1,0 +1,88 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+@using Microsoft.Extensions.Configuration
+@model EditCentreDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Details" : "Edit Centre Details";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] {nameof(Model.NotifyEmail), nameof(Model.BannerText)})" />
+    }
+
+    <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre details</h1>
+    <form method="post" novalidate asp-action="EditCentreDetails">
+      <vc:text-input asp-for="NotifyEmail"
+                     label="Notify email"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     autocomplete="email"
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half"/>
+
+      <vc:text-input asp-for="BannerText"
+                     label="Centre support details"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="true"
+                     autocomplete="off"
+                     hint-text=""
+                     css-class="nhsuk-u-width-one-half"/>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-third">
+          <input type="hidden" asp-for="CentreSignature"/>
+          <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="" css-class="nhsuk-u-width-full"/>
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          @if (Model.CentreSignature != null) {
+            <img src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre signature"/>
+          } else {
+            <img src="@Url.Content("~/images/avatar.png")" alt="Default centre signature"/>
+          }
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          <button name="action" class="nhsuk-button" value="previewSignature">Preview</button>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeSignature">Remove</button>
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-third">
+          <input type="hidden" asp-for="CentreLogo"/>
+          <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="" css-class="nhsuk-u-width-full"/>
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          @if (Model.CentreLogo != null) {
+            <img src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre logo"/>
+          } else {
+            <img src="@Url.Content("~/images/avatar.png")" alt="Default centre logo"/>
+          }
+        </div>
+        <div class="nhsuk-grid-column-one-third">
+          <button name="action" class="nhsuk-button" value="previewLogo">Preview</button>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeLogo">Remove</button>
+        </div>
+      </div>
+
+      <button name="action" class="nhsuk-button" value="save">Save</button>
+    </form>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel"/>
+      </div>
+    </div>
+  </div>
+</div>
