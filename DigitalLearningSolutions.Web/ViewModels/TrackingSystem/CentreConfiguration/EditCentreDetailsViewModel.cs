@@ -7,6 +7,8 @@
 
     public class EditCentreDetailsViewModel
     {
+        public EditCentreDetailsViewModel() { }
+
         public EditCentreDetailsViewModel(Centre centre)
         {
             NotifyEmail = centre.NotifyEmail;

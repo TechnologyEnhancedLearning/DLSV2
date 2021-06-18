@@ -3,12 +3,17 @@
 @using Microsoft.Extensions.Configuration
 @model EditCentreDetailsViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreConfiguration.css")" asp-append-version="true">
+
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Centre Details" : "Edit Centre Details";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var hintText = @"To change your {0}, select a new image and click the Preview button to preview it.
+                    To remove your {0} click the remove button.
+                    Changes will not be made until the Save button below is clicked.";
 }
 
 @section NavMenuItems {
@@ -22,37 +27,46 @@
     }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre details</h1>
-    <form method="post" novalidate asp-action="EditCentreDetails">
-      <vc:text-input asp-for="NotifyEmail"
-                     label="Notify email"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="email"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+    <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditCentreDetails" enctype="multipart/form-data">
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="save">Save</button>
+      </div>
 
-      <vc:text-input asp-for="BannerText"
-                     label="Centre support details"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="true"
-                     autocomplete="off"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+      <div class="nhsuk-grid-row divider">
+        <vc:text-input asp-for="NotifyEmail"
+                       label="Notify email"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       autocomplete="email"
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+
+        <vc:text-input asp-for="BannerText"
+                       label="Centre support details"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="true"
+                       autocomplete="off"
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+      </div>
 
       <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
-          <input type="hidden" asp-for="CentreSignature"/>
-          <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="" css-class="nhsuk-u-width-full"/>
+        <div class="nhsuk-grid-column-one-half">
+          <input type="hidden" asp-for="CentreSignature" />
+          <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="@string.Format(hintText,"signature")" css-class="nhsuk-u-width-full" />
         </div>
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-one-half">
           @if (Model.CentreSignature != null) {
-            <img src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre signature"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre Signature Picture" />
           } else {
-            <img src="@Url.Content("~/images/avatar.png")" alt="Default centre signature"/>
+            <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
         </div>
+      </div>
+
+      <div class="nhsuk-grid-row divider">
         <div class="nhsuk-grid-column-one-third">
           <button name="action" class="nhsuk-button" value="previewSignature">Preview</button>
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeSignature">Remove</button>
@@ -60,17 +74,20 @@
       </div>
 
       <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
-          <input type="hidden" asp-for="CentreLogo"/>
-          <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="" css-class="nhsuk-u-width-full"/>
+        <div class="nhsuk-grid-column-one-half">
+          <input type="hidden" asp-for="CentreLogo" />
+          <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="@string.Format(hintText,"logo")" css-class="nhsuk-u-width-full" />
         </div>
-        <div class="nhsuk-grid-column-one-third">
+        <div class="nhsuk-grid-column-one-half">
           @if (Model.CentreLogo != null) {
-            <img src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre logo"/>
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
           } else {
-            <img src="@Url.Content("~/images/avatar.png")" alt="Default centre logo"/>
+            <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
           }
         </div>
+      </div>
+
+      <div class="nhsuk-grid-row divider">
         <div class="nhsuk-grid-column-one-third">
           <button name="action" class="nhsuk-button" value="previewLogo">Preview</button>
           <button name="action" class="nhsuk-button nhsuk-button--secondary" value="removeLogo">Remove</button>

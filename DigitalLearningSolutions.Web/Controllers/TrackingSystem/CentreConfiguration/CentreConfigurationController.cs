@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -8,6 +9,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CentreConfiguration")]
@@ -16,16 +18,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
         private readonly ICentresDataService centresDataService;
         private readonly ILogger<CentreConfigurationController> logger;
         private readonly IMapsApiHelper mapsApiHelper;
+        private readonly IImageResizeService imageResizeService;
 
         public CentreConfigurationController(
             ICentresDataService centresDataService,
             IMapsApiHelper mapsApiHelper,
-            ILogger<CentreConfigurationController> logger
+            ILogger<CentreConfigurationController> logger,
+            IImageResizeService imageResizeService
         )
         {
             this.centresDataService = centresDataService;
             this.mapsApiHelper = mapsApiHelper;
             this.logger = logger;
+            this.imageResizeService = imageResizeService;
         }
 
         public IActionResult Index()
@@ -144,6 +149,122 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             var model = new EditCentreDetailsViewModel(centreDetails);
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditCentreDetails")]
+        public IActionResult EditCentreDetails(EditCentreDetailsViewModel model, string action)
+        {
+            return action switch
+            {
+                "save" => EditCentreDetailsPostSave(model),
+                "previewSignature" => EditCentreDetailsPostPreviewSignature(model),
+                "removeSignature" => EditCentreDetailsPostRemoveSignature(model),
+                "previewLogo" => EditCentreDetailsPostPreviewLogo(model),
+                "removeLogo" => EditCentreDetailsPostRemoveLogo(model),
+                _ => RedirectToAction("Error", "LearningSolutions")
+            };
+        }
+
+        private IActionResult EditCentreDetailsPostSave(EditCentreDetailsViewModel model)
+        {
+
+            if (model.CentreSignatureFile != null)
+            {
+                ModelState.AddModelError(nameof(EditCentreDetailsViewModel.CentreSignatureFile),
+                    "Preview your new centre signature before saving");
+            }
+
+            if (model.CentreLogoFile != null)
+            {
+                ModelState.AddModelError(nameof(EditCentreDetailsViewModel.CentreLogoFile),
+                    "Preview your new centre logo before saving");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+
+            centresDataService.UpdateCentreDetails(
+                centreId,
+                model.NotifyEmail!,
+                model.BannerText!,
+                model.CentreSignature,
+                model.CentreLogo
+            );
+
+            return RedirectToAction("Index");
+        }
+
+        private IActionResult EditCentreDetailsPostPreviewSignature(EditCentreDetailsViewModel model)
+        {
+            ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreSignatureFile));
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (model.CentreSignatureFile != null)
+            {
+                ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreSignature));
+                model.CentreSignature = imageResizeService.ResizeProfilePicture(model.CentreSignatureFile);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult EditCentreDetailsPostRemoveSignature(EditCentreDetailsViewModel model)
+        {
+            ClearErrorsForAllFields();
+
+            ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreSignature));
+            model.CentreSignature = null;
+            return View(model);
+        }
+
+        private IActionResult EditCentreDetailsPostPreviewLogo(EditCentreDetailsViewModel model)
+        {
+            ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreLogoFile));
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (model.CentreLogoFile != null)
+            {
+                ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreLogo));
+                model.CentreLogo = imageResizeService.ResizeProfilePicture(model.CentreLogoFile);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult EditCentreDetailsPostRemoveLogo(EditCentreDetailsViewModel model)
+        {
+            ClearErrorsForAllFields();
+
+            ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreLogo));
+            model.CentreLogo = null;
+            return View(model);
+        }
+
+        private void ClearErrorsForAllFields()
+        {
+            ClearErrorsForAllFieldsExcept(null);
+        }
+
+        private void ClearErrorsForAllFieldsExcept(string? fieldName)
+        {
+            foreach (var key in ModelState.Keys.Where(k => k != fieldName))
+            {
+                ModelState[key].Errors.Clear();
+                ModelState[key].ValidationState = ModelValidationState.Valid;
+            }
         }
     }
 }
