@@ -112,7 +112,8 @@ CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SAS.Ordering
+                      ORDER BY SAS.Ordering",
                 new { candidateId }
             );
         }
@@ -138,7 +139,8 @@ CA.LaunchCount, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SAS.Ordering
+                      ORDER BY SAS.Ordering",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -148,7 +150,7 @@ CA.LaunchCount, CA.SubmittedDate
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
-                     (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID) as RowNo,
+                     (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
                              CompetencyID
                       FROM SelfAssessmentStructure
                       WHERE SelfAssessmentID = @selfAssessmentId
