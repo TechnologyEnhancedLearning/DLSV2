@@ -21,6 +21,7 @@
             DateTime? evaluated = null,
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
+            DateTime? archivedDate = null,
             DateTime? completed = null
         )
         {
@@ -36,6 +37,7 @@
                 Sections = sections,
                 ProgressID = progressId,
                 Evaluated = evaluated,
+                ArchivedDate = archivedDate,
                 StartedDate = startedDate ?? DateTime.Now,
                 LastAccessed = lastAccessed ?? DateTime.Now,
                 Completed = completed ?? DateTime.Now
