@@ -153,6 +153,7 @@
   </data>
   <data name="dlsv2_172_fixcustomisationtutorialprogressissue_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\dlsv2-172-fixcustomisationtutorialprogressissue-up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
   <data name="DLSV2_236_GetCompletedCoursesTweak_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-236-GetCompletedCoursesTweak_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
