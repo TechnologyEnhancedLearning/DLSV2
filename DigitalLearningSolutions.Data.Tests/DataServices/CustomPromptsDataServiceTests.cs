@@ -70,7 +70,7 @@
         }
 
         [Test]
-        public void AddCustomPromptToCentre_correctly_adds_custom_prompt()
+        public void UpdateCustomPromptForCentre_correctly_adds_custom_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -79,7 +79,7 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.AddCustomPromptToCentre(2, 1, 1, false, options);
+                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
                 var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
                 var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1).Item2;
 
@@ -97,5 +97,14 @@
             }
         }
 
+        [Test]
+        public void GetPromptNameForCentreAndPromptNumber_returns_expected_prompt_name()
+        {
+            // When
+            var result = customPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
+
+            // Then
+            result.Should().BeEquivalentTo("Role type");
+        }
     }
 }

@@ -17,13 +17,15 @@
         private ICustomPromptsDataService customPromptsDataService = null!;
         private ICustomPromptsService customPromptsService = null!;
         private ILogger<CustomPromptsService> logger = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             customPromptsDataService = A.Fake<ICustomPromptsDataService>();
             logger = A.Fake<ILogger<CustomPromptsService>>();
-            customPromptsService = new CustomPromptsService(customPromptsDataService, logger);
+            userDataService = A.Fake<IUserDataService>();
+            customPromptsService = new CustomPromptsService(customPromptsDataService, logger, userDataService);
         }
 
         [Test]
@@ -195,7 +197,7 @@
             // Given
             A.CallTo
             (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, A<int>._, 1, true, null)
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
             ).DoesNothing();
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
                 .Returns
@@ -216,7 +218,7 @@
             // Then
             A.CallTo
             (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, 3, 1, true, null)
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, 3, 1, true, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
@@ -227,7 +229,7 @@
             // Given
             A.CallTo
             (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, A<int>._, 1, true, null)
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
             ).DoesNothing();
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
                 .Returns
@@ -248,7 +250,7 @@
             // Then
             A.CallTo
             (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, 2, 1, true, null)
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, 2, 1, true, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
@@ -259,7 +261,7 @@
             // Given
             A.CallTo
             (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, A<int>._, 1, true, null)
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
             ).DoesNothing();
             A.CallTo(() => customPromptsDataService.GetCentreCustomPromptsByCentreId(1))
                 .Returns
@@ -278,11 +280,26 @@
             var result = customPromptsService.AddCustomPromptToCentre(1, 1, true, null);
 
             // Then
-            A.CallTo
-            (
-                () => customPromptsDataService.AddCustomPromptToCentre(1, A<int>._, 1, true, null)
-            ).MustNotHaveHappened();
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null))
+                .MustNotHaveHappened();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void RemoveCustomPromptFromCentre_calls_data_service_with_correct_values()
+        {
+            // Given
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)).DoesNothing();
+            A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).DoesNothing();
+
+            // When
+            customPromptsService.RemoveCustomPromptFromCentre(1, 1);
+
+            // Then
+            A.CallTo(
+                () => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)
+            ).MustHaveHappened();
+            A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).MustHaveHappened();
         }
     }
 }

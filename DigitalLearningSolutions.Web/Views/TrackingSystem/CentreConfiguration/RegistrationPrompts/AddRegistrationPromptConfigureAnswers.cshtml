@@ -32,7 +32,7 @@
 
 <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
   <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.NextAction">Next</button>
+    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
   </div>
 
   <input type="hidden" asp-for="OptionsString"/>
@@ -58,6 +58,13 @@
                      hint-text=""
                      css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
       <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row divider">
+    <div class="nhsuk-grid-column-one-half">
+      <p class="nhsuk-label">Want to add answers in bulk?</p>
+      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk add</button>
     </div>
   </div>
 

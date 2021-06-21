@@ -9,6 +9,7 @@
     {
         public DateTime CompletedDate { get; }
         public DateTime? EvaluatedDate { get; }
+        public DateTime? ArchivedDate { get; }
         public string EvaluateUrl { get; }
 
 
@@ -17,6 +18,7 @@
             CompletedDate = course.Completed;
             EvaluatedDate = course.Evaluated;
             EvaluateUrl = config.GetEvaluateUrl(course.ProgressID, true);
+            ArchivedDate = course.ArchivedDate;
         }
 
         public string FinaliseButtonText()

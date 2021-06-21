@@ -11,6 +11,7 @@
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
     using System;
+    using DigitalLearningSolutions.Data.Models.RoleProfiles;
 
     public static class SearchHelper
     {
@@ -77,14 +78,49 @@
             );
                 return results.Select(result => result.Value);
             }
-
-
+        }
+        public static IEnumerable<RoleProfile> FilterRoleProfiles(IEnumerable<RoleProfile> roleProfiles, string? searchString, int minMatchScore, bool stripStopWords)
+        {
+            if (searchString == null)
+            {
+                return roleProfiles;
+            }
+            if (stripStopWords)
+            {
+                searchString = CleanSearchedWords(searchString);
+            }
+            var query = new RoleProfile()
+            {
+                RoleProfileName = searchString.ToLower()
+            };
+            if (stripStopWords)
+            {
+                var results = Process.ExtractSorted(
+                query,
+                roleProfiles,
+                roleProfile => roleProfile.RoleProfileName.ToLower(),
+                ScorerCache.Get<DefaultRatioScorer>(),
+                minMatchScore
+            );
+                return results.Select(result => result.Value);
+            }
+            else
+            {
+                var results = Process.ExtractSorted(
+                query,
+                roleProfiles,
+                roleProfile => roleProfile.RoleProfileName.ToLower(),
+                ScorerCache.Get<PartialRatioScorer>(),
+                minMatchScore
+            );
+                return results.Select(result => result.Value);
+            }
         }
         private static string[] stopWordsArrary = new string[] { "a", "about", "actually", "after", "also", "am", "an", "and", "any", "are", "as", "at", "be", "because", "but", "by",
                                                 "could", "do", "each", "either", "en", "for", "from", "has", "have", "how",
                                                 "i", "if", "in", "is", "it", "its", "just", "of", "or", "so", "some", "such", "that",
                                                 "the", "their", "these", "thing", "this", "to", "too", "very", "was", "we", "well", "what", "when", "where",
-                                                "who", "will", "with", "you", "your", "framework", "competency", "capability", "competence", "skill"
+                                                "who", "will", "with", "you", "your", "framework", "competency", "capability", "competence", "skill", "profile", "job", "role"
                                             };
 
         /// 

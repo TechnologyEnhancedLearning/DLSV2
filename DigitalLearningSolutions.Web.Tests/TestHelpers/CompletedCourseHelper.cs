@@ -21,6 +21,7 @@
             DateTime? evaluated = null,
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
+            DateTime? archivedDate = null,
             DateTime? completed = null
         )
         {
@@ -38,7 +39,8 @@
                 Evaluated = evaluated,
                 StartedDate = startedDate ?? DateTime.UtcNow,
                 LastAccessed = lastAccessed ?? DateTime.UtcNow,
-                Completed = completed ?? DateTime.UtcNow
+                Completed = completed ?? DateTime.UtcNow,
+                ArchivedDate = archivedDate
             };
         }
 

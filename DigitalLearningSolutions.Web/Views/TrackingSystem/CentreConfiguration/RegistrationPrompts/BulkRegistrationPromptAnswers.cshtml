@@ -1,0 +1,48 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration
+@using Microsoft.Extensions.Configuration
+@model BulkRegistrationPromptAnswersViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Configure answers in bulk" : "Configure answers in bulk";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(BulkRegistrationPromptAnswersViewModel.OptionsString) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
+
+    <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddRegistrationPromptBulkPost" : "EditRegistrationPromptBulkPost")">
+
+      <input type="hidden" asp-for="IsAddPromptJourney" />
+      <input type="hidden" asp-for="PromptNumber" />
+
+      <vc:text-area asp-for="OptionsString"
+                    label="Enter each response option on a separate line (max 4000 characters). The order of responses will be the order they appear on the dropdown for users."
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class="" />
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    @if (!Model.IsAddPromptJourney) {
+      var routeData = new Dictionary<string, string> { { "promptNumber", Model.PromptNumber!.Value.ToString() } };
+      <vc:back-link asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-all-route-data="@routeData" link-text="Cancel" />
+    } else {
+      <vc:back-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptConfigureAnswers" link-text="Cancel" />
+    }
+  </div>
+</div>

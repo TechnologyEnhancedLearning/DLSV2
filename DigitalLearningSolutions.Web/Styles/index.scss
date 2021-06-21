@@ -15,17 +15,18 @@ ul > li > ul > li {
 .js-enabled .non-js-only {
   display: none;
 }
-a.delete-button {
-  background-color: #d5281b;
+
+.delete-button {
+  background-color: $nhsuk-error-color;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
 }
 
-a.delete-button:hover {
+.delete-button:hover {
   background-color: #aa2016;
 }
 
-a.delete-button:active {
+.delete-button:active {
   background-color: #6b140e;
 }
 
@@ -244,9 +245,16 @@ ul.no-bullets {
   @extend .nhsuk-u-font-size-16;
 }
 
- .side-nav__item--selected {
-   border-left: 4px solid $nhsuk-link-color;
-   margin-left: -12px;
-   @include nhsuk-responsive-padding(2, "left");
-   @extend .nhsuk-u-font-weight-bold;
- }
+.side-nav__item--selected {
+  border-left: 4px solid $nhsuk-link-color;
+  @include nhsuk-responsive-padding(2, "left");
+  @extend .nhsuk-u-font-weight-bold;
+
+  @include govuk-media-query($from: desktop) {
+    margin-left: -12px;
+  }
+}
+
+.nhsuk-error-message.error-message--margin-bottom-1 {
+    margin-bottom: nhsuk-spacing(1);
+}

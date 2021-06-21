@@ -12,7 +12,7 @@
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
-                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId) != null
+                context => context.User.GetCandidateId() != null
                            && context.User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) == true
             );
         }
@@ -32,7 +32,9 @@
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
                            && (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true) |
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true)
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true) |
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true) |
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true)
             );
         }
 

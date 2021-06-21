@@ -11,7 +11,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <partial name="_ErrorSummary"/>
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })"/>
     }
 
     <div class="nhsuk-u-margin-bottom-8">
@@ -113,8 +113,8 @@
           }
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="terms" name="terms" asp-for="Terms"/>
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="terms">
+              <input class="nhsuk-checkboxes__input" id="Terms" name="Terms" asp-for="Terms"/>
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="Terms">
                 I have read, understood and agree to abide by the Digital Learning Solutions <a asp-controller="LearningSolutions" asp-action="Terms" target="_blank">Terms and Conditions</a>.
               </label>
             </div>

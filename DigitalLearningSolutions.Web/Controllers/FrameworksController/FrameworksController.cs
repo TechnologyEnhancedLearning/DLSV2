@@ -62,5 +62,15 @@
         {
             return User.GetCustomClaim(CustomClaimTypes.UserSurname);
         }
+        private bool GetIsWorkforceManager()
+        {
+            var isWorkforceManager = User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager);
+            return isWorkforceManager != null && (bool)isWorkforceManager;
+        }
+        private bool GetIsWorkforceContributor()
+        {
+            var isWorkforceContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor);
+            return isWorkforceContributor != null && (bool)isWorkforceContributor;
+        }
     }
 }

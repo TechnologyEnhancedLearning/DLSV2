@@ -46,14 +46,14 @@
     </div>
   </details>
   <div class="flex-row">
-    <form class="delegate-approvals-button-wrapper" asp-controller="DelegateApprovals" asp-action="ApproveDelegate" method="post">
+    <form class="delegate-approvals-button-wrapper" method="post">
       <input type="hidden" name="delegateId" value="@Model.Id"/>
-      <button class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"  type="submit">
+      <button class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2" asp-controller="DelegateApprovals" asp-action="ApproveDelegate">
         Approve
       </button>
+      <button class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" asp-controller="DelegateApprovals" asp-action="DelegateRejectionPage">
+        Reject
+      </button>
     </form>
-    <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-0" href="" role="button">
-      Reject
-    </a>
   </div>
 </div>

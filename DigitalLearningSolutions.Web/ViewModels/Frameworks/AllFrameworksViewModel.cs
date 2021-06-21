@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
     using System.Collections.Generic;
     using System.Linq;

@@ -111,7 +111,7 @@
             if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
-                        "A user with this email address already exists at this centre");
+                        "A user with this email address is already registered at this centre");
                 return View(model);
             }
 
@@ -120,7 +120,7 @@
             if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
             {
                 ModelState.AddModelError(nameof(EditDetailsViewModel.Password),
-                    "The password you have entered is incorrect.");
+                    "The password you have entered is incorrect");
                 return View(model);
             }
 

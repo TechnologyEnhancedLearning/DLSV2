@@ -156,7 +156,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpGet]
         public IActionResult Password()
         {
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -205,7 +205,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
 
             var centreId = (int)data.Centre;
-            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
+            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
             var userIp = Request.GetUserIpAddressFromRequest();
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(
@@ -291,7 +291,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
-                    "A user with this email address already exists at this centre"
+                    "A user with this email address is already registered at this centre"
                 );
             }
         }
