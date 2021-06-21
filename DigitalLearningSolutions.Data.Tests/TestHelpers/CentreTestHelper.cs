@@ -34,7 +34,10 @@
             int ccLicenceSpots = 0,
             int trainerSpots = 0,
             string? ipPrefix = "194.176.105",
-            string? contractType = "Basic"
+            string? contractType = "Basic",
+            int customCourses = 0,
+            long serverSpaceUsed = 0,
+            long serverSpaceBytes = 0
         )
         {
             return new Centre
@@ -67,7 +70,10 @@
                 CcLicenceSpots = ccLicenceSpots,
                 TrainerSpots = trainerSpots,
                 IpPrefix = ipPrefix,
-                ContractType = contractType
+                ContractType = contractType,
+                CustomCourses = customCourses,
+                ServerSpaceBytes = serverSpaceBytes,
+                ServerSpaceUsed = serverSpaceUsed
             };
         }
     }

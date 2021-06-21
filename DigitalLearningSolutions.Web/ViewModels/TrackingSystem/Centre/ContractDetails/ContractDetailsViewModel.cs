@@ -94,6 +94,11 @@
                 return "grey";
             }
 
+            if (limit < 0)
+            {
+                return "blue";
+            }
+
             var usage = (double)number / limit.Value;
             if (usage < 0.6)
             {
