@@ -54,10 +54,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return NotFound();
             }
 
-            var delegateRegistrationData = CreateDelegateRegistrationData(centreId);
-            delegateRegistrationData.IsCentreSpecificRegistration = centreId.HasValue;
-            delegateRegistrationData.Centre = centreId;
-            TempData.Set(delegateRegistrationData);
+            SetDelegateRegistrationData(centreId);
 
             return RedirectToAction("PersonalInformation");
         }
@@ -253,7 +250,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(viewModel);
         }
 
-        private DelegateRegistrationData CreateDelegateRegistrationData(int? centreId)
+        private void SetDelegateRegistrationData(int? centreId)
         {
             var delegateRegistrationData = new DelegateRegistrationData
             {
@@ -271,17 +268,13 @@ namespace DigitalLearningSolutions.Web.Controllers
                 }
             );
 
-            return delegateRegistrationData;
+            TempData.Set(delegateRegistrationData);
         }
 
         private bool CheckCentreIdValid(int? centreId)
         {
-            if (centreId == null)
-            {
-                return true;
-            }
-
-            return centresDataService.GetCentreName(centreId.Value) != null;
+            return centreId == null
+                || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(PersonalInformationViewModel model)
