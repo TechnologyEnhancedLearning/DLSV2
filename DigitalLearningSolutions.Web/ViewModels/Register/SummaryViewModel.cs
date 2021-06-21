@@ -12,7 +12,7 @@
         public string? Centre { get; set; }
         public string? JobGroup { get; set; }
         public bool Terms { get; set; }
-        public IEnumerable<EditCustomFieldViewModel>? CustomFields { get; set; }
+        public IEnumerable<EditCustomFieldViewModel> CustomFields { get; set; } = new List<EditCustomFieldViewModel>();
         public bool IsCentreSpecificRegistration { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

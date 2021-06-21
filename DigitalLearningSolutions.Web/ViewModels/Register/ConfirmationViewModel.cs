@@ -9,12 +9,6 @@
             CentreId = centreId;
         }
 
-        public ConfirmationViewModel(string candidateNumber, bool approved)
-        {
-            CandidateNumber = candidateNumber;
-            Approved = approved;
-        }
-
         public string CandidateNumber { get; set; }
         public bool Approved { get; set; }
         public int? CentreId { get; set; }

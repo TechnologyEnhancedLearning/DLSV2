@@ -22,8 +22,8 @@
 
         public string? Answer6 { get; set; }
 
-        public List<EditCustomFieldViewModel>? CustomFields { get; set; }
+        public List<EditCustomFieldViewModel> CustomFields { get; set; } = new List<EditCustomFieldViewModel>();
 
-        public IEnumerable<SelectListItem>? JobGroupOptions { get; set; }
+        public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
     }
 }

@@ -26,6 +26,6 @@
 
         public string? CentreName { get; set; }
 
-        public IEnumerable<SelectListItem>? CentreOptions { get; set; }
+        public IEnumerable<SelectListItem> CentreOptions { get; set; } = new List<SelectListItem>();
     }
 }
