@@ -1,23 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model AllFrameworksViewModel
 
-@{
-  ViewData["Title"] = "All Frameworks";
-  ViewData["Application"] = "Framework Service";
-}
-<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-@section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
-}
-@section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Frameworks</li>
-      </ol>
-    </div>
-  </nav>
-}
 <h1>All Frameworks</h1>
 @if (!Model.BrandedFrameworks.Any() && Model.SearchString == null)
 {

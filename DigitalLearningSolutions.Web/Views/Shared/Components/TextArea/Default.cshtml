@@ -11,9 +11,13 @@
     </div>
   }
   @if (Model.HasError) {
-    <span class="nhsuk-error-message" id="@Model.Name-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
+    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+      @foreach (var errorMessage in Model.ErrorMessages) {
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+        </span>
+      }
+    </div>
   }
   <textarea class="nhsuk-textarea @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
          id="@Model.Id"

@@ -28,6 +28,8 @@
             int centreId,
             string postcode,
             bool showOnMap,
+            double latitude,
+            double longitude,
             string? telephone,
             string email,
             string? openingHours,
@@ -115,6 +117,8 @@
                             c.pwEmail AS CentreEmail,
                             c.pwPostCode AS CentrePostcode,
                             c.ShowOnMap,
+                            c.Long AS Longitude,
+                            c.Lat AS Latitude,
                             c.pwHours AS OpeningHours,
                             c.pwWebURL AS CentreWebAddress,
                             c.pwTrustsCovered AS OrganisationsCovered,
@@ -123,9 +127,12 @@
                             c.CMSAdministrators AS CmsAdministratorSpots,
                             c.CMSManagers AS CmsManagerSpots,
                             c.CCLicences AS CcLicenceSpots,
-                            c.Trainers AS TrainerSpots
+                            c.Trainers AS TrainerSpots,
+                            c.IPPrefix,
+                            ct.ContractType
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN ContractTypes as ct on ct.ContractTypeID = c.ContractTypeId
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
@@ -170,6 +177,8 @@
             int centreId,
             string postcode,
             bool showOnMap,
+            double latitude,
+            double longitude,
             string? telephone = null,
             string? email = null,
             string? openingHours = null,
@@ -186,6 +195,8 @@
                     pwEmail = @email,
                     pwPostCode = @postcode,
                     showOnMap = @showOnMap,
+                    lat = @latitude,
+                    long = @longitude,
                     pwHours = @openingHours,
                     pwWebURL = @webAddress,
                     pwTrustsCovered = @organisationsCovered,
@@ -198,6 +209,8 @@
                     email,
                     postcode,
                     showOnMap,
+                    longitude,
+                    latitude,
                     openingHours,
                     webAddress,
                     organisationsCovered,

@@ -22,6 +22,8 @@
             string? centreEmail = "5bp.informaticstraining.5bp.nhs.uk",
             string? centrePostcode = "WA2 8WA",
             bool showCentreOnMap = true,
+            double longitude = -2.608441,
+            double latitude = 53.428349,
             string? openingHours = "9.30am - 4.30pm",
             string? centreWebAddress = null,
             string? organisationsCovered = "Northwest Boroughs Healthcare NHS Foundation Trust",
@@ -30,7 +32,9 @@
             int cmsAdministratorSpots = 5,
             int cmsManagerSpots = 0,
             int ccLicenceSpots = 0,
-            int trainerSpots = 0
+            int trainerSpots = 0,
+            string? ipPrefix = "194.176.105",
+            string? contractType = "Basic"
         )
         {
             return new Centre
@@ -51,6 +55,8 @@
                 CentreEmail = centreEmail,
                 CentrePostcode = centrePostcode,
                 ShowOnMap = showCentreOnMap,
+                Longitude = longitude,
+                Latitude = latitude,
                 OpeningHours = openingHours,
                 CentreWebAddress = centreWebAddress,
                 OrganisationsCovered = organisationsCovered,
@@ -59,7 +65,9 @@
                 CmsAdministratorSpots = cmsAdministratorSpots,
                 CmsManagerSpots = cmsManagerSpots,
                 CcLicenceSpots = ccLicenceSpots,
-                TrainerSpots = trainerSpots
+                TrainerSpots = trainerSpots,
+                IpPrefix = ipPrefix,
+                ContractType = contractType
             };
         }
     }

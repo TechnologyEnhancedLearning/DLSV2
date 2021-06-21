@@ -164,7 +164,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -220,10 +220,8 @@
                 return View(viewModel);
             }
 
-            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
-            var userIp = Request.Headers.ContainsKey("X-Forwarded-For")
-                ? Request.Headers["X-Forwarded-For"].ToString()
-                : Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            var userIp = Request.GetUserIpAddressFromRequest();
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(
                     RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
@@ -281,7 +279,7 @@
             {
                 ModelState.AddModelError(
                     nameof(RegisterViewModel.Email),
-                    "A user with this email address already exists at this centre"
+                    "A user with this email address is already registered at this centre"
                 );
             }
         }

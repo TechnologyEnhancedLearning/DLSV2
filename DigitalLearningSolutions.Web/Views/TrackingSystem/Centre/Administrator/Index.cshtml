@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
 @model CentreAdministratorsViewModel
@@ -8,7 +9,7 @@
 @{
   ViewData["Title"] = "Centre Administrators";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["CurrentSystemBaseUrl"]}/tracking/dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
 }
 
@@ -18,7 +19,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
-    Side bar
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
+    </nav>
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
@@ -61,7 +64,10 @@
       </div>
 
     </form>
-
+    
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
+    </nav>
   </div>
 </div>
 

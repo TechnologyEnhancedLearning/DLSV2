@@ -1,0 +1,25 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.dashboard-4-1-card {
+  @include mq($until: large-desktop) {
+    flex: 0 0 100%;
+
+    .nhsuk-card {
+      margin-bottom: nhsuk-spacing(3);
+    }
+
+    &:last-child .nhsuk-card {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.dashboard-4-1-card-group {
+  @include mq($until: large-desktop) {
+    margin-bottom: nhsuk-spacing(7);
+  }
+}
+
+.nhsuk-card--not-clickable {
+  border-bottom-width: nhsuk-spacing(1);
+}

@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -18,8 +21,13 @@
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
         public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage,
-            int[] ids);
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            int[] ids
+        );
 
         public void UpdateDelegateUserCentrePrompts(
             int id,
@@ -29,9 +37,20 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6);
+            string? answer6
+        );
 
         public void ApproveDelegateUsers(params int[] ids);
+
+        public void RemoveDelegateUser(int delegateId);
+
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId);
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
     }
 
     public class UserDataService : IUserDataService
@@ -63,12 +82,18 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
-                        au.ProfileImage
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.AdminID = @id",
                 new { id }
             ).SingleOrDefault();
@@ -84,6 +109,7 @@
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
@@ -157,12 +183,18 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
+                        cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
-                        au.ProfileImage
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
             ).FirstOrDefault();
@@ -298,7 +330,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6
+        )
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -322,6 +355,60 @@
                         SET Approved = 1
                         WHERE CandidateID IN @ids",
                 new { ids }
+            );
+        }
+
+        public void RemoveDelegateUser(int delegateId)
+        {
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"
+                DELETE FROM NotificationUsers
+                    WHERE CandidateID = @delegateId
+
+                DELETE FROM GroupDelegates
+                    WHERE DelegateID = @delegateId
+
+                DELETE FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+            transaction.Complete();
+        }
+
+        public int GetNumberOfApprovedDelegatesAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public int GetNumberOfActiveAdminsAtCentre(int centreId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM AdminUsers WHERE Active = 1 AND CentreID = @centreId",
+                new { centreId }
+            );
+        }
+
+        public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber)
+        {
+            return connection.Query<string>(
+                $@"SELECT Answer{promptNumber}
+                        FROM Candidates
+                        WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
+                new { centreId }
+            ).Count(x => !string.IsNullOrWhiteSpace(x)); ;
+        }
+
+        public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)
+        {
+            connection.Execute(
+                $@"UPDATE Candidates
+                        SET Answer{promptNumber} = NULL
+                        WHERE CentreID = @centreId",
+                new { centreId }
             );
         }
     }

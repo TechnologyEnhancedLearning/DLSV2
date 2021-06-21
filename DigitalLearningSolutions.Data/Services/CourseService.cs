@@ -15,6 +15,7 @@
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
         void RemoveCurrentCourse(int progressId, int candidateId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
+        int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -104,6 +105,18 @@
                     $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}"
                 );
             }
+        }
+
+        public int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int adminCategoryId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*)
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE Active = 1 AND CentreID = @centreId 
+	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
+                new { centreId, adminCategoryId }
+            );
         }
     }
 }

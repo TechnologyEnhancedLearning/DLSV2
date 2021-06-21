@@ -6,5 +6,6 @@
     {
         public DateTime Completed { get; set; }
         public DateTime? Evaluated { get; set; }
+        public DateTime? ArchivedDate { get; set; }
     }
 }

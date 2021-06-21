@@ -25,13 +25,8 @@
 
 .centre-detail--placeholder-image__downsize {
   display: block;
-  width: 400px;
-  height: 200px;
-
-  @include govuk-media-query($until: large-desktop) {
-    width: 320px;
-    height: 160px;
-  }
+  width: 300px;
+  height: 150px;
 
   @include govuk-media-query($until: desktop) {
     width: 240px;

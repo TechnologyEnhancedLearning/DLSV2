@@ -21,6 +21,10 @@
         public bool IsSupervisor { get; set; }
         public bool IsTrainer { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
+        public bool IsFrameworkContributor { get; set; }
+        public bool IsWorkforceManager { get; set; }
+        public bool IsWorkforceContributor { get; set; }
+        public bool IsLocalWorkforceManager { get; set; }
 
         public AdminLoginDetails() { }
 
@@ -43,6 +47,10 @@
             IsSupervisor = adminUser.IsSupervisor;
             IsTrainer = adminUser.IsTrainer;
             IsFrameworkDeveloper = adminUser.IsFrameworkDeveloper;
+            IsFrameworkContributor = adminUser.IsFrameworkContributor;
+            IsWorkforceManager = adminUser.IsWorkforceManager;
+            IsWorkforceContributor = adminUser.IsWorkforceContributor;
+            IsLocalWorkforceManager = adminUser.IsLocalWorkforceManager;
         }
     }
 }

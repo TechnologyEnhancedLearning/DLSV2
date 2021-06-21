@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -104,6 +105,21 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+        }
+
+        [Test]
+        public void Leading_trailing_whitespaces_in_email_should_be_ignored()
+        {
+            // Given
+            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._))
+                .DoesNothing();
+
+            // When
+            var result = controller.Index(new ForgotPasswordViewModel("  recipient@example.com\t"));
+
+            // Then
+            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", A<string>._)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
     }
 }

@@ -1,0 +1,41 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
+@using Microsoft.Extensions.Configuration
+@model CentreDashboardViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreDashboard.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Centre dashboard";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Dashboard" />
+    </nav>
+  </div>
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">Centre dashboard</h1>
+    <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.FirstName</span>. You are managing <span class="nhsuk-u-font-weight-bold">@Model.CourseCategory</span> courses.</p>
+
+    <partial name="_DashboardTopCardGroup" model="Model" />
+
+    <partial name="_DashboardCentreDetails" model="Model" />
+
+    <partial name="_DashboardBottomCardGroup" />
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Dashboard" />
+    </nav>
+
+  </div>
+</div>
