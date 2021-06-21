@@ -95,11 +95,10 @@
         }
 
         [Test]
-        public void IndexPost_with_invalid_centreId_param_shows_error()
+        public void IndexGet_with_invalid_centreId_param_shows_error()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationData());
-            var centreId = CentreTestHelper.GetDefaultCentre().CentreId;
+            const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns(null);
 
             // When
@@ -111,11 +110,11 @@
         }
 
         [Test]
-        public void IndexPost_with_valid_centreId_param_sets_data_correctly()
+        public void IndexGet_with_valid_centreId_param_sets_data_correctly()
         {
             // Given
-            controller.TempData.Set(new DelegateRegistrationData());
-            var centreId = CentreTestHelper.GetDefaultCentre().CentreId;
+            const int centreId = 7;
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
 
             // When
             var result = controller.Index(centreId);
@@ -124,16 +123,13 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<DelegateRegistrationData>()!;
             data.Centre.Should().Be(centreId);
-            data.IsCentreSpecificRegistration.Should().Be(true);
+            data.IsCentreSpecificRegistration.Should().BeTrue();
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
         }
 
         [Test]
-        public void IndexPost_with_no_centreId_param_allows_normal_registration()
+        public void IndexGet_with_no_centreId_param_allows_normal_registration()
         {
-            // Given
-            controller.TempData.Set(new DelegateRegistrationData());
-
             // When
             var result = controller.Index(null);
 
@@ -141,7 +137,7 @@
             A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();
             var data = controller.TempData.Peek<DelegateRegistrationData>()!;
             data.Centre.Should().BeNull();
-            data.IsCentreSpecificRegistration.Should().Be(false);
+            data.IsCentreSpecificRegistration.Should().BeFalse();
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
         }
     }
