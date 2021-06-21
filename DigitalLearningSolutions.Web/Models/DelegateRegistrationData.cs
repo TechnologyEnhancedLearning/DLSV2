@@ -10,7 +10,6 @@
         }
 
         public Guid Id { get; set; }
-        public string? PasswordHash { get; set; }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -25,5 +24,7 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+
+        public string? PasswordHash { get; set; }
     }
 }

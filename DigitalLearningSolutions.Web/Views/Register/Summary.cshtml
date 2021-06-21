@@ -86,7 +86,7 @@
           </a>
         </dd>
       </div>
-      @foreach (EditCustomFieldViewModel customField in Model.CustomFields) {
+      @foreach (var customField in Model.CustomFields) {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))

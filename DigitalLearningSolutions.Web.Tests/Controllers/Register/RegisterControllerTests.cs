@@ -131,7 +131,7 @@
         public void IndexGet_with_no_centreId_param_allows_normal_registration()
         {
             // When
-            var result = controller.Index(null);
+            var result = controller.Index();
 
             // Then
             A.CallTo(() => centresDataService.GetCentreName(A<int>._)).MustNotHaveHappened();

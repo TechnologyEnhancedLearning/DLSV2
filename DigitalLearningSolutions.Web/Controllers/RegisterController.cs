@@ -42,7 +42,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.customPromptHelper = customPromptHelper;
         }
 
-        public IActionResult Index(int? centreId)
+        public IActionResult Index(int? centreId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -296,13 +296,10 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
         }
 
-        private List<EditCustomFieldViewModel> GetCustomFieldsFromModel(
-            DelegateRegistrationData data,
-            LearnerInformationViewModel model
-        )
+        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromModel(LearnerInformationViewModel model, int centreId)
         {
-            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(
-                data.Centre!.Value,
+            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+                centreId,
                 model.Answer1,
                 model.Answer2,
                 model.Answer3,
@@ -310,12 +307,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 model.Answer5,
                 model.Answer6
             );
-            return customFields;
         }
 
-        private List<EditCustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
+        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(
+            return customPromptHelper.GetCustomFieldViewModelsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,
@@ -324,7 +320,6 @@ namespace DigitalLearningSolutions.Web.Controllers
                 data.Answer5,
                 data.Answer6
             );
-            return customFields;
         }
 
         private static void ClearCustomPromptAnswers(DelegateRegistrationData data)
@@ -351,7 +346,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             DelegateRegistrationData data
         )
         {
-            model.CustomFields = GetCustomFieldsFromModel(data, model);
+            model.CustomFields = GetCustomFieldsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
