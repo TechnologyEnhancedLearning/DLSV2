@@ -23,13 +23,13 @@
             A.CallTo(() => frameworkService.GetFrameworksForAdminId(AdminId)).Returns(dashboardFrameworks);
 
             // When
-            var result = controller.ViewFrameworks(null, "Created Date", "Descending", 1, "Mine");
+            var result = controller.ViewFrameworks(null, "CreatedDate", "Descending", 1, "Mine");
 
             // Then
             var allFrameworksViewModel = new AllFrameworksViewModel(
                 new List<BrandedFramework>(),
                 null,
-                "Created Date",
+                "CreatedDate",
                 "Descending",
                 1
             );
@@ -75,7 +75,7 @@
             var myFrameworksViewModel = new MyFrameworksViewModel(
                 new List<BrandedFramework>(),
                 null,
-                "Framework Name",
+                "FrameworkName",
                 "Ascending",
                 1,
                 true);
