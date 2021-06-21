@@ -11,11 +11,11 @@
         public IActionResult Completed(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.DescendingText,
+            string sortDirection = BaseSearchablePageViewModel.Descending,
             int page = 1
         )
         {
-            sortBy ??= CourseSortByOptionTexts.CompletedDate.PropertyName;
+            sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
 
             var completedCourses = courseService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();

@@ -11,6 +11,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 
     public class CurrentPageViewModel : BaseSearchablePageViewModel
     {
+        public readonly string? BannerText;
+
         public CurrentPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
             string? searchString,
@@ -19,8 +21,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             IEnumerable<SelfAssessment> selfAssessments,
             string? bannerText,
             int page
-        ) : base(searchString, sortBy, sortDirection, page, bannerText)
+        ) : base(searchString, sortBy, sortDirection, page)
         {
+            BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             foreach (SelfAssessment selfAssessment in selfAssessments)
             {
@@ -35,7 +38,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             CurrentCourses = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(
                 course =>
@@ -54,12 +57,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptionTexts.Name,
-            CourseSortByOptionTexts.StartedDate,
-            CourseSortByOptionTexts.LastAccessed,
-            CourseSortByOptionTexts.CompleteByDate,
-            CourseSortByOptionTexts.DiagnosticScore,
-            CourseSortByOptionTexts.PassedSections
+            CourseSortByOptions.Name,
+            CourseSortByOptions.StartedDate,
+            CourseSortByOptions.LastAccessed,
+            CourseSortByOptions.CompleteByDate,
+            CourseSortByOptions.DiagnosticScore,
+            CourseSortByOptions.PassedSections
         };
     }
 }

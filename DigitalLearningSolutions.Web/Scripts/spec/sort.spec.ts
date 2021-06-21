@@ -37,11 +37,11 @@ describe('getSortValue', () => {
       `).window.document;
 
       // When
-      const courseCard = {
+      const searchableElements = {
         title: ' title',
         element: document.getElementsByClassName('searchable-element')[0],
       };
-      const actualValue = getSortValue(courseCard, sortBy);
+      const actualValue = getSortValue(searchableElements, sortBy);
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
@@ -105,14 +105,14 @@ describe('sortSearchableElements current', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getSearchableElements();
-    const newCards = sortSearchableElements(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toBe(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toBe(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 
@@ -165,14 +165,14 @@ describe('sortSearchableElements completed', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getSearchableElements();
-    const newCards = sortSearchableElements(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 
@@ -222,14 +222,14 @@ describe('sortSearchableElements available', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getSearchableElements();
-    const newCards = sortSearchableElements(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 

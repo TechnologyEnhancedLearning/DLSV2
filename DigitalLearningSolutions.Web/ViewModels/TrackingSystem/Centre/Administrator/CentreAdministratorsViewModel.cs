@@ -26,7 +26,7 @@
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(searchedItems);
+            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
             Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser));
         }
 
@@ -34,7 +34,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DefaultSortByOptionTexts.Name
+            DefaultSortByOptions.Name
         };
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }

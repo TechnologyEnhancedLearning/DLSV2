@@ -9,6 +9,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 
     public class CompletedPageViewModel : BaseSearchablePageViewModel
     {
+        public readonly string? BannerText;
+
         public CompletedPageViewModel(
             IEnumerable<CompletedCourse> completedCourses,
             IConfiguration config,
@@ -17,8 +19,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             string sortDirection,
             string? bannerText,
             int page
-        ) : base(searchString, sortBy, sortDirection, page, bannerText)
+        ) : base(searchString, sortBy, sortDirection, page)
         {
+            BannerText = bannerText;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 completedCourses.AsQueryable(),
                 sortBy,
@@ -27,7 +30,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             CompletedCourses = paginatedItems.Select(
                 completedCourse =>
                     new CompletedCourseViewModel(completedCourse, config)
@@ -38,10 +41,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptionTexts.Name,
-            CourseSortByOptionTexts.StartedDate,
-            CourseSortByOptionTexts.LastAccessed,
-            CourseSortByOptionTexts.CompletedDate
+            CourseSortByOptions.Name,
+            CourseSortByOptions.StartedDate,
+            CourseSortByOptions.LastAccessed,
+            CourseSortByOptions.CompletedDate
         };
     }
 }

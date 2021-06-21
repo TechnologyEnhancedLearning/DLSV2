@@ -8,11 +8,11 @@
         public IViewComponentResult Invoke(
             string aspController,
             string aspAction,
-            BaseSearchablePageViewModel containingPageModel,
+            BaseSearchablePageViewModel searchablePageViewModel,
             string label
         )
         {
-            return View(new SearchBoxViewModel(aspController, aspAction, containingPageModel, label));
+            return View(new SearchBoxViewModel(aspController, aspAction, searchablePageViewModel, label));
         }
     }
 }

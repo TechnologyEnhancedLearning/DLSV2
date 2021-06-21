@@ -41,7 +41,7 @@
         <div class="nhsuk-grid-column-full">
           @if (!Model.Admins.Any()) {
             <p class="nhsuk-u-margin-top-4" role="alert">
-              <b>No data to display</b>
+              <b>No administrators found</b>
             </p>
           } else {
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />

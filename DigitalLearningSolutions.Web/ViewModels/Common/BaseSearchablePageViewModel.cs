@@ -9,13 +9,12 @@
 
     public abstract class BaseSearchablePageViewModel
     {
-        public const string DescendingText = "Descending";
-        public const string AscendingText = "Ascending";
+        public const string Descending = "Descending";
+        public const string Ascending = "Ascending";
 
-        private const int ItemsPerPage = 10;
+        private readonly int itemsPerPage;
 
         public readonly string? SearchString;
-        public readonly string? BannerText;
 
         public int MatchingSearchResults;
 
@@ -24,33 +23,33 @@
             string sortBy,
             string sortDirection,
             int page,
-            string? bannerText = null
+            int itemsPerPage = 10
         )
         {
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
             Page = page;
-            BannerText = bannerText;
+            this.itemsPerPage = itemsPerPage;
         }
-
-        [BindProperty] public string SortDirection { get; set; }
-
-        [BindProperty] public string SortBy { get; set; }
+        
+        public string SortDirection { get; set; }
+        
+        public string SortBy { get; set; }
         
         public int Page { get; protected set; }
 
         public int TotalPages { get; protected set; }
 
-        public IEnumerable<SelectListItem> SortByOptions => SelectListHelper.MapOptionsToSelectListItems(SortOptions);
+        public IEnumerable<SelectListItem> SortBySelectListItems => SelectListHelper.MapOptionsToSelectListItems(SortOptions);
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
-        protected IEnumerable<T> PaginateItems<T>(IList<T> items)
+        protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {
-            if (items.Count > ItemsPerPage)
+            if (items.Count > itemsPerPage)
             {
-                items = items.Skip(OffsetFromPageNumber(Page)).Take(ItemsPerPage).ToList();
+                items = items.Skip(OffsetFromPageNumber(Page)).Take(itemsPerPage).ToList();
             }
 
             return items;
@@ -58,7 +57,7 @@
 
         protected void SetTotalPages()
         {
-            TotalPages = (int)Math.Ceiling(MatchingSearchResults / (double)ItemsPerPage);
+            TotalPages = (int)Math.Ceiling(MatchingSearchResults / (double)itemsPerPage);
             if (Page < 1 || Page > TotalPages)
             {
                 Page = 1;
@@ -67,7 +66,7 @@
 
         private int OffsetFromPageNumber(int pageNumber)
         {
-            return (pageNumber - 1) * ItemsPerPage;
+            return (pageNumber - 1) * itemsPerPage;
         }
     }
 }

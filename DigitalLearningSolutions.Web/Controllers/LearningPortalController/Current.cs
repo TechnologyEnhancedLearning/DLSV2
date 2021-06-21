@@ -15,11 +15,11 @@
         public IActionResult Current(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.DescendingText,
+            string sortDirection = BaseSearchablePageViewModel.Descending,
             int page = 1
         )
         {
-            sortBy ??= CourseSortByOptionTexts.LastAccessed.PropertyName;
+            sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
 
             var currentCourses = courseService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();

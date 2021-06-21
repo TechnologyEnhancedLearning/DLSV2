@@ -16,7 +16,7 @@
             string sortBy,
             string sortDirection,
             int page
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, sortBy, sortDirection, page, 12)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 brandedFrameworks.AsQueryable(),
@@ -26,19 +26,19 @@
             var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString, 60).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             BrandedFrameworks = paginatedItems;
         }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new []
         {
-            FrameworkSortByOptionTexts.FrameworkName,
-            FrameworkSortByOptionTexts.FrameworkOwner,
-            FrameworkSortByOptionTexts.FrameworkCreatedDate,
-            FrameworkSortByOptionTexts.FrameworkPublishStatus,
-            FrameworkSortByOptionTexts.FrameworkBrand,
-            FrameworkSortByOptionTexts.FrameworkCategory,
-            FrameworkSortByOptionTexts.FrameworkTopic
+            FrameworkSortByOptions.FrameworkName,
+            FrameworkSortByOptions.FrameworkOwner,
+            FrameworkSortByOptions.FrameworkCreatedDate,
+            FrameworkSortByOptions.FrameworkPublishStatus,
+            FrameworkSortByOptions.FrameworkBrand,
+            FrameworkSortByOptions.FrameworkCategory,
+            FrameworkSortByOptions.FrameworkTopic
         };
     }
 }

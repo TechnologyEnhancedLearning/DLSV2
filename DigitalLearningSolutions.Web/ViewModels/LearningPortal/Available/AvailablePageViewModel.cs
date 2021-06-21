@@ -9,6 +9,7 @@
     public class AvailablePageViewModel : BaseSearchablePageViewModel
     {
         public readonly IEnumerable<AvailableCourseViewModel> AvailableCourses;
+        public readonly string? BannerText;
 
         public AvailablePageViewModel(
             IEnumerable<AvailableCourse> availableCourses,
@@ -17,8 +18,9 @@
             string sortDirection,
             string? bannerText,
             int page
-        ) : base(searchString, sortBy, sortDirection, page, bannerText)
+        ) : base(searchString, sortBy, sortDirection, page)
         {
+            BannerText = bannerText;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 availableCourses.AsQueryable(),
                 sortBy,
@@ -27,16 +29,16 @@
             var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             AvailableCourses = paginatedItems.Select(c => new AvailableCourseViewModel(c));
         }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            CourseSortByOptionTexts.Name,
-            CourseSortByOptionTexts.Brand,
-            CourseSortByOptionTexts.Category,
-            CourseSortByOptionTexts.Topic
+            CourseSortByOptions.Name,
+            CourseSortByOptions.Brand,
+            CourseSortByOptions.Category,
+            CourseSortByOptions.Topic
         };
     }
 }

@@ -11,11 +11,11 @@
         public IActionResult Available(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.AscendingText,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1
         )
         {
-            sortBy ??= CourseSortByOptionTexts.Name.PropertyName;
+            sortBy ??= CourseSortByOptions.Name.PropertyName;
 
             var availableCourses = courseService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),

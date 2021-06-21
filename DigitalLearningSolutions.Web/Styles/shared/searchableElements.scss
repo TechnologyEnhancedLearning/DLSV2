@@ -208,7 +208,19 @@ div#search {
   display: flex;
 }
 
-.pagination-button-container {
+.pagination-button {
+  &--next {
+    float: right;
+    align-items: flex-start;
+  }
+
+  &--previous {
+    float: left;
+    align-items: flex-end;
+  }
+}
+
+.pagination-item {
   width: 38%;
 }
 

@@ -23,11 +23,11 @@
         public IActionResult FrameworksDashboard(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.DescendingText,
+            string sortDirection = BaseSearchablePageViewModel.Descending,
             int page = 1
         )
         {
-            sortBy ??= FrameworkSortByOptionTexts.FrameworkCreatedDate.PropertyName;
+            sortBy ??= FrameworkSortByOptions.FrameworkCreatedDate.PropertyName;
 
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
@@ -53,11 +53,11 @@
         public IActionResult FrameworksViewAll(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.AscendingText,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1
         )
         {
-            sortBy ??= FrameworkSortByOptionTexts.FrameworkName.PropertyName;
+            sortBy ??= FrameworkSortByOptions.FrameworkName.PropertyName;
 
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
@@ -228,8 +228,8 @@
             var frameworks = frameworkService.GetAllFrameworks(adminId);
             var sortedItems = GenericSortingHelper.SortAllItems(
                 frameworks.AsQueryable(),
-                FrameworkSortByOptionTexts.FrameworkName.PropertyName,
-                BaseSearchablePageViewModel.AscendingText
+                FrameworkSortByOptions.FrameworkName.PropertyName,
+                BaseSearchablePageViewModel.Ascending
             );
             var similarItems = GenericSearchHelper.SearchItems(sortedItems, frameworkname, 55, true);
             var matchingSearchResults = similarItems.ToList().Count;

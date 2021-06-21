@@ -4,19 +4,19 @@
     {
         public readonly string AspAction;
         public readonly string AspController;
-        public readonly BaseSearchablePageViewModel ContainingPageViewModel;
+        public readonly BaseSearchablePageViewModel SearchablePageViewModel;
         public readonly string Label;
 
         public SearchBoxViewModel(
             string aspController,
             string aspAction,
-            BaseSearchablePageViewModel containingPageViewModel,
+            BaseSearchablePageViewModel searchablePageViewModel,
             string label
         )
         {
             AspAction = aspAction;
             AspController = aspController;
-            ContainingPageViewModel = containingPageViewModel;
+            SearchablePageViewModel = searchablePageViewModel;
             Label = label;
         }
     }

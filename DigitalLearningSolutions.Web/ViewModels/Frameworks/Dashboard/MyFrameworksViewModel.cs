@@ -18,7 +18,7 @@
             string sortDirection,
             int page,
             bool isFrameworkDeveloper
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, sortBy, sortDirection, page, 12)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 brandedFrameworks.AsQueryable(),
@@ -28,17 +28,17 @@
             var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString, 60).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             BrandedFrameworks = paginatedItems;
             IsFrameworkDeveloper = isFrameworkDeveloper;
         }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            FrameworkSortByOptionTexts.FrameworkName,
-            FrameworkSortByOptionTexts.FrameworkOwner,
-            FrameworkSortByOptionTexts.FrameworkCreatedDate,
-            FrameworkSortByOptionTexts.FrameworkPublishStatus
+            FrameworkSortByOptions.FrameworkName,
+            FrameworkSortByOptions.FrameworkOwner,
+            FrameworkSortByOptions.FrameworkCreatedDate,
+            FrameworkSortByOptions.FrameworkPublishStatus
         };
     }
 }

@@ -22,11 +22,11 @@
         public IActionResult Index(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.AscendingText,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1
         )
         {
-            sortBy ??= DefaultSortByOptionTexts.Name.PropertyName;
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
 
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(User.GetCentreId());
             var model = new CentreAdministratorsViewModel(

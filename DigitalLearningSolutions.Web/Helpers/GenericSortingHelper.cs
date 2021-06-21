@@ -31,7 +31,7 @@
 
             var sortByArray = sortBy.Split(',');
 
-            var result = sortDirection == BaseSearchablePageViewModel.DescendingText
+            var result = sortDirection == BaseSearchablePageViewModel.Descending
                 ? items.OrderByDescending(sortByArray[0])
                 : items.OrderBy(sortByArray[0]);
 
@@ -39,7 +39,7 @@
             {
                 for (var i = 1; i < sortByArray.Length; i++)
                 {
-                    result = sortDirection == BaseSearchablePageViewModel.DescendingText
+                    result = sortDirection == BaseSearchablePageViewModel.Descending
                         ? result.ThenByDescending(sortByArray[i])
                         : result.ThenBy(sortByArray[i]);
                 }
@@ -49,7 +49,7 @@
         }
     }
 
-    public static class FrameworkSortByOptionTexts
+    public static class FrameworkSortByOptions
     {
         public static readonly (string DisplayText, string PropertyName) FrameworkName = ("Framework Name", nameof(BaseFramework.FrameworkName));
         public static readonly (string DisplayText, string PropertyName) FrameworkOwner = ("Owner", nameof(BaseFramework.Owner));
@@ -60,7 +60,7 @@
         public static readonly (string DisplayText, string PropertyName) FrameworkTopic = ("Topic", nameof(BrandedFramework.Topic));
     }
 
-    public static class CourseSortByOptionTexts
+    public static class CourseSortByOptions
     {
         public static readonly (string DisplayText, string PropertyName) Name = ("Activity Name", nameof(BaseLearningItem.Name));
         public static readonly (string DisplayText, string PropertyName) StartedDate = ("Enrolled Date", nameof(CompletedCourse.StartedDate));
@@ -74,7 +74,7 @@
         public static readonly (string DisplayText, string PropertyName) Topic = ("Topic", nameof(AvailableCourse.Topic));
     }
 
-    public static class DefaultSortByOptionTexts
+    public static class DefaultSortByOptions
     {
         public static readonly (string DisplayText, string PropertyName) Name = ("SearchableName", nameof(BaseSearchableItem.SearchableName));
     }
