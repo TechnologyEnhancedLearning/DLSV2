@@ -53,17 +53,5 @@
             var isWorkforceContributor = User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor);
             return isWorkforceContributor != null && (bool)isWorkforceContributor;
         }
-        private string? GetUserEmail()
-        {
-            return User.GetEmail();
-        }
-        private string? GetUserFirstName()
-        {
-            return User.GetCustomClaim(CustomClaimTypes.UserForename);
-        }
-        private string? GetUserLastName()
-        {
-            return User.GetCustomClaim(CustomClaimTypes.UserSurname);
-        }
     }
 }
