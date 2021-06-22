@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -26,12 +26,12 @@ namespace DigitalLearningSolutions.Data.Services
             var currentYear = date.Year;
             var monthsToDate = Enumerable.Range(1, date.Month);
 
-            var activity = activityDataService.GetActivityForMonthsInYear(currentYear, monthsToDate);
+            var activity = activityDataService.GetActivityForMonthsInYear(centreId, currentYear, monthsToDate);
 
             if (date.Month < 12)
             {
                 var monthsLastYear = Enumerable.Range(date.Month + 1, 12 - date.Month);
-                var lastYearActivity = activityDataService.GetActivityForMonthsInYear(currentYear - 1, monthsLastYear);
+                var lastYearActivity = activityDataService.GetActivityForMonthsInYear(centreId, currentYear - 1, monthsLastYear);
                 activity = activity.Concat(lastYearActivity);
             }
 

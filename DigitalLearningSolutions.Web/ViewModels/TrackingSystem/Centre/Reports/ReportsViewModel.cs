@@ -15,16 +15,18 @@
 
     public class ActivityTableRow
     {
-        private static string[] MonthNames = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Nov", "Dec"};
+        private static string[] MonthNames = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
         public ActivityTableRow(MonthOfActivity monthOfActivity)
         {
+            Year = monthOfActivity.Year;
             Month = MonthNames[monthOfActivity.Month - 1];
             Completions = monthOfActivity.Completions;
             Evaluations = monthOfActivity.Evaluations;
             Registrations = monthOfActivity.Registrations;
         }
 
+        public int Year { get; set; }
         public string? Month { get; set; }
         public int Completions { get; set; }
         public int Evaluations { get; set; }

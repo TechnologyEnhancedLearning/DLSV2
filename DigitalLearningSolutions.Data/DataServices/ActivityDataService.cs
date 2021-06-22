@@ -8,7 +8,7 @@
 
     public interface IActivityDataService
     {
-        IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int year, IEnumerable<int> months);
+        IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int centreId, int year, IEnumerable<int> months);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -20,7 +20,7 @@
             this.connection = connection;
         }
 
-        public IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int year, IEnumerable<int> months)
+        public IEnumerable<MonthOfActivity> GetActivityForMonthsInYear(int centreId, int year, IEnumerable<int> months)
         {
             return connection.Query<MonthOfActivity>(
                 @"DECLARE @monthTable TABLE (Month INT)
@@ -34,7 +34,7 @@
                         SUM(CONVERT(INT, Evaluated)) AS Evaluations,
                         SUM(CONVERT(INT, Registered)) AS Registrations 
                     FROM tActivityLog
-                        WHERE (LogYear = @year AND LogMonth IN @months)
+                        WHERE (LogYear = @year AND LogMonth IN @months AND CentreID = @centreId)
                     GROUP BY LogYear, LogMonth
                     
                     SELECT @year AS Year, m.Month, COALESCE(a.Completions, 0) AS Completions, COALESCE(a.Evaluations, 0) AS Evaluations, COALESCE(a.Registrations, 0) AS Registrations
@@ -42,7 +42,7 @@
 	                    LEFT JOIN @activity a ON m.Month = a.Month
                     WHERE m.Month IN @months
                     ORDER BY m.Month DESC",
-            new {year, months}
+            new {centreId, year, months}
             );
         }
     }

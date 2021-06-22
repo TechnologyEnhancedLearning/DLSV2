@@ -163,6 +163,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<IActivityDataService, ActivityDataService>();
+            services.AddScoped<IActivityService, ActivityService>();
+
             RegisterWebServiceFilters(services);
         }
 

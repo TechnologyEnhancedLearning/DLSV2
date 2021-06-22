@@ -6,6 +6,9 @@
     <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
         <th role="columnheader" class="" scope="col">
+          Year
+        </th>
+        <th role="columnheader" class="" scope="col">
           Month
         </th>
         <th role="columnheader" class="" scope="col">
@@ -22,6 +25,9 @@
     <tbody class="nhsuk-table__body">
     @foreach (var activityMonth in Model.Rows) {
       <tr role="row" class="nhsuk-table__row">
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Month </span>@activityMonth.Year
+        </td>
         <td role="cell" class="nhsuk-table__cell">
           <span class="nhsuk-table-responsive__heading">Month </span>@activityMonth.Month
         </td>
