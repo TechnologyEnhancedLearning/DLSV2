@@ -133,6 +133,35 @@ namespace DigitalLearningSolutions.Web.Controllers
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
+            return RedirectToAction("Summary");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpGet]
+        public IActionResult Summary()
+        {
+            var data = TempData.Peek<RegistrationData>()!;
+            var model = RegistrationMappingHelper.MapDataToSummary(data);
+            PopulateSummaryExtraFields(model, data);
+            return View(model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpPost]
+        public IActionResult Summary(SummaryViewModel model)
+        {
+            var data = TempData.Peek<RegistrationData>()!;
+
+            if (!ModelState.IsValid)
+            {
+                var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+                PopulateSummaryExtraFields(viewModel, data);
+                viewModel.Terms = model.Terms;
+                return View(viewModel);
+            }
+
+            // TODO: register admin details and notification preferences in database
+
             return new EmptyResult();
         }
 
@@ -170,6 +199,12 @@ namespace DigitalLearningSolutions.Web.Controllers
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
+        }
+
+        private void PopulateSummaryExtraFields(SummaryViewModel model, RegistrationData data)
+        {
+            model.Centre = centresDataService.GetCentreName((int)data.Centre!);
+            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
         }
     }
 }
