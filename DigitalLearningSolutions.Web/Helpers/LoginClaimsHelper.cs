@@ -1,8 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
     using System.Security.Claims;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
 
     public static class LoginClaimsHelper
