@@ -160,6 +160,12 @@
   <data name="DLSV2_236_GetCompletedCoursesTweak_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-236-GetCompletedCoursesTweak_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="DLSV2_237_GetActiveAvailableTweak_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DLSV2-237-GetActiveAvailableTweak_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="DLSV2_237_GetActiveAvailableTweak_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\DLSV2-237-GetActiveAvailableTweak_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
   <data name="DLSV2_95_AddSystemVersioning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\DLSV2-95_AddSystemVersioning.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

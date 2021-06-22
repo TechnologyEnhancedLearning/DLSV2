@@ -6,6 +6,7 @@
     {
         public override void Up()
         {
+            Execute.Sql(Properties.Resources.DLSV2_237_GetActiveAvailableTweak_UP);
             Delete.ForeignKey("FK_SelfAssessments_CategoryID_CourseCategories_CourseCategoryID").OnTable("SelfAssessments");
             Delete.ForeignKey("FK_SelfAssessments_TopicID_CourseTopics_CourseTopicID").OnTable("SelfAssessments");
             Delete.ForeignKey("FK_SelfAssessments_SignedByAdminId_AdminUsers_AdminID").OnTable("SelfAssessments");
@@ -27,7 +28,7 @@
                 .AddColumn("NRPSubGroupID").AsInt32().Nullable().ForeignKey("NRPSubGroups", "ID")
                 .AddColumn("NRPRoleID").AsInt32().Nullable().ForeignKey("NRPRoles", "ID")
                 .AddColumn("PublishStatusID").AsInt32().NotNullable().ForeignKey("PublishStatus", "ID").WithDefaultValue(1)
-                .AddColumn("UpdatedByAdminID").AsInt32().NotNullable().ForeignKey("AdminUsers", "AdminID")
+                .AddColumn("UpdatedByAdminID").AsInt32().NotNullable().ForeignKey("AdminUsers", "AdminID").WithDefaultValue(1)
                 .AddColumn("National").AsBoolean().NotNullable().WithDefaultValue(false)
                 .AddColumn("Public").AsBoolean().NotNullable().WithDefaultValue(false)
                 .AddColumn("Archived").AsDateTime().Nullable()
@@ -66,6 +67,7 @@
         }
         public override void Down()
         {
+            Execute.Sql(Properties.Resources.DLSV2_237_GetActiveAvailableTweak_DOWN);
             Delete.Table("SelfAssessmentReviews");
             Delete.Table("SelfAssessmentComments");
             Delete.Table("SelfAssessmentCollaborators");
