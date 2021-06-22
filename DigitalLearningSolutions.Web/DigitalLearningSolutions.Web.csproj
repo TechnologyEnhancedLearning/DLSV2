@@ -91,11 +91,7 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Scripts\trackingSystem\" />
-  </ItemGroup>
-
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />
     <Exec Command="npm run build" />
