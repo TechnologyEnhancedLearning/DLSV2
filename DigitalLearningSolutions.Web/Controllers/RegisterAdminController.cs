@@ -14,12 +14,15 @@ namespace DigitalLearningSolutions.Web.Controllers
     {
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
         public RegisterAdminController(
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            IJobGroupsDataService jobGroupsDataService
         )
         {
             this.centresDataService = centresDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -72,7 +75,37 @@ namespace DigitalLearningSolutions.Web.Controllers
             data.SetPersonalInformation(model);
             TempData.Set(data);
 
-            return new OkResult();
+            return RedirectToAction("LearnerInformation");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpGet]
+        public IActionResult LearnerInformation()
+        {
+            var data = TempData.Peek<RegistrationData>()!;
+
+            var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+            PopulateLearnerInformationExtraFields(model);
+
+            return View(model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpPost]
+        public IActionResult LearnerInformation(LearnerInformationViewModel model)
+        {
+            var data = TempData.Peek<RegistrationData>()!;
+
+            if (!ModelState.IsValid)
+            {
+                PopulateLearnerInformationExtraFields(model);
+                return View(model);
+            }
+
+            data.SetLearnerInformation(model);
+            TempData.Set(data);
+
+            return new EmptyResult();
         }
 
         private void SetAdminRegistrationData(int centreId)
@@ -99,6 +132,16 @@ namespace DigitalLearningSolutions.Web.Controllers
         private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
         {
             model.CentreName = centresDataService.GetCentreName(model.Centre!.Value);
+        }
+
+        private void PopulateLearnerInformationExtraFields(
+            LearnerInformationViewModel model
+        )
+        {
+            model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                model.JobGroup
+            );
         }
     }
 }

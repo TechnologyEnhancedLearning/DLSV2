@@ -1,0 +1,37 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model LearnerInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form method="post" asp-action="LearnerInformation">
+
+      @if (errorHasOccurred) {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup) })" />
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 id="page-heading" class="nhsuk-heading-xl">Learner information</h1>
+      </div>
+
+      <vc:select-list
+        asp-for="JobGroup"
+        label="Job Group"
+        value="@Model.JobGroup?.ToString()"
+        hint-text=""
+        deselectable="false"
+        css-class="nhsuk-u-width-one-half"
+        default-option="Select a job group"
+        select-list-options="@Model.JobGroupOptions" />
+
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="Register" asp-action="PersonalInformation" link-text="Go back" />
+  </div>
+</div>
