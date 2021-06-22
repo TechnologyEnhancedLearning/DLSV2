@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
@@ -19,15 +20,13 @@
 
         public ActivityTableRow(MonthOfActivity monthOfActivity)
         {
-            Year = monthOfActivity.Year;
-            Month = MonthNames[monthOfActivity.Month - 1];
+            Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM, yyyy");
             Completions = monthOfActivity.Completions;
             Evaluations = monthOfActivity.Evaluations;
             Registrations = monthOfActivity.Registrations;
         }
 
-        public int Year { get; set; }
-        public string? Month { get; set; }
+        public string? Period { get; set; }
         public int Completions { get; set; }
         public int Evaluations { get; set; }
         public int Registrations { get; set; }
