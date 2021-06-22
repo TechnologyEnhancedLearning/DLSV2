@@ -14,15 +14,17 @@
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
+        private readonly IClockService clockService;
 
-        public ActivityService(IActivityDataService activityDataService)
+        public ActivityService(IActivityDataService activityDataService, IClockService clockService)
         {
             this.activityDataService = activityDataService;
+            this.clockService = clockService;
         }
 
         public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId)
         {
-            var date = DateTime.Now;
+            var date = clockService.UtcNow;
             var currentYear = date.Year;
             var monthsToDate = Enumerable.Range(1, date.Month);
 
