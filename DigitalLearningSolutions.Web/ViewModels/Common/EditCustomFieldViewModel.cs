@@ -1,8 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class EditCustomFieldViewModel : CustomFieldViewModel

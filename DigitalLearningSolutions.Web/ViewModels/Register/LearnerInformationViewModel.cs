@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class LearnerInformationViewModel

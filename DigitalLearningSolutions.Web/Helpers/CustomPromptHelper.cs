@@ -4,7 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class CustomPromptHelper

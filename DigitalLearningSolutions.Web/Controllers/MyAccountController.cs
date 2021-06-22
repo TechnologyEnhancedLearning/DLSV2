@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
