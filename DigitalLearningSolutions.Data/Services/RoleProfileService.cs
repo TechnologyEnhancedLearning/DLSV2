@@ -34,24 +34,24 @@
             this.connection = connection;
             this.logger = logger;
         }
-        private const string RoleProfileBaseFields = @"rp.ID, rp.RoleProfileName, rp.Description, rp.BrandID,
-                rp.ParentRoleProfileID,
-                rp.[National], rp.[Public], rp.OwnerAdminID,
+        private const string SelfAssessmentBaseFields = @"rp.ID, rp.Name AS RoleProfileName, rp.Description, rp.BrandID,
+                rp.ParentSelfAssessmentID,
+                rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID,
                 rp.NRPProfessionalGroupID,
                  rp.NRPSubGroupID,
                  rp.NRPRoleID,
-                 rp.PublishStatusID, CASE WHEN rp.OwnerAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
-        private const string RoleProfileFields =
+                 rp.PublishStatusID, CASE WHEN rp.CreatedByAdminID = @adminId THEN 3 WHEN rpc.CanModify = 1 THEN 2 WHEN rpc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+        private const string SelfAssessmentFields =
             @", rp.CreatedDate,
                  (SELECT BrandName
                  FROM    Brands
                  WHERE (BrandID = rp.BrandID)) AS Brand, 
-                 (SELECT RoleProfileName
-                 FROM    RoleProfiles AS rp2
-                 WHERE (ID = rp.ParentRoleProfileID)) AS ParentRoleProfile, 
+                 (SELECT [Name]
+                 FROM    SelfAssessments AS rp2
+                 WHERE (ID = rp.ParentSelfAssessmentID)) AS ParentSelfAssessment, 
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = rp.OwnerAdminID)) AS Owner, rp.Archived, rp.LastEdit, 
+                 WHERE (AdminID = rp.CreatedByAdminID)) AS Owner, rp.Archived, rp.LastEdit, 
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
                  WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, 
@@ -60,31 +60,31 @@
                  WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup, 
                  (SELECT RoleProfile
                  FROM    NRPRoles
-                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, rpr.ID AS RoleProfileReviewID";
-        private const string RoleProfileBaseTables =
-            @"RoleProfiles AS rp LEFT OUTER JOIN
-             RoleProfileCollaborators AS rpc ON rpc.RoleProfileID = rp.ID AND rpc.AdminID = @adminId";
-        private const string RoleProfileTables =
+                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, rpr.ID AS SelfAssessmentReviewID";
+        private const string SelfAssessmentBaseTables =
+            @"SelfAssessments AS rp LEFT OUTER JOIN
+             SelfAssessmentCollaborators AS rpc ON rpc.SelfAssessmentID = rp.ID AND rpc.AdminID = @adminId";
+        private const string SelfAssessmentTables =
             @" LEFT OUTER JOIN
-             RoleProfileReviews AS rpr ON rpc.ID = rpr.RoleProfileCollaboratorID AND rpr.Archived IS NULL AND rpr.ReviewComplete IS NULL";
+             SelfAssessmentReviews AS rpr ON rpc.ID = rpr.SelfAssessmentCollaboratorID AND rpr.Archived IS NULL AND rpr.ReviewComplete IS NULL";
         public IEnumerable<RoleProfile> GetAllRoleProfiles(int adminId)
         {
             return connection.Query<RoleProfile>(
-               $@"SELECT {RoleProfileBaseFields} {RoleProfileFields}
-                      FROM {RoleProfileBaseTables} {RoleProfileTables}", new { adminId }
+               $@"SELECT {SelfAssessmentBaseFields} {SelfAssessmentFields}
+                      FROM {SelfAssessmentBaseTables} {SelfAssessmentTables}", new { adminId }
           );
         }
 
         public IEnumerable<RoleProfile> GetRoleProfilesForAdminId(int adminId)
         {
             return connection.Query<RoleProfile>(
-                $@"SELECT {RoleProfileBaseFields} {RoleProfileFields}
-                      FROM {RoleProfileBaseTables} {RoleProfileTables}
-                      WHERE (rp.OwnerAdminID = @adminId) OR
+                $@"SELECT {SelfAssessmentBaseFields} {SelfAssessmentFields}
+                      FROM {SelfAssessmentBaseTables} {SelfAssessmentTables}
+                      WHERE (rp.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
-                 FROM    RoleProfileCollaborators
-                 WHERE (RoleProfileID = rp.ID)))",
+                 FROM    SelfAssessmentCollaborators
+                 WHERE (SelfAssessmentID = rp.ID)))",
                new { adminId }
            );
         }
@@ -92,8 +92,8 @@
         public RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId)
         {
             return connection.Query<RoleProfileBase>(
-               $@"SELECT {RoleProfileBaseFields} 
-                      FROM {RoleProfileBaseTables}
+               $@"SELECT {SelfAssessmentBaseFields} 
+                      FROM {SelfAssessmentBaseTables}
                       WHERE (rp.ID = @roleProfileId)",
               new { roleProfileId, adminId }
           ).FirstOrDefault();
@@ -108,15 +108,15 @@
                 );
                 return false;
             }
-            int existingRoleProfiles = (int)connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM RoleProfiles WHERE RoleProfileName = @roleProfileName AND ID <> @roleProfileId",
+            int existingSelfAssessments = (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*) FROM SelfAssessments WHERE [Name] = @roleProfileName AND ID <> @roleProfileId",
                 new { roleProfileName, roleProfileId });
-            if (existingRoleProfiles > 0)
+            if (existingSelfAssessments > 0)
             {
                 return false;
             }
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE RoleProfiles SET RoleProfileName = @roleProfileName, UpdatedByAdminID = @adminId
+                @"UPDATE SelfAssessments SET [Name] = @roleProfileName, UpdatedByAdminID = @adminId
                     WHERE ID = @roleProfileId",
                new { roleProfileName, adminId, roleProfileId }
            );
@@ -124,7 +124,7 @@
             {
                 logger.LogWarning(
                     "Not updating role profile name as db update failed. " +
-                    $"RoleProfileName: {roleProfileName}, admin id: {adminId}, roleProfileId: {roleProfileId}"
+                    $"SelfAssessmentName: {roleProfileName}, admin id: {adminId}, roleProfileId: {roleProfileId}"
                 );
                 return false;
             }
@@ -147,9 +147,9 @@
         public RoleProfileBase? GetRoleProfileByName(string roleProfileName, int adminId)
         {
             return connection.Query<RoleProfileBase>(
-               $@"SELECT {RoleProfileBaseFields} 
-                      FROM {RoleProfileBaseTables}
-                      WHERE (rp.RoleProfileName = @roleProfileName)",
+               $@"SELECT {SelfAssessmentBaseFields} 
+                      FROM {SelfAssessmentBaseTables}
+                      WHERE (rp.Name = @roleProfileName)",
               new { roleProfileName, adminId }
           ).FirstOrDefault();
         }
@@ -169,7 +169,7 @@
             {
                 //needs updating:
                 var numberOfAffectedRows = connection.Execute(
-               @"UPDATE RoleProfiles SET NRPProfessionalGroupID = @nrpProfessionalGroupID, NRPSubGroupID = NULL, NRPRoleID = NULL, UpdatedByAdminID = @adminId
+               @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @nrpProfessionalGroupID, NRPSubGroupID = NULL, NRPRoleID = NULL, UpdatedByAdminID = @adminId
                     WHERE ID = @roleProfileId",
               new { nrpProfessionalGroupID, adminId, roleProfileId }
               );
