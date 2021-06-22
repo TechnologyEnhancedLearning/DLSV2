@@ -33,7 +33,7 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("StatusCode")
-                .WithControllerName("LearningSolutions").WithRouteValue("code",404 );
+                .WithControllerName("LearningSolutions").WithRouteValue("code", 404);
         }
     }
 }

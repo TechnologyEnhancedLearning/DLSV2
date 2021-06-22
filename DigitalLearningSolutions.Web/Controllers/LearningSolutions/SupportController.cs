@@ -6,14 +6,15 @@
 
     public class SupportController : Controller
     {
-        [Route("/{applicationName}/Support")]
-        public IActionResult Index(string applicationName)
+        [Route("/{applicationBaseUrl}/Support")]
+        public IActionResult Index(string applicationBaseUrl)
         {
-            if (applicationName == "TrackingSystem" || applicationName == "Frameworks")
+            if (applicationBaseUrl == ApplicationType.TrackingSystem.ApplicationBaseUrl ||
+                applicationBaseUrl == ApplicationType.Frameworks.ApplicationBaseUrl)
             {
                 return View(
                     "/Views/LearningSolutions/Support.cshtml",
-                    new SupportViewModel(applicationName, SupportPage.Support)
+                    new SupportViewModel(applicationBaseUrl, SupportPage.Support)
                 );
             }
 

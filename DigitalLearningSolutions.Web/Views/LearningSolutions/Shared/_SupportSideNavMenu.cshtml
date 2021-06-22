@@ -5,8 +5,7 @@
 @model SupportViewModel
 
 @{
-    var linkApplicationName = Model.ApplicationName == "Tracking System" ? "TrackingSystem" : Model.ApplicationName;
-    var routeData = new Dictionary<string, string> { { "applicationName", linkApplicationName } };
+    var routeData = new Dictionary<string, string> { { "applicationBaseUrl", Model.Application.ApplicationBaseUrl } };
 }
 
 <h2 class="side-nav__heading">Support</h2>

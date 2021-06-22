@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningSolutions
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
 
@@ -9,20 +10,15 @@
         {
             CurrentPage = currentPage;
 
-            if (applicationName == "TrackingSystem")
-            {
-                ApplicationName = "Tracking System";
-                HeaderPath = $"{ConfigHelper.GetAppConfig()["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-            }
-            else
-            {
-                ApplicationName = "Frameworks";
-                HeaderPath = null;
-            }
+            Application = Enumeration.FromName<ApplicationType>(applicationName);
+
+            HeaderPath = Application.Equals(ApplicationType.TrackingSystem)
+                ? $"{ConfigHelper.GetAppConfig()["AppRootPath"]}/TrackingSystem/Centre/Dashboard"
+                : null;
         }
 
-        public string ApplicationName { get; set; }
         public string? HeaderPath { get; set; }
         public SupportPage CurrentPage { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }
