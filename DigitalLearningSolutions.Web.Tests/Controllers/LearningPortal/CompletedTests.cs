@@ -30,7 +30,7 @@
                 completedCourses,
                 config,
                 null,
-                "Completed Date",
+                "Completed",
                 "Descending",
                 bannerText,
                 1

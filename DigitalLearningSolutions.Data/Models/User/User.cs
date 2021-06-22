@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public abstract class User
+    public abstract class User : BaseSearchableItem
     {
         public int Id { get; set; }
 
@@ -21,5 +21,11 @@
         public int? ResetPasswordId { get; set; }
 
         public byte[]? ProfileImage { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName}";
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

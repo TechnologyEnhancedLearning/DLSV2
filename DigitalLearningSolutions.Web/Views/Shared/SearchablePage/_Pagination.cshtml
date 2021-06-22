@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
-@model BaseCoursePageViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model BaseSearchablePageViewModel
 
 <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
   <ul class="nhsuk-list nhsuk-pagination__list">
@@ -16,7 +16,7 @@
     <div class="page-indicator-container">
       <span aria-live="polite" aria-atomic="true">
         <span class="nhsuk-u-visually-hidden">page </span>
-        <span id="page-indicator">@Model.Page&nbsp;of&nbsp;@Model.TotalPages</span>
+        <span id="page-indicator">@Model.Page of @Model.TotalPages</span>
       </span>
     </div>
     <div class="pagination-button-container">

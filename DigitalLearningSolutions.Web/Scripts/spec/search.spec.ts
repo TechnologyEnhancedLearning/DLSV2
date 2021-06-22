@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
-import * as searchCourses from '../learningPortal/searchCourses';
-import getCourseCards from './getCourseCards';
+import * as searchCourses from '../searchSortAndPaginate/search';
+import getSearchableElements from './getSearchableElements';
 
 describe('updateResultCount', () => {
   it('should make the result count visible', () => {
@@ -75,19 +75,19 @@ describe('search', () => {
       <body>
         <input type="text" id="search-field" value="cheese" />
         <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
-        <div id="course-cards">
-          <div class="course-card">
-            <span class="nhsuk-details__summary-text course-title">cheese</span>
+        <div id="searchable-elements">
+          <div class="searchable-element">
+            <span class="nhsuk-details__summary-text searchable-element-title">cheese</span>
           </div>
-          <div class="course-card">
-            <span class="nhsuk-details__summary-text course-title">petril</span>
+          <div class="searchable-element">
+            <span class="nhsuk-details__summary-text searchable-element-title">petril</span>
           </div>
       </body>
       </html>
     `).window.document;
 
     // When
-    const newCourses = searchCourses.search(getCourseCards());
+    const newCourses = searchCourses.search(getSearchableElements());
 
     // Then
     expect(newCourses.length).toBe(1);

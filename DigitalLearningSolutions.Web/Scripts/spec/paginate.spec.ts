@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
-import * as paginate from '../learningPortal/paginate';
-import getCourseCards from './getCourseCards';
+import * as paginate from '../searchSortAndPaginate/paginate';
+import getSearchableElements from './getSearchableElements';
 
 describe('paginateResults', () => {
   it('returns ten results per page', () => {
@@ -108,88 +108,88 @@ function createCourseCards() {
       <head></head>
       <body>
         <span id="page-indicator"></span>
-        <div id="course-cards">
-          <div class="course-card" id="course-a">
-            <span name="name" class="course-title">a: Course</span>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-a">
+            <span name="name" class="searchable-element-title">a: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
             <p name="completed-date">22-3-2010</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="course-card" id="course-b">
-            <span name="name" class="course-title">B: Course</span>
+          <div class="searchable-element" id="course-b">
+            <span name="name" class="searchable-element-title">B: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="completed-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="course-card" id="course-c">
-            <span name="name" class="course-title">c: course</span>
+          <div class="searchable-element" id="course-c">
+            <span name="name" class="searchable-element-title">c: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-d">
-            <span name="name" class="course-title">d: course</span>
+          <div class="searchable-element" id="course-d">
+            <span name="name" class="searchable-element-title">d: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-e">
-            <span name="name" class="course-title">e: course</span>
+          <div class="searchable-element" id="course-e">
+            <span name="name" class="searchable-element-title">e: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-f">
-            <span name="name" class="course-title">f: course</span>
+          <div class="searchable-element" id="course-f">
+            <span name="name" class="searchable-element-title">f: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-g">
-            <span name="name" class="course-title">g: course</span>
+          <div class="searchable-element" id="course-g">
+            <span name="name" class="searchable-element-title">g: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-h">
-            <span name="name" class="course-title">h: course</span>
+          <div class="searchable-element" id="course-h">
+            <span name="name" class="searchable-element-title">h: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-i">
-            <span name="name" class="course-title">i: course</span>
+          <div class="searchable-element" id="course-i">
+            <span name="name" class="searchable-element-title">i: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-j">
-            <span name="name" class="course-title">j: course</span>
+          <div class="searchable-element" id="course-j">
+            <span name="name" class="searchable-element-title">j: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
             <p name="evaluated-date">24-2-2011</p>
             <p name="passed-sections">0/6</p>
           </div>
-          <div class="course-card" id="course-k">
-            <span name="name" class="course-title">k: course</span>
+          <div class="searchable-element" id="course-k">
+            <span name="name" class="searchable-element-title">k: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
@@ -202,5 +202,5 @@ function createCourseCards() {
       </body>
       </html>
     `).window.document;
-  return getCourseCards();
+  return getSearchableElements();
 }
