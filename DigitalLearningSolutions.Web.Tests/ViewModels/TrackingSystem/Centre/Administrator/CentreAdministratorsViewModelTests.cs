@@ -9,7 +9,8 @@
 
     public class CentreAdministratorsViewModelTests
     {
-        private readonly AdminUser[] adminUsers = {
+        private readonly AdminUser[] adminUsers =
+        {
             UserTestHelper.GetDefaultAdminUser(firstName: "a", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "b", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "c", lastName: "Surname"),
@@ -24,10 +25,10 @@
             UserTestHelper.GetDefaultAdminUser(firstName: "l", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "m", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "n", lastName: "Surname"),
-            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname"),
+            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname")
         };
 
-    [Test]
+        [Test]
         public void Centre_administrators_should_default_to_returning_the_first_ten_admins()
         {
             var model = new CentreAdministratorsViewModel(

@@ -5,6 +5,11 @@
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
 
+    /// <summary>
+    /// This is the older version of the SortingHelper. For future search/sort implementations we should
+    /// be using the generic version <see cref="GenericSortingHelper"/> and implementing BaseSearchableItem
+    /// on the entity to be sorted
+    /// </summary>
     public static class SortingHelper
     {
         public static IEnumerable<RoleProfile> SortRoleProfileItems(

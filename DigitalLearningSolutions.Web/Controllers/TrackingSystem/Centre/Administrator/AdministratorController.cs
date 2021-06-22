@@ -21,20 +21,16 @@
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1
         )
         {
-            sortBy ??= DefaultSortByOptions.Name.PropertyName;
-
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(User.GetCentreId());
             var model = new CentreAdministratorsViewModel(
                 User.GetCentreId(),
                 adminUsersAtCentre,
                 searchString,
-                sortBy,
-                sortDirection,
+                DefaultSortByOptions.Name.PropertyName,
+                BaseSearchablePageViewModel.Ascending,
                 page
             );
 

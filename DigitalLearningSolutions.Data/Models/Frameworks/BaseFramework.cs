@@ -23,8 +23,8 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
 
         public override string SearchableName
         {
-            get => SearchableNameValue ?? FrameworkName;
-            set => SearchableNameValue = value;
+            get => SearchableNameOverrideForFuzzySharp ?? FrameworkName;
+            set => SearchableNameOverrideForFuzzySharp = value;
         }
     }
 }

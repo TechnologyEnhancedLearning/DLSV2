@@ -24,8 +24,8 @@
 
         public override string SearchableName
         {
-            get => SearchableNameValue ?? $"{FirstName} {LastName}";
-            set => SearchableNameValue = value;
+            get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName}";
+            set => SearchableNameOverrideForFuzzySharp = value;
         }
     }
 }

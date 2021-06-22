@@ -10,6 +10,11 @@
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 
+    /// <summary>
+    /// This is the older version of the SearchHelper. For future search/sort implementations we should
+    /// be using the generic version <see cref="GenericSearchHelper"/> and implementing BaseSearchableItem
+    /// on the entity to be searched
+    /// </summary>
     public static class SearchHelper
     {
         private static readonly string[] StopWordsArray =
