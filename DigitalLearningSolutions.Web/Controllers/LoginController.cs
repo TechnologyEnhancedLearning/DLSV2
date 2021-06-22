@@ -4,10 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Login;
@@ -47,7 +47,7 @@
         }
 
         [HttpPost]
-        public IActionResult Index(LoginViewModel model)
+        public async Task<IActionResult> Index(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -98,7 +98,7 @@
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
 
-                return LogIn(
+                return await LogIn(
                     adminLoginDetails,
                     delegateLoginDetails.FirstOrDefault(),
                     model.RememberMe,
@@ -135,7 +135,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<List<DelegateLoginDetails>>))]
         [HttpGet]
-        public IActionResult ChooseCentre(int centreId)
+        public async Task<IActionResult> ChooseCentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
             var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
@@ -148,7 +148,7 @@
                 delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
@@ -177,7 +177,7 @@
             TempData["ReturnUrl"] = returnUrl;
         }
 
-        private IActionResult LogIn(
+        private async Task<IActionResult> LogIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
             bool rememberMe,
@@ -192,7 +192,7 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = DateTime.UtcNow
             };
-            HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+            await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
         }

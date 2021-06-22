@@ -18,7 +18,7 @@
             DateTime? dateRegistered = null,
             string firstName = "Firstname",
             string lastName = "Test",
-            string emailAddress = "email@test.com",
+            string? emailAddress = "email@test.com",
             string password = "password",
             int? resetPasswordId = null,
             bool approved = true,

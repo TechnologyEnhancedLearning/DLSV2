@@ -29,7 +29,7 @@
   </li>
 
   <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
-    <div class="nhsuk-card nhsuk-card--clickable">
+    <div class="nhsuk-card @(User.HasCentreManagerPermissions() ? "nhsuk-card--clickable" : "nhsuk-card--not-clickable")">
       <div class="nhsuk-card__content">
         <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
           @Model.NumberOfAdmins <span class="nhsuk-u-visually-hidden">Admins</span>

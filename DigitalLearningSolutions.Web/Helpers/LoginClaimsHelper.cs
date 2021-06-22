@@ -45,6 +45,22 @@
                 new Claim(
                     CustomClaimTypes.UserCentreName,
                     adminLoginDetails?.CentreName ?? delegateLoginDetails?.CentreName
+                ),
+                new Claim(
+                    CustomClaimTypes.IsFrameworkContributor,
+                    adminLoginDetails?.IsFrameworkContributor.ToString() ?? "False"
+                ),
+                new Claim(
+                    CustomClaimTypes.IsWorkforceManager,
+                    adminLoginDetails?.IsWorkforceManager.ToString() ?? "False"
+                ),
+                new Claim(
+                    CustomClaimTypes.IsWorkforceContributor,
+                    adminLoginDetails?.IsWorkforceContributor.ToString() ?? "False"
+                ),
+                new Claim(
+                    CustomClaimTypes.IsLocalWorkforceManager,
+                    adminLoginDetails?.IsLocalWorkforceManager.ToString() ?? "False"
                 )
             };
 

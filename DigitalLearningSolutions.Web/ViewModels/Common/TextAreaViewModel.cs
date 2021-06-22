@@ -1,5 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TextAreaViewModel
     {
         public TextAreaViewModel
@@ -10,12 +13,13 @@
             string? value,
             int rows,
             bool spellCheck,
+            IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null,
-            string? errorMessage = null,
-            bool hasError = false
+            string? hintText = null
         )
         {
+            var errorMessageList = errorMessages.ToList();
+
             Id = id;
             Class = cssClass;
             Name = name;
@@ -24,8 +28,8 @@
             Rows = rows;
             SpellCheck = spellCheck;
             HintText = hintText;
-            ErrorMessage = errorMessage;
-            HasError = hasError;
+            ErrorMessages = errorMessageList;
+            HasError = errorMessageList.Any();
         }
 
         public string Id { get; set; }
@@ -36,7 +40,7 @@
         public int Rows { get; set; }
         public bool SpellCheck { get; set; }
         public string? HintText { get; set; }
-        public string? ErrorMessage { get; set; }
+        public IEnumerable<string> ErrorMessages { get; set; }
         public bool HasError { get; set; }
     }
 }

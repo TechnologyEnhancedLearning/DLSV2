@@ -20,11 +20,11 @@
     {
         private IRequestCookieCollection cookieCollection = null!;
         private ICustomPromptsService customPromptsService = null!;
-        private IUserDataService userDataService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -50,10 +50,11 @@
             A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
 
-            registrationPromptsControllerWithMockHttpContext = new RegistrationPromptsController(customPromptsService, userDataService)
-                .WithMockHttpContext(httpContext)
-                .WithMockUser(true)
-                .WithMockTempData();
+            registrationPromptsControllerWithMockHttpContext =
+                new RegistrationPromptsController(customPromptsService, userDataService)
+                    .WithMockHttpContext(httpContext)
+                    .WithMockUser(true)
+                    .WithMockTempData();
         }
 
         [Test]
@@ -133,6 +134,24 @@
         }
 
         [Test]
+        public void PostEditRegistrationPrompt_bulk_sets_up_temp_data_and_redirects()
+        {
+            // Given
+            var model = new EditRegistrationPromptViewModel(1, "Test", false, "Test\r\nAnswer", "Answer");
+            const string action = "bulk";
+
+            // When
+            var result = registrationPromptsController.EditRegistrationPrompt(model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                AssertEditTempDataIsExpected(model);
+                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPromptBulk");
+            }
+        }
+
+        [Test]
         public void PostEditRegistrationPrompt_returns_error_with_unexpected_action()
         {
             // Given
@@ -147,15 +166,15 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSelectPrompt_sets_new_temp_data()
+        public void AddRegistrationPromptNew_sets_new_temp_data()
         {
             // When
-            var result = registrationPromptsControllerWithMockHttpContext.AddRegistrationPromptSelectPrompt();
+            var result = registrationPromptsController.AddRegistrationPromptNew();
 
             // Then
-            registrationPromptsControllerWithMockHttpContext.TempData.Peek<AddRegistrationPromptData>().Should()
+            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should()
                 .NotBeNull();
-            result.Should().BeViewResult().WithDefaultViewName();
+            result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptSelectPrompt");
         }
 
         [Test]
@@ -218,7 +237,7 @@
             var expectedConfigureAnswerViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
 
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
+                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             const string action = "addPrompt";
@@ -249,7 +268,7 @@
             const string action = "delete0";
 
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
 
             // When
@@ -286,7 +305,7 @@
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
             var initialViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
             var initialTempData = new AddRegistrationPromptData
-            { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
+                { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
                 () => customPromptsService.AddCustomPromptToCentre(
@@ -304,13 +323,13 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                                () => customPromptsService.AddCustomPromptToCentre(
-                                    ControllerContextHelper.CentreId,
-                                    1,
-                                    true,
-                                    "Test\r\nAnswer"
-                                )
-                            ).MustHaveHappened();
+                    () => customPromptsService.AddCustomPromptToCentre(
+                        ControllerContextHelper.CentreId,
+                        1,
+                        true,
+                        "Test\r\nAnswer"
+                    )
+                ).MustHaveHappened();
                 registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
                 result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
@@ -348,7 +367,57 @@
                         "Test\r\nAnswer"
                     )
                 ).MustHaveHappened();
-                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                    .WithActionName("Error");
+            }
+        }
+
+        [Test]
+        public void RegistrationPromptBulkPost_updates_temp_data_and_redirects_to_edit()
+        {
+            // Given
+            var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", false, 1);
+            var initialEditViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test");
+            var expectedViewModel = new EditRegistrationPromptViewModel(1, "Prompt", false, "Test\r\nAnswer");
+            var initialTempData = new EditRegistrationPromptData(initialEditViewModel);
+
+            registrationPromptsController.TempData.Set(initialTempData);
+
+            // When
+            var result = registrationPromptsController.EditRegistrationPromptBulkPost(inputViewModel);
+
+            // Then
+            using (new AssertionScope())
+            {
+                AssertEditTempDataIsExpected(expectedViewModel);
+                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPrompt");
+            }
+        }
+
+        [Test]
+        public void RegistrationPromptBulkPost_updates_temp_data_and_redirects_to_configure_answers()
+        {
+            // Given
+            var inputViewModel = new BulkRegistrationPromptAnswersViewModel("Test\r\nAnswer", true, null);
+            var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+            var initialConfigureAnswersViewModel = new RegistrationPromptAnswersViewModel("Test");
+            var expectedViewModel = new RegistrationPromptAnswersViewModel("Test\r\nAnswer");
+
+            var initialTempData = new AddRegistrationPromptData
+            {
+                SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialConfigureAnswersViewModel
+            };
+            registrationPromptsController.TempData.Set(initialTempData);
+
+            // When
+            var result = registrationPromptsController.AddRegistrationPromptBulkPost(inputViewModel);
+
+            // Then
+            using (new AssertionScope())
+            {
+                AssertSelectPromptViewModelIsExpectedModel(initialPromptModel);
+                AssertPromptAnswersViewModelIsExpectedModel(expectedViewModel);
+                result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptConfigureAnswers");
             }
         }
 
@@ -369,6 +438,12 @@
         {
             registrationPromptsController.TempData.Peek<AddRegistrationPromptData>()!.ConfigureAnswersViewModel.Should()
                 .BeEquivalentTo(promptModel);
+        }
+
+        private void AssertEditTempDataIsExpected(EditRegistrationPromptViewModel expectedData)
+        {
+            registrationPromptsController.TempData.Peek<EditRegistrationPromptData>()!.EditModel.Should()
+                .BeEquivalentTo(expectedData);
         }
     }
 }
