@@ -374,7 +374,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///   Looks up a localized string similar to USE [mbdbx101]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -384,7 +386,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_237_GetActiveAvailableTweak_DOWN {
             get {
@@ -393,7 +395,9 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///   Looks up a localized string similar to USE [mbdbx101]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -403,7 +407,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_237_GetActiveAvailableTweak_UP {
             get {
