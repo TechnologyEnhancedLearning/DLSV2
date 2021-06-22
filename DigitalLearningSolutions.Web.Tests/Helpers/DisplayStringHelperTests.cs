@@ -6,7 +6,7 @@
 
     public class DisplayStringHelperTests
     {
-        private const long Gigabyte = 1073741824;
+        private const long Gibibyte = 1073741824;
 
         [Test]
         public void GenerateNumberWithLimitDisplayString_returns_expected_string_with_limit()
@@ -52,7 +52,7 @@
         public void GenerateBytesLimitDisplayString_returns_expected_string_for_gigabytes()
         {
             // When
-            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, Gigabyte);
+            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, Gibibyte);
 
             // Then
             result.Should().Be("12B / 1GiB");
@@ -62,7 +62,7 @@
         public void GenerateBytesLimitDisplayString_returns_expected_string_when_less_than_next_size()
         {
             // Given
-            var bytes = Gigabyte - 10;
+            var bytes = Gibibyte - 10;
 
             // When
             var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, bytes);

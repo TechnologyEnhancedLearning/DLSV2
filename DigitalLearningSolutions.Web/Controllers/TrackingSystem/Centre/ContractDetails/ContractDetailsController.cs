@@ -24,7 +24,7 @@
 
         public IActionResult Index()
         {
-            int centreId = User.GetCentreId();
+            var centreId = User.GetCentreId();
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var numberOfCourses = courseService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, 0);

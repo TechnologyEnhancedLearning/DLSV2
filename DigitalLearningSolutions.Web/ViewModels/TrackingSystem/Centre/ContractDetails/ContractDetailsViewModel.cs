@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.ContractDetails
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
@@ -87,25 +86,20 @@
         public string ServerSpace { get; set; }
         public string ServerSpaceColour { get; set; }
 
-        private string GetColourFromPercentageFilled(long number, long? limit)
+        private string GetColourFromPercentageFilled(long number, long limit)
         {
             if (limit == 0 && number == 0)
             {
                 return "grey";
             }
 
-            if (limit < 0)
-            {
-                return "blue";
-            }
-
-            var usage = (double)number / limit.Value;
-            if (usage < 0.6)
+            var usage = (double)number / limit;
+            if (0 <= usage && usage < 0.6)
             {
                 return "green";
             }
 
-            if (usage >= 0.6 && usage < 1)
+            if (0.6 <= usage && usage < 1)
             {
                 return "yellow";
             }
