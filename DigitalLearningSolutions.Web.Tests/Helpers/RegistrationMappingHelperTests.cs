@@ -22,7 +22,7 @@
         public void MapToDelegateRegistrationModel_returns_correct_DelegateRegistrationModel()
         {
             // Given
-            var data = SampleData();
+            var data = SampleDelegateRegistrationData();
 
             // When
             var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
@@ -43,7 +43,23 @@
         public void MapDataToPersonalInformation_returns_correct_ViewModel()
         {
             // Given
-            var data = SampleData();
+            var data = SampleRegistrationData();
+
+            // When
+            var result = RegistrationMappingHelper.MapDataToPersonalInformation(data);
+
+            // Then
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+            result.Centre.Should().Be(CentreId);
+        }
+
+        [Test]
+        public void MapDelegateDataToPersonalInformation_returns_correct_ViewModel()
+        {
+            // Given
+            var data = SampleDelegateRegistrationData();
 
             // When
             var result = RegistrationMappingHelper.MapDataToPersonalInformation(data);
@@ -60,7 +76,20 @@
         public void MapDataToLearnerInformation_returns_correct_ViewModel()
         {
             // Given
-            var data = SampleData();
+            var data = SampleRegistrationData();
+
+            // When
+            var result = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+
+            // Then
+            result.JobGroup.Should().Be(JobGroupId);
+        }
+
+        [Test]
+        public void MapDelegateDataToLearnerInformation_returns_correct_ViewModel()
+        {
+            // Given
+            var data = SampleDelegateRegistrationData();
 
             // When
             var result = RegistrationMappingHelper.MapDataToLearnerInformation(data);
@@ -76,7 +105,7 @@
         public void MapDataToSummary_returns_correct_ViewModel()
         {
             // Given
-            var data = SampleData();
+            var data = SampleRegistrationData();
 
             // When
             var result = RegistrationMappingHelper.MapDataToSummary(data);
@@ -87,7 +116,35 @@
             result.Email.Should().Be(Email);
         }
 
-        private static DelegateRegistrationData SampleData()
+        [Test]
+        public void MapDelegateDataToSummary_returns_correct_ViewModel()
+        {
+            // Given
+            var data = SampleDelegateRegistrationData();
+
+            // When
+            var result = RegistrationMappingHelper.MapDataToSummary(data);
+
+            // Then
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+        }
+
+        private static RegistrationData SampleRegistrationData()
+        {
+            return new RegistrationData
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                Centre = CentreId,
+                JobGroup = JobGroupId,
+                PasswordHash = PasswordHash
+            };
+        }
+
+        private static DelegateRegistrationData SampleDelegateRegistrationData()
         {
             return new DelegateRegistrationData
             {

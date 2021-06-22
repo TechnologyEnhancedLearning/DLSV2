@@ -24,43 +24,59 @@
             );
         }
 
-        public static SummaryViewModel MapDataToSummary(DelegateRegistrationData data)
+        public static SummaryViewModel MapDataToSummary(RegistrationData data)
         {
             return new SummaryViewModel
             {
                 FirstName = data.FirstName!,
                 LastName = data.LastName!,
-                Email = data.Email!,
-                IsCentreSpecificRegistration = data.IsCentreSpecificRegistration
+                Email = data.Email!
             };
         }
 
-        public static PersonalInformationViewModel MapDataToPersonalInformation(DelegateRegistrationData data)
+        public static SummaryViewModel MapDataToSummary(DelegateRegistrationData data)
+        {
+            var model = MapDataToSummary((RegistrationData)data);
+            model.IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
+            return model;
+        }
+
+        public static PersonalInformationViewModel MapDataToPersonalInformation(RegistrationData data)
         {
             return new PersonalInformationViewModel
             {
                 FirstName = data.FirstName,
                 LastName = data.LastName,
                 Centre = data.Centre,
-                Email = data.Email,
-                IsCentreSpecificRegistration = data.IsCentreSpecificRegistration
+                Email = data.Email
             };
         }
 
-        public static LearnerInformationViewModel MapDataToLearnerInformation(
-            DelegateRegistrationData data
-        )
+        public static PersonalInformationViewModel MapDataToPersonalInformation(DelegateRegistrationData data)
+        {
+            var model = MapDataToPersonalInformation((RegistrationData)data);
+            model.IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
+            return model;
+        }
+
+        public static LearnerInformationViewModel MapDataToLearnerInformation(RegistrationData data)
         {
             return new LearnerInformationViewModel
             {
-                JobGroup = data.JobGroup,
-                Answer1 = data.Answer1,
-                Answer2 = data.Answer2,
-                Answer3 = data.Answer3,
-                Answer4 = data.Answer4,
-                Answer5 = data.Answer5,
-                Answer6 = data.Answer6
+                JobGroup = data.JobGroup
             };
+        }
+
+        public static LearnerInformationViewModel MapDataToLearnerInformation(DelegateRegistrationData data)
+        {
+            var model = MapDataToLearnerInformation((RegistrationData)data);
+            model.Answer1 = data.Answer1;
+            model.Answer2 = data.Answer2;
+            model.Answer3 = data.Answer3;
+            model.Answer4 = data.Answer4;
+            model.Answer5 = data.Answer5;
+            model.Answer6 = data.Answer6;
+            return model;
         }
     }
 }
