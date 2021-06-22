@@ -162,7 +162,13 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             // TODO: register admin details and notification preferences in database
 
-            return new EmptyResult();
+            return RedirectToAction("Confirmation");
+        }
+
+        [HttpGet]
+        public IActionResult Confirmation()
+        {
+            return View();
         }
 
         private void SetAdminRegistrationData(int centreId)
