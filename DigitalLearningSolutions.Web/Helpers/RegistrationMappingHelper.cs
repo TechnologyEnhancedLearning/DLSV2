@@ -62,32 +62,5 @@
                 Answer6 = data.Answer6
             };
         }
-
-        public static DelegateRegistrationData MapPersonalInformationToData(
-            PersonalInformationViewModel model,
-            DelegateRegistrationData data
-        )
-        {
-            data.Centre = model.Centre;
-            data.Email = model.Email;
-            data.FirstName = model.FirstName;
-            data.LastName = model.LastName;
-            return data;
-        }
-
-        public static DelegateRegistrationData MapLearnerInformationToData(
-            LearnerInformationViewModel model,
-            DelegateRegistrationData data
-        )
-        {
-            data.JobGroup = model.JobGroup;
-            data.Answer1 = model.Answer1;
-            data.Answer2 = model.Answer2;
-            data.Answer3 = model.Answer3;
-            data.Answer4 = model.Answer4;
-            data.Answer5 = model.Answer5;
-            data.Answer6 = model.Answer6;
-            return data;
-        }
     }
 }

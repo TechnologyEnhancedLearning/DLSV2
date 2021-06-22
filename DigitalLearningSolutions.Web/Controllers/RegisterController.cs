@@ -91,10 +91,10 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             if (data.Centre != model.Centre)
             {
-                ClearCustomPromptAnswers(data);
+                data.ClearCustomPromptAnswers();
             }
 
-            data = RegistrationMappingHelper.MapPersonalInformationToData(model, data);
+            data.SetPersonalInformation(model);
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
@@ -146,7 +146,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(model);
             }
 
-            data = RegistrationMappingHelper.MapLearnerInformationToData(model, data);
+            data.SetLearnerInformation(model);
             TempData.Set(data);
 
             return RedirectToAction("Password");
@@ -274,7 +274,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         private bool CheckCentreIdValid(int? centreId)
         {
             return centreId == null
-                || centresDataService.GetCentreName(centreId.Value) != null;
+                   || centresDataService.GetCentreName(centreId.Value) != null;
         }
 
         private void ValidateEmailAddress(PersonalInformationViewModel model)
@@ -296,7 +296,10 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
         }
 
-        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromModel(LearnerInformationViewModel model, int centreId)
+        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromModel(
+            LearnerInformationViewModel model,
+            int centreId
+        )
         {
             return customPromptHelper.GetCustomFieldViewModelsForCentre(
                 centreId,
@@ -320,16 +323,6 @@ namespace DigitalLearningSolutions.Web.Controllers
                 data.Answer5,
                 data.Answer6
             );
-        }
-
-        private static void ClearCustomPromptAnswers(DelegateRegistrationData data)
-        {
-            data.Answer1 = null;
-            data.Answer2 = null;
-            data.Answer3 = null;
-            data.Answer4 = null;
-            data.Answer5 = null;
-            data.Answer6 = null;
         }
 
         private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)

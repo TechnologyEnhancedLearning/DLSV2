@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
-    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -89,52 +87,6 @@
             result.Email.Should().Be(Email);
         }
 
-        [Test]
-        public void MapPersonalInformationToData_returns_correct_Data()
-        {
-            // Given
-            var model = new PersonalInformationViewModel
-            {
-                FirstName = FirstName,
-                LastName = LastName,
-                Centre = CentreId,
-                Email = Email,
-            };
-            var data = new DelegateRegistrationData();
-
-            // When
-            var result = RegistrationMappingHelper.MapPersonalInformationToData(model, data);
-
-            // Then
-            result.FirstName.Should().Be(FirstName);
-            result.LastName.Should().Be(LastName);
-            result.Email.Should().Be(Email);
-            result.Centre.Should().Be(CentreId);
-        }
-
-        [Test]
-        public void MapLearnerInformationToData_returns_correct_Data()
-        {
-            // Given
-            var model = new LearnerInformationViewModel
-            {
-                JobGroup = JobGroupId,
-                Answer1 = Answer1,
-                Answer2 = Answer2,
-                Answer3 = Answer3,
-            };
-            var data = new DelegateRegistrationData();
-
-            // When
-            var result = RegistrationMappingHelper.MapLearnerInformationToData(model, data);
-
-            // Then
-            result.JobGroup.Should().Be(JobGroupId);
-            result.Answer1.Should().Be(Answer1);
-            result.Answer2.Should().Be(Answer2);
-            result.Answer3.Should().Be(Answer3);
-        }
-
         private static DelegateRegistrationData SampleData()
         {
             return new DelegateRegistrationData
@@ -148,7 +100,7 @@
                 Answer1 = Answer1,
                 Answer2 = Answer2,
                 Answer3 = Answer3,
-                IsCentreSpecificRegistration = IsCentreSpecificRegistration,
+                IsCentreSpecificRegistration = IsCentreSpecificRegistration
             };
         }
     }
