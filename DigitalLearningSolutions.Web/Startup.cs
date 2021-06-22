@@ -168,6 +168,7 @@ namespace DigitalLearningSolutions.Web
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
         {
+            services.AddScoped<RedirectEmptySessionData<RegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
