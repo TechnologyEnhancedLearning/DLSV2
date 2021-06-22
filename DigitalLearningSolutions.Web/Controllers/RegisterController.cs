@@ -296,12 +296,12 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
         }
 
-        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromModel(
+        private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
             LearnerInformationViewModel model,
             int centreId
         )
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -312,7 +312,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             );
         }
 
-        private IEnumerable<EditCustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
+        private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
             return customPromptHelper.GetCustomFieldViewModelsForCentre(
                 data.Centre!.Value,
@@ -339,7 +339,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             DelegateRegistrationData data
         )
         {
-            model.CustomFields = GetCustomFieldsFromModel(model, data.Centre!.Value);
+            model.CustomFields = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup

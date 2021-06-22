@@ -172,14 +172,14 @@
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
                 model.Answer1, model.Answer2, model.Answer3, model.Answer4,
                 model.Answer5, model.Answer6);
         }
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
                 delegateUser?.Answer1, delegateUser?.Answer2, delegateUser?.Answer3, delegateUser?.Answer4,
                 delegateUser?.Answer5, delegateUser?.Answer6);
         }

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class SummaryViewModel : IValidatableObject
     {
@@ -12,7 +12,7 @@
         public string? Centre { get; set; }
         public string? JobGroup { get; set; }
         public bool Terms { get; set; }
-        public IEnumerable<EditCustomFieldViewModel> CustomFields { get; set; } = new List<EditCustomFieldViewModel>();
+        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
         public bool IsCentreSpecificRegistration { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
