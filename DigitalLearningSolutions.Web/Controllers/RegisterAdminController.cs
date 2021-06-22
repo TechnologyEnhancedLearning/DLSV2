@@ -2,10 +2,12 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -14,14 +16,17 @@ namespace DigitalLearningSolutions.Web.Controllers
     {
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
+        private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
+            ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService
         )
         {
             this.centresDataService = centresDataService;
+            this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
@@ -103,6 +108,29 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
 
             data.SetLearnerInformation(model);
+            TempData.Set(data);
+
+            return RedirectToAction("Password");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpGet]
+        public IActionResult Password()
+        {
+            return View(new PasswordViewModel());
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
+        [HttpPost]
+        public IActionResult Password(PasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var data = TempData.Peek<RegistrationData>()!;
+            data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
             return new EmptyResult();
