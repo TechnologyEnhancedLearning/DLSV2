@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class RegisterViewModel
+    public class PersonalInformationViewModel
     {
         [Required(ErrorMessage = "Enter your first name")]
         [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
@@ -21,5 +23,11 @@
 
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
+
+        public bool IsCentreSpecificRegistration { get; set; }
+
+        public string? CentreName { get; set; }
+
+        public IEnumerable<SelectListItem> CentreOptions { get; set; } = new List<SelectListItem>();
     }
 }
