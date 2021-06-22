@@ -2,10 +2,7 @@ namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection.PortableExecutable;
-    using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService

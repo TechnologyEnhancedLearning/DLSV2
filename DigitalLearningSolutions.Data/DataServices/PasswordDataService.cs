@@ -58,7 +58,7 @@
             var userRefs = users.ToList();
 
             await connection.ExecuteAsync(
-                @"UPDATE dbo.AdminUsers SET Password = @PasswordHash WHERE AdminID IN @AdminIds;
+                @"UPDATE AdminUsers SET Password = @PasswordHash WHERE AdminID IN @AdminIds;
                   UPDATE Candidates SET Password = @PasswordHash WHERE CandidateID IN @CandidateIds;",
                 new
                 {

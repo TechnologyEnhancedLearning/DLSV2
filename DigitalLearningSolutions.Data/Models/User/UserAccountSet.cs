@@ -22,10 +22,10 @@
 
         public List<UserReference> GetUserRefs()
         {
-            var candidateRefs = DelegateAccounts.Select(user => user.ToUserReference());
+            var delegateRefs = DelegateAccounts.Select(user => user.ToUserReference());
             return AdminAccount == null
-                ? candidateRefs.ToList()
-                : candidateRefs.Concat(new[] { AdminAccount.ToUserReference() }).ToList();
+                ? delegateRefs.ToList()
+                : delegateRefs.Concat(new[] { AdminAccount.ToUserReference() }).ToList();
         }
 
         public void Deconstruct(out AdminUser? adminUser, out List<DelegateUser> delegateUsers)
