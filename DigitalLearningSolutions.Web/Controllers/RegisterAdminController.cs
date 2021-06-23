@@ -37,12 +37,10 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)
+            if (!centreId.HasValue || !CheckRegisterAdminAllowed(centreId.Value))
             {
                 return NotFound();
             }
-
-            // TODO: Check if registering admin account is allowed
 
             SetAdminRegistrationData(centreId.Value);
 
@@ -169,6 +167,17 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult Confirmation()
         {
             return View();
+        }
+
+        private bool CheckRegisterAdminAllowed(int centreId)
+        {
+            if (centresDataService.GetCentreName(centreId) == null)
+            {
+                return false;
+            }
+
+            var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
+            return !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
         }
 
         private void SetAdminRegistrationData(int centreId)
