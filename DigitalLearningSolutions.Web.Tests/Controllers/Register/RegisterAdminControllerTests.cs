@@ -20,6 +20,7 @@
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
@@ -33,6 +34,7 @@
                     centresDataService,
                     cryptoService,
                     jobGroupsDataService,
+                    registrationService,
                     userDataService
                 )
                 .WithDefaultContext()

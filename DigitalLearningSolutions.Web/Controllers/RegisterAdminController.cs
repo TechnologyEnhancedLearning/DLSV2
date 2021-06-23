@@ -18,18 +18,21 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
+            IRegistrationService registrationService,
             IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.registrationService = registrationService;
             this.userDataService = userDataService;
         }
 
@@ -165,6 +168,17 @@
                 !CheckEmailMatchesCentre(data.Email, data.Centre.Value) || !CheckEmailUnique(data.Email))
             {
                 return new StatusCodeResult(500);
+            }
+
+            // register user as a delegate
+            var candidateNumber = registrationService.RegisterAdminDelegate(RegistrationMappingHelper.MapToRegistrationModel(data));
+            if (candidateNumber == "-1")
+            {
+                return new StatusCodeResult(500);
+            }
+            if (candidateNumber == "-4")
+            {
+                return RedirectToAction("Index");
             }
 
             // TODO: register admin details and notification preferences in database
