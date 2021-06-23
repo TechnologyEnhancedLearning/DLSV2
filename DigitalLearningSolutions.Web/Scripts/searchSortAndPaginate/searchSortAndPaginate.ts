@@ -67,6 +67,7 @@ export class SearchSortAndPaginate {
   }
 
   private static fetchAllSearchableElements(route: string): Promise<Document | null> {
+    const path = this.getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();
 
@@ -74,7 +75,7 @@ export class SearchSortAndPaginate {
         res(request.responseXML);
       };
 
-      request.open('GET', route, true);
+      request.open('GET', path, true);
       request.responseType = 'document';
       request.send();
     });
@@ -96,5 +97,13 @@ export class SearchSortAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
+  }
+
+  private static getPathForEndpoint(endpoint: string): string {
+    const currentPath = window.location.pathname;
+    const baseUrlParts = endpoint.split('/');
+    const indexOfBaseUrl = currentPath.indexOf(baseUrlParts[1]);
+    const path = `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
+    return path.replace('//', '/');
   }
 }
