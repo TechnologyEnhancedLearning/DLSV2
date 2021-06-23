@@ -94,6 +94,7 @@
             }
 
             var usage = (double)number / limit;
+
             if (0 <= usage && usage < 0.6)
             {
                 return "green";
