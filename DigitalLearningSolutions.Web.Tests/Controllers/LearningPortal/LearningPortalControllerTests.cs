@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     {
         private LearningPortalController controller = null!;
         private ICentresDataService centresDataService = null!;
-        private ICourseService courseService = null!;
+        private ICourseDataService courseDataService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private INotificationService notificationService = null!;
         private IConfiguration config = null!;
@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         public void SetUp()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            courseService = A.Fake<ICourseService>();
+            courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             notificationService = A.Fake<INotificationService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             }, "mock"));
             controller = new LearningPortalController(
                 centresDataService,
-                courseService,
+                courseDataService,
                 selfAssessmentService,
                 notificationService,
                 logger,

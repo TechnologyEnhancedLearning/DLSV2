@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
-    public interface ICourseService
+    public interface ICourseDataService
     {
         IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
         IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
@@ -18,12 +18,12 @@
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
     }
 
-    public class CourseService : ICourseService
+    public class CourseDataDataService : ICourseDataService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<CourseService> logger;
+        private readonly ILogger<CourseDataDataService> logger;
 
-        public CourseService(IDbConnection connection, ILogger<CourseService> logger)
+        public CourseDataDataService(IDbConnection connection, ILogger<CourseDataDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -31,18 +31,27 @@
 
         public IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId)
         {
-            return connection.Query<CurrentCourse>("GetCurrentCoursesForCandidate_V2", new { candidateId }, commandType: CommandType.StoredProcedure);
+            return connection.Query<CurrentCourse>(
+                "GetCurrentCoursesForCandidate_V2",
+                new { candidateId },
+                commandType: CommandType.StoredProcedure
+            );
         }
 
         public IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId)
         {
-            return connection.Query<CompletedCourse>("GetCompletedCoursesForCandidate", new { candidateId }, commandType: CommandType.StoredProcedure);
+            return connection.Query<CompletedCourse>(
+                "GetCompletedCoursesForCandidate",
+                new { candidateId },
+                commandType: CommandType.StoredProcedure
+            );
         }
 
         public IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId)
         {
             return connection.Query<AvailableCourse>(
-                @"GetActiveAvailableCustomisationsForCentreFiltered_V5", new { candidateId, centreId },
+                @"GetActiveAvailableCustomisationsForCentreFiltered_V5",
+                new { candidateId, centreId },
                 commandType: CommandType.StoredProcedure
             );
         }
@@ -55,7 +64,7 @@
                         WHERE ProgressID = @progressId
                           AND CandidateID = @candidateId",
                 new { date = completeByDate, progressId, candidateId }
-                );
+            );
 
             if (numberOfAffectedRows < 1)
             {
@@ -69,13 +78,13 @@
         public void RemoveCurrentCourse(int progressId, int candidateId)
         {
             var numberOfAffectedRows = connection.Execute(
-            @"UPDATE Progress
+                @"UPDATE Progress
                     SET RemovedDate = getUTCDate(),
                         RemovalMethodID = 1
                     WHERE ProgressID = @progressId
                       AND CandidateID = @candidateId
                 ",
-            new { progressId, candidateId }
+                new { progressId, candidateId }
             );
 
             if (numberOfAffectedRows < 1)

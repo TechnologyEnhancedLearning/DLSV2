@@ -1,20 +1,20 @@
-namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    public class CourseServiceTests
+    public class CourseDataServiceTests
     {
-        private CourseService courseService;
+        private CourseDataDataService courseDataService;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -26,8 +26,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            var logger = A.Fake<ILogger<CourseService>>();
-            courseService = new CourseService(connection, logger);
+            var logger = A.Fake<ILogger<CourseDataDataService>>();
+            courseDataService = new CourseDataDataService(connection, logger);
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // When
             const int candidateId = 1;
-            var result = courseService.GetCurrentCourses(candidateId).ToList();
+            var result = courseDataService.GetCurrentCourses(candidateId).ToList();
 
             // Then
             var expectedFirstCourse = new CurrentCourse
@@ -66,7 +66,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // When
             const int candidateId = 1;
-            var result = courseService.GetCompletedCourses(candidateId).ToList();
+            var result = courseDataService.GetCompletedCourses(candidateId).ToList();
 
             // Then
             var expectedFirstCourse = new CompletedCourse
@@ -96,7 +96,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // When
             const int candidateId = 254480;
             const int centreId = 101;
-            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
+            var result = courseDataService.GetAvailableCourses(candidateId, centreId).ToList();
 
             // Then
             var expectedFirstCourse = new AvailableCourse
@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // When
             const int candidateId = 254480;
             const int centreId = 101;
-            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
+            var result = courseDataService.GetAvailableCourses(candidateId, centreId).ToList();
 
             // Then
             result[index].Category.Should().Be(expectedValidatedCategory);
@@ -141,7 +141,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // When
             const int candidateId = 254480;
             const int centreId = 101;
-            var result = courseService.GetAvailableCourses(candidateId, centreId).ToList();
+            var result = courseDataService.GetAvailableCourses(candidateId, centreId).ToList();
 
             // Then
             result[index].Topic.Should().Be(expectedValidatedTopic);
@@ -152,7 +152,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // When
             const int candidateId = 1;
-            var result = courseService.GetAvailableCourses(candidateId, null).ToList();
+            var result = courseDataService.GetAvailableCourses(candidateId, null).ToList();
 
             // Then
             result.Should().BeEmpty();
@@ -169,8 +169,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             using (new TransactionScope())
             {
                 // When
-                courseService.SetCompleteByDate(progressId, candidateId, newCompleteByDate);
-                var modifiedCourse = courseService.GetCurrentCourses(candidateId).ToList()
+                courseDataService.SetCompleteByDate(progressId, candidateId, newCompleteByDate);
+                var modifiedCourse = courseDataService.GetCurrentCourses(candidateId).ToList()
                     .First(c => c.ProgressID == progressId);
 
                 // Then
@@ -188,8 +188,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 const int candidateId = 1;
 
                 // When
-                courseService.RemoveCurrentCourse(progressId, candidateId);
-                var courseReturned = courseService.GetCurrentCourses(candidateId).ToList()
+                courseDataService.RemoveCurrentCourse(progressId, candidateId);
+                var courseReturned = courseDataService.GetCurrentCourses(candidateId).ToList()
                     .Any(c => c.ProgressID == progressId);
 
                 // Then
@@ -201,7 +201,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
         {
             // When
-            var count = courseService.GetNumberOfActiveCoursesAtCentreForCategory(2, 0);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 0);
 
             // Then
             count.Should().Be(38);
@@ -211,7 +211,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void GetNumberOfActiveCoursesAtCentre_with_filtered_category_returns_expected_count()
         {
             // When
-            var count = courseService.GetNumberOfActiveCoursesAtCentreForCategory(2, 2);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 2);
 
             // Then
             count.Should().Be(3);

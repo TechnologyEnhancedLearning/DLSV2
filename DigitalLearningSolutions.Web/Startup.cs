@@ -121,7 +121,7 @@ namespace DigitalLearningSolutions.Web
             // Register services.
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseDataService, CourseDataDataService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
