@@ -8,7 +8,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var canAddNewPrompt = Model.CustomFields.Count == 6;
+  var canAddNewPrompt = Model.CustomFields.Count <= 6;
 }
 
 @section NavMenuItems {
@@ -34,7 +34,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Manage delegate registration prompts</h1>
 
-    <div class="@(canAddNewPrompt ? "nhsuk-u-margin-bottom-7" : "nhsuk-u-margin-bottom-3")">
+    <div class="@(canAddNewPrompt ? "nhsuk-u-margin-bottom-3" : "nhsuk-u-margin-bottom-7")">
       @foreach (var customField in Model.CustomFields) {
         <partial name="_CustomPromptExpander" model="customField" />
       }
@@ -45,7 +45,7 @@
         </p>
       }
 
-      @if (!canAddNewPrompt) {
+      @if (canAddNewPrompt) {
         <a class="nhsuk-button" asp-action="AddRegistrationPromptNew">Add a new prompt</a>
       }
     </div>
