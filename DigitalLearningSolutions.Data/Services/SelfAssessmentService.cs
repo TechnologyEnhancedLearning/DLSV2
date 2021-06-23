@@ -90,24 +90,14 @@
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
         {
             return connection.Query<CurrentSelfAssessment>(
-                @"SELECT CA.SelfAssessmentID AS Id,
-                             SA.Name,
-                             SA.Description,
-SA.UseFilteredApi,
-                             COUNT(C.ID)         AS NumberOfCompetencies,
-                             CA.StartedDate,
-                             CA.LastAccessed,
-                             CA.CompleteByDate,
-                             CA.UserBookmark,
-                             CA.UnprocessedUpdates,
-CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
-                      FROM CandidateAssessments CA
-                               JOIN SelfAssessments SA
-                                    ON CA.SelfAssessmentID = SA.ID
-                               INNER JOIN Competencies AS C
-                                          ON SAS.CompetencyID = C.ID
-                      WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                @"SELECT        CA.SelfAssessmentID AS Id, SA.Name, SA.Description, SA.UseFilteredApi, COUNT(C.ID) AS NumberOfCompetencies, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, 
+                         CA.UnprocessedUpdates, CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
+FROM            CandidateAssessments AS CA INNER JOIN
+                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID INNER JOIN
+                         SelfAssessmentStructure AS SAS ON CA.SelfAssessmentID = SAS.SelfAssessmentID INNER JOIN
+                         Competencies AS C ON SAS.CompetencyID = C.ID
+WHERE        (CA.CandidateID = @candidateId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
+GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId }
             );
         }
@@ -133,8 +123,7 @@ CA.LaunchCount, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SAS.Ordering
-                      ORDER BY SAS.Ordering",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId, selfAssessmentId }
             );
         }
