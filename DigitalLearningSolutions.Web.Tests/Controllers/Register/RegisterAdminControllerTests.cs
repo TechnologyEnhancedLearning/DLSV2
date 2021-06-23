@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -17,7 +19,7 @@
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-        private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -25,8 +27,13 @@
             centresDataService = A.Fake<ICentresDataService>();
             cryptoService = A.Fake<ICryptoService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            userService = A.Fake<IUserService>();
-            controller = new RegisterAdminController(centresDataService, cryptoService, jobGroupsDataService)
+            userDataService = A.Fake<IUserDataService>();
+            controller = new RegisterAdminController(
+                    centresDataService,
+                    cryptoService,
+                    jobGroupsDataService,
+                    userDataService
+                )
                 .WithDefaultContext()
                 .WithMockTempData();
         }
@@ -124,6 +131,84 @@
             var data = controller.TempData.Peek<RegistrationData>()!;
             data.Centre.Should().Be(centreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_wrong_autoregisteremail_for_centre_fails_validation()
+        {
+            // Given
+            const int centreId = 7;
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = centreId,
+                Email = "wrong@email"
+            };
+            var data = new RegistrationData { Centre = centreId };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "right@email"));
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_email_already_in_use_fails_validation()
+        {
+            // Given
+            const int centreId = 7;
+            const string email = "right@email";
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = centreId,
+                Email = email
+            };
+            var data = new RegistrationData { Centre = centreId };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void PersonalInformationPost_with_correct_unique_email_is_allowed()
+        {
+            // Given
+            const int centreId = 7;
+            const string email = "right@email";
+            var model = new PersonalInformationViewModel
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Centre = centreId,
+                Email = email
+            };
+            var data = new RegistrationData { Centre = centreId };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+
+            // When
+            var result = controller.PersonalInformation(model);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
     }
 }

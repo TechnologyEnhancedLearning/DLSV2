@@ -18,16 +18,19 @@ namespace DigitalLearningSolutions.Web.Controllers
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IUserDataService userDataService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
             ICryptoService cryptoService,
-            IJobGroupsDataService jobGroupsDataService
+            IJobGroupsDataService jobGroupsDataService,
+            IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -56,7 +59,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
             PopulatePersonalInformationExtraFields(model);
 
-            // TODO: Validate Email Address?
+            ValidateEmailAddress(model.Email, data.Centre!.Value);
 
             return View(model);
         }
@@ -65,15 +68,15 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpPost]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            // TODO: Validate Email Address
+            var data = TempData.Peek<RegistrationData>()!;
+
+            ValidateEmailAddress(model.Email, data.Centre!.Value);
 
             if (!ModelState.IsValid)
             {
                 PopulatePersonalInformationExtraFields(model);
                 return View(model);
             }
-
-            var data = TempData.Peek<RegistrationData>()!;
 
             data.SetPersonalInformation(model);
             TempData.Set(data);
@@ -199,6 +202,33 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             TempData.Clear();
             TempData.Set(adminRegistrationData);
+        }
+
+        private void ValidateEmailAddress(string? email, int centreId)
+        {
+            if (email == null)
+            {
+                return;
+            }
+
+            var (_, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
+            if (!email.Equals(autoRegisterManagerEmail))
+            {
+                ModelState.AddModelError(
+                    nameof(PersonalInformationViewModel.Email),
+                    "This email address does not match the one held by the centre"
+                );
+            }
+
+            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
+
+            if (adminUser != null)
+            {
+                ModelState.AddModelError(
+                    nameof(PersonalInformationViewModel.Email),
+                    "An admin user with this email address is already registered"
+                );
+            }
         }
 
         private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
