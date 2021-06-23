@@ -76,6 +76,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreManager,
                         policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserSupervisor,
+                        policy => CustomPolicies.ConfigurePolicyUserSupervisor(policy)
+                    );
                 }
             );
 
@@ -163,6 +167,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<ISupervisorService, SupervisorService>();
             RegisterWebServiceFilters(services);
         }
 
