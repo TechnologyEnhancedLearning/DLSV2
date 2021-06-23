@@ -122,7 +122,11 @@
             }
 
             var editData = TempData.Peek<EditRegistrationPromptData>()!;
-            editData.EditModel!.OptionsString = model.OptionsString;
+
+            var optionsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString)
+                .Where(o => o != string.Empty);
+
+            editData.EditModel!.OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(optionsList);
             TempData.Set(editData);
 
             return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
@@ -236,8 +240,10 @@
                 return View("BulkRegistrationPromptAnswers", model);
             }
 
+            var optionsList = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(model.OptionsString)
+                .Where(o => o != string.Empty);
             var addData = TempData.Peek<AddRegistrationPromptData>()!;
-            addData.ConfigureAnswersViewModel!.OptionsString = model.OptionsString;
+            addData.ConfigureAnswersViewModel!.OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(optionsList);
             TempData.Set(addData);
 
             return RedirectToAction("AddRegistrationPromptConfigureAnswers");
