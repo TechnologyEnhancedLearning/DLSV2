@@ -126,7 +126,7 @@
                             ct.ContractType
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                        INNER JOIN ContractTypes as ct on ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
@@ -233,21 +233,21 @@
         {
             return connection.Query<CentreRank>(
                 @"SELECT 
-                        RANK() over (ORDER BY tc.CentreIDCount DESC) as [Rank],
+                        RANK() OVER (ORDER BY tc.CentreIDCount DESC) AS [Rank],
                         c.CentreID,
                         c.CentreName,
-                        tc.CentreIDCount as [Sum]
+                        tc.CentreIDCount AS [Sum]
                     FROM 
 	                ( 
 	                    SELECT
-                            Count(c.CentreID) as CentreIDCount,
+                            Count(c.CentreID) AS CentreIDCount,
                             c.CentreID
 	                    FROM [Sessions] s 
-	                    INNER JOIN Candidates c on s.CandidateID = c.CandidateID 
-	                    INNER JOIN Centres ct on c.CentreID = ct.CentreID
+	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
+	                    INNER JOIN Centres ct ON c.CentreID = ct.CentreID
 	                    WHERE s.LoginTime > @dateSince AND c.CentreID <> 101 AND (ct.RegionID = @RegionID OR @RegionID = -1)
 	                    GROUP BY c.CentreID
-                    ) as tc 
+                    ) AS tc 
                     INNER JOIN Centres c ON tc.CentreID = c.CentreID",
                 new { dateSince, regionId }
             );

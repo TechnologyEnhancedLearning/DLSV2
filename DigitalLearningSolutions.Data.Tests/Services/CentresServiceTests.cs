@@ -43,7 +43,7 @@
         public void GetCentreRanks_returns_expected_list_when_centre_in_top_ten()
         {
             // When
-            var result = centresService.GetCentreRanks(3, 14, -1);
+            var result = centresService.GetTopCentreRanks(3, 14, -1);
 
             // Then
             result.Count().Should().Be(10);
@@ -53,7 +53,7 @@
         public void GetCentreRanks_returns_expected_list_when_centre_is_not_in_top_ten()
         {
             // When
-            var result = centresService.GetCentreRanks(12, 14, -1);
+            var result = centresService.GetTopCentreRanks(12, 14, -1);
 
             // Then
             result.Count().Should().Be(11);
@@ -63,7 +63,7 @@
         public void GetCentreRanks_returns_expected_list_when_centre_has_no_data()
         {
             // When
-            var result = centresService.GetCentreRanks(20, 14, -1);
+            var result = centresService.GetTopCentreRanks(20, 14, -1);
 
             // Then
             result.Count().Should().Be(10);

@@ -20,7 +20,7 @@
         public IActionResult Index()
         {
             // TODO: HEEDLS-469 Populate these numbers from filters
-            var centreRankings = centresService.GetCentreRanks(User.GetCentreId(), 14, -1);
+            var centreRankings = centresService.GetTopCentreRanks(User.GetCentreId(), 14, -1);
 
             return View(new CentreRankingViewModel(centreRankings, User.GetCentreId()));
         }

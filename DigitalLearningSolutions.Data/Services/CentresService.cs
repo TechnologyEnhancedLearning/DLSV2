@@ -8,7 +8,7 @@
 
     public interface ICentresService
     {
-        IEnumerable<CentreRank> GetCentreRanks(int centreId, int numberOfDays, int regionId);
+        IEnumerable<CentreRank> GetTopCentreRanks(int centreId, int numberOfDays, int regionId);
 
         int GetCentreRankForCentre(int centreId);
     }
@@ -22,7 +22,7 @@
             this.centresDataService = centresDataService;
         }
 
-        public IEnumerable<CentreRank> GetCentreRanks(int centreId, int numberOfDays, int regionId)
+        public IEnumerable<CentreRank> GetTopCentreRanks(int centreId, int numberOfDays, int regionId)
         {
             var dateSince = DateTime.UtcNow.AddDays(-numberOfDays);
 

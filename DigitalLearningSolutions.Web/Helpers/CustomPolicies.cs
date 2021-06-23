@@ -42,8 +42,7 @@
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true ||
-                            context.User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
+                           context.User.HasCentreManagerPermissions()
             );
         }
     }
