@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Linq;
@@ -14,6 +14,10 @@
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
             string userIp
+        );
+
+        string RegisterAdminDelegate(
+            RegistrationModel registrationModel
         );
     }
 
@@ -60,17 +64,50 @@
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
-                var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName,
+                var approvalEmail = GenerateApprovalEmail(
+                    contactInfo.email,
+                    contactInfo.firstName,
                     delegateRegistrationModel.FirstName,
-                    delegateRegistrationModel.LastName, baseUrl);
+                    delegateRegistrationModel.LastName,
+                    baseUrl
+                );
                 emailService.SendEmail(approvalEmail);
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        private Email GenerateApprovalEmail
-        (
+        public string RegisterAdminDelegate(
+            RegistrationModel registrationModel
+        )
+        {
+            var delegateRegistrationModel = new DelegateRegistrationModel(
+                registrationModel.FirstName,
+                registrationModel.LastName,
+                registrationModel.Email,
+                registrationModel.Centre,
+                registrationModel.JobGroup,
+                registrationModel.PasswordHash,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+            delegateRegistrationModel.Approved = true;
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            if (candidateNumber == "-1" || candidateNumber == "-4")
+            {
+                return candidateNumber;
+            }
+
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
+
+            return candidateNumber;
+        }
+
+        private Email GenerateApprovalEmail(
             string emailAddress,
             string firstName,
             string learnerFirstName,

@@ -175,7 +175,7 @@
         }
 
         [Test]
-        public void Error_when_registering_returns_error_code()
+        public void Error_when_registering_delegate_returns_error_code()
         {
             // When
             var candidateNumber =
@@ -187,7 +187,7 @@
         }
 
         [Test]
-        public void Error_when_registering_fails_fast()
+        public void Error_when_registering_delegate_fails_fast()
         {
             // When
             registrationService.RegisterDelegate(failingRegistrationModel, "localhost", string.Empty);
@@ -196,6 +196,80 @@
             A.CallTo(() =>
                 emailService.SendEmail(A<Email>._)
             ).MustNotHaveHappened();
+            A.CallTo(() =>
+                passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_admin_delegate_registers_delegate_as_approved()
+        {
+            // When
+            registrationService.RegisterAdminDelegate(testRegistrationModel);
+
+            // Then
+            A.CallTo(() =>
+                    registrationDataService.RegisterDelegate(
+                        A<DelegateRegistrationModel>.That.Matches(d => d.Approved)))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_admin_delegate_does_not_send_email()
+        {
+            // When
+            registrationService.RegisterAdminDelegate(testRegistrationModel);
+
+            // Then
+            A.CallTo(() =>
+                emailService.SendEmail(A<Email>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_admin_delegate_should_set_password()
+        {
+            // When
+            registrationService.RegisterAdminDelegate(testRegistrationModel);
+
+            // Then
+            A.CallTo(() =>
+                passwordDataService.SetPasswordByCandidateNumber(newCandidateNumber, passwordHash)
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_admin_delegate_returns_candidate_number()
+        {
+            // When
+            var candidateNumber = registrationService.RegisterAdminDelegate(testRegistrationModel);
+
+            // Then
+            candidateNumber.Should().Be(newCandidateNumber);
+        }
+
+        [Test]
+        public void Error_when_registering_admin_delegate_returns_error_code()
+        {
+            // Given
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+
+            // When
+            var candidateNumber = registrationService.RegisterAdminDelegate(failingRegistrationModel);
+
+            // Then
+            candidateNumber.Should().Be("-1");
+        }
+
+        [Test]
+        public void Error_when_registering_admin_delegate_fails_fast()
+        {
+            // Given
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+
+            // When
+            registrationService.RegisterAdminDelegate(failingRegistrationModel);
+
+            // Then
             A.CallTo(() =>
                 passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
