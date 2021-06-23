@@ -1,5 +1,6 @@
 ﻿@import "inputrange";
 @import "~nhsuk-frontend/packages/core/tools/sass-mq";
+@import "~nhsuk-frontend/packages/core/all";
 
 .competency-group-header {
   padding-top: 0;
@@ -134,4 +135,82 @@ details.nhsuk-details {
 #skip-arrow {
   left: auto;
   right: -24px
+}
+
+.asset-title-header {
+  padding-bottom: 25px;
+}
+
+.asset-title-header .img-circle {
+  height: 47px;
+  width: 47px;
+  border-radius: 5%;
+  border: 1px solid #768692;
+  text-align: center;
+  display: inline-block;
+  margin-right: 15px;
+  vertical-align: middle;
+}
+
+.asset-title-header .title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: $nhsuk-secondary-text-color;
+  padding: 1rem 0 0 0;
+  display: inline-block;
+}
+
+.img-screenshot {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 2%;
+  border: 1px solid #768692;
+  margin-bottom: 15px;
+}
+
+.playlist-title {
+  min-height: 72px;
+}
+
+@include mq($from: 768px, $until: 1024px) {
+  .asset-card-header {
+    min-height: 222px;
+  }
+}
+
+@include mq($from: 1024px) {
+  .asset-card-header {
+    min-height: 163px;
+  }
+}
+
+.tag.tag-article {
+  background-color: $nhsuk-link-active-color;
+}
+
+.tag.tag-online.course {
+  background-color: $nhsuk-link-color;
+}
+
+.tag.tag-learning.guide {
+  background-color: $nhsuk-link-hover-color;
+}
+
+.tag.tag-video {
+  background-color: $nhsuk-link-visited-color;
+}
+
+.course-card {
+  background-color: #fff;
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-3;
+  padding-top: 8px;
+  padding-bottom: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.course-card .nhsuk-expander {
+  border: none
 }

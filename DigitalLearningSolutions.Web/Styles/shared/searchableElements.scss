@@ -2,7 +2,7 @@
 
 $nhs-dark-grey: #425563;
 
-.course-card {
+.searchable-element {
   background-color: #fff;
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-3;
@@ -12,7 +12,7 @@ $nhs-dark-grey: #425563;
   padding-right: 32px;
 }
 
-.course-card .nhsuk-expander {
+.searchable-element .nhsuk-expander {
   border: none
 }
 
@@ -208,7 +208,19 @@ div#search {
   display: flex;
 }
 
-.pagination-button-container {
+.pagination-button {
+  &--next {
+    float: right;
+    align-items: flex-start;
+  }
+
+  &--previous {
+    float: left;
+    align-items: flex-end;
+  }
+}
+
+.pagination-item {
   width: 38%;
 }
 

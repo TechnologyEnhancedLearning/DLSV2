@@ -1,4 +1,4 @@
-import { CourseCard } from './searchSortAndPaginate';
+import { SearchableElement } from './searchSortAndPaginate';
 
 export const ITEMS_PER_PAGE = 10;
 
@@ -23,10 +23,10 @@ export function setupPagination(
 }
 
 export function paginateResults(
-  results: CourseCard[],
+  results: SearchableElement[],
   page: number,
   totalPages: number,
-): CourseCard[] {
+): SearchableElement[] {
   updatePageNumber(page, totalPages);
   updatePageButtonVisibility(page, totalPages);
   return results.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);

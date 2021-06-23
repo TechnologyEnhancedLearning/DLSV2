@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/ban-ts-comment */
 import { JSDOM } from 'jsdom';
-import { getSortValue, sortCards } from '../learningPortal/sortCourses';
-import getCourseCards from './getCourseCards';
+import { getSortValue, sortSearchableElements } from '../searchSortAndPaginate/sort';
+import getSearchableElements from './getSearchableElements';
 
 describe('getSortValue', () => {
   it.each`
@@ -29,7 +29,7 @@ describe('getSortValue', () => {
         <html>
         <head></head>
         <body>
-          <div class="course-card">
+          <div class="searchable-element">
             <span name="${fieldName}">${fieldValue}</span>
           </div>
         </body>
@@ -37,18 +37,18 @@ describe('getSortValue', () => {
       `).window.document;
 
       // When
-      const courseCard = {
+      const searchableElements = {
         title: ' title',
-        element: document.getElementsByClassName('course-card')[0],
+        element: document.getElementsByClassName('searchable-element')[0],
       };
-      const actualValue = getSortValue(courseCard, sortBy);
+      const actualValue = getSortValue(searchableElements, sortBy);
 
       // Then
       expect(actualValue).toEqual(expectedSortValue);
     });
 });
 
-describe('sortCards current', () => {
+describe('sortSearchableElements current', () => {
   beforeEach(() => {
     // Given
     global.document = new JSDOM(`
@@ -57,24 +57,24 @@ describe('sortCards current', () => {
       <body>
       <input type="text" id="select-sort-by" />
       <input type="text" id="select-sort-direction"/>
-        <div id="course-cards">
-          <div class="course-card" id="course-b">
-            <span name="name" class="course-title">B: Course</span>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-b">
+            <span name="name" class="searchable-element-title">B: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
             <p name="complete-by-date">22-3-2010</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="course-card" id="course-c">
-            <span name="name" class="course-title">c: Course</span>
+          <div class="searchable-element" id="course-c">
+            <span name="name" class="searchable-element-title">c: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="complete-by-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="course-card" id="course-a">
-            <span name="name" class="course-title">A: course</span>
+          <div class="searchable-element" id="course-a">
+            <span name="name" class="searchable-element-title">A: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="passed-sections">0/6</p>
@@ -105,18 +105,18 @@ describe('sortCards current', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getCourseCards();
-    const newCards = sortCards(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toBe(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toBe(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 
-describe('sortCards completed', () => {
+describe('sortSearchableElements completed', () => {
   beforeEach(() => {
     // Given
     global.document = new JSDOM(`
@@ -125,24 +125,24 @@ describe('sortCards completed', () => {
       <body>
       <input type="text" id="select-sort-by" />
       <input type="text" id="select-sort-direction"/>
-        <div id="course-cards">
-          <div class="course-card" id="course-a">
-            <span name="name" class="course-title">a: Course</span>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-a">
+            <span name="name" class="searchable-element-title">a: Course</span>
             <p name="started-date">31-1-2010</p>
             <p name="accessed-date">22-2-2010</p>
             <p name="completed-date">22-3-2010</p>
             <p name="diagnostic-score">123</p>
             <p name="passed-sections">4/6</p>
           </div>
-          <div class="course-card" id="course-b">
-            <span name="name" class="course-title">B: Course</span>
+          <div class="searchable-element" id="course-b">
+            <span name="name" class="searchable-element-title">B: Course</span>
             <p name="started-date">1-2-2010</p>
             <p name="accessed-date">22-2-2011</p>
             <p name="completed-date">22-3-2011</p>
             <p name="diagnostic-score">0</p>
           </div>
-          <div class="course-card" id="course-c">
-            <span name="name" class="course-title">c: course</span>
+          <div class="searchable-element" id="course-c">
+            <span name="name" class="searchable-element-title">c: course</span>
             <p name="started-date">22-1-2001</p>
             <p name="accessed-date">23-2-2011</p>
             <p name="completed-date">22-2-2011</p>
@@ -165,18 +165,18 @@ describe('sortCards completed', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getCourseCards();
-    const newCards = sortCards(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 
-describe('sortCards available', () => {
+describe('sortSearchableElements available', () => {
   beforeEach(() => {
     // Given
     global.document = new JSDOM(`
@@ -185,20 +185,20 @@ describe('sortCards available', () => {
       <body>
       <input type="text" id="select-sort-by" />
       <input type="text" id="select-sort-direction"/>
-        <div id="course-cards">
-          <div class="course-card" id="course-a">
-            <span name="name" class="course-title">A: Course</span>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-a">
+            <span name="name" class="searchable-element-title">A: Course</span>
             <p name="brand">C: Brand</p>
             <p name="topic">Topic 2</p>
           </div>
-          <div class="course-card" id="course-b">
-            <span name="name" class="course-title">B: Course</span>
+          <div class="searchable-element" id="course-b">
+            <span name="name" class="searchable-element-title">B: Course</span>
             <p name="brand">A: Brand</p>
             <p name="category">C: Category</p>
             <p name="topic">Topic 1</p>
           </div>
-          <div class="course-card" id="course-c">
-            <span name="name" class="course-title">C: Course</span>
+          <div class="searchable-element" id="course-c">
+            <span name="name" class="searchable-element-title">C: Course</span>
             <p name="brand">B: Brand</p>
             <p name="category">B: Category</p>
           </div>
@@ -222,14 +222,14 @@ describe('sortCards available', () => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
-    const courseCards = getCourseCards();
-    const newCards = sortCards(courseCards);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
 
     // Then
-    expect(newCards?.length).toEqual(3);
-    expect(newCards![0].element.id).toBe(firstId);
-    expect(newCards![1].element.id).toBe(secondId);
-    expect(newCards![2].element.id).toBe(thirdId);
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
   });
 });
 

@@ -1,9 +1,6 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
-    using FluentAssertions;
-    using OpenQA.Selenium;
-    using Selenium.Axe;
     using Xunit;
 
     public class BasicAccessibilityTests : AccessibilityTestsBase

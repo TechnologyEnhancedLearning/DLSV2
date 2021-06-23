@@ -14,6 +14,8 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+
     public partial class FrameworksController
     {
         private const string CookieName = "DLSFrameworkService";
@@ -40,11 +42,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         [Route("/Frameworks/View/{tabname}/{page=1:int}")]
         public IActionResult ViewFrameworks(string? searchString = null,
-            string sortBy = FrameworkSortByOptionTexts.FrameworkName,
-            string sortDirection = BaseFrameworksPageViewModel.AscendingText,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1,
             string tabname = "All")
         {
+            sortBy ??= FrameworkSortByOptions.FrameworkName.PropertyName;
+
             var adminId = GetAdminID();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var isFrameworkContributor = GetIsFrameworkContributor();
@@ -240,12 +244,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminID();
             var sameItems = frameworkService.GetFrameworkByFrameworkName(frameworkname, adminId);
             var frameworks = frameworkService.GetAllFrameworks(adminId);
-            var sortedItems = SortingHelper.SortFrameworkItems(
-               frameworks,
-               FrameworkSortByOptionTexts.FrameworkName,
-               BaseFrameworksPageViewModel.AscendingText
+            var sortedItems = GenericSortingHelper.SortAllItems(
+               frameworks.AsQueryable(),
+               FrameworkSortByOptions.FrameworkName.PropertyName,
+               BaseSearchablePageViewModel.Ascending
            );
-            var similarItems = SearchHelper.FilterFrameworks(sortedItems, frameworkname, 55, true);
+            var similarItems = GenericSearchHelper.SearchItems(sortedItems, frameworkname, 55, true);
             var matchingSearchResults = similarItems.ToList().Count;
             if (matchingSearchResults > 0)
             {

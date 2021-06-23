@@ -1,5 +1,5 @@
 import * as JsSearch from 'js-search';
-import type { CourseCard } from './searchSortAndPaginate';
+import { SearchableElement } from './searchSortAndPaginate';
 
 export function setUpSearch(onSearchUpdated: VoidFunction): void {
   const searchInput = getSearchBox();
@@ -14,18 +14,19 @@ export function setUpSearch(onSearchUpdated: VoidFunction): void {
   );
 }
 
-export function search(courseCards: CourseCard[]): CourseCard[] {
+export function search(searchableElements: SearchableElement[]): SearchableElement[] {
   const query = getQuery();
   if (query.length === 0) {
     hideResultCount();
-    return courseCards;
+    return searchableElements;
   }
 
   const searchEngine = new JsSearch.Search(['element', 'id']);
   searchEngine.searchIndex = new JsSearch.UnorderedSearchIndex();
+  searchEngine.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
   searchEngine.addIndex('title');
-  searchEngine.addDocuments(courseCards);
-  const results = <CourseCard[]>searchEngine.search(query);
+  searchEngine.addDocuments(searchableElements);
+  const results = <SearchableElement[]>searchEngine.search(query);
   updateResultCount(results.length);
   return results;
 }

@@ -1,22 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public partial class LearningPortalController
     {
         [Route("/LearningPortal/Available/{page=1:int}")]
         public IActionResult Available(
             string? searchString = null,
-            string sortBy = SortByOptionTexts.Name,
-            string sortDirection = BaseCoursePageViewModel.AscendingText,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             int page = 1
         )
         {
-            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateIdKnownNotNull(), User.GetCentreId());
+            sortBy ??= CourseSortByOptions.Name.PropertyName;
+
+            var availableCourses = courseService.GetAvailableCourses(
+                User.GetCandidateIdKnownNotNull(),
+                User.GetCentreId()
+            );
             var bannerText = GetBannerText();
             var model = new AvailablePageViewModel(
                 availableCourses,
@@ -31,7 +35,10 @@
 
         public IActionResult AllAvailableItems()
         {
-            var availableCourses = courseService.GetAvailableCourses(User.GetCandidateIdKnownNotNull(), User.GetCentreId());
+            var availableCourses = courseService.GetAvailableCourses(
+                User.GetCandidateIdKnownNotNull(),
+                User.GetCentreId()
+            );
             var model = new AllAvailableItemsPageViewModel(availableCourses);
             return View("Available/AllAvailableItems", model);
         }
