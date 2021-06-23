@@ -6,6 +6,18 @@
 
     public static class RegistrationMappingHelper
     {
+        public static RegistrationModel MapToRegistrationModel(RegistrationData data)
+        {
+            return new RegistrationModel(
+                data.FirstName!,
+                data.LastName!,
+                data.Email!,
+                (int)data.Centre!,
+                (int)data.JobGroup!,
+                data.PasswordHash!
+            );
+        }
+
         public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
         {
             return new DelegateRegistrationModel(
