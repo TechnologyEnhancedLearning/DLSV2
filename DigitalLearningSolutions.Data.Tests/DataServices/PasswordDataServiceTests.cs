@@ -9,8 +9,8 @@
 
     public class PasswordDataServiceTests
     {
-        private PasswordDataService passwordDataService;
-        private UserDataService userDataService;
+        private PasswordDataService passwordDataService = null!;
+        private UserDataService userDataService = null!;
         private const string PasswordHashNotYetInDb = "I haven't used this password before!";
 
         [SetUp]
@@ -83,33 +83,33 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
+            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
-            await passwordDataService.SetPasswordByEmailAsync(existingCandidate.EmailAddress!, newPasswordHash);
+            await passwordDataService.SetPasswordByEmailAsync(existingDelegate.EmailAddress!, newPasswordHash);
 
             // Then
-            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
+            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 
         [Test]
-        public async Task Setting_password_by_email_does_not_set_password_for_all_candidates()
+        public async Task Setting_password_by_email_does_not_set_password_for_all_delegates()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidate = UserTestHelper.GetDefaultDelegateUser();
-            var existingCandidatePassword = existingCandidate.Password;
+            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
+            var existingDelegatePassword = existingDelegate.Password;
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
             await passwordDataService.SetPasswordByEmailAsync("random.email@address.com", newPasswordHash);
 
             // Then
-            userDataService.GetDelegateUserById(existingCandidate.Id)?.Password.Should()
-                .Be(existingCandidatePassword);
+            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
+                .Be(existingDelegatePassword);
         }
 
         [Test]
@@ -118,19 +118,19 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
+            var existingDelegateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
             var existingAdminRef = UserTestHelper.GetDefaultAdminUser().ToUserReference();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
             await passwordDataService.SetPasswordForUsersAsync(
-                new[] { existingCandidateRef, existingAdminRef },
+                new[] { existingDelegateRef, existingAdminRef },
                 newPasswordHash
             );
 
             // Then
             userDataService.GetAdminUserById(existingAdminRef.Id)?.Password.Should().Be(newPasswordHash);
-            userDataService.GetDelegateUserById(existingCandidateRef.Id)?.Password.Should()
+            userDataService.GetDelegateUserById(existingDelegateRef.Id)?.Password.Should()
                 .Be(newPasswordHash);
         }
 
@@ -140,12 +140,12 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var existingCandidateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
+            var existingDelegateRef = UserTestHelper.GetDefaultDelegateUser().ToUserReference();
             var newPasswordHash = PasswordHashNotYetInDb;
 
             // When
             await passwordDataService.SetPasswordForUsersAsync(
-                new[] { existingCandidateRef },
+                new[] { existingDelegateRef },
                 newPasswordHash
             );
 
