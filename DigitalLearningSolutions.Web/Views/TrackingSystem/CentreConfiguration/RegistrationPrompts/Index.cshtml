@@ -8,7 +8,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var canAddNewPrompt = Model.CustomFields.Count <= 6;
+  var canAddNewPrompt = Model.CustomFields.Count < 6;
 }
 
 @section NavMenuItems {
