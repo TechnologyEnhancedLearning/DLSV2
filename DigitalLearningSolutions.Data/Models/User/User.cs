@@ -27,5 +27,7 @@
             get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
+
+        public abstract UserReference ToUserReference();
     }
 }
