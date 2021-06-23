@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
             PopulatePersonalInformationExtraFields(model);
 
-            ValidateEmailAddress(model.Email, data.Centre!.Value);
+            ValidateEmailAddress(model.Email, model.Centre!.Value);
 
             return View(model);
         }
@@ -70,7 +70,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            ValidateEmailAddress(model.Email, data.Centre!.Value);
+            ValidateEmailAddress(model.Email, model.Centre!.Value);
 
             if (!ModelState.IsValid)
             {
