@@ -3,7 +3,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Learner information" : "Register Admin - Learner information";
 }
 
 <div class="nhsuk-grid-row">
@@ -32,6 +32,6 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="Register" asp-action="PersonalInformation" link-text="Go back" />
+    <vc:back-link asp-controller="RegisterAdmin" asp-action="PersonalInformation" link-text="Go back" />
   </div>
 </div>
