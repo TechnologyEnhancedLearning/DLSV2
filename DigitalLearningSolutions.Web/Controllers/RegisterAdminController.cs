@@ -161,7 +161,13 @@
                 return View(viewModel);
             }
 
-            // TODO: (HEEDLS-527) register admin details and notification preferences in database
+            if (!data.Centre.HasValue || data.Email == null || !CheckRegisterAdminAllowed(data.Centre.Value) ||
+                !CheckEmailMatchesCentre(data.Email, data.Centre.Value) || !CheckEmailUnique(data.Email))
+            {
+                return new StatusCodeResult(500);
+            }
+
+            // TODO: register admin details and notification preferences in database
 
             return RedirectToAction("Confirmation");
         }
@@ -204,6 +210,18 @@
             TempData.Set(adminRegistrationData);
         }
 
+        private bool CheckEmailUnique(string email)
+        {
+            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
+            return adminUser == null;
+        }
+
+        private bool CheckEmailMatchesCentre(string email, int centreId)
+        {
+            var (_, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
+            return email.Equals(autoRegisterManagerEmail);
+        }
+
         private void ValidateEmailAddress(string? email, int centreId)
         {
             if (email == null)
@@ -211,8 +229,7 @@
                 return;
             }
 
-            var (_, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            if (!email.Equals(autoRegisterManagerEmail))
+            if (!CheckEmailMatchesCentre(email, centreId))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
@@ -220,9 +237,7 @@
                 );
             }
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
-
-            if (adminUser != null)
+            if (!CheckEmailUnique(email))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
