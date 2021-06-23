@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -41,6 +41,7 @@
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
+        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -245,6 +246,17 @@
 
             var ipPrefixes = ipPrefixString?.Split(',', StringSplitOptions.RemoveEmptyEntries);
             return ipPrefixes ?? new string[0];
+        }
+
+        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
+        {
+            var info = connection.QueryFirstOrDefault<(bool, string?)>(
+                @"SELECT AutoRegistered, AutoRegisterManagerEmail
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
+            return info;
         }
     }
 }

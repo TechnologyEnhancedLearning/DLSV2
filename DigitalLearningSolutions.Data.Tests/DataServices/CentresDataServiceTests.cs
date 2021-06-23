@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
+namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Linq;
@@ -229,6 +229,17 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        [Test]
+        public void GetCentreAutoRegisterValues_should_return_correct_values()
+        {
+            // When
+            var result = centresDataService.GetCentreAutoRegisterValues(2);
+
+            // Then
+            result.autoRegistered.Should().Be(true);
+            result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
         }
     }
 }
