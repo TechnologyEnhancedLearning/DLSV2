@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using System.Security.Cryptography;
-    using Microsoft.Extensions.Logging;
 
     public interface ICryptoService
     {
@@ -19,13 +18,6 @@
         private const int CorrectStoredPasswordLength = 1 + SaltSize + PBKDF2SubkeyLength;
         private const byte CorrectStoredPasswordVersionHeader = 0x00;
 
-        private readonly ILogger<CryptoService> logger;
-
-        public CryptoService(ILogger<CryptoService> logger)
-        {
-            this.logger = logger;
-        }
-
         public bool VerifyHashedPassword(string? hashedPassword, string password)
         {
             if (string.IsNullOrWhiteSpace(hashedPassword))
@@ -33,20 +25,7 @@
                 return false;
             }
 
-            byte[] hashedPasswordBytes;
-
-            try
-            {
-                hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
-            }
-            catch (FormatException e)
-            {
-                logger.LogError(
-                    e,
-                    "Could not verify password as user's password hash was not a valid base 64 string."
-                );
-                return false;
-            }
+            byte[] hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
 
             bool storedPasswordIsIncorrectLength = hashedPasswordBytes.Length != CorrectStoredPasswordLength;
             bool storedPasswordHasIncorrectVersionHeader =
