@@ -2,7 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -12,12 +12,13 @@ namespace DigitalLearningSolutions.Web.Controllers
 
     public class NotificationPreferencesController : Controller
     {
-        private readonly INotificationPreferencesService notificationPreferencesService;
         private readonly ILogger<NotificationPreferencesController> logger;
+        private readonly INotificationPreferencesService notificationPreferencesService;
 
         public NotificationPreferencesController(
             INotificationPreferencesService notificationPreferencesService,
-            ILogger<NotificationPreferencesController> logger)
+            ILogger<NotificationPreferencesController> logger
+        )
         {
             this.notificationPreferencesService = notificationPreferencesService;
             this.logger = logger;
@@ -36,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             var delegateId = User.GetCandidateId();
             var delegateNotifications =
-                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
+                notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
             var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
 
@@ -46,14 +47,21 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpGet]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult UpdateNotificationPreferences(string userType)
+        public IActionResult UpdateNotificationPreferences(UserType? userType)
         {
-            var userId = ((UserType)userType).Equals(UserType.AdminUser)
-                ? User.GetAdminId()
-                : User.GetCandidateIdKnownNotNull();
-            var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType, userId);
+            var userReference = GetUserReference(userType);
+            if (userReference == null)
+            {
+                return NotFound();
+            }
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType);
+            var notifications =
+                notificationPreferencesService.GetNotificationPreferencesForUser(
+                    userReference.UserType,
+                    userReference.Id
+                );
+
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!);
 
             return View(model);
         }
@@ -61,15 +69,37 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Authorize]
         [HttpPost]
         [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(string userType, IEnumerable<int> notificationIds)
+        public IActionResult SaveNotificationPreferences(UserType? userType, IEnumerable<int> notificationIds)
         {
-            var userId = ((UserType)userType).Equals(UserType.AdminUser)
-                ? User.GetAdminId()
-                : User.GetCandidateIdKnownNotNull();
+            var userReference = GetUserReference(userType);
+            if (userReference == null)
+            {
+                return NotFound();
+            }
 
-            notificationPreferencesService.SetNotificationPreferencesForUser(userType, userId, notificationIds);
+            notificationPreferencesService.SetNotificationPreferencesForUser(
+                userReference.UserType,
+                userReference.Id,
+                notificationIds
+            );
 
             return RedirectToAction("Index", "NotificationPreferences");
+        }
+
+        private UserReference? GetUserReference(UserType? userType)
+        {
+            int? userId = null;
+
+            if (Equals(userType, UserType.AdminUser))
+            {
+                userId = User.GetAdminId();
+            }
+            else if (Equals(userType, UserType.DelegateUser))
+            {
+                userId = User.GetCandidateId();
+            }
+
+            return userId != null ? new UserReference(userId.Value, userType!) : null;
         }
     }
 }
