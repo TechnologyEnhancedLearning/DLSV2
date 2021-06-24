@@ -10,30 +10,26 @@
     [Authorize(Policy = CustomPolicies.UserSupervisor)]
     public partial class SupervisorController : Controller
     {
-        private readonly IRoleProfileService roleProfileService;
+        private readonly ISupervisorService supervisorService;
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IConfigService configService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
         public SupervisorController(
-           IRoleProfileService roleProfileService,
+           ISupervisorService supervisorService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
           IConfigService configService,
            ILogger<SupervisorController> logger,
            IConfiguration config)
         {
-            this.roleProfileService = roleProfileService;
+            this.supervisorService = supervisorService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.configService = configService;
             this.logger = logger;
             this.config = config;
-        }
-        public IActionResult Index()
-        {
-            return View();
         }
         private int? GetCentreId()
         {

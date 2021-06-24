@@ -13,6 +13,10 @@
     using System.Collections.Generic;
     public partial class SupervisorController
     {
-
+        public IActionResult Index()
+        {
+            var adminId = GetAdminID();          
+            return View();
+        }
     }
 }
