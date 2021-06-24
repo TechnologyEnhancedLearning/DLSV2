@@ -1,6 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -9,6 +10,7 @@
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -18,10 +20,10 @@
         private const string CookieName = "RegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
+        private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
-        private readonly CustomPromptHelper customPromptHelper;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -40,66 +42,59 @@
             this.customPromptHelper = customPromptHelper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? centreId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var delegateRegistrationData = TempData.Peek<DelegateRegistrationData>();
-
-            if (delegateRegistrationData == null || !Request.Cookies.ContainsKey(CookieName))
+            if (!CheckCentreIdValid(centreId))
             {
-                delegateRegistrationData = new DelegateRegistrationData();
-                var id = delegateRegistrationData.Id;
-
-                Response.Cookies.Append(
-                    CookieName,
-                    id.ToString(),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                    }
-                );
-                TempData.Set(delegateRegistrationData);
+                return NotFound();
             }
 
-            ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetActiveCentresAlphabetical(),
-                delegateRegistrationData.RegisterViewModel.Centre
-            );
+            SetDelegateRegistrationData(centreId);
+
+            return RedirectToAction("PersonalInformation");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
+        [HttpGet]
+        public IActionResult PersonalInformation()
+        {
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+
+            var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
+            PopulatePersonalInformationExtraFields(model);
 
             // Check this email and centre combination doesn't already exist in case we were redirected
             // back here by the user trying to submit the final page of the form
-            ValidateEmailAddress(delegateRegistrationData.RegisterViewModel);
+            ValidateEmailAddress(model);
 
-            return View(delegateRegistrationData.RegisterViewModel);
+            return View(model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult Index(RegisterViewModel model)
+        public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
             ValidateEmailAddress(model);
 
+            var data = TempData.Peek<DelegateRegistrationData>()!;
+
             if (!ModelState.IsValid)
             {
-                ViewBag.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                    centresDataService.GetActiveCentresAlphabetical(),
-                    model.Centre
-                );
+                PopulatePersonalInformationExtraFields(model);
                 return View(model);
             }
 
-            var data = TempData.Peek<DelegateRegistrationData>()!;
-
-            if (data.RegisterViewModel.Centre != model.Centre)
+            if (data.Centre != model.Centre)
             {
-                ClearCustomPromptAnswers(data.LearnerInformationViewModel);
+                data.ClearCustomPromptAnswers();
             }
 
-            data.RegisterViewModel = model;
+            data.SetPersonalInformation(model);
             TempData.Set(data);
 
             return RedirectToAction("LearnerInformation");
@@ -110,17 +105,14 @@
         public IActionResult LearnerInformation()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var model = data.LearnerInformationViewModel;
 
-            if (data.RegisterViewModel.Centre == null)
+            if (data.Centre == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var centreId = (int)data.RegisterViewModel.Centre;
-
-            SetLearnerInformationViewBag(model, centreId);
-
+            var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+            PopulateLearnerInformationExtraFields(model, data);
             return View(model);
         }
 
@@ -130,12 +122,12 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
-            if (data.RegisterViewModel.Centre == null)
+            if (data.Centre == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var centreId = (int)data.RegisterViewModel.Centre;
+            var centreId = data.Centre.Value;
 
             customPromptHelper.ValidateCustomPrompts(
                 centreId,
@@ -150,11 +142,11 @@
 
             if (!ModelState.IsValid)
             {
-                SetLearnerInformationViewBag(model, centreId);
+                PopulateLearnerInformationExtraFields(model, data);
                 return View(model);
             }
 
-            data.LearnerInformationViewModel = model;
+            data.SetLearnerInformation(model);
             TempData.Set(data);
 
             return RedirectToAction("Password");
@@ -164,7 +156,7 @@
         [HttpGet]
         public IActionResult Password()
         {
-            return View();
+            return View(new PasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
@@ -188,11 +180,8 @@
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var centre = centresDataService.GetCentreName((int)data.RegisterViewModel.Centre!);
-            var jobGroup = jobGroupsDataService.GetJobGroupName((int)data.LearnerInformationViewModel.JobGroup!);
-            var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
-            AddCustomFieldsToViewBag(data.LearnerInformationViewModel, (int)data.RegisterViewModel.Centre!);
-
+            var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+            PopulateSummaryExtraFields(viewModel, data);
             return View(viewModel);
         }
 
@@ -202,25 +191,21 @@
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
-            if (data.RegisterViewModel.Centre == null || data.LearnerInformationViewModel.JobGroup == null)
+            if (data.Centre == null || data.JobGroup == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var centreId = (int)data.RegisterViewModel.Centre;
-            var jobGroupId = (int)data.LearnerInformationViewModel.JobGroup;
-
             if (!ModelState.IsValid)
             {
-                var centre = centresDataService.GetCentreName(centreId);
-                var jobGroup = jobGroupsDataService.GetJobGroupName(jobGroupId);
-                var viewModel = RegistrationMappingHelper.MapToSummary(data, centre!, jobGroup!);
+                var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+                PopulateSummaryExtraFields(viewModel, data);
                 viewModel.Terms = model.Terms;
-                AddCustomFieldsToViewBag(data.LearnerInformationViewModel, centreId);
                 return View(viewModel);
             }
 
-            var baseUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"];
+            var centreId = (int)data.Centre;
+            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
             var userIp = Request.GetUserIpAddressFromRequest();
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(
@@ -265,7 +250,34 @@
             return View(viewModel);
         }
 
-        private void ValidateEmailAddress(RegisterViewModel model)
+        private void SetDelegateRegistrationData(int? centreId)
+        {
+            var delegateRegistrationData = new DelegateRegistrationData
+            {
+                IsCentreSpecificRegistration = centreId.HasValue,
+                Centre = centreId
+            };
+            var id = delegateRegistrationData.Id;
+
+            Response.Cookies.Append(
+                CookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                }
+            );
+
+            TempData.Set(delegateRegistrationData);
+        }
+
+        private bool CheckCentreIdValid(int? centreId)
+        {
+            return centreId == null
+                   || centresDataService.GetCentreName(centreId.Value) != null;
+        }
+
+        private void ValidateEmailAddress(PersonalInformationViewModel model)
         {
             if (model.Email == null)
             {
@@ -278,24 +290,18 @@
             if (duplicateUsers.Count() != 0)
             {
                 ModelState.AddModelError(
-                    nameof(RegisterViewModel.Email),
-                    "A user with this email address already exists at this centre"
+                    nameof(PersonalInformationViewModel.Email),
+                    "A user with this email address is already registered at this centre"
                 );
             }
         }
 
-        private void SetLearnerInformationViewBag(LearnerInformationViewModel model, int centreId)
+        private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
+            LearnerInformationViewModel model,
+            int centreId
+        )
         {
-            AddCustomFieldsToViewBag(model, centreId);
-            ViewBag.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
-                jobGroupsDataService.GetJobGroupsAlphabetical(),
-                model.JobGroup
-            );
-        }
-
-        private void AddCustomFieldsToViewBag(LearnerInformationViewModel model, int centreId)
-        {
-            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -304,17 +310,47 @@
                 model.Answer5,
                 model.Answer6
             );
-            ViewBag.CustomFields = customFields;
         }
 
-        private static void ClearCustomPromptAnswers(LearnerInformationViewModel model)
+        private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            model.Answer1 = null;
-            model.Answer2 = null;
-            model.Answer3 = null;
-            model.Answer4 = null;
-            model.Answer5 = null;
-            model.Answer6 = null;
+            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+                data.Centre!.Value,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
+            );
+        }
+
+        private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
+        {
+            model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
+            model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
+                centresDataService.GetActiveCentresAlphabetical(),
+                model.Centre
+            );
+        }
+
+        private void PopulateLearnerInformationExtraFields(
+            LearnerInformationViewModel model,
+            DelegateRegistrationData data
+        )
+        {
+            model.CustomFields = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
+            model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
+                jobGroupsDataService.GetJobGroupsAlphabetical(),
+                model.JobGroup
+            );
+        }
+
+        private void PopulateSummaryExtraFields(SummaryViewModel model, DelegateRegistrationData data)
+        {
+            model.Centre = centresDataService.GetCentreName((int)data.Centre!);
+            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+            model.CustomFields = GetCustomFieldsFromData(data);
         }
     }
 }

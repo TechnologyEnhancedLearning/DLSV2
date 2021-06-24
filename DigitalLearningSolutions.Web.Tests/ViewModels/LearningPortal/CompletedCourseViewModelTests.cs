@@ -10,7 +10,7 @@
 
     public class CompletedCourseViewModelTests
     {
-        private IConfiguration config;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()

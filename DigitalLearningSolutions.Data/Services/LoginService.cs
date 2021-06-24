@@ -7,8 +7,7 @@
 
     public interface ILoginService
     {
-        public (AdminUser?, List<DelegateUser>) VerifyUsers
-        (
+        public UserAccountSet VerifyUsers(
             string password,
             AdminUser? unverifiedAdminUser,
             List<DelegateUser> unverifiedDelegateUsers
@@ -32,8 +31,7 @@
             this.cryptoService = cryptoService;
         }
 
-        public (AdminUser?, List<DelegateUser>) VerifyUsers
-        (
+        public UserAccountSet VerifyUsers(
             string password,
             AdminUser? unverifiedAdminUser,
             List<DelegateUser> unverifiedDelegateUsers
@@ -47,7 +45,7 @@
                 unverifiedDelegateUsers.Where(du => cryptoService.VerifyHashedPassword(du.Password, password))
                     .ToList();
 
-            return (verifiedAdminUser, verifiedDelegateUsers);
+            return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
         }
 
         public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser, string password)

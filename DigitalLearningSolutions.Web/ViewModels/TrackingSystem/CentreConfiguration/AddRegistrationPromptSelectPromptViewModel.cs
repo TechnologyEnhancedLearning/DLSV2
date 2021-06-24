@@ -12,7 +12,7 @@
             Mandatory = mandatory;
         }
 
-        [Required]
+        [Required(ErrorMessage = "Select a prompt name")]
         public int? CustomPromptId { get; set; }
 
         public bool Mandatory { get; set; }

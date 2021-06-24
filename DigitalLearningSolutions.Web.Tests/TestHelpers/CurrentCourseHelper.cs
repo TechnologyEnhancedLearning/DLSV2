@@ -51,7 +51,7 @@
         public static CurrentPageViewModel CurrentPageViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Current() as ViewResult;
-            return result.Model as CurrentPageViewModel;
+            return (CurrentPageViewModel)result!.Model;
         }
     }
 }

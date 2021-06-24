@@ -1,0 +1,57 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
+@using Microsoft.Extensions.Configuration
+@model CentreDashboardViewModel
+
+<ul class="nhsuk-grid-row nhsuk-card-group dashboard-4-1-card-group">
+
+  <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
+    <div class="nhsuk-card nhsuk-card--clickable">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+          @Model.NumberOfDelegates <span class="nhsuk-u-visually-hidden">Delegates</span>
+        </p>
+        <a href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Delegates</a>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
+    <div class="nhsuk-card nhsuk-card--clickable">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+          @Model.NumberOfCourses <span class="nhsuk-u-visually-hidden">Courses</span>
+        </p>
+        <a href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursesetup" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Courses</a>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
+    <div class="nhsuk-card @(User.HasCentreManagerPermissions() ? "nhsuk-card--clickable" : "nhsuk-card--not-clickable")">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+          @Model.NumberOfAdmins <span class="nhsuk-u-visually-hidden">Admins</span>
+        </p>
+        @if (User.HasCentreManagerPermissions()) {
+          <a asp-controller="Administrator" asp-action="Index" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Admins</a>
+        } else {
+          <p>Admins</p>
+        }
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
+    <div class="nhsuk-card nhsuk-card--clickable">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+          @Model.NumberOfSupportTickets <span class="nhsuk-u-visually-hidden">Support tickets</span>
+        </p>
+        <a href="@Configuration["CurrentSystemBaseUrl"]/tracking/tickets" class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state">Support tickets</a>
+      </div>
+    </div>
+  </li>
+
+</ul>

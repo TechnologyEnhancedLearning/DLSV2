@@ -29,10 +29,7 @@
         {
             return user.FindFirst(customClaimType)?.Value;
         }
-        public static string? GetEmail(this ClaimsPrincipal user)
-        {
-            return user.FindFirst("Email")?.Value;
-        }
+
         public static int? GetCustomClaimAsInt(this ClaimsPrincipal user, string customClaimType)
         {
             var customClaimString = user.GetCustomClaim(customClaimType);
@@ -78,6 +75,12 @@
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
+                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
+        }
+
+        public static bool HasCentreManagerPermissions(this ClaimsPrincipal user)
+        {
+            return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
                    (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
         }
     }

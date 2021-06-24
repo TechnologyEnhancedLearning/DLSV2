@@ -14,7 +14,8 @@
             string? defaultOption,
             IEnumerable<SelectListItem> selectListOptions,
             string? hintText,
-            string? cssClass
+            string? cssClass,
+            bool? deselectable
         )
         {
             var model = ViewData.Model;
@@ -34,7 +35,8 @@
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,
-                hasError);
+                hasError,
+                deselectable ?? false);
             return View(textBoxViewModel);
         }
     }

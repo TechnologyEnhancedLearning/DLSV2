@@ -19,10 +19,11 @@
             ReturnUrl = returnUrl;
         }
 
-        [Required(ErrorMessage = "Please enter a username to log in.")]
+        [Required(ErrorMessage = "Enter your email address or user ID")]
+        [MaxLength(255, ErrorMessage = "Email or user ID must be 255 characters or fewer")]
         public string? Username { get; set; }
 
-        [Required (ErrorMessage = "Please enter a password to log in.")]
+        [Required(ErrorMessage = "Enter your password")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
