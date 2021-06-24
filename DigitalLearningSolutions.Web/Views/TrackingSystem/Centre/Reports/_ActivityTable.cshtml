@@ -23,7 +23,7 @@
     @foreach (var activityMonth in Model.Rows) {
       <tr role="row" class="nhsuk-table__row">
         <td role="cell" class="nhsuk-table__cell">
-          <span class="nhsuk-table-responsive__heading">Month </span>@activityMonth.Period
+          <span class="nhsuk-table-responsive__heading">Period </span>@activityMonth.Period
         </td>
         <td role="cell" class="nhsuk-table__cell">
           <span class="nhsuk-table-responsive__heading">Completions </span>@activityMonth.Completions
@@ -32,7 +32,7 @@
           <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityMonth.Evaluations
         </td>
         <td role="cell" class="nhsuk-table__cell">
-          <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityMonth.Registrations
+          <span class="nhsuk-table-responsive__heading">Registrations </span>@activityMonth.Registrations
         </td>
       </tr>
     }

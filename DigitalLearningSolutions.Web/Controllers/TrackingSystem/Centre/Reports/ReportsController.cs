@@ -23,10 +23,7 @@
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
             var model = new ReportsViewModel
             {
-                ActivityTableViewModel = new ActivityTableViewModel
-                {
-                    Rows = monthsOfActivity.Select(m => new ActivityTableRow(m))
-                }
+                ActivityTableViewModel = new ActivityTableViewModel(monthsOfActivity)
             };
             return View(model);
         }

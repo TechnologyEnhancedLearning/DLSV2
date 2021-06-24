@@ -37,7 +37,12 @@
                         WHERE (LogYear = @year AND LogMonth IN @months AND CentreID = @centreId)
                     GROUP BY LogYear, LogMonth
                     
-                    SELECT @year AS Year, m.Month, COALESCE(a.Completions, 0) AS Completions, COALESCE(a.Evaluations, 0) AS Evaluations, COALESCE(a.Registrations, 0) AS Registrations
+                    SELECT
+                        @year AS Year,
+                        m.Month,
+                        COALESCE(a.Completions, 0) AS Completions,
+                        COALESCE(a.Evaluations, 0) AS Evaluations,
+                        COALESCE(a.Registrations, 0) AS Registrations
                     FROM @monthTable m
 	                    LEFT JOIN @activity a ON m.Month = a.Month
                     WHERE m.Month IN @months

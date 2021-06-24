@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public class ReportsViewModel
@@ -11,13 +12,15 @@
 
     public class ActivityTableViewModel
     {
+        public ActivityTableViewModel(IEnumerable<MonthOfActivity> monthsOfActivity)
+        {
+            Rows = monthsOfActivity.Select(m => new ActivityTableRow(m));
+        }
         public IEnumerable<ActivityTableRow> Rows { get; set; }
     }
 
     public class ActivityTableRow
     {
-        private static string[] MonthNames = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
         public ActivityTableRow(MonthOfActivity monthOfActivity)
         {
             Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM, yyyy");
