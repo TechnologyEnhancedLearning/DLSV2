@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -48,13 +49,17 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult UpdateNotificationPreferences(UserType? userType)
         {
-            var userId = GetUserId(userType);
-            if (userId == null)
+            var userReference = GetUserReference(userType);
+            if (userReference == null)
             {
                 return NotFound();
             }
 
-            var notifications = notificationPreferencesService.GetNotificationPreferencesForUser(userType!, userId);
+            var notifications =
+                notificationPreferencesService.GetNotificationPreferencesForUser(
+                    userReference.UserType,
+                    userReference.Id
+                );
 
             var model = new UpdateNotificationPreferencesViewModel(notifications, userType!);
 
@@ -66,28 +71,35 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences/Edit/{userType}")]
         public IActionResult SaveNotificationPreferences(UserType? userType, IEnumerable<int> notificationIds)
         {
-            var userId = GetUserId(userType);
-            if (userId == null)
+            var userReference = GetUserReference(userType);
+            if (userReference == null)
             {
                 return NotFound();
             }
 
-            notificationPreferencesService.SetNotificationPreferencesForUser(userType!, userId, notificationIds);
+            notificationPreferencesService.SetNotificationPreferencesForUser(
+                userReference.UserType,
+                userReference.Id,
+                notificationIds
+            );
 
             return RedirectToAction("Index", "NotificationPreferences");
         }
 
-        private int? GetUserId(UserType? userType)
+        private UserReference? GetUserReference(UserType? userType)
         {
+            int? userId = null;
+
             if (Equals(userType, UserType.AdminUser))
             {
-                return User.GetAdminId();
+                userId = User.GetAdminId();
             }
-            if (Equals(userType, UserType.DelegateUser))
+            else if (Equals(userType, UserType.DelegateUser))
             {
-                return User.GetCandidateId();
+                userId = User.GetCandidateId();
             }
-            return null;
+
+            return userId != null ? new UserReference(userId.Value, userType!) : null;
         }
     }
 }
