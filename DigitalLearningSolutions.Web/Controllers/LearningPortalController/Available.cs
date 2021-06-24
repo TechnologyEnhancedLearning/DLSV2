@@ -17,7 +17,7 @@
         {
             sortBy ??= CourseSortByOptions.Name.PropertyName;
 
-            var availableCourses = courseService.GetAvailableCourses(
+            var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreId()
             );
@@ -35,7 +35,7 @@
 
         public IActionResult AllAvailableItems()
         {
-            var availableCourses = courseService.GetAvailableCourses(
+            var availableCourses = courseDataService.GetAvailableCourses(
                 User.GetCandidateIdKnownNotNull(),
                 User.GetCentreId()
             );
@@ -45,7 +45,7 @@
 
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
-            courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            courseDataService.EnrolOnSelfAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
     }

@@ -11,6 +11,7 @@ export interface SearchableElement {
 export class SearchSortAndPaginate {
   private page: number;
 
+  // Route proved should be a relative path with no leading /
   constructor(route: string) {
     this.page = 1;
     SearchSortAndPaginate.getSearchableElements(route).then((allSearchableElements) => {
@@ -67,6 +68,7 @@ export class SearchSortAndPaginate {
   }
 
   private static fetchAllSearchableElements(route: string): Promise<Document | null> {
+    const path = this.getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();
 
@@ -74,7 +76,7 @@ export class SearchSortAndPaginate {
         res(request.responseXML);
       };
 
-      request.open('GET', route, true);
+      request.open('GET', path, true);
       request.responseType = 'document';
       request.send();
     });
@@ -96,5 +98,12 @@ export class SearchSortAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
+  }
+
+  private static getPathForEndpoint(endpoint: string): string {
+    const currentPath = window.location.pathname;
+    const endpointUrlParts = endpoint.split('/');
+    const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
+    return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
   }
 }
