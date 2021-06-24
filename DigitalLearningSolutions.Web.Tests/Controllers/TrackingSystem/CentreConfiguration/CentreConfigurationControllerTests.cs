@@ -9,7 +9,11 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -82,6 +86,64 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Error").WithControllerName("LearningSolutions");
+        }
+
+        [Test]
+        public void EditCentreDetailsPostSave_with_signature_image_fails_validation()
+        {
+            // Given
+            var model = new EditCentreDetailsViewModel
+            {
+                NotifyEmail = "email@test.com",
+                BannerText = "Banner text",
+                CentreSignatureFile = A.Fake<FormFile>()
+            };
+
+            // When
+            var result = controller.EditCentreDetails(model, "save");
+
+            // Then
+            A.CallTo(() => centresDataService.UpdateCentreDetails(A<int>._, A<string>._, A<string>._, A<byte[]?>._, A<byte[]?>._))
+                .MustNotHaveHappened();
+            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreSignatureFile)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
+        }
+
+        [Test]
+        public void EditCentreDetailsPostSave_with_logo_image_fails_validation()
+        {
+            // Given
+            var model = new EditCentreDetailsViewModel
+            {
+                NotifyEmail = "email@test.com",
+                BannerText = "Banner text",
+                CentreLogoFile = A.Fake<FormFile>()
+            };
+
+            // When
+            var result = controller.EditCentreDetails(model, "save");
+
+            // Then
+            A.CallTo(() => centresDataService.UpdateCentreDetails(A<int>._, A<string>._, A<string>._, A<byte[]?>._, A<byte[]?>._))
+                .MustNotHaveHappened();
+            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
+            controller.ModelState[nameof(EditCentreDetailsViewModel.CentreLogoFile)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
+        }
+
+        [Test]
+        public void EditCentreDetailsPost_returns_error_with_unexpected_action()
+        {
+            // Given
+            const string action = "unexpectedString";
+            var model = new EditCentreDetailsViewModel();
+
+            // When
+            var result = controller.EditCentreDetails(model, action);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
         }
 
         [Test]
