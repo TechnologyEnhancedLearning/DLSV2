@@ -55,7 +55,7 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '/LearningPortal/Current/1' } } as any;
 
     // When
-    SearchSortAndPaginate.getSearchableElements('/LearningPortal/test');
+    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
 
     // Then
     expect(mockOpen).toHaveBeenCalledWith('GET', '/LearningPortal/test', true);
@@ -74,7 +74,7 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '/dev/LearningPortal/Current/1' } } as any;
 
     // When
-    SearchSortAndPaginate.getSearchableElements('/LearningPortal/test');
+    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
 
     // Then
     expect(mockOpen).toHaveBeenCalledWith('GET', '/dev/LearningPortal/test', true);

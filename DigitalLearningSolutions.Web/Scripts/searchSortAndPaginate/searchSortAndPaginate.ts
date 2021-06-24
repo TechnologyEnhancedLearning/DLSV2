@@ -11,6 +11,7 @@ export interface SearchableElement {
 export class SearchSortAndPaginate {
   private page: number;
 
+  // Route proved should be a relative path with no leading /
   constructor(route: string) {
     this.page = 1;
     SearchSortAndPaginate.getSearchableElements(route).then((allSearchableElements) => {
@@ -101,9 +102,8 @@ export class SearchSortAndPaginate {
 
   private static getPathForEndpoint(endpoint: string): string {
     const currentPath = window.location.pathname;
-    const baseUrlParts = endpoint.split('/');
-    const indexOfBaseUrl = currentPath.indexOf(baseUrlParts[1]);
-    const path = `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
-    return path.replace('//', '/');
+    const endpointUrlParts = endpoint.split('/');
+    const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
+    return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
   }
 }
