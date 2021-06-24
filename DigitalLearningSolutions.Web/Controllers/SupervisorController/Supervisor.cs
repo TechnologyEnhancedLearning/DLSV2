@@ -15,8 +15,13 @@
     {
         public IActionResult Index()
         {
-            var adminId = GetAdminID();          
-            return View();
+            var adminId = GetAdminID();
+            var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
+            var model = new SupervisorDashboardViewModel()
+            {
+                DashboardData = dashboardData
+            };
+            return View(model);
         }
     }
 }

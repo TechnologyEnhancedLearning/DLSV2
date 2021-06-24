@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     public class SupervisorDashboardViewModel
     {
+        public DashboardData DashboardData { get; set; }
     }
 }
