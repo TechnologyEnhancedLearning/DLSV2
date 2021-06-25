@@ -83,27 +83,8 @@
             </button>
           </p>
           <ul class="nhsuk-header__navigation-list">
-            @RenderSection("NavMenuItems", false)
-            @if (!IsSectionDefined("NavMenuItems")) {
-              <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
-                  Welcome
-                  <partial name="_NhsChevronRight" />
-                </a>
-              </li>
-              <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
-                  Find your centre
-                  <partial name="_NhsChevronRight" />
-                </a>
-              </li>
-              <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
-                  Pricing
-                  <partial name="_NhsChevronRight" />
-                </a>
-              </li>
-            }
+            @RenderSection("NavMenuItems", true)
+
             @if (shouldDisplayHelpMenuItem) {
               string helpPage;
               if (User.HasClaim(c => c.Type == CustomClaimTypes.UserAdminId)) {

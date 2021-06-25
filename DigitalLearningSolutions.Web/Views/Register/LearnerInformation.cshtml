@@ -7,11 +7,16 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
 }
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form method="post" asp-action="LearnerInformation">
 
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] {
            nameof(Model.JobGroup),
            nameof(Model.Answer1),
@@ -20,7 +25,7 @@
            nameof(Model.Answer4),
            nameof(Model.Answer5),
            nameof(Model.Answer6)
-        })"/>
+        })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
