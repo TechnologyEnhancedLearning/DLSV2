@@ -77,6 +77,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreManager,
                         policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserCentreAdminOrFrameworksAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
+                    );
                 }
             );
 

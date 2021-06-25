@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class ApplicationType : Enumeration
     {
@@ -12,9 +13,14 @@
         private ApplicationType(int id, string name, string applicationName) : base(id, name)
         {
             ApplicationName = applicationName;
+
+            HeaderPath = name.Equals("TrackingSystem")
+                ? $"{ConfigHelper.GetAppConfig()["AppRootPath"]}/TrackingSystem/Centre/Dashboard"
+                : null;
         }
 
         public readonly string ApplicationName;
+        public readonly string? HeaderPath;
 
         public static implicit operator ApplicationType(string value)
         {
