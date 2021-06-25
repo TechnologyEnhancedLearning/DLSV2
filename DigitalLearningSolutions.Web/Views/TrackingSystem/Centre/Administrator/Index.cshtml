@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Models.User
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
@@ -33,13 +34,31 @@
         </div>
       </div>
     </div>
-
-    <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
-
-      <div class="nhsuk-grid-row">
+    
+    <div class="nhsuk-grid-row">
+      <form method="get" role="search">
         <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
-      </div>
+      </form>
+    </div>
+    
 
+    @foreach (var filter in Model.Filters) {
+      <div class="nhsuk-grid-row">
+        <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+          <select name="filterValue" id="@filter.Item1">
+            @foreach (var filterProperty in filter.Item2)
+            {
+              <option value="@filterProperty.Item2">@filterProperty.Item1</option>
+            }
+          </select>
+          <button class="nhsuk-search__submit non-js-only" type="submit">
+            Add
+          </button>
+        </form>
+      </div>
+    }
+
+    <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           @if (!Model.Admins.Any()) {
@@ -50,6 +69,7 @@
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
             <input type="hidden" id="select-sort-by" value="Name" />
             <input type="hidden" id="select-sort-direction" value="Ascending" />
+            <input type="hidden" id="filter-by" name="filter" value=""/>
 
             <div id="searchable-elements">
               @foreach (var admin in Model.Admins) {
@@ -64,10 +84,10 @@
       </div>
 
     </form>
-    
-    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
-    </nav>
+
+      <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+        <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
+      </nav>
   </div>
 </div>
 

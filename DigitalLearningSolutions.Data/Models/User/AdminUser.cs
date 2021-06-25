@@ -33,6 +33,8 @@
         public bool IsLocalWorkforceManager { get; set; }
         public bool ImportOnly { get; set; }
 
+        public bool IsCmsAdministrator => ImportOnly && IsContentManager;
+
         public override UserReference ToUserReference()
         {
             return new UserReference(Id, UserType.AdminUser);

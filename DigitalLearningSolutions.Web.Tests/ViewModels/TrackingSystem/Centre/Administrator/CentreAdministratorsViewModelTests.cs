@@ -37,6 +37,7 @@
                 null,
                 "SearchableName",
                 "Ascending",
+                null,
                 1
             );
 
@@ -53,6 +54,7 @@
                 null,
                 "SearchableName",
                 "Ascending",
+                null,
                 2
             );
 

@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             IEnumerable<SelfAssessment> selfAssessments,
             string? bannerText,
             int page
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, sortBy, sortDirection, null, page)
         {
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();

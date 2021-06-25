@@ -4,13 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public abstract class BaseSearchablePageViewModel
     {
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
+
+        public readonly string? FilterString;
 
         private readonly int itemsPerPage;
 
@@ -22,6 +23,7 @@
             string? searchString,
             string sortBy,
             string sortDirection,
+            string? filterString,
             int page,
             int itemsPerPage = 10
         )
@@ -29,21 +31,26 @@
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
+            FilterString = filterString;
             Page = page;
+            Filters = new List<(string, IEnumerable<(string, string)>)>();
             this.itemsPerPage = itemsPerPage;
         }
-        
+
         public string SortDirection { get; set; }
-        
+
         public string SortBy { get; set; }
-        
+
         public int Page { get; protected set; }
 
         public int TotalPages { get; protected set; }
 
-        public IEnumerable<SelectListItem> SortBySelectListItems => SelectListHelper.MapOptionsToSelectListItems(SortOptions);
+        public IEnumerable<SelectListItem> SortBySelectListItems =>
+            SelectListHelper.MapOptionsToSelectListItems(SortOptions);
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
+
+        public IEnumerable<(string, IEnumerable<(string, string)>)> Filters { get; set; }
 
         protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {

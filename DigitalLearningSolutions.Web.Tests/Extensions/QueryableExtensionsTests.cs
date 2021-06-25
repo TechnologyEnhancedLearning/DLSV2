@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Extensions
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
@@ -86,6 +87,34 @@
 
             // When
             var result = inputItems.OrderByDescending("Name").ThenByDescending("Number");
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void Where_returns_expected_items_for_string_property()
+        {
+            // Given
+            var inputItems = QueryableHelper.GetListOfSortableItems("a", 1, "a", 3, "b", 2);
+            var expectedItems = new[] { new SortableItem("a", 1), new SortableItem("a", 3) }.AsQueryable();
+
+            // When
+            var result = inputItems.Where("Name", "a");
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void Where_returns_expected_items_for_int_property()
+        {
+            // Given
+            var inputItems = QueryableHelper.GetListOfSortableItems("a", 1, "a", 3, "b", 3);
+            var expectedItems = new[] { new SortableItem("a", 3), new SortableItem("b", 3) }.AsQueryable();
+
+            // When
+            var result = inputItems.Where("Number", 3);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
