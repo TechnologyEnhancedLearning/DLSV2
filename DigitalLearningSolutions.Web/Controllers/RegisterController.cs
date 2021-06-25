@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using AspNetCore.ReCaptcha;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -185,6 +186,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return View(viewModel);
         }
 
+        [ValidateReCaptcha]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)

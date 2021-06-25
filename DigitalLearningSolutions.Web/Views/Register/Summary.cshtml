@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using AspNetCore.ReCaptcha
 @using DigitalLearningSolutions.Web.ViewModels.Register
 @model SummaryViewModel
 @{
@@ -27,11 +27,11 @@
           @Model.Centre
         </dd>
         <dd class="nhsuk-summary-list__actions">
-        @if (!Model.IsCentreSpecificRegistration) {
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> centre</span>
-          </a>
-        }
+          @if (!Model.IsCentreSpecificRegistration) {
+            <a asp-action="PersonalInformation">
+              Change<span class="nhsuk-u-visually-hidden"> centre</span>
+            </a>
+          }
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
@@ -122,8 +122,9 @@
         </fieldset>
       </div>
 
+      <recaptcha/>
+
       <button class="nhsuk-button" type="submit">Register</button>
     </form>
   </div>
 </div>
-

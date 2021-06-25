@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web
     using System.IO;
     using System.Threading.Tasks;
     using System.Web;
+    using AspNetCore.ReCaptcha;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
@@ -115,6 +116,8 @@ namespace DigitalLearningSolutions.Web
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
+
+            services.AddReCaptcha(config.GetSection("ReCaptcha"));
 
             var defaultConnectionString = config.GetConnectionString(ConfigHelper.DefaultConnectionStringName);
             MapperHelper.SetUpFluentMapper();
