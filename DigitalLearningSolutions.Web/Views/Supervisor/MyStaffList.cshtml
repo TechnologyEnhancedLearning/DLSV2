@@ -1,0 +1,36 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+
+@model MyStaffListViewModel;
+@{
+  ViewData["Title"] = "My Staff List";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">Supervisor</li>
+      </ol>
+    </div>
+  </nav>
+}
+<h1>My Supervised Staff</h1>
+@if (Model.SuperviseDelegateDetails.Any())
+{
+  foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
+  {
+    <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
+  }
+}
+else
+{
+  <p>You are not supervising any staff, yet. Add some staff to your staff list using the button below.</p>
+}
+<a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="AddStaffToSupervise">
+  Add supervised staff
+</a>

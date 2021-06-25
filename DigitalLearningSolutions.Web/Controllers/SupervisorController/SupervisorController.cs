@@ -14,6 +14,7 @@
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IConfigService configService;
+        private readonly ICustomPromptsService customPromptsService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
         public SupervisorController(
@@ -21,6 +22,7 @@
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
           IConfigService configService,
+          ICustomPromptsService customPromptsService,
            ILogger<SupervisorController> logger,
            IConfiguration config)
         {
@@ -28,12 +30,13 @@
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.configService = configService;
+            this.customPromptsService = customPromptsService;
             this.logger = logger;
             this.config = config;
         }
-        private int? GetCentreId()
+        private int GetCentreId()
         {
-            return User.GetCustomClaimAsInt(CustomClaimTypes.UserCentreId);
+            return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
         private int GetAdminID()
         {

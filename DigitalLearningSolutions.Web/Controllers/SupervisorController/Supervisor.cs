@@ -23,5 +23,19 @@
             };
             return View(model);
         }
+        [Route("/Supervisor/MyStaff/{page=1:int}")]
+        public IActionResult MyStaffList(int page = 1)
+        {
+            var adminId = GetAdminID();
+            var centreId = GetCentreId();
+            var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var model = new MyStaffListViewModel()
+            {
+                CentreCustomPrompts = centreCustomPrompts,
+                SuperviseDelegateDetails = supervisorDelegateDetails
+            };
+            return View("MyStaffList", model);
+        }
     }
 }
