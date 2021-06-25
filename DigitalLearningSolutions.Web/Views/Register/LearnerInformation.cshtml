@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
 @model LearnerInformationViewModel
 
 @{
@@ -13,25 +12,22 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form method="post" asp-action="LearnerInformation">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.JobGroup),
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6)
+                                                 })"/>
+    }
+      
+    <h1 class="nhsuk-heading-xl">Learner information</h1>
 
-      @if (errorHasOccurred)
-      {
-        <vc:error-summary order-of-property-names="@(new[] {
-           nameof(Model.JobGroup),
-           nameof(Model.Answer1),
-           nameof(Model.Answer2),
-           nameof(Model.Answer3),
-           nameof(Model.Answer4),
-           nameof(Model.Answer5),
-           nameof(Model.Answer6)
-        })" />
-      }
-
-      <div class="nhsuk-u-margin-bottom-8">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Learner information</h1>
-      </div>
-
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
+      
       <vc:select-list
         asp-for="JobGroup"
         label="Job Group"

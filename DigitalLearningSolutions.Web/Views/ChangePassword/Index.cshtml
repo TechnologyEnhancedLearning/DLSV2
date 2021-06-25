@@ -14,20 +14,16 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form method="post" asp-action="Index">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CurrentPassword), nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
+    }
 
-      @if (errorHasOccurred)
-      {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CurrentPassword), nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
-      }
+    <h1 class="nhsuk-heading-xl">Change password</h1>
+    <p class="nhsuk-body-l">
+      Use the form below to change the password for delegate and admin accounts associated with your email address.
+    </p>
 
-      <div class="nhsuk-u-margin-bottom-8">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Change password</h1>
-        <p class="nhsuk-body-l">
-          Use the form below to change the password for delegate and admin accounts associated with your email address.
-        </p>
-      </div>
-
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
       <vc:text-input asp-for="@nameof(Model.CurrentPassword)"
                      label="Current password"
                      populate-with-current-value="false"
@@ -56,8 +52,9 @@
                      css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Change password</button>
+    </form>
 
-      <vc:back-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+      <vc:back-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@null" link-text="Cancel"/>
     </form>
   </div>
 </div>
