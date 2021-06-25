@@ -1530,7 +1530,7 @@ WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
         {
             return connection.Query<DashboardData>(
                 $@"SELECT (SELECT COUNT(*) 
-  FROM [mbdbx101].[dbo].[Frameworks]) AS FrameworksCount,
+  FROM [dbo].[Frameworks]) AS FrameworksCount,
 
   (SELECT COUNT(*) FROM {FrameworkTables} 
 WHERE (OwnerAdminID = @adminId) OR
