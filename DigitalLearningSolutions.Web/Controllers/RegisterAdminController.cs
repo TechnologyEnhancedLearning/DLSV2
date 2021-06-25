@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
@@ -161,7 +161,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(viewModel);
             }
 
-            // TODO: register admin details and notification preferences in database
+            // TODO: (HEEDLS-527) register admin details and notification preferences in database
 
             return RedirectToAction("Confirmation");
         }

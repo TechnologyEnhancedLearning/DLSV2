@@ -11,6 +11,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using NUnit.Framework;
 
     public class RegisterAdminControllerTests
@@ -154,6 +155,8 @@
 
             // Then
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            controller.ModelState[nameof(PersonalInformationViewModel.Email)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -181,6 +184,8 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
+            controller.ModelState[nameof(PersonalInformationViewModel.Email)].ValidationState.Should()
+                .Be(ModelValidationState.Invalid);
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
