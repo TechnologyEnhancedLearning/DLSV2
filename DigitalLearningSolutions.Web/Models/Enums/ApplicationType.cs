@@ -5,18 +5,16 @@
 
     public class ApplicationType : Enumeration
     {
-        public static readonly ApplicationType TrackingSystem = new ApplicationType(0, nameof(TrackingSystem), "Tracking System", "TrackingSystem");
-        public static readonly ApplicationType Frameworks = new ApplicationType(1, nameof(Frameworks), "Frameworks", "Frameworks");
+        public static readonly ApplicationType TrackingSystem = new ApplicationType(0, nameof(TrackingSystem), "Tracking System");
+        public static readonly ApplicationType Frameworks = new ApplicationType(1, nameof(Frameworks), "Frameworks");
+        public static readonly ApplicationType Main = new ApplicationType(1, nameof(Main), "Main");
 
-        private ApplicationType(int id, string name, string applicationName, string applicationBaseUrl) : base(id, name)
+        private ApplicationType(int id, string name, string applicationName) : base(id, name)
         {
             ApplicationName = applicationName;
-            ApplicationBaseUrl = applicationBaseUrl;
         }
 
         public readonly string ApplicationName;
-
-        public readonly string ApplicationBaseUrl;
 
         public static implicit operator ApplicationType(string value)
         {

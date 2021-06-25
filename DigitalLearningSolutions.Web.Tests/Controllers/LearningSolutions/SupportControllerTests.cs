@@ -29,11 +29,10 @@
         public void Invalid_application_name_should_redirect_to_404_page()
         {
             // When
-            var result = controller.Index("SomeInvalidApplication");
+            var result = controller.Index("Main");
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("StatusCode")
-                .WithControllerName("LearningSolutions").WithRouteValue("code", 404);
+            result.Should().BeNotFoundResult();
         }
     }
 }

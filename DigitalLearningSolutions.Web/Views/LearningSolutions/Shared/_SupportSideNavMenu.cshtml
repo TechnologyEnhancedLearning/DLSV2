@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@inject IConfiguration configuration
 @model SupportViewModel
 
 @{
-    var routeData = new Dictionary<string, string> { { "applicationBaseUrl", Model.Application.ApplicationBaseUrl } };
+    var routeData = new Dictionary<string, string> { { "application", Model.Application.Name } };
 }
 
 <h2 class="side-nav__heading">Support</h2>
@@ -18,22 +18,22 @@
     is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
 
   <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/help/Introduction.html"
+    href="@configuration["CurrentSystemBaseUrl"]/help/Introduction.html"
     link-text="Help documentation"
     is-current-page="@(Model.CurrentPage == SupportPage.HelpDocumentation)" />
 
   <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/tracking/faqs"
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/faqs"
     link-text="FAQs"
     is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
   <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/tracking/resources"
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/resources"
     link-text="Resources"
     is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
   <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/tracking/tickets"
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/tickets"
     link-text="Support tickets"
     is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 

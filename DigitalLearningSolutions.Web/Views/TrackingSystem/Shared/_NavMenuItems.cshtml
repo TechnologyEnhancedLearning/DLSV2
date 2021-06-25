@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
@@ -31,7 +32,7 @@
   </li>
 }
 <li class="nhsuk-header__navigation-item">
-  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-applicationBaseUrl="TrackingSystem">
+  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-application="@ApplicationType.TrackingSystem">
     Support
     <partial name="_NhsChevronRight" />
   </a>

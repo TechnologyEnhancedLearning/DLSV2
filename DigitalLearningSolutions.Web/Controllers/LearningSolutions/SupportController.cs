@@ -6,19 +6,19 @@
 
     public class SupportController : Controller
     {
-        [Route("/{applicationBaseUrl}/Support")]
-        public IActionResult Index(string applicationBaseUrl)
+        [Route("/{application}/Support")]
+        public IActionResult Index(ApplicationType application)
         {
-            if (applicationBaseUrl == ApplicationType.TrackingSystem.ApplicationBaseUrl ||
-                applicationBaseUrl == ApplicationType.Frameworks.ApplicationBaseUrl)
+            if (ApplicationType.TrackingSystem == application ||
+                ApplicationType.Frameworks == application)
             {
                 return View(
                     "/Views/LearningSolutions/Support.cshtml",
-                    new SupportViewModel(applicationBaseUrl, SupportPage.Support)
+                    new SupportViewModel(application, SupportPage.Support)
                 );
             }
 
-            return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            return NotFound();
         }
     }
 }
