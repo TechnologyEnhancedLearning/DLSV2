@@ -17,16 +17,12 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
-    </div>
-  </div>
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
+    }
+
     <h1 class="nhsuk-heading-xl">Remove delegate registration prompt</h1>
   </div>
 </div>
@@ -43,18 +39,14 @@
 </div>
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full nhsuk-body-m">
+  <div class="nhsuk-grid-column-full">
     @if (Model.DelegateCount == 1) {
-      <p>@Model.DelegateCount user has responded to this prompt. Deleting the prompt will permanently delete their response.</p>
+      <p class="nhsuk-body-m">@Model.DelegateCount user has responded to this prompt. Deleting the prompt will permanently delete their response.</p>
     } else {
-      <p>@Model.DelegateCount users have responded to this prompt. Deleting the prompt will permanently delete all of their responses.</p>
+      <p class="nhsuk-body-m">@Model.DelegateCount users have responded to this prompt. Deleting the prompt will permanently delete all of their responses.</p>
     }
-  </div>
-</div>
-
-<form class="nhsuk-u-margin-bottom-8" method="post" asp-action="RemoveRegistrationPrompt">
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
+    
+    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveRegistrationPrompt">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
           @if (confirmError) {
@@ -79,12 +71,8 @@
       <input type="hidden" asp-for="PromptName" />
       <input type="hidden" asp-for="DelegateCount" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete prompt</button>
-    </div>
-  </div>
-</form>
+    </form>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
     <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel" />
   </div>
 </div>
