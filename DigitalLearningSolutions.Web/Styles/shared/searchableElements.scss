@@ -116,6 +116,68 @@ div#search {
   }
 }
 
+.filter-dropdown {
+  border: 2px solid $nhsuk-form-border-color;
+  border-radius: 4px 0 0 4px !important; 
+  border-right: 0;
+  height: 52px;
+  padding: 0 12px;
+  font-size: 16px;
+  width: 80%;
+  float: left;
+  margin-bottom: nhsuk-spacing(4);
+  outline: none;
+
+  &:focus {
+    border: 4px solid $color_nhsuk_black;
+    box-shadow: 0 0 0 4px $nhsuk-focus-color;
+    margin-right: 4px;
+  }
+
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    display: none;
+  }
+
+  @include mq($from: tablet) {
+    height: 40px;
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
+
+  .js-enabled & {
+    border-right: 2px solid $nhsuk-form-border-color;
+    border-radius: 4px;
+
+    &:focus {
+      border-right: 4px solid $color_nhsuk-black;
+    }
+
+    @include mq($until: tablet) {
+      width: 100%;
+    }
+  }
+}
+
+.filter-dropdown__submit {
+  background-color: #003d78;
+  float: left;
+  width: 15%;
+  color: $color_nhsuk-white;
+  min-width: 100px;
+
+  .nhsuk-icon__search {
+    fill: #fff;
+  }
+
+  &:hover {
+    background-color: #4c6272;
+  }
+}
+
 .sort-row {
   display: flex;
   flex-direction: row;
