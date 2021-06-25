@@ -8,7 +8,7 @@
     {
         public static readonly ApplicationType TrackingSystem = new ApplicationType(0, nameof(TrackingSystem), "Tracking System");
         public static readonly ApplicationType Frameworks = new ApplicationType(1, nameof(Frameworks), "Frameworks");
-        public static readonly ApplicationType Main = new ApplicationType(1, nameof(Main), "Main");
+        public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "Main");
 
         private ApplicationType(int id, string name, string applicationName) : base(id, name)
         {
