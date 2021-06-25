@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using FluentMigrator.Runner;
@@ -46,46 +47,69 @@ namespace DigitalLearningSolutions.Web
                 .SetApplicationName("DLSSharedCookieApp");
 
             services.AddAuthentication("Identity.Application")
-                .AddCookie("Identity.Application", options =>
-                {
-                    options.Cookie.Name = ".AspNet.SharedCookie";
-                    options.Cookie.Path = "/";
-                    options.Events.OnRedirectToLogin = RedirectToLogin;
-                    options.Events.OnRedirectToAccessDenied = RedirectToHome;
-                });
+                .AddCookie(
+                    "Identity.Application",
+                    options =>
+                    {
+                        options.Cookie.Name = ".AspNet.SharedCookie";
+                        options.Cookie.Path = "/";
+                        options.Events.OnRedirectToLogin = RedirectToLogin;
+                        options.Events.OnRedirectToAccessDenied = RedirectToHome;
+                    }
+                );
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(CustomPolicies.UserOnly,
-                    policy => CustomPolicies.ConfigurePolicyUserOnly(policy));
-                options.AddPolicy(CustomPolicies.UserCentreAdmin,
-                    policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy));
-                options.AddPolicy(CustomPolicies.UserFrameworksAdminOnly,
-                    policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy));
-                options.AddPolicy(CustomPolicies.UserCentreManager,
-                    policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy));
-            });
+            services.AddAuthorization(
+                options =>
+                {
+                    options.AddPolicy(
+                        CustomPolicies.UserOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserOnly(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserCentreAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserCentreAdmin(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserFrameworksAdminOnly,
+                        policy => CustomPolicies.ConfigurePolicyUserFrameworksAdminOnly(policy)
+                    );
+                    options.AddPolicy(
+                        CustomPolicies.UserCentreManager,
+                        policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
+                    );
+                }
+            );
 
             services.ConfigureApplicationCookie(options => { options.Cookie.Name = ".AspNet.SharedCookie"; });
 
             services.AddDistributedMemoryCache();
 
-            services.AddSession(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
+            services.AddSession(
+                options =>
+                {
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.IsEssential = true;
+                }
+            );
 
             var mvcBuilder = services
                 .AddControllersWithViews()
-                .AddRazorOptions(options =>
-                {
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
-                    options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
-                })
-                .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+                .AddRazorOptions(
+                    options =>
+                    {
+                        options.ViewLocationFormats.Add("/Views/TrackingSystem/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
+                    }
+                )
+                .AddMvcOptions(
+                    options =>
+                    {
+                        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                        options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
+                    }
+                );
 
             if (env.IsDevelopment())
             {
@@ -104,7 +128,7 @@ namespace DigitalLearningSolutions.Web
             // Register services.
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseDataService, CourseDataDataService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
@@ -144,7 +168,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
-
+            services.AddScoped<IRoleProfileService, RoleProfileService>();
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             RegisterWebServiceFilters(services);
         }
 
@@ -152,6 +177,7 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
+            services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
@@ -159,10 +185,12 @@ namespace DigitalLearningSolutions.Web
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            app.UseForwardedHeaders(
+                new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                }
+            );
 
             if (env.IsDevelopment())
             {
@@ -180,8 +208,10 @@ namespace DigitalLearningSolutions.Web
 
             app.UseSession();
 
-            app.UseEndpoints(endpoints =>
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}"));
+            app.UseEndpoints(
+                endpoints =>
+                    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}")
+            );
 
             migrationRunner.MigrateUp();
         }

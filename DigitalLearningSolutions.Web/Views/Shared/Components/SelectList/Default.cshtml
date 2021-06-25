@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.Common
 @model SelectListViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
@@ -23,6 +23,6 @@
           name="@Model.Name"
           value="@Model.Value"
           asp-items="Model.SelectListOptions">
-    <option value="" disabled selected=@(Model.Value != null ? "" : "selected") >@Model.DefaultOption</option>
+    <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected") >@Model.DefaultOption</option>
   </select>
 </div>

@@ -183,6 +183,16 @@ This can be fixed by making sure PATH is on the top of the 'External Web Tools' 
     2. Run the install command in the Task Runner Explorer to reinstall the `node_modules`
     3. Run the build command, it should now work as normal
 
+## Random data service tests failing (esp. if using Rider)
+
+The tests may rely on new migrations which haven't been run on the test project.
+
+Running tests from the Data.Tests project should cause any new migrations to be run on the test database,
+but sometimes Rider doesn't build referenced projects when you'd expect it to,
+so you may need to build Data.Migrations manually in order for new migrations to get picked up.
+
+Build the Data.Migrations project manually and run the failing tests again - they should pass now.
+
 # Logging
 We're using [serilog](https://serilog.net/), specifically [serilog for .net core](https://nblumhardt.com/2019/10/serilog-in-aspnetcore-3/). This will automatically log:
 * Any ASP.NET Core logs with level warning or above

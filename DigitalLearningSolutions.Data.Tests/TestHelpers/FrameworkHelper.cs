@@ -15,7 +15,6 @@
            int topicId = 1,
            DateTime createdDate = default(DateTime),
            int publishStatusId = 1,
-           string publishStatus = "Draft",
            int updatedByAdminId = 1,
            string updatedBy = "owner",
            int userRole = 3
@@ -32,7 +31,6 @@
                 TopicID = topicId,
                 CreatedDate = createdDate,
                 PublishStatusID = publishStatusId,
-                PublishStatus = publishStatus,
                 UpdatedByAdminID = updatedByAdminId,
                 UpdatedBy = updatedBy,
                 UserRole = userRole

@@ -21,18 +21,18 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Notification preferences</h1>
 
-    @if (Model.AdminNotifications.Notifications.Any())
-    {
-      <partial name="_UserNotificationPreferences" model="Model.AdminNotifications"/>
-    }
+    <div class="nhsuk-u-margin-bottom-7">
+      @if (Model.AdminNotifications.Notifications.Any())
+      {
+        <partial name="_UserNotificationPreferences" model="Model.AdminNotifications" />
+      }
 
-    @if (Model.DelegateNotifications.Notifications.Any())
-    {
-      <partial name="_UserNotificationPreferences" model="Model.DelegateNotifications"/>
-    }
-
-    <div class="top-spaced-goback">
-      <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" />
+      @if (Model.DelegateNotifications.Notifications.Any())
+      {
+        <partial name="_UserNotificationPreferences" model="Model.DelegateNotifications" />
+      }
     </div>
+
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" />
   </div>
 </div>

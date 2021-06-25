@@ -25,9 +25,11 @@
                 return false;
             }
 
-            var hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
+            byte[] hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
+
             bool storedPasswordIsIncorrectLength = hashedPasswordBytes.Length != CorrectStoredPasswordLength;
-            bool storedPasswordHasIncorrectVersionHeader = hashedPasswordBytes[0] != CorrectStoredPasswordVersionHeader;
+            bool storedPasswordHasIncorrectVersionHeader =
+                hashedPasswordBytes[0] != CorrectStoredPasswordVersionHeader;
 
             if (storedPasswordIsIncorrectLength || storedPasswordHasIncorrectVersionHeader)
             {

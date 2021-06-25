@@ -88,6 +88,10 @@ h1#page-heading {
   height: 100%;
   flex: 1 1 auto;
   display: flex;
+
+  @include govuk-media-query($from: desktop) {
+    min-height: 500px;
+  }
 }
 
 .responsive-iframe-wrapper-padding {
@@ -253,4 +257,8 @@ ul.no-bullets {
   @include govuk-media-query($from: desktop) {
     margin-left: -12px;
   }
+}
+
+.nhsuk-error-message.error-message--margin-bottom-1 {
+    margin-bottom: nhsuk-spacing(1);
 }

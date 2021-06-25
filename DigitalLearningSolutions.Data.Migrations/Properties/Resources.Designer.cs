@@ -333,6 +333,89 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 21/06/2021 08:36:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesForCandidate]
+        ///	-- Add the parameters for the stored procedure here
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_236_GetCompletedCoursesTweak_DOWN {
+            get {
+                return ResourceManager.GetString("DLSV2_236_GetCompletedCoursesTweak_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 21/06/2021 08:36:32 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesForCan [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_236_GetCompletedCoursesTweak_UP {
+            get {
+                return ResourceManager.GetString("DLSV2_236_GetCompletedCoursesTweak_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_237_GetActiveAvailableTweak_DOWN {
+            get {
+                return ResourceManager.GetString("DLSV2_237_GetActiveAvailableTweak_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [mbdbx101]
+        ///GO
+        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_237_GetActiveAvailableTweak_UP {
+            get {
+                return ResourceManager.GetString("DLSV2_237_GetActiveAvailableTweak_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table
