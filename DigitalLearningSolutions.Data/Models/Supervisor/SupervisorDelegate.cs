@@ -14,6 +14,6 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public DateTime Added { get; set; }
         public bool AddedByDelegate { get; set; }
         public DateTime NotificationSent { get; set; }
-        public DateTime Confirmed { get; set; }
+        public DateTime? Confirmed { get; set; }
     }
 }

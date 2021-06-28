@@ -33,7 +33,7 @@
               @if (Model.Confirmed == null)
               {
                 <strong class="nhsuk-tag nhsuk-tag--yellow">
-                  Awaiting confirmation
+                  Awaiting @(Model.AddedByDelegate ? "supervisor" : "delegate") confirmation
                 </strong>
               }
               else
@@ -178,18 +178,35 @@
       }
       </dl>
     }
-</div>
+    </div>
     </div>
     </details>
-    @*<div class="nhsuk-grid-row">
+    @if (Model.Confirmed != null)
+    {
+      <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
              aria-describedby="@Model.ID-name"
-             asp-controller="LearningMenu"
-             asp-action="Index"
-             asp-route-customisationId="@Model.ID">
-            Launch course
+             asp-controller="Supervisor"
+             asp-action="ProfileAssessments"
+             asp-route-supervisorDandidateId="@Model.ID">
+            View profile assessments
           </a>
         </div>
-      </div>*@
+      </div>
+    }
+    else if (Model.AddedByDelegate)
+    {
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+             aria-describedby="@Model.ID-name"
+             asp-controller="Supervisor"
+             asp-action="ConfirmSupervise"
+             asp-route-supervisorDandidateId="@Model.ID">
+            Confirm
+          </a>
+        </div>
+      </div>
+    }
     </div>
