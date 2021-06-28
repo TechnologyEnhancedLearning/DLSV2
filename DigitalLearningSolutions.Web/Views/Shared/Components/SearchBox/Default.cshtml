@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @model SearchBoxViewModel
 
-<div class="nhsuk-grid-column-one-half" id="search">
+<div class="@Model.Class" id="search">
   <label class="nhsuk-u-visually-hidden" for="search-field">@Model.Label</label>
   <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchablePageViewModel.SearchString">
   <button class="nhsuk-search__submit non-js-only" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">

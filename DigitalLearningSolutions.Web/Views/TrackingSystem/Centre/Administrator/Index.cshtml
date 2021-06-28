@@ -27,44 +27,58 @@
   <div class="nhsuk-grid-column-three-quarters">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Centre administrators</h1>
-        <div class="nhsuk-u-margin-top-8">
-          <vc:number-of-administrators centre-id="@Model.CentreId" />
-        </div>
+        <h1 class="nhsuk-heading-xl">Centre administrators</h1>
+
+        <vc:number-of-administrators centre-id="@Model.CentreId" />
       </div>
     </div>
 
     <div class="nhsuk-grid-row">
       <form method="get" role="search">
-        <input type="hidden" name="filterBy" value="" />
-        <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
+        <input type="hidden" name="filterBy" value="@Model.FilterString" />
+        <vc:search-box label="Search administrators"
+                       asp-controller="Administrator"
+                       asp-action="Index"
+                       searchable-page-view-model="@Model"
+                       css-class="nhsuk-grid-column-one-half" />
       </form>
     </div>
 
-
-    @foreach (var filter in Model.Filters) {
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-            <input type="hidden" name="searchString" value="@Model.SearchString" />
-            <input type="hidden" name="filterBy" value="" />
-            <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.Item1">
-              <option value="" disabled selected="selected">Select a value</option>
-              @foreach (var filterProperty in filter.Item2) {
-                <option value="@filterProperty.Item2">@filterProperty.Item1</option>
-              }
-            </select>
-            <button class="nhsuk-search__submit filter-dropdown__submit non-js-only" type="submit">
-              Add filter
-            </button>
-          </form>
-        </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full" id="filters">
+        @foreach (var (filterProperty, filterValues) in Model.Filters) {
+          <div id="filter-@filterProperty">
+            <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+              <input type="hidden" name="searchString" value="@Model.SearchString" />
+              <input type="hidden" name="filterBy" value="@Model.FilterString" />
+              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filterProperty">
+                <option value="" disabled selected="selected">Select a value</option>
+                @foreach (var (displayText, filterValue) in filterValues) {
+                  <option value="@filterValue">@displayText</option>
+                }
+              </select>
+              <button class="nhsuk-search__submit filter-dropdown__submit non-js-only" type="submit">
+                Add filter
+              </button>
+            </form>
+          </div>
+        }
       </div>
-    }
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full" id="applied-filters">
+        <vc:current-filters label="Search administrators"
+                            asp-controller="Administrator"
+                            asp-action="Index"
+                            searchable-page-view-model="@Model"
+                            css-class="nhsuk-grid-column-one-half" />
+      </div>
+    </div>
 
     <form method="get">
       <input type="hidden" id="searchString" value="@Model.SearchString" />
-      <input type="hidden" id="filter-by" name="filterBy" value="" />
+      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterString" />
       <input type="hidden" id="select-sort-by" value="Name" />
       <input type="hidden" id="select-sort-direction" value="Ascending" />
       <div class="nhsuk-grid-row">

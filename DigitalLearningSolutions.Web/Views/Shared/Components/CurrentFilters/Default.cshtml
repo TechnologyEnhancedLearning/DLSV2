@@ -1,0 +1,6 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model CurrentFiltersViewModel
+
+@foreach (var filter in Model.AppliedFilters) {
+  <p>@filter.FilterCategory : @filter.DisplayText</p>
+}

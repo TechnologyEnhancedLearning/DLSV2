@@ -9,10 +9,11 @@
             string aspController,
             string aspAction,
             BaseSearchablePageViewModel searchablePageViewModel,
-            string label
+            string label,
+            string? cssClass
         )
         {
-            return View(new SearchBoxViewModel(aspController, aspAction, searchablePageViewModel, label));
+            return View(new SearchBoxViewModel(aspController, aspAction, searchablePageViewModel, label, cssClass));
         }
     }
 }

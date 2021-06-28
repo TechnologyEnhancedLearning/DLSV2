@@ -29,7 +29,7 @@
         {
             if (filterValue != null)
             {
-                filterBy += NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(filterBy, filterValue);
+                filterBy = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(filterBy, filterValue);
             }
             
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(User.GetCentreId());

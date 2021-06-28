@@ -5,8 +5,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using Microsoft.AspNetCore.Authorization.Infrastructure;
-    using Microsoft.CodeAnalysis.Operations;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
     {
@@ -43,12 +41,13 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser));
-            IEnumerable<(string, string)> categoryOptions = categories.Select(c => (c, $"{nameof(AdminUser.CategoryName)}|{c}"));
+            IEnumerable<(string, string)> categoryOptions =
+                categories.Select(c => (c, $"{nameof(AdminUser.CategoryName)}|{c}"));
 
             Filters = new[]
             {
-                ("Role", RoleOptions),
-                (nameof(AdminUser.CategoryName), categoryOptions)
+                (("Role","Role"), RoleOptions),
+                ((nameof(AdminUser.CategoryName), "Category"), categoryOptions)
             };
         }
 
