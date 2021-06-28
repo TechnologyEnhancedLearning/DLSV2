@@ -14,7 +14,7 @@
             int courses,
             int admins,
             int supportTickets,
-            int centreRank
+            int? centreRank
         )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress, centreRank);

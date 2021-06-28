@@ -1,13 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DbModels
 {
-    public class CentreRank
+    public class CentreRanking
     {
         public int CentreId { get; set; }
 
-        public int Rank { get; set; }
+        public int Ranking { get; set; }
 
         public string CentreName { get; set; }
 
-        public int Sum { get; set; }
+        public int DelegateSessionCount { get; set; }
     }
 }

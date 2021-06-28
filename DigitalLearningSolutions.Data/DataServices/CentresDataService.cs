@@ -39,7 +39,7 @@
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
 
-        IEnumerable<CentreRank> GetCentreRanks(DateTime dateSince, int regionId);
+        IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -229,27 +229,43 @@
             return ipPrefixes ?? new string[0];
         }
 
-        public IEnumerable<CentreRank> GetCentreRanks(DateTime dateSince, int regionId)
+        public IEnumerable<CentreRanking> GetCentreRanks(
+            DateTime dateSince,
+            int? regionId,
+            int resultsCount,
+            int centreId
+        )
         {
-            return connection.Query<CentreRank>(
-                @"SELECT 
-                        RANK() OVER (ORDER BY tc.CentreIDCount DESC) AS [Rank],
-                        c.CentreID,
-                        c.CentreName,
-                        tc.CentreIDCount AS [Sum]
-                    FROM 
-	                ( 
+            return connection.Query<CentreRanking>(
+                @"WITH SessionsCount AS
+                    (
 	                    SELECT
-                            Count(c.CentreID) AS CentreIDCount,
-                            c.CentreID
+		                    Count(c.CentreID) AS DelegateSessionCount,
+		                    c.CentreID
 	                    FROM [Sessions] s 
 	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
 	                    INNER JOIN Centres ct ON c.CentreID = ct.CentreID
-	                    WHERE s.LoginTime > @dateSince AND c.CentreID <> 101 AND (ct.RegionID = @RegionID OR @RegionID = -1)
+	                    WHERE 
+		                    s.LoginTime > @dateSince 
+		                    AND c.CentreID <> 101 AND c.CentreID <> 374 
+		                    AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
 	                    GROUP BY c.CentreID
-                    ) AS tc 
-                    INNER JOIN Centres c ON tc.CentreID = c.CentreID",
-                new { dateSince, regionId }
+                    ), 
+                    Rankings AS
+                    (
+	                    SELECT 
+		                    RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
+		                    c.CentreID,
+		                    c.CentreName,
+		                    sc.DelegateSessionCount
+	                    FROM SessionsCount sc
+	                    INNER JOIN Centres c ON sc.CentreID = c.CentreID
+                    )
+                    SELECT *
+                    FROM Rankings
+                    WHERE Ranking <= @resultsCount OR CentreID = @centreId
+                    ORDER BY Ranking",
+                new { dateSince, regionId, resultsCount, centreId }
             );
         }
     }

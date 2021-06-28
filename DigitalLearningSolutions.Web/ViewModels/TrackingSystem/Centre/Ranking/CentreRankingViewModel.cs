@@ -6,22 +6,25 @@
 
     public class CentreRankingViewModel
     {
-        public CentreRankingViewModel(IEnumerable<CentreRank> centreRanks, int centreId)
+        public CentreRankingViewModel(IEnumerable<CentreRanking> centreRanks, int centreId)
         {
             var centreRanksList = centreRanks.ToList();
 
-            CurrentCentre = centreRanksList.Where(cr => cr.CentreId == centreId)
-                .Select(cr => new CentreRankViewModel(cr.Rank, cr.CentreName, cr.Sum))
-                .SingleOrDefault();
+            Centres = centreRanksList.OrderBy(cr => cr.Ranking)
+                .Select(
+                    cr => new CentreRankViewModel(
+                        cr.Ranking,
+                        cr.CentreName,
+                        cr.DelegateSessionCount,
+                        cr.CentreId == centreId
+                    )
+                );
 
-            TopTenCentres = centreRanksList.OrderBy(cr => cr.Rank).Take(10)
-                .Select(cr => new CentreRankViewModel(cr.Rank, cr.CentreName, cr.Sum));
+            CentreHasNoActivity = centreRanksList.All(cr => cr.CentreId != centreId);
         }
 
-        public IEnumerable<CentreRankViewModel> TopTenCentres { get; set; }
+        public IEnumerable<CentreRankViewModel> Centres { get; set; }
 
-        public CentreRankViewModel? CurrentCentre { get; set; }
-
-        public bool IsCurrentCentreInTopTen => CurrentCentre?.Rank <= 10;
+        public bool CentreHasNoActivity { get; set; }
     }
 }

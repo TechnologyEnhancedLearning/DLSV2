@@ -29,7 +29,7 @@
                 viewModel.ApprovedIps.Should().BeEquivalentTo(centre.IpPrefix);
                 viewModel.Telephone.Should().BeEquivalentTo(centre.ContactTelephone);
                 viewModel.Email.Should().BeEquivalentTo(centre.ContactEmail);
-                viewModel.CentreRank.Should().Be(12);
+                viewModel.CentreRank.Should().Be("12");
             }
         }
     }

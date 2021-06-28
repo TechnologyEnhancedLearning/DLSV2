@@ -12,58 +12,39 @@
     public class CentresServiceTests
     {
         private ICentresDataService centresDataService = null!;
+        private IClockService clockService = null!;
         private ICentresService centresService = null!;
 
         [SetUp]
         public void Setup()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            centresService = new CentresService(centresDataService);
+            clockService = A.Fake<IClockService>();
+            centresService = new CentresService(centresDataService, clockService);
 
-            A.CallTo(() => centresDataService.GetCentreRanks(A<DateTime>._, A<int>._)).Returns(
+            A.CallTo(() => clockService.UtcNow).Returns(new DateTime(2021, 1, 1));
+            A.CallTo(() => centresDataService.GetCentreRanks(A<DateTime>._, A<int?>._, 10, A<int>._)).Returns(
                 new[]
-                    {
-                        CentreTestHelper.GetCentreRank(1),
-                        CentreTestHelper.GetCentreRank(2),
-                        CentreTestHelper.GetCentreRank(3),
-                        CentreTestHelper.GetCentreRank(4),
-                        CentreTestHelper.GetCentreRank(5),
-                        CentreTestHelper.GetCentreRank(6),
-                        CentreTestHelper.GetCentreRank(7),
-                        CentreTestHelper.GetCentreRank(8),
-                        CentreTestHelper.GetCentreRank(9),
-                        CentreTestHelper.GetCentreRank(10),
-                        CentreTestHelper.GetCentreRank(11),
-                        CentreTestHelper.GetCentreRank(12)
-                    }
+                {
+                    CentreTestHelper.GetCentreRank(1),
+                    CentreTestHelper.GetCentreRank(2),
+                    CentreTestHelper.GetCentreRank(3),
+                    CentreTestHelper.GetCentreRank(4),
+                    CentreTestHelper.GetCentreRank(5),
+                    CentreTestHelper.GetCentreRank(6),
+                    CentreTestHelper.GetCentreRank(7),
+                    CentreTestHelper.GetCentreRank(8),
+                    CentreTestHelper.GetCentreRank(9),
+                    CentreTestHelper.GetCentreRank(10)
+                }
             );
         }
 
         [Test]
-        public void GetCentreRanks_returns_expected_list_when_centre_in_top_ten()
+        public void GetCentreRanks_returns_expected_list()
         {
             // When
-            var result = centresService.GetTopCentreRanks(3, 14, -1);
-
-            // Then
-            result.Count().Should().Be(10);
-        }
-
-        [Test]
-        public void GetCentreRanks_returns_expected_list_when_centre_is_not_in_top_ten()
-        {
-            // When
-            var result = centresService.GetTopCentreRanks(12, 14, -1);
-
-            // Then
-            result.Count().Should().Be(11);
-        }
-
-        [Test]
-        public void GetCentreRanks_returns_expected_list_when_centre_has_no_data()
-        {
-            // When
-            var result = centresService.GetTopCentreRanks(20, 14, -1);
+            var result = centresService.GetCentresForCentreRankingPage(3, 14, -1);
 
             // Then
             result.Count().Should().Be(10);
@@ -86,7 +67,7 @@
             var result = centresService.GetCentreRankForCentre(20);
 
             // Then
-            result.Should().Be(-1);
+            result.Should().BeNull();
         }
     }
 }

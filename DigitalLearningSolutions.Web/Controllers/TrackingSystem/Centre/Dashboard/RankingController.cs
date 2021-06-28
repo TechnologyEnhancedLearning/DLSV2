@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Ranking
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,10 +19,11 @@
 
         public IActionResult Index()
         {
+            var centreId = User.GetCentreId();
             // TODO: HEEDLS-469 Populate these numbers from filters
-            var centreRankings = centresService.GetTopCentreRanks(User.GetCentreId(), 14, -1);
+            var centreRankings = centresService.GetCentresForCentreRankingPage(centreId, 14, null);
 
-            return View(new CentreRankingViewModel(centreRankings, User.GetCentreId()));
+            return View(new CentreRankingViewModel(centreRankings, centreId));
         }
     }
 }

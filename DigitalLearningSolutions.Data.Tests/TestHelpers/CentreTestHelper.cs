@@ -68,14 +68,14 @@
             };
         }
 
-        public static CentreRank GetCentreRank(int rank)
+        public static CentreRanking GetCentreRank(int rank)
         {
-            return new CentreRank
+            return new CentreRanking
             {
                 CentreId = rank,
-                Rank = rank,
+                Ranking = rank,
                 CentreName = $"Centre {rank}",
-                Sum = 10000-rank*10
+                DelegateSessionCount = 10000-rank*10
             };
         }
     }

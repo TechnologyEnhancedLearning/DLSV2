@@ -7,28 +7,16 @@
     <th role="columnheader" class="cell-left-padding" scope="col">
       Rank
     </th>
-    <th role="columnheader" class="" scope="col">
+    <th role="columnheader" scope="col">
       Centre
     </th>
   </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var centre in Model.TopTenCentres) {
-    <tr role="row" class="nhsuk-table__row @(centre.Rank == Model.CurrentCentre?.Rank ? "current-centre" : string.Empty)">
+  @foreach (var centre in Model.Centres) {
+    <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)">
       <td class="nhsuk-table__cell cell-left-padding">@centre.Rank</td>
       <td class="nhsuk-table__cell ">@centre.CentreName</td>
-    </tr>
-  }
-  @if (!Model.IsCurrentCentreInTopTen && Model.CurrentCentre != null) {
-    <tr role="row" class="nhsuk-table__row current-centre">
-      <td class="nhsuk-table__cell cell-left-padding">@Model.CurrentCentre.Rank</td>
-      <td class="nhsuk-table__cell ">@Model.CurrentCentre.CentreName</td>
-    </tr>
-  }
-  @if (Model.CurrentCentre == null) {
-    <tr role="row" class="nhsuk-table__row current-centre">
-      <td class="nhsuk-table__cell cell-left-padding"></td>
-      <td class="nhsuk-table__cell ">Your centre overall rank: no activity</td>
     </tr>
   }
   </tbody>

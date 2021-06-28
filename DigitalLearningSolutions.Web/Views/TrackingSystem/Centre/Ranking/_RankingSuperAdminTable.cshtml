@@ -16,8 +16,8 @@
   </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var centre in Model.TopTenCentres) {
-    <tr role="row" class="nhsuk-table__row @(centre.Rank == Model.CurrentCentre?.Rank ? "current-centre" : string.Empty)">
+  @foreach (var centre in Model.Centres) {
+    <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)">
       <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
         <span class="nhsuk-table-responsive__heading">Rank </span>@centre.Rank
       </td>
@@ -27,28 +27,6 @@
       <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
         <span class="nhsuk-table-responsive__heading">Sum </span>@centre.Sum
       </td>
-    </tr>
-  }
-  @if (!Model.IsCurrentCentreInTopTen && Model.CurrentCentre != null) {
-    <tr role="row" class="nhsuk-table__row current-centre">
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Rank </span>@Model.CurrentCentre.Rank
-      </td>
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Centre </span>@Model.CurrentCentre.CentreName
-      </td>
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
-        <span class="nhsuk-table-responsive__heading">Sum </span>@Model.CurrentCentre.Sum
-      </td>
-    </tr>
-  }
-  @if (Model.CurrentCentre == null) {
-    <tr role="row" class="nhsuk-table__row current-centre">
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding"></td>
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding">
-        Your centre overall rank: no activity
-      </td>
-      <td role="cell" class="nhsuk-table__cell cell-left-padding cell-right-padding"></td>
     </tr>
   }
   </tbody>

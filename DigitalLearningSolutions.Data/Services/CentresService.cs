@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -8,43 +7,37 @@
 
     public interface ICentresService
     {
-        IEnumerable<CentreRank> GetTopCentreRanks(int centreId, int numberOfDays, int regionId);
+        IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId);
 
-        int GetCentreRankForCentre(int centreId);
+        int? GetCentreRankForCentre(int centreId);
     }
 
     public class CentresService : ICentresService
     {
+        private const int NumberOfCentresToDisplay = 10;
+        private const int DefaultNumberOfDaysFilter = 14;
         private readonly ICentresDataService centresDataService;
+        private readonly IClockService clockService;
 
-        public CentresService(ICentresDataService centresDataService)
+        public CentresService(ICentresDataService centresDataService, IClockService clockService)
         {
             this.centresDataService = centresDataService;
+            this.clockService = clockService;
         }
 
-        public IEnumerable<CentreRank> GetTopCentreRanks(int centreId, int numberOfDays, int regionId)
+        public IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId)
         {
-            var dateSince = DateTime.UtcNow.AddDays(-numberOfDays);
+            var dateSince = clockService.UtcNow.AddDays(-numberOfDays);
 
-            var centreRanks = centresDataService.GetCentreRanks(dateSince, regionId).OrderBy(cr => cr.Rank).ToList();
-
-            var topTenCentres = centreRanks.Take(10).ToList();
-
-            var currentCentreRank = centreRanks.SingleOrDefault(cr => cr.CentreId == centreId);
-
-            if (currentCentreRank == null)
-            {
-                return topTenCentres;
-            }
-
-            return topTenCentres.Contains(currentCentreRank) ? topTenCentres : topTenCentres.Append(currentCentreRank);
+            return centresDataService.GetCentreRanks(dateSince, regionId, NumberOfCentresToDisplay, centreId).ToList();
         }
 
-        public int GetCentreRankForCentre(int centreId)
+        public int? GetCentreRankForCentre(int centreId)
         {
-            var centreRanks = centresDataService.GetCentreRanks(DateTime.UtcNow.AddDays(-14), -1);
-            var centreRank = centreRanks.SingleOrDefault(cr => cr.CentreId == centreId);
-            return centreRank?.Rank ?? -1;
+            var dateSince = clockService.UtcNow.AddDays(-DefaultNumberOfDaysFilter);
+            var centreRankings = centresDataService.GetCentreRanks(dateSince, null, NumberOfCentresToDisplay, centreId);
+            var centreRanking = centreRankings.SingleOrDefault(cr => cr.CentreId == centreId);
+            return centreRanking?.Ranking;
         }
     }
 }

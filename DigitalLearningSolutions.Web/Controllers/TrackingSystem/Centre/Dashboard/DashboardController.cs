@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -41,7 +41,7 @@
             var courseCount = courseService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
-            var centreRank = centresService.GetCentreRankForCentre(User.GetCentreId());
+            var centreRank = centresService.GetCentreRankForCentre(centreId);
 
             var model = new CentreDashboardViewModel(
                 centre,

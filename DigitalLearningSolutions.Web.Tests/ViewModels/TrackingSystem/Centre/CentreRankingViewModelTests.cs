@@ -10,7 +10,7 @@
 
     public class CentreRankingViewModelTests
     {
-        private readonly CentreRank[] centreRankings =
+        private readonly CentreRanking[] centreRankings =
         {
             CentreTestHelper.GetCentreRank(1),
             CentreTestHelper.GetCentreRank(2),
@@ -33,9 +33,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.TopTenCentres.Count().Should().Be(10);
-                result.CurrentCentre!.Rank.Should().Be(3);
-                result.IsCurrentCentreInTopTen.Should().BeTrue();
+                result.Centres.Count().Should().Be(10);
+                result.CentreHasNoActivity.Should().BeFalse();
             }
         }
 
@@ -52,9 +51,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.TopTenCentres.Count().Should().Be(10);
-                result.CurrentCentre!.Rank.Should().Be(20);
-                result.IsCurrentCentreInTopTen.Should().BeFalse();
+                result.Centres.Count().Should().Be(11);
+                result.CentreHasNoActivity.Should().BeFalse();
             }
         }
 
@@ -68,9 +66,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.TopTenCentres.Count().Should().Be(10);
-                result.CurrentCentre.Should().BeNull();
-                result.IsCurrentCentreInTopTen.Should().BeFalse();
+                result.Centres.Count().Should().Be(10);
+                result.CentreHasNoActivity.Should().BeTrue();
             }
         }
 
@@ -86,9 +83,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.TopTenCentres.Count().Should().Be(5);
-                result.CurrentCentre.Should().BeNull();
-                result.IsCurrentCentreInTopTen.Should().BeFalse();
+                result.Centres.Count().Should().Be(5);
+                result.CentreHasNoActivity.Should().BeTrue();
             }
         }
     }

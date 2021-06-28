@@ -4,7 +4,7 @@
 
     public class DashboardCentreDetailsViewModel
     {
-        public DashboardCentreDetailsViewModel(Centre centre, string userIpAddress, int centreRank)
+        public DashboardCentreDetailsViewModel(Centre centre, string userIpAddress, int? centreRank)
         {
             CentreName = centre.CentreName;
             CentreId = centre.CentreId;
@@ -16,7 +16,7 @@
             BannerText = centre.BannerText;
             IpAddress = userIpAddress;
             ApprovedIps = centre.IpPrefix;
-            CentreRank = centreRank;
+            CentreRank = centreRank?.ToString() ?? "No activity";
         }
 
         public string CentreName { get; set; }
@@ -39,6 +39,6 @@
 
         public string? ApprovedIps { get; set; }
 
-        public int CentreRank { get; set; }
+        public string CentreRank { get; set; }
     }
 }
