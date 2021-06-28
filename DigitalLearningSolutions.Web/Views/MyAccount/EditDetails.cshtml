@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model EditDetailsViewModel
 
@@ -11,26 +12,27 @@
 
 @if (User.IsDelegateOnlyAccount()) {
   ViewData["Application"] = "Learning Portal";
-  @section NavMenuItems {
-  <partial name="../LearningPortal/Shared/_NavMenuItems"/>
-  }
-}
 
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password) })"/>
-    </div>
-  </div>
+  @section NavMenuItems {
+    <partial name="../LearningPortal/Shared/_NavMenuItems" />
+  }
+} else {
+  @section NavMenuItems {
+    <partial name="_NavMenuItems" />
+  }
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password) })" />
+    }
+
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditDetails" enctype="multipart/form-data">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save">Save</button>
   </div>
@@ -44,7 +46,7 @@
                      spell-check="false"
                      autocomplete="given-name"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="LastName"
                      label="Last name"
@@ -53,7 +55,7 @@
                      spell-check="false"
                      autocomplete="family-name"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+                     css-class="nhsuk-u-width-one-half" />
 
       <vc:text-input asp-for="Email"
                      label="Email address"
@@ -62,12 +64,12 @@
                      spell-check="false"
                      autocomplete="email"
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+                     css-class="nhsuk-u-width-one-half" />
     </div>
   </div>
 
   @if (Model.IsDelegateUser) {
-    <input type="hidden" asp-for="IsDelegateUser"/>
+    <input type="hidden" asp-for="IsDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
         <vc:select-list asp-for="JobGroupId"
@@ -77,7 +79,7 @@
                         deselectable="false"
                         css-class="nhsuk-u-width-one-half"
                         default-option="Select a job group"
-                        select-list-options="@ViewBag.JobGroupOptions"/>
+                        select-list-options="@ViewBag.JobGroupOptions" />
 
         @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
           @if (customField.Options.Any()) {
@@ -88,7 +90,7 @@
                             deselectable="@(!customField.Mandatory)"
                             css-class="nhsuk-u-width-one-half"
                             default-option="Select a @customField.CustomPrompt.ToLower()"
-                            select-list-options="@customField.Options"/>
+                            select-list-options="@customField.Options" />
           } else {
             <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
                            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
@@ -97,7 +99,7 @@
                            spell-check="false"
                            autocomplete=""
                            hint-text=""
-                           css-class="nhsuk-u-width-one-half"/>
+                           css-class="nhsuk-u-width-one-half" />
           }
         }
       </div>
@@ -109,14 +111,14 @@
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
                               To remove your profile picture click the remove button.
                               Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="ProfileImage"/>
-      <vc:file-input asp-for="ProfileImageFile" label="Profile picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full"/>
+      <input type="hidden" asp-for="ProfileImage" />
+      <vc:file-input asp-for="ProfileImageFile" label="Profile picture (optional)" hint-text="@hintText" css-class="nhsuk-u-width-full" />
     </div>
     <div class="nhsuk-grid-column-one-half">
       @if (Model.ProfileImage != null) {
-        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture"/>
+        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
       } else {
-        <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture"/>
+        <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
       }
     </div>
   </div>
@@ -137,7 +139,7 @@
                      spell-check="false"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-one-half"/>
+                     css-class="nhsuk-u-width-one-half" />
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
@@ -145,6 +147,6 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Cancel"/>
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Cancel" />
   </div>
 </div>

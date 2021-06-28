@@ -8,6 +8,7 @@
         public const string UserCentreAdmin = "UserCentreAdmin";
         public const string UserFrameworksAdminOnly = "UserFrameworksAdminOnly";
         public const string UserCentreManager = "UserCentreManager";
+        public const string UserCentreAdminOrFrameworksAdmin = "UserCentreAdminOrFrameworksAdmin";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
@@ -32,7 +33,9 @@
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
                            && (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true) |
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true)
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true) |
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true) |
+                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true)
             );
         }
 
@@ -42,8 +45,18 @@
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
-                           (context.User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) == true ||
-                            context.User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) == true)
+                           context.User.HasCentreManagerPermissions()
+            );
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserCentreAdminOrFrameworksAdmin(
+            AuthorizationPolicyBuilder policy
+        )
+        {
+            return policy.RequireAssertion(
+                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
+                           && (context.User.HasCentreAdminPermissions()
+                           || context.User.HasFrameworksAdminPermissions())
             );
         }
     }

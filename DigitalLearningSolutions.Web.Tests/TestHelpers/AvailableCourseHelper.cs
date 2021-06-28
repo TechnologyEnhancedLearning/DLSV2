@@ -35,7 +35,7 @@
         public static AvailablePageViewModel AvailableViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Available() as ViewResult;
-            return result.Model as AvailablePageViewModel;
+            return (AvailablePageViewModel)result!.Model;
         }
     }
 }

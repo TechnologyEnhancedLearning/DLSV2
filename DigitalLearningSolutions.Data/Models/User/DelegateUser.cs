@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
     using System;
+    using DigitalLearningSolutions.Data.Enums;
 
     public class DelegateUser : User
     {
@@ -14,5 +15,10 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+
+        public override UserReference ToUserReference()
+        {
+            return new UserReference(Id, UserType.DelegateUser);
+        }
     }
 }

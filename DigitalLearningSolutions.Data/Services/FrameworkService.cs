@@ -13,6 +13,8 @@
     {
         //GET DATA
         //  Frameworks:
+        DashboardData GetDashboardDataForAdminID(int adminId);
+        IEnumerable<DashboardToDoItem> GetDashboardToDoItems(int adminId);
         DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId);
         BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId);
         BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId);
@@ -98,10 +100,7 @@
             @"FW.ID, FrameworkName, OwnerAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID,
-                 (SELECT Status
-                 FROM    PublishStatus
-                 WHERE (ID = FW.PublishStatusID)) AS PublishStatus, UpdatedByAdminID,
+                 WHERE (AdminID = FW.OwnerAdminID)) AS Owner, BrandID, CategoryID, TopicID, CreatedDate, PublishStatusID, UpdatedByAdminID,
                  (SELECT Forename + ' ' + Surname AS Expr1
                  FROM    AdminUsers AS AdminUsers_1
                  WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy, CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
@@ -184,8 +183,8 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
             return connection.Query<BrandedFramework>(
                 $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
                       FROM {FrameworkTables}
-                      WHERE (OwnerAdminID = @AdminID) OR
-             (@AdminID IN
+                      WHERE (OwnerAdminID = @adminId) OR
+             (@adminId IN
                  (SELECT AdminID
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID)))",
@@ -1525,6 +1524,51 @@ WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
                     $"reviewId: {reviewId}."
                 );
             }
+        }
+
+        public DashboardData GetDashboardDataForAdminID(int adminId)
+        {
+            return connection.Query<DashboardData>(
+                $@"SELECT (SELECT COUNT(*) 
+  FROM [dbo].[Frameworks]) AS FrameworksCount,
+
+  (SELECT COUNT(*) FROM {FrameworkTables} 
+WHERE (OwnerAdminID = @adminId) OR
+             (@adminId IN
+                 (SELECT AdminID
+                 FROM    FrameworkCollaborators
+                 WHERE (FrameworkID = FW.ID)))) AS MyFrameworksCount,
+
+				 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
+
+				 (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
+             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId 
+WHERE (RP.CreatedByAdminID = @adminId) OR
+             (@adminId IN
+                 (SELECT AdminID
+                 FROM    SelfAssessmentCollaborators
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
+                new { adminId }).FirstOrDefault();
+        }
+
+        public IEnumerable<DashboardToDoItem> GetDashboardToDoItems(int adminId)
+        {
+            return connection.Query<DashboardToDoItem>(
+                @"SELECT FW.ID AS FrameworkID, 0 AS RoleProfileID, FW.FrameworkName AS ItemName, AU.Forename + ' ' + AU.Surname AS RequestorName, FWR.SignOffRequired, FWR.ReviewRequested AS Requested
+FROM   FrameworkReviews AS FWR INNER JOIN
+             Frameworks AS FW ON FWR.FrameworkID = FW.ID INNER JOIN
+             FrameworkCollaborators AS FWC ON FWR.FrameworkCollaboratorID = FWC.ID INNER JOIN
+             AdminUsers AS AU ON FW.OwnerAdminID = AU.AdminID
+WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
+UNION ALL
+SELECT 0 AS SelfAssessmentID, RP.ID AS SelfAssessmentID, RP.Name AS ItemName, AU.Forename + ' ' + AU.Surname AS RequestorName, RPR.SignOffRequired, RPR.ReviewRequested AS Requested
+FROM   SelfAssessmentReviews AS RPR INNER JOIN
+             SelfAssessments AS RP ON RPR.SelfAssessmentID = RP.ID INNER JOIN
+             SelfAssessmentCollaborators AS RPC ON RPR.SelfAssessmentCollaboratorID = RPC.ID INNER JOIN
+             AdminUsers AS AU ON RP.CreatedByAdminID = AU.AdminID
+WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archived IS NULL)", new { adminId }
+                );
+
         }
     }
 }

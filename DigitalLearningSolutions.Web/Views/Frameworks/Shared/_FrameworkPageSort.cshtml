@@ -1,9 +1,9 @@
-@using DigitalLearningSolutions.Web.ViewModels.Frameworks
-@model BaseFrameworksPageViewModel
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model BaseSearchablePageViewModel
 @* label set in CSS ::before due to layout *@
   <div class="sort-row nhsuk-form-group">
     <div class=" sort-select-container">
-      <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.FrameworkSortByOptions" aria-label="Sort by"></select>
+      <select class="nhsuk-select" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
     </div>
     <div class=" sort-select-container">
       <select class="nhsuk-select" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">

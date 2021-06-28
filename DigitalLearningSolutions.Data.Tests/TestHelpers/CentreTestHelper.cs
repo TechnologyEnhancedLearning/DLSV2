@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DbModels;
 
     public static class CentreTestHelper
     {
@@ -74,6 +75,17 @@
                 CustomCourses = customCourses,
                 ServerSpaceBytes = serverSpaceBytes,
                 ServerSpaceUsed = serverSpaceUsed
+            };
+        }
+
+        public static CentreRanking GetCentreRank(int rank)
+        {
+            return new CentreRanking
+            {
+                CentreId = rank,
+                Ranking = rank,
+                CentreName = $"Centre {rank}",
+                DelegateSessionCount = 10000-rank*10
             };
         }
     }

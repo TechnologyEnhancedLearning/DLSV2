@@ -148,7 +148,7 @@ CA.LaunchCount, CA.SubmittedDate
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
-                     (SELECT ROW_NUMBER() OVER (ORDER BY CompetencyID) as RowNo,
+                     (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
                              CompetencyID
                       FROM SelfAssessmentStructure
                       WHERE SelfAssessmentID = @selfAssessmentId

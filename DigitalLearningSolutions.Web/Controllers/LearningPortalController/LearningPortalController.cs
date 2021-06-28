@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     public partial class LearningPortalController : Controller
     {
         private readonly ICentresDataService centresDataService;
-        private readonly ICourseService courseService;
+        private readonly ICourseDataService courseDataService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly INotificationService notificationService;
         private readonly ILogger<LearningPortalController> logger;
@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 
         public LearningPortalController(
             ICentresDataService centresDataService,
-            ICourseService courseService,
+            ICourseDataService courseDataService,
             ISelfAssessmentService selfAssessmentService,
             INotificationService notificationService,
             ILogger<LearningPortalController> logger,
@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IFilteredApiHelperService filteredApiHelperService)
         {
             this.centresDataService = centresDataService;
-            this.courseService = courseService;
+            this.courseDataService = courseDataService;
             this.selfAssessmentService = selfAssessmentService;
             this.notificationService = notificationService;
             this.logger = logger;

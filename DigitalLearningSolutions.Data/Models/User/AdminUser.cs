@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Enums;
+
     public class AdminUser : User
     {
         public bool IsCentreAdmin { get; set; }
@@ -25,7 +27,15 @@
         public bool IsTrainer { get; set; }
 
         public bool IsFrameworkDeveloper { get; set; }
-
+        public bool IsFrameworkContributor { get; set; }
+        public bool IsWorkforceManager { get; set; }
+        public bool IsWorkforceContributor { get; set; }
+        public bool IsLocalWorkforceManager { get; set; }
         public bool ImportOnly { get; set; }
+
+        public override UserReference ToUserReference()
+        {
+            return new UserReference(Id, UserType.AdminUser);
+        }
     }
 }

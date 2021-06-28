@@ -5,6 +5,10 @@
 
 @model ApplicationSelectorViewModel
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems"/>
+}
+
 @{
   ViewData["Title"] = "Switch Application";
 }
@@ -79,7 +83,7 @@
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
-            <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="FrameworksDashboard">Frameworks</a>
+            <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="Index">Frameworks</a>
           </h2>
           <p class="nhsuk-card__description">Create and distribute competency frameworks and role profiles.</p>
         </div>

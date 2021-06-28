@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using FluentMigrator.Runner;
@@ -76,6 +77,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreManager,
                         policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserCentreAdminOrFrameworksAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
+                    );
                 }
             );
 
@@ -102,7 +107,13 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                     }
                 )
-                .AddMvcOptions(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+                .AddMvcOptions(
+                    options =>
+                    {
+                        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                        options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
+                    }
+                );
 
             if (env.IsDevelopment())
             {
@@ -119,9 +130,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register services.
+            services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseDataService, CourseDataDataService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
@@ -161,9 +173,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<CustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
-
+            services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
-
             RegisterWebServiceFilters(services);
         }
 

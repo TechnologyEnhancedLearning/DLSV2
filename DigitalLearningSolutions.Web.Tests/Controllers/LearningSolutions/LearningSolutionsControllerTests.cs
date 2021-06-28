@@ -3,7 +3,7 @@
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using FakeItEasy;
     using FluentAssertions;
