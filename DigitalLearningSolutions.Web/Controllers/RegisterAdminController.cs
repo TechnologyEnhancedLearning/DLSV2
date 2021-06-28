@@ -185,10 +185,7 @@
 
         private void SetAdminRegistrationData(int centreId)
         {
-            var adminRegistrationData = new RegistrationData
-            {
-                Centre = centreId
-            };
+            var adminRegistrationData = new RegistrationData(centreId);
             var id = adminRegistrationData.Id;
 
             Response.Cookies.Append(

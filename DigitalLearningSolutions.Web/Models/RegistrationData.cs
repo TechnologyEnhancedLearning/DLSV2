@@ -10,6 +10,12 @@
             Id = new Guid();
         }
 
+        public RegistrationData(int? centreId)
+        {
+            Id = new Guid();
+            Centre = centreId;
+        }
+
         public Guid Id { get; set; }
 
         public string? FirstName { get; set; }
