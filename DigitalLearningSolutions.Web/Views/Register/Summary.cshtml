@@ -1,11 +1,8 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using DigitalLearningSolutions.Web.ViewModels.Register
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Summary" : "Register - Summary";
-  var termsError = ViewData.ModelState["Terms"]?.Errors?.Count > 0;
-  var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
 }
 
 @section NavMenuItems {
