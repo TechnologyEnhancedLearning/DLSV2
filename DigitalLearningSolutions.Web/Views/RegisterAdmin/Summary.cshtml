@@ -3,8 +3,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Summary" : "Register Admin - Summary";
-  var termsError = ViewData.ModelState["Terms"]?.Errors?.Count > 0;
-  var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
 }
 
 <div class="nhsuk-grid-row">
@@ -83,24 +81,7 @@
     </dl>
 
     <form method="post" asp-action="Summary">
-      <div class="nhsuk-form-group @termsFormErrorClass">
-        <fieldset class="nhsuk-fieldset" aria-describedby="terms-error">
-          @if (termsError) {
-            <span class="nhsuk-error-message" id="terms-error">
-              <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Terms"].Errors[0].ErrorMessage
-            </span>
-          }
-          <div class="nhsuk-checkboxes">
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="Terms" name="Terms" asp-for="Terms" />
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="Terms">
-                I have read, understood and agree to abide by the Digital Learning Solutions <a asp-controller="LearningSolutions" asp-action="Terms" target="_blank">Terms and Conditions</a>.
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
+      <vc:terms-conditions asp-for="Terms" />
       <button class="nhsuk-button" type="submit">Register</button>
     </form>
   </div>
