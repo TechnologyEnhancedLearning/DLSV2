@@ -5,31 +5,36 @@
   ViewData["Title"] = "Welcome";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true"/>
+<link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true" />
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />
 
     <div class="welcome-page-button-container">
-      @if (Model.UserIsLoggedIn) {
+      @if (Model.UserIsLoggedIn)
+      {
         <a class="nhsuk-button auth-button auth-button--left" asp-controller="ApplicationSelector" asp-action="Index">
           Switch application
         </a>
       } else {
-        <a class="nhsuk-button auth-button auth-button--left" asp-controller="Login" asp-action="Index">
+        <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
           Log in
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary auth-button" asp-controller="Register" asp-action="Index">
+        <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Index">
           Register
         </a>
       }
     </div>
 
-    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
 
     <p class="nhsuk-body-m">Our products and services can help you manage digital learning delivery for the benefit of the people in your organisation.</p>
 
-    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
   </div>
 </div>

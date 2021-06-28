@@ -8,10 +8,14 @@
   var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
 }
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })"/>
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })" />
     }
 
     <div class="nhsuk-u-margin-bottom-8">
@@ -109,4 +113,3 @@
     </form>
   </div>
 </div>
-

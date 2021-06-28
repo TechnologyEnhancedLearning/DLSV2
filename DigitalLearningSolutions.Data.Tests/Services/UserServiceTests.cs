@@ -207,7 +207,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress))
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, adminUser, A<List<DelegateUser>>._))
-                .Returns((adminUser, new List<DelegateUser>()));
+                .Returns(new UserAccountSet(adminUser, new List<DelegateUser>()));
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
 
@@ -241,7 +241,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress))
                 .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, null, A<List<DelegateUser>>._))
-                .Returns((null, new List<DelegateUser> { delegateUser }));
+                .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
 
@@ -281,7 +281,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((adminUser, new List<DelegateUser> { delegateUser }));
+                .Returns(new UserAccountSet(adminUser, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
@@ -321,7 +321,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
 
             // When
             var result = userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);

@@ -5,19 +5,25 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register" : "Register";
 }
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="PersonalInformation">
 
-      @if (errorHasOccurred) {
+      @if (errorHasOccurred)
+      {
         <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Register</h1>
+        <h1 class="nhsuk-heading-xl">Register</h1>
         <input type="hidden" asp-for="IsCentreSpecificRegistration" value="@Model.IsCentreSpecificRegistration" />
 
-        @if (Model.IsCentreSpecificRegistration) {
+        @if (Model.IsCentreSpecificRegistration)
+        {
           <p class="nhsuk-body-l">
             Please enter your personal details to start the registration process
             to access all Digital Learning Solutions services at <b>@Model.CentreName</b>.
@@ -26,59 +32,58 @@
             </a>
           </p>
           <input type="hidden" asp-for="Centre" />
-        } else {
+        }
+        else
+        {
           <p class="nhsuk-body-l">
             Please select your centre to start the registration process
             to access all Digital Learning Solutions services.
           </p>
 
-          <vc:select-list
-            asp-for="Centre"
-            label="Centre"
-            value="@Model.Centre?.ToString()"
-            hint-text=""
-            deselectable="false"
-            css-class="nhsuk-u-width-full"
-            default-option="Select a centre"
-            select-list-options="@Model.CentreOptions" />
+          <vc:select-list asp-for="Centre"
+                          label="Centre"
+                          value="@Model.Centre?.ToString()"
+                          hint-text=""
+                          deselectable="false"
+                          css-class="nhsuk-u-width-full"
+                          default-option="Select a centre"
+                          select-list-options="@Model.CentreOptions" />
         }
       </div>
 
-      @if (!Model.IsCentreSpecificRegistration) {
+      @if (!Model.IsCentreSpecificRegistration)
+      {
         <p class="nhsuk-body-l">
           Now enter your personal details.
         </p>
       }
 
-      <vc:text-input
-        asp-for="FirstName"
-        label="First name"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        hint-text=""
-        autocomplete="given-name"
-        css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="FirstName"
+                     label="First name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="given-name"
+                     css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input
-        asp-for="LastName"
-        label="Last name"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        hint-text=""
-        autocomplete="family-name"
-        css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="LastName"
+                     label="Last name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="family-name"
+                     css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input
-        asp-for="Email"
-        label="Email"
-        populate-with-current-value="true"
-        type="text"
-        spell-check="false"
-        hint-text=""
-        autocomplete="email"
-        css-class="nhsuk-u-width-one-half" />
+      <vc:text-input asp-for="Email"
+                     label="Email"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="email"
+                     css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>

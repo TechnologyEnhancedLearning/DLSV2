@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration
-
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @using Microsoft.Extensions.Configuration
 @model RejectDelegateViewModel
@@ -7,10 +6,10 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateApprovals.css")" asp-append-version="true">
 
 @{
-    ViewData["Title"] = "Reject delegate registration";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = "Reject delegate registration";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -20,7 +19,9 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Reject delegate registration</h1>
+
     <p class="nhsuk-body-l">Are you sure you want to reject this user's registration?</p>
+
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -47,14 +48,14 @@
         </dd>
       </div>
     </dl>
-    <form asp-controller="DelegateApprovals" asp-action="RejectDelegate" method="post">
+
+    <form class="nhsuk-u-margin-bottom-5" asp-controller="DelegateApprovals" asp-action="RejectDelegate" method="post">
       <input type="hidden" name="delegateId" value="@Model.Id" />
-      <button class="nhsuk-button delete-button nhsuk-u-margin-bottom-6" type="submit">
+      <button class="nhsuk-button delete-button" type="submit">
         Reject
       </button>
     </form>
-    <div class="top-spaced-goback">
-      <vc:back-link asp-controller="DelegateApprovals" asp-action="Index" link-text="Cancel" />
-    </div>
+
+    <vc:back-link asp-controller="DelegateApprovals" asp-action="Index" link-text="Cancel" />
   </div>
 </div>

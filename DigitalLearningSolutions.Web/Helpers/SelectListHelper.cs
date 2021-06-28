@@ -20,5 +20,10 @@
         {
             return options.Select(o => new SelectListItem(o, o, o == selected)).ToList();
         }
+
+        public static IEnumerable<SelectListItem> MapOptionsToSelectListItems(IEnumerable<(string Text, string Value)> options)
+        {
+            return options.Select(option => new SelectListItem(option.Text, option.Value));
+        }
     }
 }

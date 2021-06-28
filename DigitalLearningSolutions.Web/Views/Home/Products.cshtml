@@ -5,20 +5,24 @@
   ViewData["Title"] = "Welcome - Products";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/home/products.css")"/>
+<link rel="stylesheet" href="@Url.Content("~/css/home/products.css")" />
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_MiniHubHeading" model="@Model.MiniHubNavigationModel" />
 
-    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
 
     <div class="product">
       <h2 class="product__heading">Tracking System</h2>
       <p class="product__body-text">Distribute and track digital learning</p>
       <ul class="product__body-text">
-        <li>Provide your staff or students with access to quality assured digital learning content</li>
+        <li>Provide your staff or students with access to quality-assured digital learning content</li>
         <li>Provide access to your own, hosted learning content</li>
         <li>Comprehensive tools for managing learners and learning pathways</li>
         <li>Track and report on learning</li>
@@ -44,6 +48,6 @@
       </ul>
     </div>
 
-    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel"/>
+    <partial name="MiniHub/_Pagination" model="@Model.MiniHubNavigationModel" />
   </div>
 </div>

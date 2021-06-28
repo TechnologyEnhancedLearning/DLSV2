@@ -13,70 +13,50 @@
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
-}
-
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}"/>
-    </div>
-  </div>
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
+    }
+
     <h1 class="nhsuk-heading-xl">Configure answers</h1>
-  </div>
-</div>
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
-  <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
-  </div>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
+      </div>
 
-  <input type="hidden" asp-for="OptionsString"/>
+      <input type="hidden" asp-for="OptionsString" />
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
-        <partial name="_NoConfiguredAnswers"/>
+        <partial name="_NoConfiguredAnswers" />
       } else {
-        <partial name="_RegistrationPromptAnswerTable" model="Model"/>
+        <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
-    </div>
-  </div>
 
-  <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <vc:text-input asp-for="Answer"
-                     label="Add a new answer?"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="true"
-                     autocomplete=""
-                     hint-text=""
-                     css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
-    </div>
-  </div>
+      <div class="divider">
+        <vc:text-input asp-for="Answer"
+                       label="Add a new answer?"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="true"
+                       autocomplete=""
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+        <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
+      </div>
 
-  <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <p class="nhsuk-label">Want to add answers in bulk?</p>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk add</button>
-    </div>
-  </div>
+      <div class="divider">
+        <p class="nhsuk-label">Want to edit answers in bulk?</p>
+        <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk edit</button>
+      </div>
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
       <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.NextAction">Next</button>
-    </div>
-  </div>
-</form>
+    </form>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptSelectPrompt" link-text="Go back"/>
+    <vc:back-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptSelectPrompt" link-text="Go back" />
   </div>
 </div>

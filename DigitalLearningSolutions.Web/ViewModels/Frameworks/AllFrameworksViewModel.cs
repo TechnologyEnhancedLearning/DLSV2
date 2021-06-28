@@ -4,38 +4,41 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Helpers;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    public class AllFrameworksViewModel : BaseFrameworksPageViewModel
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+
+    public class AllFrameworksViewModel : BaseSearchablePageViewModel
     {
         public readonly IEnumerable<BrandedFramework> BrandedFrameworks;
-        public override SelectList FrameworkSortByOptions { get; } = new SelectList(new[]
-    {
-            FrameworkSortByOptionTexts.FrameworkName,
-            FrameworkSortByOptionTexts.FrameworkOwner,
-            FrameworkSortByOptionTexts.FrameworkCreatedDate,
-            FrameworkSortByOptionTexts.FrameworkPublishStatus,
-            FrameworkSortByOptionTexts.FrameworkBrand,
-            FrameworkSortByOptionTexts.FrameworkCategory,
-            FrameworkSortByOptionTexts.FrameworkTopic
-        });
+
         public AllFrameworksViewModel(
             IEnumerable<BrandedFramework> brandedFrameworks,
             string? searchString,
             string sortBy,
             string sortDirection,
             int page
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, sortBy, sortDirection, page, 12)
         {
-            var sortedItems = SortingHelper.SortFrameworkItems(
-                brandedFrameworks,
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                brandedFrameworks.AsQueryable(),
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterFrameworks(sortedItems, SearchString, 60, false).ToList();
+            var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString, 60).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
-            BrandedFrameworks = paginatedItems.Cast<BrandedFramework>();
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
+            BrandedFrameworks = paginatedItems;
         }
+
+        public override IEnumerable<(string, string)> SortOptions { get; } = new []
+        {
+            FrameworkSortByOptions.FrameworkName,
+            FrameworkSortByOptions.FrameworkOwner,
+            FrameworkSortByOptions.FrameworkCreatedDate,
+            FrameworkSortByOptions.FrameworkPublishStatus,
+            FrameworkSortByOptions.FrameworkBrand,
+            FrameworkSortByOptions.FrameworkCategory,
+            FrameworkSortByOptions.FrameworkTopic
+        };
     }
 }

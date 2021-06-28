@@ -1,9 +1,6 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
-    using FluentAssertions;
-    using OpenQA.Selenium;
-    using Selenium.Axe;
     using Xunit;
 
     public class BasicAccessibilityTests : AccessibilityTestsBase
@@ -41,6 +38,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
+        [InlineData("/ChangePassword", "Change password")]
+        [InlineData("/TrackingSystem/Support", "Support")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
