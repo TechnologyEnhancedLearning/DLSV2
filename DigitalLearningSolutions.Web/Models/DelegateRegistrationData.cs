@@ -13,7 +13,7 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
         
-        public new void SetLearnerInformation(LearnerInformationViewModel model)
+        public override void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;
             Answer1 = model.Answer1;

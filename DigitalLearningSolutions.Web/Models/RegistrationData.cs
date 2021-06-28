@@ -29,7 +29,7 @@
             LastName = model.LastName;
         }
 
-        public void SetLearnerInformation(LearnerInformationViewModel model)
+        public virtual void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;
         }
