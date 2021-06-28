@@ -86,9 +86,9 @@
 
         public static bool HasFrameworksAdminPermissions(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true |
-                   user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true |
-                   user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true |
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true ||
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true;
         }
     }
