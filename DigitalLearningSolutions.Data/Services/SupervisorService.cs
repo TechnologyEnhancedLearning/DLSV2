@@ -59,11 +59,19 @@
         public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
         {
             return connection.Query<SupervisorDelegateDetail>(
-                @"SELECT sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6
-                    FROM   SupervisorDelegates AS sd LEFT OUTER JOIN
-                    Candidates AS c ON sd.CandidateID = c.CandidateID LEFT OUTER JOIN
-                    JobGroups AS jg ON c.JobGroupID = jg.JobGroupID
-                    WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
+                @"SELECT sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
+             cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6
+FROM   Centres AS ct LEFT OUTER JOIN
+             CustomPrompts AS cp1 ON ct.CustomField1PromptID = cp1.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp2 ON ct.CustomField1PromptID = cp2.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp3 ON ct.CustomField1PromptID = cp3.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp4 ON ct.CustomField1PromptID = cp4.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp5 ON ct.CustomField1PromptID = cp5.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp6 ON ct.CustomField1PromptID = cp6.CustomPromptID RIGHT OUTER JOIN
+             Candidates AS c ON ct.CentreID = c.CentreID RIGHT OUTER JOIN
+             SupervisorDelegates AS sd ON c.CandidateID = sd.CandidateID LEFT OUTER JOIN
+             JobGroups AS jg ON c.JobGroupID = jg.JobGroupID
+WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
                 );
         }
     }
