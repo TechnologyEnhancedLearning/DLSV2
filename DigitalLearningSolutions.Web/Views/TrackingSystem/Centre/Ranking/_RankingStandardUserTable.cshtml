@@ -4,7 +4,7 @@
 <table class="nhsuk-table">
   <thead role="rowgroup" class="nhsuk-table__head">
   <tr role="row">
-    <th role="columnheader" class="cell-left-padding" scope="col">
+    <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
       Rank
     </th>
     <th role="columnheader" scope="col">
@@ -15,7 +15,7 @@
   <tbody class="nhsuk-table__body">
   @foreach (var centre in Model.Centres) {
     <tr role="row" class="nhsuk-table__row @(centre.IsHighlighted ? "current-centre" : string.Empty)">
-      <td class="nhsuk-table__cell cell-left-padding">@centre.Rank</td>
+      <td class="nhsuk-table__cell nhsuk-u-padding-left-2">@centre.Rank</td>
       <td class="nhsuk-table__cell ">@centre.CentreName</td>
     </tr>
   }

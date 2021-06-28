@@ -44,7 +44,7 @@
         public void GetCentreRanks_returns_expected_list()
         {
             // When
-            var result = centresService.GetCentresForCentreRankingPage(3, 14, -1);
+            var result = centresService.GetCentresForCentreRankingPage(3, 14, null);
 
             // Then
             result.Count().Should().Be(10);
@@ -61,7 +61,7 @@
         }
 
         [Test]
-        public void GetCentreRankForCentre_returns_negative_one_with_no_data_for_centre()
+        public void GetCentreRankForCentre_returns_null_with_no_data_for_centre()
         {
             // When
             var result = centresService.GetCentreRankForCentre(20);

@@ -10,10 +10,6 @@ $current-centre-highlight: $color_nhsuk-pale-yellow;
   }
 }
 
-.cell-left-padding {
-  padding-left: nhsuk-spacing(2);
-}
-
 .cell-right-padding {
   @include govuk-media-query($until: desktop) {
     padding-right: nhsuk-spacing(2) !important;

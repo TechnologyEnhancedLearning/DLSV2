@@ -25,7 +25,7 @@
         };
 
         [Test]
-        public void CentreRankingViewModelViewModel_populates_expected_values_from_centre_ranks_with_centre_in_top_ten()
+        public void CentreRankingViewModel_populates_expected_values_from_centre_ranks_with_centre_in_top_ten()
         {
             // When
             var result = new CentreRankingViewModel(centreRankings, 3);
@@ -40,7 +40,7 @@
 
         [Test]
         public void
-            CentreRankingViewModelViewModel_populates_expected_values_from_centre_ranks_with_centre_not_in_top_ten()
+            CentreRankingViewModel_populates_expected_values_from_centre_ranks_with_centre_not_in_top_ten()
         {
             // Given
             var centreRankingsWithExtraCentre = centreRankings.Append(CentreTestHelper.GetCentreRank(20));
@@ -58,7 +58,7 @@
 
         [Test]
         public void
-            CentreRankingViewModelViewModel_populates_expected_values_from_centre_ranks_when_centre_has_no_data()
+            CentreRankingViewModel_populates_expected_values_from_centre_ranks_when_centre_has_no_data()
         {
             // When
             var result = new CentreRankingViewModel(centreRankings, 20);
@@ -72,7 +72,7 @@
         }
 
         [Test]
-        public void CentreRankingViewModelViewModel_populates_expected_values_from_centre_ranks_with_less_data()
+        public void CentreRankingViewModel_populates_expected_values_from_centre_ranks_with_less_data()
         {
             // Given
             var shortedCentreRankings = centreRankings.Take(5);

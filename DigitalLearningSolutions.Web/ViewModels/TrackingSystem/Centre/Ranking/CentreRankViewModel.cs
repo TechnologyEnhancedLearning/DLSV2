@@ -2,7 +2,7 @@
 {
     public class CentreRankViewModel
     {
-        public CentreRankViewModel(int rank, string centreName, int sum,bool isHighlighted)
+        public CentreRankViewModel(int rank, string centreName, int sum, bool isHighlighted)
         {
             Rank = rank;
             CentreName = centreName;
