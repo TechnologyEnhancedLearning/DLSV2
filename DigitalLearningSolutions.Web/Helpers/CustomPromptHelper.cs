@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class CustomPromptHelper
@@ -15,7 +15,7 @@
             this.customPromptsService = customPromptsService;
         }
 
-        public List<EditCustomFieldViewModel> GetCustomFieldViewModelsForCentre(
+        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
             int centreId,
             string? answer1,
             string? answer2,
@@ -39,6 +39,29 @@
             ).ToList();
         }
 
+        public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(
+            int centreId,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6
+        )
+        {
+            var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
+            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+
+            return customPrompts.CustomPrompts.Select(
+                cp => new CustomFieldViewModel(
+                    cp.CustomPromptNumber,
+                    cp.CustomPromptText,
+                    cp.Mandatory,
+                    answers[cp.CustomPromptNumber - 1]
+                )
+            ).ToList();
+        }
+
         public void ValidateCustomPrompts(
             int centreId,
             string? answer1,
@@ -50,7 +73,7 @@
             ModelStateDictionary modelState
         )
         {
-            var customFields = GetCustomFieldViewModelsForCentre(
+            var customFields = GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 answer1,
                 answer2,

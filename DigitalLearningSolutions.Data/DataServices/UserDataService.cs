@@ -86,7 +86,11 @@
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
-                        au.ProfileImage
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
@@ -183,7 +187,11 @@
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
-                        au.ProfileImage
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID

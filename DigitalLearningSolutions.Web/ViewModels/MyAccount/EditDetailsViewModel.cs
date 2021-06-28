@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -45,6 +45,7 @@
         [Required(ErrorMessage = "Enter your email address")]
         [MaxLength(250, ErrorMessage = "Email address must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
+        [NoWhitespace("Email address must not contain any whitespace characters")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Enter your current password")]

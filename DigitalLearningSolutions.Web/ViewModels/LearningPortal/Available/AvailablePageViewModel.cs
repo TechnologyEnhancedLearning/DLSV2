@@ -4,20 +4,12 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.Extensions.Configuration;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class AvailablePageViewModel : BaseCoursePageViewModel
+    public class AvailablePageViewModel : BaseSearchablePageViewModel
     {
         public readonly IEnumerable<AvailableCourseViewModel> AvailableCourses;
-
-        public override SelectList SortByOptions { get; } = new SelectList(new[]
-        {
-            SortByOptionTexts.Name,
-            SortByOptionTexts.Brand,
-            SortByOptionTexts.Category,
-            SortByOptionTexts.Topic
-        });
+        public readonly string? BannerText;
 
         public AvailablePageViewModel(
             IEnumerable<AvailableCourse> availableCourses,
@@ -26,18 +18,27 @@
             string sortDirection,
             string? bannerText,
             int page
-        ) : base(searchString, sortBy, sortDirection, bannerText, page)
+        ) : base(searchString, sortBy, sortDirection, page)
         {
-            var sortedItems = SortingHelper.SortAllItems(
-                availableCourses,
+            BannerText = bannerText;
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                availableCourses.AsQueryable(),
                 sortBy,
                 sortDirection
             );
-            var filteredItems = SearchHelper.FilterLearningItems(sortedItems, SearchString).ToList();
+            var filteredItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = PaginateItems(filteredItems);
-            AvailableCourses = paginatedItems.Cast<AvailableCourse>().Select(c => new AvailableCourseViewModel(c));
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
+            AvailableCourses = paginatedItems.Select(c => new AvailableCourseViewModel(c));
         }
+
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            CourseSortByOptions.Name,
+            CourseSortByOptions.Brand,
+            CourseSortByOptions.Category,
+            CourseSortByOptions.Topic
+        };
     }
 }

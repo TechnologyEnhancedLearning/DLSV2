@@ -13,8 +13,8 @@
     public class CompletedPageViewModelTests
     {
         private readonly IConfiguration config = A.Fake<IConfiguration>();
-        private CompletedPageViewModel model;
-        private CompletedCourse[] completedCourses;
+        private CompletedPageViewModel model = null!;
+        private CompletedCourse[] completedCourses = null!;
 
         [SetUp]
         public void SetUp()
@@ -31,6 +31,7 @@
                     StartedDate = new DateTime(2010, 1, 31),
                     Completed = new DateTime(2010, 2, 22),
                     Evaluated = new DateTime(2010, 3, 22),
+                    ArchivedDate = null,
                     DiagnosticScore = 123,
                     Passes = 4,
                     Sections = 6,
@@ -45,6 +46,7 @@
                     StartedDate = new DateTime(2010, 2, 1),
                     Completed = new DateTime(2011, 2, 22),
                     Evaluated = new DateTime(2011, 3, 22),
+                    ArchivedDate = null,
                     DiagnosticScore = 0,
                     Passes = 14,
                     Sections = 16,
@@ -59,6 +61,7 @@
                     StartedDate = new DateTime(2001, 1, 22),
                     Completed = new DateTime(2011, 2, 23),
                     Evaluated = new DateTime(2011, 2, 23),
+                    ArchivedDate = null,
                     DiagnosticScore = 0,
                     Passes = 0,
                     Sections = 6,
@@ -69,7 +72,7 @@
                 completedCourses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -169,7 +172,7 @@
                 courses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 1
@@ -200,7 +203,7 @@
                 courses,
                 config,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 null,
                 2

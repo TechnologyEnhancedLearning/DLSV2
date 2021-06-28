@@ -9,9 +9,23 @@
   var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/Learning?brand=" + Model.Brand + "&nonav=true";
 }
 
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="Home" asp-action="LearningContent">Learning content</a></li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-controller="Home" asp-action="LearningContent">Back to learning content</a></p>
+    </div>
+  </nav>
+}
+
 <div class="nhsuk-grid-row">
-  <vc:back-link asp-controller="Home" asp-action="LearningContent" link-text="Go back"/>
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">@Model.Title</h1>
+  </div>
 </div>
+
 <div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
-  <iframe class="responsive-iframe" title="Learning Content" src="@url"></iframe>
+  <iframe class="responsive-iframe" title="@Model.Title" src="@url"></iframe>
 </div>

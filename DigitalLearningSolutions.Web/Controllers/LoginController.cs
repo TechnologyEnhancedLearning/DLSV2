@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -22,7 +23,12 @@
         private readonly IUserService userService;
         private readonly ILogger<LoginController> logger;
 
-        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService, ILogger<LoginController> logger)
+        public LoginController(
+            ILoginService loginService,
+            IUserService userService,
+            ISessionService sessionService,
+            ILogger<LoginController> logger
+        )
         {
             this.loginService = loginService;
             this.userService = userService;
@@ -42,14 +48,14 @@
         }
 
         [HttpPost]
-        public IActionResult Index(LoginViewModel model)
+        public async Task<IActionResult> Index(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
 
-            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username);
+            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
             if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
@@ -71,8 +77,10 @@
             }
 
             verifiedAdminUser ??=
-                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
-                    model.Password);
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    verifiedDelegateUsers.First(),
+                    model.Password
+                );
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
                 userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
@@ -91,13 +99,17 @@
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
 
-                return LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe, model.ReturnUrl);
+                return await LogIn(
+                    adminLoginDetails,
+                    delegateLoginDetails.FirstOrDefault(),
+                    model.RememberMe,
+                    model.ReturnUrl
+                );
             }
 
             var chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
 
-            SetTempDataForChooseACentre
-            (
+            SetTempDataForChooseACentre(
                 model.RememberMe,
                 adminLoginDetails,
                 delegateLoginDetails,
@@ -124,7 +136,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<List<DelegateLoginDetails>>))]
         [HttpGet]
-        public IActionResult ChooseCentre(int centreId)
+        public async Task<IActionResult> ChooseCentre(int centreId)
         {
             var rememberMe = (bool)TempData["RememberMe"];
             var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
@@ -137,11 +149,10 @@
                 delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
         }
 
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails
-        (
+        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         )
@@ -151,8 +162,7 @@
             return (adminLoginDetails, delegateLoginDetails);
         }
 
-        private void SetTempDataForChooseACentre
-        (
+        private void SetTempDataForChooseACentre(
             bool rememberMe,
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
@@ -168,8 +178,7 @@
             TempData["ReturnUrl"] = returnUrl;
         }
 
-        private IActionResult LogIn
-        (
+        private async Task<IActionResult> LogIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
             bool rememberMe,
@@ -184,7 +193,7 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = DateTime.UtcNow
             };
-            HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
+            await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
         }
@@ -197,6 +206,7 @@
                 {
                     return Redirect(returnUrl);
                 }
+
                 logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
             }
 

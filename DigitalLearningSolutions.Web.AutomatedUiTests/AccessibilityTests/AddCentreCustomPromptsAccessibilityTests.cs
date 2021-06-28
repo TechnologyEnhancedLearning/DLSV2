@@ -14,7 +14,7 @@
         {
             // given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
-            const string startUrl = "/TrackingSystem/CentreConfiguration/RegistrationPrompts/Add/SelectPrompt";
+            const string startUrl = "/TrackingSystem/CentreConfiguration/RegistrationPrompts/Add/New";
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
@@ -31,6 +31,11 @@
             ValidatePageHeading("Configure answers");
             var configureAnswerWithAnswersResult = new AxeBuilder(Driver).Analyze();
 
+            Driver.ClickButtonByText("Bulk add");
+            ValidatePageHeading("Configure answers in bulk");
+            var bulkAdditionResult = new AxeBuilder(Driver).Analyze();
+
+            Driver.ClickButtonByText("Next");
             Driver.ClickButtonByText("Next");
 
             ValidatePageHeading("Summary");
@@ -40,6 +45,7 @@
             selectPromptResult.Violations.Should().BeEmpty();
             configureAnswerInitialResult.Violations.Should().BeEmpty();
             configureAnswerWithAnswersResult.Violations.Should().BeEmpty();
+            bulkAdditionResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
         }
 

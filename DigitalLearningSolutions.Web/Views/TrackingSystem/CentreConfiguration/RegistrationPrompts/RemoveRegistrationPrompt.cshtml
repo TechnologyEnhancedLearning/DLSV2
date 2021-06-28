@@ -17,16 +17,12 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
-    </div>
-  </div>
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveRegistrationPromptViewModel.Confirm) }" />
+    }
+
     <h1 class="nhsuk-heading-xl">Remove delegate registration prompt</h1>
   </div>
 </div>
@@ -38,24 +34,22 @@
     </div>
   </div>
   <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-    <input type="hidden" asp-for="PromptName" />
     @Model.PromptName
   </div>
 </div>
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full nhsuk-body-m">
-    <p>Some users have answered this prompt. By deleting this prompt, all the answers that the delegates have given will be deleted too.</p>
-  </div>
-</div>
-
-<form method="post" asp-action="RemoveRegistrationPrompt">
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.DelegateCount == 1) {
+      <p class="nhsuk-body-m">@Model.DelegateCount user has responded to this prompt. Deleting the prompt will permanently delete their response.</p>
+    } else {
+      <p class="nhsuk-body-m">@Model.DelegateCount users have responded to this prompt. Deleting the prompt will permanently delete all of their responses.</p>
+    }
+    
+    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveRegistrationPrompt">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
-          @if (confirmError)
-          {
+          @if (confirmError) {
             <span class="nhsuk-error-message" id="confirm-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(RemoveRegistrationPromptViewModel.Confirm)].Errors[0].ErrorMessage
             </span>
@@ -64,20 +58,21 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
               <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
-                I am sure that I wish to delete this prompt and all @Model.DelegateCount delegate responses
+                @if (Model.DelegateCount == 1) {
+                  @:I am sure that I wish to delete this prompt and @Model.DelegateCount delegate response
+                } else {
+                  @:I am sure that I wish to delete this prompt and all @Model.DelegateCount delegate responses
+                }
               </label>
             </div>
           </div>
         </fieldset>
       </div>
-      <input type="hidden" asp-for="DelegateCount"/>
+      <input type="hidden" asp-for="PromptName" />
+      <input type="hidden" asp-for="DelegateCount" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete prompt</button>
-    </div>
-  </div>
-</form>
+    </form>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
     <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel" />
   </div>
 </div>

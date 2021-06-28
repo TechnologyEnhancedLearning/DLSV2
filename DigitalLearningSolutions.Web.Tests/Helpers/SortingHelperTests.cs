@@ -12,9 +12,9 @@
 
     public class SortingHelperTests
     {
-        private CurrentCourse[] currentCourses;
-        private CompletedCourse[] completedCourses;
-        private AvailableCourse[] availableCourses;
+        private IQueryable<CurrentCourse> currentCourses = null!;
+        private IQueryable<CompletedCourse> completedCourses = null!;
+        private IQueryable<AvailableCourse> availableCourses = null!;
 
         [SetUp]
         public void SetUp()
@@ -57,7 +57,7 @@
                     passes: 0,
                     diagnosticScore: 0
                 )
-            };
+            }.AsQueryable();
 
             completedCourses = new[]
             {
@@ -97,7 +97,7 @@
                     diagnosticScore: 0,
                     passes: 0
                 )
-            };
+            }.AsQueryable();
 
             availableCourses = new[]
             {
@@ -122,51 +122,51 @@
                     category: "A: Category",
                     topic: null
                 )
-            };
+            }.AsQueryable();
         }
 
-        [TestCase("Activity Name", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Activity Name", "Descending", new[] { 72, 71, 73 })]
-        [TestCase("Diagnostic Score", "Ascending", new[] { 73, 72, 71 })]
-        [TestCase("Diagnostic Score", "Descending", new[] { 71, 72, 73 })]
-        [TestCase("Passed Sections", "Ascending", new[] { 72, 73, 71 })]
-        [TestCase("Passed Sections", "Descending", new[] { 71, 73, 72 })]
-        [TestCase("Enrolled Date", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Enrolled Date", "Descending", new[] { 72, 71, 73 })]
-        [TestCase("Last Accessed Date", "Ascending", new[] { 71, 72, 73 })]
-        [TestCase("Last Accessed Date", "Descending", new[] { 73, 72, 71 })]
-        [TestCase("Complete By Date", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Complete By Date", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("Name", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("Name", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("HasDiagnostic,DiagnosticScore", "Ascending", new[] { 73, 72, 71 })]
+        [TestCase("HasDiagnostic,DiagnosticScore", "Descending", new[] { 71, 72, 73 })]
+        [TestCase("IsAssessed,Passes", "Ascending", new[] { 72, 73, 71 })]
+        [TestCase("IsAssessed,Passes", "Descending", new[] { 71, 73, 72 })]
+        [TestCase("StartedDate", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("StartedDate", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("LastAccessed", "Ascending", new[] { 71, 72, 73 })]
+        [TestCase("LastAccessed", "Descending", new[] { 73, 72, 71 })]
+        [TestCase("CompleteByDate", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("CompleteByDate", "Descending", new[] { 72, 71, 73 })]
         public void SortAllItems_should_sort_current_courses_correctly(
             string sortBy,
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCurrentCourses = SortingHelper.SortAllItems(currentCourses, sortBy, sortDirection);
+            var sortedCurrentCourses = GenericSortingHelper.SortAllItems(currentCourses, sortBy, sortDirection);
             var sortedIds = sortedCurrentCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
-        [TestCase("Activity Name", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Activity Name", "Descending", new[] { 72, 71, 73 })]
-        [TestCase("Enrolled Date", "Ascending", new[] { 73, 71, 72 })]
-        [TestCase("Enrolled Date", "Descending", new[] { 72, 71, 73 })]
-        [TestCase("Last Accessed Date", "Ascending", new[] { 71, 72, 73 })]
-        [TestCase("Last Accessed Date", "Descending", new[] { 73, 72, 71 })]
-        [TestCase("Completed Date", "Ascending", new[] { 71, 73, 72 })]
-        [TestCase("Completed Date", "Descending", new[] { 72, 73, 71 })]
+        [TestCase("Name", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("Name", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("StartedDate", "Ascending", new[] { 73, 71, 72 })]
+        [TestCase("StartedDate", "Descending", new[] { 72, 71, 73 })]
+        [TestCase("LastAccessed", "Ascending", new[] { 71, 72, 73 })]
+        [TestCase("LastAccessed", "Descending", new[] { 73, 72, 71 })]
+        [TestCase("Completed", "Ascending", new[] { 71, 73, 72 })]
+        [TestCase("Completed", "Descending", new[] { 72, 73, 71 })]
         public void SortAllItems_should_sort_completed_courses_correctly(
             string sortBy,
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCompletedCourses = SortingHelper.SortAllItems(completedCourses, sortBy, sortDirection);
+            var sortedCompletedCourses = GenericSortingHelper.SortAllItems(completedCourses, sortBy, sortDirection);
             var sortedIds = sortedCompletedCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }
 
-        [TestCase("Activity Name", "Ascending", new[] { 71, 72, 73 })]
-        [TestCase("Activity Name", "Descending", new[] { 73, 72, 71 })]
+        [TestCase("Name", "Ascending", new[] { 71, 72, 73 })]
+        [TestCase("Name", "Descending", new[] { 73, 72, 71 })]
         [TestCase("Brand", "Ascending", new[] { 72, 71, 73 })]
         [TestCase("Brand", "Descending", new[] { 73, 71, 72 })]
         [TestCase("Category", "Ascending", new[] { 72, 73, 71 })]
@@ -178,7 +178,7 @@
             string sortDirection,
             int[] expectedIdsOrder)
         {
-            var sortedCompletedCourses = SortingHelper.SortAllItems(availableCourses, sortBy, sortDirection);
+            var sortedCompletedCourses = GenericSortingHelper.SortAllItems(availableCourses, sortBy, sortDirection);
             var sortedIds = sortedCompletedCourses.Select(course => course.Id);
             sortedIds.Should().Equal(expectedIdsOrder);
         }

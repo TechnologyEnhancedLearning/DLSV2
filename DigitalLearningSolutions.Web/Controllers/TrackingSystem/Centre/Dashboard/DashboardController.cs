@@ -13,21 +13,21 @@
     {
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
-        private readonly ICourseService courseService;
+        private readonly ICourseDataService courseDataService;
         private readonly ISupportTicketDataService ticketDataService;
         private readonly IUserDataService userDataService;
 
         public DashboardController(
             IUserDataService userDataService,
             ICentresDataService centresDataService,
-            ICourseService courseService,
+            ICourseDataService courseDataService,
             ISupportTicketDataService ticketDataService,
             ICentresService centresService
         )
         {
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
-            this.courseService = courseService;
+            this.courseDataService = courseDataService;
             this.ticketDataService = ticketDataService;
             this.centresService = centresService;
         }
@@ -38,7 +38,8 @@
             var centreId = User.GetCentreId();
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
-            var courseCount = courseService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
+            var courseCount =
+                courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             var centreRank = centresService.GetCentreRankForCentre(centreId);

@@ -12,33 +12,26 @@
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
-}
-
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId)}"/>
-    </div>
-  </div>
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Add delegate registration prompt</h1>
-  </div>
-</div>
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(AddRegistrationPromptSelectPromptViewModel.CustomPromptId)}" />
+    }
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="AddRegistrationPromptSelectPrompt">
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Add delegate registration prompt</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptSelectPrompt">
       <vc:select-list asp-for="CustomPromptId"
                       label="Prompt name"
                       value="@Model.CustomPromptId?.ToString()"
                       hint-text=""
+                      deselectable="false"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a prompt name"
-                      select-list-options="@ViewBag.CustomPromptNameOptions"/>
+                      select-list-options="@ViewBag.CustomPromptNameOptions" />
 
       <p class="nhsuk-body-m">
         Tick the box below if all users that register with your centre are required to fill in this field.
@@ -54,12 +47,8 @@
       </div>
 
       <button class="nhsuk-button">Next</button>
-    </div>
-  </div>
-</form>
+    </form>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel"/>
+    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel" />
   </div>
 </div>

@@ -21,6 +21,7 @@
             DateTime? evaluated = null,
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
+            DateTime? archivedDate = null,
             DateTime? completed = null
         )
         {
@@ -38,14 +39,15 @@
                 Evaluated = evaluated,
                 StartedDate = startedDate ?? DateTime.UtcNow,
                 LastAccessed = lastAccessed ?? DateTime.UtcNow,
-                Completed = completed ?? DateTime.UtcNow
+                Completed = completed ?? DateTime.UtcNow,
+                ArchivedDate = archivedDate
             };
         }
 
         public static CompletedPageViewModel CompletedViewModelFromController(LearningPortalController controller)
         {
             var result = controller.Completed() as ViewResult;
-            return result.Model as CompletedPageViewModel;
+            return (CompletedPageViewModel)result!.Model;
         }
     }
 }

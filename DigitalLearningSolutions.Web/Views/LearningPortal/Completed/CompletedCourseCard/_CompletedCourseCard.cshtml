@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @model CompletedCourseViewModel
 
-<div class="course-card nhsuk-panel" id="@Model.Id-card">
+<div class="searchable-element nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text course-title" id="@Model.Id-name" name="name" role="heading" aria-level="3">
-        @Model.Name
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="3">
+        @Model.Name @(Model.ArchivedDate == null ? "" : " - ARCHIVED")
       </span>
     </summary>
     <div class="nhsuk-details__text">
@@ -20,25 +20,26 @@
   </details>
 
   <div class="flex-row">
-    <a
-      class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
-      aria-describedby="@Model.Id-name"
-      asp-controller="LearningMenu"
-      asp-action="Index"
-      asp-route-customisationId="@Model.Id">
-      Launch course
-    </a>
-    @if (Model.HasFinaliseButton())
+    @if (Model.ArchivedDate == null)
     {
-      <a
-        class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0"
-        aria-describedby="@Model.Id-name"
-        aria-label="@Model.FinaliseButtonAriaLabel()"
-        href="@Model.EvaluateUrl">
-        <span aria-hidden="true">
-          @Model.FinaliseButtonText()
-        </span>
+      <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+         aria-describedby="@Model.Id-name"
+         asp-controller="LearningMenu"
+         asp-action="Index"
+         asp-route-customisationId="@Model.Id">
+        Launch course
       </a>
     }
-  </div>
+      @if (Model.HasFinaliseButton())
+      {
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0"
+           aria-describedby="@Model.Id-name"
+           aria-label="@Model.FinaliseButtonAriaLabel()"
+           href="@Model.EvaluateUrl">
+          <span aria-hidden="true">
+            @Model.FinaliseButtonText()
+          </span>
+        </a>
+      }
+    </div>
 </div>

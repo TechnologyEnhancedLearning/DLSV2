@@ -8,13 +8,53 @@
         public DelegateRegistrationData()
         {
             Id = new Guid();
-            RegisterViewModel = new RegisterViewModel();
-            LearnerInformationViewModel = new LearnerInformationViewModel();
         }
 
         public Guid Id { get; set; }
-        public RegisterViewModel RegisterViewModel { get; set; }
-        public LearnerInformationViewModel LearnerInformationViewModel { get; set; }
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public int? Centre { get; set; }
+        public bool IsCentreSpecificRegistration { get; set; }
+
+        public int? JobGroup { get; set; }
+        public string? Answer1 { get; set; }
+        public string? Answer2 { get; set; }
+        public string? Answer3 { get; set; }
+        public string? Answer4 { get; set; }
+        public string? Answer5 { get; set; }
+        public string? Answer6 { get; set; }
+
         public string? PasswordHash { get; set; }
+
+        public void SetPersonalInformation(PersonalInformationViewModel model)
+        {
+            Centre = model.Centre;
+            Email = model.Email;
+            FirstName = model.FirstName;
+            LastName = model.LastName;
+        }
+
+        public void SetLearnerInformation(LearnerInformationViewModel model)
+        {
+            JobGroup = model.JobGroup;
+            Answer1 = model.Answer1;
+            Answer2 = model.Answer2;
+            Answer3 = model.Answer3;
+            Answer4 = model.Answer4;
+            Answer5 = model.Answer5;
+            Answer6 = model.Answer6;
+        }
+
+        public void ClearCustomPromptAnswers()
+        {
+            Answer1 = null;
+            Answer2 = null;
+            Answer3 = null;
+            Answer4 = null;
+            Answer5 = null;
+            Answer6 = null;
+        }
     }
 }

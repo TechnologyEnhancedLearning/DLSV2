@@ -16,27 +16,22 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@if (errorHasOccurred)
-{
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
-    </div>
-  </div>
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
+    }
+
     <h1 class="nhsuk-heading-xl">Edit delegate registration prompt</h1>
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditRegistrationPrompt">
+<form method="post" novalidate asp-action="EditRegistrationPrompt">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
   </div>
 
-  <input type="hidden" asp-for="OptionsString"/>
+  <input type="hidden" asp-for="OptionsString" />
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
@@ -45,7 +40,7 @@
       </div>
     </div>
     <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-      <input type="hidden" asp-for="Prompt"/>
+      <input type="hidden" asp-for="Prompt" />
       @Model.Prompt
     </div>
   </div>
@@ -66,9 +61,9 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
-        <partial name="_NoConfiguredAnswers"/>
+        <partial name="_NoConfiguredAnswers" />
       } else {
-        <partial name="_RegistrationPromptAnswerTable" model="Model"/>
+        <partial name="_RegistrationPromptAnswerTable" model="Model" />
       }
     </div>
   </div>
@@ -82,12 +77,19 @@
                      spell-check="true"
                      autocomplete=""
                      hint-text=""
-                     css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold"/>
+                     css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
       <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.AddPromptAction">Add</button>
     </div>
   </div>
 
-  <div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row divider">
+    <div class="nhsuk-grid-column-one-half">
+      <p class="nhsuk-label">Want to add answers in bulk?</p>
+      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk add</button>
+    </div>
+  </div>
+
+  <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
     <div class="nhsuk-grid-column-full">
       <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveAction">Save</button>
     </div>
@@ -96,6 +98,6 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel"/>
+    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel" />
   </div>
 </div>

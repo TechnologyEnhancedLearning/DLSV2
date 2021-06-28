@@ -33,13 +33,13 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
         [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts", "Manage delegate registration prompts")]
-        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Edit", "Edit delegate registration prompt")]
         [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove", "Remove delegate registration prompt")]
-        [InlineData("/TrackingSystem/Centre/Reports", "Reports")]
+        [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
+        [InlineData("/ChangePassword", "Change password")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when
