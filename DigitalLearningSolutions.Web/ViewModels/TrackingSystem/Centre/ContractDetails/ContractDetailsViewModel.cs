@@ -18,47 +18,47 @@
             var cmsManagers = adminUsers.Count(a => a.IsContentManager) - cmsAdministrators;
             var contentCreators = adminUsers.Count(a => a.IsContentCreator);
 
-            Trainers = DisplayStringHelper.GenerateNumberWithLimitDisplayString(trainers, centreDetails.TrainerSpots);
-            TrainersColour = GetColourFromPercentageFilled(trainers, centreDetails.TrainerSpots);
+            Trainers = DisplayStringHelper.FormatNumberWithLimit(trainers, centreDetails.TrainerSpots);
+            TrainersColour = DisplayColourHelper.GetDisplayColourForPercentage(trainers, centreDetails.TrainerSpots);
 
-            CmsAdministrators = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            CmsAdministrators = DisplayStringHelper.FormatNumberWithLimit(
                 cmsAdministrators,
                 centreDetails.CmsAdministratorSpots
             );
-            CmsAdministratorsColour = GetColourFromPercentageFilled(
+            CmsAdministratorsColour = DisplayColourHelper.GetDisplayColourForPercentage(
                 cmsAdministrators,
                 centreDetails.CmsAdministratorSpots
             );
 
-            CmsManagers = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            CmsManagers = DisplayStringHelper.FormatNumberWithLimit(
                 cmsManagers,
                 centreDetails.CmsManagerSpots
             );
-            CmsManagersColour = GetColourFromPercentageFilled(
+            CmsManagersColour = DisplayColourHelper.GetDisplayColourForPercentage(
                 cmsManagers,
                 centreDetails.CmsManagerSpots
             );
 
-            ContentCreators = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            ContentCreators = DisplayStringHelper.FormatNumberWithLimit(
                 contentCreators,
                 centreDetails.CcLicenceSpots
             );
-            ContentCreatorsColour = GetColourFromPercentageFilled(
+            ContentCreatorsColour = DisplayColourHelper.GetDisplayColourForPercentage(
                 contentCreators,
                 centreDetails.CcLicenceSpots
             );
 
-            CustomCourses = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            CustomCourses = DisplayStringHelper.FormatNumberWithLimit(
                 numberOfCourses,
                 centreDetails.CustomCourses
             );
-            CustomCoursesColour = GetColourFromPercentageFilled(numberOfCourses, centreDetails.CustomCourses);
+            CustomCoursesColour = DisplayColourHelper.GetDisplayColourForPercentage(numberOfCourses, centreDetails.CustomCourses);
 
-            ServerSpace = DisplayStringHelper.GenerateBytesLimitDisplayString(
+            ServerSpace = DisplayStringHelper.FormatBytesWithLimit(
                 centreDetails.ServerSpaceUsed,
                 centreDetails.ServerSpaceBytes
             );
-            ServerSpaceColour = GetColourFromPercentageFilled(
+            ServerSpaceColour = DisplayColourHelper.GetDisplayColourForPercentage(
                 centreDetails.ServerSpaceUsed,
                 centreDetails.ServerSpaceBytes
             );
@@ -85,32 +85,5 @@
 
         public string ServerSpace { get; set; }
         public string ServerSpaceColour { get; set; }
-
-        private string GetColourFromPercentageFilled(long number, long limit)
-        {
-            if (limit == 0 && number == 0)
-            {
-                return "grey";
-            }
-
-            var usage = (double)number / limit;
-
-            if (0 <= usage && usage < 0.6)
-            {
-                return "green";
-            }
-
-            if (0.6 <= usage && usage < 1)
-            {
-                return "yellow";
-            }
-
-            if (usage >= 1)
-            {
-                return "red";
-            }
-
-            return "blue";
-        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
+// The colours here are tied to the colour conversion from percentages
+// defined in DisplayColourHelper
 .coloured-card-number {
   &--blue {
     color: $color_nhsuk-blue;

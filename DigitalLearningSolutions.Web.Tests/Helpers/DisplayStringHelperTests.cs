@@ -12,7 +12,7 @@
         public void GenerateNumberWithLimitDisplayString_returns_expected_string_with_limit()
         {
             // When
-            var result = DisplayStringHelper.GenerateNumberWithLimitDisplayString(1, 5);
+            var result = DisplayStringHelper.FormatNumberWithLimit(1, 5);
 
             // Then
             result.Should().Be("1 / 5");
@@ -22,50 +22,50 @@
         public void GenerateNumberWithLimitDisplayString_returns_expected_string_with_no_limit()
         {
             // When
-            var result = DisplayStringHelper.GenerateNumberWithLimitDisplayString(1, -1);
+            var result = DisplayStringHelper.FormatNumberWithLimit(1, -1);
 
             // Then
             result.Should().Be("1");
         }
 
         [Test]
-        public void GenerateBytesLimitDisplayString_returns_expected_string_for_bytes()
+        public void FormatBytesWithLimit_returns_expected_string_for_bytes()
         {
             // When
-            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, 120);
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, 120);
 
             // Then
             result.Should().Be("12B / 120B");
         }
 
         [Test]
-        public void GenerateBytesLimitDisplayString_returns_expected_string_for_kilobytes()
+        public void FormatBytesWithLimit_returns_expected_string_for_kilobytes()
         {
             // When
-            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, 1200);
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, 1200);
 
             // Then
             result.Should().Be("12B / 1.2KiB");
         }
 
         [Test]
-        public void GenerateBytesLimitDisplayString_returns_expected_string_for_gigabytes()
+        public void FormatBytesWithLimit_returns_expected_string_for_gibibytes()
         {
             // When
-            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, Gibibyte);
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, Gibibyte);
 
             // Then
             result.Should().Be("12B / 1GiB");
         }
 
         [Test]
-        public void GenerateBytesLimitDisplayString_returns_expected_string_when_less_than_next_size()
+        public void FormatBytesWithLimit_returns_expected_string_when_less_than_next_size()
         {
             // Given
             var bytes = Gibibyte - 10;
 
             // When
-            var result = DisplayStringHelper.GenerateBytesLimitDisplayString(12, bytes);
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, bytes);
 
             // Then
             result.Should().Be("12B / 1024MiB");

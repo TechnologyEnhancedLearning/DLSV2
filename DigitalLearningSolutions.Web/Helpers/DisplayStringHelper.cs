@@ -7,12 +7,12 @@
         private const string Divider = " / ";
         private static readonly string[] Units = { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 
-        public static string GenerateNumberWithLimitDisplayString(int number, int limit)
+        public static string FormatNumberWithLimit(int number, int limit)
         {
             return limit == -1 ? number.ToString() : number + Divider + limit;
         }
 
-        public static string GenerateBytesLimitDisplayString(long number, long limit)
+        public static string FormatBytesWithLimit(long number, long limit)
         {
             return GenerateBytesDisplayString(number) + Divider + GenerateBytesDisplayString(limit);
         }

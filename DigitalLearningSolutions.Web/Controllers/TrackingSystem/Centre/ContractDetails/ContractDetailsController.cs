@@ -12,10 +12,14 @@
     public class ContractDetailsController : Controller
     {
         private readonly ICentresDataService centresDataService;
-        private readonly IUserDataService userDataService;
         private readonly ICourseService courseService;
+        private readonly IUserDataService userDataService;
 
-        public ContractDetailsController(ICentresDataService centresDataService, IUserDataService userDataService, ICourseService courseService)
+        public ContractDetailsController(
+            ICentresDataService centresDataService,
+            IUserDataService userDataService,
+            ICourseService courseService
+        )
         {
             this.centresDataService = centresDataService;
             this.userDataService = userDataService;
@@ -29,7 +33,9 @@
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var numberOfCourses = courseService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, 0);
 
-            return View(new ContractDetailsViewModel(adminUsersAtCentre, centreDetails, numberOfCourses));
+            var model = new ContractDetailsViewModel(adminUsersAtCentre, centreDetails, numberOfCourses);
+
+            return View(model);
         }
     }
 }

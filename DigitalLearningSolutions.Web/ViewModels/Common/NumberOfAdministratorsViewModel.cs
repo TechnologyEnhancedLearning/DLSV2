@@ -18,16 +18,16 @@
             var cmsManagers = adminUsers.Count(a => a.IsContentManager) - cmsAdministrators;
             var ccLicences = adminUsers.Count(a => a.IsContentCreator);
 
-            Trainers = DisplayStringHelper.GenerateNumberWithLimitDisplayString(trainers, centreDetails.TrainerSpots);
-            CmsAdministrators = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            Trainers = DisplayStringHelper.FormatNumberWithLimit(trainers, centreDetails.TrainerSpots);
+            CmsAdministrators = DisplayStringHelper.FormatNumberWithLimit(
                 cmsAdministrators,
                 centreDetails.CmsAdministratorSpots
             );
-            CmsManagers = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            CmsManagers = DisplayStringHelper.FormatNumberWithLimit(
                 cmsManagers,
                 centreDetails.CmsManagerSpots
             );
-            CcLicences = DisplayStringHelper.GenerateNumberWithLimitDisplayString(
+            CcLicences = DisplayStringHelper.FormatNumberWithLimit(
                 ccLicences,
                 centreDetails.CcLicenceSpots
             );
