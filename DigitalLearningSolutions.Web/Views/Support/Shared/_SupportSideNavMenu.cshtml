@@ -1,11 +1,11 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Support
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration configuration
 @model SupportViewModel
 
 @{
-    var routeData = new Dictionary<string, string> { { "application", Model.Application.Name } };
+  var routeData = new Dictionary<string, string> { { "application", Model.Application.Name } };
 }
 
 <h2 class="side-nav__heading">Support</h2>

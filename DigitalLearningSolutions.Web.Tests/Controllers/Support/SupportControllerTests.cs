@@ -1,6 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningSolutions
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Support
 {
-    using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
+    using DigitalLearningSolutions.Web.Controllers.Support;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -22,7 +22,7 @@
             var result = controller.Index(applicationName);
 
             // Then
-            result.Should().BeViewResult().WithViewName("/Views/LearningSolutions/Support.cshtml");
+            result.Should().BeViewResult().WithViewName("Support");
         }
 
         [Test]

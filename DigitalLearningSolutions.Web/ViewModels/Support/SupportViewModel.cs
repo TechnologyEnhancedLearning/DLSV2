@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Support
 {
     using DigitalLearningSolutions.Web.Models.Enums;
 

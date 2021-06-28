@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
+﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
+    using DigitalLearningSolutions.Web.ViewModels.Support;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +15,8 @@
             if (ApplicationType.TrackingSystem.Equals(application) ||
                 ApplicationType.Frameworks.Equals(application))
             {
-                return View(
-                    "/Views/LearningSolutions/Support.cshtml",
-                    new SupportViewModel(application, SupportPage.Support)
-                );
+                var model = new SupportViewModel(application, SupportPage.Support);
+                return View("Support", model);
             }
 
             return NotFound();

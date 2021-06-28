@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.LearningSolutions
+@using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningSolutions/support.css")" asp-append-version="true">
@@ -12,12 +12,9 @@
 }
 
 @section NavMenuItems {
-  @if (Model.Application.Equals(ApplicationType.TrackingSystem))
-  {
+  @if (Model.Application.Equals(ApplicationType.TrackingSystem)) {
     <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-  }
-  else if (Model.Application.Equals(ApplicationType.Frameworks))
-  {
+  } else if (Model.Application.Equals(ApplicationType.Frameworks)) {
     <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
   }
 }
@@ -63,4 +60,3 @@
     </nav>
   </div>
 </div>
-
