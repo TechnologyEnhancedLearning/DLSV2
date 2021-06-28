@@ -16,21 +16,17 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@if (errorHasOccurred) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
-    </div>
-  </div>
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditRegistrationPromptViewModel.OptionsString), nameof(EditRegistrationPromptViewModel.Answer)}" />
+    }
+
     <h1 class="nhsuk-heading-xl">Edit delegate registration prompt</h1>
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditRegistrationPrompt">
+<form method="post" novalidate asp-action="EditRegistrationPrompt">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
   </div>
@@ -93,7 +89,7 @@
     </div>
   </div>
 
-  <div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
     <div class="nhsuk-grid-column-full">
       <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.SaveAction">Save</button>
     </div>

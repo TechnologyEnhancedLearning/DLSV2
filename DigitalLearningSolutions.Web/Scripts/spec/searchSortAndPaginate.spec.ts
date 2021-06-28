@@ -55,10 +55,29 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '/LearningPortal/Current/1' } } as any;
 
     // When
-    SearchSortAndPaginate.getSearchableElements('/LearningPortal/test');
+    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
 
     // Then
     expect(mockOpen).toHaveBeenCalledWith('GET', '/LearningPortal/test', true);
+  });
+
+  it('calls the correct url hosted in subdirectory', () => {
+    // Given
+    const mockOpen = jest.fn();
+    createCourseCards();
+    const mockXHR = {
+      open: mockOpen,
+      send: jest.fn(),
+      responseXML: document,
+    };
+    global.XMLHttpRequest = jest.fn(() => mockXHR) as any;
+    global.window = { location: { pathname: '/dev/LearningPortal/Current/1' } } as any;
+
+    // When
+    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
+
+    // Then
+    expect(mockOpen).toHaveBeenCalledWith('GET', '/dev/LearningPortal/test', true);
   });
 });
 

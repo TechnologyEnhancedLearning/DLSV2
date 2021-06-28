@@ -17,7 +17,7 @@
         {
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
 
-            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
+            var completedCourses = courseDataService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
@@ -33,7 +33,7 @@
 
         public IActionResult AllCompletedItems()
         {
-            var completedCourses = courseService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
+            var completedCourses = courseDataService.GetCompletedCourses(User.GetCandidateIdKnownNotNull());
             var model = new AllCompletedItemsPageViewModel(completedCourses, config);
             return View("Completed/AllCompletedItems", model);
         }

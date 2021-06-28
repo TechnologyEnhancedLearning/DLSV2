@@ -21,7 +21,7 @@
         </p>
       </div>
 
-      <vc:text-input asp-for="Password"
+      <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"
                      type="password"
@@ -30,7 +30,7 @@
                      autocomplete="new-password"
                      css-class="nhsuk-u-width-one-half"/>
 
-      <vc:text-input asp-for="ConfirmPassword"
+      <vc:text-input asp-for="@nameof(Model.ConfirmPassword)"
                      label="Re-type password"
                      populate-with-current-value="false"
                      type="password"
