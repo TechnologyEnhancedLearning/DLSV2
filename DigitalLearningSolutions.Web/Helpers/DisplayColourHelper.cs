@@ -10,6 +10,11 @@
                 return "grey";
             }
 
+            if (limit < 0)
+            {
+                return "blue";
+            }
+
             var usage = (double)number / limit;
 
             if (0 <= usage && usage < 0.6)
