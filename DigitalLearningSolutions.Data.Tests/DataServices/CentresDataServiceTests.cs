@@ -238,7 +238,7 @@
             var result = centresDataService.GetCentreAutoRegisterValues(2);
 
             // Then
-            result.autoRegistered.Should().Be(true);
+            result.autoRegistered.Should().BeTrue();
             result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
         }
     }
