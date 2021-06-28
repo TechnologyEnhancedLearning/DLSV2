@@ -14,7 +14,7 @@
 
     public class RegisterAdminController : Controller
     {
-        private const string CookieName = "RegistrationData";
+        private const string CookieName = "AdminRegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -40,7 +40,7 @@
                 return RedirectToAction("Index", "Home");
             }
 
-            if (!centreId.HasValue || !CheckRegisterAdminAllowed(centreId.Value))
+            if (!centreId.HasValue || !IsRegisterAdminAllowed(centreId.Value))
             {
                 return NotFound();
             }
@@ -57,7 +57,7 @@
             var data = TempData.Peek<RegistrationData>()!;
 
             var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
-            PopulatePersonalInformationExtraFields(model);
+            SetCentreName(model);
 
             ValidateEmailAddress(model.Email, model.Centre!.Value);
 
@@ -74,7 +74,7 @@
 
             if (!ModelState.IsValid)
             {
-                PopulatePersonalInformationExtraFields(model);
+                SetCentreName(model);
                 return View(model);
             }
 
@@ -91,7 +91,7 @@
             var data = TempData.Peek<RegistrationData>()!;
 
             var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
-            PopulateLearnerInformationExtraFields(model);
+            SetJobGroupOptions(model);
 
             return View(model);
         }
@@ -104,7 +104,7 @@
 
             if (!ModelState.IsValid)
             {
-                PopulateLearnerInformationExtraFields(model);
+                SetJobGroupOptions(model);
                 return View(model);
             }
 
@@ -172,7 +172,7 @@
             return View();
         }
 
-        private bool CheckRegisterAdminAllowed(int centreId)
+        private bool IsRegisterAdminAllowed(int centreId)
         {
             if (centresDataService.GetCentreName(centreId) == null)
             {
@@ -231,14 +231,12 @@
             }
         }
 
-        private void PopulatePersonalInformationExtraFields(PersonalInformationViewModel model)
+        private void SetCentreName(PersonalInformationViewModel model)
         {
             model.CentreName = centresDataService.GetCentreName(model.Centre!.Value);
         }
 
-        private void PopulateLearnerInformationExtraFields(
-            LearnerInformationViewModel model
-        )
+        private void SetJobGroupOptions(LearnerInformationViewModel model)
         {
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
