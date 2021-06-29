@@ -177,19 +177,27 @@
             {
                 return new StatusCodeResult(500);
             }
+
             if (candidateNumber == "-4")
             {
                 return RedirectToAction("Index");
             }
 
             // register user as centre manager admin
-            bool adminRegistered = registrationService.RegisterCentreManager(registrationModel);
+            var adminRegistered = registrationService.RegisterCentreManager(registrationModel);
             if (!adminRegistered)
             {
                 return new StatusCodeResult(500);
             }
 
-            // TODO: register admin details and notification preferences in database
+            // update centre auto register values
+            var autoRegisterUpdated = centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+            if (!autoRegisterUpdated)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            // TODO: update centre details and add notification preferences in database
 
             return RedirectToAction("Confirmation");
         }
