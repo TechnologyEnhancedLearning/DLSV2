@@ -171,7 +171,8 @@
             }
 
             // register user as a delegate
-            var candidateNumber = registrationService.RegisterAdminDelegate(RegistrationMappingHelper.MapToRegistrationModel(data));
+            var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
+            var candidateNumber = registrationService.RegisterAdminDelegate(registrationModel);
             if (candidateNumber == "-1")
             {
                 return new StatusCodeResult(500);
@@ -179,6 +180,13 @@
             if (candidateNumber == "-4")
             {
                 return RedirectToAction("Index");
+            }
+
+            // register user as centre manager admin
+            bool adminRegistered = registrationService.RegisterCentreManager(registrationModel);
+            if (!adminRegistered)
+            {
+                return new StatusCodeResult(500);
             }
 
             // TODO: register admin details and notification preferences in database
