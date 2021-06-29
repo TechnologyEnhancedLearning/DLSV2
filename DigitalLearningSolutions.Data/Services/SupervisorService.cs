@@ -13,6 +13,7 @@
         //GET DATA
         DashboardData GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
+        SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
         //UPDATE DATA
 
         //INSERT DATA
@@ -25,6 +26,20 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
+             cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
+             AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName ";
+        private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd LEFT OUTER JOIN
+             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
+             CustomPrompts AS cp6 RIGHT OUTER JOIN
+             CustomPrompts AS cp1 RIGHT OUTER JOIN
+             Centres AS ct ON cp1.CustomPromptID = ct.CustomField1PromptID LEFT OUTER JOIN
+             CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID LEFT OUTER JOIN
+             CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID ON cp6.CustomPromptID = ct.CustomField6PromptID FULL OUTER JOIN
+             JobGroups AS jg RIGHT OUTER JOIN
+             Candidates AS c ON jg.JobGroupID = c.JobGroupID ON ct.CentreID = c.CentreID ON sd.CandidateID = c.CandidateID ";
         public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger)
         {
             this.connection = connection;
@@ -59,19 +74,9 @@
         public IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId)
         {
             return connection.Query<SupervisorDelegateDetail>(
-                @"SELECT sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
-             cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6
-FROM   Centres AS ct LEFT OUTER JOIN
-             CustomPrompts AS cp1 ON ct.CustomField1PromptID = cp1.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp6 ON ct.CustomField6PromptID = cp6.CustomPromptID RIGHT OUTER JOIN
-             Candidates AS c ON ct.CentreID = c.CentreID RIGHT OUTER JOIN
-             SupervisorDelegates AS sd ON c.CandidateID = sd.CandidateID LEFT OUTER JOIN
-             JobGroups AS jg ON c.JobGroupID = jg.JobGroupID
-WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
+                $@"SELECT {supervisorDelegateDetailFields}
+                    FROM   {supervisorDelegateDetailTables}
+                    WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
                 );
         }
         public int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId)
@@ -118,6 +123,15 @@ WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
                new { supervisorAdminId, delegateEmail });
                 return existingId;
             }
+        }
+
+        public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId)
+        {
+            return connection.Query<SupervisorDelegateDetail>(
+               $@"SELECT {supervisorDelegateDetailFields}
+                    FROM   {supervisorDelegateDetailTables}
+                    WHERE (sd.ID = @supervisorDelegateId)", new { supervisorDelegateId }
+               ).FirstOrDefault();
         }
     }
 }

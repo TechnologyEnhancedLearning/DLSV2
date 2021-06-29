@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public int ID { get; set; }
         public string SupervisorEmail { get; set; }
         public int? SupervisorAdminID { get; set; }
+        public int CentreId { get; set; }
         public string DelegateEmail { get; set; }
         public int? CandidateID { get; set; }
         public DateTime Added { get; set; }

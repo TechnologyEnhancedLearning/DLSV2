@@ -79,8 +79,7 @@
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(adminId, delegateEmail, supervisorEmail, centreId);
             if (supervisorDelegateId > 0)
             {
-                //send appropriate notification:
-
+                frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId);
             }
         }
     }

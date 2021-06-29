@@ -19,5 +19,6 @@
         public string? CustomPrompt6 { get; set; }
         public string? Answer6 { get; set; }
         public byte[]? ProfileImage { get; set; }
+        public string? SupervisorName { get; set; }
     }
 }

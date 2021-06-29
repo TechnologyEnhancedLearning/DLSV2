@@ -13,21 +13,28 @@
         void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment);
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder);
         void SendReviewOutcomeNotification(int reviewId);
+        void SendSupervisorDelegateInvite(int supervisorDelegateId);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
         private readonly IConfigService configService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
+        private readonly IRoleProfileService roleProfileService;
+        private readonly ISupervisorService supervisorService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
            IConfigService configService,
-           IEmailService emailService
+           IEmailService emailService,
+           IRoleProfileService roleProfileService,
+           ISupervisorService supervisorService
        )
         {
             this.frameworkService = frameworkService;
             this.configService = configService;
             this.emailService = emailService;
+            this.roleProfileService = roleProfileService;
+            this.supervisorService = supervisorService;
         }
 
         public void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment)
@@ -141,6 +148,35 @@
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {outcomeNotification.OwnerFirstName},</p><p>Your framework, {outcomeNotification?.FrameworkName}, has been reviewed by <a href='mailto:{outcomeNotification?.UserEmail}'>{outcomeNotification?.ReviewerFirstName + " " + outcomeNotification.ReviewerLastName}</a>.</p><p>{approvalStatus}</p>{commentsHtml}<p><a href='{frameworkUrl}'>Click here</a> to view the full review status for the framework. Once all of the required reviewers have approved the framework, you may publish it.</p><p>You will need to login to the Digital Learning Solutions platform to access the framework.</p></body>"
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
+        }
+        public void SendSupervisorDelegateInvite(int supervisorDelegateId)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+
+            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
+                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
+            string emailSubjectLine = "Digital Learning Solutions Invite from Supervisor";
+            var builder = new BodyBuilder();
+            var dlsUrlBuilder = new UriBuilder(trackingSystemBaseUrl);
+            if (supervisorDelegate.CandidateID == null)
+            {
+                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegateId}";
+                builder.TextBody = $@"Dear colleague,
+                              You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}).
+                              To register, visit {dlsUrlBuilder.Uri.ToString()}.
+                              Registering using this link will confirm your acceptance of the invite. Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p>";
+            }
+            else
+            {
+                dlsUrlBuilder.Path += $"LearningPortal/ConfirmSupervisor/{supervisorDelegateId}";
+                builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                              You have been identified as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
+                              You are already registered as a delegate at the supervisor's DLS centre. To respond to their invite, please visit {dlsUrlBuilder.Uri.ToString()} (you may need to sign in using your existing DLS credentials).
+                              Once you have accepted the invite, your supervisor will be able to assign role profile assessments and view and validate your self assessment results.";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear  {supervisorDelegate.FirstName},</p><p>You have been identified as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a> in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p>You are already registered as a delegate at the supervisor's DLS centre. <a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to respond to their invite (you may need to sign in using your existing DLS credentials).</p><p>Once you have accepted the invite, your supervisor will be able to assign role profile assessments and view and validate your self assessment results.</p>";
+            }
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
 }
