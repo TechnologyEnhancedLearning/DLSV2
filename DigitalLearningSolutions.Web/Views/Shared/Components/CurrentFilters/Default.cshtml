@@ -7,7 +7,7 @@
     <input type="hidden" name="searchString" value="@Model.SearchString" />
     <div class="applied-filter-container">
       @foreach (var filter in Model.AppliedFilters) {
-        <div class="nhsuk-tag nhsuk-tag--blue filter-tag">@filter.FilterCategory : @filter.DisplayText</div>
+        <div class="nhsuk-tag nhsuk-tag--blue filter-tag">@filter.FilterCategory : @filter.DisplayText<span class="nhsuk-u-visually-hidden">.</span></div>
       }
     </div>
 

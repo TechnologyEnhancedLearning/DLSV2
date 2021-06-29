@@ -51,7 +51,7 @@
             <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
               <input type="hidden" name="searchString" value="@Model.SearchString" />
               <input type="hidden" name="filterBy" value="@Model.FilterString" />
-              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filterProperty" aria-label="@filterName">
+              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filterProperty" aria-label="@filterName filter">
                 <option value="" disabled selected="selected">Select @filterName.ToLower()</option>
                 @foreach (var (displayText, filterValue) in filterValues) {
                   <option value="@filterValue">@displayText</option>
