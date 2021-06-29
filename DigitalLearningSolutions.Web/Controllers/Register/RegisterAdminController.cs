@@ -208,7 +208,8 @@
                 return;
             }
 
-            var (_, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
+            var autoRegisterManagerEmail =
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
             if (!email.Equals(autoRegisterManagerEmail))
             {
                 ModelState.AddModelError(
