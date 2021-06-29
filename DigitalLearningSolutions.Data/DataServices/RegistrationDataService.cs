@@ -8,7 +8,7 @@
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
-        bool RegisterCentreManager(RegistrationModel registrationModel);
+        int? RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationDataService : IRegistrationDataService
@@ -52,7 +52,7 @@
             return candidateNumber;
         }
 
-        public bool RegisterCentreManager(RegistrationModel registrationModel)
+        public int? RegisterCentreManager(RegistrationModel registrationModel)
         {
             var values = new
             {
@@ -67,12 +67,14 @@
                 active = 1
             };
 
-            var rows = connection.Execute(
+            var adminId = connection.QuerySingleOrDefault<int?>(
                 @"INSERT INTO AdminUsers (Forename, Surname, Email, Password, CentreId, CentreAdmin, IsCentreManager, Approved, Active)
+                        OUTPUT Inserted.AdminID
                       VALUES (@forename, @surname, @email, @password, @centreId, @centreAdmin, @isCentreManager, @approved, @active)",
-                values);
+                values
+            );
 
-            return rows.Equals(1);
+            return adminId;
         }
     }
 }

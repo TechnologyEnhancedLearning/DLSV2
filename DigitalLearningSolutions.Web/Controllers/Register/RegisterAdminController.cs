@@ -18,6 +18,7 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly INotificationPreferencesService notificationPreferencesService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
 
@@ -25,6 +26,7 @@
             ICentresDataService centresDataService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
+            INotificationPreferencesService notificationPreferencesService,
             IRegistrationService registrationService,
             IUserDataService userDataService
         )
@@ -32,6 +34,7 @@
             this.centresDataService = centresDataService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.notificationPreferencesService = notificationPreferencesService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
         }
@@ -184,8 +187,8 @@
             }
 
             // register user as centre manager admin
-            var adminRegistered = registrationService.RegisterCentreManager(registrationModel);
-            if (!adminRegistered)
+            var adminId = registrationService.RegisterCentreManager(registrationModel);
+            if (!adminId.HasValue)
             {
                 return new StatusCodeResult(500);
             }
@@ -197,7 +200,10 @@
                 return new StatusCodeResult(500);
             }
 
-            // TODO: update centre details and add notification preferences in database
+            // TODO: update centre contact details
+            // TODO: log errors
+
+            notificationPreferencesService.SetDefaultNotificationPreferencesForCentreManager(adminId.Value);
 
             return RedirectToAction("Confirmation");
         }

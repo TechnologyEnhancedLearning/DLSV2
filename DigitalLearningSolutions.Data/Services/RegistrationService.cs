@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Data.Services
             RegistrationModel registrationModel
         );
 
-        bool RegisterCentreManager(RegistrationModel registrationModel);
+        int? RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationService : IRegistrationService
@@ -109,7 +109,7 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        public bool RegisterCentreManager(
+        public int? RegisterCentreManager(
             RegistrationModel registrationModel
         )
         {
