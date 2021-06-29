@@ -241,5 +241,19 @@
             result.autoRegistered.Should().BeTrue();
             result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
         }
+
+        [Test]
+        public void SetCentreAutoRegistered_should_set_AutoRegistered_true()
+        {
+            // Given
+            const int centreId = 7;
+
+            // When
+            var success = centresDataService.SetCentreAutoRegistered(centreId);
+
+            // Then
+            success.Should().BeTrue();
+            centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
+        }
     }
 }

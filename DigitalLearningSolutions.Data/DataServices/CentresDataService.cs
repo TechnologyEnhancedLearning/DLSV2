@@ -42,6 +42,8 @@
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
+
+        bool SetCentreAutoRegistered(int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -256,6 +258,17 @@
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
+        }
+
+        public bool SetCentreAutoRegistered(int centreId)
+        {
+            var rows = connection.Execute(
+                @"UPDATE Centres SET
+                    AutoRegistered = 1,
+                WHERE CentreId = @centreId",
+                new { centreId }
+            );
+            return rows.Equals(1);
         }
     }
 }
