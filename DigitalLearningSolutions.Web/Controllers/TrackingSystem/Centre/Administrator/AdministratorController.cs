@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
@@ -12,11 +14,16 @@
     [Route("TrackingSystem/Centre/Administrators")]
     public class AdministratorController : Controller
     {
+        private readonly ICommonService commonService;
         private readonly IUserDataService userDataService;
 
-        public AdministratorController(IUserDataService userDataService)
+        public AdministratorController(
+            IUserDataService userDataService,
+            ICommonService commonService
+        )
         {
             this.userDataService = userDataService;
+            this.commonService = commonService;
         }
 
         [Route("{page=1:int}")]
@@ -31,18 +38,13 @@
             {
                 filterBy = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(filterBy, filterValue);
             }
-            
-            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(User.GetCentreId());
-            var categories = new List<string> {
-                "Undefined",
-                "Office 2007",
-                "Office 2010",
-                "Digital Workplace",
-                "test",
-                "Clinical Skills"
-            };
+
+            var centreId = User.GetCentreId();
+            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
+            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+
             var model = new CentreAdministratorsViewModel(
-                User.GetCentreId(),
+                centreId,
                 adminUsersAtCentre,
                 categories,
                 searchString,
