@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
 
     public interface ICentresDataService
@@ -14,8 +15,7 @@
         IEnumerable<(int, string)> GetActiveCentresAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
 
-        void UpdateCentreManagerDetails
-        (
+        void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
             string lastName,
@@ -23,8 +23,7 @@
             string? telephone
         );
 
-        void UpdateCentreWebsiteDetails
-        (
+        void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
             bool showOnMap,
@@ -42,8 +41,8 @@
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
-
         bool SetCentreAutoRegistered(int centreId);
+        IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
     public class CentresDataService : ICentresDataService
@@ -59,8 +58,7 @@
 
         public string? GetBannerText(int centreId)
         {
-            return connection.QueryFirstOrDefault<string?>
-            (
+            return connection.QueryFirstOrDefault<string?>(
                 @"SELECT BannerText
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -70,8 +68,7 @@
 
         public string? GetCentreName(int centreId)
         {
-            var name = connection.QueryFirstOrDefault<string?>
-            (
+            var name = connection.QueryFirstOrDefault<string?>(
                 @"SELECT CentreName
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -102,8 +99,7 @@
 
         public Centre? GetCentreDetailsById(int centreId)
         {
-            var centre = connection.QueryFirstOrDefault<Centre>
-            (
+            var centre = connection.QueryFirstOrDefault<Centre>(
                 @"SELECT c.CentreID,
                             c.CentreName,
                             c.RegionID,
@@ -135,7 +131,7 @@
                             ct.ContractType
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                        INNER JOIN ContractTypes as ct on ct.ContractTypeID = c.ContractTypeId
+                        INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
@@ -154,8 +150,7 @@
             return centre;
         }
 
-        public void UpdateCentreManagerDetails
-        (
+        public void UpdateCentreManagerDetails(
             int centreId,
             string firstName,
             string lastName,
@@ -163,8 +158,7 @@
             string? telephone
         )
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @"UPDATE Centres SET
                     ContactForename = @firstName,
                     ContactSurname = @lastName,
@@ -175,8 +169,7 @@
             );
         }
 
-        public void UpdateCentreWebsiteDetails
-        (
+        public void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
             bool showOnMap,
@@ -191,8 +184,7 @@
             string? otherInformation = null
         )
         {
-            connection.Execute
-            (
+            connection.Execute(
                 @"UPDATE Centres SET
                     pwTelephone = @telephone,
                     pwEmail = @email,
@@ -226,8 +218,7 @@
 
         public (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId)
         {
-            var info = connection.QueryFirstOrDefault<(string, string, string)>
-            (
+            var info = connection.QueryFirstOrDefault<(string, string, string)>(
                 @"SELECT ContactForename, ContactSurname, ContactEmail
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -238,8 +229,7 @@
 
         public string[] GetCentreIpPrefixes(int centreId)
         {
-            var ipPrefixString = connection.QueryFirstOrDefault<string?>
-            (
+            var ipPrefixString = connection.QueryFirstOrDefault<string?>(
                 @"SELECT IPPrefix
                         FROM Centres
                         WHERE CentreID = @centreId",
@@ -260,11 +250,51 @@
             );
         }
 
+        public IEnumerable<CentreRanking> GetCentreRanks(
+            DateTime dateSince,
+            int? regionId,
+            int resultsCount,
+            int centreId
+        )
+        {
+            return connection.Query<CentreRanking>(
+                @"WITH SessionsCount AS
+                    (
+	                    SELECT
+		                    Count(c.CentreID) AS DelegateSessionCount,
+		                    c.CentreID
+	                    FROM [Sessions] s 
+	                    INNER JOIN Candidates c ON s.CandidateID = c.CandidateID 
+	                    INNER JOIN Centres ct ON c.CentreID = ct.CentreID
+	                    WHERE 
+		                    s.LoginTime > @dateSince 
+		                    AND c.CentreID <> 101 AND c.CentreID <> 374 
+		                    AND (ct.RegionID = @RegionID OR @RegionID IS NULL)
+	                    GROUP BY c.CentreID
+                    ), 
+                    Rankings AS
+                    (
+	                    SELECT 
+		                    RANK() OVER (ORDER BY sc.DelegateSessionCount DESC) AS Ranking,
+		                    c.CentreID,
+		                    c.CentreName,
+		                    sc.DelegateSessionCount
+	                    FROM SessionsCount sc
+	                    INNER JOIN Centres c ON sc.CentreID = c.CentreID
+                    )
+                    SELECT *
+                    FROM Rankings
+                    WHERE Ranking <= @resultsCount OR CentreID = @centreId
+                    ORDER BY Ranking",
+                new { dateSince, regionId, resultsCount, centreId }
+            );
+        }
+
         public bool SetCentreAutoRegistered(int centreId)
         {
             var rows = connection.Execute(
                 @"UPDATE Centres SET
-                    AutoRegistered = 1,
+                    AutoRegistered = 1
                 WHERE CentreId = @centreId",
                 new { centreId }
             );

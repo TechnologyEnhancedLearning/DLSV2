@@ -1,0 +1,17 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+$current-centre-highlight: $color_nhsuk-pale-yellow;
+
+.current-centre {
+  background-color: $current-centre-highlight;
+
+  &:hover {
+    background-color: $current-centre-highlight;
+  }
+}
+
+.cell-right-padding {
+  @include govuk-media-query($until: desktop) {
+    padding-right: nhsuk-spacing(2) !important;
+  }
+}

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -12,22 +12,24 @@
     public class DashboardController : Controller
     {
         private readonly ICentresDataService centresDataService;
-        private readonly IUserDataService userDataService;
+        private readonly ICentresService centresService;
         private readonly ICourseDataService courseDataService;
         private readonly ISupportTicketDataService ticketDataService;
+        private readonly IUserDataService userDataService;
 
-        public DashboardController
-        (
+        public DashboardController(
             IUserDataService userDataService,
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
-            ISupportTicketDataService ticketDataService
+            ISupportTicketDataService ticketDataService,
+            ICentresService centresService
         )
         {
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
             this.ticketDataService = ticketDataService;
+            this.centresService = centresService;
         }
 
         public IActionResult Index()
@@ -36,10 +38,12 @@
             var centreId = User.GetCentreId();
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
-            var courseCount = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
+            var courseCount =
+                courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
-            
+            var centreRank = centresService.GetCentreRankForCentre(centreId);
+
             var model = new CentreDashboardViewModel(
                 centre,
                 adminUser.FirstName,
@@ -48,7 +52,8 @@
                 delegateCount,
                 courseCount,
                 adminCount,
-                supportTicketCount
+                supportTicketCount,
+                centreRank
             );
 
             return View(model);

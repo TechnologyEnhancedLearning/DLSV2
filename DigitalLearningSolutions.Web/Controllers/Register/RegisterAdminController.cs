@@ -245,7 +245,8 @@
 
         private bool CheckEmailMatchesCentre(string email, int centreId)
         {
-            var (_, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
+            var autoRegisterManagerEmail =
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
             return email.Equals(autoRegisterManagerEmail);
         }
 
