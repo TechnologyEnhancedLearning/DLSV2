@@ -1,0 +1,38 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model LearnerInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Learner information" : "Register Admin - Learner information";
+}
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Learner information</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
+
+      <vc:select-list
+        asp-for="JobGroup"
+        label="Job Group"
+        value="@Model.JobGroup?.ToString()"
+        hint-text=""
+        deselectable="false"
+        css-class="nhsuk-u-width-one-half"
+        default-option="Select a job group"
+        select-list-options="@Model.JobGroupOptions" />
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="RegisterAdmin" asp-action="PersonalInformation" link-text="Go back" />
+  </div>
+</div>

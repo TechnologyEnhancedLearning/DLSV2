@@ -40,7 +40,7 @@
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
-
+        (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
@@ -240,6 +240,16 @@
 
             var ipPrefixes = ipPrefixString?.Split(',', StringSplitOptions.RemoveEmptyEntries);
             return ipPrefixes ?? new string[0];
+        }
+
+        public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
+        {
+            return connection.QueryFirstOrDefault<(bool, string?)>(
+                @"SELECT AutoRegistered, AutoRegisterManagerEmail
+                        FROM Centres
+                        WHERE CentreID = @centreId",
+                new { centreId }
+            );
         }
 
         public IEnumerable<CentreRanking> GetCentreRanks(

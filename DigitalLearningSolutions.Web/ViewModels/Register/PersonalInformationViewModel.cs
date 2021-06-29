@@ -3,10 +3,26 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class PersonalInformationViewModel
     {
+        public PersonalInformationViewModel() { }
+
+        public PersonalInformationViewModel(RegistrationData data)
+        {
+            FirstName = data.FirstName;
+            LastName = data.LastName;
+            Centre = data.Centre;
+            Email = data.Email;
+        }
+
+        public PersonalInformationViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
+        {
+            IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
+        }
+
         [Required(ErrorMessage = "Enter your first name")]
         [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
         public string? FirstName { get; set; }
