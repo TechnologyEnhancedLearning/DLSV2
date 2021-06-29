@@ -19,14 +19,18 @@
 
         private static string GenerateBytesDisplayString(long byteCount)
         {
+            if (byteCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(byteCount), $"Byte count cannot be negative: {byteCount}");
+            }
+
             if (byteCount == 0)
             {
                 return 0 + Units[0];
             }
 
-            var bytes = Math.Abs(byteCount);
-            var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            var number = Math.Round(bytes / Math.Pow(1024, place), 1);
+            var place = Convert.ToInt32(Math.Floor(Math.Log(byteCount, 1024)));
+            var number = Math.Round(byteCount / Math.Pow(1024, place), 1);
             return (Math.Sign(byteCount) * number) + Units[place];
         }
     }

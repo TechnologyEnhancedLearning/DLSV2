@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
+    using System;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -69,6 +70,16 @@
 
             // Then
             result.Should().Be("12B / 1024MiB");
+        }
+
+        [Test]
+        public void FormatBytesWithLimit_throws_exception_with_negative_bytes()
+        {
+            // When
+            Action action = () => DisplayStringHelper.FormatBytesWithLimit(-1, 0);
+
+            // Then
+            action.Should().Throw<ArgumentOutOfRangeException>();
         }
     }
 }
