@@ -130,6 +130,27 @@
             ) { Approved = approved };
         }
 
+        public static RegistrationModel GetDefaultRegistrationModel(
+            string firstName = "FirstName",
+            string lastName = "Test",
+            string email = "email@test.com",
+            int centre = 2,
+            int jobGroup = 3,
+            string passwordHash = "APasswordHash",
+            bool approved = false
+        )
+        {
+            return new RegistrationModel(
+                    firstName,
+                    lastName,
+                    email,
+                    centre,
+                    jobGroup,
+                    passwordHash
+                )
+                { Approved = approved };
+        }
+
         public static async Task<DelegateUser> GetDelegateUserByCandidateNumberAsync(
             this DbConnection connection,
             string candidateNumber
@@ -152,6 +173,26 @@
                     FROM Candidates
                     WHERE CandidateNumber = @candidateNumber",
                 new { candidateNumber }
+            );
+
+            return users.Single();
+        }
+
+        public static async Task<AdminUser> GetAdminUserByEmailAddressAsync(
+            this DbConnection connection,
+            string emailAddress
+        )
+        {
+            var users = await connection.QueryAsync<AdminUser>(
+                @"SELECT
+                        Forename AS FirstName,
+                        Surname AS LastName,
+                        CentreID,
+                        IsCentreManager,
+                        CentreAdmin AS IsCentreAdmin
+                    FROM AdminUsers
+                    WHERE Email = @emailAddress",
+                new { emailAddress }
             );
 
             return users.Single();

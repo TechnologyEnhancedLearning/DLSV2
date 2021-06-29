@@ -44,5 +44,26 @@
             user.Answer5.Should().Be(delegateRegistrationModel.Answer5);
             user.Answer6.Should().Be(delegateRegistrationModel.Answer6);
         }
+
+        [Test]
+        public async Task Sets_all_fields_correctly_on_centre_manager_registration()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
+
+            // When
+            var registered = service.RegisterCentreManager(registrationModel);
+            var user = await connection.GetAdminUserByEmailAddressAsync(registrationModel.Email);
+
+            // Then
+            registered.Should().BeTrue();
+            user.FirstName.Should().Be(registrationModel.FirstName);
+            user.LastName.Should().Be(registrationModel.LastName);
+            user.CentreId.Should().Be(registrationModel.Centre);
+            user.IsCentreAdmin.Should().BeTrue();
+            user.IsCentreManager.Should().BeTrue();
+        }
     }
 }

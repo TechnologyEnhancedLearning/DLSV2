@@ -19,6 +19,8 @@ namespace DigitalLearningSolutions.Data.Services
         string RegisterAdminDelegate(
             RegistrationModel registrationModel
         );
+
+        bool RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationService : IRegistrationService
@@ -105,6 +107,13 @@ namespace DigitalLearningSolutions.Data.Services
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
 
             return candidateNumber;
+        }
+
+        public bool RegisterCentreManager(
+            RegistrationModel registrationModel
+        )
+        {
+            return registrationDataService.RegisterCentreManager(registrationModel);
         }
 
         private Email GenerateApprovalEmail(
