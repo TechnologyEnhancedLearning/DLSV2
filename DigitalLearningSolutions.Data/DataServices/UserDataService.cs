@@ -155,7 +155,8 @@
                         cc.CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
-                        au.ImportOnly
+                        au.ImportOnly,
+                        au.FailedLoginCount
                     FROM AdminUsers AS au
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId",

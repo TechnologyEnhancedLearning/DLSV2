@@ -18,6 +18,12 @@
             AdminFilterOptions.CmsManager
         };
 
+        private static readonly IEnumerable<(string, string)> AccountStatusOptions = new[]
+        {
+            AdminFilterOptions.IsLocked,
+            AdminFilterOptions.IsNotLocked
+        };
+
         public CentreAdministratorsViewModel(
             int centreId,
             IEnumerable<AdminUser> adminUsers,
@@ -46,8 +52,9 @@
 
             Filters = new[]
             {
-                (("Role","Role"), RoleOptions),
-                ((nameof(AdminUser.CategoryName), "Category"), categoryOptions)
+                (("Role", "Role"), RoleOptions),
+                ((nameof(AdminUser.CategoryName), "Category"), categoryOptions),
+                (("AccountStatus", "Account Status"), AccountStatusOptions)
             };
         }
 

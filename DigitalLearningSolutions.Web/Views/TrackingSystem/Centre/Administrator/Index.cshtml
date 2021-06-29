@@ -45,14 +45,14 @@
     </div>
 
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full" id="filters">
-        @foreach (var (filterProperty, filterValues) in Model.Filters) {
+      <div class="nhsuk-grid-column-full" id="filters-container">
+        @foreach (var ((filterProperty, filterName), filterValues) in Model.Filters) {
           <div id="filter-@filterProperty">
             <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
               <input type="hidden" name="searchString" value="@Model.SearchString" />
               <input type="hidden" name="filterBy" value="@Model.FilterString" />
-              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filterProperty">
-                <option value="" disabled selected="selected">Select a value</option>
+              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filterProperty" aria-label="@filterName">
+                <option value="" disabled selected="selected">Select @filterName.ToLower()</option>
                 @foreach (var (displayText, filterValue) in filterValues) {
                   <option value="@filterValue">@displayText</option>
                 }
@@ -67,12 +67,8 @@
     </div>
 
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full" id="applied-filters">
-        <vc:current-filters label="Search administrators"
-                            asp-controller="Administrator"
-                            asp-action="Index"
-                            searchable-page-view-model="@Model"
-                            css-class="nhsuk-grid-column-one-half" />
+      <div class="nhsuk-grid-column-full">
+        <vc:current-filters searchable-page-view-model="@Model" />
       </div>
     </div>
 
@@ -101,7 +97,6 @@
           }
         </div>
       </div>
-
     </form>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

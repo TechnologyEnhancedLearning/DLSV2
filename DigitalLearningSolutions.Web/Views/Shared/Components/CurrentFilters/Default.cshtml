@@ -1,6 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @model CurrentFiltersViewModel
 
-@foreach (var filter in Model.AppliedFilters) {
-  <p>@filter.FilterCategory : @filter.DisplayText</p>
-}
+<div id="applied-filters" @(Model.AppliedFilters.Any() ? "" : "hidden")>
+  <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+    <input type="hidden" name="filterBy" value="" />
+    <input type="hidden" name="searchString" value="@Model.SearchString" />
+    <div class="applied-filter-container">
+      @foreach (var filter in Model.AppliedFilters) {
+        <div class="nhsuk-tag nhsuk-tag--blue filter-tag">@filter.FilterCategory : @filter.DisplayText</div>
+      }
+    </div>
+
+    <input type="submit" class="nhsuk-search__submit clear-filter__submit" value="Clear filters" />
+  </form>
+</div>

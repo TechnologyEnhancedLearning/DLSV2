@@ -45,5 +45,9 @@
             ("CMS administrator", nameof(AdminUser.IsCmsAdministrator) + "|true");
         public static readonly (string DisplayText, string Filter) CmsManager =
             ("CMS manager", nameof(AdminUser.IsContentManager) + "|true");
+        public static readonly (string DisplayText, string Filter) IsLocked =
+            ("Locked", nameof(AdminUser.IsLocked) + "|true");
+        public static readonly (string DisplayText, string Filter) IsNotLocked =
+            ("Not locked", nameof(AdminUser.IsLocked) + "|false");
     }
 }

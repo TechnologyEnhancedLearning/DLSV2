@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Administrator
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -34,6 +35,7 @@
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
+                new List<string>(),
                 null,
                 "SearchableName",
                 "Ascending",
@@ -51,6 +53,7 @@
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
+                new List<string>(),
                 null,
                 "SearchableName",
                 "Ascending",

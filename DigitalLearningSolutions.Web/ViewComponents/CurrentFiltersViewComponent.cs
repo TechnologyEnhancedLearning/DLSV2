@@ -8,11 +8,7 @@
     public class CurrentFiltersViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            string aspController,
-            string aspAction,
-            BaseSearchablePageViewModel searchablePageViewModel,
-            string label,
-            string? cssClass
+            BaseSearchablePageViewModel searchablePageViewModel
         )
         {
             var currentFilters =
@@ -29,7 +25,9 @@
                 )
             );
 
-            return View(new CurrentFiltersViewModel(appliedFilters));
+            var model = new CurrentFiltersViewModel(appliedFilters, searchablePageViewModel.SearchString);
+
+            return View(model);
         }
     }
 }

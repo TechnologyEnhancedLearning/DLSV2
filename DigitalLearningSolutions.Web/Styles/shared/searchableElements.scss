@@ -282,7 +282,7 @@ div#search {
   }
 }
 
-.pagination-item {
+.pagination-button-container {
   width: 38%;
 }
 
@@ -396,4 +396,46 @@ button.nhsuk-pagination__link {
   border-radius: 2%;
   border: 1px solid #768692;
   margin-bottom: 15px;
+}
+
+.applied-filter-container {
+  height: auto;
+  width: 80%;
+  float: left;
+
+  @include mq($from: tablet) {
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
+}
+
+.clear-filter-button-container {
+  width: 18%;
+  float: left;
+}
+
+.clear-filter__submit {
+  background-color: $color_nhsuk-red;
+  border-radius: 4px;
+  float: left;
+  width: 18%;
+  color: $color_nhsuk-white;
+  min-width: 100px;
+
+  .nhsuk-icon__search {
+    fill: #fff;
+  }
+
+  &:hover {
+    background-color: #4c6272;
+  }
+}
+
+.filter-tag {
+  padding-top: 11px;
+  padding-bottom: 11px;
+  margin-bottom:4px;
 }
