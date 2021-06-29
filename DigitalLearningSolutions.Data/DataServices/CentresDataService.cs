@@ -41,7 +41,7 @@
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
-        bool SetCentreAutoRegistered(int centreId);
+        void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
@@ -290,15 +290,14 @@
             );
         }
 
-        public bool SetCentreAutoRegistered(int centreId)
+        public void SetCentreAutoRegistered(int centreId)
         {
-            var rows = connection.Execute(
+            connection.Execute(
                 @"UPDATE Centres SET
                     AutoRegistered = 1
                 WHERE CentreId = @centreId",
                 new { centreId }
             );
-            return rows.Equals(1);
         }
     }
 }

@@ -249,10 +249,9 @@
             const int centreId = 7;
 
             // When
-            var success = centresDataService.SetCentreAutoRegistered(centreId);
+            centresDataService.SetCentreAutoRegistered(centreId);
 
             // Then
-            success.Should().BeTrue();
             centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
         }
     }

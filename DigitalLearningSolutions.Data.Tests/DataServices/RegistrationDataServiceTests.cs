@@ -46,7 +46,7 @@
         }
 
         [Test]
-        public async Task Sets_all_fields_correctly_on_centre_manager_registration()
+        public async Task Sets_all_fields_correctly_on_centre_manager_admin_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -54,11 +54,10 @@
             var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
 
             // When
-            var registered = service.RegisterCentreManager(registrationModel);
+            service.RegisterCentreManagerAdmin(registrationModel);
             var user = await connection.GetAdminUserByEmailAddressAsync(registrationModel.Email);
 
             // Then
-            registered.Should().BeTrue();
             user.FirstName.Should().Be(registrationModel.FirstName);
             user.LastName.Should().Be(registrationModel.LastName);
             user.CentreId.Should().Be(registrationModel.Centre);

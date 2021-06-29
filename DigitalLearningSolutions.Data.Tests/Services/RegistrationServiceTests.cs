@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -7,6 +8,7 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -52,7 +54,8 @@
         private IEmailService emailService;
         private IPasswordDataService passwordDataService;
         private IRegistrationDataService registrationDataService;
-        private RegistrationService registrationService;
+        private IRegistrationService registrationService;
+        private ILogger<RegistrationService> logger;
 
         [SetUp]
         public void Setup()
@@ -61,6 +64,7 @@
             passwordDataService = A.Fake<IPasswordDataService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
+            logger = A.Fake<ILogger<RegistrationService>>();
 
             A.CallTo(() => centresDataService.GetCentreIpPrefixes(testRegistrationModel.Centre))
                 .Returns(new[] { approvedIpPrefix });
@@ -77,7 +81,8 @@
                 registrationDataService,
                 passwordDataService,
                 emailService,
-                centresDataService
+                centresDataService,
+                logger
             );
         }
 
@@ -273,6 +278,45 @@
             A.CallTo(() =>
                 passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterCentreManager_calls_all_relevant_registration_methods()
+        {
+            // When
+            registrationService.RegisterCentreManager(testRegistrationModel);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() =>
+                passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+            ).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => registrationDataService.RegisterCentreManagerAdmin(testRegistrationModel))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.SetCentreAutoRegistered(testRegistrationModel.Centre))
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public void Error_in_RegisterCentreManager_fails_fast()
+        {
+            // Given
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+
+            // When
+            registrationService.RegisterCentreManager(failingRegistrationModel);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() =>
+                passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
+            ).MustNotHaveHappened();
+            A.CallTo(() => registrationDataService.RegisterCentreManagerAdmin(testRegistrationModel))
+                .MustNotHaveHappened();
+            A.CallTo(() => centresDataService.SetCentreAutoRegistered(testRegistrationModel.Centre))
+                .MustNotHaveHappened();
         }
     }
 }

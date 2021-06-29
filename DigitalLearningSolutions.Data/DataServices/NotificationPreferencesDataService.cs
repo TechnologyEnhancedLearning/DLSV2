@@ -13,7 +13,6 @@
         IEnumerable<NotificationPreference> GetNotificationPreferencesForDelegate(int? delegateId);
         void SetNotificationPreferencesForAdmin(int? adminId, IEnumerable<int> notificationIds);
         void SetNotificationPreferencesForDelegate(int? delegateId, IEnumerable<int> notificationIds);
-        void SetDefaultNotificationPreferencesForCentreManager(int adminUserId);
     }
 
     public class NotificationPreferencesDataService : INotificationPreferencesDataService

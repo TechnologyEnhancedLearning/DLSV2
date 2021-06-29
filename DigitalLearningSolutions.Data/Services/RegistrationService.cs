@@ -2,9 +2,11 @@ namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
@@ -20,7 +22,7 @@ namespace DigitalLearningSolutions.Data.Services
             RegistrationModel registrationModel
         );
 
-        int? RegisterCentreManager(RegistrationModel registrationModel);
+        bool RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationService : IRegistrationService
@@ -29,19 +31,22 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService
         (
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
             IEmailService emailService,
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            ILogger<RegistrationService> logger
         )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
+            this.logger = logger;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate
@@ -109,11 +114,32 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
-        public int? RegisterCentreManager(
+        public bool RegisterCentreManager(
             RegistrationModel registrationModel
         )
         {
-            return registrationDataService.RegisterCentreManager(registrationModel);
+            using var transaction = new TransactionScope();
+            try
+            {
+                var candidateNumber = RegisterAdminDelegate(registrationModel);
+                if (candidateNumber == "-1")
+                {
+                    throw new Exception("Delegate account could not be created");
+                }
+
+                registrationDataService.RegisterCentreManagerAdmin(registrationModel);
+
+                centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+                transaction.Complete();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.LogWarning($"Centre Manager registration failed for the following reason: {e.Message}");
+                return false;
+            }
         }
 
         private Email GenerateApprovalEmail(

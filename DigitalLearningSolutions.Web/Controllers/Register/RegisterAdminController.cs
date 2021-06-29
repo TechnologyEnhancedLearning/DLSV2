@@ -170,28 +170,13 @@
                 return new StatusCodeResult(500);
             }
             
-            // register user as a delegate
             var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
-            var candidateNumber = registrationService.RegisterAdminDelegate(registrationModel);
-            if (candidateNumber == "-1")
+            var success = registrationService.RegisterCentreManager(registrationModel);
+            if (!success)
             {
                 return new StatusCodeResult(500);
             }
 
-            // register user as centre manager admin (and set notification preferences)
-            var adminId = registrationService.RegisterCentreManager(registrationModel);
-            if (!adminId.HasValue)
-            {
-                return new StatusCodeResult(500);
-            }
-
-            // update centre auto register values
-            var autoRegisterUpdated = centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-            if (!autoRegisterUpdated)
-            {
-                return new StatusCodeResult(500);
-            }
-            
             return RedirectToAction("Confirmation");
         }
 
