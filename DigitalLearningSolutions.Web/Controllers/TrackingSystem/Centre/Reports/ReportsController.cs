@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
@@ -12,6 +11,7 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
+
         public ReportsController(IActivityService activityService)
         {
             this.activityService = activityService;
@@ -21,10 +21,7 @@
         {
             var centreId = User.GetCentreId();
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            var model = new ReportsViewModel
-            {
-                ActivityTableViewModel = new ActivityTableViewModel(monthsOfActivity)
-            };
+            var model = new ReportsViewModel(monthsOfActivity);
             return View(model);
         }
     }

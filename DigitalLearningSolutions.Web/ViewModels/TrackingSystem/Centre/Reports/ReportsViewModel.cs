@@ -7,21 +7,27 @@
 
     public class ReportsViewModel
     {
-        public ActivityTableViewModel ActivityTableViewModel { get; set; }
-    }
+        public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
 
-    public class ActivityTableViewModel
-    {
-        public ActivityTableViewModel(IEnumerable<MonthOfActivity> monthsOfActivity)
+        public ReportsViewModel(IEnumerable<MonthOfActivity> monthsOfActivity)
         {
-            Rows = monthsOfActivity.Select(m => new ActivityTableRow(m));
+            UsageStatsTableViewModel = new UsageStatsTableViewModel(monthsOfActivity);
         }
-        public IEnumerable<ActivityTableRow> Rows { get; set; }
     }
 
-    public class ActivityTableRow
+    public class UsageStatsTableViewModel
     {
-        public ActivityTableRow(MonthOfActivity monthOfActivity)
+        public UsageStatsTableViewModel(IEnumerable<MonthOfActivity> monthsOfActivity)
+        {
+            Rows = monthsOfActivity.Select(m => new UsageStatsTableRow(m));
+        }
+
+        public IEnumerable<UsageStatsTableRow> Rows { get; set; }
+    }
+
+    public class UsageStatsTableRow
+    {
+        public UsageStatsTableRow(MonthOfActivity monthOfActivity)
         {
             Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM, yyyy");
             Completions = monthOfActivity.Completions;
@@ -29,7 +35,7 @@
             Registrations = monthOfActivity.Registrations;
         }
 
-        public string? Period { get; set; }
+        public string Period { get; set; }
         public int Completions { get; set; }
         public int Evaluations { get; set; }
         public int Registrations { get; set; }
