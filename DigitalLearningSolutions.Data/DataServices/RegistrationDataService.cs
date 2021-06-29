@@ -67,14 +67,22 @@
                 active = 1
             };
 
-            var adminId = connection.QuerySingleOrDefault<int?>(
+            var adminUserId = connection.QuerySingleOrDefault<int?>(
                 @"INSERT INTO AdminUsers (Forename, Surname, Email, Password, CentreId, CentreAdmin, IsCentreManager, Approved, Active)
                         OUTPUT Inserted.AdminID
                       VALUES (@forename, @surname, @email, @password, @centreId, @centreAdmin, @isCentreManager, @approved, @active)",
                 values
             );
+            connection.Execute(
+                @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
+                SELECT N.NotificationId, @adminUserId
+                FROM Notifications N INNER JOIN NotificationRoles NR 
+                ON N.NotificationID = NR.NotificationID 
+                WHERE RoleID IN (1,2) AND AutoOptIn = 1",
+                new { adminUserId }
+            );
 
-            return adminId;
+            return adminUserId;
         }
     }
 }

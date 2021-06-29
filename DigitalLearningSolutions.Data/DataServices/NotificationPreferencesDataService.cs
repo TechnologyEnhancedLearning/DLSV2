@@ -138,28 +138,5 @@
                 transaction.Complete();
             }
         }
-
-        public void SetDefaultNotificationPreferencesForCentreManager(int adminUserId)
-        {
-            using (var transaction = new TransactionScope())
-            {
-                connection.Execute(
-                    @"DELETE FROM NotificationUsers
-                    WHERE AdminUserId = @adminUserId",
-                    new { adminUserId }
-                );
-
-                connection.Execute(
-                    @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
-                SELECT N.NotificationId, @adminUserId
-                FROM Notifications N INNER JOIN NotificationRoles NR 
-                ON N.NotificationID = NR.NotificationID 
-                WHERE RoleID IN (1,2) AND AutoOptIn = 1",
-                    new { adminUserId }
-                );
-
-                transaction.Complete();
-            }
-        }
     }
 }

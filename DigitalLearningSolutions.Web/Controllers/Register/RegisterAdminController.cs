@@ -18,7 +18,6 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly INotificationPreferencesService notificationPreferencesService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
 
@@ -26,7 +25,6 @@
             ICentresDataService centresDataService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
-            INotificationPreferencesService notificationPreferencesService,
             IRegistrationService registrationService,
             IUserDataService userDataService
         )
@@ -34,7 +32,6 @@
             this.centresDataService = centresDataService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
-            this.notificationPreferencesService = notificationPreferencesService;
             this.registrationService = registrationService;
             this.userDataService = userDataService;
         }
@@ -172,7 +169,7 @@
             {
                 return new StatusCodeResult(500);
             }
-
+            
             // register user as a delegate
             var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
             var candidateNumber = registrationService.RegisterAdminDelegate(registrationModel);
@@ -181,12 +178,7 @@
                 return new StatusCodeResult(500);
             }
 
-            if (candidateNumber == "-4")
-            {
-                return RedirectToAction("Index");
-            }
-
-            // register user as centre manager admin
+            // register user as centre manager admin (and set notification preferences)
             var adminId = registrationService.RegisterCentreManager(registrationModel);
             if (!adminId.HasValue)
             {
@@ -199,12 +191,7 @@
             {
                 return new StatusCodeResult(500);
             }
-
-            // TODO: update centre contact details
-            // TODO: log errors
-
-            notificationPreferencesService.SetDefaultNotificationPreferencesForCentreManager(adminId.Value);
-
+            
             return RedirectToAction("Confirmation");
         }
 
