@@ -23,22 +23,22 @@
 
         public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId)
         {
-            var now = clockService.UtcNow;
-            var yearAgo = now.AddYears(-1);
+            var endTime = clockService.UtcNow;
+            var startTime = endTime.AddYears(-1);
 
-            var activityData = activityDataService.GetActivityInRangeByMonth(centreId, yearAgo, now).ToList();
+            var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
 
-            var monthsThisYear = Enumerable.Range(1, now.Month).Select(
+            var monthsThisYear = Enumerable.Range(1, endTime.Month).Select(
                 m => new MonthOfActivity
                 {
-                    Year = now.Year,
+                    Year = endTime.Year,
                     Month = m
                 }
             );
-            var monthsLastYear = Enumerable.Range(now.Month, 12 - now.Month).Select(
+            var monthsLastYear = Enumerable.Range(startTime.Month, 13 - startTime.Month).Select(
                 m => new MonthOfActivity
                 {
-                    Year = yearAgo.Year,
+                    Year = startTime.Year,
                     Month = m
                 }
             );
