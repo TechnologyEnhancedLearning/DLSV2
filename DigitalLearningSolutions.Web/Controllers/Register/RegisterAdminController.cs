@@ -56,7 +56,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
+            var model = new PersonalInformationViewModel(data);
             SetCentreName(model);
 
             ValidateEmailAddress(model.Email, model.Centre!.Value);
@@ -90,7 +90,7 @@
         {
             var data = TempData.Peek<RegistrationData>()!;
 
-            var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+            var model = new LearnerInformationViewModel(data);
             SetJobGroupOptions(model);
 
             return View(model);
@@ -142,7 +142,7 @@
         public IActionResult Summary()
         {
             var data = TempData.Peek<RegistrationData>()!;
-            var model = RegistrationMappingHelper.MapDataToSummary(data);
+            var model = new SummaryViewModel(data);
             PopulateSummaryExtraFields(model, data);
             return View(model);
         }
@@ -155,7 +155,7 @@
 
             if (!ModelState.IsValid)
             {
-                var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+                var viewModel = new SummaryViewModel(data);
                 PopulateSummaryExtraFields(viewModel, data);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);

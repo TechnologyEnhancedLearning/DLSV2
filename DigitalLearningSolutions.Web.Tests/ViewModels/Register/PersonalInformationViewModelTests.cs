@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Register
 {
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.ViewModels.Register;
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class RegistrationMappingHelperTests
+    public class PersonalInformationViewModelTests
     {
         private const string FirstName = "Test";
         private const string LastName = "User";
@@ -19,24 +19,36 @@
         private const bool IsCentreSpecificRegistration = true;
 
         [Test]
-        public void MapToDelegateRegistrationModel_returns_correct_DelegateRegistrationModel()
+        public void PersonalInformation_constructor_using_data_populates_viewmodel_correctly()
         {
             // Given
-            var data = SampleDelegateRegistrationData();
+            var data = SampleRegistrationData();
 
             // When
-            var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
+            var result = new PersonalInformationViewModel(data);
 
             // Then
             result.FirstName.Should().Be(FirstName);
             result.LastName.Should().Be(LastName);
             result.Email.Should().Be(Email);
             result.Centre.Should().Be(CentreId);
-            result.JobGroup.Should().Be(JobGroupId);
-            result.PasswordHash.Should().Be(PasswordHash);
-            result.Answer1.Should().Be(Answer1);
-            result.Answer2.Should().Be(Answer2);
-            result.Answer3.Should().Be(Answer3);
+        }
+
+        [Test]
+        public void PersonalInformation_constructor_using_delegate_data_populates_viewmodel_correctly()
+        {
+            // Given
+            var data = SampleDelegateRegistrationData();
+
+            // When
+            var result = new PersonalInformationViewModel(data);
+
+            // Then
+            result.FirstName.Should().Be(FirstName);
+            result.LastName.Should().Be(LastName);
+            result.Email.Should().Be(Email);
+            result.Centre.Should().Be(CentreId);
+            result.IsCentreSpecificRegistration.Should().Be(IsCentreSpecificRegistration);
         }
 
         private static RegistrationData SampleRegistrationData()
