@@ -95,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
             if (mapsResponse.HasNoResults())
             {
-                ModelState.AddModelError(nameof(model.CentrePostcode), "Enter a valid postcode");
+                ModelState.AddModelError(nameof(model.CentrePostcode), "Enter a UK postcode");
                 return View(model);
             }
 

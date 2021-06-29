@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+@model AllAdminsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var admin in Model.Admins) {
+  <partial name="_SearchableAdminCard" model="admin" />
+}
+</body>
+</html>

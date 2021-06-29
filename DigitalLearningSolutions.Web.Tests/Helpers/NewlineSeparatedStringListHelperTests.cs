@@ -11,6 +11,7 @@
         private const string Item1 = "item1";
         private const string Item2 = "item2";
         private const string ItemList = "item1\r\nitem2";
+        private const string ItemListWithWhitespaceItems = "item1\r\nitem2\r\n\r\n     ";
         private readonly List<string> items = new List<string> { Item1, Item2 };
 
         [Test]
@@ -55,6 +56,16 @@
                 resultList.Count.Should().Be(2);
                 resultList.Should().BeEquivalentTo(items);
             }
+        }
+
+        [Test]
+        public void RemoveEmptyOptions_removes_expected_entries()
+        {
+            // When
+            var resultString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(ItemListWithWhitespaceItems);
+
+            //Then
+            resultString.Should().BeEquivalentTo(ItemList);
         }
     }
 }

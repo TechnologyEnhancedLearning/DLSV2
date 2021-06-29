@@ -1,0 +1,337 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+$nhs-dark-grey: #425563;
+
+.searchable-element {
+  background-color: #fff;
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-3;
+  padding-top: 8px;
+  padding-bottom: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.searchable-element .nhsuk-expander {
+  border: none
+}
+
+.tags {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: $nhs-dark-grey;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.nhsuk-details__text {
+  padding-bottom: 0 !important;
+}
+
+.search-box {
+  border: 2px solid $nhsuk-form-border-color;
+  border-radius: 4px 0 0 4px;
+  border-right: 0;
+  height: 52px;
+  padding: 0 12px;
+  font-size: 16px;
+  width: 80%;
+  float: left;
+  margin-bottom: nhsuk-spacing(4);
+  -webkit-appearance: none;
+  outline: none;
+
+  &:focus {
+    border: 4px solid $color_nhsuk_black;
+    box-shadow: 0 0 0 4px $nhsuk-focus-color;
+    margin-right: 4px;
+  }
+
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    display: none;
+  }
+
+  @include mq($from: tablet) {
+    height: 40px;
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
+
+  @include mq($from: large-desktop) {
+    width: 85%;
+  }
+
+  .js-enabled & {
+    border-right: 2px solid $nhsuk-form-border-color;
+    border-radius: 4px;
+
+    &:focus {
+      border-right: 4px solid $color_nhsuk-black;
+    }
+
+    @include mq($until: tablet) {
+      width: 100%;
+    }
+  }
+}
+
+.nhsuk-search__submit {
+  background-color: #003d78;
+  float: left;
+
+  .nhsuk-icon__search {
+    fill: #fff;
+  }
+
+  &:hover {
+    background-color: #4c6272;
+  }
+}
+
+div#search {
+  text-align: left;
+  padding: 0 16px;
+
+  @include mq($from: desktop) {
+    flex-basis: 50%;
+  }
+  // IE11 hack, since otherwise this overflows horribly when setting flex-basis
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    flex-basis: auto;
+
+    @include mq($from: large-desktop) {
+      flex-basis: 50%;
+    }
+  }
+}
+
+.sort-row {
+  display: flex;
+  flex-direction: row;
+
+  @include mq($until: desktop) {
+    margin-top: 36px;
+    margin-left: 16px;
+    margin-right: 16px;
+    flex-direction: column;
+
+    .js-enabled & {
+      flex-direction: row;
+    }
+  }
+
+  @include mq($until: 339px) {
+    flex-direction: column !important;
+  }
+}
+
+.sort-select-container {
+  padding-right: 8px;
+  padding-top: 8px;
+
+  @include mq($from: desktop) {
+    padding-left: 8px;
+    margin-top: -8px;
+  }
+}
+
+.sort-row::before {
+  content: "Sort by:";
+  position: relative;
+  top: -32px;
+  height: 0;
+  width: 0;
+  float: left;
+  font-weight: 600;
+  font-size: 19px;
+  color: rgb(33, 43, 50);
+  font-family: "Frutiger W01", Arial, sans-serif;
+  white-space: nowrap;
+
+  @include mq($from: desktop) {
+    left: 8px;
+  }
+}
+
+.sort-row .nhsuk-button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.sort-button-container {
+  padding-top: 8px;
+
+  @include mq($from: desktop) {
+    padding-top: 0;
+    padding-left: 8px;
+  }
+}
+
+.nhsuk-select {
+  border-radius: 4px;
+}
+
+.nhsuk-details__text {
+  padding-bottom: 0 !important;
+}
+
+.sort-and-search {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+
+  @include mq($from: desktop) {
+    flex-direction: row;
+  }
+}
+
+.label-reduced-margin {
+  margin-bottom: 8px;
+}
+
+.button-small {
+  padding: 2px 10px
+}
+
+.nhsuk-pagination__list {
+  display: flex;
+}
+
+.pagination-button {
+  &--next {
+    float: right;
+    align-items: flex-start;
+  }
+
+  &--previous {
+    float: left;
+    align-items: flex-end;
+  }
+}
+
+.pagination-item {
+  width: 38%;
+}
+
+.page-indicator-container {
+  width: 24%;
+  text-align: center;
+}
+
+button.nhsuk-pagination__link {
+  border: none;
+  background-color: transparent;
+  color: $nhsuk-link-color;
+  display: flex;
+  // Since IE is bad at drawing boxes the correct size
+  overflow: visible;
+
+  @include mq($until: tablet) {
+    flex-direction: column;
+  }
+
+  &.nhsuk-pagination__link--prev {
+    @include mq($until: tablet) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  &:hover {
+    color: $nhsuk-link-hover-color;
+  }
+
+  &:active {
+    color: $nhsuk-link-active-color;
+  }
+}
+
+.nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-right, .nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-left {
+  display: inline-block;
+  position: static;
+  flex-shrink: 0;
+}
+
+.nhsuk-pagination__title {
+  @include mq($until: tablet) {
+    padding: 0 !important;
+  }
+
+  .nhsuk-pagination-item--next & {
+    text-align: left;
+  }
+}
+
+@include mq($from: 768px, $until: 1024px) {
+  .asset-card-header {
+    min-height: 222px;
+  }
+}
+
+@include mq($from: 1024px) {
+  .asset-card-header {
+    min-height: 163px;
+  }
+}
+
+.tag.tag-article {
+  background-color: $nhsuk-link-active-color;
+}
+
+.tag.tag-online.course {
+  background-color: $nhsuk-link-color;
+}
+
+.tag.tag-learning.guide {
+  background-color: $nhsuk-link-hover-color;
+}
+
+.tag.tag-video {
+  background-color: $nhsuk-link-visited-color;
+}
+
+.playlist-title {
+  min-height: 72px;
+}
+
+.asset-title-header {
+  padding-bottom: 25px;
+}
+
+.asset-title-header .img-circle {
+  height: 47px;
+  width: 47px;
+  border-radius: 5%;
+  border: 1px solid #768692;
+  text-align: center;
+  display: inline-block;
+  margin-right: 15px;
+  vertical-align: middle;
+}
+
+.asset-title-header .title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: $nhsuk-secondary-text-color;
+  padding: 1rem 0 0 0;
+  display: inline-block;
+}
+
+.img-screenshot {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 2%;
+  border: 1px solid #768692;
+  margin-bottom: 15px;
+}

@@ -148,7 +148,7 @@
                 Centre = centreId,
                 Email = "wrong@email"
             };
-            var data = new RegistrationData { Centre = centreId };
+            var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "right@email"));
 
@@ -175,7 +175,7 @@
                 Centre = centreId,
                 Email = email
             };
-            var data = new RegistrationData { Centre = centreId };
+            var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
@@ -204,7 +204,7 @@
                 Centre = centreId,
                 Email = email
             };
-            var data = new RegistrationData { Centre = centreId };
+            var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);

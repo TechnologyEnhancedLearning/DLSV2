@@ -19,7 +19,7 @@
                 CompletedCourseHelper.CreateDefaultCompletedCourse()
             };
             var bannerText = "bannerText";
-            A.CallTo(() => courseService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
+            A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -30,7 +30,7 @@
                 completedCourses,
                 config,
                 null,
-                "Completed Date",
+                "Completed",
                 "Descending",
                 bannerText,
                 1

@@ -6,7 +6,8 @@ namespace DigitalLearningSolutions.Data.Enums
     using System.Reflection;
 
     /// <summary>
-    /// Enumeration base class as recommended at https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/enumeration-classes-over-enum-types
+    /// Enumeration base class as recommended at https://ankitvijay.net/2020/05/21/introduction-enumeration-class/
+    /// and https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/enumeration-classes-over-enum-types
     /// </summary>
     public abstract class Enumeration
     {
@@ -42,6 +43,25 @@ namespace DigitalLearningSolutions.Data.Enums
             var valueMatches = Id.Equals(objAsEnumeration.Id);
 
             return typeMatches && valueMatches;
+        }
+
+        public static bool TryGetFromIdOrName<T>(
+            string idOrName,
+            out T enumeration)
+            where T : Enumeration
+        {
+            return TryParse(item => item.Name == idOrName, out enumeration) ||
+                   int.TryParse(idOrName, out var id) &&
+                   TryParse(item => item.Id == id, out enumeration);
+        }
+
+        private static bool TryParse<TEnumeration>(
+            Func<TEnumeration, bool> predicate,
+            out TEnumeration enumeration)
+            where TEnumeration : Enumeration
+        {
+            enumeration = GetAll<TEnumeration>().FirstOrDefault(predicate);
+            return enumeration != null;
         }
 
         public static T FromId<T>(int id) where T : Enumeration

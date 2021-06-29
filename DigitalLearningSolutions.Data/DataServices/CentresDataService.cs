@@ -250,13 +250,12 @@
 
         public (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId)
         {
-            var info = connection.QueryFirstOrDefault<(bool, string?)>(
+            return connection.QueryFirstOrDefault<(bool, string?)>(
                 @"SELECT AutoRegistered, AutoRegisterManagerEmail
                         FROM Centres
                         WHERE CentreID = @centreId",
                 new { centreId }
             );
-            return info;
         }
     }
 }
