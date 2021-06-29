@@ -2,7 +2,7 @@
 @model SummaryViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register - Summary" : "Register - Summary";
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Summary" : "Register Admin - Summary";
 }
 
 @section NavMenuItems {
@@ -28,11 +28,6 @@
           @Model.Centre
         </dd>
         <dd class="nhsuk-summary-list__actions">
-        @if (!Model.IsCentreSpecificRegistration) {
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> centre</span>
-          </a>
-        }
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
@@ -87,21 +82,6 @@
           </a>
         </dd>
       </div>
-      @foreach (var customField in Model.CustomFields) {
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @customField.Answer
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
-            </a>
-          </dd>
-        </div>
-      }
     </dl>
 
     <form method="post" asp-action="Summary">

@@ -2,10 +2,25 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class SummaryViewModel : IValidatableObject
     {
+        public SummaryViewModel() { }
+
+        public SummaryViewModel(RegistrationData data)
+        {
+            FirstName = data.FirstName;
+            LastName = data.LastName;
+            Email = data.Email;
+        }
+
+        public SummaryViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
+        {
+            IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
+        }
+
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
