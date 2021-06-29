@@ -50,7 +50,8 @@
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
-        public IEnumerable<((string FilterProperty, string FilterName) Filter, IEnumerable<(string DisplayText, string Filter)> FilterOptions)> Filters { get; set; }
+        public IEnumerable<((string FilterProperty, string FilterName) Filter,
+            IEnumerable<(string DisplayText, string Filter)> FilterOptions)> Filters { get; set; }
 
         protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {
