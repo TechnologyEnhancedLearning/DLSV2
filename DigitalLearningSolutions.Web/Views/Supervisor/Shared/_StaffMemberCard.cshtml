@@ -12,7 +12,7 @@
               <text>@Model.DelegateEmail</text>
             </span>
           </div>
-          <div>
+          <div class="nhsuk-grid-column-one-quarter">
             <span class="float-right-additional-information">
               <strong class="nhsuk-tag nhsuk-tag--red">
                 Not registered
@@ -23,28 +23,29 @@
       }
       else
       {
-        <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-three-quarters nhsuk-u-padding-left-0">
-            <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.ID-name" name="name" role="heading" aria-level="3">
-              <text>@Model.FirstName @Model.LastName (@Model.DelegateEmail)</text>
-            </span>
-            div>
-            <span class="float-right-additional-information">
-              @if (Model.Confirmed == null)
-              {
-                <strong class="nhsuk-tag nhsuk-tag--yellow">
-                  Awaiting @(Model.AddedByDelegate ? "supervisor" : "delegate") confirmation
-                </strong>
-              }
-              else
-              {
-                <strong class="nhsuk-tag nhsuk-tag--green">
-                  Confirmed
-                </strong>
-              }
-            </span>
-          </div>
-        </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-three-quarters nhsuk-u-padding-left-0">
+        <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.ID-name" name="name" role="heading" aria-level="3">
+          <text>@Model.FirstName @Model.LastName (@Model.DelegateEmail)</text>
+        </span>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <span class="float-right-additional-information">
+          @if (Model.Confirmed == null)
+          {
+            <strong class="nhsuk-tag nhsuk-tag--yellow">
+              Awaiting @(Model.AddedByDelegate ? "supervisor" : "delegate") confirmation
+            </strong>
+          }
+          else
+          {
+            <strong class="nhsuk-tag nhsuk-tag--green">
+              Confirmed
+            </strong>
+          }
+        </span>
+      </div>
+    </div>
       }
 
     </summary>

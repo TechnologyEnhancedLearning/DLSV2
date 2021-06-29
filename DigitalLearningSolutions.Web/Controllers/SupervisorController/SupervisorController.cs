@@ -42,5 +42,17 @@
         {
             return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
         }
+        private string GetUserEmail()
+        {
+            var userEmail = User.GetUserEmail();
+            if (userEmail == null)
+            {
+                return "";
+            }
+            else
+            {
+                return userEmail;
+            }
+        }
     }
 }

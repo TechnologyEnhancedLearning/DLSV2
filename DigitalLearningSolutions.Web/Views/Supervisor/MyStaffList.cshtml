@@ -19,7 +19,7 @@
     </div>
   </nav>
 }
-<h1>My Supervised Staff</h1>
+<h1>My Staff List</h1>
 @if (Model.SuperviseDelegateDetails.Any())
 {
   foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
@@ -31,6 +31,25 @@ else
 {
   <p>You are not supervising any staff, yet. Add some staff to your staff list using the button below.</p>
 }
-<a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="AddStaffToSupervise">
-  Add supervised staff
+<form method="post">
+  <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
+    <h2>Add a member of staff</h2>
+  </label>
+  <div class="nhsuk-form-group">
+    <div class=" sort-select-container">
+      <label class="nhsuk-label" for="example">
+        User email address
+      </label>
+      <div class="nhsuk-hint" id="add-user-hint">
+        Provide the work email address of a member of staff to add to your supervision list.
+      </div>
+      <input class="nhsuk-input" id="delegateEmail" aria-describedby="add-user-hint" type="email" name="delegateEmail" />
+    </div>
+  </div>
+  <button class="nhsuk-button" type="submit">
+    Submit
+  </button>
+</form>
+<a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="AddMultipleSuperviseDelegates">
+  Add multiple staff members
 </a>
