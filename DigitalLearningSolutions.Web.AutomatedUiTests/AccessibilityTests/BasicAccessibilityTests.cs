@@ -29,6 +29,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
+        [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]

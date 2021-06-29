@@ -1,0 +1,25 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+// The colours here are tied to the colour conversion from percentages
+// defined in DisplayColourHelper
+.coloured-card-number {
+  &--blue {
+    color: $color_nhsuk-blue;
+  }
+
+  &--green {
+    color: $color_nhsuk-green;
+  }
+
+  &--yellow {
+    color: #d97f00;
+  }
+
+  &--red {
+    color: $color_nhsuk-red;
+  }
+
+  &--grey {
+    color: $color_nhsuk-grey-1;
+  }
+}
