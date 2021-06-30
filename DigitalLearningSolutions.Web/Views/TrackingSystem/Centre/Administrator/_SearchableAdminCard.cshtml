@@ -4,12 +4,64 @@
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
         @Model.Name
       </span>
     </summary>
     <div class="nhsuk-details__text">
-
+      <div class="nhsuk-grid-row">
+        <div class="tags">
+          @if (!Model.IsLocked) {
+            <div class="tag nhsuk-u-font-size-14" value="@("IsLocked|false")" hidden>
+              Not locked
+            </div>
+          }
+          @foreach (var (displayText, filter) in Model.Tags) {
+            <div class="tag nhsuk-u-font-size-14" value="@filter">
+              @displayText
+            </div>
+          }
+        </div>
+      </div>
+      <div class="nhsuk-grid-row">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Email:
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.EmailAddress
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Course category:
+            </dt>
+            <dd class="nhsuk-summary-list__value" name="CategoryName|@Model.CategoryName">
+              @Model.CategoryName
+            </dd>
+          </div>
+        </dl>
+      </div>
+      @if (Model.IsLocked) {
+        <div class="nhsuk-grid-row">
+          <p class="nhsuk-body-m">This account is currently locked out</p>
+        </div>
+      }
+      <div class="nhsuk-grid-row">
+        @if (Model.IsLocked) {
+          <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button">
+            Unlock account
+          </a>
+        } else {
+          <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button">
+            Manage Roles
+          </a>
+        }
+        <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button">
+          Inactive admin account
+        </a>
+      </div>
     </div>
   </details>
 </div>
