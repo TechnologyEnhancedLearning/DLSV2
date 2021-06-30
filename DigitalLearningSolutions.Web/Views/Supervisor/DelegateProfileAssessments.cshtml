@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@model DelegateSelfAssessmentsViewModel;
+@{
+  ViewData["Title"] = "My Staff List";
+  ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">Supervisor</li>
+      </ol>
+    </div>
+  </nav>
+}
+<h1>Delegate Profile Assessments</h1>
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+  </div>
+</details>

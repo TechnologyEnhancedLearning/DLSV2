@@ -14,6 +14,7 @@
         DashboardData GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
+        IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -27,7 +28,7 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
              cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
              AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
 FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
@@ -176,6 +177,23 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                 return false;
             }
             return true;
+        }
+
+        public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId)
+        {
+            return connection.Query<DelegateSelfAssessment>(
+                @"SELECT ca.ID, sa.Name AS RoleName, cas.SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                 (SELECT COUNT(*) AS Expr1
+                 FROM    CandidateAssessmentSupervisorVerifications AS casv
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested
+                FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+                CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                SelfAssessments AS sa ON cas.ID = sa.ID LEFT OUTER JOIN
+                NRPProfessionalGroups AS pg ON sa.NRPProfessionalGroupID = pg.ID LEFT OUTER JOIN
+                NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
+                NRPRoles AS r ON sa.NRPRoleID = r.ID
+                WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
+                );
         }
     }
 }

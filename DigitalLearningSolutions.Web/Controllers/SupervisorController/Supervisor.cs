@@ -24,7 +24,7 @@
             };
             return View(model);
         }
-        [Route("/Supervisor/MyStaff/{page=1:int}")]
+        [Route("/Supervisor/Staff/List/{page=1:int}")]
         public IActionResult MyStaffList(int page = 1)
         {
             var adminId = GetAdminID();
@@ -39,7 +39,7 @@
             return View("MyStaffList", model);
         }
         [HttpPost]
-        [Route("/Supervisor/MyStaff/{page=1:int}")]
+        [Route("/Supervisor/Staff/List/{page=1:int}")]
         public IActionResult AddSuperviseDelegate(string delegateEmail, int page = 1)
         {
             var adminId = GetAdminID();
@@ -48,14 +48,14 @@
             AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
             return RedirectToAction("MyStaffList", page);
         }
-        [Route("/Supervisor/MyStaff/AddMultiple")]
+        [Route("/Supervisor/Staff/AddMultiple")]
         public IActionResult AddMultipleSuperviseDelegates()
         {
             var model = new AddMultipleSupervisorDelegatesViewModel();
             return View("AddMultipleSupervisorDelegates", model);
         }
         [HttpPost]
-        [Route("/Supervisor/MyStaff/AddMultiple")]
+        [Route("/Supervisor/Staff/AddMultiple")]
         public IActionResult AddMultipleSuperviseDelegates(AddMultipleSupervisorDelegatesViewModel model)
         {
             var adminId = GetAdminID();
@@ -90,7 +90,7 @@
             }
             return RedirectToAction("MyStaffList");
         }
-        [Route("/Supervisor/MyStaff/Remove/{supervisorDelegateId}")]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
@@ -100,6 +100,18 @@
         {
             supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, 0, GetAdminID());
             return RedirectToAction("MyStaffList");
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]
+        public IActionResult DelegateProfileAssessments(int supervisorDelegateId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessments = supervisorService.GetSelfAssessmentsForSupervisorDelegateId(supervisorDelegateId, GetAdminID());
+            var model = new DelegateSelfAssessmentsViewModel()
+            {
+                SupervisorDelegateDetail = superviseDelegate,
+                DelegateSelfAssessments = delegateSelfAssessments
+            };
+            return View("DelegateProfileAssessments", model);
         }
     }
 }
