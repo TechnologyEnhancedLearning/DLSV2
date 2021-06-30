@@ -11,8 +11,8 @@ describe('getSortValue', () => {
   ${'accessed-date'}    | ${'02/02/2020'}   | ${'LastAccessed'} | ${new Date('02/02/2020')}
   ${'complete-by-date'} | ${'03/03/2020'}   | ${'CompleteByDate'}   | ${new Date('03/03/2020')}
   ${'complete-by-date'} | ${'-'}            | ${'CompleteByDate'}   | ${new Date(0)}
-  ${'diagnostic-score'} | ${'6/10'}         | ${'HasDiagnostic,DiagnosticsScore'}   | ${6}
-  ${''}                 | ${''}             | ${'HasDiagnostic,DiagnosticsScore'}   | ${-1}
+  ${'diagnostic-score'} | ${'6/10'}         | ${'HasDiagnostic,DiagnosticScore'}   | ${6}
+  ${''}                 | ${''}             | ${'HasDiagnostic,DiagnosticScore'}   | ${-1}
   ${'passed-sections'}  | ${'8/10'}         | ${'IsAssessed,Passes'}    | ${8}
   ${''}                 | ${''}             | ${'IsAssessed,Passes'}    | ${-1}
   ${'brand'}            | ${'Brand 1'}      | ${'Brand'}              | ${'brand 1'}
@@ -89,8 +89,8 @@ describe('sortSearchableElements current', () => {
     sortBy                  | sortDirection   | firstId       | secondId      | thirdId
     ${'Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
     ${'Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
-    ${'HasDiagnostic,DiagnosticsScore'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
-    ${'HasDiagnostic,DiagnosticsScore'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
+    ${'HasDiagnostic,DiagnosticScore'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
+    ${'HasDiagnostic,DiagnosticScore'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
     ${'IsAssessed,Passes'}    | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}
     ${'IsAssessed,Passes'}    | ${'Descending'} | ${'course-b'} | ${'course-a'} | ${'course-c'}
     ${'StartedDate'}      | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}

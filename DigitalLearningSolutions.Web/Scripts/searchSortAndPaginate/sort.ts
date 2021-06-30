@@ -38,7 +38,7 @@ export function getSortValue(
       return parseDate(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
       return parseDate(getElementText(searchableElement, 'completed-date'));
-    case 'HasDiagnostic,DiagnosticsScore':
+    case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
       return parseInt(getElementText(searchableElement, 'passed-sections').split('/')[0] || '-1', 10);
