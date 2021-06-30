@@ -6,15 +6,15 @@ import getSearchableElements from './getSearchableElements';
 describe('getSortValue', () => {
   it.each`
   fieldName             | fieldValue        | sortBy                  | expectedSortValue
-  ${'name'}             | ${'Example name'} | ${'Activity Name'}        | ${'example name'}
-  ${'started-date'}     | ${'01/01/2020'}   | ${'Enrolled Date'}      | ${new Date('01/01/2020')}
-  ${'accessed-date'}    | ${'02/02/2020'}   | ${'Last Accessed Date'} | ${new Date('02/02/2020')}
-  ${'complete-by-date'} | ${'03/03/2020'}   | ${'Complete By Date'}   | ${new Date('03/03/2020')}
-  ${'complete-by-date'} | ${'-'}            | ${'Complete By Date'}   | ${new Date(0)}
-  ${'diagnostic-score'} | ${'6/10'}         | ${'Diagnostic Score'}   | ${6}
-  ${''}                 | ${''}             | ${'Diagnostic Score'}   | ${-1}
-  ${'passed-sections'}  | ${'8/10'}         | ${'Passed Sections'}    | ${8}
-  ${''}                 | ${''}             | ${'Passed Sections'}    | ${-1}
+  ${'name'}             | ${'Example name'} | ${'Name'}        | ${'example name'}
+  ${'started-date'}     | ${'01/01/2020'}   | ${'StartedDate'}      | ${new Date('01/01/2020')}
+  ${'accessed-date'}    | ${'02/02/2020'}   | ${'LastAccessed'} | ${new Date('02/02/2020')}
+  ${'complete-by-date'} | ${'03/03/2020'}   | ${'CompleteByDate'}   | ${new Date('03/03/2020')}
+  ${'complete-by-date'} | ${'-'}            | ${'CompleteByDate'}   | ${new Date(0)}
+  ${'diagnostic-score'} | ${'6/10'}         | ${'HasDiagnostic,DiagnosticScore'}   | ${6}
+  ${''}                 | ${''}             | ${'HasDiagnostic,DiagnosticScore'}   | ${-1}
+  ${'passed-sections'}  | ${'8/10'}         | ${'IsAssessed,Passes'}    | ${8}
+  ${''}                 | ${''}             | ${'IsAssessed,Passes'}    | ${-1}
   ${'brand'}            | ${'Brand 1'}      | ${'Brand'}              | ${'brand 1'}
   ${'category'}         | ${'Category 1'}   | ${'Category'}           | ${'category 1'}
   ${''}                 | ${''}             | ${'Category'}           | ${''}
@@ -87,18 +87,18 @@ describe('sortSearchableElements current', () => {
 
   it.each`
     sortBy                  | sortDirection   | firstId       | secondId      | thirdId
-    ${'Activity Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'Activity Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
-    ${'Diagnostic Score'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
-    ${'Diagnostic Score'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
-    ${'Passed Sections'}    | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}
-    ${'Passed Sections'}    | ${'Descending'} | ${'course-b'} | ${'course-a'} | ${'course-c'}
-    ${'Enrolled Date'}      | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'Enrolled Date'}      | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
-    ${'Last Accessed Date'} | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
-    ${'Last Accessed Date'} | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
-    ${'Complete By Date'}   | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'Complete By Date'}   | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'HasDiagnostic,DiagnosticScore'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
+    ${'HasDiagnostic,DiagnosticScore'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
+    ${'IsAssessed,Passes'}    | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}
+    ${'IsAssessed,Passes'}    | ${'Descending'} | ${'course-b'} | ${'course-a'} | ${'course-c'}
+    ${'StartedDate'}      | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'StartedDate'}      | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'LastAccessed'} | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
+    ${'LastAccessed'} | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
+    ${'CompleteByDate'}   | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'CompleteByDate'}   | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
     `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {
@@ -157,8 +157,8 @@ describe('sortSearchableElements completed', () => {
 
   it.each`
   sortBy              | sortDirection   | firstId       | secondId      | thirdId
-  ${'Completed Date'} | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
-  ${'Completed Date'} | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
+  ${'Completed'} | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
+  ${'Completed'} | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {

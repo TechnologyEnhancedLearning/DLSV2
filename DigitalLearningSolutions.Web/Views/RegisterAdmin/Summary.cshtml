@@ -1,0 +1,92 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register
+@model SummaryViewModel
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Admin - Summary" : "Register Admin - Summary";
+}
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })" />
+    }
+
+    <div class="nhsuk-u-margin-bottom-8">
+      <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+    </div>
+
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Centre
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          First name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.FirstName
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> first name</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Last name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.LastName
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> last name</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Email
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> email address</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Job group
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.JobGroup
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="LearnerInformation">
+            Change<span class="nhsuk-u-visually-hidden"> job group</span>
+          </a>
+        </dd>
+      </div>
+    </dl>
+
+    <form method="post" asp-action="Summary">
+      <vc:terms-conditions asp-for="Terms" />
+      <button class="nhsuk-button" type="submit">Register</button>
+    </form>
+  </div>
+</div>

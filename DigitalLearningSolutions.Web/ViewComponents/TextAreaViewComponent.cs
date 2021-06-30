@@ -16,6 +16,7 @@
         /// <param name="spellCheck"></param>
         /// <param name="hintText">Leave blank for no hint.</param>
         /// <param name="cssClass"></param>
+        /// <param name="characterCount"></param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
             string aspFor,
@@ -24,7 +25,8 @@
             int rows,
             bool spellCheck,
             string hintText,
-            string cssClass)
+            string cssClass,
+            int? characterCount)
         {
             var model = ViewData.Model;
 
@@ -43,7 +45,8 @@
                 spellCheck,
                 errorMessages,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText);
+                string.IsNullOrEmpty(hintText) ? null : hintText,
+                characterCount);
             return View(textBoxViewModel);
         }
     }

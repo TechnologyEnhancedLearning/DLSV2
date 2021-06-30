@@ -1,0 +1,92 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.ContractDetails
+@model ContractDetailsViewModel
+
+<ul class="nhsuk-grid-row nhsuk-card-group">
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 coloured-card-number--blue">
+          @Model.Administrators
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Administrators</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.CmsAdministratorsColour)">
+          @Model.CmsAdministrators
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">CMS administrators</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.CmsManagersColour)">
+          @Model.CmsManagers
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">CMS managers</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.TrainersColour)">
+          @Model.Trainers
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Trainers</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 coloured-card-number--blue">
+          @Model.Supervisors
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Supervisors</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.ContentCreatorsColour)">
+          @Model.ContentCreators
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Content creators</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.CustomCoursesColour)">
+          @Model.CustomCourses
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Custom courses</span>
+      </div>
+    </div>
+  </li>
+
+  <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-64 nhsuk-u-margin-bottom-1 @("coloured-card-number--" + Model.ServerSpaceColour)">
+          @Model.ServerSpace
+        </p>
+        <span class="nhsuk-u-font-weight-normal nhsuk-u-font-size-19">Server space</span>
+      </div>
+    </div>
+  </li>
+</ul>
