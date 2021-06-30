@@ -2,6 +2,8 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/allDelegates.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Delegates";
   ViewData["Application"] = "Tracking System";
@@ -22,8 +24,22 @@
 
   <div class="nhsuk-grid-column-three-quarters">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
+      <div class="nhsuk-grid-column-one-third">
         <h1 id="page-heading" class="nhsuk-heading-xl">Delegates</h1>
+      </div>
+      <div class="nhsuk-grid-column-two-thirds all-delegates-button-group">
+        <button class="nhsuk-button nhsuk-button--secondary all-delegates-button">
+          Register
+        </button>
+        <button class="nhsuk-button nhsuk-button--secondary all-delegates-button">
+          Email
+        </button>
+        <button class="nhsuk-button nhsuk-button--secondary all-delegates-button">
+          Upload
+        </button>
+        <button class="nhsuk-button nhsuk-button--secondary all-delegates-button">
+          Download
+        </button>
       </div>
     </div>
 
