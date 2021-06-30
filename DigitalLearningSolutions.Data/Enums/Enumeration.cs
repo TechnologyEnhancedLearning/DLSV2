@@ -47,10 +47,14 @@ namespace DigitalLearningSolutions.Data.Enums
 
         public static bool TryGetFromIdOrName<T>(
             string idOrName,
-            out T enumeration)
+            out T enumeration,
+            bool ignoreCase = false
+        )
             where T : Enumeration
         {
-            return TryParse(item => item.Name == idOrName, out enumeration) ||
+            var comparison =
+                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture;
+            return TryParse(item => string.Equals(item.Name, idOrName, comparison), out enumeration) ||
                    int.TryParse(idOrName, out var id) &&
                    TryParse(item => item.Id == id, out enumeration);
         }
