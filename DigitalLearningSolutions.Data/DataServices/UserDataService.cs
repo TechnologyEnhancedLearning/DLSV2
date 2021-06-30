@@ -12,6 +12,7 @@
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
         public List<AdminUser> GetAdminUsersByCentreId(int centreId);
+        public List<DelegateUser> GetDelegateUsersByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
@@ -169,6 +170,39 @@
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId",
+                new { centreId }
+            ).ToList();
+
+            return users;
+        }
+
+        public List<DelegateUser> GetDelegateUsersByCentreId(int centreId)
+        {
+            var users = connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.CentreId = @centreId AND cd.Approved = 1",
                 new { centreId }
             ).ToList();
 
