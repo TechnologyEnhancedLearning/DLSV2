@@ -30,9 +30,9 @@ export function getSortValue(
   switch (sortBy) {
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
-    case 'EnrolledDate':
+    case 'StartedDate':
       return parseDate(getElementText(searchableElement, 'started-date'));
-    case 'LastAccessedDate':
+    case 'LastAccessed':
       return parseDate(getElementText(searchableElement, 'accessed-date'));
     case 'CompleteByDate':
       return parseDate(getElementText(searchableElement, 'complete-by-date'));
