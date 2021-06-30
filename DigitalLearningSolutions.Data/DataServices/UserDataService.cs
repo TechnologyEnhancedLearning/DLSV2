@@ -1,12 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Transactions;
     using Dapper;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserDataService
@@ -90,7 +88,9 @@
                         au.IsFrameworkContributor,
                         au.IsWorkforceManager,
                         au.IsWorkforceContributor,
-                        au.IsLocalWorkforceManager
+                        au.IsLocalWorkforceManager,
+                        au.ImportOnly,
+                        au.FailedLoginCount
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
@@ -138,25 +138,37 @@
         {
             var users = connection.Query<AdminUser>(
                 @"SELECT
-                        AdminID AS Id,
-                        CentreID,
-                        Email AS EmailAddress,
-                        Forename AS FirstName,
-                        Surname AS LastName,
-                        Password,
-                        CentreAdmin AS IsCentreAdmin,
-                        IsCentreManager,
-                        ContentCreator AS IsContentCreator,
-                        ContentManager AS IsContentManager,
-                        PublishToAll,
-                        SummaryReports,
-                        UserAdmin AS IsUserAdmin,
-                        CategoryID,
-                        Supervisor AS IsSupervisor,
-                        Trainer AS IsTrainer,
-                        ImportOnly
-                    FROM AdminUsers
-                    WHERE Active = 1 AND Approved = 1 AND CentreId = @centreId",
+                        au.AdminID AS Id,
+                        au.CentreID,
+                        ct.CentreName,
+                        ct.Active AS CentreActive,
+                        au.Email AS EmailAddress,
+                        au.Forename AS FirstName,
+                        au.Surname AS LastName,
+                        au.Password,
+                        au.CentreAdmin AS IsCentreAdmin,
+                        au.IsCentreManager,
+                        au.ContentCreator AS IsContentCreator,
+                        au.ContentManager AS IsContentManager,
+                        au.PublishToAll,
+                        au.SummaryReports,
+                        au.UserAdmin AS IsUserAdmin,
+                        au.CategoryID,
+                        cc.CategoryName,
+                        au.Supervisor AS IsSupervisor,
+                        au.Trainer AS IsTrainer,
+                        au.IsFrameworkDeveloper,
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager,
+                        au.ImportOnly,
+                        au.FailedLoginCount
+                    FROM AdminUsers AS au
+                    INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
+                    WHERE au.Active = 1 AND au.Approved = 1 AND au.CentreId = @centreId",
                 new { centreId }
             ).ToList();
 
@@ -191,7 +203,9 @@
                         au.IsFrameworkContributor,
                         au.IsWorkforceManager,
                         au.IsWorkforceContributor,
-                        au.IsLocalWorkforceManager
+                        au.IsLocalWorkforceManager,
+                        au.ImportOnly,
+                        au.FailedLoginCount
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
@@ -230,14 +244,37 @@
         {
             return connection.Query<AdminUser>(
                 @"SELECT
-                        AdminID AS Id,
-                        Forename AS FirstName,
-                        Surname AS LastName,
-                        Email AS EmailAddress,
-                        Password,
-                        ResetPasswordID
-                    FROM AdminUsers
-                    WHERE (Email = @emailAddress)",
+                        au.AdminID AS Id,
+                        au.CentreID,
+                        ct.CentreName,
+                        ct.Active AS CentreActive,
+                        au.Email AS EmailAddress,
+                        au.Forename AS FirstName,
+                        au.Surname AS LastName,
+                        au.Password,
+                        au.CentreAdmin AS IsCentreAdmin,
+                        au.IsCentreManager,
+                        au.ContentCreator AS IsContentCreator,
+                        au.ContentManager AS IsContentManager,
+                        au.PublishToAll,
+                        au.SummaryReports,
+                        au.UserAdmin AS IsUserAdmin,
+                        au.CategoryID,
+                        cc.CategoryName,
+                        au.Supervisor AS IsSupervisor,
+                        au.Trainer AS IsTrainer,
+                        au.IsFrameworkDeveloper,
+                        au.ProfileImage,
+                        au.IsFrameworkContributor,
+                        au.IsWorkforceManager,
+                        au.IsWorkforceContributor,
+                        au.IsLocalWorkforceManager,
+                        au.ImportOnly,
+                        au.FailedLoginCount
+                    FROM AdminUsers AS au
+                    INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
+                    WHERE (au.Email = @emailAddress)",
                 new { emailAddress }
             ).SingleOrDefault();
         }
@@ -399,7 +436,7 @@
                         FROM Candidates
                         WHERE CentreID = @centreId AND Answer{promptNumber} IS NOT NULL",
                 new { centreId }
-            ).Count(x => !string.IsNullOrWhiteSpace(x)); ;
+            ).Count(x => !string.IsNullOrWhiteSpace(x));
         }
 
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber)
