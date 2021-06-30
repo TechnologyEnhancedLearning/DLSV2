@@ -82,5 +82,24 @@
                 frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId);
             }
         }
+        public IActionResult ConfirmSupervise(int supervisorDelegateId)
+        {
+            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, GetAdminID()))
+            {
+                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId);
+            }
+            return RedirectToAction("MyStaffList");
+        }
+        [Route("/Supervisor/MyStaff/Remove/{supervisorDelegateId}")]
+        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
+        {
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            return View("RemoveConfirm", supervisorDelegateId);
+        }
+        public IActionResult RemoveSupervisorDelegate(int supervisorDelegateId)
+        {
+            supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, 0, GetAdminID());
+            return RedirectToAction("MyStaffList");
+        }
     }
 }

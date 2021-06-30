@@ -20,5 +20,6 @@
         public string? Answer6 { get; set; }
         public byte[]? ProfileImage { get; set; }
         public string? SupervisorName { get; set; }
+        public int CandidateAssessmentCount { get; set; }
     }
 }

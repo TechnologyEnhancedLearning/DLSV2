@@ -265,3 +265,16 @@ nav, .nhsuk-header__navigation, #header-navigation {
   margin: 0;
   clip: auto;
 }
+.nhsuk-button--danger {
+  background-color: $color_nhsuk-red;
+  box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
+  margin-bottom: 16px !important;
+
+  &:hover {
+    background-color: shade($color_nhsuk-red, 20%);
+  }
+
+  &:active {
+    background-color: shade($color_nhsuk-red, 50%);
+  }
+}

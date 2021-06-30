@@ -15,7 +15,8 @@
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
         //UPDATE DATA
-
+        bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
+        bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         //INSERT DATA
         int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId);
         //DELETE DATA
@@ -26,9 +27,12 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, 
              cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
-             AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName ";
+             AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
+FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount ";
         private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd LEFT OUTER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
              CustomPrompts AS cp6 RIGHT OUTER JOIN
@@ -76,7 +80,7 @@
             return connection.Query<SupervisorDelegateDetail>(
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.SupervisorAdminID = @adminId)", new {adminId}
+                    WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new {adminId}
                 );
         }
         public int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId)
@@ -96,7 +100,15 @@
                new { supervisorAdminId, delegateEmail });
             if (existingId > 0)
             {
-                return -2;
+                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail });
+                if (numberOfAffectedRows > 0)
+                {
+                    return existingId;
+                }
+                else
+                {
+                    return -2;
+                }
             }
             else
             {
@@ -130,8 +142,40 @@
             return connection.Query<SupervisorDelegateDetail>(
                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.ID = @supervisorDelegateId)", new { supervisorDelegateId }
+                    WHERE (sd.ID = @supervisorDelegateId) AND (Removed IS NULL)", new { supervisorDelegateId }
                ).FirstOrDefault();
+        }
+
+        public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+         @"UPDATE SupervisorDelegates SET Confirmed = getUTCDate()
+            WHERE ID = @supervisorDelegateId AND Confirmed IS NULL AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
+        new { supervisorDelegateId, candidateId, adminId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not confirming SupervisorDelegate as db update failed. supervisorDelegateId: {supervisorDelegateId}, candidateId: {candidateId}, adminId: {adminId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+         @"UPDATE SupervisorDelegates SET Removed = getUTCDate()
+            WHERE ID = @supervisorDelegateId AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
+        new { supervisorDelegateId, candidateId, adminId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing SupervisorDelegate as db update failed. supervisorDelegateId: {supervisorDelegateId}, candidateId: {candidateId}, adminId: {adminId}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -181,6 +181,9 @@
     }
     </div>
     </div>
+<a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" asp-action="@(Model.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")" asp-route-supervisorDelegateId="@Model.ID">
+  Remove staff member
+</a>
     </details>
     @if (Model.Confirmed != null)
     {
@@ -191,7 +194,7 @@
              asp-controller="Supervisor"
              asp-action="ProfileAssessments"
              asp-route-supervisorDandidateId="@Model.ID">
-            View profile assessments
+            View profile assessments (@Model.CandidateAssessmentCount)
           </a>
         </div>
       </div>
@@ -204,7 +207,7 @@
              aria-describedby="@Model.ID-name"
              asp-controller="Supervisor"
              asp-action="ConfirmSupervise"
-             asp-route-supervisorDandidateId="@Model.ID">
+             asp-route-supervisorCandidateId="@Model.ID">
             Confirm
           </a>
         </div>
