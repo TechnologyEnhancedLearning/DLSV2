@@ -30,15 +30,15 @@ export function getSortValue(
   switch (sortBy) {
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
-    case 'EnrolledDate':
+    case 'StartedDate':
       return parseDate(getElementText(searchableElement, 'started-date'));
-    case 'LastAccessedDate':
+    case 'LastAccessed':
       return parseDate(getElementText(searchableElement, 'accessed-date'));
     case 'CompleteByDate':
       return parseDate(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
       return parseDate(getElementText(searchableElement, 'completed-date'));
-    case 'HasDiagnostic,DiagnosticsScore':
+    case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
       return parseInt(getElementText(searchableElement, 'passed-sections').split('/')[0] || '-1', 10);
