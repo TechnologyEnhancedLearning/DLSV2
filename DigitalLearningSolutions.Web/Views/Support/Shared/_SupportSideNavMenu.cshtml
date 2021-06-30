@@ -1,0 +1,44 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Support
+@using Microsoft.Extensions.Configuration
+@model SupportViewModel
+
+@{
+  var routeData = new Dictionary<string, string> { { "application", Model.Application.Name } };
+}
+
+<h2 class="side-nav__heading">Support</h2>
+<ul class="nhsuk-list side-nav__list">
+  <vc:side-menu-link
+    asp-action="Index"
+    asp-controller="Support"
+    asp-all-route-data="@routeData"
+    link-text="Support"
+    is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
+
+  <vc:side-menu-link-with-href
+    href="@configuration["CurrentSystemBaseUrl"]/help/Introduction.html"
+    link-text="Help documentation"
+    is-current-page="@(Model.CurrentPage == SupportPage.HelpDocumentation)" />
+
+  <vc:side-menu-link-with-href
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/faqs"
+    link-text="FAQs"
+    is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
+
+  <vc:side-menu-link-with-href
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/resources"
+    link-text="Resources"
+    is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
+
+  <vc:side-menu-link-with-href
+    href="@configuration["CurrentSystemBaseUrl"]/tracking/tickets"
+    link-text="Support tickets"
+    is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
+
+  <vc:side-menu-link-with-href
+    href="https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true"
+    link-text="Change requests"
+    is-current-page="@(Model.CurrentPage == SupportPage.ChangeRequests)" />
+</ul>

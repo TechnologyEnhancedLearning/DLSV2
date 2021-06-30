@@ -1,0 +1,62 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Support
+@model SupportViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningSolutions/support.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Support";
+  ViewData["Application"] = Model.Application.ApplicationName;
+  ViewData["HeaderPath"] = Model.Application.HeaderPath;
+  ViewData["HeaderPathName"] = Model.Application.ApplicationName;
+}
+
+@section NavMenuItems {
+  @if (Model.Application.Equals(ApplicationType.TrackingSystem)) {
+    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  } else if (Model.Application.Equals(ApplicationType.Frameworks)) {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+  }
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 id="page-heading" class="nhsuk-heading-xl">Support</h1>
+
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">Access Digital Learning Solutions support in 5 easy steps...</p>
+    <ol>
+      <li>
+        Check the online Help documentation. It is searchable and comprehensive.
+      </li>
+      <li>
+        Search our Frequently Asked Questions (FAQs).
+        If you've got a question about the platform, the chances are somebody has asked it before.
+        Find answers to the most common questions.
+      </li>
+      <li>
+        Look through our Resources.
+        These contain in-depth guides to some of the more complex parts of the platform
+        and materials to help you publicise and support use of the platform with your users.
+      </li>
+      <li>
+        If you are still experiencing issues having gone through 1-3 above,
+        then please raise a support ticket and we will assist you further.
+      </li>
+      <li>
+        If you have suggestions that you believe would help improve the platform,
+        please also raise a support ticket.
+        You can then track these on our GitHub Change requests page.
+      </li>
+    </ol>
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+    </nav>
+  </div>
+</div>

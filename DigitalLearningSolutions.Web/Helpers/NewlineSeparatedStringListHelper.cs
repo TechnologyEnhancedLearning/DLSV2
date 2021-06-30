@@ -30,5 +30,12 @@
         {
             return string.Join(Separator, strings);
         }
+
+        public static string RemoveEmptyOptions(string? list)
+        {
+            var options = SplitNewlineSeparatedList(list);
+            var filteredOptions = options.Where(o => !string.IsNullOrWhiteSpace(o));
+            return JoinNewlineSeparatedList(filteredOptions);
+        }
     }
 }

@@ -1,0 +1,41 @@
+﻿@inject IConfiguration Configuration
+
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.ContractDetails
+@using Microsoft.Extensions.Configuration
+@model ContractDetailsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/contractDetails.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Contract details";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Contract details</h1>
+
+    <partial name="_ContractDetailsList" model="Model" />
+
+    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="Pricing" asp-action="Index" role="button">
+      View pricing plans
+    </a>
+    @if (User.HasCentreManagerPermissions())
+    {
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Administrator" asp-action="Index" role="button">
+        Manage users
+      </a>
+    }
+  </div>
+</div>

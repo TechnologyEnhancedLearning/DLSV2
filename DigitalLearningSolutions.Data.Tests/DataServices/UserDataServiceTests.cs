@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -334,6 +333,19 @@
 
             // Then
             Assert.That(returnedIds.SequenceEqual(expectedAdminIds));
+        }
+
+        [Test]
+        public void GetAdminUsersByCentreId_populates_correct_properties_on_admin()
+        {
+            // Given
+            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
+
+            // When
+            var admin = userDataService.GetAdminUsersByCentreId(2).Single(a => a.Id == 7);
+
+            // Then
+            admin.Should().BeEquivalentTo(expectedAdminUser);
         }
 
         [Test]

@@ -1,6 +1,9 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
-@{
+﻿@{
   ViewData["Title"] = "Password Reset Email Sent";
+}
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
 }
 
 <div class="nhsuk-grid-row">
@@ -12,4 +15,3 @@
     <p>To find out your administrator details, <a asp-controller="FindYourCentre" asp-action="Index">search for your centre here</a>.</p>
   </div>
 </div>
-

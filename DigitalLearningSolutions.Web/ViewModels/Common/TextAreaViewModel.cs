@@ -15,7 +15,8 @@
             bool spellCheck,
             IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null
+            string? hintText = null,
+            int? characterCount = null
         )
         {
             var errorMessageList = errorMessages.ToList();
@@ -28,6 +29,7 @@
             Rows = rows;
             SpellCheck = spellCheck;
             HintText = hintText;
+            CharacterCount = characterCount;
             ErrorMessages = errorMessageList;
             HasError = errorMessageList.Any();
         }
@@ -40,6 +42,7 @@
         public int Rows { get; set; }
         public bool SpellCheck { get; set; }
         public string? HintText { get; set; }
+        public int? CharacterCount { get; set; }
         public IEnumerable<string> ErrorMessages { get; set; }
         public bool HasError { get; set; }
     }

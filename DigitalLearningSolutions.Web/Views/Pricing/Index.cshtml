@@ -4,6 +4,10 @@
   var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/pricing?nonav=true";
 }
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl heading-margin-2" id="page-heading">Pricing</h1>

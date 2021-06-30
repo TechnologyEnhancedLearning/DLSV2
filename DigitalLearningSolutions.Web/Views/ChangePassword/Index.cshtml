@@ -8,6 +8,10 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
 }
 
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
@@ -50,6 +54,6 @@
       <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 
-    <vc:back-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@null" link-text="Cancel" />
+      <vc:back-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@null" link-text="Cancel"/>
   </div>
 </div>

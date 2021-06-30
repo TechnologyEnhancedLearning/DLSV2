@@ -78,14 +78,26 @@
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
-                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
-                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
+                   user.HasCentreManagerPermissions();
         }
 
         public static bool HasCentreManagerPermissions(this ClaimsPrincipal user)
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) ?? false) ||
-                   (user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false);
+                   user.HasSuperAdminPermissions();
+        }
+
+        public static bool HasSuperAdminPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) ?? false;
+        }
+
+        public static bool HasFrameworksAdminPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkDeveloper) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true ||
+                   user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true;
         }
     }
 }

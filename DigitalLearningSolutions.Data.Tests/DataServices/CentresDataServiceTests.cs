@@ -230,5 +230,16 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetCentreAutoRegisterValues_should_return_correct_values()
+        {
+            // When
+            var result = centresDataService.GetCentreAutoRegisterValues(2);
+
+            // Then
+            result.autoRegistered.Should().BeTrue();
+            result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
+        }
     }
 }
