@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@model SearchableDelegateViewModel
+
+@*TODO: Search and sort functionality is part of HEEDLS-491.
+  Filename includes 'Searchable' to avoid having to change name later*@
+
+<div class="nhsuk-expander-group" id="@Model.Id-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+        @Model.Name (@Model.CandidateNumber)
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+
+    </div>
+  </details>
+</div>

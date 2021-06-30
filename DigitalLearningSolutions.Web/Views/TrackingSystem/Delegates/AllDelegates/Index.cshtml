@@ -1,6 +1,8 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@model AllDelegatesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/allDelegates.css")" asp-append-version="true">
 
@@ -40,6 +42,22 @@
         <button class="nhsuk-button nhsuk-button--secondary all-delegates-button">
           Download
         </button>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        @if (!Model.Delegates.Any()) {
+          <p class="nhsuk-u-margin-top-4" role="alert">
+            <b>No delegates found</b>
+          </p>
+        } else {
+          <div id="searchable-elements">
+            @foreach (var delegateModel in Model.Delegates) {
+              <partial name="_SearchableDelegateCard" model="delegateModel" />
+            }
+          </div>
+        }
       </div>
     </div>
 
