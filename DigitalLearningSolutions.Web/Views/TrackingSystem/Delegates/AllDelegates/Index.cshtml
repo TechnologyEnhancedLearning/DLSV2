@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
+  ViewData["Title"] = "Delegates";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Delegates/All";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <h1 id="page-heading" class="nhsuk-heading-xl">Delegates</h1>
+      </div>
+    </div>
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />
+    </nav>
+  </div>
+</div>
