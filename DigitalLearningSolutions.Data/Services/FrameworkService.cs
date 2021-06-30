@@ -1530,7 +1530,7 @@ WHERE (FR.ID = @reviewId) AND (FR.ReviewComplete IS NOT NULL)",
         {
             return connection.Query<DashboardData>(
                 $@"SELECT (SELECT COUNT(*) 
-  FROM [mbdbx101].[dbo].[Frameworks]) AS FrameworksCount,
+  FROM [dbo].[Frameworks]) AS FrameworksCount,
 
   (SELECT COUNT(*) FROM {FrameworkTables} 
 WHERE (OwnerAdminID = @adminId) OR
@@ -1539,15 +1539,15 @@ WHERE (OwnerAdminID = @adminId) OR
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID)))) AS MyFrameworksCount,
 
-				 (SELECT COUNT(*) FROM RoleProfiles) AS RoleProfileCount,
+				 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
 
-				 (SELECT COUNT(*) FROM RoleProfiles AS RP LEFT OUTER JOIN
-             RoleProfileCollaborators AS RPC ON RPC.RoleProfileID = RP.ID AND RPC.AdminID = @adminId 
-WHERE (OwnerAdminID = @adminId) OR
+				 (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
+             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId 
+WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
-                 FROM    RoleProfileCollaborators
-                 WHERE (RoleProfileID = RP.ID)))) AS MyRoleProfilesCount",
+                 FROM    SelfAssessmentCollaborators
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
                 new { adminId }).FirstOrDefault();
         }
 
@@ -1561,11 +1561,11 @@ FROM   FrameworkReviews AS FWR INNER JOIN
              AdminUsers AS AU ON FW.OwnerAdminID = AU.AdminID
 WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
 UNION ALL
-SELECT 0 AS RoleProfileID, RP.ID AS RoleProfileID, RP.RoleProfileName AS ItemName, AU.Forename + ' ' + AU.Surname AS RequestorName, RPR.SignOffRequired, RPR.ReviewRequested AS Requested
-FROM   RoleProfileReviews AS RPR INNER JOIN
-             RoleProfiles AS RP ON RPR.RoleProfileID = RP.ID INNER JOIN
-             RoleProfileCollaborators AS RPC ON RPR.RoleProfileCollaboratorID = RPC.ID INNER JOIN
-             AdminUsers AS AU ON RP.OwnerAdminID = AU.AdminID
+SELECT 0 AS SelfAssessmentID, RP.ID AS SelfAssessmentID, RP.Name AS ItemName, AU.Forename + ' ' + AU.Surname AS RequestorName, RPR.SignOffRequired, RPR.ReviewRequested AS Requested
+FROM   SelfAssessmentReviews AS RPR INNER JOIN
+             SelfAssessments AS RP ON RPR.SelfAssessmentID = RP.ID INNER JOIN
+             SelfAssessmentCollaborators AS RPC ON RPR.SelfAssessmentCollaboratorID = RPC.ID INNER JOIN
+             AdminUsers AS AU ON RP.CreatedByAdminID = AU.AdminID
 WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archived IS NULL)", new { adminId }
                 );
 

@@ -1,7 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Enums;
+
     public class AdminUser : User
     {
+        private const int FailedLoginThreshold = 5;
+
         public bool IsCentreAdmin { get; set; }
 
         public bool IsCentreManager { get; set; }
@@ -30,5 +34,15 @@
         public bool IsWorkforceContributor { get; set; }
         public bool IsLocalWorkforceManager { get; set; }
         public bool ImportOnly { get; set; }
+
+        public int FailedLoginCount { get; set; }
+
+        public bool IsLocked => FailedLoginCount >= FailedLoginThreshold;
+        public bool IsCmsAdministrator => ImportOnly && IsContentManager;
+
+        public override UserReference ToUserReference()
+        {
+            return new UserReference(Id, UserType.AdminUser);
+        }
     }
 }

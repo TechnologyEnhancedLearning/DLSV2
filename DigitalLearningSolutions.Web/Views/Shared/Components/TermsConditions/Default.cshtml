@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model TermsConditionsViewModel
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <fieldset class="nhsuk-fieldset" aria-describedby="terms-error">
+    @if (Model.HasError) {
+      <span class="nhsuk-error-message" id="terms-error">
+        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+      </span>
+    }
+    <div class="nhsuk-checkboxes">
+      <div class="nhsuk-checkboxes__item">
+        <input class="nhsuk-checkboxes__input" id="@Model.Id" name="@Model.Name" type="checkbox" value="true" />
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Name">
+          I have read, understood and agree to abide by the Digital Learning Solutions <a asp-controller="LearningSolutions" asp-action="Terms" target="_blank">Terms and Conditions</a>.
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>

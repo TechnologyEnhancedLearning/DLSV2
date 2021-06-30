@@ -14,13 +14,13 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 
     public partial class LearningPortalControllerTests
     {
-        private LearningPortalController controller;
-        private ICentresDataService centresDataService;
-        private ICourseService courseService;
-        private ISelfAssessmentService selfAssessmentService;
-        private INotificationService notificationService;
-        private IConfiguration config;
-        private IFilteredApiHelperService filteredApiHelperService;
+        private LearningPortalController controller = null!;
+        private ICentresDataService centresDataService = null!;
+        private ICourseDataService courseDataService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
+        private INotificationService notificationService = null!;
+        private IConfiguration config = null!;
+        private IFilteredApiHelperService filteredApiHelperService = null!;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         public void SetUp()
         {
             centresDataService = A.Fake<ICentresDataService>();
-            courseService = A.Fake<ICourseService>();
+            courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             notificationService = A.Fake<INotificationService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             }, "mock"));
             controller = new LearningPortalController(
                 centresDataService,
-                courseService,
+                courseDataService,
                 selfAssessmentService,
                 notificationService,
                 logger,

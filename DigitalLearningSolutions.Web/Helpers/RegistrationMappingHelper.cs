@@ -2,38 +2,24 @@
 {
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Web.Models;
-    using DigitalLearningSolutions.Web.ViewModels.Register;
 
     public static class RegistrationMappingHelper
     {
         public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
         {
-            return new DelegateRegistrationModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                (int)data.RegisterViewModel.Centre!,
-                (int)data.LearnerInformationViewModel.JobGroup!,
+            return new DelegateRegistrationModel(
+                data.FirstName!,
+                data.LastName!,
+                data.Email!,
+                (int)data.Centre!,
+                (int)data.JobGroup!,
                 data.PasswordHash!,
-                data.LearnerInformationViewModel.Answer1,
-                data.LearnerInformationViewModel.Answer2,
-                data.LearnerInformationViewModel.Answer3,
-                data.LearnerInformationViewModel.Answer4,
-                data.LearnerInformationViewModel.Answer5,
-                data.LearnerInformationViewModel.Answer6
-            );
-        }
-
-        public static SummaryViewModel MapToSummary(DelegateRegistrationData data, string centre, string jobGroup)
-        {
-            return new SummaryViewModel
-            (
-                data.RegisterViewModel.FirstName!,
-                data.RegisterViewModel.LastName!,
-                data.RegisterViewModel.Email!,
-                centre,
-                jobGroup
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
             );
         }
     }

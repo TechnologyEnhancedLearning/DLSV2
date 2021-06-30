@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -119,8 +120,7 @@
 
             if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Password),
-                    "The password you have entered is incorrect");
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), CommonValidationErrorMessages.IncorrectPassword);
                 return View(model);
             }
 
@@ -172,14 +172,14 @@
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
                 model.Answer1, model.Answer2, model.Answer3, model.Answer4,
                 model.Answer5, model.Answer6);
         }
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(User.GetCentreId(),
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
                 delegateUser?.Answer1, delegateUser?.Answer2, delegateUser?.Answer3, delegateUser?.Answer4,
                 delegateUser?.Answer5, delegateUser?.Answer6);
         }

@@ -9,12 +9,12 @@
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Dashboard"
-                     link-text="Centre dashboard"
+                     link-text="Dashboard"
                      is-current-page="Model == CentrePage.Dashboard" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="CentreConfiguration"
-                     link-text="Centre configuration"
+                     link-text="Configuration"
                      is-current-page="Model == CentrePage.Configuration" />
 
   @if (User.HasCentreManagerPermissions()) {

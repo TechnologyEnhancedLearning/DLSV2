@@ -25,5 +25,10 @@
          value="@Model.Value"
          rows="@Model.Rows"
          spellcheck="@Model.SpellCheck"
-         aria-describedby="@Model.Name-error @Model.Name-hint">@Model.Value</textarea>
+         aria-describedby="@Model.Name-error @Model.Name-hint @Model.Name-info">@Model.Value</textarea>
+  @if (Model.CharacterCount.HasValue) {
+    <div id="@Model.Name-info" class="nhsuk-hint">
+      You can enter up to @Model.CharacterCount characters
+    </div>
+  }
 </div>

@@ -18,7 +18,7 @@
                 AvailableCourseHelper.CreateDefaultAvailableCourse(),
                 AvailableCourseHelper.CreateDefaultAvailableCourse()
             };
-            A.CallTo(() => courseService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
+            A.CallTo(() => courseDataService.GetAvailableCourses(CandidateId, CentreId)).Returns(availableCourses);
 
             // When
             var result = controller.Available();
@@ -27,7 +27,7 @@
             var expectedModel = new AvailablePageViewModel(
                 availableCourses,
                 null,
-                "Activity Name",
+                "Name",
                 "Ascending",
                 "",
                 1

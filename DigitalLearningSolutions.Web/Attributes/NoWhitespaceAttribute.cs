@@ -2,10 +2,9 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using Microsoft.AspNetCore.Http;
 
     /// <summary>
-    /// Specifies that no whitespace characters are allowed
+    ///     Specifies that no whitespace characters are allowed
     /// </summary>
     public class NoWhitespaceAttribute : ValidationAttribute
     {
@@ -16,13 +15,16 @@
             this.errorMessage = errorMessage;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
-            if (value.ToString().Any(char.IsWhiteSpace))
+            switch (value)
             {
-                return new ValidationResult(errorMessage); 
+                case null:
+                case string strValue when !strValue.Any(char.IsWhiteSpace):
+                    return ValidationResult.Success;
+                default:
+                    return new ValidationResult(errorMessage);
             }
-            return ValidationResult.Success;
         }
     }
 }

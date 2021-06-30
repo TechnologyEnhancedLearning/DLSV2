@@ -23,7 +23,12 @@
         private readonly IUserService userService;
         private readonly ILogger<LoginController> logger;
 
-        public LoginController(ILoginService loginService, IUserService userService, ISessionService sessionService, ILogger<LoginController> logger)
+        public LoginController(
+            ILoginService loginService,
+            IUserService userService,
+            ISessionService sessionService,
+            ILogger<LoginController> logger
+        )
         {
             this.loginService = loginService;
             this.userService = userService;
@@ -72,8 +77,10 @@
             }
 
             verifiedAdminUser ??=
-                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(verifiedDelegateUsers.First(),
-                    model.Password);
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    verifiedDelegateUsers.First(),
+                    model.Password
+                );
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
                 userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
@@ -92,13 +99,17 @@
             {
                 sessionService.StartAdminSession(adminLoginDetails?.Id);
 
-                return await LogIn(adminLoginDetails, delegateLoginDetails.FirstOrDefault(), model.RememberMe, model.ReturnUrl);
+                return await LogIn(
+                    adminLoginDetails,
+                    delegateLoginDetails.FirstOrDefault(),
+                    model.RememberMe,
+                    model.ReturnUrl
+                );
             }
 
             var chooseACentreViewModel = new ChooseACentreViewModel(availableCentres);
 
-            SetTempDataForChooseACentre
-            (
+            SetTempDataForChooseACentre(
                 model.RememberMe,
                 adminLoginDetails,
                 delegateLoginDetails,
@@ -141,8 +152,7 @@
             return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
         }
 
-        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails
-        (
+        private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         )
@@ -152,8 +162,7 @@
             return (adminLoginDetails, delegateLoginDetails);
         }
 
-        private void SetTempDataForChooseACentre
-        (
+        private void SetTempDataForChooseACentre(
             bool rememberMe,
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
@@ -169,8 +178,7 @@
             TempData["ReturnUrl"] = returnUrl;
         }
 
-        private async Task<IActionResult> LogIn
-        (
+        private async Task<IActionResult> LogIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
             bool rememberMe,
@@ -198,6 +206,7 @@
                 {
                     return Redirect(returnUrl);
                 }
+
                 logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
             }
 

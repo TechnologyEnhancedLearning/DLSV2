@@ -5,6 +5,7 @@ end_of_line = crlf
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+encoding = utf-8-bom
 
 # ReSharper properties
 resharper_csharp_wrap_after_declaration_lpar = true
