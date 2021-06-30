@@ -41,7 +41,7 @@
 
         void UpdateCentreDetails(
             int centreId,
-            string notifyEmail,
+            string? notifyEmail,
             string bannerText,
             byte[]? centreSignature,
             byte[]? centreLogo
@@ -231,7 +231,7 @@
 
         public void UpdateCentreDetails(
             int centreId,
-            string notifyEmail,
+            string? notifyEmail,
             string bannerText,
             byte[]? centreSignature,
             byte[]? centreLogo

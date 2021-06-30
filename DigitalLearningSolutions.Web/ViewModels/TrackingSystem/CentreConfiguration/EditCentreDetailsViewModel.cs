@@ -17,7 +17,6 @@
             CentreLogo = centre.CentreLogo;
         }
 
-        [Required(ErrorMessage = "Enter an email address")]
         [MaxLength(250, ErrorMessage = "Email address must be 250 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         [NoWhitespace("Email address must not contain any whitespace characters")]

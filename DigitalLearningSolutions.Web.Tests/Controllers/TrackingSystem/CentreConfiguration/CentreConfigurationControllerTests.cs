@@ -89,7 +89,7 @@
         }
 
         [Test]
-        public void EditCentreDetailsPostSave_with_signature_image_fails_validation()
+        public void EditCentreDetailsPostSave_without_previewing_signature_image_fails_validation()
         {
             // Given
             var model = new EditCentreDetailsViewModel
@@ -111,7 +111,7 @@
         }
 
         [Test]
-        public void EditCentreDetailsPostSave_with_logo_image_fails_validation()
+        public void EditCentreDetailsPostSave_without_previewing_logo_image_fails_validation()
         {
             // Given
             var model = new EditCentreDetailsViewModel

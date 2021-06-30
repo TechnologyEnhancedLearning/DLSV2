@@ -230,5 +230,32 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void UpdateCentreDetails_updates_centre()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string notifyEmail = "test@centre.com";
+                const string bannerText = "Test banner text";
+
+                // When
+                centresDataService.UpdateCentreDetails(2, notifyEmail, bannerText, null, null);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCentre.NotifyEmail.Should().BeEquivalentTo(notifyEmail);
+                    updatedCentre.BannerText.Should().BeEquivalentTo(bannerText);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

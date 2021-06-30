@@ -168,7 +168,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostSave(EditCentreDetailsViewModel model)
         {
-
             if (model.CentreSignatureFile != null)
             {
                 ModelState.AddModelError(nameof(EditCentreDetailsViewModel.CentreSignatureFile),
@@ -190,7 +189,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
             centresDataService.UpdateCentreDetails(
                 centreId,
-                model.NotifyEmail!,
+                model.NotifyEmail,
                 model.BannerText!,
                 model.CentreSignature,
                 model.CentreLogo
