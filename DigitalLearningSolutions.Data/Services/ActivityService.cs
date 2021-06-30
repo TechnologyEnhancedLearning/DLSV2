@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -28,25 +29,10 @@
 
             var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
 
-            var monthsThisYear = Enumerable.Range(1, endTime.Month).Select(
-                m => new MonthOfActivity
-                {
-                    Year = endTime.Year,
-                    Month = m
-                }
-            );
-            var monthsLastYear = Enumerable.Range(startTime.Month, 13 - startTime.Month).Select(
-                m => new MonthOfActivity
-                {
-                    Year = startTime.Year,
-                    Month = m
-                }
-            );
+            var months = GenerateBlankMonthsBetweenDates(startTime, endTime).ToList();
+            months.Reverse();
 
-            var monthsOfActivity = monthsLastYear.Concat(monthsThisYear).ToList();
-            monthsOfActivity.Reverse();
-
-            foreach (var month in monthsOfActivity)
+            foreach (var month in months)
             {
                 var monthData =
                     activityData.SingleOrDefault(data => data.Year == month.Year && data.Month == month.Month);
@@ -58,7 +44,21 @@
                 }
             }
 
-            return monthsOfActivity;
+            return months;
+        }
+
+        private IEnumerable<MonthOfActivity> GenerateBlankMonthsBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            var diffInMonths = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);
+            var monthEnumerable = Enumerable.Range(startDate.Month, diffInMonths + 1);
+
+            return monthEnumerable.Select(
+                m => new MonthOfActivity
+                {
+                    Month = (m - 1) % 12 + 1,
+                    Year = startDate.Year + (m - 1) / 12
+                }
+            );
         }
     }
 }

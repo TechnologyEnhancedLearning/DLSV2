@@ -7,7 +7,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    class ActivityDataServiceTests
+    public class ActivityDataServiceTests
     {
         private IActivityDataService service = null!;
 

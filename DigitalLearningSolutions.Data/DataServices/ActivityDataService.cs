@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
@@ -34,7 +33,7 @@
                         WHERE (LogDate > @start AND LogDate < @end AND CentreID = @centreId)
                     GROUP BY LogYear, LogMonth
                     ORDER BY LogYear, LogMonth",
-            new {centreId, start, end}
+                new { centreId, start, end }
             );
         }
     }

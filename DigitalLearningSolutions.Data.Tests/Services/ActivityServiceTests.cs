@@ -10,7 +10,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    class ActivityServiceTests
+    public class ActivityServiceTests
     {
         private IActivityDataService activityDataService = null!;
         private IClockService clockService = null!;
