@@ -29,3 +29,7 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
   </div>
 </details>
+<partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
+<a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+  Enrol on new assessment
+</a>

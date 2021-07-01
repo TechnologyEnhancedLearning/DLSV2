@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Data.Models.Supervisor
+@model DelegateSelfAssessment
+
+@if (Model.LaunchCount == 0)
+{
+  <strong class="nhsuk-tag nhsuk-tag--grey status-tag">
+    Not started
+  </strong>
+}
+else if (Model.CompletedDate != null)
+{
+  <strong class="nhsuk-tag nhsuk-tag--green status-tag">
+    Complete
+  </strong>
+}
+else if (Model.VerificationRequested > 0)
+{
+  <strong class="nhsuk-tag nhsuk-tag--red status-tag">
+    Review requested
+  </strong>
+}
+else
+{
+  <strong class="nhsuk-tag status-tag">
+    Ongoing
+  </strong>
+}

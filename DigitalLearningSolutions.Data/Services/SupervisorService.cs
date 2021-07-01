@@ -81,7 +81,8 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
             return connection.Query<SupervisorDelegateDetail>(
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new {adminId}
+                    WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)
+                    ORDER BY c.LastName, COALESCE(c.FirstName, sd.DelegateEmail)", new {adminId}
                 );
         }
         public int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId)
