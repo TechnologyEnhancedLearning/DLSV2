@@ -1,0 +1,31 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+button.nhsuk-pagination__link {
+  @include mq($until: 1024px) {
+    flex-direction: column;
+  }
+
+  &.nhsuk-pagination__link--prev {
+    @include mq($until: 1024px) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  &.nhsuk-pagination__link--next {
+    @include mq($until: 1024px) {
+      float: right;
+    }
+  }
+}
+
+.nhsuk-pagination-item--next .nhsuk-pagination__title {
+  @include mq($until: 1024px) {
+    padding-right: 0;
+  }
+}
+
+.nhsuk-pagination-item--previous .nhsuk-pagination__title {
+  @include mq($until: 1024px) {
+    padding-left: 0;
+  }
+}

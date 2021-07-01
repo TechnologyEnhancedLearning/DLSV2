@@ -2,7 +2,7 @@
 @model BaseSearchablePageViewModel
 
 <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
-  <div class="nhsuk-list nhsuk-pagination__list">
+  <div class="nhsuk-pagination__list">
     <div class="pagination-button-container">
       <div class="nhsuk-pagination-item--previous" @(Model.Page == 1 ? "hidden" : "")>
         <button class="nhsuk-pagination__link nhsuk-pagination__link--prev" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="@(Model.Page - 1)">

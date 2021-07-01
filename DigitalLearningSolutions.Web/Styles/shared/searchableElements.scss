@@ -229,6 +229,11 @@ div#search {
   text-align: center;
 }
 
+#page-indicator {
+  @include nhsuk-typography-responsive(24);
+  padding-top: 1px;
+}
+
 button.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
@@ -246,6 +251,10 @@ button.nhsuk-pagination__link {
     @include mq($until: tablet) {
       flex-direction: column-reverse;
     }
+  }
+
+  &.nhsuk-pagination__link--next {
+    float: right;
   }
 
   &:hover {
@@ -271,6 +280,10 @@ button.nhsuk-pagination__link {
   .nhsuk-pagination-item--next & {
     text-align: left;
   }
+}
+
+.nhsuk-pagination {
+  padding: 0;
 }
 
 @include mq($from: 768px, $until: 1024px) {
