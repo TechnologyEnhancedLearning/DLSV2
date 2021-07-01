@@ -2,6 +2,7 @@
 @model CurrentFiltersViewModel
 
 <div id="applied-filters" @(Model.AppliedFilters.Any() ? "" : "hidden")>
+  <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Applied filters</label>
   <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
     <input type="hidden" name="filterBy" value="" />
     <input type="hidden" name="searchString" value="@Model.SearchString" />
@@ -11,6 +12,6 @@
       }
     </div>
 
-    <input type="submit" class="nhsuk-search__submit clear-filter__submit" value="Clear filters" />
+    <input type="submit" class="nhsuk-search__submit filter-submit__clear" value="Clear filters" />
   </form>
 </div>

@@ -1,4 +1,4 @@
-﻿@inject IConfiguration configuration
+﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
@@ -9,7 +9,7 @@
 @{
   ViewData["Title"] = "Centre Administrators";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
 }
 
@@ -46,6 +46,7 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full" id="filters-container">
+        <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filters</label>
         @foreach (var filter in Model.Filters) {
           <div id="filter-@filter.FilterProperty">
             <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
@@ -57,7 +58,7 @@
                   <option value="@filterValue">@displayText</option>
                 }
               </select>
-              <button class="nhsuk-search__submit filter-dropdown__submit non-js-only" type="submit">
+              <button class="nhsuk-search__submit filter-submit__dropdown non-js-only" type="submit">
                 Add filter
               </button>
             </form>

@@ -1,6 +1,8 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
 $nhs-dark-grey: #425563;
+$button-dark-blue: #003d78;
+$button-hover-colour: #4c6272;
 
 .searchable-element {
   background-color: #fff;
@@ -13,39 +15,22 @@ $nhs-dark-grey: #425563;
 }
 
 .searchable-element .nhsuk-expander {
-  border: none
-}
-
-.tags {
-  display: flex;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  background-color: $nhs-dark-grey;
-  color: white;
-  padding: 4px;
-  border-radius: 4px;
-  margin-right: 4px;
-  margin-bottom: 4px;
+  border: none;
 }
 
 .nhsuk-details__text {
   padding-bottom: 0 !important;
 }
 
-.search-box {
+.input-with-no-js-submit-button {
   border: 2px solid $nhsuk-form-border-color;
-  border-radius: 4px 0 0 4px;
   border-right: 0;
+  border-radius: 4px 0 0 4px;
   height: 52px;
   padding: 0 12px;
   font-size: 16px;
-  width: 80%;
   float: left;
   margin-bottom: nhsuk-spacing(4);
-  -webkit-appearance: none;
   outline: none;
 
   &:focus {
@@ -68,10 +53,6 @@ $nhs-dark-grey: #425563;
     width: 80%;
   }
 
-  @include mq($from: large-desktop) {
-    width: 85%;
-  }
-
   .js-enabled & {
     border-right: 2px solid $nhsuk-form-border-color;
     border-radius: 4px;
@@ -86,8 +67,37 @@ $nhs-dark-grey: #425563;
   }
 }
 
+.sort-and-search {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+
+  @include mq($from: desktop) {
+    flex-direction: row;
+  }
+}
+
+.button-small {
+  padding: 2px 10px;
+}
+
+/*#region search */
+
+.search-box {
+  @extend .input-with-no-js-submit;
+  -webkit-appearance: none;
+
+  @include mq($until: tablet) {
+    width: 79%;
+  }
+
+  @include mq($from: large-desktop) {
+    width: 85%;
+  }
+}
+
 .nhsuk-search__submit {
-  background-color: #003d78;
+  background-color: $button-dark-blue;
   float: left;
 
   .nhsuk-icon__search {
@@ -95,7 +105,7 @@ $nhs-dark-grey: #425563;
   }
 
   &:hover {
-    background-color: #4c6272;
+    background-color: $button-hover-colour;
   }
 }
 
@@ -116,66 +126,12 @@ div#search {
   }
 }
 
-.filter-dropdown {
-  border: 2px solid $nhsuk-form-border-color;
-  border-radius: 4px 0 0 4px !important; 
-  border-right: 0;
-  height: 52px;
-  padding: 0 12px;
-  font-size: 16px;
-  width: 65%;
-  float: left;
-  margin-bottom: nhsuk-spacing(4);
-  outline: none;
+/*#endregion */
 
-  &:focus {
-    border: 4px solid $color_nhsuk_black;
-    box-shadow: 0 0 0 4px $nhsuk-focus-color;
-    margin-right: 4px;
-  }
+/*#region sort */
 
-  &::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    display: none;
-  }
-
-  @include mq($from: tablet) {
-    height: 40px;
-    width: 70%;
-  }
-
-  @include mq($from: desktop) {
-    width: 80%;
-  }
-
-  .js-enabled & {
-    border-right: 2px solid $nhsuk-form-border-color;
-    border-radius: 4px;
-
-    &:focus {
-      border-right: 4px solid $color_nhsuk-black;
-    }
-
-    @include mq($until: tablet) {
-      width: 100%;
-    }
-  }
-}
-
-.filter-dropdown__submit {
-  background-color: #003d78;
-  float: left;
-  width: 18%;
-  color: $color_nhsuk-white;
-  min-width: 100px;
-
-  .nhsuk-icon__search {
-    fill: #fff;
-  }
-
-  &:hover {
-    background-color: #4c6272;
-  }
+.sort-dropdown {
+  border-radius: 4px;
 }
 
 .sort-row {
@@ -240,31 +196,69 @@ div#search {
   }
 }
 
-.nhsuk-select {
-  border-radius: 4px;
-}
+/*#endregion */
 
-.nhsuk-details__text {
-  padding-bottom: 0 !important;
-}
+/*#region filter */
 
-.sort-and-search {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
+.filter-dropdown {
+  @extend .input-with-no-js-submit;
 
-  @include mq($from: desktop) {
-    flex-direction: row;
+  @include mq($until: tablet) {
+    width: 63%;
   }
 }
 
-.label-reduced-margin {
-  margin-bottom: 8px;
+.filter-submit {
+  float: left;
+  width: 18%;
+  color: $color_nhsuk-white;
+  min-width: 100px;
+  padding: 8px 4px;
+
+  &:hover {
+    background-color: $button-hover-colour;
+  }
+
+  &__dropdown {
+    @extend .filter-submit;
+    background-color: $button-dark-blue;
+  }
+
+  &__clear {
+    @extend .filter-submit;
+    border-radius: 4px;
+    background-color: $color_nhsuk-red;
+  }
 }
 
-.button-small {
-  padding: 2px 10px
+.applied-filter-container {
+  height: auto;
+  width: 100%;
+  float: left;
+
+  @include mq($from: tablet) {
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
 }
+
+.clear-filter-button-container {
+  width: 18%;
+  float: left;
+}
+
+.filter-tag {
+  padding-top: 11px;
+  padding-bottom: 11px;
+  margin-bottom: 4px;
+}
+
+/*#endregion */
+
+/*#region pagination */
 
 .nhsuk-pagination__list {
   display: flex;
@@ -334,16 +328,23 @@ button.nhsuk-pagination__link {
   }
 }
 
-@include mq($from: 768px, $until: 1024px) {
-  .asset-card-header {
-    min-height: 222px;
-  }
+/*#endregion */
+
+/*#region tags */
+
+.tags {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
-@include mq($from: 1024px) {
-  .asset-card-header {
-    min-height: 163px;
-  }
+.tag {
+  background-color: $nhs-dark-grey;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
 }
 
 .tag.tag-article {
@@ -362,80 +363,4 @@ button.nhsuk-pagination__link {
   background-color: $nhsuk-link-visited-color;
 }
 
-.playlist-title {
-  min-height: 72px;
-}
-
-.asset-title-header {
-  padding-bottom: 25px;
-}
-
-.asset-title-header .img-circle {
-  height: 47px;
-  width: 47px;
-  border-radius: 5%;
-  border: 1px solid #768692;
-  text-align: center;
-  display: inline-block;
-  margin-right: 15px;
-  vertical-align: middle;
-}
-
-.asset-title-header .title {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: $nhsuk-secondary-text-color;
-  padding: 1rem 0 0 0;
-  display: inline-block;
-}
-
-.img-screenshot {
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  border-radius: 2%;
-  border: 1px solid #768692;
-  margin-bottom: 15px;
-}
-
-.applied-filter-container {
-  height: auto;
-  width: 65%;
-  float: left;
-
-  @include mq($from: tablet) {
-    width: 70%;
-  }
-
-  @include mq($from: desktop) {
-    width: 80%;
-  }
-}
-
-.clear-filter-button-container {
-  width: 18%;
-  float: left;
-}
-
-.clear-filter__submit {
-  background-color: $color_nhsuk-red;
-  border-radius: 4px;
-  float: left;
-  width: 18%;
-  color: $color_nhsuk-white;
-  min-width: 100px;
-
-  .nhsuk-icon__search {
-    fill: #fff;
-  }
-
-  &:hover {
-    background-color: #4c6272;
-  }
-}
-
-.filter-tag {
-  padding-top: 11px;
-  padding-bottom: 11px;
-  margin-bottom:4px;
-}
+/*#endregion */
