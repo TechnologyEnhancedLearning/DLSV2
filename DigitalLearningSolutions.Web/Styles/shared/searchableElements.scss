@@ -234,6 +234,7 @@ button.nhsuk-pagination__link {
   background-color: transparent;
   color: $nhsuk-link-color;
   display: flex;
+  width: auto;
   // Since IE is bad at drawing boxes the correct size
   overflow: visible;
 
