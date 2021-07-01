@@ -1,5 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model SearchableDelegateViewModel
+@{
+  var activeTagCss = Model.IsActive ? "nhsuk-tag" : "nhsuk-tag nhsuk-tag--grey";
+  var selfRegTagCss = "nhsuk-tag nhsuk-tag--pink";
+  var adminTagCss = "nhsuk-tag--blue";
+  var passwordTagCss = Model.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+}
 
 @*TODO: Search and sort functionality is part of HEEDLS-491.
   Filename includes 'Searchable' to avoid having to change name later*@
@@ -12,7 +18,12 @@
       </span>
     </summary>
     <div class="nhsuk-details__text">
-
+      <strong class="@activeTagCss">@(Model.IsActive ? "Active" : "Inactive")</strong>
+      <strong class="@selfRegTagCss">@(Model.IsSelfReg ? "Self registered" + (Model.IsExternalReg ? " (External)" : "") : "Registered by centre")</strong>
+      @if (Model.IsAdmin) {
+        <strong class="@adminTagCss">Admin</strong>
+      }
+      <strong class="@passwordTagCss">@(Model.IsPasswordSet ? "Password set" : "Password not set")</strong>
     </div>
   </details>
 </div>

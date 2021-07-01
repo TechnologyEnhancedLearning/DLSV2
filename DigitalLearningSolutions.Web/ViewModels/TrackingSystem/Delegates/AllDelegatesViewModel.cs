@@ -6,7 +6,7 @@
 
     public class AllDelegatesViewModel
     {
-        public AllDelegatesViewModel(IEnumerable<DelegateUser> delegateUsers)
+        public AllDelegatesViewModel(IEnumerable<DelegateUserCard> delegateUsers)
         {
             Delegates = delegateUsers.Select(delegateUser => new SearchableDelegateViewModel(delegateUser));
         }

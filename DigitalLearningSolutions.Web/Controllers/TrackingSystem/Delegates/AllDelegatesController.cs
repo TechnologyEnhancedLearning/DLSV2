@@ -19,7 +19,7 @@
 
         public IActionResult Index()
         {
-            var delegateUsers = userDataService.GetDelegateUsersByCentreId(User.GetCentreId()).GetRange(0, 10);
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(User.GetCentreId()).GetRange(0, 10);
             var model = new AllDelegatesViewModel(delegateUsers);
 
             return View(model);
