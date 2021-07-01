@@ -52,9 +52,9 @@
 
             Filters = new[]
             {
-                (("Role", "Role"), RoleOptions),
-                ((nameof(AdminUser.CategoryName), "Category"), categoryOptions),
-                (("AccountStatus", "Account Status"), AccountStatusOptions)
+                new FilterViewModel("Role", "Role", RoleOptions),
+                new FilterViewModel(nameof(AdminUser.CategoryName), "Category", categoryOptions),
+                new FilterViewModel("AccountStatus", "Account Status", AccountStatusOptions)
             };
         }
 

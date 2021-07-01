@@ -33,7 +33,7 @@
             SearchString = searchString;
             FilterString = filterString;
             Page = page;
-            Filters = new List<((string, string), IEnumerable<(string, string)>)>();
+            Filters = new List<FilterViewModel>();
             this.itemsPerPage = itemsPerPage;
         }
 
@@ -50,8 +50,7 @@
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
-        public IEnumerable<((string FilterProperty, string FilterName) Filter,
-            IEnumerable<(string DisplayText, string Filter)> FilterOptions)> Filters { get; set; }
+        public IEnumerable<FilterViewModel> Filters { get; set; }
 
         protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {

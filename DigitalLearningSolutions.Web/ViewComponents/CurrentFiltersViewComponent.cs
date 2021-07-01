@@ -29,12 +29,11 @@
             string currentFilter
         )
         {
-            var (filterProperty, filterOptions) =
-                searchablePageViewModel.Filters.Single(filter => FilterOptionsContainsFilter(currentFilter, filter));
+            var appliedFilter = searchablePageViewModel.Filters.Single(filter => FilterOptionsContainsFilter(currentFilter, filter.FilterOptions));
 
             return new AppliedFilterViewModel(
-                GetFilterDisplayText(currentFilter, filterOptions),
-                filterProperty.FilterName
+                GetFilterDisplayText(currentFilter, appliedFilter.FilterOptions),
+                appliedFilter.FilterName
             );
         }
 
@@ -48,11 +47,10 @@
 
         private static bool FilterOptionsContainsFilter(
             string currentFilter,
-            ((string FilterProperty, string FilterName) Filter, IEnumerable<(string DisplayText, string Filter)>
-                FilterOptions) filter
+            IEnumerable<(string DisplayText, string Filter)> filter
         )
         {
-            return filter.FilterOptions.Any(filterValue => filterValue.Filter == currentFilter);
+            return filter.Any(filterValue => filterValue.Filter == currentFilter);
         }
     }
 }

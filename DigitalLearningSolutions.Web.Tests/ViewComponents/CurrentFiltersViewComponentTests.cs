@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewComponents
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewComponents;
