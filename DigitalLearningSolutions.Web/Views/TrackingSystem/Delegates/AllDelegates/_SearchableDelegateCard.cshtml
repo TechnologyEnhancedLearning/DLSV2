@@ -17,13 +17,44 @@
         @Model.Name (@Model.CandidateNumber)
       </span>
     </summary>
+
     <div class="nhsuk-details__text">
-      <strong class="@activeTagCss">@(Model.IsActive ? "Active" : "Inactive")</strong>
-      <strong class="@selfRegTagCss">@(Model.IsSelfReg ? "Self registered" + (Model.IsExternalReg ? " (External)" : "") : "Registered by centre")</strong>
-      @if (Model.IsAdmin) {
-        <strong class="@adminTagCss">Admin</strong>
-      }
-      <strong class="@passwordTagCss">@(Model.IsPasswordSet ? "Password set" : "Password not set")</strong>
+      <div class="nhsuk-u-margin-bottom-3">
+        <strong class="@activeTagCss">@(Model.IsActive ? "Active" : "Inactive")</strong>
+        <strong class="@selfRegTagCss">@(Model.IsSelfReg ? "Self registered" + (Model.IsExternalReg ? " (External)" : "") : "Registered by centre")</strong>
+        @if (Model.IsAdmin) {
+          <strong class="@adminTagCss">Admin</strong>
+        }
+        <strong class="@passwordTagCss">@(Model.IsPasswordSet ? "Password set" : "Password not set")</strong>
+      </div>
+
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Name</dt>
+          <dd class="nhsuk-summary-list__value">@Model.Name</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Email</dt>
+          <dd class="nhsuk-summary-list__value">@Model.Email</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">ID</dt>
+          <dd class="nhsuk-summary-list__value">@Model.CandidateNumber</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Registration date</dt>
+          <dd class="nhsuk-summary-list__value">@Model.RegistrationDate</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">Job group</dt>
+          <dd class="nhsuk-summary-list__value">@Model.JobGroup</dd>
+        </div>
+      </dl>
     </div>
+
   </details>
 </div>
