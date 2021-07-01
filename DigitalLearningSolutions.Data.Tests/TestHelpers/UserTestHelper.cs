@@ -177,25 +177,5 @@
 
             return users.Single();
         }
-
-        public static async Task<AdminUser> GetAdminUserByEmailAddressAsync(
-            this DbConnection connection,
-            string emailAddress
-        )
-        {
-            var users = await connection.QueryAsync<AdminUser>(
-                @"SELECT
-                        Forename AS FirstName,
-                        Surname AS LastName,
-                        CentreID,
-                        IsCentreManager,
-                        CentreAdmin AS IsCentreAdmin
-                    FROM AdminUsers
-                    WHERE Email = @emailAddress",
-                new { emailAddress }
-            );
-
-            return users.Single();
-        }
     }
 }

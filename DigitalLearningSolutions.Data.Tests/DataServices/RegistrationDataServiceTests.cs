@@ -12,12 +12,14 @@
     {
         private SqlConnection connection = null!;
         private RegistrationDataService service = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             service = new RegistrationDataService(connection);
+            userDataService = new UserDataService(connection);
         }
 
         [Test]
@@ -46,7 +48,7 @@
         }
 
         [Test]
-        public async Task Sets_all_fields_correctly_on_centre_manager_admin_registration()
+        public void Sets_all_fields_correctly_on_centre_manager_admin_registration()
         {
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -55,9 +57,9 @@
 
             // When
             service.RegisterCentreManagerAdmin(registrationModel);
-            var user = await connection.GetAdminUserByEmailAddressAsync(registrationModel.Email);
 
             // Then
+            var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
             user.FirstName.Should().Be(registrationModel.FirstName);
             user.LastName.Should().Be(registrationModel.LastName);
             user.CentreId.Should().Be(registrationModel.Centre);

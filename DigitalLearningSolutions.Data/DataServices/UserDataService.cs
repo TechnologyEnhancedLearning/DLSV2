@@ -235,7 +235,10 @@
                         Surname AS LastName,
                         Email AS EmailAddress,
                         Password,
-                        ResetPasswordID
+                        ResetPasswordID,
+                        CentreID,
+                        IsCentreManager,
+                        CentreAdmin AS IsCentreAdmin
                     FROM AdminUsers
                     WHERE (Email = @emailAddress)",
                 new { emailAddress }

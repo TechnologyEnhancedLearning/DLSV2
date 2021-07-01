@@ -11,8 +11,8 @@
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
-                (int)data.Centre!,
-                (int)data.JobGroup!,
+                data.Centre!.Value,
+                data.JobGroup!.Value,
                 data.PasswordHash!
             );
         }
@@ -23,8 +23,8 @@
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
-                (int)data.Centre!,
-                (int)data.JobGroup!,
+                data.Centre!.Value,
+                data.JobGroup!.Value,
                 data.PasswordHash!,
                 data.Answer1,
                 data.Answer2,
