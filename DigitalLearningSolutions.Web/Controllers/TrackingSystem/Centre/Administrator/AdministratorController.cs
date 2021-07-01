@@ -63,6 +63,20 @@
             return View("AllAdmins", model);
         }
 
+        [Route("{userId:int}/EditAdminRoles")]
+        [HttpGet]
+        public IActionResult EditAdminRoles(int userId)
+        {
+            var adminInfo = userDataService.GetAdminUserById(userId);
+            if (adminInfo == null)
+            {
+                return RedirectToAction("Index"); // QQ or return to error page?
+            }
+
+            var model = new EditRolesViewModel(adminInfo);
+            return View(model);
+        }
+
         private IEnumerable<string> GetCourseCategories(int centreId)
         {
             var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);

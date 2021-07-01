@@ -1,0 +1,43 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model CheckboxViewModel
+@* QQ update to take a list of checkboxes? *@
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Name-hint @Model.Name-error">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m"> @* QQ check class and change to l or s if necessary *@
+      <h2 class="nhsuk-fieldset__heading"> @* QQ check heading number *@
+        @Model.Label @* QQ update to overall label *@
+      </h2>
+    </legend>
+
+    @if (Model.HintText != null) {
+      <div class="nhsuk-hint" id="@Model.Name-hint">
+        @Model.HintText
+      </div>
+    }
+
+    @if (Model.HasError) {
+      <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+        @foreach (var errorMessage in Model.ErrorMessages) {
+          <span class="error-message--margin-bottom-1 nhsuk-error-message">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+          </span>
+        }
+      </div>
+    }
+
+    <div class="nhsuk-checkboxes">
+      <div class="nhsuk-checkboxes__item">
+        <input class="nhsuk-checkboxes__input @Model.Class @(Model.HasError ? "nhsuk-input--error" : "")"
+               type="checkbox"
+               id="@Model.Id"
+               name="@Model.Name"
+               value="true"
+               aria-describedby="@Model.Name-error @Model.Name-hint" />
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id">
+          @Model.Label
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
