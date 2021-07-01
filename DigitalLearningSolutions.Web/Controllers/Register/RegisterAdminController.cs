@@ -164,8 +164,7 @@
                 return View(viewModel);
             }
 
-            if (!data.Centre.HasValue || data.Email == null || !IsRegisterAdminAllowed(data.Centre.Value) ||
-                !CheckEmailMatchesCentre(data.Email, data.Centre.Value) || !CheckEmailUnique(data.Email))
+            if (!CanProceedWithRegistration(data))
             {
                 return new StatusCodeResult(500);
             }
@@ -211,17 +210,23 @@
             TempData.Set(adminRegistrationData);
         }
 
-        private bool CheckEmailUnique(string email)
+        private bool IsEmailUnique(string email)
         {
             var adminUser = userDataService.GetAdminUserByEmailAddress(email);
             return adminUser == null;
         }
 
-        private bool CheckEmailMatchesCentre(string email, int centreId)
+        private bool DoesEmailMatchCentre(string email, int centreId)
         {
             var autoRegisterManagerEmail =
                 centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
             return email.Equals(autoRegisterManagerEmail);
+        }
+
+        private bool CanProceedWithRegistration(RegistrationData data)
+        {
+            return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
+                   DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
         }
 
         private void ValidateEmailAddress(string? email, int centreId)
@@ -231,7 +236,7 @@
                 return;
             }
 
-            if (!CheckEmailMatchesCentre(email, centreId))
+            if (!DoesEmailMatchCentre(email, centreId))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
@@ -239,7 +244,7 @@
                 );
             }
 
-            if (!CheckEmailUnique(email))
+            if (!IsEmailUnique(email))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
