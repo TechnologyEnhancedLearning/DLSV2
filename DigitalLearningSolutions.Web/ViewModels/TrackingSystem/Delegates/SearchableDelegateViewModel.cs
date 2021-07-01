@@ -1,13 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     /* TODO: Search and sort functionality is part of HEEDLS-491.
        Filename includes 'Searchable' to avoid having to change name later */
 
     public class SearchableDelegateViewModel
     {
-        public SearchableDelegateViewModel(DelegateUserCard delegateUser)
+        public SearchableDelegateViewModel(DelegateUserCard delegateUser, List<CustomFieldViewModel> customFields)
         {
             Id = delegateUser.Id;
             Name = delegateUser.SearchableName;
@@ -25,6 +27,8 @@
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToShortDateString();
             }
+
+            CustomFields = customFields;
         }
 
         public int Id { get; set; }
@@ -40,5 +44,7 @@
         public string? Email { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
+
+        public List<CustomFieldViewModel> CustomFields { get; set; }
     }
 }

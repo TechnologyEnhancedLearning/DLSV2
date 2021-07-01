@@ -3,14 +3,35 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class AllDelegatesViewModel
     {
-        public AllDelegatesViewModel(IEnumerable<DelegateUserCard> delegateUsers)
+        public AllDelegatesViewModel(
+            int centreId,
+            IEnumerable<DelegateUserCard> delegateUsers,
+            CustomPromptHelper helper
+        )
         {
-            Delegates = delegateUsers.Select(delegateUser => new SearchableDelegateViewModel(delegateUser));
+            CentreId = centreId;
+            Delegates = delegateUsers.Select(
+                delegateUser =>
+                {
+                    var customFields = helper.GetCustomFieldViewModelsForCentre(
+                        centreId,
+                        delegateUser.Answer1,
+                        delegateUser.Answer2,
+                        delegateUser.Answer3,
+                        delegateUser.Answer4,
+                        delegateUser.Answer5,
+                        delegateUser.Answer6
+                    );
+                    return new SearchableDelegateViewModel(delegateUser, customFields);
+                }
+            );
         }
 
-        public IEnumerable<SearchableDelegateViewModel> Delegates { get; }
+        public int CentreId { get; set; }
+        public IEnumerable<SearchableDelegateViewModel> Delegates { get; set; }
     }
 }

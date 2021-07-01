@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model SearchableDelegateViewModel
 @{
   var activeTagCss = Model.IsActive ? "nhsuk-tag" : "nhsuk-tag nhsuk-tag--grey";
@@ -53,6 +54,13 @@
           <dt class="nhsuk-summary-list__key">Job group</dt>
           <dd class="nhsuk-summary-list__value">@Model.JobGroup</dd>
         </div>
+
+        @foreach (CustomFieldViewModel customField in Model.CustomFields) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
+            <dd class="nhsuk-summary-list__value">@customField.Answer</dd>
+          </div>
+        }
       </dl>
 
       <button class="nhsuk-button">Manage delegate</button>

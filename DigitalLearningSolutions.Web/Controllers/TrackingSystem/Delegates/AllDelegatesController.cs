@@ -10,17 +10,21 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
+        private readonly CustomPromptHelper customPromptHelper;
         private readonly IUserDataService userDataService;
 
-        public AllDelegatesController(IUserDataService userDataService)
+        public AllDelegatesController(IUserDataService userDataService, CustomPromptHelper customPromptHelper)
         {
             this.userDataService = userDataService;
+            this.customPromptHelper = customPromptHelper;
         }
 
         public IActionResult Index()
         {
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(User.GetCentreId()).GetRange(0, 10);
-            var model = new AllDelegatesViewModel(delegateUsers);
+            var centreId = User.GetCentreId();
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).GetRange(0, 10);
+
+            var model = new AllDelegatesViewModel(centreId, delegateUsers, customPromptHelper);
 
             return View(model);
         }
