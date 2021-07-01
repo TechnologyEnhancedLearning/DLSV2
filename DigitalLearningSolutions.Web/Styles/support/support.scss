@@ -1,5 +1,5 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
 ol>li {
-  @include nhsuk-responsive-margin(5, "bottom");
+  margin-bottom: nhsuk-spacing(6)
 }

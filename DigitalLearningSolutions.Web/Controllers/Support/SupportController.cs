@@ -12,14 +12,20 @@
         [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
         public IActionResult Index(ApplicationType application)
         {
-            if (ApplicationType.TrackingSystem.Equals(application) ||
-                ApplicationType.Frameworks.Equals(application))
+            if (!ApplicationType.TrackingSystem.Equals(application) &&
+                !ApplicationType.Frameworks.Equals(application))
+            {
+                return NotFound();
+            }
+
+            if (ApplicationType.TrackingSystem.Equals(application) && User.HasCentreAdminPermissions() ||
+                ApplicationType.Frameworks.Equals(application) && User.HasFrameworksAdminPermissions())
             {
                 var model = new SupportViewModel(application, SupportPage.Support);
                 return View("Support", model);
             }
 
-            return NotFound();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
