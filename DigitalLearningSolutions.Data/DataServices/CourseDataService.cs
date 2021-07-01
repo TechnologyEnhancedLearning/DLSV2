@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
@@ -16,14 +17,15 @@
         void RemoveCurrentCourse(int progressId, int candidateId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
     }
 
-    public class CourseDataDataService : ICourseDataService
+    public class CourseDataService : ICourseDataService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<CourseDataDataService> logger;
+        private readonly ILogger<CourseDataService> logger;
 
-        public CourseDataDataService(IDbConnection connection, ILogger<CourseDataDataService> logger)
+        public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -125,6 +127,32 @@
                         WHERE Active = 1 AND CentreID = @centreId 
 	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
                 new { centreId, adminCategoryId }
+            );
+        }
+
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId)
+        {
+            return connection.Query<CourseStatistics>(
+                @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        ap.ASPMenu,
+                        ap.ArchivedDate,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {CourseHelper.DelegateCount},
+                        {CourseHelper.CompletedCount},
+                        {CourseHelper.AllAttempts},
+                        {CourseHelper.AttemptsPassed}
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId",
+                new { centreId, categoryId }
             );
         }
     }

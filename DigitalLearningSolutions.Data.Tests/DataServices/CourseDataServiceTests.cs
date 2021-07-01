@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
     public class CourseDataServiceTests
     {
-        private CourseDataDataService courseDataService;
+        private CourseDataService courseDataService = null!;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -26,8 +26,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            var logger = A.Fake<ILogger<CourseDataDataService>>();
-            courseDataService = new CourseDataDataService(connection, logger);
+            var logger = A.Fake<ILogger<CourseDataService>>();
+            courseDataService = new CourseDataService(connection, logger);
         }
 
         [Test]
@@ -215,6 +215,35 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             count.Should().Be(3);
+        }
+
+        [Test]
+        public void GetCourseStatisticsAtCentreForCategoryID_should_return_course_statistics_correctly()
+        {
+            // When
+            const int centreId = 101;
+            const int categoryId = 0;
+            var result = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId).ToList();
+
+            // Then
+            var expectedFirstCourse = new CourseStatistics
+            {
+                CustomisationId = 100,
+                CentreId = 101,
+                Active = false,
+                AllCentres = false,
+                AspMenu = false,
+                ArchivedDate = null,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard",
+                DelegateCount = 25,
+                AllAttempts = 49,
+                AttemptsPassed = 34,
+                CompletedCount = 5
+            };
+
+            result.Should().HaveCount(267);
+            result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
     }
 }
