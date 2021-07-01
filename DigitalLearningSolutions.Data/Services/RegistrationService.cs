@@ -11,15 +11,10 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate
-        (
+        (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
             string userIp
-        );
-
-        string RegisterAdminDelegate(
-            RegistrationModel registrationModel
         );
 
         bool RegisterCentreManager(RegistrationModel registrationModel);
@@ -29,12 +24,11 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly ICentresDataService centresDataService;
         private readonly IEmailService emailService;
+        private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
-        private readonly ILogger<RegistrationService> logger;
 
-        public RegistrationService
-        (
+        public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
             IEmailService emailService,
@@ -49,8 +43,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.logger = logger;
         }
 
-        public (string candidateNumber, bool approved) RegisterDelegate
-        (
+        public (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
             string userIp
@@ -84,9 +77,33 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public string RegisterAdminDelegate(
-            RegistrationModel registrationModel
-        )
+        public bool RegisterCentreManager(RegistrationModel registrationModel)
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                var candidateNumber = RegisterAdminDelegate(registrationModel);
+                if (candidateNumber == "-1")
+                {
+                    throw new Exception("Delegate account could not be created");
+                }
+
+                registrationDataService.RegisterCentreManagerAdmin(registrationModel);
+
+                centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+                transaction.Complete();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.LogWarning($"Centre Manager registration failed for the following reason: {e.Message}");
+                return false;
+            }
+        }
+
+        private string RegisterAdminDelegate(RegistrationModel registrationModel)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -112,34 +129,6 @@ namespace DigitalLearningSolutions.Data.Services
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
 
             return candidateNumber;
-        }
-
-        public bool RegisterCentreManager(
-            RegistrationModel registrationModel
-        )
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                var candidateNumber = RegisterAdminDelegate(registrationModel);
-                if (candidateNumber == "-1")
-                {
-                    throw new Exception("Delegate account could not be created");
-                }
-
-                registrationDataService.RegisterCentreManagerAdmin(registrationModel);
-
-                centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-                transaction.Complete();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                logger.LogWarning($"Centre Manager registration failed for the following reason: {e.Message}");
-                return false;
-            }
         }
 
         private Email GenerateApprovalEmail(
