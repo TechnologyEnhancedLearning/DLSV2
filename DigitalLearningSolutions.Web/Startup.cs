@@ -180,6 +180,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<IActivityDataService, ActivityDataService>();
+            services.AddScoped<IActivityService, ActivityService>();
             RegisterWebServiceFilters(services);
         }
 
