@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public interface IActivityService
     {
@@ -29,34 +30,15 @@
 
             var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
 
-            var months = GenerateBlankMonthsBetweenDates(startTime, endTime).ToList();
-            months.Reverse();
+            var monthSlots = DateHelper.GetMonthsAndYearsBetweenDates(startTime, endTime).ToList();
+            monthSlots.Reverse();
 
-            foreach (var month in months)
-            {
-                var monthData =
-                    activityData.SingleOrDefault(data => data.Year == month.Year && data.Month == month.Month);
-                if (monthData != null)
+            return monthSlots.Select(
+                slot =>
                 {
-                    month.Completions = monthData.Completions;
-                    month.Registrations = monthData.Registrations;
-                    month.Evaluations = monthData.Evaluations;
-                }
-            }
-
-            return months;
-        }
-
-        private IEnumerable<MonthOfActivity> GenerateBlankMonthsBetweenDates(DateTime startDate, DateTime endDate)
-        {
-            var diffInMonths = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);
-            var monthEnumerable = Enumerable.Range(startDate.Month, diffInMonths + 1);
-
-            return monthEnumerable.Select(
-                m => new MonthOfActivity
-                {
-                    Month = (m - 1) % 12 + 1,
-                    Year = startDate.Year + (m - 1) / 12
+                    var monthData =
+                        activityData.SingleOrDefault(data => data.Year == slot.Year && data.Month == slot.Month);
+                    return new MonthOfActivity(slot, monthData);
                 }
             );
         }
