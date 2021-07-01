@@ -12,7 +12,7 @@
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
         public List<AdminUser> GetAdminUsersByCentreId(int centreId);
-        public List<DelegateUser> GetDelegateUsersByCentreId(int centreId);
+        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
@@ -176,9 +176,9 @@
             return users;
         }
 
-        public List<DelegateUser> GetDelegateUsersByCentreId(int centreId)
+        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
-            var users = connection.Query<DelegateUser>(
+            var users = connection.Query<DelegateUserCard>(
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
@@ -191,14 +191,20 @@
                         cd.LastName,
                         cd.Password,
                         cd.Approved,
-                        cd.ProfileImage,
                         cd.Answer1,
                         cd.Answer2,
                         cd.Answer3,
                         cd.Answer4,
                         cd.Answer5,
                         cd.Answer6,
-                        jg.JobGroupName
+                        jg.JobGroupName,
+                        cd.SelfReg,
+                        cd.ExternalReg,
+                        cd.Active,
+                        (SELECT AdminID
+                         FROM AdminUsers au
+                         WHERE au.Email = cd.EmailAddress AND au.CentreID = cd.CentreID
+                        )
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
