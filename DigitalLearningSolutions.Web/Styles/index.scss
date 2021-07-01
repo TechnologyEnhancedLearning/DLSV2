@@ -131,7 +131,7 @@ h1#page-heading {
 
 .nhsuk-summary-list__value {
   @include govuk-media-query($until: tablet) {
-    word-break: break-word;
+    word-break: break-all;
   }
 }
 
@@ -193,7 +193,7 @@ ul.no-bullets {
 }
 
 .word-break {
-  word-break: break-word;
+  word-break: break-all;
 }
 
 .vertical-align-centre {
