@@ -84,7 +84,7 @@ $button-hover-colour: #4c6272;
 /*#region search */
 
 .search-box {
-  @extend .input-with-no-js-submit;
+  @extend .input-with-no-js-submit-button;
   -webkit-appearance: none;
 
   @include mq($until: tablet) {
@@ -201,7 +201,7 @@ div#search {
 /*#region filter */
 
 .filter-dropdown {
-  @extend .input-with-no-js-submit;
+  @extend .input-with-no-js-submit-button;
 
   @include mq($until: tablet) {
     width: 63%;
