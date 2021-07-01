@@ -20,25 +20,27 @@ export function sortSearchableElements(
   );
 }
 
+// The cases for these must match the value of the dropdown options. In most cases this will be the
+// property name of the C# object to be sorted on, and should always match the value set in
+// GenericSortingHelper.cs
 export function getSortValue(
   searchableElement: SearchableElement,
   sortBy: string,
 ): string | number | Date {
   switch (sortBy) {
     case 'Name':
-    case 'Activity Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
-    case 'Enrolled Date':
+    case 'StartedDate':
       return parseDate(getElementText(searchableElement, 'started-date'));
-    case 'Last Accessed Date':
+    case 'LastAccessed':
       return parseDate(getElementText(searchableElement, 'accessed-date'));
-    case 'Complete By Date':
+    case 'CompleteByDate':
       return parseDate(getElementText(searchableElement, 'complete-by-date'));
-    case 'Completed Date':
+    case 'Completed':
       return parseDate(getElementText(searchableElement, 'completed-date'));
-    case 'Diagnostic Score':
+    case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
-    case 'Passed Sections':
+    case 'IsAssessed,Passes':
       return parseInt(getElementText(searchableElement, 'passed-sections').split('/')[0] || '-1', 10);
     case 'Brand':
       return getElementText(searchableElement, 'brand').toLocaleLowerCase();

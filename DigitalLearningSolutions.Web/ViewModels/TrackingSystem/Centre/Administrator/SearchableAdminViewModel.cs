@@ -8,10 +8,13 @@
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
+            CategoryName = adminUser.CategoryName;
         }
 
         public int Id { get; set; }
 
         public string Name { get; set; }
+
+        public string? CategoryName { get; set; }
     }
 }

@@ -68,7 +68,7 @@
             bool isSupervisor = true,
             bool isTrainer = true,
             bool isFrameworkDeveloper = true,
-            bool importOnly = false
+            bool importOnly = true
         )
         {
             return new AdminUser
