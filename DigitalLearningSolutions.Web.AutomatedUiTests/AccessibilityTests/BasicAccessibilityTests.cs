@@ -28,6 +28,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
+        [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
+        [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
@@ -39,6 +41,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
+        [InlineData("/TrackingSystem/Support", "Support")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

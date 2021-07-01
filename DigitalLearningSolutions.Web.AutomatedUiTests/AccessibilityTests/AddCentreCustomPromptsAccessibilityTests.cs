@@ -31,7 +31,7 @@
             ValidatePageHeading("Configure answers");
             var configureAnswerWithAnswersResult = new AxeBuilder(Driver).Analyze();
 
-            Driver.ClickButtonByText("Bulk add");
+            Driver.ClickButtonByText("Bulk edit");
             ValidatePageHeading("Configure answers in bulk");
             var bulkAdditionResult = new AxeBuilder(Driver).Analyze();
 

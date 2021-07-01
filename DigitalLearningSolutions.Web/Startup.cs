@@ -78,6 +78,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreManager,
                         policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserCentreAdminOrFrameworksAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
+                    );
                 }
             );
 
@@ -129,6 +133,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register services.
+            services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseDataService, CourseDataDataService>();
@@ -173,11 +178,15 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<IActivityDataService, ActivityDataService>();
+            services.AddScoped<IActivityService, ActivityService>();
+
             RegisterWebServiceFilters(services);
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
         {
+            services.AddScoped<RedirectEmptySessionData<RegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<DelegateRegistrationData>>();
             services.AddScoped<RedirectEmptySessionData<AddRegistrationPromptData>>();
             services.AddScoped<RedirectEmptySessionData<EditRegistrationPromptData>>();

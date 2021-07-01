@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -66,7 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
-            var model = RegistrationMappingHelper.MapDataToPersonalInformation(data);
+            var model = new PersonalInformationViewModel(data);
             PopulatePersonalInformationExtraFields(model);
 
             // Check this email and centre combination doesn't already exist in case we were redirected
@@ -112,7 +111,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var model = RegistrationMappingHelper.MapDataToLearnerInformation(data);
+            var model = new LearnerInformationViewModel(data);
             PopulateLearnerInformationExtraFields(model, data);
             return View(model);
         }
@@ -181,7 +180,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult Summary()
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
-            var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+            var viewModel = new SummaryViewModel(data);
             PopulateSummaryExtraFields(viewModel, data);
             return View(viewModel);
         }
@@ -200,7 +199,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                var viewModel = RegistrationMappingHelper.MapDataToSummary(data);
+                var viewModel = new SummaryViewModel(data);
                 PopulateSummaryExtraFields(viewModel, data);
                 viewModel.Terms = model.Terms;
                 return View(viewModel);

@@ -1,10 +1,9 @@
-namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 

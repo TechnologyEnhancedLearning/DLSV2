@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DbModels;
 
     public static class CentreTestHelper
     {
@@ -34,7 +35,10 @@
             int ccLicenceSpots = 0,
             int trainerSpots = 0,
             string? ipPrefix = "194.176.105",
-            string? contractType = "Basic"
+            string? contractType = "Basic",
+            int customCourses = 0,
+            long serverSpaceUsed = 0,
+            long serverSpaceBytes = 0
         )
         {
             return new Centre
@@ -67,7 +71,21 @@
                 CcLicenceSpots = ccLicenceSpots,
                 TrainerSpots = trainerSpots,
                 IpPrefix = ipPrefix,
-                ContractType = contractType
+                ContractType = contractType,
+                CustomCourses = customCourses,
+                ServerSpaceBytes = serverSpaceBytes,
+                ServerSpaceUsed = serverSpaceUsed
+            };
+        }
+
+        public static CentreRanking GetCentreRank(int rank)
+        {
+            return new CentreRanking
+            {
+                CentreId = rank,
+                Ranking = rank,
+                CentreName = $"Centre {rank}",
+                DelegateSessionCount = 10000-rank*10
             };
         }
     }

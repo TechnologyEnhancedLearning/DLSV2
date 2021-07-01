@@ -31,5 +31,8 @@
         public int TrainerSpots { get; set; }
         public string? IpPrefix { get; set; }
         public string? ContractType { get; set; }
+        public int CustomCourses { get; set; }
+        public long ServerSpaceUsed { get; set; }
+        public long ServerSpaceBytes { get; set; }
     }
 }

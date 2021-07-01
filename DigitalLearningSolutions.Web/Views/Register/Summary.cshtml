@@ -4,14 +4,16 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Summary" : "Register - Summary";
-  var termsError = ViewData.ModelState["Terms"]?.Errors?.Count > 0;
-  var termsFormErrorClass = termsError ? "nhsuk-form-group--error" : "";
+}
+
+@section NavMenuItems {
+  <partial name="_NavMenuItems" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })"/>
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Terms) })" />
     }
 
     <div class="nhsuk-u-margin-bottom-8">
@@ -104,23 +106,7 @@
     </dl>
 
     <form method="post" asp-action="Summary">
-      <div class="nhsuk-form-group @termsFormErrorClass">
-        <fieldset class="nhsuk-fieldset" aria-describedby="terms-error">
-          @if (termsError) {
-            <span class="nhsuk-error-message" id="terms-error">
-              <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["Terms"].Errors[0].ErrorMessage
-            </span>
-          }
-          <div class="nhsuk-checkboxes">
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="Terms" name="Terms" asp-for="Terms"/>
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="Terms">
-                I have read, understood and agree to abide by the Digital Learning Solutions <a asp-controller="LearningSolutions" asp-action="Terms" target="_blank">Terms and Conditions</a>.
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
+      <vc:terms-conditions asp-for="Terms" />
 
       <recaptcha/>
 
