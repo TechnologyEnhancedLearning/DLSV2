@@ -12,7 +12,12 @@
             var monthEnumerable = Enumerable.Range(startDate.Month, diffInMonths + 1);
 
             return monthEnumerable.Select(
-                m => ((m - 1) % 12 + 1, startDate.Year + (m - 1) / 12)
+                m =>
+                {
+                    var month = (m - 1) % 12 + 1;
+                    var yearsToAdd = (m - 1) / 12;
+                    return (month, startDate.Year + yearsToAdd);
+                }
             );
         }
     }
