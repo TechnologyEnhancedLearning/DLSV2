@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -285,15 +286,29 @@
         }
 
         [Test]
+        public void Error_in_RegisterCentreManager_throws_exception()
+        {
+            // Given
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
+
+            // When
+            Action act = () => registrationService.RegisterCentreManager(failingRegistrationModel);
+
+            // Then
+            act.Should().Throw<Exception>();
+        }
+
+        [Test]
         public void Error_in_RegisterCentreManager_fails_fast()
         {
             // Given
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            registrationService.RegisterCentreManager(failingRegistrationModel);
+            Action act = () => registrationService.RegisterCentreManager(failingRegistrationModel);
 
             // Then
+            act.Should().Throw<Exception>();
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(

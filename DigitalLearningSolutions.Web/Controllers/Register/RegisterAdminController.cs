@@ -171,11 +171,7 @@
             }
             
             var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
-            var success = registrationService.RegisterCentreManager(registrationModel);
-            if (!success)
-            {
-                return new StatusCodeResult(500);
-            }
+            registrationService.RegisterCentreManager(registrationModel);
 
             return RedirectToAction("Confirmation");
         }

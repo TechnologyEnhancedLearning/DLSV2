@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Data.Services
             string userIp
         );
 
-        bool RegisterCentreManager(RegistrationModel registrationModel);
+        void RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationService : IRegistrationService
@@ -77,33 +77,27 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public bool RegisterCentreManager(RegistrationModel registrationModel)
+        public void RegisterCentreManager(RegistrationModel registrationModel)
         {
             using var transaction = new TransactionScope();
             try
             {
-                var candidateNumber = RegisterAdminDelegate(registrationModel);
-                if (candidateNumber == "-1")
-                {
-                    throw new Exception("Delegate account could not be created");
-                }
+                RegisterAdminDelegate(registrationModel);
 
                 registrationDataService.RegisterCentreManagerAdmin(registrationModel);
 
                 centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
                 transaction.Complete();
-
-                return true;
             }
             catch (Exception e)
             {
                 logger.LogWarning($"Centre Manager registration failed for the following reason: {e.Message}");
-                return false;
+                throw;
             }
         }
 
-        private string RegisterAdminDelegate(RegistrationModel registrationModel)
+        private void RegisterAdminDelegate(RegistrationModel registrationModel)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -123,12 +117,10 @@ namespace DigitalLearningSolutions.Data.Services
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
-                return candidateNumber;
+                throw new Exception("Delegate account could not be created");
             }
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
-
-            return candidateNumber;
         }
 
         private Email GenerateApprovalEmail(
