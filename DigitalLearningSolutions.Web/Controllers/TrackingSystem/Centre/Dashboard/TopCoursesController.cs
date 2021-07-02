@@ -11,12 +11,12 @@
     [Route("/TrackingSystem/Centre/TopCourses")]
     public class TopCoursesController : Controller
     {
-        private readonly ICourseService CourseService;
+        private readonly ICourseService courseService;
         private const int NumberOfTopCourses = 10;
 
         public TopCoursesController(ICourseService courseService)
         {
-            CourseService = courseService;
+            this.courseService = courseService;
         }
 
         public IActionResult Index()
@@ -25,7 +25,7 @@
             var adminCategoryId = User.GetAdminCategoryId()!;
 
             var topCourses =
-                CourseService.GetTopCourseStatisticsAtCentreForCategoryId(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
+                courseService.GetTopCourseStatisticsAtCentreForCategoryId(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
 
             var model = new TopCoursesViewModel(topCourses);
 
