@@ -12,6 +12,8 @@
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+
     public partial class SupervisorController
     {
         public IActionResult Index()
@@ -25,17 +27,17 @@
             return View(model);
         }
         [Route("/Supervisor/Staff/List/{page=1:int}")]
-        public IActionResult MyStaffList(int page = 1)
+        public IActionResult MyStaffList(string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            int page = 1)
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
             var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var model = new MyStaffListViewModel()
-            {
-                CentreCustomPrompts = centreCustomPrompts,
-                SuperviseDelegateDetails = supervisorDelegateDetails
-            };
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            var model = new MyStaffListViewModel(supervisorDelegateDetails,centreCustomPrompts,searchString,sortBy,sortDirection,page);
             return View("MyStaffList", model);
         }
         [HttpPost]

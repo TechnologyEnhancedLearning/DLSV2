@@ -2,8 +2,6 @@
 {
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
         public string CandidateNumber { get; set; }
         public string? JobGroupName { get; set; }
         public string? CustomPrompt1 { get; set; }

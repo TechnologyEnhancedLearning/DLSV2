@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
-    public class SupervisorDelegate
+    public class SupervisorDelegate : BaseSearchableItem
     {
         public int ID { get; set; }
         public string SupervisorEmail { get; set; }
@@ -17,5 +17,13 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public DateTime NotificationSent { get; set; }
         public DateTime? Confirmed { get; set; }
         public DateTime? Removed { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName} {DelegateEmail}";
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

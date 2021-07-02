@@ -2,13 +2,40 @@
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using System;
-    using System.Collections.Generic;
+    using DigitalLearningSolutions.Web.Helpers;
     using System.Linq;
-    using System.Threading.Tasks;
-    public class MyStaffListViewModel
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using System.Collections.Generic;
+    public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
+
+        public MyStaffListViewModel(
+            IEnumerable<SupervisorDelegateDetail> supervisorDelegateDetails,
+            CentreCustomPrompts centreCustomPrompts,
+            string? searchString,
+            string sortBy,
+            string sortDirection,
+            int page
+        ) : base(searchString, sortBy, sortDirection, page)
+        {
+            CentreCustomPrompts = centreCustomPrompts;
+            var sortedItems = GenericSortingHelper.SortAllItems(
+           supervisorDelegateDetails.AsQueryable(),
+           sortBy,
+           sortDirection
+       );
+            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
+            MatchingSearchResults = searchedItems.Count;
+            SetTotalPages();
+            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
+            SuperviseDelegateDetails = paginatedItems;
+
+        }
         public IEnumerable<SupervisorDelegateDetail> SuperviseDelegateDetails { get; set; }
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+       {
+            DefaultSortByOptions.Name
+        };
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
     }
 }
