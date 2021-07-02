@@ -1,5 +1,12 @@
 @import "~nhsuk-frontend/packages/core/all";
 
+@mixin word-break-ie-fix {
+  // IE11 hack
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    word-break: break-all;
+  }
+}
+
 ul > li > ul > li {
   list-style-type: circle;
 }
@@ -131,7 +138,8 @@ h1#page-heading {
 
 .nhsuk-summary-list__value {
   @include govuk-media-query($until: tablet) {
-    word-break: break-all;
+    word-break: break-word;
+    @include word-break-ie-fix;
   }
 }
 
@@ -194,11 +202,7 @@ ul.no-bullets {
 
 .word-break {
   word-break: break-word;
-
-  // IE11 hack
-  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    word-break: break-all;
-  }
+  @include word-break-ie-fix;
 }
 
 .vertical-align-centre {
