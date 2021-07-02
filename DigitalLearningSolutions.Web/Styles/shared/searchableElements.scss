@@ -4,24 +4,6 @@ $nhs-dark-grey: #425563;
 $button-dark-blue: #003d78;
 $button-hover-colour: #4c6272;
 
-.searchable-element {
-  background-color: #fff;
-  @extend .nhsuk-u-margin-top-3;
-  @extend .nhsuk-u-margin-bottom-3;
-  padding-top: 8px;
-  padding-bottom: 16px;
-  padding-left: 32px;
-  padding-right: 32px;
-}
-
-.searchable-element .nhsuk-expander {
-  border: none;
-}
-
-.nhsuk-details__text {
-  padding-bottom: 0 !important;
-}
-
 .input-with-no-js-submit-button {
   border: 2px solid $nhsuk-form-border-color;
   border-right: 0;
@@ -254,6 +236,10 @@ div#search {
   padding-top: 11px;
   padding-bottom: 11px;
   margin-bottom: 4px;
+}
+
+.card-filter-tag {
+  margin: 0 4px 4px 0;
 }
 
 /*#endregion */
