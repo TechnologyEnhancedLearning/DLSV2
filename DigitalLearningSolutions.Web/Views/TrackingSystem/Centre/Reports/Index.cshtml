@@ -27,10 +27,11 @@
 
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
-    <h2 class="nhsuk-heading-m">Usage stats</h2>
-    <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel"/>
 
     <div class="ct-chart ct-perfect-fourth"></div>
+
+    <h2 class="nhsuk-heading-m">Usage stats</h2>
+    <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />

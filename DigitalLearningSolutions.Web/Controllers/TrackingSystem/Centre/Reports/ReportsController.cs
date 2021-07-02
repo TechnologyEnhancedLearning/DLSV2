@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports
 {
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
@@ -23,6 +25,14 @@
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
             var model = new ReportsViewModel(monthsOfActivity);
             return View(model);
+        }
+
+        [Route("/TrackingSystem/Centre/Reports/Data")]
+        public IEnumerable<MonthOfActivity> GetRecentData()
+        {
+            var centreId = User.GetCentreId();
+            var monthsOfActivity = activityService.GetRecentActivity(centreId);
+            return monthsOfActivity;
         }
     }
 }
