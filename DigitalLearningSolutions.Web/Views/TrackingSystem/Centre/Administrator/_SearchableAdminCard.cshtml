@@ -12,12 +12,12 @@
 
       <div class="tags">
         @if (!Model.IsLocked) {
-          <div class="tag nhsuk-u-font-size-14" value="@("IsLocked|false")" hidden>
+          <div class="tag nhsuk-u-font-size-14" data-filter-value="@("IsLocked|false")" hidden>
             Not locked
           </div>
         }
         @foreach (var (displayText, filter) in Model.Tags) {
-          <div class="tag nhsuk-u-font-size-14" value="@filter">
+          <div class="tag nhsuk-u-font-size-14" data-filter-value="@filter">
             @displayText
           </div>
         }
