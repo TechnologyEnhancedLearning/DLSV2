@@ -193,7 +193,12 @@ ul.no-bullets {
 }
 
 .word-break {
-  word-break: break-all;
+  word-break: break-word;
+
+  // IE11 hack
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    word-break: break-all;
+  }
 }
 
 .vertical-align-centre {
