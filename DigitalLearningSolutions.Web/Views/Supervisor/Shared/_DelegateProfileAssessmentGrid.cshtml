@@ -41,7 +41,21 @@
         <span class="nhsuk-table-responsive__heading">Status </span> <partial name="Shared/_ProfileAssessmentStatusTag" model="delegateSelfAssessment" />
       </td>
       <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Review</a>
+        @if (delegateSelfAssessment.LaunchCount == 0 | delegateSelfAssessment.StartedDate < DateTime.Now.AddDays(-7))
+        {
+          <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="SendReminderDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Send reminder</a>
+        }&nbsp;
+        @if (delegateSelfAssessment.LaunchCount > 0)
+        {
+          if (delegateSelfAssessment.VerificationRequested > 0)
+          {
+            <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Review</a>
+          }
+          else
+          {
+            <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">View</a>
+          }
+        }
       </td>
     </tr>
     }
