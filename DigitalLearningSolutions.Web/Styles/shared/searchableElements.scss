@@ -2,20 +2,6 @@
 
 $nhs-dark-grey: #425563;
 
-.searchable-element {
-  background-color: #fff;
-  @extend .nhsuk-u-margin-top-3;
-  @extend .nhsuk-u-margin-bottom-3;
-  padding-top: 8px;
-  padding-bottom: 16px;
-  padding-left: 32px;
-  padding-right: 32px;
-}
-
-.searchable-element .nhsuk-expander {
-  border: none
-}
-
 .tags {
   display: flex;
   margin-bottom: 16px;
@@ -29,10 +15,6 @@ $nhs-dark-grey: #425563;
   border-radius: 4px;
   margin-right: 4px;
   margin-bottom: 4px;
-}
-
-.nhsuk-details__text {
-  padding-bottom: 0 !important;
 }
 
 .search-box {
@@ -180,10 +162,6 @@ div#search {
 
 .nhsuk-select {
   border-radius: 4px;
-}
-
-.nhsuk-details__text {
-  padding-bottom: 0 !important;
 }
 
 .sort-and-search {
@@ -334,4 +312,8 @@ button.nhsuk-pagination__link {
   border-radius: 2%;
   border: 1px solid #768692;
   margin-bottom: 15px;
+}
+
+.card-filter-tag {
+  margin: 0 4px 4px 0;
 }
