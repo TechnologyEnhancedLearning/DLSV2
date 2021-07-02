@@ -17,8 +17,9 @@
             : ApplicationName + " - " + CustomisationName;
         public int DelegateCount { get; set; }
         public int CompletedCount { get; set; }
+        public int InProgressCount => DelegateCount - CompletedCount;
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
-        public double PassRate => AllAttempts == 0 ? 0 : 100 * AttemptsPassed / (double)AllAttempts;
+        public double PassRate => AllAttempts == 0 ? 0 : Math.Round(100 * AttemptsPassed / (double)AllAttempts);
     }
 }

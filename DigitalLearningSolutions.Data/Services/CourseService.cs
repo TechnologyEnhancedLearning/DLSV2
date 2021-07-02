@@ -22,7 +22,7 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId)
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId);
-            return allCourses.Where(c => c.Active).OrderByDescending(c => c.DelegateCount);
+            return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
     }
 }

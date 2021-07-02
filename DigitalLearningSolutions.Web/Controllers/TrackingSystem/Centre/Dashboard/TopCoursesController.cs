@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.TopCourses
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
@@ -11,12 +11,12 @@
     [Route("/TrackingSystem/Centre/TopCourses")]
     public class TopCoursesController : Controller
     {
-        private readonly ICourseService courseService;
-        private const int TopNumberOfCourses = 10;
+        private readonly ICourseService CourseService;
+        private const int NumberOfTopCourses = 10;
 
         public TopCoursesController(ICourseService courseService)
         {
-            this.courseService = courseService;
+            CourseService = courseService;
         }
 
         public IActionResult Index()
@@ -25,7 +25,7 @@
             var adminCategoryId = User.GetAdminCategoryId()!;
 
             var topCourses =
-                courseService.GetTopCourseStatisticsAtCentreForCategoryId(centreId, adminCategoryId.Value).Take(TopNumberOfCourses);
+                CourseService.GetTopCourseStatisticsAtCentreForCategoryId(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
 
             var model = new TopCoursesViewModel(topCourses);
 
