@@ -2,6 +2,7 @@
 {
     using System;
     using System.Data;
+    using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Register;
 
@@ -67,6 +68,8 @@
                 active = 1
             };
 
+            using var transaction = new TransactionScope();
+
             var adminUserId = connection.QuerySingle<int>(
                 @"INSERT INTO AdminUsers (Forename, Surname, Email, Password, CentreId, CentreAdmin, IsCentreManager, Approved, Active)
                         OUTPUT Inserted.AdminID
@@ -82,6 +85,8 @@
                 new { adminUserId }
             );
 
+            transaction.Complete();
+        
             return adminUserId;
         }
     }

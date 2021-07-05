@@ -82,7 +82,7 @@ namespace DigitalLearningSolutions.Data.Services
             using var transaction = new TransactionScope();
             try
             {
-                RegisterAdminDelegate(registrationModel);
+                CreateDelegateAccountForAdmin(registrationModel);
 
                 registrationDataService.RegisterCentreManagerAdmin(registrationModel);
 
@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Data.Services
             }
         }
 
-        private void RegisterAdminDelegate(RegistrationModel registrationModel)
+        private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
@@ -105,25 +105,18 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.Email,
                 registrationModel.Centre,
                 registrationModel.JobGroup,
-                registrationModel.PasswordHash,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            );
-            delegateRegistrationModel.Approved = true;
+                registrationModel.PasswordHash
+            ) { Approved = true };
             var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
-                throw new Exception("Delegate account could not be created");
+                throw new Exception($"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}");
             }
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
         }
 
-        private Email GenerateApprovalEmail(
+        private static Email GenerateApprovalEmail(
             string emailAddress,
             string firstName,
             string learnerFirstName,

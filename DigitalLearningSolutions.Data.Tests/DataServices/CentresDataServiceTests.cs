@@ -192,8 +192,7 @@
                 const string otherInformation = "This is not the information you're looking for";
 
                 // When
-                centresDataService.UpdateCentreWebsiteDetails
-                (
+                centresDataService.UpdateCentreWebsiteDetails(
                     2,
                     postcode,
                     showOnMap,
@@ -245,14 +244,22 @@
         [Test]
         public void SetCentreAutoRegistered_should_set_AutoRegistered_true()
         {
-            // Given
-            const int centreId = 7;
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int centreId = 7;
 
-            // When
-            centresDataService.SetCentreAutoRegistered(centreId);
+                // When
+                centresDataService.SetCentreAutoRegistered(centreId);
 
-            // Then
-            centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
+                // Then
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

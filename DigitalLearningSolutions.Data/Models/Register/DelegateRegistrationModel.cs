@@ -24,6 +24,15 @@
             Answer6 = answer6;
         }
 
+        public DelegateRegistrationModel(
+            string firstName,
+            string lastName,
+            string email,
+            int centre,
+            int jobGroup,
+            string passwordHash
+        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
+
         public string? Answer1 { get; set; }
 
         public string? Answer2 { get; set; }
