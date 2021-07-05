@@ -22,6 +22,10 @@
         {
             IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
         }
+        public PersonalInformationViewModel(CentreDelegateRegistrationData data) : this((DelegateRegistrationData)data)
+        {
+            Alias = data.Alias;
+        }
 
         [Required(ErrorMessage = "Enter your first name")]
         [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
@@ -39,6 +43,10 @@
 
         [Required(ErrorMessage = "Select a centre")]
         public int? Centre { get; set; }
+
+        [MaxLength(250, ErrorMessage = "Alias must be 250 characters or fewer")]
+        public string? Alias { get; set; }
+        // TODO: change error messages, subclass? for delegate registration by centre
 
         public bool IsCentreSpecificRegistration { get; set; }
 
