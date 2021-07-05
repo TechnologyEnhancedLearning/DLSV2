@@ -49,15 +49,12 @@ function updatePageNumber(page: number, totalPages: number) {
 function updatePageButtonVisibility(page: number, totalPages: number) {
   const previousButton = getPreviousButtonDisplayContainer();
   const nextButton = getNextButtonDisplayContainer();
-  const paginationContainer = getPaginationDisplayContainer();
-  if (previousButton === null || nextButton === null || paginationContainer === null) {
+  if (previousButton === null || nextButton === null) {
     return;
   }
 
   nextButton.hidden = page >= totalPages;
   previousButton.hidden = page === 1;
-  paginationContainer.style.display = (totalPages === 1 ? 'none' : 'block');
-  paginationContainer.hidden = totalPages === 1;
 }
 
 function getPreviousButton() {
@@ -74,8 +71,4 @@ function getPreviousButtonDisplayContainer() {
 
 function getNextButtonDisplayContainer() {
   return <HTMLLIElement>document.getElementsByClassName('nhsuk-pagination-item--next').item(0);
-}
-
-function getPaginationDisplayContainer() {
-  return <HTMLLIElement>document.getElementsByClassName('nhsuk-pagination').item(0);
 }
