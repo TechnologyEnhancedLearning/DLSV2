@@ -68,7 +68,8 @@
             bool isSupervisor = true,
             bool isTrainer = true,
             bool isFrameworkDeveloper = true,
-            bool importOnly = true
+            bool importOnly = true,
+            int failedLoginCount = 0
         )
         {
             return new AdminUser
@@ -94,7 +95,8 @@
                 IsSupervisor = isSupervisor,
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper,
-                ImportOnly = importOnly
+                ImportOnly = importOnly,
+                FailedLoginCount = failedLoginCount
             };
         }
 
