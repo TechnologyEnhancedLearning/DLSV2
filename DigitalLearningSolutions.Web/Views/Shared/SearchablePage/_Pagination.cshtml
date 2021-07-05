@@ -2,8 +2,8 @@
 @model BaseSearchablePageViewModel
 
 <nav class="nhsuk-pagination" role="navigation" aria-label="Pagination">
-  <ul class="nhsuk-list nhsuk-pagination__list">
-    <div class="pagination-button-container">
+  <ul class="nhsuk-list nhsuk-pagination__list nhsuk-grid-row">
+    <div class="pagination-button-container nhsuk-grid-column-one-third">
       <li class="nhsuk-pagination-item--previous" @(Model.Page == 1 ? "hidden" : "")>
         <button class="nhsuk-pagination__link nhsuk-pagination__link--prev" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="@(Model.Page - 1)">
           <svg class="nhsuk-icon nhsuk-icon__arrow-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -13,13 +13,13 @@
         </button>
       </li>
     </div>
-    <div class="page-indicator-container">
+    <div class="page-indicator-container nhsuk-grid-column-one-third"">
       <span aria-live="polite" aria-atomic="true">
         <span class="nhsuk-u-visually-hidden">page </span>
         <span id="page-indicator">@Model.Page of @Model.TotalPages</span>
       </span>
     </div>
-    <div class="pagination-button-container">
+    <div class="pagination-button-container nhsuk-grid-column-one-third"">
       <li class="nhsuk-pagination-item--next" @(Model.Page < Model.TotalPages ? "" : "hidden")>
         <button class="nhsuk-pagination__link nhsuk-pagination__link--next" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="@(Model.Page + 1)">
           <span class="nhsuk-pagination__title">Next</span>
