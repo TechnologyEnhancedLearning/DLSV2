@@ -23,30 +23,35 @@
 
 @if (Model.SuperviseDelegateDetails.Any() | Model.SearchString != null)
 {
-<form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
-  <div class="nhsuk-grid-row">
-    <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
-  </div>
-  <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-  <input type="hidden" id="select-sort-by" value="Name" />
-  <input type="hidden" id="select-sort-direction" value="Ascending" />
-  @if (@Model.SuperviseDelegateDetails.Any())
-  {
-    foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
-    {
-      <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
-    }
-    if (Model.TotalPages > 1)
-    {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
-  }
-  else
-  {
-    <p>Please change your search criteria and try again.</p>
-  }
-
-</form>
+  <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
+    <div class="nhsuk-grid-row">
+      <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
+    </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+        <input type="hidden" id="select-sort-by" value="Name" />
+        <input type="hidden" id="select-sort-direction" value="Ascending" />
+        @if (@Model.SuperviseDelegateDetails.Any())
+        {
+          <div id="searchable-elements">
+            @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
+            {
+              <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
+            }
+          </div>
+          if (Model.TotalPages > 1)
+          {
+            <partial name="SearchablePage/_Pagination" model="Model" />
+          }
+        }
+        else
+        {
+          <p>Please change your search criteria and try again.</p>
+        }
+      </div>
+    </div>
+  </form>
 }
 else
 {
@@ -76,3 +81,6 @@ else
 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="AddMultipleSuperviseDelegates">
   Add multiple staff members
 </a>
+@section scripts {
+  <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
+}

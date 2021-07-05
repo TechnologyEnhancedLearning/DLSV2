@@ -36,6 +36,7 @@
     <None Remove="Scripts\searchSortAndPaginate\sort.ts" />
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
+    <None Remove="Scripts\supervisor\staffList.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +89,7 @@
     <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
+    <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
   </ItemGroup>
 

@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@model AllStaffListViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  @foreach (var supervisorDelegate in Model.SupervisorDelegateDetails)
+  {
+    <partial name="Shared/_StaffMemberCard" model="supervisorDelegate" />
+  }
+</body>
+</html>

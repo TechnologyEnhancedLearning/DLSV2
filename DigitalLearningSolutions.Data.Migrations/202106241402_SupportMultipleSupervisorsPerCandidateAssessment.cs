@@ -42,7 +42,6 @@
             Delete.Column("SupervisorAdminId").FromTable("CandidateAssessments");
             Delete.Column("OneMonthReminderSent").FromTable("CandidateAssessments");
             Delete.Column("ExpiredReminderSent").FromTable("CandidateAssessments");
-            Delete.Column("SubmittedDate").FromTable("CandidateAssessments");
             Delete.Column("OutcomeId").FromTable("CandidateAssessments");
             Delete.Column("SignedByAdminId").FromTable("CandidateAssessments");
             Delete.Column("Signed").FromTable("CandidateAssessments");
@@ -65,7 +64,6 @@
                 .AddColumn("SupervisorAdminId").AsInt32().Nullable()
                 .AddColumn("OneMonthReminderSent").AsBoolean().NotNullable().WithDefaultValue(false)
                 .AddColumn("ExpiredReminderSent").AsBoolean().NotNullable().WithDefaultValue(false)
-                .AddColumn("SubmittedDate").AsDateTime().Nullable()
                 .AddColumn("OutcomeId").AsInt32().Nullable()
                 .AddColumn("SignedByAdminId").AsInt32().Nullable().ForeignKey("AdminUsers", "AdminID")
                 .AddColumn("Signed").AsDateTime().Nullable()

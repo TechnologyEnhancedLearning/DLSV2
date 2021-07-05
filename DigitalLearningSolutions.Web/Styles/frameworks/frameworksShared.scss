@@ -384,3 +384,11 @@ h1.truncate-overflow::after {
     }
   }
 }
+.searchable-element {
+  background-color: #fff;
+  @extend .nhsuk-u-margin-top-3;
+  @extend .nhsuk-u-margin-bottom-3;
+}
+.searchable-element .nhsuk-expander {
+  border: none
+}

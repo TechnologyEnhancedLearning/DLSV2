@@ -115,5 +115,15 @@
             };
             return View("DelegateProfileAssessments", model);
         }
+        [Route("/Supervisor/AllStaffList")]
+        public IActionResult AllStaffList()
+        {
+            var adminId = GetAdminID();
+            var centreId = GetCentreId();
+            var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
+            return View("AllStaffList", model);
+        }
     }
 }
