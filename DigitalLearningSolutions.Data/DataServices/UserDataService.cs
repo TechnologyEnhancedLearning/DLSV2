@@ -204,7 +204,7 @@
                         (SELECT AdminID
                          FROM AdminUsers au
                          WHERE au.Email = cd.EmailAddress AND au.CentreID = cd.CentreID
-                        )
+                        ) AS AdminID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
