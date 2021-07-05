@@ -7,7 +7,7 @@
         public FilterViewModel(
             string filterProperty,
             string filterName,
-            IEnumerable<(string DisplayText, string Filter)> filterOptions
+            IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
             FilterProperty = filterProperty;
@@ -19,6 +19,6 @@
 
         public string FilterName { get; set; }
 
-        public IEnumerable<(string DisplayText, string Filter)> FilterOptions { get; set; }
+        public IEnumerable<FilterOptionViewModel> FilterOptions { get; set; }
     }
 }

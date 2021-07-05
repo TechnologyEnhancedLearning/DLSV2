@@ -39,7 +39,7 @@
 
         private static string GetFilterDisplayText(
             string currentFilter,
-            IEnumerable<(string DisplayText, string Filter)> filterOptions
+            IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
             return filterOptions.Single(filterValue => filterValue.Filter == currentFilter).DisplayText;
@@ -47,7 +47,7 @@
 
         private static bool FilterOptionsContainsFilter(
             string currentFilter,
-            IEnumerable<(string DisplayText, string Filter)> filter
+            IEnumerable<FilterOptionViewModel> filter
         )
         {
             return filter.Any(filterValue => filterValue.Filter == currentFilter);

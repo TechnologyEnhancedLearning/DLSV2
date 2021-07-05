@@ -2,47 +2,51 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public static class FilterableTagHelper
     {
-        public static IEnumerable<(string, string)> GetCurrentTagsForAdminUser(AdminUser adminUser)
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForAdminUser(AdminUser adminUser)
         {
-            var tags = new List<(string, string)>();
-
-            // TODO: Either change these when HEEDLS-532 is merged first or change them on HEEDLS-532 if HEEDLS-416 is merged first to the AdminFilterOptions
+            var tags = new List<SearchableTagViewModel>();
+            
             if (adminUser.IsLocked)
             {
-                tags.Add(("Locked", nameof(AdminUser.IsLocked) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.IsLocked));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.IsNotLocked, true));
             }
 
             if (adminUser.IsCentreAdmin)
             {
-                tags.Add(("Centre administrator", nameof(AdminUser.IsCentreAdmin) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CentreAdministrator));
             }
 
             if (adminUser.IsSupervisor)
             {
-                tags.Add(("Supervisor", nameof(AdminUser.IsSupervisor) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.Supervisor));
             }
 
             if (adminUser.IsTrainer)
             {
-                tags.Add(("Trainer", nameof(AdminUser.IsTrainer) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.Trainer));
             }
 
             if (adminUser.IsContentCreator)
             {
-                tags.Add(("Content Creator license", nameof(AdminUser.IsContentCreator) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense));
             }
 
             if (adminUser.IsCmsAdministrator)
             {
-                tags.Add(("CMS administrator", nameof(AdminUser.IsCmsAdministrator) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator));
             }
 
             if (adminUser.IsContentManager)
             {
-                tags.Add(("CMS manager", nameof(AdminUser.IsContentManager) + "|true"));
+                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsManager));
             }
 
             return tags;

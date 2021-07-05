@@ -54,8 +54,8 @@
               <input type="hidden" name="filterBy" value="@Model.FilterString" />
               <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
                 <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
-                @foreach (var (displayText, filterValue) in filter.FilterOptions) {
-                  <option value="@filterValue">@displayText</option>
+                @foreach (var filterOption in filter.FilterOptions) {
+                  <option value="@filterOption.Filter">@filterOption.DisplayText</option>
                 }
               </select>
               <button class="nhsuk-search__submit filter-submit__dropdown non-js-only" type="submit">

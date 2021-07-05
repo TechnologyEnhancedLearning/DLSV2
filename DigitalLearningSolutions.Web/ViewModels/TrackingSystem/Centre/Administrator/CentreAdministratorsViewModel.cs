@@ -4,11 +4,12 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
     {
-        private static readonly IEnumerable<(string, string)> RoleOptions = new[]
+        private static readonly IEnumerable<FilterOptionViewModel> RoleOptions = new[]
         {
             AdminFilterOptions.CentreAdministrator,
             AdminFilterOptions.Supervisor,
@@ -18,7 +19,7 @@
             AdminFilterOptions.CmsManager
         };
 
-        private static readonly IEnumerable<(string, string)> AccountStatusOptions = new[]
+        private static readonly IEnumerable<FilterOptionViewModel> AccountStatusOptions = new[]
         {
             AdminFilterOptions.IsLocked,
             AdminFilterOptions.IsNotLocked
@@ -47,8 +48,10 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser));
-            IEnumerable<(string, string)> categoryOptions =
-                categories.Select(c => (c, $"{nameof(AdminUser.CategoryName)}|{c}"));
+            IEnumerable<FilterOptionViewModel> categoryOptions =
+                categories.Select(
+                    c => new FilterOptionViewModel(c, $"{nameof(AdminUser.CategoryName)}|{c}", FilterStatus.Default)
+                );
 
             Filters = new[]
             {
