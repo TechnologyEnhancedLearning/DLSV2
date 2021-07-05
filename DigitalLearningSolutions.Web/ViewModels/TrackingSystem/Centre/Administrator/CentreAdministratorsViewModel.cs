@@ -34,7 +34,7 @@
             string sortDirection,
             string? filterString,
             int page
-        ) : base(searchString, sortBy, sortDirection, filterString, page)
+        ) : base(searchString, sortBy, sortDirection, page, filterString)
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -56,7 +56,7 @@
             Filters = new[]
             {
                 new FilterViewModel("Role", "Role", RoleOptions),
-                new FilterViewModel(nameof(AdminUser.CategoryName), "Category", categoryOptions),
+                new FilterViewModel("CategoryName", "Category", categoryOptions),
                 new FilterViewModel("AccountStatus", "Account Status", AccountStatusOptions)
             };
         }

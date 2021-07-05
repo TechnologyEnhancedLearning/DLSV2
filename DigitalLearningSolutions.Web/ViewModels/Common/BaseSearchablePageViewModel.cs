@@ -23,8 +23,8 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            string? filterString,
             int page,
+            string? filterString = null,
             int itemsPerPage = 10
         )
         {
