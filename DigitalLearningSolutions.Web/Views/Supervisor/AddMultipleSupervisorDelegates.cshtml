@@ -22,7 +22,7 @@
 {
   <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
 }
-<h1>Add multiple members of staff</h1>
+<h1>Add staff members to your team</h1>
 <form method="post" novalidate>
   <vc:text-area asp-for="DelegateEmails"
                 label="User email addresses"
@@ -30,7 +30,8 @@
                 rows="8"
                 spell-check="false"
                 hint-text="Provide the work email address of each member of staff to add to your supervision list on a separate line."
-                css-class="" />
+                css-class=""
+                character-count="null"/>
   <button class="nhsuk-button" type="submit">
     Submit
   </button>

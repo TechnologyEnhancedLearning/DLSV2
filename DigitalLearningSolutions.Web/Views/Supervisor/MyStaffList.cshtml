@@ -20,17 +20,39 @@
   </nav>
 }
 <h1>My Staff List</h1>
-@if (Model.SuperviseDelegateDetails.Any())
+
+@if (Model.SuperviseDelegateDetails.Any() | Model.SearchString != null)
 {
-  foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
+<form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
+  <div class="nhsuk-grid-row">
+    <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
+  </div>
+  <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+  <input type="hidden" id="select-sort-by" value="Name" />
+  <input type="hidden" id="select-sort-direction" value="Ascending" />
+  @if (@Model.SuperviseDelegateDetails.Any())
   {
-    <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
+    foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
+    {
+      <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
+    }
+    if (Model.TotalPages > 1)
+    {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
   }
+  else
+  {
+    <p>Please change your search criteria and try again.</p>
+  }
+
+</form>
 }
 else
 {
   <p>You are not supervising any staff, yet. Add some staff to your staff list using the button below.</p>
 }
+
 
 <form method="post">
   <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
