@@ -28,29 +28,23 @@
         [HttpPost]
         public async Task<IActionResult> Index(ChangePasswordViewModel model)
         {
+            var adminId = User.GetAdminId();
+            var delegateId = User.GetCandidateId();
+            if (model.CurrentPassword != null && !userService.IsPasswordValid(adminId, delegateId, model.CurrentPassword))
+            {
+                ModelState.AddModelError(
+                    nameof(ChangePasswordViewModel.CurrentPassword),
+                    CommonValidationErrorMessages.IncorrectPassword
+                );
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var currentPassword = model.CurrentPassword!;
-
-            var adminId = User.GetAdminId();
-            var delegateId = User.GetCandidateId();
-
             var verifiedLinkedUsersAccounts =
-                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword);
-
-            var passwordIsInvalid = !verifiedLinkedUsersAccounts.Any();
-
-            if (passwordIsInvalid)
-            {
-                ModelState.AddModelError(
-                    nameof(model.CurrentPassword),
-                    CommonValidationErrorMessages.IncorrectPassword
-                );
-                return View(model);
-            }
+                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
 
             var newPassword = model.Password!;
 

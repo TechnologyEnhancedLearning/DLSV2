@@ -49,10 +49,10 @@
         public async Task Post_returns_form_if_current_password_does_not_match_user_ids()
         {
             // Given
-            GivenPasswordVerificationFails();
+            GivenPasswordIsNotValid();
 
             // When
-            var result = await authenticatedController.Index(new ChangePasswordViewModel());
+            var result = await authenticatedController.Index(new ChangePasswordViewModel{CurrentPassword = "test"});
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ChangePasswordViewModel>();
@@ -62,10 +62,10 @@
         public async Task Post_does_not_change_password_if_current_password_does_not_match_user_ids()
         {
             // Given
-            GivenPasswordVerificationFails();
+            GivenPasswordIsNotValid();
 
             // When
-            await authenticatedController.Index(new ChangePasswordViewModel());
+            await authenticatedController.Index(new ChangePasswordViewModel { CurrentPassword = "test" });
 
             // Then
             ThenMustNotHaveChangedPassword();
@@ -76,7 +76,8 @@
         {
             // Given
             var user = Builder<AdminUser>.CreateNew().Build();
-            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, new DelegateUser[] { }), "current-password");
+            GivenPasswordIsValid("current-password");
+            GivenGetVerifiedUsersReturnsUsers(new UserAccountSet(user, new DelegateUser[] { }), "current-password");
 
             // When
             var result = await authenticatedController.Index(
@@ -99,7 +100,8 @@
             GivenLoggedInUserAccountsAre(adminUser, delegateUser);
 
             var verifiedUsers = new UserAccountSet(adminUser, new[] { delegateUser });
-            GivenPasswordVerificationReturnsUsers(verifiedUsers, "current-password");
+            GivenPasswordIsValid("current-password");
+            GivenGetVerifiedUsersReturnsUsers(verifiedUsers, "current-password");
 
             // When
             await authenticatedController.Index(
@@ -120,7 +122,8 @@
             var delegateUser = Builder<DelegateUser>.CreateNew().Build();
 
             GivenLoggedInUserAccountsAre(adminUser, delegateUser);
-            GivenPasswordVerificationReturnsUsers(
+            GivenPasswordIsValid("current-password");
+            GivenGetVerifiedUsersReturnsUsers(
                 new UserAccountSet(null, new[] { delegateUser }),
                 "current-password"
             );
@@ -143,16 +146,20 @@
                 .Returns((adminUser, delegateUser));
         }
 
-        private void GivenPasswordVerificationReturnsUsers(UserAccountSet users, string password)
+        private void GivenPasswordIsValid(string password)
+        {
+            A.CallTo(() => userService.IsPasswordValid(LoggedInAdminId, LoggedInDelegateId, password)).Returns(true);
+        }
+
+        private void GivenPasswordIsNotValid()
+        {
+            A.CallTo(() => userService.IsPasswordValid(LoggedInAdminId, LoggedInDelegateId, A<string>._)).Returns(false);
+        }
+
+        private void GivenGetVerifiedUsersReturnsUsers(UserAccountSet users, string password)
         {
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(LoggedInAdminId, LoggedInDelegateId, password))
                 .Returns(users);
-        }
-
-        private void GivenPasswordVerificationFails()
-        {
-            A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<int>._, A<int>._, A<string>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
         }
 
         private void ThenMustHaveChangedPasswordForUsersOnce(string newPassword, IEnumerable<User> expectedUsers)
