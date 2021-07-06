@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
     public class AppliedFilterViewModel
     {

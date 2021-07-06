@@ -2,10 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -24,7 +23,7 @@
                 new SearchableTagViewModel(AdminFilterOptions.Supervisor),
                 new SearchableTagViewModel(AdminFilterOptions.Trainer),
                 new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator),
-                new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense),
+                new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense)
             };
 
             // When

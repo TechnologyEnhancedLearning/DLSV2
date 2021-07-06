@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.AspNetCore.Mvc;
 
     public class CurrentFiltersViewComponent : ViewComponent

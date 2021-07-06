@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
     {

@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+
     public class SearchBoxViewModel
     {
         public readonly string AspAction;

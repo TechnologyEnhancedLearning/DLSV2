@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {

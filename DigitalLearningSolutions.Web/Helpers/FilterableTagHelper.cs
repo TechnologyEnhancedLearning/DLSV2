@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class FilterableTagHelper
     {
