@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
-    public class CentreDelegateRegistrationData : DelegateRegistrationData
+    public class DelegateRegistrationByCentreData : DelegateRegistrationData
     {
         public string? Alias { get; set; }
     }

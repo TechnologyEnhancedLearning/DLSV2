@@ -17,14 +17,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Register")]
-    public class CentreDelegateRegisterController : Controller
+    public class RegisterDelegateByCentreController : Controller
     {
-        private const string CookieName = "CentreDelegateRegistrationData";
+        private const string CookieName = "DelegateRegistrationByCentreData";
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
-        public CentreDelegateRegisterController(
+        public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
             CustomPromptHelper customPromptHelper
@@ -44,12 +44,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("PersonalInformation");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<CentreDelegateRegistrationData>))]
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
         [Route("PersonalInformation")]
         public IActionResult PersonalInformation()
         {
-            var data = TempData.Peek<CentreDelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             var model = new PersonalInformationViewModel(data);
 
@@ -58,12 +58,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<CentreDelegateRegistrationData>))]
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
         [Route("PersonalInformation")]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
-            var data = TempData.Peek<CentreDelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             ValidateEmailAddress(model);
 
@@ -78,12 +78,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("LearnerInformation");
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<CentreDelegateRegistrationData>))]
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
         [Route("LearnerInformation")]
         public IActionResult LearnerInformation()
         {
-            var data = TempData.Peek<CentreDelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             var model = new LearnerInformationViewModel(data);
 
@@ -92,12 +92,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(model);
         }
 
-        [ServiceFilter(typeof(RedirectEmptySessionData<CentreDelegateRegistrationData>))]
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
         [Route("LearnerInformation")]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
-            var data = TempData.Peek<CentreDelegateRegistrationData>()!;
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             var centreId = data.Centre!.Value;
 
@@ -126,7 +126,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void SetCentreDelegateRegistrationData(int centreId)
         {
-            var centreDelegateRegistrationData = new CentreDelegateRegistrationData
+            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData
             {
                 IsCentreSpecificRegistration = true,
                 Centre = centreId

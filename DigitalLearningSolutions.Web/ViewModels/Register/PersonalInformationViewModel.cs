@@ -22,7 +22,7 @@
         {
             IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
         }
-        public PersonalInformationViewModel(CentreDelegateRegistrationData data) : this((DelegateRegistrationData)data)
+        public PersonalInformationViewModel(DelegateRegistrationByCentreData data) : this((DelegateRegistrationData)data)
         {
             Alias = data.Alias;
         }
