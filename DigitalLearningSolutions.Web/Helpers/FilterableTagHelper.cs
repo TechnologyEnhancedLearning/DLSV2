@@ -44,7 +44,7 @@
                 tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator));
             }
 
-            if (adminUser.IsContentManager)
+            if (adminUser.IsCmsManager)
             {
                 tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsManager));
             }

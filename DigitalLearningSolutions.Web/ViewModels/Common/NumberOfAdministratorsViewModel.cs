@@ -14,8 +14,8 @@
             Supervisors = adminUsers.Count(a => a.IsSupervisor).ToString();
 
             var trainers = adminUsers.Count(a => a.IsTrainer);
-            var cmsAdministrators = adminUsers.Count(a => a.ImportOnly);
-            var cmsManagers = adminUsers.Count(a => a.IsContentManager) - cmsAdministrators;
+            var cmsAdministrators = adminUsers.Count(a => a.IsCmsAdministrator);
+            var cmsManagers = adminUsers.Count(a => a.IsCmsManager);
             var ccLicences = adminUsers.Count(a => a.IsContentCreator);
 
             Trainers = DisplayStringHelper.FormatNumberWithLimit(trainers, centreDetails.TrainerSpots);

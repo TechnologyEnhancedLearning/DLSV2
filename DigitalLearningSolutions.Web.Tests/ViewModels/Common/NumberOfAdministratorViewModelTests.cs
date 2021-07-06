@@ -27,8 +27,8 @@
             // Then
             viewModel.Admins.Should().Be("7");
             viewModel.Supervisors.Should().Be("6");
-            viewModel.CmsAdministrators.Should().Be("4 / 12");
-            viewModel.CmsManagers.Should().Be("1 / 13");
+            viewModel.CmsAdministrators.Should().Be("3 / 12");
+            viewModel.CmsManagers.Should().Be("2 / 13");
             viewModel.CcLicences.Should().Be("2 / 14");
             viewModel.Trainers.Should().Be("1 / 15");
         }
@@ -49,8 +49,8 @@
             var viewModel = new NumberOfAdministratorsViewModel(centre, adminUsersAtCentre);
 
             // Then
-            viewModel.CmsAdministrators.Should().Be("4");
-            viewModel.CmsManagers.Should().Be("1");
+            viewModel.CmsAdministrators.Should().Be("3");
+            viewModel.CmsManagers.Should().Be("2");
             viewModel.CcLicences.Should().Be("2");
             viewModel.Trainers.Should().Be("1");
         }

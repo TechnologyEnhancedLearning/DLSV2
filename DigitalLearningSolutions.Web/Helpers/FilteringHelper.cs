@@ -71,7 +71,7 @@
 
         public static readonly FilterOptionViewModel CmsManager = new FilterOptionViewModel(
             "CMS manager",
-            nameof(AdminUser.IsContentManager) + FilteringHelper.Separator + "true",
+            nameof(AdminUser.IsCmsManager) + FilteringHelper.Separator + "true",
             FilterStatus.Default
         );
 

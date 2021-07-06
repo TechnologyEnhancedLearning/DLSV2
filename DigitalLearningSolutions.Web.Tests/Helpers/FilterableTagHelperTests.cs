@@ -24,7 +24,6 @@
                 new SearchableTagViewModel(AdminFilterOptions.Supervisor),
                 new SearchableTagViewModel(AdminFilterOptions.Trainer),
                 new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator),
-                new SearchableTagViewModel(AdminFilterOptions.CmsManager),
                 new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense),
             };
 
