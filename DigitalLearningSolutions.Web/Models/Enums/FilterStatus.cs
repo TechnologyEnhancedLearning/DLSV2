@@ -4,6 +4,7 @@
     {
         Default,
         Warning,
-        Success
+        Success,
+        Other //This will result in the default blue nhsuk-tag
     }
 }
