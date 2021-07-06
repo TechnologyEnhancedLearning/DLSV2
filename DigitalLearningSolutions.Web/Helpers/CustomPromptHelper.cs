@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -60,6 +61,19 @@
                     answers[cp.CustomPromptNumber - 1]
                 )
             ).ToList();
+        }
+
+        public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(int centreId, DelegateUser delegateUser)
+        {
+            return GetCustomFieldViewModelsForCentre(
+                centreId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
         }
 
         public void ValidateCustomPrompts(

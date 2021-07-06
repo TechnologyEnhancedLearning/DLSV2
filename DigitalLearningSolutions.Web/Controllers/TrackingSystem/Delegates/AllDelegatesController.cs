@@ -24,8 +24,14 @@
         {
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Take(10);
-
-            var model = new AllDelegatesViewModel(centreId, delegateUsers, customPromptHelper);
+            var searchableDelegateViewModels = delegateUsers.Select(
+                delegateUser =>
+                {
+                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+                    return new SearchableDelegateViewModel(delegateUser, customFields);
+                }
+            );
+            var model = new AllDelegatesViewModel(centreId, searchableDelegateViewModels);
 
             return View(model);
         }
