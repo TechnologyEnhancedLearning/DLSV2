@@ -15,7 +15,7 @@ function constructChartistData(model: any): any { // TODO HEEDLS-458 this should
   const series = [
     data.map((d: any) => d.completions),
     data.map((d: any) => d.evaluations),
-    data.map((d: any) => d.registrations)
+    data.map((d: any) => d.registrations),
   ];
   return { labels, series };
 }
