@@ -43,7 +43,7 @@
                 searchString,
                 "SearchableName",
                 "Ascending",
-                $"CategoryName|Word\r\n{AdminFilterOptions.CentreAdministrator.Filter}",
+                $"CategoryName|Word\r\n{AdminFilterOptions.CentreAdministrator.FilterValue}",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>

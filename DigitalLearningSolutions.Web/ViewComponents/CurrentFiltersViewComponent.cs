@@ -42,15 +42,15 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.Single(filterValue => filterValue.Filter == currentFilter).DisplayText;
+            return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
         }
 
         private static bool FilterOptionsContainsFilter(
             string currentFilter,
-            IEnumerable<FilterOptionViewModel> filter
+            IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filter.Any(filterValue => filterValue.Filter == currentFilter);
+            return filterOptions.Any(filterOption => filterOption.FilterValue == currentFilter);
         }
     }
 }

@@ -4,16 +4,16 @@
 
     public class FilterOptionViewModel
     {
-        public FilterOptionViewModel(string displayText, string filter, FilterStatus tagStatus)
+        public FilterOptionViewModel(string displayText, string filterValue, FilterStatus tagStatus)
         {
             DisplayText = displayText;
-            Filter = filter;
+            FilterValue = filterValue;
             TagStatus = tagStatus;
         }
 
         public string DisplayText { get; set; }
 
-        public string Filter { get; set; }
+        public string FilterValue { get; set; }
 
         public FilterStatus TagStatus { get; set; }
     }
