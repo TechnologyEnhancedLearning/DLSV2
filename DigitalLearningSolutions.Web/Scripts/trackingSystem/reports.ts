@@ -17,7 +17,7 @@ function getPathForEndpoint(endpoint: string): string { // TODO HEEDLS-458 from 
   return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
 }
 
-function constructChartistData(model: any): any { // TODO HEEDLS-458 define types here?
+function constructChartistData(model: any): any { // TODO HEEDLS-458 this should have defined types for parameters and return values
   const data = model.rows;
   data.reverse(); // TODO HEEDLS-458 remove the reversal in the backend and deal with it in the frontend where needed
   const labels = data.map((d: any) => d.period);
@@ -38,38 +38,12 @@ const options = {
     onlyInteger: true
   },
   chartPadding: { bottom: 32 }
-//  plugins: [
-//    Chartist.plugins.ctAxisTitle({
-//      axisX: {
-//        axisTitle: 'Month',
-//        offset: {
-//          x: 0,
-//          y: 50
-//        },
-//        textAnchor: 'middle'
-//      }
-//    })
-//  ]
 }
 
 request.onload = () => {
-//  console.log(request.response);
-  var foo = new Chartist.Line('.ct-chart', constructChartistData(request.response), options);
+  new Chartist.Line('.ct-chart', constructChartistData(request.response), options);
 };
 
 request.open('GET', path, true);
 request.responseType = 'json';
 request.send();
-
-
-//requestPromise.then((response) => {
-//  if (response === null) {
-//    return undefined;
-//  }
-//
-//  new Chartist.Line('.ct-chart', data);
-//});
-
-// Create a new line chart object where as first parameter we pass in a selector
-// that is resolving to our chart container element. The Second parameter
-// is the actual data object.
