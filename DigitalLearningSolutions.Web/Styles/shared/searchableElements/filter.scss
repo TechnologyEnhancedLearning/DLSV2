@@ -1,0 +1,62 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "common";
+
+.filter-dropdown {
+  @extend .input-with-no-js-submit-button;
+
+  @include mq($until: tablet) {
+    width: 63%;
+  }
+}
+
+.filter-submit {
+  float: left;
+  width: 18%;
+  color: $color_nhsuk-white;
+  min-width: 100px;
+  padding: 8px 4px;
+
+  &:hover {
+    background-color: $button-hover-colour;
+  }
+
+  &__dropdown {
+    @extend .filter-submit;
+    background-color: $button-dark-blue;
+  }
+
+  &__clear {
+    @extend .filter-submit;
+    border-radius: 4px;
+    background-color: $color_nhsuk-red;
+  }
+}
+
+.applied-filter-container {
+  height: auto;
+  width: 100%;
+  float: left;
+
+  @include mq($from: tablet) {
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
+}
+
+.clear-filter-button-container {
+  width: 18%;
+  float: left;
+}
+
+.filter-tag {
+  padding-top: 11px;
+  padding-bottom: 11px;
+  margin-bottom: 4px;
+}
+
+.card-filter-tag {
+  margin: 0 4px 4px 0;
+}
