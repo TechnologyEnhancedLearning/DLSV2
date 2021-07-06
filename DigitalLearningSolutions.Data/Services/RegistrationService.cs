@@ -80,21 +80,14 @@ namespace DigitalLearningSolutions.Data.Services
         public void RegisterCentreManager(RegistrationModel registrationModel)
         {
             using var transaction = new TransactionScope();
-            try
-            {
-                CreateDelegateAccountForAdmin(registrationModel);
+            
+            CreateDelegateAccountForAdmin(registrationModel);
 
-                registrationDataService.RegisterCentreManagerAdmin(registrationModel);
+            registrationDataService.RegisterCentreManagerAdmin(registrationModel);
 
-                centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
 
-                transaction.Complete();
-            }
-            catch (Exception e)
-            {
-                logger.LogWarning($"Centre Manager registration failed for the following reason: {e.Message}");
-                throw;
-            }
+            transaction.Complete();
         }
 
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
