@@ -1,15 +1,6 @@
 ﻿import Chartist from 'chartist';
 import 'chartist-plugin-axistitle';
 
-var data = {
-  // A labels array that can contain any sort of values
-  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-  // Our series array that contains series objects or in this case series data arrays
-  series: [
-    [5, 2, 4, 2, 0]
-  ]
-};
-
 function getPathForEndpoint(endpoint: string): string { // TODO HEEDLS-458 from searchSortAndPaginate, commonise
   const currentPath = window.location.pathname;
   const endpointUrlParts = endpoint.split('/');
@@ -29,7 +20,7 @@ function constructChartistData(model: any): any { // TODO HEEDLS-458 this should
   return { labels, series };
 }
 
-const path = getPathForEndpoint("TrackingSystem/Centre/Reports/Data");
+const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 
 const request = new XMLHttpRequest();
 
