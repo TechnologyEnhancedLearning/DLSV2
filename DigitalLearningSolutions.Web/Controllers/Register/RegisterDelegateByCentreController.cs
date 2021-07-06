@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
+    using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -118,7 +119,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.SetLearnerInformation(model);
             TempData.Set(data);
 
-            return new OkResult();
+            return RedirectToAction("WelcomeEmail");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpGet]
+        [Route("WelcomeEmail")]
+        public IActionResult WelcomeEmail()
+        {
+            var model = new WelcomeEmailViewModel();
+            
+            return View(model);
         }
 
         private void SetCentreDelegateRegistrationData(int centreId)

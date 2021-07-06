@@ -1,0 +1,87 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+@model WelcomeEmailViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
+  var exampleDate = DateTime.Today;
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Welcome Email</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="WelcomeEmail">
+      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" id="ShouldSendEmail" name="ShouldSendEmail" type="checkbox" value="true" aria-controls="conditional-email-date" aria-expanded="false">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
+            Send welcome email to registered delegate
+          </label>
+        </div>
+
+        <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-email-date">
+          <fieldset class="nhsuk-fieldset" aria-describedby="email-date-hint" role="group">
+            <legend class="nhsuk-fieldset__legend nhsuk-label">
+              Deliver email on or after:
+            </legend>
+            <div class="nhsuk-hint" id="example-hint">
+              For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year
+            </div>
+
+            <div class="nhsuk-date-input" id="date">
+              <div class="nhsuk-date-input__item">
+                <div class="nhsuk-form-group">
+                  <vc:text-input asp-for="Day"
+                                 label="Day"
+                                 populate-with-current-value="true"
+                                 type="number"
+                                 spell-check="false"
+                                 hint-text=""
+                                 autocomplete=""
+                                 css-class="nhsuk-date-input__input nhsuk-input--width-2" />
+                </div>
+              </div>
+              <div class="nhsuk-date-input__item">
+                <div class="nhsuk-form-group">
+                  <vc:text-input asp-for="Month"
+                                 label="Month"
+                                 populate-with-current-value="true"
+                                 type="number"
+                                 spell-check="false"
+                                 hint-text=""
+                                 autocomplete=""
+                                 css-class="nhsuk-date-input__input nhsuk-input--width-2" />
+                </div>
+              </div>
+              <div class="nhsuk-date-input__item">
+                <div class="nhsuk-form-group">
+                  <vc:text-input asp-for="Year"
+                                 label="Year"
+                                 populate-with-current-value="true"
+                                 type="number"
+                                 spell-check="false"
+                                 hint-text=""
+                                 autocomplete=""
+                                 css-class="nhsuk-date-input__input nhsuk-input--width-4" />
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="LearnerInformation" link-text="Go back" />
+  </div>
+</div>
