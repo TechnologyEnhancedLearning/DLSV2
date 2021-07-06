@@ -32,7 +32,7 @@
             viewModel.Supervisors.Should().Be("6");
             viewModel.CmsAdministrators.Should().Be("3 / 3");
             viewModel.CmsAdministratorsColour.Should().Be("red");
-            viewModel.CmsManagers.Should().Be("1 / 13");
+            viewModel.CmsManagers.Should().Be("2 / 13");
             viewModel.CmsManagersColour.Should().Be("green");
             viewModel.ContentCreators.Should().Be("2 / 14");
             viewModel.ContentCreatorsColour.Should().Be("green");
@@ -67,7 +67,7 @@
             viewModel.Supervisors.Should().Be("6");
             viewModel.CmsAdministrators.Should().Be("3");
             viewModel.CmsAdministratorsColour.Should().Be("blue");
-            viewModel.CmsManagers.Should().Be("1");
+            viewModel.CmsManagers.Should().Be("2");
             viewModel.CmsManagersColour.Should().Be("blue");
             viewModel.ContentCreators.Should().Be("2");
             viewModel.ContentCreatorsColour.Should().Be("blue");
