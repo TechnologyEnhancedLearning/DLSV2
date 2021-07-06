@@ -1,5 +1,9 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
+// Some of the NHS styles break down with the 3/4 column layout below this
+// size. Since the NHS large-desktop is 990px, defined this xl-desktop size.
+$xl-desktop: 1024px;
+
 $nhs-dark-grey: #425563;
 
 .searchable-element {
@@ -286,13 +290,13 @@ button.nhsuk-pagination__link {
   padding: 0;
 }
 
-@include mq($from: 768px, $until: 1024px) {
+@include mq($from: 768px, $until: $xl-desktop) {
   .asset-card-header {
     min-height: 222px;
   }
 }
 
-@include mq($from: 1024px) {
+@include mq($from: $xl-desktop) {
   .asset-card-header {
     min-height: 163px;
   }
