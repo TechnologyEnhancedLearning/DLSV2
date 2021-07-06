@@ -1,4 +1,5 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
+import { setupFilter, filterSearchableElements } from './filter';
 import { search, setUpSearch } from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
@@ -20,6 +21,7 @@ export class SearchSortAndPaginate {
         return;
       }
 
+      setupFilter(() => this.onFilterUpdated(allSearchableElements))
       setUpSearch(() => this.onSearchUpdated(allSearchableElements));
       setupSort(() => this.searchSortAndPaginate(allSearchableElements));
       setupPagination(
@@ -28,6 +30,11 @@ export class SearchSortAndPaginate {
       );
       this.searchSortAndPaginate(allSearchableElements);
     });
+  }
+
+  private onFilterUpdated(allSearchableElements: SearchableElement[]): void {
+    this.page = 1;
+    this.searchSortAndPaginate(allSearchableElements);
   }
 
   private onSearchUpdated(allSearchableElements: SearchableElement[]): void {
@@ -46,7 +53,8 @@ export class SearchSortAndPaginate {
   }
 
   private searchSortAndPaginate(searchableElements: SearchableElement[]): void {
-    const filteredElements = search(searchableElements);
+    const searchedElements = search(searchableElements);
+    const filteredElements = filterSearchableElements(searchedElements);
     const sortedElements = sortSearchableElements(filteredElements);
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = paginateResults(sortedElements, this.page, totalPages);

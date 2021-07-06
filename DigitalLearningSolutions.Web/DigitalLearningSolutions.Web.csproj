@@ -81,6 +81,7 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
+    <TypeScriptCompile Include="Scripts\searchSortAndPaginate\filter.ts" />
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\paginate.ts" />
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\search.ts" />
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\searchSortAndPaginate.ts" />

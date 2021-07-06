@@ -51,14 +51,14 @@
           <div id="filter-@filter.FilterProperty">
             <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
               <input type="hidden" name="searchString" value="@Model.SearchString" />
-              <input type="hidden" name="filterBy" value="@Model.FilterString" />
+              <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterString" />
               <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
                 <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
                 @foreach (var filterOption in filter.FilterOptions) {
                   <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
                 }
               </select>
-              <button class="nhsuk-search__submit filter-submit__dropdown non-js-only" type="submit">
+              <button class="nhsuk-search__submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
                 Add filter
               </button>
             </form>
@@ -75,7 +75,7 @@
 
     <form method="get">
       <input type="hidden" id="searchString" value="@Model.SearchString" />
-      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterString" />
+      <input type="hidden" name="filterBy" value="@Model.FilterString" />
       <input type="hidden" id="select-sort-by" value="Name" />
       <input type="hidden" id="select-sort-direction" value="Ascending" />
       <div class="nhsuk-grid-row">
