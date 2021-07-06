@@ -21,9 +21,9 @@
 
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-margin-bottom-4">
-        <strong class="@activeTagCss">@(Model.IsActive ? "Active" : "Inactive")</strong>
-        <strong class="@selfRegTagCss">@(Model.IsSelfReg ? "Self registered" + (Model.IsExternalReg ? " (External)" : "") : "Registered by centre")</strong>
-        <strong class="@passwordTagCss">@(Model.IsPasswordSet ? "Password set" : "Password not set")</strong>
+        <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
+        <strong class="@selfRegTagCss">@(Model.RegStatusTagName)</strong>
+        <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
         @if (Model.IsAdmin) {
           <strong class="@adminTagCss">Admin</strong>
         }

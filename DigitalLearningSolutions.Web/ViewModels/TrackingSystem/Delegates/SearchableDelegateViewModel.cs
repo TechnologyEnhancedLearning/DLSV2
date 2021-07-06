@@ -41,6 +41,11 @@
         public bool IsAdmin { get; set; }
         public bool IsPasswordSet { get; set; }
 
+        public string RegStatusTagName =>
+            IsSelfReg ? "Self registered" + (IsExternalReg ? " (External)" : "") : "Registered by centre";
+        public string ActiveTagName => IsActive ? "Active" : "Inactive";
+        public string PasswordTagName => IsPasswordSet ? "Password set" : "Password not set";
+
         public string? Email { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
