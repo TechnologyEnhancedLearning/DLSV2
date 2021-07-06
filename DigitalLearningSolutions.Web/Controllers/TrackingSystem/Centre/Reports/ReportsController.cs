@@ -28,11 +28,11 @@
         }
 
         [Route("/TrackingSystem/Centre/Reports/Data")]
-        public IEnumerable<MonthOfActivity> GetRecentData()
+        public UsageStatsTableViewModel GetRecentData()
         {
             var centreId = User.GetCentreId();
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            return monthsOfActivity;
+            return new UsageStatsTableViewModel(monthsOfActivity);
         }
     }
 }

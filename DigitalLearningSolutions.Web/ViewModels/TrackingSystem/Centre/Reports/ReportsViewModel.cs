@@ -29,7 +29,7 @@
     {
         public UsageStatsTableRow(MonthOfActivity monthOfActivity)
         {
-            Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM, yyyy");
+            Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM yyyy");
             Completions = monthOfActivity.Completions;
             Evaluations = monthOfActivity.Evaluations;
             Registrations = monthOfActivity.Registrations;

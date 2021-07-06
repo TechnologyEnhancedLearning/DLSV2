@@ -17,19 +17,19 @@ function getPathForEndpoint(endpoint: string): string { // TODO HEEDLS-458 from 
   return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
 }
 
-function constructChartistData(rawData: any[]): any {
-  rawData.reverse(); // TODO HEEDLS-458 remove the reversal in the backend and deal with it in the frontend where needed
-  const labels = rawData.map(d => d.month);
+function constructChartistData(model: any): any { // TODO HEEDLS-458 define types here?
+  const data = model.rows;
+  data.reverse(); // TODO HEEDLS-458 remove the reversal in the backend and deal with it in the frontend where needed
+  const labels = data.map((d: any) => d.period);
   const series = [
-    rawData.map(d => d.completions),
-    rawData.map(d => d.evaluations),
-    rawData.map(d => d.registrations)
+    data.map((d: any) => d.completions),
+    data.map((d: any) => d.evaluations),
+    data.map((d: any) => d.registrations)
   ];
   return { labels, series };
 }
 
 const path = getPathForEndpoint("TrackingSystem/Centre/Reports/Data");
-
 
 const request = new XMLHttpRequest();
 
@@ -37,20 +37,23 @@ const options = {
   axisY: {
     onlyInteger: true
   },
-  plugins: [
-    Chartist.plugins.ctAxisTitle({
-      axisX: {
-        axisTitle: 'Month'
-      },
-      axisY: {
-        axisTitle: '#'
-      }
-    })
-  ]
+  chartPadding: { bottom: 32 }
+//  plugins: [
+//    Chartist.plugins.ctAxisTitle({
+//      axisX: {
+//        axisTitle: 'Month',
+//        offset: {
+//          x: 0,
+//          y: 50
+//        },
+//        textAnchor: 'middle'
+//      }
+//    })
+//  ]
 }
 
 request.onload = () => {
-  console.log(request.response);
+//  console.log(request.response);
   var foo = new Chartist.Line('.ct-chart', constructChartistData(request.response), options);
 };
 

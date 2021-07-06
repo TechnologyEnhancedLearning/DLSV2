@@ -1,0 +1,36 @@
+﻿@import "~chartist/dist/scss/chartist";
+
+.ct-series-a .ct-line {
+  stroke: blue;
+  stroke-width: 5px;
+}
+
+.ct-series-a .ct-point {
+  stroke: blue;
+}
+
+.ct-series-b .ct-line {
+  stroke: green;
+  stroke-width: 5px;
+}
+
+.ct-series-b .ct-point {
+  stroke: green;
+}
+
+.ct-series-c .ct-line {
+  stroke: red;
+  stroke-width: 5px;
+}
+
+.ct-series-c .ct-point {
+  stroke: red;
+}
+
+.ct-label.ct-label.ct-horizontal {
+  position: fixed;
+  justify-content: flex-end;
+  text-align: right;
+  transform-origin: 100% 0;
+  transform: translate(-100%) rotate(-45deg);
+}
