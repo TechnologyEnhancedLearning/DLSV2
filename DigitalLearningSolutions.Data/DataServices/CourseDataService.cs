@@ -157,7 +157,6 @@
                         cu.CentreID,
                         cu.Active,
                         cu.AllCentres,
-                        ap.ASPMenu,
                         ap.ArchivedDate,
                         ap.ApplicationName,
                         cu.CustomisationName,
