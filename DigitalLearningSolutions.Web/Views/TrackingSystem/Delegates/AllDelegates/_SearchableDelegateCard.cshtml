@@ -14,7 +14,7 @@
 <div class="nhsuk-expander-group" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
         @Model.Name (@Model.CandidateNumber)
       </span>
     </summary>
@@ -24,8 +24,7 @@
         <strong class="@activeTagCss">@(Model.IsActive ? "Active" : "Inactive")</strong>
         <strong class="@selfRegTagCss">@(Model.IsSelfReg ? "Self registered" + (Model.IsExternalReg ? " (External)" : "") : "Registered by centre")</strong>
         <strong class="@passwordTagCss">@(Model.IsPasswordSet ? "Password set" : "Password not set")</strong>
-        @if (Model.IsAdmin)
-        {
+        @if (Model.IsAdmin) {
           <strong class="@adminTagCss">Admin</strong>
         }
       </div>
@@ -64,8 +63,8 @@
         }
       </dl>
 
-      <button class="nhsuk-button">Manage delegate</button>
-      <button class="nhsuk-button nhsuk-button--secondary">Set password</button>
+      <a class="nhsuk-button" role="button">Manage delegate</a>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button">Set password</a>
     </div>
   </details>
 </div>
