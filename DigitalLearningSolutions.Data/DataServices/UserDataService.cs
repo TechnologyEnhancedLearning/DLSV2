@@ -178,7 +178,7 @@
 
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
-            var users = connection.Query<DelegateUserCard>(
+            return connection.Query<DelegateUserCard>(
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
@@ -211,8 +211,6 @@
                     WHERE cd.CentreId = @centreId AND cd.Approved = 1",
                 new { centreId }
             ).ToList();
-
-            return users;
         }
 
         public AdminUser? GetAdminUserByUsername(string username)

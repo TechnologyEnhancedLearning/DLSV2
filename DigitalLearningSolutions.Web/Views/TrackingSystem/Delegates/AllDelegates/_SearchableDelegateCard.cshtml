@@ -2,9 +2,9 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model SearchableDelegateViewModel
 @{
-  var activeTagCss = Model.IsActive ? "nhsuk-tag" : "nhsuk-tag nhsuk-tag--grey";
+  var activeTagCss = Model.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
   var selfRegTagCss = "nhsuk-tag nhsuk-tag--grey";
-  var adminTagCss = "nhsuk-tag nhsuk-tag--green";
+  var adminTagCss = "nhsuk-tag nhsuk-tag--grey";
   var passwordTagCss = Model.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
 }
 
