@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using FluentAssertions;
     using NUnit.Framework;
 

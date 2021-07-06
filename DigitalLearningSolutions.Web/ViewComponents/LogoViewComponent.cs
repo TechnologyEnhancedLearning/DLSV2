@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewComponents
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 
     public class LogoViewComponent : ViewComponent
     {
