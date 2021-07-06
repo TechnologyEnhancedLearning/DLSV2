@@ -3,8 +3,6 @@
 @model SearchableDelegateViewModel
 @{
   var activeTagCss = Model.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
-  var selfRegTagCss = "nhsuk-tag nhsuk-tag--grey";
-  var adminTagCss = "nhsuk-tag nhsuk-tag--grey";
   var passwordTagCss = Model.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
 }
 
@@ -22,10 +20,10 @@
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-margin-bottom-4">
         <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
-        <strong class="@selfRegTagCss">@(Model.RegStatusTagName)</strong>
+        <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
         <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
         @if (Model.IsAdmin) {
-          <strong class="@adminTagCss">Admin</strong>
+          <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
         }
       </div>
 
