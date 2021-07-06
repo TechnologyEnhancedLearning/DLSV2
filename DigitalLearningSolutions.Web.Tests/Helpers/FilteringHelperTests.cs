@@ -8,18 +8,20 @@
 
     public class FilteringHelperTests
     {
-        private readonly IQueryable<SortableItem> inputItems =
-            new[] { new SortableItem("a", 1), new SortableItem("a", 3), new SortableItem("b", 2) }.AsQueryable();
+        private static readonly SortableItem ItemA1 = new SortableItem("a", 1);
+        private static readonly SortableItem ItemA3 = new SortableItem("a", 3);
+        private static readonly SortableItem ItemB2 = new SortableItem("b", 2);
+        private static readonly IQueryable<SortableItem> InputItems = new[] { ItemA1, ItemA3, ItemB2 }.AsQueryable();
 
         [Test]
         public void FilterItems_returns_expected_items_with_single_filter()
         {
             // Given
-            var expectedItems = new[] { new SortableItem("a", 1), new SortableItem("a", 3) }.AsQueryable();
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
             var filterBy = "Name|a";
 
             // When
-            var result = FilteringHelper.FilterItems(inputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
@@ -29,11 +31,11 @@
         public void FilterItems_returns_expected_items_with_multiple_filters()
         {
             // Given
-            var expectedItems = new[] { new SortableItem("a", 1) }.AsQueryable();
+            var expectedItems = new[] { ItemA1 }.AsQueryable();
             var filterBy = "Name|a\r\nNumber|1";
 
             // When
-            var result = FilteringHelper.FilterItems(inputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
