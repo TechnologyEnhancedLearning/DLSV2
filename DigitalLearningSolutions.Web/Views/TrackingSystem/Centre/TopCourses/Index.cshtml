@@ -1,9 +1,7 @@
 ﻿@inject IConfiguration Configuration
-
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses
 @using Microsoft.Extensions.Configuration
 @model TopCoursesViewModel
-
 
 @{
   ViewData["Title"] = "Top courses";
@@ -63,7 +61,7 @@
             <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate %
+            <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate%
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
             <span class="nhsuk-table-responsive__heading">Action </span>

@@ -25,7 +25,7 @@
             var adminCategoryId = User.GetAdminCategoryId()!;
 
             var topCourses =
-                courseService.GetTopCourseStatisticsAtCentreForCategoryId(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
+                courseService.GetTopCourseStatistics(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
 
             var model = new TopCoursesViewModel(topCourses);
 

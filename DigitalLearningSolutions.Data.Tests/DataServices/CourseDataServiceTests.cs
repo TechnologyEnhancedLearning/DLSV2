@@ -220,9 +220,11 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [Test]
         public void GetCourseStatisticsAtCentreForCategoryID_should_return_course_statistics_correctly()
         {
-            // When
+            // Given
             const int centreId = 101;
             const int categoryId = 0;
+
+            // When
             var result = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId).ToList();
 
             // Then
@@ -232,7 +234,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 101,
                 Active = false,
                 AllCentres = false,
-                AspMenu = false,
                 ArchivedDate = null,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",

@@ -7,7 +7,7 @@
 
     public interface ICourseService
     {
-        IEnumerable<CourseStatistics> GetTopCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -19,7 +19,7 @@
             this.courseDataService = courseDataService;
         }
 
-        public IEnumerable<CourseStatistics> GetTopCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId)
+        public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId);
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);

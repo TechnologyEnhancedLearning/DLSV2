@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
@@ -22,6 +21,26 @@
 
     public class CourseDataService : ICourseDataService
     {
+        private const string DelegateCountQuery =
+            @"(SELECT COUNT(CandidateID)
+                FROM dbo.Progress AS pr
+                WHERE pr.CustomisationID = cu.CustomisationID) AS DelegateCount";
+
+        private const string CompletedCountQuery =
+            @"(SELECT COUNT(CandidateID)
+                FROM dbo.Progress AS pr
+                WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL) AS CompletedCount";
+
+        private const string AllAttemptsQuery =
+            @"(SELECT COUNT(AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL) AS AllAttempts";
+
+        private const string AttemptsPassedQuery =
+            @"(SELECT COUNT(AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1) AS AttemptsPassed";
+
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
 
@@ -142,10 +161,10 @@
                         ap.ArchivedDate,
                         ap.ApplicationName,
                         cu.CustomisationName,
-                        {CourseHelper.DelegateCount},
-                        {CourseHelper.CompletedCount},
-                        {CourseHelper.AllAttempts},
-                        {CourseHelper.AttemptsPassed}
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery}
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
