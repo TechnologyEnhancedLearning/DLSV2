@@ -67,13 +67,14 @@
         public void SearchableDelegateViewModel_sets_reg_date_string_correctly()
         {
             // Given
-            var user = new DelegateUserCard { DateRegistered = new DateTime(2021, 05, 13) };
+            var date = new DateTime(2021, 05, 13);
+            var user = new DelegateUserCard { DateRegistered = date };
 
             // When
             var model = new SearchableDelegateViewModel(user, customFields);
 
             // Then
-            model.RegistrationDate.Should().Be("13/05/2021");
+            model.RegistrationDate.Should().BeOneOf("13/05/2021", "05/13/2021").And.Be(date.ToShortDateString());
         }
     }
 }
