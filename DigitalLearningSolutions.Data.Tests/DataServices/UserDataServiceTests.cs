@@ -367,5 +367,40 @@
             // Then
             count.Should().Be(3420);
         }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_populates_DelegateUser_fields_correctly()
+        {
+            // Given
+            var expected = UserTestHelper.GetDefaultDelegateUser(
+                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
+                jobGroupName: "Nursing / midwifery"
+            );
+
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(2);
+
+            // Then
+            var userCard = userCards.Single(user => user.Id == 2);
+            userCard.Should().BeEquivalentTo(expected);
+            userCard.Active.Should().BeTrue();
+            userCard.SelfReg.Should().BeFalse();
+            userCard.ExternalReg.Should().BeFalse();
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_populates_DelegateUserCard_fields_correctly()
+        {
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(279);
+
+            // Then
+            var userCard = userCards.Single(user => user.Id == 97055);
+            userCard.Active.Should().BeTrue();
+            userCard.SelfReg.Should().BeTrue();
+            userCard.ExternalReg.Should().BeFalse();
+            userCard.AdminId.Should().Be(74);
+        }
     }
 }
