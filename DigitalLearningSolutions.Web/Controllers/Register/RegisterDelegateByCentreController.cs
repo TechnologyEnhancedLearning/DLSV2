@@ -16,17 +16,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using PasswordViewModel = ViewModels.RegisterDelegateByCentre.PasswordViewModel;
+    using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.PasswordViewModel;
+    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.SummaryViewModel;
 
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
         private const string CookieName = "DelegateRegistrationByCentreData";
+        private readonly ICryptoService cryptoService;
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
-        private readonly ICryptoService cryptoService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -152,12 +153,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.SetWelcomeEmail(model);
             TempData.Set(data);
 
-            if (!data.ShouldSendEmail)
-            {
-                return RedirectToAction("Password");
-            }
-
-            return View(model);
+            return RedirectToAction(data.ShouldSendEmail ? "Summary" : "Password");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
@@ -182,7 +178,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
-            return View(model);
+            return RedirectToAction("Summary");
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpGet]
+        public IActionResult Summary()
+        {
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var viewModel = new SummaryViewModel(data);
+            PopulateSummaryExtraFields(viewModel, data);
+            return View(viewModel);
         }
 
         private void SetCentreDelegateRegistrationData(int centreId)
@@ -235,7 +241,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return true;
             }
 
-            var validationResult = DateValidator.ValidateRequiredDate(model.Day, model.Month, model.Year, "Email delivery date");
+            var validationResult = DateValidator.ValidateRequiredDate(
+                model.Day,
+                model.Month,
+                model.Year,
+                "Email delivery date"
+            );
             model.DateValidationResult = validationResult;
             return validationResult.DateValid;
         }
@@ -256,6 +267,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
+        private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
+        {
+            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+                data.Centre!.Value,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6
+            );
+        }
+
         private void PopulateLearnerInformationExtraFields(
             LearnerInformationViewModel model,
             RegistrationData data
@@ -266,6 +290,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
             );
+        }
+
+        private void PopulateSummaryExtraFields(SummaryViewModel model, DelegateRegistrationData data)
+        {
+            model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
+            model.CustomFields = GetCustomFieldsFromData(data);
         }
     }
 }
