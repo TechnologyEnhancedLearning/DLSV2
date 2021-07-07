@@ -13,12 +13,14 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Supervisor</li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</li>
       </ol>
     </div>
   </nav>
 }
-<h1>@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName Profile Assessments</h1>
+<h1>@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</h1>
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
@@ -29,7 +31,14 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
   </div>
 </details>
-<partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
+@if (Model.DelegateSelfAssessments.Any())
+{
+  <partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
+}
+else
+{
+  <p class="nhsuk-lede-text">You are not supervising any profile assessments for this member of staff, yet.</p>
+}
 <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
   Enrol on new assessment
 </a>

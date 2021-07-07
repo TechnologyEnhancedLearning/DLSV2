@@ -14,12 +14,13 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Supervisor</li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item">My Staff</li>
       </ol>
     </div>
   </nav>
 }
-<h1>My Staff List</h1>
+<h1>My Staff</h1>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (Model.SuperviseDelegateDetails.Any() | Model.SearchString != null)
