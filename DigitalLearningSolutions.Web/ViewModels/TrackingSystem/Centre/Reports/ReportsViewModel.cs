@@ -19,15 +19,17 @@
     {
         public UsageStatsTableViewModel(IEnumerable<MonthOfActivity> monthsOfActivity)
         {
-            Rows = monthsOfActivity.Select(m => new UsageStatsTableRow(m));
+            var monthData = monthsOfActivity.ToList();
+            monthData.Reverse();
+            Rows = monthData.Select(m => new ActivityDataRowModel(m));
         }
 
-        public IEnumerable<UsageStatsTableRow> Rows { get; set; }
+        public IEnumerable<ActivityDataRowModel> Rows { get; set; }
     }
 
-    public class UsageStatsTableRow
+    public class ActivityDataRowModel
     {
-        public UsageStatsTableRow(MonthOfActivity monthOfActivity)
+        public ActivityDataRowModel(MonthOfActivity monthOfActivity)
         {
             Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM yyyy");
             Completions = monthOfActivity.Completions;

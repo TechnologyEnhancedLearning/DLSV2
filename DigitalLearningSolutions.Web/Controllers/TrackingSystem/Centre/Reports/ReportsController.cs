@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -28,11 +29,11 @@
         }
 
         [Route("/TrackingSystem/Centre/Reports/Data")]
-        public UsageStatsTableViewModel GetRecentData()
+        public IEnumerable<ActivityDataRowModel> GetRecentData()
         {
             var centreId = User.GetCentreId();
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            return new UsageStatsTableViewModel(monthsOfActivity);
+            return monthsOfActivity.Select(m => new ActivityDataRowModel(m));
         }
     }
 }

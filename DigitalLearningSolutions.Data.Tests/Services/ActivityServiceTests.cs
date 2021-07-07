@@ -39,7 +39,7 @@
             // then
             A.CallTo(() => activityDataService.GetActivityInRangeByMonth(A<int>._, A<DateTime>._, A<DateTime>._))
                 .MustHaveHappened(1, Times.Exactly);
-            result.Last().Should().BeEquivalentTo(new MonthOfActivity
+            result.First().Should().BeEquivalentTo(new MonthOfActivity
             {
                 Year = 2014,
                 Month = 12,
@@ -47,7 +47,7 @@
                 Registrations = 0,
                 Evaluations = 0
             });
-            result.First().Should().BeEquivalentTo(new MonthOfActivity
+            result.Last().Should().BeEquivalentTo(new MonthOfActivity
             {
                 Year = 2015,
                 Month = 12,

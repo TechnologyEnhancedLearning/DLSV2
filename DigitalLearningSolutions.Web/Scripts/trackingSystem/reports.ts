@@ -2,20 +2,14 @@
 import 'chartist-plugin-axistitle';
 import { getPathForEndpoint } from "../common";
 
-interface IUsageStatsTableRow {
+interface IActivityDataRowModel {
   period: string;
   completions: number;
   evaluations: number;
   registrations: number;
 }
 
-interface IUsageStatsTableViewModel {
-  rows: Array<IUsageStatsTableRow>;
-}
-
-function constructChartistData(model: IUsageStatsTableViewModel): Chartist.IChartistData {
-  const data = model.rows;
-  data.reverse(); // TODO HEEDLS-458 remove the reversal in the backend and deal with it in the frontend where needed
+function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.IChartistData {
   const labels = data.map((d: any) => d.period);
   const series = [
     data.map((d: any) => d.completions),
