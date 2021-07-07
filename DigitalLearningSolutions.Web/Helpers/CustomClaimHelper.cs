@@ -25,6 +25,11 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
 
+        public static int? GetAdminCategoryId(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsInt(CustomClaimTypes.AdminCategoryId);
+        }
+
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)
         {
             return user.FindFirst(customClaimType)?.Value;

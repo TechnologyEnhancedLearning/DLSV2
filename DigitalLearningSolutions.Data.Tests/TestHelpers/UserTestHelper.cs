@@ -132,6 +132,27 @@
             ) { Approved = approved };
         }
 
+        public static RegistrationModel GetDefaultRegistrationModel(
+            string firstName = "FirstName",
+            string lastName = "Test",
+            string email = "email@test.com",
+            int centre = 2,
+            int jobGroup = 3,
+            string passwordHash = "APasswordHash",
+            bool approved = false
+        )
+        {
+            return new RegistrationModel(
+                    firstName,
+                    lastName,
+                    email,
+                    centre,
+                    jobGroup,
+                    passwordHash
+                )
+                { Approved = approved };
+        }
+
         public static async Task<DelegateUser> GetDelegateUserByCandidateNumberAsync(
             this DbConnection connection,
             string candidateNumber

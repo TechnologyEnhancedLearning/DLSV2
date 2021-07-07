@@ -1,0 +1,78 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses
+@using Microsoft.Extensions.Configuration
+@model TopCoursesViewModel
+
+@{
+  ViewData["Title"] = "Top courses";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml"/>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Top courses</h1>
+
+    <table role="table" class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Name
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          In progress
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Completed
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Delegates
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Pass rate
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Action
+        </th>
+      </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+      @foreach (var course in Model.TopCourses) {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Name </span>@course.CourseName
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">In progress </span>@course.InProgressCount
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Completed </span>@course.CompletedCount
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate%
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Action </span>
+            <a href="@($"{Configuration["CurrentSystemBaseUrl"]}/tracking/coursedelegates?tab=course&CustomisationID={course.CustomisationId}")">View course</a>
+          </td>
+        </tr>
+      }
+      </tbody>
+    </table>
+
+    <a class="nhsuk-button nhsuk-u-margin-top-4" role="button" href="@($"{Configuration["CurrentSystemBaseUrl"]}/tracking/coursedelegates")">View more</a>
+
+  </div>
+</div>

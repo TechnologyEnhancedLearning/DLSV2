@@ -192,8 +192,7 @@
                 const string otherInformation = "This is not the information you're looking for";
 
                 // When
-                centresDataService.UpdateCentreWebsiteDetails
-                (
+                centresDataService.UpdateCentreWebsiteDetails(
                     2,
                     postcode,
                     showOnMap,
@@ -240,6 +239,27 @@
             // Then
             result.autoRegistered.Should().BeTrue();
             result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
+        }
+
+        [Test]
+        public void SetCentreAutoRegistered_should_set_AutoRegistered_true()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int centreId = 7;
+
+                // When
+                centresDataService.SetCentreAutoRegistered(centreId);
+
+                // Then
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

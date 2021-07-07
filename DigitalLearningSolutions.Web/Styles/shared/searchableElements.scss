@@ -1,5 +1,9 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
+// Some of the NHS styles break down with the 3/4 column layout below this
+// size. Since the NHS large-desktop is 990px, defined this xl-desktop size.
+$xl-desktop: 1024px;
+
 $nhs-dark-grey: #425563;
 
 .tags {
@@ -198,7 +202,7 @@ div#search {
   }
 }
 
-.pagination-item {
+.pagination-button-container {
   width: 38%;
 }
 
@@ -207,11 +211,17 @@ div#search {
   text-align: center;
 }
 
+#page-indicator {
+  @include nhsuk-typography-responsive(24);
+  padding-top: 1px;
+}
+
 button.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
   color: $nhsuk-link-color;
   display: flex;
+  width: auto;
   // Since IE is bad at drawing boxes the correct size
   overflow: visible;
 
@@ -223,6 +233,10 @@ button.nhsuk-pagination__link {
     @include mq($until: tablet) {
       flex-direction: column-reverse;
     }
+  }
+
+  &.nhsuk-pagination__link--next {
+    float: right;
   }
 
   &:hover {
@@ -250,13 +264,17 @@ button.nhsuk-pagination__link {
   }
 }
 
-@include mq($from: 768px, $until: 1024px) {
+.nhsuk-pagination {
+  padding: 0;
+}
+
+@include mq($from: 768px, $until: $xl-desktop) {
   .asset-card-header {
     min-height: 222px;
   }
 }
 
-@include mq($from: 1024px) {
+@include mq($from: $xl-desktop) {
   .asset-card-header {
     min-height: 163px;
   }
