@@ -20,9 +20,11 @@
         {
             var adminId = GetAdminID();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
+            var supervisorDashboardToDoItems = supervisorService.GetSupervisorDashboardToDoItems(adminId);
             var model = new SupervisorDashboardViewModel()
             {
-                DashboardData = dashboardData
+                DashboardData = dashboardData,
+                SupervisorDashboardToDoItems = supervisorDashboardToDoItems
             };
             return View(model);
         }
@@ -124,6 +126,14 @@
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review")]
+        public IActionResult ReviewDelegateSelfAssessment(int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+
+            return View("ReviewDelegateSelfAssessment");
         }
     }
 }

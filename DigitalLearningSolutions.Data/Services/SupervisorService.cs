@@ -15,6 +15,7 @@
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
+        IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -201,6 +202,19 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                 NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
                 NRPRoles AS r ON sa.NRPRoleID = r.ID
                 WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
+                );
+        }
+        public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId)
+        {
+            return connection.Query<SupervisorDashboardToDoItem>(
+                @"SELECT ca.ID, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, casv.Requested
+FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+             SelfAssessments AS sa ON cas.ID = sa.ID INNER JOIN
+             SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+             CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID INNER JOIN
+             Candidates AS c ON ca.CandidateID = c.CandidateID
+WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL)", new { adminId }
                 );
         }
     }
