@@ -1,6 +1,6 @@
 import Chartist from 'chartist';
 import 'chartist-plugin-axistitle';
-import { getPathForEndpoint } from '../common';
+import getPathForEndpoint from '../common';
 
 interface IActivityDataRowModel {
   period: string;
