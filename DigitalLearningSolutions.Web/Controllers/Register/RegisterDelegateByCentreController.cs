@@ -128,7 +128,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [Route("WelcomeEmail")]
         public IActionResult WelcomeEmail()
         {
-            var model = new WelcomeEmailViewModel();
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+
+            var model = new WelcomeEmailViewModel(data);
 
             return View(model);
         }
@@ -140,7 +142,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            ValidateWelcomeEmail(model);
+            if (!ValidateWelcomeEmail(model))
+            {
+                return View(model);
+            }
+
+            data.SetWelcomeEmail(model);
+            TempData.Set(data);
 
             return View(model);
         }
@@ -185,15 +193,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private void ValidateWelcomeEmail(WelcomeEmailViewModel model)
+        private bool ValidateWelcomeEmail(WelcomeEmailViewModel model)
         {
             if (!model.ShouldSendEmail)
             {
-                return;
+                model.Day = null;
+                model.Month = null;
+                model.Year = null;
+                return true;
             }
 
             var validationResult = DateValidator.ValidateRequiredDate(model.Day, model.Month, model.Year, "Email delivery date");
             model.DateValidationResult = validationResult;
+            return validationResult.DateValid;
         }
 
         private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
