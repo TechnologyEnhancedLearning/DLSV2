@@ -1,8 +1,13 @@
+@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.Extensions.Configuration
 @model PersonalInformationViewModel
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate" : "Register Delegate";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate" : "Register Delegate";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+    ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -13,7 +18,7 @@
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-8" method="post" asp-action="PersonalInformation">
       @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Centre), nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Alias) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Alias) })" />
       }
 
       <div class="nhsuk-u-margin-bottom-8">

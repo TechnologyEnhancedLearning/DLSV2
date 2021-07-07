@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("/TrackingSystem/Delegates/Register")]
+    [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
         private const string CookieName = "DelegateRegistrationByCentreData";
@@ -35,6 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.customPromptHelper = customPromptHelper;
         }
 
+        [Route("/TrackingSystem/Delegates/Register")]
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
@@ -46,7 +47,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
-        [Route("PersonalInformation")]
         public IActionResult PersonalInformation()
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
@@ -60,7 +60,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
-        [Route("PersonalInformation")]
         public IActionResult PersonalInformation(PersonalInformationViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
@@ -80,7 +79,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
-        [Route("LearnerInformation")]
         public IActionResult LearnerInformation()
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
@@ -94,7 +92,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
-        [Route("LearnerInformation")]
         public IActionResult LearnerInformation(LearnerInformationViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
