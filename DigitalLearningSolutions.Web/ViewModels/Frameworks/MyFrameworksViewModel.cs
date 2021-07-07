@@ -4,7 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class MyFrameworksViewModel : BaseSearchablePageViewModel
     {
@@ -18,7 +18,7 @@
             string sortDirection,
             int page,
             bool isFrameworkDeveloper
-        ) : base(searchString, sortBy, sortDirection, page, 12)
+        ) : base(searchString, sortBy, sortDirection, page, itemsPerPage: 12)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 brandedFrameworks.AsQueryable(),
