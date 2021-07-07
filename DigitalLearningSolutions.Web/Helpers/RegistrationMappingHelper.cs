@@ -5,14 +5,26 @@
 
     public static class RegistrationMappingHelper
     {
+        public static RegistrationModel MapToRegistrationModel(RegistrationData data)
+        {
+            return new RegistrationModel(
+                data.FirstName!,
+                data.LastName!,
+                data.Email!,
+                data.Centre!.Value,
+                data.JobGroup!.Value,
+                data.PasswordHash!
+            );
+        }
+
         public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
         {
             return new DelegateRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
-                (int)data.Centre!,
-                (int)data.JobGroup!,
+                data.Centre!.Value,
+                data.JobGroup!.Value,
                 data.PasswordHash!,
                 data.Answer1,
                 data.Answer2,

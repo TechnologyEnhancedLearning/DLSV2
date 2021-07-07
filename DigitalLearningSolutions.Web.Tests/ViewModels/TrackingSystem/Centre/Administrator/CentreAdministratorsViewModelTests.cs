@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Administrator
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FluentAssertions;
     using NUnit.Framework;
@@ -34,9 +37,11 @@
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
+                new List<string>(),
                 null,
                 "SearchableName",
                 "Ascending",
+                null,
                 1
             );
 
@@ -50,14 +55,57 @@
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
+                new List<string>(),
                 null,
                 "SearchableName",
                 "Ascending",
+                null,
                 2
             );
 
             model.Admins.Count().Should().Be(5);
             model.Admins.First().Name.Should().BeEquivalentTo("k Surname");
+        }
+
+        [Test]
+        public void Centre_Administrators_filters_should_be_set()
+        {
+            // Given
+            var roleOptions = new[]
+            {
+                AdminFilterOptions.CentreAdministrator,
+                AdminFilterOptions.Supervisor,
+                AdminFilterOptions.Trainer,
+                AdminFilterOptions.ContentCreatorLicense,
+                AdminFilterOptions.CmsAdministrator,
+                AdminFilterOptions.CmsManager
+            };
+            var accountStatusOptions = new[]
+            {
+                AdminFilterOptions.IsLocked,
+                AdminFilterOptions.IsNotLocked
+            };
+            var expectedFilters = new[]
+            {
+                new FilterViewModel("Role", "Role", roleOptions),
+                new FilterViewModel("CategoryName", "Category", new List<FilterOptionViewModel>()),
+                new FilterViewModel("AccountStatus", "Account Status", accountStatusOptions)
+            }.AsEnumerable();
+
+            // When
+            var model = new CentreAdministratorsViewModel(
+                1,
+                adminUsers,
+                new List<string>(),
+                null,
+                "SearchableName",
+                "Ascending",
+                null,
+                2
+            );
+
+            // Then
+            model.Filters.Should().BeEquivalentTo(expectedFilters);
         }
     }
 }

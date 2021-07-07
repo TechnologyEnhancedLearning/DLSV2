@@ -1,22 +1,21 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    public class TextAreaViewModel
+    public class TextInputViewModel
     {
-        public TextAreaViewModel
-        (
+        public TextInputViewModel(
             string id,
             string name,
             string label,
             string? value,
-            int rows,
+            string type,
             bool spellCheck,
+            string? autocomplete,
             IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null,
-            int? characterCount = null
+            string? hintText = null
         )
         {
             var errorMessageList = errorMessages.ToList();
@@ -26,10 +25,10 @@
             Name = name;
             Label = label;
             Value = value;
-            Rows = rows;
+            Type = type;
             SpellCheck = spellCheck;
+            Autocomplete = autocomplete;
             HintText = hintText;
-            CharacterCount = characterCount;
             ErrorMessages = errorMessageList;
             HasError = errorMessageList.Any();
         }
@@ -39,11 +38,11 @@
         public string Name { get; set; }
         public string Label { get; set; }
         public string? Value { get; set; }
-        public int Rows { get; set; }
+        public string Type { get; set; }
         public bool SpellCheck { get; set; }
+        public string? Autocomplete { get; set; }
         public string? HintText { get; set; }
-        public int? CharacterCount { get; set; }
         public IEnumerable<string> ErrorMessages { get; set; }
-        public bool HasError { get; set; }
+        public readonly bool HasError;
     }
 }
