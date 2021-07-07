@@ -73,17 +73,17 @@
             // Given
             var roleOptions = new[]
             {
-                AdminFilterOptions.CentreAdministrator,
-                AdminFilterOptions.Supervisor,
-                AdminFilterOptions.Trainer,
-                AdminFilterOptions.ContentCreatorLicense,
-                AdminFilterOptions.CmsAdministrator,
-                AdminFilterOptions.CmsManager
+                AdminRoleFilterOptions.CentreAdministrator,
+                AdminRoleFilterOptions.Supervisor,
+                AdminRoleFilterOptions.Trainer,
+                AdminRoleFilterOptions.ContentCreatorLicense,
+                AdminRoleFilterOptions.CmsAdministrator,
+                AdminRoleFilterOptions.CmsManager
             };
             var accountStatusOptions = new[]
             {
-                AdminFilterOptions.IsLocked,
-                AdminFilterOptions.IsNotLocked
+                AdminAccountStatusFilterOptions.IsLocked,
+                AdminAccountStatusFilterOptions.IsNotLocked
             };
             var expectedFilters = new[]
             {

@@ -12,41 +12,41 @@
             
             if (adminUser.IsLocked)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.IsLocked));
+                tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.IsNotLocked, true));
+                tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsNotLocked, true));
             }
 
             if (adminUser.IsCentreAdmin)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CentreAdministrator));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator));
             }
 
             if (adminUser.IsSupervisor)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.Supervisor));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor));
             }
 
             if (adminUser.IsTrainer)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.Trainer));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.Trainer));
             }
 
             if (adminUser.IsContentCreator)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense));
             }
 
             if (adminUser.IsCmsAdministrator)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator));
             }
 
             if (adminUser.IsCmsManager)
             {
-                tags.Add(new SearchableTagViewModel(AdminFilterOptions.CmsManager));
+                tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsManager));
             }
 
             return tags;

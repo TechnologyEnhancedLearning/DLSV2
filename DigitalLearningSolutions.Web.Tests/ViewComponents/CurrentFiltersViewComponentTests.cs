@@ -43,12 +43,12 @@
                 searchString,
                 "SearchableName",
                 "Ascending",
-                $"CategoryName|Word\r\n{AdminFilterOptions.CentreAdministrator.FilterValue}",
+                $"CategoryName|CategoryName|Word\r\n{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
-                new AppliedFilterViewModel(AdminFilterOptions.CentreAdministrator.DisplayText, "Role"),
+                new AppliedFilterViewModel(AdminRoleFilterOptions.CentreAdministrator.DisplayText, "Role"),
                 new AppliedFilterViewModel("Word", "Category")
             };
 

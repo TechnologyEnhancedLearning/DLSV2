@@ -11,18 +11,18 @@
     {
         private static readonly IEnumerable<FilterOptionViewModel> RoleOptions = new[]
         {
-            AdminFilterOptions.CentreAdministrator,
-            AdminFilterOptions.Supervisor,
-            AdminFilterOptions.Trainer,
-            AdminFilterOptions.ContentCreatorLicense,
-            AdminFilterOptions.CmsAdministrator,
-            AdminFilterOptions.CmsManager
+            AdminRoleFilterOptions.CentreAdministrator,
+            AdminRoleFilterOptions.Supervisor,
+            AdminRoleFilterOptions.Trainer,
+            AdminRoleFilterOptions.ContentCreatorLicense,
+            AdminRoleFilterOptions.CmsAdministrator,
+            AdminRoleFilterOptions.CmsManager
         };
 
         private static readonly IEnumerable<FilterOptionViewModel> AccountStatusOptions = new[]
         {
-            AdminFilterOptions.IsLocked,
-            AdminFilterOptions.IsNotLocked
+            AdminAccountStatusFilterOptions.IsLocked,
+            AdminAccountStatusFilterOptions.IsNotLocked
         };
 
         public CentreAdministratorsViewModel(
@@ -50,7 +50,11 @@
             Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser));
             IEnumerable<FilterOptionViewModel> categoryOptions =
                 categories.Select(
-                    c => new FilterOptionViewModel(c, $"{nameof(AdminUser.CategoryName)}|{c}", FilterStatus.Default)
+                    c => new FilterOptionViewModel(
+                        c,
+                        $"{nameof(AdminUser.CategoryName)}|{nameof(AdminUser.CategoryName)}|{c}",
+                        FilterStatus.Default
+                    )
                 );
 
             Filters = new[]

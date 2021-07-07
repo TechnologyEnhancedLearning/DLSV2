@@ -18,12 +18,12 @@
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 5, isContentCreator: true);
             var expectedTags = new List<SearchableTagViewModel>
             {
-                new SearchableTagViewModel(AdminFilterOptions.IsLocked),
-                new SearchableTagViewModel(AdminFilterOptions.CentreAdministrator),
-                new SearchableTagViewModel(AdminFilterOptions.Supervisor),
-                new SearchableTagViewModel(AdminFilterOptions.Trainer),
-                new SearchableTagViewModel(AdminFilterOptions.CmsAdministrator),
-                new SearchableTagViewModel(AdminFilterOptions.ContentCreatorLicense)
+                new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked),
+                new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator),
+                new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor),
+                new SearchableTagViewModel(AdminRoleFilterOptions.Trainer),
+                new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),
+                new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense)
             };
 
             // When
