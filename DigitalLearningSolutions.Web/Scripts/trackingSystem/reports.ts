@@ -10,11 +10,11 @@ interface IActivityDataRowModel {
 }
 
 function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.IChartistData {
-  const labels = data.map((d: any) => d.period);
+  const labels = data.map((d) => d.period);
   const series = [
-    data.map((d: any) => d.completions),
-    data.map((d: any) => d.evaluations),
-    data.map((d: any) => d.registrations),
+    data.map((d) => d.completions),
+    data.map((d) => d.evaluations),
+    data.map((d) => d.registrations),
   ];
   return { labels, series };
 }

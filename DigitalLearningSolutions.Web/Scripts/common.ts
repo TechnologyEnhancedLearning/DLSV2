@@ -1,4 +1,4 @@
-﻿export function getPathForEndpoint(endpoint: string): string {
+export default function getPathForEndpoint(endpoint: string): string {
   const currentPath = window.location.pathname;
   const endpointUrlParts = endpoint.split('/');
   const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
