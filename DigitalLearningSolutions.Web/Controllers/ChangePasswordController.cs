@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -30,7 +31,12 @@
         {
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
-            if (model.CurrentPassword != null && !userService.IsPasswordValid(adminId, delegateId, model.CurrentPassword))
+
+            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(model.CurrentPassword)
+                ? new UserAccountSet(null, null)
+                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
+
+            if (!verifiedLinkedUsersAccounts.Any())
             {
                 ModelState.AddModelError(
                     nameof(ChangePasswordViewModel.CurrentPassword),
@@ -42,9 +48,6 @@
             {
                 return View(model);
             }
-
-            var verifiedLinkedUsersAccounts =
-                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
 
             var newPassword = model.Password!;
 
