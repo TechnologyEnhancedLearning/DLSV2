@@ -21,6 +21,7 @@ resharper_place_constructor_initializer_on_same_line = true
 resharper_wrap_before_declaration_rpar = true
 resharper_wrap_before_invocation_rpar = true
 resharper_csharp_instance_members_qualify_members = none
+resharper_dl_tag_contains_non_dt_or_dd_elements_highlighting = none
 
 [*.{cs}]
 indent_size = 4

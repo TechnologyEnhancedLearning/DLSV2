@@ -1,0 +1,33 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "common";
+
+.tags {
+  display: flex;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: $nhs-dark-grey;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.tag.tag-article {
+  background-color: $nhsuk-link-active-color;
+}
+
+.tag.tag-online.course {
+  background-color: $nhsuk-link-color;
+}
+
+.tag.tag-learning.guide {
+  background-color: $nhsuk-link-hover-color;
+}
+
+.tag.tag-video {
+  background-color: $nhsuk-link-visited-color;
+}

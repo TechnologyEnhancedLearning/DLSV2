@@ -37,6 +37,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove", "Remove delegate registration prompt")]
         [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
+        [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]

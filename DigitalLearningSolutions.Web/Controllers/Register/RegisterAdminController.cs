@@ -18,18 +18,21 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
 
         public RegisterAdminController(
             ICentresDataService centresDataService,
             ICryptoService cryptoService,
             IJobGroupsDataService jobGroupsDataService,
+            IRegistrationService registrationService,
             IUserDataService userDataService
         )
         {
             this.centresDataService = centresDataService;
             this.cryptoService = cryptoService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.registrationService = registrationService;
             this.userDataService = userDataService;
         }
 
@@ -161,7 +164,13 @@
                 return View(viewModel);
             }
 
-            // TODO: (HEEDLS-527) register admin details and notification preferences in database
+            if (!CanProceedWithRegistration(data))
+            {
+                return new StatusCodeResult(500);
+            }
+            
+            var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
+            registrationService.RegisterCentreManager(registrationModel);
 
             return RedirectToAction("Confirmation");
         }
@@ -201,6 +210,25 @@
             TempData.Set(adminRegistrationData);
         }
 
+        private bool IsEmailUnique(string email)
+        {
+            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
+            return adminUser == null;
+        }
+
+        private bool DoesEmailMatchCentre(string email, int centreId)
+        {
+            var autoRegisterManagerEmail =
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
+            return email.Equals(autoRegisterManagerEmail);
+        }
+
+        private bool CanProceedWithRegistration(RegistrationData data)
+        {
+            return data.Centre.HasValue && data.Email != null && IsRegisterAdminAllowed(data.Centre.Value) &&
+                   DoesEmailMatchCentre(data.Email, data.Centre.Value) && IsEmailUnique(data.Email);
+        }
+
         private void ValidateEmailAddress(string? email, int centreId)
         {
             if (email == null)
@@ -208,9 +236,7 @@
                 return;
             }
 
-            var autoRegisterManagerEmail =
-                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegisterManagerEmail;
-            if (!email.Equals(autoRegisterManagerEmail))
+            if (!DoesEmailMatchCentre(email, centreId))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
@@ -218,9 +244,7 @@
                 );
             }
 
-            var adminUser = userDataService.GetAdminUserByEmailAddress(email);
-
-            if (adminUser != null)
+            if (!IsEmailUnique(email))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),

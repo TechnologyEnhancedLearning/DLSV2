@@ -133,7 +133,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<ICourseDataService, CourseDataDataService>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseDataService, CourseDataService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
@@ -175,6 +176,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<IActivityDataService, ActivityDataService>();
+            services.AddScoped<IActivityService, ActivityService>();
+
             RegisterWebServiceFilters(services);
         }
 

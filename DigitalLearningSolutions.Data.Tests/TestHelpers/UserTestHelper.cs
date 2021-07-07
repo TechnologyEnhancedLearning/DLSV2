@@ -68,7 +68,8 @@
             bool isSupervisor = true,
             bool isTrainer = true,
             bool isFrameworkDeveloper = true,
-            bool importOnly = true
+            bool importOnly = true,
+            int failedLoginCount = 0
         )
         {
             return new AdminUser
@@ -94,7 +95,8 @@
                 IsSupervisor = isSupervisor,
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper,
-                ImportOnly = importOnly
+                ImportOnly = importOnly,
+                FailedLoginCount = failedLoginCount
             };
         }
 
@@ -128,6 +130,27 @@
                 answer5,
                 answer6
             ) { Approved = approved };
+        }
+
+        public static RegistrationModel GetDefaultRegistrationModel(
+            string firstName = "FirstName",
+            string lastName = "Test",
+            string email = "email@test.com",
+            int centre = 2,
+            int jobGroup = 3,
+            string passwordHash = "APasswordHash",
+            bool approved = false
+        )
+        {
+            return new RegistrationModel(
+                    firstName,
+                    lastName,
+                    email,
+                    centre,
+                    jobGroup,
+                    passwordHash
+                )
+                { Approved = approved };
         }
 
         public static async Task<DelegateUser> GetDelegateUserByCandidateNumberAsync(
