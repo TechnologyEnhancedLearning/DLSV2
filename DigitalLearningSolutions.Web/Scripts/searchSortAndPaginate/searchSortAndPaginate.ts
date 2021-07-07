@@ -2,7 +2,7 @@ import Details from 'nhsuk-frontend/packages/components/details/details';
 import { search, setUpSearch } from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
-import { getPathForEndpoint } from "../common";
+import { getPathForEndpoint } from '../common';
 
 export interface SearchableElement {
   element: Element;

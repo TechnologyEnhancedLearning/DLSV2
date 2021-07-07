@@ -1,6 +1,6 @@
 ﻿import Chartist from 'chartist';
 import 'chartist-plugin-axistitle';
-import { getPathForEndpoint } from "../common";
+import { getPathForEndpoint } from '../common';
 
 interface IActivityDataRowModel {
   period: string;
@@ -25,13 +25,14 @@ const request = new XMLHttpRequest();
 
 const options = {
   axisY: {
-    onlyInteger: true
+    onlyInteger: true,
   },
-  chartPadding: { bottom: 32 }
-}
+  chartPadding: { bottom: 32 },
+};
 
 request.onload = () => {
-  var data = constructChartistData(request.response);
+  const data = constructChartistData(request.response);
+  // eslint-disable-next-line no-new
   new Chartist.Line('.ct-chart', data, options);
 };
 
