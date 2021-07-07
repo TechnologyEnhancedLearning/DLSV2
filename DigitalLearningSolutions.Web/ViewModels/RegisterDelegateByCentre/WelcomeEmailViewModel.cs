@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
 {
-    using System;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
 
     public class WelcomeEmailViewModel
     {
@@ -8,5 +8,6 @@
         public int? Month { get; set; }
         public int? Year { get; set; }
         public bool ShouldSendEmail { get; set; }
+        public DateValidator.ValidationResult DateValidationResult { get; set; }
     }
 }

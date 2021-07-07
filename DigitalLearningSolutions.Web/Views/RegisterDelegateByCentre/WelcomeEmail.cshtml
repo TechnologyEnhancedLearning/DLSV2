@@ -2,9 +2,13 @@
 @model WelcomeEmailViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
-  var exampleDate = DateTime.Today;
+    var errorHasOccurred = Model.DateValidationResult is { DateValid: false };
+    ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
+    var exampleDate = DateTime.Today;
+    var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
+    var dayErrorCss = Model.DateValidationResult is { DayValid: false } ?  "nhsuk-input--error" : "";
+    var monthErrorCss = Model.DateValidationResult is { MonthValid: false } ? "nhsuk-input--error" : "";
+    var yearErrorCss = Model.DateValidationResult is { YearValid: false } ? "nhsuk-input--error" : "";
 }
 
 @section NavMenuItems {
@@ -14,64 +18,75 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+          There is a problem
+        </h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            <li>
+              <a href="#welcome-email-date">@Model.DateValidationResult!.ErrorMessage</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     }
 
-    <h1 class="nhsuk-heading-xl">Welcome Email</h1>
+    <h1 class="nhsuk-heading-xl">Welcome email</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="WelcomeEmail">
       <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
         <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input" id="ShouldSendEmail" name="ShouldSendEmail" type="checkbox" value="true" aria-controls="conditional-email-date" aria-expanded="false">
+          <input class="nhsuk-checkboxes__input" id="ShouldSendEmail" name="ShouldSendEmail" asp-for="ShouldSendEmail" type="checkbox" value="true" aria-controls="conditional-welcome-email-date" aria-expanded="@Model.ShouldSendEmail">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
             Send welcome email to registered delegate
           </label>
         </div>
 
-        <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-email-date">
-          <fieldset class="nhsuk-fieldset" aria-describedby="email-date-hint" role="group">
+        <div class="@emailDateCss" id="conditional-welcome-email-date">
+          <fieldset class="nhsuk-fieldset" aria-describedby="welcome-email-date-hint" role="group">
             <legend class="nhsuk-fieldset__legend nhsuk-label">
               Deliver email on or after:
             </legend>
-            <div class="nhsuk-hint" id="example-hint">
+            <div class="nhsuk-hint" id="welcome-email-date-hint">
               For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year
             </div>
 
-            <div class="nhsuk-date-input" id="date">
+            @if (errorHasOccurred) {
+              <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                <span class="nhsuk-u-visually-hidden">Error:</span> @Model.DateValidationResult!.ErrorMessage
+              </span>
+            }
+
+            <div class="nhsuk-date-input" id="welcome-email-date">
               <div class="nhsuk-date-input__item">
                 <div class="nhsuk-form-group">
-                  <vc:text-input asp-for="Day"
-                                 label="Day"
-                                 populate-with-current-value="true"
-                                 type="number"
-                                 spell-check="false"
-                                 hint-text=""
-                                 autocomplete=""
-                                 css-class="nhsuk-date-input__input nhsuk-input--width-2" />
+                  <label class="nhsuk-label" for="Day">Day</label>
+                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
+                         id="Day"
+                         name="Day"
+                         value="@Model.Day"
+                         type="number" />
                 </div>
               </div>
               <div class="nhsuk-date-input__item">
                 <div class="nhsuk-form-group">
-                  <vc:text-input asp-for="Month"
-                                 label="Month"
-                                 populate-with-current-value="true"
-                                 type="number"
-                                 spell-check="false"
-                                 hint-text=""
-                                 autocomplete=""
-                                 css-class="nhsuk-date-input__input nhsuk-input--width-2" />
+                  <label class="nhsuk-label" for="Month">Month</label>
+                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
+                         id="Month"
+                         name="Month"
+                         value="@Model.Month"
+                         type="number" />
                 </div>
               </div>
               <div class="nhsuk-date-input__item">
                 <div class="nhsuk-form-group">
-                  <vc:text-input asp-for="Year"
-                                 label="Year"
-                                 populate-with-current-value="true"
-                                 type="number"
-                                 spell-check="false"
-                                 hint-text=""
-                                 autocomplete=""
-                                 css-class="nhsuk-date-input__input nhsuk-input--width-4" />
+                  <label class="nhsuk-label" for="Year">Year</label>
+                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorCss"
+                         id="Year"
+                         name="Year"
+                         value="@Model.Year"
+                         type="number" />
                 </div>
               </div>
             </div>

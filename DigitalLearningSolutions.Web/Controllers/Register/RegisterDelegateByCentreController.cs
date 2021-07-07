@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -128,7 +129,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult WelcomeEmail()
         {
             var model = new WelcomeEmailViewModel();
-            
+
+            return View(model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpPost]
+        [Route("WelcomeEmail")]
+        public IActionResult WelcomeEmail(WelcomeEmailViewModel model)
+        {
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+
+            ValidateWelcomeEmail(model);
+
             return View(model);
         }
 
@@ -170,6 +183,17 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     "A user with this email address is already registered at this centre"
                 );
             }
+        }
+
+        private void ValidateWelcomeEmail(WelcomeEmailViewModel model)
+        {
+            if (!model.ShouldSendEmail)
+            {
+                return;
+            }
+
+            var validationResult = DateValidator.ValidateRequiredDate(model.Day, model.Month, model.Year, "Email delivery date");
+            model.DateValidationResult = validationResult;
         }
 
         private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
