@@ -2,6 +2,7 @@ import Details from 'nhsuk-frontend/packages/components/details/details';
 import { search, setUpSearch } from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
+import { getPathForEndpoint } from "../common";
 
 export interface SearchableElement {
   element: Element;
@@ -68,7 +69,7 @@ export class SearchSortAndPaginate {
   }
 
   private static fetchAllSearchableElements(route: string): Promise<Document | null> {
-    const path = this.getPathForEndpoint(route);
+    const path = getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();
 
@@ -98,12 +99,5 @@ export class SearchSortAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
-  }
-
-  private static getPathForEndpoint(endpoint: string): string {
-    const currentPath = window.location.pathname;
-    const endpointUrlParts = endpoint.split('/');
-    const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
-    return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
   }
 }

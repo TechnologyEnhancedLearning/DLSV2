@@ -1,14 +1,19 @@
 ﻿import Chartist from 'chartist';
 import 'chartist-plugin-axistitle';
+import { getPathForEndpoint } from "../common";
 
-function getPathForEndpoint(endpoint: string): string { // TODO HEEDLS-458 from searchSortAndPaginate, commonise
-  const currentPath = window.location.pathname;
-  const endpointUrlParts = endpoint.split('/');
-  const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
-  return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
+interface IUsageStatsTableRow {
+  period: string;
+  completions: number;
+  evaluations: number;
+  registrations: number;
 }
 
-function constructChartistData(model: any): any { // TODO HEEDLS-458 this should have defined types for parameters and return values
+interface IUsageStatsTableViewModel {
+  rows: Array<IUsageStatsTableRow>;
+}
+
+function constructChartistData(model: IUsageStatsTableViewModel): Chartist.IChartistData {
   const data = model.rows;
   data.reverse(); // TODO HEEDLS-458 remove the reversal in the backend and deal with it in the frontend where needed
   const labels = data.map((d: any) => d.period);
@@ -32,7 +37,8 @@ const options = {
 }
 
 request.onload = () => {
-  new Chartist.Line('.ct-chart', constructChartistData(request.response), options);
+  var data = constructChartistData(request.response);
+  new Chartist.Line('.ct-chart', data, options);
 };
 
 request.open('GET', path, true);

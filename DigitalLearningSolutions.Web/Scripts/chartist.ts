@@ -1,1 +1,0 @@
-﻿import Chartist from 'chartist';
