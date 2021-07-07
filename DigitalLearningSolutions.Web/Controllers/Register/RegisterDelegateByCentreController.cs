@@ -191,6 +191,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpPost]
+        public IActionResult Summary(SummaryViewModel model)
+        {
+            return new OkResult();
+        }
+
         private void SetCentreDelegateRegistrationData(int centreId)
         {
             var centreDelegateRegistrationData = new DelegateRegistrationByCentreData

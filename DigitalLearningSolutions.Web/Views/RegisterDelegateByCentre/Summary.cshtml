@@ -62,7 +62,7 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Alias
+          Alias (optional)
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.Alias
@@ -132,9 +132,8 @@
     </dl>
 
     <form method="post" asp-action="Summary">
-      <button class="nhsuk-button" type="submit">Register</button>
+      <button class="nhsuk-button" type="submit">Save</button>
     </form>
-    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="WelcomeEmail" link-text="Go back" />
-    @*// TODO: link to correct page*@
+    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="@Model.PreviousAction" link-text="Go back" />
   </div>
 </div>

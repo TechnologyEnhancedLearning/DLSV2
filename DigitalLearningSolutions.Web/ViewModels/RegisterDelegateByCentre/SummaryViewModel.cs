@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+﻿namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
 {
     using System.Collections.Generic;
     using System.Globalization;
@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
             Email = data.Email;
             Alias = data.Alias;
             IsPasswordSet = data.IsPasswordSet;
+            PreviousAction = "Password";
             ShouldSendEmail = data.ShouldSendEmail;
             if (ShouldSendEmail)
             {
@@ -23,6 +24,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
                 CultureInfo.CurrentCulture = new CultureInfo("en-GB");
                 WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToShortDateString();
                 CultureInfo.CurrentCulture = originalCulture;
+                PreviousAction = "WelcomeEmail";
             }
         }
 
@@ -35,5 +37,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
         public string? WelcomeEmailDate { get; set; }
         public string? JobGroup { get; set; }
         public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
+        public string PreviousAction { get; set; }
     }
 }
