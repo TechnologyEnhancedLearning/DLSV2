@@ -10,11 +10,11 @@
         public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
         {
             ShouldSendEmail = data.ShouldSendEmail;
-            if (ShouldSendEmail && data.WelcomeEmailDate != null)
+            if (ShouldSendEmail)
             {
-                Day = data.WelcomeEmailDate.Value.Day;
-                Month = data.WelcomeEmailDate.Value.Month;
-                Year = data.WelcomeEmailDate.Value.Year;
+                Day = data.WelcomeEmailDate!.Value.Day;
+                Month = data.WelcomeEmailDate!.Value.Month;
+                Year = data.WelcomeEmailDate!.Value.Year;
             }
         }
 

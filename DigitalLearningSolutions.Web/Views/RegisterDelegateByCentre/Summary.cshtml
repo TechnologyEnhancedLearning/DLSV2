@@ -103,27 +103,27 @@
       }
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          @(Model.WelcomeEmailDate != null ? "Welcome email date" : "Send welcome email")
+          @(Model.ShouldSendEmail ? "Welcome email date" : "Send welcome email")
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.WelcomeEmailDate ?? "No")
+          @(Model.ShouldSendEmail ? Model.WelcomeEmailDate : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="LearnerInformation">
+          <a asp-action="WelcomeEmail">
             Change<span class="nhsuk-u-visually-hidden"> welcome email settings</span>
           </a>
         </dd>
       </div>
-      @if (Model.WelcomeEmailDate == null) {
+      @if (!Model.ShouldSendEmail) {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Password set
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @(Model.PasswordSet ? "Yes" : "No")
+            @(Model.IsPasswordSet ? "Yes" : "No")
           </dd>
           <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
+            <a asp-action="Password">
               Change<span class="nhsuk-u-visually-hidden"> password settings</span>
             </a>
           </dd>

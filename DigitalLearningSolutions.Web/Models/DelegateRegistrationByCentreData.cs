@@ -7,17 +7,22 @@
     {
         public string? Alias { get; set; }
 
-        public bool ShouldSendEmail { get; set; }
-
         public DateTime? WelcomeEmailDate { get; set; }
 
         public void SetWelcomeEmail(WelcomeEmailViewModel model)
         {
-            ShouldSendEmail = model.ShouldSendEmail;
-            if (ShouldSendEmail)
+            if (model.ShouldSendEmail)
             {
                 WelcomeEmailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
             }
+            else
+            {
+                WelcomeEmailDate = null;
+            }
         }
+
+        public bool ShouldSendEmail => WelcomeEmailDate.HasValue;
+
+        public bool IsPasswordSet => PasswordHash != null;
     }
 }
