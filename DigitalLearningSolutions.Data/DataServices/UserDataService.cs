@@ -12,6 +12,7 @@
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
         public List<AdminUser> GetAdminUsersByCentreId(int centreId);
+        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
@@ -173,6 +174,43 @@
             ).ToList();
 
             return users;
+        }
+
+        public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
+        {
+            return connection.Query<DelegateUserCard>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        jg.JobGroupName,
+                        cd.SelfReg,
+                        cd.ExternalReg,
+                        cd.Active,
+                        (SELECT AdminID
+                         FROM AdminUsers au
+                         WHERE au.Email = cd.EmailAddress AND au.CentreID = cd.CentreID
+                        ) AS AdminID
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.CentreId = @centreId AND cd.Approved = 1",
+                new { centreId }
+            ).ToList();
         }
 
         public AdminUser? GetAdminUserByUsername(string username)
