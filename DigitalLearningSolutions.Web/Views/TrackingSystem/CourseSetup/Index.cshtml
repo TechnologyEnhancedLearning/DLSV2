@@ -1,0 +1,35 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.Extensions.Configuration
+@model CourseSetupViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Centre course setup";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Centre course setup</h1>
+
+    @if (!Model.Courses.Any()) {
+      <p>The centre has no courses set up yet.</p>
+    } else {
+      <div id="searchable-elements">
+        @foreach (var course in Model.Courses) {
+          <partial name="_CentreCourseCard" model="course"/>
+        }
+      </div>
+    }
+
+  </div>
+</div>
