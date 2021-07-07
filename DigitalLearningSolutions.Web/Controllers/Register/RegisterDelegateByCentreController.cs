@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using PasswordViewModel = ViewModels.RegisterDelegateByCentre.PasswordViewModel;
 
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
@@ -25,16 +26,19 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
+        private readonly ICryptoService cryptoService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
-            CustomPromptHelper customPromptHelper
+            CustomPromptHelper customPromptHelper,
+            ICryptoService cryptoService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
+            this.cryptoService = cryptoService;
         }
 
         [Route("/TrackingSystem/Delegates/Register")]
@@ -125,7 +129,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
-        [Route("WelcomeEmail")]
         public IActionResult WelcomeEmail()
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
@@ -137,7 +140,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
-        [Route("WelcomeEmail")]
         public IActionResult WelcomeEmail(WelcomeEmailViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
@@ -148,6 +150,36 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             data.SetWelcomeEmail(model);
+            TempData.Set(data);
+
+            if (!data.ShouldSendEmail)
+            {
+                return RedirectToAction("Password");
+            }
+
+            return View(model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpGet]
+        public IActionResult Password()
+        {
+            var model = new PasswordViewModel();
+
+            return View(model);
+        }
+
+        [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
+        [HttpPost]
+        public IActionResult Password(PasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
             TempData.Set(data);
 
             return View(model);
