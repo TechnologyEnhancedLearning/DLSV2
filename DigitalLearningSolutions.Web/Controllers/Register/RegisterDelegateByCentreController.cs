@@ -175,7 +175,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
 
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
-            data.PasswordHash = cryptoService.GetPasswordHash(model.Password!);
+
+            data.PasswordHash = model.Password != null ? cryptoService.GetPasswordHash(model.Password) : null;
+
             TempData.Set(data);
 
             return RedirectToAction("Summary");

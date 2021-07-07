@@ -4,7 +4,6 @@
 
     public class PasswordViewModel
     {
-        [Required(ErrorMessage = "Enter a password")]
         [MinLength(8, ErrorMessage = "Password must be 8 characters or more")]
         [MaxLength(100, ErrorMessage = "Password must be 100 characters or fewer")]
         [RegularExpression(

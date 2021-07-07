@@ -14,6 +14,7 @@
             if (model.ShouldSendEmail)
             {
                 WelcomeEmailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+                PasswordHash = null;
             }
             else
             {
