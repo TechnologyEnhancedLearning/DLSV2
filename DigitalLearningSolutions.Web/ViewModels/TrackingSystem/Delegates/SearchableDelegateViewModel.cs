@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -25,7 +26,10 @@
             JobGroup = delegateUser.JobGroupName;
             if (delegateUser.DateRegistered.HasValue)
             {
+                CultureInfo originalCulture = CultureInfo.CurrentCulture;
+                CultureInfo.CurrentCulture = new CultureInfo("en-GB");
                 RegistrationDate = delegateUser.DateRegistered.Value.ToShortDateString();
+                CultureInfo.CurrentCulture = originalCulture;
             }
 
             CustomFields = customFields;

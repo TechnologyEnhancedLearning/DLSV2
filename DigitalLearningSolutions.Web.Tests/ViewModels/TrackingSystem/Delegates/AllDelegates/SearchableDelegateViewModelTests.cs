@@ -74,7 +74,7 @@
             var model = new SearchableDelegateViewModel(user, customFields);
 
             // Then
-            model.RegistrationDate.Should().BeOneOf("13/05/2021", "05/13/2021").And.Be(date.ToShortDateString());
+            model.RegistrationDate.Should().Be("13/05/2021");
         }
     }
 }
