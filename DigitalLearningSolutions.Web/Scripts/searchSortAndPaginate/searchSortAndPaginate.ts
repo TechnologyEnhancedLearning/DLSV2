@@ -1,6 +1,6 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
-import { setupFilter, filterSearchableElements } from './filter';
-import { search, setUpSearch } from './search';
+import {setupFilter, filterSearchableElements, getFilterBy} from './filter'
+import {getQuery, search, setUpSearch} from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
 import getPathForEndpoint from '../common';
@@ -56,6 +56,13 @@ export class SearchSortAndPaginate {
     const searchedElements = search(searchableElements);
     const filteredElements = filterSearchableElements(searchedElements);
     const sortedElements = sortSearchableElements(filteredElements);
+
+    if (this.shouldDisplayResultCount()){
+      this.updateResultCount(sortedElements.length);
+    } else {
+      this.hideResultCount();
+    }
+
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
     SearchSortAndPaginate.displaySearchableElements(paginatedElements);
@@ -107,5 +114,31 @@ export class SearchSortAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
+  }
+
+  private static getPathForEndpoint(endpoint: string): string {
+    const currentPath = window.location.pathname;
+    const endpointUrlParts = endpoint.split('/');
+    const indexOfBaseUrl = currentPath.indexOf(endpointUrlParts[0]);
+    return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
+  }
+
+  private shouldDisplayResultCount(): boolean {
+    const filterString = getFilterBy();
+    const searchString = getQuery();
+    return filterString || searchString ? true : false;
+  }
+
+  private updateResultCount(count: number): void {
+    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+    resultCount.hidden = false;
+    resultCount.setAttribute('aria-hidden', 'false');
+    resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+  }
+
+  private hideResultCount(): void {
+    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+    resultCount.hidden = true;
+    resultCount.setAttribute('aria-hidden', 'true');
   }
 }

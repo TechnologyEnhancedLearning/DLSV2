@@ -20,14 +20,17 @@ export function filterSearchableElements(
   const setOfSelectedFilters = filterBy.split('\r\n');
 
   for (let filter of setOfSelectedFilters){
-    const splitFilter = filter.split('|');
-    const propertyName = splitFilter[0];
-    const filterValue = splitFilter[1];
-
-    searchableElements = _.filter<SearchableElement>(
-      searchableElements,
-      function(o) { return getElementText(o, propertyName) === filterValue }
-    );
+    if (filter){
+      searchableElements = _.filter<SearchableElement>(
+        searchableElements,
+        function(o) {
+          return doesElementHaveFilterValue(o, filter);
+          // const elementFilterValue = getElementFilterValue(o, propertyName);
+          // return elementFilterValue === filterValue;
+        }
+      );
+      showAppliedFilters();
+    }
   }
   return searchableElements;
 }
@@ -47,23 +50,49 @@ function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): void {
     } else {
       newFilter = filterValue;
     }
-    updateFilterBy(newFilter);
+    updateAllFilterByElementsByName(newFilter);
+    updateFilterByById(newFilter);
   }
   return;
 }
 
-function getElementText(searchableElement: SearchableElement, elementName: string): string {
-  return searchableElement.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
+function doesElementHaveFilterValue(searchableElement: SearchableElement, filter: string): boolean{
+  const filterElement = searchableElement.element.querySelector(`[data-filter-value="${filter}"]`);
+  const filterValue = filterElement?.getAttribute('data-filter-value')?.trim() ?? '';
+  return filterValue === filter;
 }
 
-function getFilterBy(): string {
+export function getFilterBy(): string {
   const element = <HTMLInputElement>document.getElementById('filter-by');
   return element.value;
 }
 
-function updateFilterBy(newFilter: string): void {
+function updateFilterByById(newFilter: string): void {
   const element = <HTMLInputElement>document.getElementById('filter-by');
   element.value = newFilter;
+  element.dispatchEvent(new Event('change'));
+}
+
+function updateAllFilterByElementsByName(newFilter: string): void {
+  const filterByElements = Array.from(document.getElementsByName('filterBy'));
+  for (let filterElement of filterByElements){
+    const element = <HTMLInputElement>filterElement;
+    element.value = newFilter;
+  }
+}
+
+function showAppliedFilters(): void{
+  const element = document.getElementById('applied-filters');
+  if (element){
+    element.hidden = false;
+  }
+}
+
+function hideAppliedFilters(): void{
+  const element = document.getElementById('applied-filters');
+  if (element){
+    element.hidden = true;
+  }
 }
 
 
