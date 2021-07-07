@@ -5,6 +5,8 @@
 
     public class WelcomeEmailViewModel
     {
+        public WelcomeEmailViewModel() {}
+
         public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
         {
             ShouldSendEmail = data.ShouldSendEmail;
