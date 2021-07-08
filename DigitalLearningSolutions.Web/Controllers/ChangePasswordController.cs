@@ -33,7 +33,7 @@
             var delegateId = User.GetCandidateId();
 
             var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(model.CurrentPassword)
-                ? new UserAccountSet(null, null)
+                ? new UserAccountSet()
                 : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
 
             if (!verifiedLinkedUsersAccounts.Any())

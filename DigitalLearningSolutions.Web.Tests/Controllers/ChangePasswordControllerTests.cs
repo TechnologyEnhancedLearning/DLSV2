@@ -76,7 +76,7 @@
         {
             // Given
             var user = Builder<AdminUser>.CreateNew().Build();
-            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, new DelegateUser[] { }), "current-password");
+            GivenPasswordVerificationReturnsUsers(new UserAccountSet(), "current-password");
 
             // When
             var result = await authenticatedController.Index(
@@ -158,7 +158,7 @@
         private void GivenPasswordVerificationFails()
         {
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<int>._, A<int>._, A<string>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet());
         }
 
         private void ThenMustHaveChangedPasswordForUsersOnce(string newPassword, IEnumerable<User> expectedUsers)

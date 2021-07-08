@@ -317,7 +317,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet());
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);

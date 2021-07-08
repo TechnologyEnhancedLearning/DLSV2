@@ -8,6 +8,8 @@
         public readonly AdminUser? AdminAccount;
         public readonly List<DelegateUser> DelegateAccounts;
 
+        public UserAccountSet() : this(null, null) { }
+
         public UserAccountSet(AdminUser? adminAccount, IEnumerable<DelegateUser?>? delegateAccounts)
         {
             AdminAccount = adminAccount;

@@ -13,12 +13,8 @@
         [Test]
         public void Any_returns_false_if_adminUser_null_and_delegateUsers_empty()
         {
-            // Given
-            AdminUser? adminUser = null;
-            var delegates = new List<DelegateUser>();
-
             // When
-            var result = new UserAccountSet(adminUser, delegates).Any();
+            var result = new UserAccountSet().Any();
 
             // Then
             result.Should().BeFalse();
