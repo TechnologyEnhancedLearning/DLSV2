@@ -212,10 +212,9 @@
                 .DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(accountDetailsData);
+            userService.UpdateUserAccountDetails(accountDetailsData);
 
             // Then
-            result.Should().BeTrue();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
@@ -246,11 +245,9 @@
                 .DoesNothing();
 
             // When
-            var result =
-                userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
-            result.Should().BeTrue();
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
@@ -288,10 +285,9 @@
                 .DoesNothing();
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
-            result.Should().BeTrue();
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
@@ -321,13 +317,12 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet());
 
             // When
-            var result = userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             // Then
-            result.Should().BeFalse();
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))

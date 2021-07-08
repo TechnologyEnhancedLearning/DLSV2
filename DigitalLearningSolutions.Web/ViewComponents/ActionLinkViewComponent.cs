@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
     public class ActionLinkViewComponent : ViewComponent

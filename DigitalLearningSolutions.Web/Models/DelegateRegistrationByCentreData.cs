@@ -5,6 +5,8 @@
 
     public class DelegateRegistrationByCentreData : DelegateRegistrationData
     {
+        public DelegateRegistrationByCentreData() { }
+        public DelegateRegistrationByCentreData(int centreId) : base(centreId) { }
         public string? Alias { get; set; }
 
         public DateTime? WelcomeEmailDate { get; set; }

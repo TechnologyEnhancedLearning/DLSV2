@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
     public class TextAreaViewComponent : ViewComponent

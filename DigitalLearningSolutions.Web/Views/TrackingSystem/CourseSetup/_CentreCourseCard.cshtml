@@ -1,0 +1,30 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@model SearchableCourseStatisticsViewModel
+
+<div class="searchable-element nhsuk-panel card-with-buttons" id="@Model.CustomisationId-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CustomisationId-name" name="name">
+        @Model.CourseName
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+      <a class="nhsuk-button nhsuk-u-margin-right-2"
+         role="button"
+         asp-controller="LearningMenu"
+         asp-action="Index"
+         asp-route-customisationId="@Model.CustomisationId">
+        Launch course
+      </a>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" href="#">
+        Manage course
+      </a>
+    </div>
+  </div>
+</div>

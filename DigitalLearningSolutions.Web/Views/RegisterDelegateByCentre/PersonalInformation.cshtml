@@ -3,11 +3,11 @@
 @using Microsoft.Extensions.Configuration
 @model PersonalInformationViewModel
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate" : "Register Delegate";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate" : "Register Delegate";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -69,7 +69,6 @@
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="Dashboard" asp-action="Index" link-text="Cancel" />
-    @*TODO: set cancel link to return to all delegates page*@
+    <vc:back-link asp-controller="AllDelegates" asp-action="Index" link-text="Cancel" />
   </div>
 </div>
