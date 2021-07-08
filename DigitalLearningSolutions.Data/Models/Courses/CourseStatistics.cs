@@ -8,7 +8,6 @@
         public int CentreId { get; set; }
         public bool Active { get; set; }
         public bool AllCentres { get; set; }
-        public DateTime? ArchivedDate { get; set; }
         public string ApplicationName { get; set; }
         public string? CustomisationName { get; set; }
         public int DelegateCount { get; set; }

@@ -29,7 +29,7 @@
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId)
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId && c.ArchivedDate == null);
+            return allCourses.Where(c => c.CentreId == centreId);
         }
     }
 }
