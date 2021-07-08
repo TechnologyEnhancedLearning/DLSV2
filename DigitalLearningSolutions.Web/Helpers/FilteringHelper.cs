@@ -4,10 +4,7 @@
     using System.ComponentModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class FilteringHelper
     {
@@ -20,71 +17,46 @@
         {
             var listOfFilters = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(filterBy);
 
-            foreach (var filter in listOfFilters)
-            {
-                var splitFilter = filter.Split(Separator);
-                var propertyName = splitFilter[0];
-                var propertyValueString = splitFilter[1];
-                var propertyType = typeof(T).GetProperty(propertyName)!.PropertyType;
-                var propertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromString(propertyValueString);
+            var appliedFilters = listOfFilters.Select(filter => new AppliedFilter(filter));
 
-                items = items.Where(propertyName, propertyValue);
+            foreach (var filterGroup in appliedFilters.GroupBy(a => a.Group))
+            {
+                var itemsToFilter = items;
+                var setOfFilteredLists = filterGroup.Select(
+                    af => FilterGroupItems(itemsToFilter, af.PropertyName, af.PropertyValue)
+                );
+                items = setOfFilteredLists.SelectMany(x => x).Distinct().AsQueryable();
             }
 
             return items;
         }
-    }
 
-    public static class AdminFilterOptions
-    {
-        public static readonly FilterOptionViewModel CentreAdministrator = new FilterOptionViewModel(
-            "Centre administrator",
-            nameof(AdminUser.IsCentreAdmin) + FilteringHelper.Separator + "true",
-            FilterStatus.Default
-        );
+        private static IQueryable<T> FilterGroupItems<T>(
+            IQueryable<T> items,
+            string propertyName,
+            string propertyValueString
+        )
+        {
+            var propertyType = typeof(T).GetProperty(propertyName)!.PropertyType;
+            var propertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromString(propertyValueString);
+            return items.Where(propertyName, propertyValue);
+        }
 
-        public static readonly FilterOptionViewModel Supervisor = new FilterOptionViewModel(
-            "Supervisor",
-            nameof(AdminUser.IsSupervisor) + FilteringHelper.Separator + "true",
-            FilterStatus.Default
-        );
+        private class AppliedFilter
+        {
+            public AppliedFilter(string filterOption)
+            {
+                var splitFilter = filterOption.Split(Separator);
+                Group = splitFilter[0];
+                PropertyName = splitFilter[1];
+                PropertyValue = splitFilter[2];
+            }
 
-        public static readonly FilterOptionViewModel Trainer = new FilterOptionViewModel(
-            "Trainer",
-            nameof(AdminUser.IsTrainer) + FilteringHelper.Separator + "true",
-            FilterStatus.Default
-        );
+            public string Group { get; }
 
-        public static readonly FilterOptionViewModel ContentCreatorLicense =
-            new FilterOptionViewModel(
-                "Content Creator license",
-                nameof(AdminUser.IsContentCreator) + FilteringHelper.Separator + "true",
-                FilterStatus.Default
-            );
+            public string PropertyName { get; }
 
-        public static readonly FilterOptionViewModel CmsAdministrator =
-            new FilterOptionViewModel(
-                "CMS administrator",
-                nameof(AdminUser.IsCmsAdministrator) + FilteringHelper.Separator + "true",
-                FilterStatus.Default
-            );
-
-        public static readonly FilterOptionViewModel CmsManager = new FilterOptionViewModel(
-            "CMS manager",
-            nameof(AdminUser.IsCmsManager) + FilteringHelper.Separator + "true",
-            FilterStatus.Default
-        );
-
-        public static readonly FilterOptionViewModel IsLocked = new FilterOptionViewModel(
-            "Locked",
-            nameof(AdminUser.IsLocked) + FilteringHelper.Separator + "true",
-            FilterStatus.Warning
-        );
-
-        public static readonly FilterOptionViewModel IsNotLocked = new FilterOptionViewModel(
-            "Not locked",
-            nameof(AdminUser.IsLocked) + FilteringHelper.Separator + "false",
-            FilterStatus.Default
-        );
+            public string PropertyValue { get; }
+        }
     }
 }
