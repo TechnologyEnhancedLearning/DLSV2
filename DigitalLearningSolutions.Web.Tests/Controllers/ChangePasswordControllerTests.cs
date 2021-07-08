@@ -76,7 +76,7 @@
         {
             // Given
             var user = Builder<AdminUser>.CreateNew().Build();
-            GivenPasswordVerificationReturnsUsers(new UserAccountSet(), "current-password");
+            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, null), "current-password");
 
             // When
             var result = await authenticatedController.Index(
