@@ -21,7 +21,7 @@
         {
             var monthData = monthsOfActivity.ToList();
             monthData.Reverse();
-            Rows = monthData.Select(m => new ActivityDataRowModel(m));
+            Rows = monthData.Select(m => new ActivityDataRowModel(m, "MMMM, yyyy"));
         }
 
         public IEnumerable<ActivityDataRowModel> Rows { get; set; }
@@ -29,9 +29,9 @@
 
     public class ActivityDataRowModel
     {
-        public ActivityDataRowModel(MonthOfActivity monthOfActivity)
+        public ActivityDataRowModel(MonthOfActivity monthOfActivity, string formatString)
         {
-            Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString("MMMM yyyy");
+            Period = DateTime.Parse($"{monthOfActivity.Year}-{monthOfActivity.Month}-01").ToString(formatString);
             Completions = monthOfActivity.Completions;
             Evaluations = monthOfActivity.Evaluations;
             Registrations = monthOfActivity.Registrations;

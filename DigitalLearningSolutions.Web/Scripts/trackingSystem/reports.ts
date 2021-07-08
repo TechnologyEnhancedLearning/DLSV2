@@ -25,6 +25,7 @@ const request = new XMLHttpRequest();
 
 const options = {
   axisY: {
+    scaleMinSpace: 10,
     onlyInteger: true,
   },
   chartPadding: { bottom: 32 },

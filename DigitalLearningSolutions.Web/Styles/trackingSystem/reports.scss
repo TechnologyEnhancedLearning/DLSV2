@@ -1,36 +1,56 @@
-﻿@import "~chartist/dist/scss/chartist";
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "~chartist/dist/scss/chartist";
+
+.ct-line {
+  stroke-width: 5px;
+
+  @include mq($until: tablet) {
+    stroke-width: 4px;
+  }
+}
+
+.ct-point {
+  @include mq($until: tablet) {
+    stroke-width: 8px;
+  }
+}
 
 .ct-series-a .ct-line {
-  stroke: blue;
-  stroke-width: 5px;
+  stroke: #005EB8;
 }
 
 .ct-series-a .ct-point {
-  stroke: blue;
+  stroke: #005EB8;
 }
 
 .ct-series-b .ct-line {
-  stroke: green;
-  stroke-width: 5px;
+  stroke: #699AFC;
 }
 
 .ct-series-b .ct-point {
-  stroke: green;
+  stroke: #699AFC;
 }
 
 .ct-series-c .ct-line {
-  stroke: red;
-  stroke-width: 5px;
+  stroke: #B1DAFF;
 }
 
 .ct-series-c .ct-point {
-  stroke: red;
+  stroke: #B1DAFF;
+}
+
+.ct-label {
+  color: $nhsuk-secondary-text-color;
 }
 
 .ct-label.ct-label.ct-horizontal {
-  position: fixed;
+  white-space: nowrap;
   justify-content: flex-end;
   text-align: right;
   transform-origin: 100% 0;
   transform: translate(-100%) rotate(-45deg);
+
+  @include mq($until: tablet) {
+    transform: translate(-100%) rotate(-60deg);
+  }
 }

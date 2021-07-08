@@ -33,7 +33,7 @@
         {
             var centreId = User.GetCentreId();
             var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            return monthsOfActivity.Select(m => new ActivityDataRowModel(m));
+            return monthsOfActivity.Select(m => new ActivityDataRowModel(m, "MMM yyyy"));
         }
     }
 }
