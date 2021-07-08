@@ -6,6 +6,7 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
   var exampleDate = DateTime.Today;
   var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
+  var errorCss = errorHasOccurred ? "nhsuk-form-group--error nhsuk-u-padding-left-5" : "";
 }
 
 @section NavMenuItems {
@@ -40,15 +41,14 @@
           </label>
         </div>
 
-        <div class="@emailDateCss" id="conditional-welcome-email-date">
-          <vc:date-input
-            name="welcome-email-date"
-            label="Deliver email on or after:"
-            day-id="Day"
-            month-id="Month"
-            year-id="Year"
-            validation-result="@Model.DateValidationResult"
-            hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+        <div class="@emailDateCss @errorCss" id="conditional-welcome-email-date">
+          <vc:date-input name="welcome-email-date"
+                         label="Deliver email on or after:"
+                         day-id="Day"
+                         month-id="Month"
+                         year-id="Year"
+                         validation-result="@Model.DateValidationResult"
+                         hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
         </div>
       </div>
 
