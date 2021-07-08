@@ -22,17 +22,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private const string CookieName = "DelegateRegistrationByCentreData";
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
-            CustomPromptHelper customPromptHelper
+            CustomPromptHelper customPromptHelper,
+            IUserDataService userDataService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
+            this.userDataService = userDataService;
         }
 
         [Route("/TrackingSystem/Delegates/Register")]
@@ -53,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var model = new PersonalInformationViewModel(data);
 
-            ValidateEmailAddress(model);
+            ValidatePersonalInformation(model);
 
             return View(model);
         }
@@ -64,7 +67,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            ValidateEmailAddress(model);
+            ValidatePersonalInformation(model);
 
             if (!ModelState.IsValid)
             {
@@ -138,7 +141,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             TempData.Set(centreDelegateRegistrationData);
         }
 
-        private void ValidateEmailAddress(PersonalInformationViewModel model)
+        private void ValidatePersonalInformation(PersonalInformationViewModel model)
         {
             if (model.Email == null)
             {
@@ -153,6 +156,22 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
                     "A user with this email address is already registered at this centre"
+                );
+            }
+
+            if (model.Alias == null)
+            {
+                return;
+            }
+
+            duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
+                .Where(u => u.CentreId == model.Centre);
+
+            if (duplicateUsers.Count() != 0)
+            {
+                ModelState.AddModelError(
+                    nameof(PersonalInformationViewModel.Alias),
+                    "A user with this alias is already registered at this centre"
                 );
             }
         }
