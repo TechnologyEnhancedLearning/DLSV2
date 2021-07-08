@@ -42,11 +42,11 @@
         }
 
         [Test]
-        public void FilterItems_with_filters_in_same_category_returns_union_of_filters()
+        public void FilterItems_with_filters_in_same_group_returns_union_of_filters()
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3, ItemB2 }.AsQueryable();
-            var filterBy = "Category|Name|a\r\nCategory|Name|b";
+            var filterBy = "Group|Name|a\r\nGroup|Name|b";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -56,11 +56,11 @@
         }
 
         [Test]
-        public void FilterItems_with_filters_in_same_category_returns_no_duplicates()
+        public void FilterItems_with_filters_in_same_group_returns_no_duplicates()
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            var filterBy = "Category|Name|a\r\nCategory|Name|a";
+            var filterBy = "Group|Name|a\r\nGroup|Name|a";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -70,11 +70,11 @@
         }
 
         [Test]
-        public void FilterItems_with_some_filters_in_same_category_returns_expected_items()
+        public void FilterItems_with_some_filters_in_same_group_returns_expected_items()
         {
             // Given
             var expectedItems = new[] { ItemA3 }.AsQueryable();
-            var filterBy = "Category|Name|a\r\nCategory|Name|b\r\nNumber|Number|3";
+            var filterBy = "Group|Name|a\r\nGroup|Name|b\r\nNumber|Number|3";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
