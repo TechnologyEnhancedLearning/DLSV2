@@ -7,8 +7,9 @@
 <h2 class="side-nav__heading">Delegates</h2>
 <ul class="nhsuk-list side-nav__list">
 
-  <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates"
+  <vc:side-menu-link
+    asp-action="Index"
+    asp-controller="AllDelegates"
     link-text="All delegates"
     is-current-page="Model == DelegatePage.AllDelegates" />
 
