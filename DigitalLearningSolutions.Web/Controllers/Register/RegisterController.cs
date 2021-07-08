@@ -251,11 +251,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         private void SetDelegateRegistrationData(int? centreId)
         {
-            var delegateRegistrationData = new DelegateRegistrationData
-            {
-                IsCentreSpecificRegistration = centreId.HasValue,
-                Centre = centreId
-            };
+            var delegateRegistrationData = new DelegateRegistrationData(centreId);
             var id = delegateRegistrationData.Id;
 
             Response.Cookies.Append(

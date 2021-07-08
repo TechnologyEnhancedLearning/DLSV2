@@ -1,0 +1,67 @@
+@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.Extensions.Configuration
+@model LearnerInformationViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Learner information" : "Register Delegate - Learner information";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroup), nameof(Model.Answer1), nameof(Model.Answer2), nameof(Model.Answer3), nameof(Model.Answer4), nameof(Model.Answer5), nameof(Model.Answer6) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Learner information</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
+
+      <vc:select-list
+        asp-for="JobGroup"
+        label="Job Group"
+        value="@Model.JobGroup?.ToString()"
+        hint-text=""
+        deselectable="false"
+        css-class="nhsuk-u-width-one-half"
+        default-option="Select a job group"
+        select-list-options="@Model.JobGroupOptions" />
+
+      @foreach (var customField in Model.CustomFields) {
+        if (customField.Options.Any()) {
+          <vc:select-list
+            asp-for="@("Answer" + customField.CustomFieldId)"
+            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+            value="@customField.Answer"
+            hint-text=""
+            deselectable="@(!customField.Mandatory)"
+            css-class="nhsuk-u-width-one-half"
+            default-option="Select a @customField.CustomPrompt.ToLower()"
+            select-list-options="@customField.Options" />
+        } else {
+          <vc:text-input
+            asp-for="@("Answer" + customField.CustomFieldId)"
+            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+            populate-with-current-value="true"
+            type="text"
+            spell-check="false"
+            hint-text=""
+            autocomplete=""
+            css-class="nhsuk-u-width-one-half" />
+        }
+      }
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="PersonalInformation" link-text="Go back" />
+  </div>
+</div>
