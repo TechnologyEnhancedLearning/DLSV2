@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
-        public bool TryUpdateUserAccountDetails(
+        public void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
@@ -26,6 +26,8 @@ namespace DigitalLearningSolutions.Data.Services
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
 
         UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
+
+        public bool IsPasswordValid(int? adminId, int? delegateId, string password);
     }
 
     public class UserService : IUserService
@@ -103,7 +105,7 @@ namespace DigitalLearningSolutions.Data.Services
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public bool TryUpdateUserAccountDetails(
+        public void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
@@ -114,11 +116,6 @@ namespace DigitalLearningSolutions.Data.Services
                     accountDetailsData.DelegateId,
                     accountDetailsData.Password
                 );
-
-            if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
-            {
-                return false;
-            }
 
             if (verifiedAdminUser != null)
             {
@@ -156,8 +153,6 @@ namespace DigitalLearningSolutions.Data.Services
                     );
                 }
             }
-
-            return true;
         }
 
         public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId)
@@ -200,6 +195,13 @@ namespace DigitalLearningSolutions.Data.Services
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
             return loginService.VerifyUsers(password, adminUser, delegateUsers);
+        }
+
+        public bool IsPasswordValid(int? adminId, int? delegateId, string password)
+        {
+            var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
+
+            return verifiedLinkedUsersAccounts.Any();
         }
     }
 }

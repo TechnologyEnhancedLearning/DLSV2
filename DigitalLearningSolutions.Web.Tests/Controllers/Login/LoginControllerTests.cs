@@ -196,7 +196,7 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((UserTestHelper.GetDefaultAdminUser(), new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet());
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());

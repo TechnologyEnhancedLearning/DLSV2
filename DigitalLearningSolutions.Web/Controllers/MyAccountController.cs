@@ -104,6 +104,11 @@
                     "Preview your new profile picture before saving");
             }
 
+            if (model.Password != null && !userService.IsPasswordValid(userAdminId, userDelegateId, model.Password))
+            {
+                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), CommonValidationErrorMessages.IncorrectPassword);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -118,11 +123,7 @@
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(model, userAdminId, userDelegateId);
 
-            if (!userService.TryUpdateUserAccountDetails(accountDetailsData, centreAnswersData))
-            {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), CommonValidationErrorMessages.IncorrectPassword);
-                return View(model);
-            }
+            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index");
         }
