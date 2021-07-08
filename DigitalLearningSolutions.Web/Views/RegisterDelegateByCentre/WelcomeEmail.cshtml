@@ -2,13 +2,10 @@
 @model WelcomeEmailViewModel
 
 @{
-    var errorHasOccurred = Model.DateValidationResult is { DateValid: false };
-    ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
-    var exampleDate = DateTime.Today;
-    var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
-    var dayErrorCss = Model.DateValidationResult is { DayValid: false } ?  "nhsuk-input--error" : "";
-    var monthErrorCss = Model.DateValidationResult is { MonthValid: false } ? "nhsuk-input--error" : "";
-    var yearErrorCss = Model.DateValidationResult is { YearValid: false } ? "nhsuk-input--error" : "";
+  var errorHasOccurred = Model.DateValidationResult is { DateValid: false };
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
+  var exampleDate = DateTime.Today;
+  var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
 }
 
 @section NavMenuItems {
@@ -44,53 +41,14 @@
         </div>
 
         <div class="@emailDateCss" id="conditional-welcome-email-date">
-          <fieldset class="nhsuk-fieldset" aria-describedby="welcome-email-date-hint" role="group">
-            <legend class="nhsuk-fieldset__legend nhsuk-label">
-              Deliver email on or after:
-            </legend>
-            <div class="nhsuk-hint" id="welcome-email-date-hint">
-              For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year
-            </div>
-
-            @if (errorHasOccurred) {
-              <span class="error-message--margin-bottom-1 nhsuk-error-message">
-                <span class="nhsuk-u-visually-hidden">Error:</span> @Model.DateValidationResult!.ErrorMessage
-              </span>
-            }
-
-            <div class="nhsuk-date-input" id="welcome-email-date">
-              <div class="nhsuk-date-input__item">
-                <div class="nhsuk-form-group">
-                  <label class="nhsuk-label" for="Day">Day</label>
-                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
-                         id="Day"
-                         name="Day"
-                         value="@Model.Day"
-                         type="number" />
-                </div>
-              </div>
-              <div class="nhsuk-date-input__item">
-                <div class="nhsuk-form-group">
-                  <label class="nhsuk-label" for="Month">Month</label>
-                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
-                         id="Month"
-                         name="Month"
-                         value="@Model.Month"
-                         type="number" />
-                </div>
-              </div>
-              <div class="nhsuk-date-input__item">
-                <div class="nhsuk-form-group">
-                  <label class="nhsuk-label" for="Year">Year</label>
-                  <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorCss"
-                         id="Year"
-                         name="Year"
-                         value="@Model.Year"
-                         type="number" />
-                </div>
-              </div>
-            </div>
-          </fieldset>
+          <vc:date-input
+            name="welcome-email-date"
+            label="Deliver email on or after:"
+            day-id="Day"
+            month-id="Month"
+            year-id="Year"
+            validation-result="@Model.DateValidationResult"
+            hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
         </div>
       </div>
 
