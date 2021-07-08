@@ -6,6 +6,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -53,6 +54,59 @@
 
             // Then
             returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
+        public void GetAllDelegateUsersByUsername_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+
+            //When
+            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("SV1234");
+
+            // Then
+            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
+        public void GetAllDelegateUsersByUsername_includes_inactive_users()
+        {
+            //When
+            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("OS35");
+
+            // Then
+            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(89094);
+        }
+
+        [Test]
+        public void GetAllDelegateUsersByUsername_search_includes_CandidateNumber()
+        {
+            //When
+            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("ND107");
+
+            // Then
+            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
+        }
+
+        [Test]
+        public void GetAllDelegateUsersByUsername_search_includes_EmailAddress()
+        {
+            //When
+            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("saudnhb@.5lpyk");
+
+            // Then
+            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
+        }
+
+        [Test]
+        public void GetAllDelegateUsersByUsername_searches_AliasID()
+        {
+            //When
+            var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("aldn y");
+
+            // Then
+            returnedDelegateUsers.FirstOrDefault()!.Id.Should().Be(78051);
         }
 
         [Test]
