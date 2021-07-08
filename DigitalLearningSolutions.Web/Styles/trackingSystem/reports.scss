@@ -1,6 +1,10 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "~chartist/dist/scss/chartist";
 
+$series-a-colour: #005EB8;
+$series-b-colour: #699AFC;
+$series-c-colour: #8EBAFF;
+
 .ct-line {
   stroke-width: 5px;
 
@@ -16,27 +20,27 @@
 }
 
 .ct-series-a .ct-line {
-  stroke: #005EB8;
+  stroke: $series-a-colour;
 }
 
 .ct-series-a .ct-point {
-  stroke: #005EB8;
+  stroke: $series-a-colour;
 }
 
 .ct-series-b .ct-line {
-  stroke: #699AFC;
+  stroke: $series-b-colour;
 }
 
 .ct-series-b .ct-point {
-  stroke: #699AFC;
+  stroke: $series-b-colour;
 }
 
 .ct-series-c .ct-line {
-  stroke: #B1DAFF;
+  stroke: $series-c-colour;
 }
 
 .ct-series-c .ct-point {
-  stroke: #B1DAFF;
+  stroke: $series-c-colour;
 }
 
 .ct-label {
