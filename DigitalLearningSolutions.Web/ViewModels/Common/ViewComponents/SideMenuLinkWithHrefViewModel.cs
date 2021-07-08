@@ -10,13 +10,16 @@
 
         public readonly bool IsCurrentPage;
 
+        public readonly bool OpenInNewTab;
+
         public readonly Dictionary<string, string>? AspAllRouteData;
 
-        public SideMenuLinkWithHrefViewModel(string hRef, string linkText, bool isCurrentPage,  Dictionary<string, string>? aspAllRouteData)
+        public SideMenuLinkWithHrefViewModel(string hRef, string linkText, bool isCurrentPage, bool openInNewTab,  Dictionary<string, string>? aspAllRouteData)
         {
             Href = hRef;
             LinkText = linkText;
             IsCurrentPage = isCurrentPage;
+            OpenInNewTab = openInNewTab;
             AspAllRouteData = aspAllRouteData;
         }
     }

@@ -20,25 +20,30 @@
   <vc:side-menu-link-with-href
     href="@configuration["CurrentSystemBaseUrl"]/help/Introduction.html"
     link-text="Help documentation"
-    is-current-page="@(Model.CurrentPage == SupportPage.HelpDocumentation)" />
+    is-current-page="@(Model.CurrentPage == SupportPage.HelpDocumentation)"
+    open-in-new-tab="true" />
 
   <vc:side-menu-link-with-href
     href="@configuration["CurrentSystemBaseUrl"]/tracking/faqs"
     link-text="FAQs"
-    is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
+    is-current-page="@(Model.CurrentPage == SupportPage.Faqs)"
+    open-in-new-tab="false" />
 
   <vc:side-menu-link-with-href
     href="@configuration["CurrentSystemBaseUrl"]/tracking/resources"
     link-text="Resources"
-    is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
-
+    is-current-page="@(Model.CurrentPage == SupportPage.Resources)"
+    open-in-new-tab="false" />
+    
   <vc:side-menu-link-with-href
     href="@configuration["CurrentSystemBaseUrl"]/tracking/tickets"
     link-text="Support tickets"
-    is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
+    is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)"
+    open-in-new-tab="false" />
 
   <vc:side-menu-link-with-href
     href="https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true"
     link-text="Change requests"
-    is-current-page="@(Model.CurrentPage == SupportPage.ChangeRequests)" />
+    is-current-page="@(Model.CurrentPage == SupportPage.ChangeRequests)"
+    open-in-new-tab="true" />
 </ul>

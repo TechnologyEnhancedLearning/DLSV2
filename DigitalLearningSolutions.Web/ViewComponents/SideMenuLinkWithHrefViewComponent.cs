@@ -10,10 +10,11 @@
             string href,
             string linkText,
             bool isCurrentPage,
+            bool openInNewTab,
             Dictionary<string, string> aspAllRouteData
         )
         {
-            var model = new SideMenuLinkWithHrefViewModel(href, linkText, isCurrentPage, aspAllRouteData);
+            var model = new SideMenuLinkWithHrefViewModel(href, linkText, isCurrentPage, openInNewTab, aspAllRouteData);
 
             return View(model);
         }

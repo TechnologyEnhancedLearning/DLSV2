@@ -16,12 +16,14 @@
   <vc:side-menu-link-with-href
     href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegategroups"
     link-text="Delegate groups"
-    is-current-page="Model == DelegatePage.DelegateGroups" />
+    is-current-page="Model == DelegatePage.DelegateGroups"
+    open-in-new-tab="false" />
 
   <vc:side-menu-link-with-href
     href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates"
     link-text="Course delegates"
-    is-current-page="Model == DelegatePage.CourseDelegates" />
+    is-current-page="Model == DelegatePage.CourseDelegates"
+    open-in-new-tab="false" />
 
   <vc:side-menu-link
     asp-action="Index"
