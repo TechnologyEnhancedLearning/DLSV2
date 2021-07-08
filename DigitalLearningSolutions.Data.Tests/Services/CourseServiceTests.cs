@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -28,37 +27,31 @@
         }
 
         [Test]
-        public void GetTopCourseStatistics_should_return_correctly_ordered_active_course_statistics()
+        public void GetTopCourseStatistics_should_return_active_course_statistics_ordered_by_InProgress()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var expectedIdOrder = new List<int> { 3, 1 };
+            // Given
+            var expectedIdOrder = new List<int> { 3, 1 };
 
-                // When
-                var resultIdOrder = courseService.GetTopCourseStatistics(CentreId, AdminCategoryId)
-                    .Select(r => r.CustomisationId).ToList();
+            // When
+            var resultIdOrder = courseService.GetTopCourseStatistics(CentreId, AdminCategoryId)
+                .Select(r => r.CustomisationId).ToList();
 
-                // Then
-                Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
-            }
+            // Then
+            Assert.That(resultIdOrder.SequenceEqual(expectedIdOrder));
         }
 
         [Test]
         public void GetCentreSpecificCourseStatistics_should_only_return_course_statistics_for_centre()
         {
-            using (new TransactionScope())
-            {
-                // Given
-                var expectedIdOrder = new List<int> { 1, 2 };
+            // Given
+            var expectedIdOrder = new List<int> { 1, 2 };
 
-                // When
-                var resultIdOrder = courseService.GetCentreSpecificCourseStatistics(CentreId, AdminCategoryId)
-                    .Select(r => r.CustomisationId).ToList();
+            // When
+            var resultIdOrder = courseService.GetCentreSpecificCourseStatistics(CentreId, AdminCategoryId)
+                .Select(r => r.CustomisationId).ToList();
 
-                // Then
-                resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
-            }
+            // Then
+            resultIdOrder.Should().BeEquivalentTo(expectedIdOrder);
         }
 
         private IEnumerable<CourseStatistics> GetSampleCourses()
