@@ -1,45 +1,49 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
     {
-        (string candidateNumber, bool approved) RegisterDelegate
-        (
+        (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
             string userIp
         );
+
+        void RegisterCentreManager(RegistrationModel registrationModel);
     }
 
     public class RegistrationService : IRegistrationService
     {
         private readonly ICentresDataService centresDataService;
         private readonly IEmailService emailService;
+        private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
 
-        public RegistrationService
-        (
+        public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
             IEmailService emailService,
-            ICentresDataService centresDataService
+            ICentresDataService centresDataService,
+            ILogger<RegistrationService> logger
         )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
+            this.logger = logger;
         }
 
-        public (string candidateNumber, bool approved) RegisterDelegate
-        (
+        public (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string baseUrl,
             string userIp
@@ -60,17 +64,52 @@
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
-                var approvalEmail = GenerateApprovalEmail(contactInfo.email, contactInfo.firstName,
+                var approvalEmail = GenerateApprovalEmail(
+                    contactInfo.email,
+                    contactInfo.firstName,
                     delegateRegistrationModel.FirstName,
-                    delegateRegistrationModel.LastName, baseUrl);
+                    delegateRegistrationModel.LastName,
+                    baseUrl
+                );
                 emailService.SendEmail(approvalEmail);
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        private Email GenerateApprovalEmail
-        (
+        public void RegisterCentreManager(RegistrationModel registrationModel)
+        {
+            using var transaction = new TransactionScope();
+            
+            CreateDelegateAccountForAdmin(registrationModel);
+
+            registrationDataService.RegisterCentreManagerAdmin(registrationModel);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
+        }
+
+        private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
+        {
+            var delegateRegistrationModel = new DelegateRegistrationModel(
+                registrationModel.FirstName,
+                registrationModel.LastName,
+                registrationModel.Email,
+                registrationModel.Centre,
+                registrationModel.JobGroup,
+                registrationModel.PasswordHash
+            ) { Approved = true };
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            if (candidateNumber == "-1" || candidateNumber == "-4")
+            {
+                throw new Exception($"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}");
+            }
+
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
+        }
+
+        private static Email GenerateApprovalEmail(
             string emailAddress,
             string firstName,
             string learnerFirstName,

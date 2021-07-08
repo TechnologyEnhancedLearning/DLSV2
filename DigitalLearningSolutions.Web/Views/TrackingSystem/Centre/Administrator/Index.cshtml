@@ -4,7 +4,7 @@
 @using Microsoft.Extensions.Configuration
 @model CentreAdministratorsViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/centreAdministrators.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Centre Administrators";
@@ -26,20 +26,58 @@
 
   <div class="nhsuk-grid-column-three-quarters">
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Centre administrators</h1>
-        <div class="nhsuk-u-margin-top-8">
-          <vc:number-of-administrators centre-id="@Model.CentreId" />
-        </div>
+      <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-4">
+        <h1 class="nhsuk-heading-xl">Centre administrators</h1>
+
+        <vc:number-of-administrators centre-id="@Model.CentreId" />
       </div>
     </div>
 
-    <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
+    <div class="nhsuk-grid-row">
+      <form method="get" role="search">
+        <input type="hidden" name="filterBy" value="@Model.FilterString" />
+        <vc:search-box label="Search administrators"
+                       asp-controller="Administrator"
+                       asp-action="Index"
+                       searchable-page-view-model="@Model"
+                       css-class="nhsuk-grid-column-one-half" />
+      </form>
+    </div>
 
-      <div class="nhsuk-grid-row">
-        <vc:search-box label="Search administrators" asp-controller="Administrator" asp-action="Index" searchable-page-view-model="@Model" />
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full" id="filters-container">
+        <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filters</label>
+        @foreach (var filter in Model.Filters) {
+          <div id="filter-@filter.FilterProperty">
+            <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+              <input type="hidden" name="searchString" value="@Model.SearchString" />
+              <input type="hidden" name="filterBy" value="@Model.FilterString" />
+              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
+                <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
+                @foreach (var filterOption in filter.FilterOptions) {
+                  <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
+                }
+              </select>
+              <button class="nhsuk-search__submit filter-submit__dropdown non-js-only" type="submit">
+                Add filter
+              </button>
+            </form>
+          </div>
+        }
       </div>
+    </div>
 
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:current-filters searchable-page-view-model="@Model" />
+      </div>
+    </div>
+
+    <form method="get">
+      <input type="hidden" id="searchString" value="@Model.SearchString" />
+      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterString" />
+      <input type="hidden" id="select-sort-by" value="Name" />
+      <input type="hidden" id="select-sort-direction" value="Ascending" />
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           @if (!Model.Admins.Any()) {
@@ -48,8 +86,6 @@
             </p>
           } else {
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-            <input type="hidden" id="select-sort-by" value="Name" />
-            <input type="hidden" id="select-sort-direction" value="Ascending" />
 
             <div id="searchable-elements">
               @foreach (var admin in Model.Admins) {
@@ -62,9 +98,8 @@
           }
         </div>
       </div>
-
     </form>
-    
+
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
     </nav>

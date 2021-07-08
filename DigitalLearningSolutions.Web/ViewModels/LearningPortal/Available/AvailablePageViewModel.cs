@@ -4,7 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class AvailablePageViewModel : BaseSearchablePageViewModel
     {

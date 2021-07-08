@@ -10,18 +10,7 @@
     </summary>
     <div class="nhsuk-details__text">
 
-      <div class="tags">
-        @if (!Model.IsLocked) {
-          <div data-filter-value="@("IsLocked|false")" hidden>
-            <strong class="nhsuk-tag nhsuk-tag--grey">Not locked</strong>
-          </div>
-        }
-        @foreach (var (displayText, filter) in Model.Tags) {
-          <div class="card-filter-tag" data-filter-value="@filter">
-            <strong class="nhsuk-tag nhsuk-tag--grey">@displayText</strong>
-          </div>
-        }
-      </div>
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
 
       <dl class="nhsuk-summary-list details-list-with-button">
         <div class="nhsuk-summary-list__row">

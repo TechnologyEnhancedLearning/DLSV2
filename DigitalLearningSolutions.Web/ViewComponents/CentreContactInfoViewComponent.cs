@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
     public class CentreContactInfoViewComponent: ViewComponent
