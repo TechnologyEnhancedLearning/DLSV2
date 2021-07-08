@@ -33,7 +33,8 @@
 
             return new AppliedFilterViewModel(
                 GetFilterDisplayText(currentFilter, appliedFilter.FilterOptions),
-                appliedFilter.FilterName
+                appliedFilter.FilterName,
+                GetFilterValue(currentFilter, appliedFilter.FilterOptions)
             );
         }
 
@@ -43,6 +44,14 @@
         )
         {
             return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
+        }
+
+        private static string GetFilterValue(
+            string currentFilter,
+            IEnumerable<FilterOptionViewModel> filterOptions
+        )
+        {
+            return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
         }
 
         private static bool FilterOptionsContainsFilter(

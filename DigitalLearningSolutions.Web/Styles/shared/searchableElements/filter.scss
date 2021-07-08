@@ -2,7 +2,7 @@
 @import "common";
 
 .filter-dropdown {
-  @extend .input-with-no-js-submit-button;
+  @extend .input-with-submit-button;
 
   @include mq($until: tablet) {
     width: 63%;
@@ -55,6 +55,10 @@
   padding-top: 11px;
   padding-bottom: 11px;
   margin-bottom: 4px;
+
+  .js-enabled & {
+    margin-right: 4px;
+  }
 }
 
 .card-filter-tag {

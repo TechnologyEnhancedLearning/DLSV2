@@ -8,7 +8,7 @@ $nhs-dark-grey: #425563;
 $button-dark-blue: #003d78;
 $button-hover-colour: #4c6272;
 
-.input-with-no-js-submit-button {
+.input-with-submit-button {
   border: 2px solid $nhsuk-form-border-color;
   border-right: 0;
   border-radius: 4px 0 0 4px;
@@ -38,6 +38,10 @@ $button-hover-colour: #4c6272;
   @include mq($from: desktop) {
     width: 80%;
   }
+}
+
+.input-with-no-js-submit-button {
+  @extend .input-with-submit-button;
 
   .js-enabled & {
     border-right: 2px solid $nhsuk-form-border-color;

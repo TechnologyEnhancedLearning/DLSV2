@@ -59,8 +59,10 @@
         [Route("AllAdmins")]
         public IActionResult AllAdmins()
         {
-            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(User.GetCentreId());
-            var model = new AllAdminsViewModel(adminUsersAtCentre);
+            var centreId = User.GetCentreId();
+            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
+            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+            var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
             return View("AllAdmins", model);
         }
     }

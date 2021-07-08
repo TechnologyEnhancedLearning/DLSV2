@@ -1,5 +1,5 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
-import {setupFilter, filterSearchableElements, getFilterBy} from './filter'
+import {setupFilter, filterSearchableElements, getFilterBy, AppliedFilterTag} from './filter'
 import {getQuery, search, setUpSearch} from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
@@ -10,51 +10,56 @@ export interface SearchableElement {
   title: string;
 }
 
+export interface SearchableData {
+  searchableElements: SearchableElement[];
+  possibleFilters: AppliedFilterTag[];
+}
+
 export class SearchSortAndPaginate {
   private page: number;
 
   // Route proved should be a relative path with no leading /
   constructor(route: string) {
     this.page = 1;
-    SearchSortAndPaginate.getSearchableElements(route).then((allSearchableElements) => {
-      if (allSearchableElements === undefined) {
+    SearchSortAndPaginate.getSearchableElements(route).then((searchableData) => {
+      if (searchableData === undefined) {
         return;
       }
 
-      setupFilter(() => this.onFilterUpdated(allSearchableElements))
-      setUpSearch(() => this.onSearchUpdated(allSearchableElements));
-      setupSort(() => this.searchSortAndPaginate(allSearchableElements));
+      setupFilter(() => this.onFilterUpdated(searchableData))
+      setUpSearch(() => this.onSearchUpdated(searchableData));
+      setupSort(() => this.searchSortAndPaginate(searchableData));
       setupPagination(
-        () => this.onNextPagePressed(allSearchableElements),
-        () => this.onPreviousPagePressed(allSearchableElements),
+        () => this.onNextPagePressed(searchableData),
+        () => this.onPreviousPagePressed(searchableData),
       );
-      this.searchSortAndPaginate(allSearchableElements);
+      this.searchSortAndPaginate(searchableData);
     });
   }
 
-  private onFilterUpdated(allSearchableElements: SearchableElement[]): void {
+  private onFilterUpdated(searchableData: SearchableData): void {
     this.page = 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private onSearchUpdated(allSearchableElements: SearchableElement[]): void {
+  private onSearchUpdated(searchableData: SearchableData): void {
     this.page = 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private onNextPagePressed(allSearchableElements: SearchableElement[]): void {
+  private onNextPagePressed(searchableData: SearchableData): void {
     this.page += 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private onPreviousPagePressed(allSearchableElements: SearchableElement[]): void {
+  private onPreviousPagePressed(searchableData: SearchableData): void {
     this.page -= 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private searchSortAndPaginate(searchableElements: SearchableElement[]): void {
-    const searchedElements = search(searchableElements);
-    const filteredElements = filterSearchableElements(searchedElements);
+  private searchSortAndPaginate(searchableData: SearchableData): void {
+    const searchedElements = search(searchableData.searchableElements);
+    const filteredElements = filterSearchableElements(searchedElements, searchableData.possibleFilters);
     const sortedElements = sortSearchableElements(filteredElements);
 
     if (this.shouldDisplayResultCount()){
@@ -68,18 +73,27 @@ export class SearchSortAndPaginate {
     SearchSortAndPaginate.displaySearchableElements(paginatedElements);
   }
 
-  static getSearchableElements(route: string): Promise<SearchableElement[] | undefined> {
+  static getSearchableElements(route: string): Promise<SearchableData | undefined> {
     return SearchSortAndPaginate.fetchAllSearchableElements(route)
-      .then((response): SearchableElement[] | undefined => {
+      .then((response): SearchableData | undefined => {
         if (response === null) {
           return undefined;
         }
 
-        const searchableElements = Array.from(response.getElementsByClassName('searchable-element'));
-        return searchableElements.map((element) => ({
+        const elements = Array.from(response.getElementsByClassName('searchable-element'));
+        const searchableElements = elements.map((element) => ({
           element,
           title: SearchSortAndPaginate.titleFromElement(element),
         }));
+        const tags = Array.from(response.getElementsByClassName('filter-tag'));
+        const possibleAppliedFilters = tags.map((element) => ({
+          element,
+          filterValue: SearchSortAndPaginate.filterValueFromElement(element),
+        }));
+        return {
+          searchableElements: searchableElements,
+          possibleFilters: possibleAppliedFilters
+        }
       });
   }
 
@@ -101,6 +115,10 @@ export class SearchSortAndPaginate {
   static titleFromElement(element: Element): string {
     const titleSpan = <HTMLSpanElement>element.getElementsByClassName('searchable-element-title')[0];
     return titleSpan?.textContent ?? '';
+  }
+
+  static filterValueFromElement(element: Element): string {
+    return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
   static displaySearchableElements(searchableElements: SearchableElement[]): void {
