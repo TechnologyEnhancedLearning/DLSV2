@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using FluentAssertions;
     using FluentAssertions.Execution;

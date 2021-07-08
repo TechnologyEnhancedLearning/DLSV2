@@ -54,5 +54,33 @@
             // Then
             result.Should().BeEquivalentTo(expectedItems);
         }
+
+        [Test]
+        public void FilterItems_with_filters_in_same_category_returns_no_duplicates()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
+            var filterBy = "Category|Name|a\r\nCategory|Name|a";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void FilterItems_with_some_filters_in_same_category_returns_expected_items()
+        {
+            // Given
+            var expectedItems = new[] { ItemA3 }.AsQueryable();
+            var filterBy = "Category|Name|a\r\nCategory|Name|b\r\nNumber|Number|3";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
     }
 }

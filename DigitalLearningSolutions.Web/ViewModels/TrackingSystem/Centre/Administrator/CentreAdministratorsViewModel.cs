@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -52,7 +53,8 @@
                 categories.Select(
                     c => new FilterOptionViewModel(
                         c,
-                        $"{nameof(AdminUser.CategoryName)}|{nameof(AdminUser.CategoryName)}|{c}",
+                        nameof(AdminUser.CategoryName) + FilteringHelper.Separator + nameof(AdminUser.CategoryName) +
+                        FilteringHelper.Separator + c,
                         FilterStatus.Default
                     )
                 );
