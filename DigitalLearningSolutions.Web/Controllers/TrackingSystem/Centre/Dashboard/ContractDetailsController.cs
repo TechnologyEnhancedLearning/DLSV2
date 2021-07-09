@@ -5,7 +5,9 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.ContractDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Centre/ContractDetails")]
     public class ContractDetailsController : Controller
