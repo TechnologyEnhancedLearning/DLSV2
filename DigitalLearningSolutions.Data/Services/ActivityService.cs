@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -31,7 +31,6 @@
             var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
 
             var monthSlots = DateHelper.GetMonthsAndYearsBetweenDates(startTime, endTime).ToList();
-            monthSlots.Reverse();
 
             return monthSlots.Select(
                 slot =>

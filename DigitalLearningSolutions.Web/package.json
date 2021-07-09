@@ -17,14 +17,17 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/chartist": "^0.11.0",
+    "chartist": "^0.11.4",
+    "chartist-plugin-axistitle": "0.0.7",
     "core-js": "^3.8.1",
     "input-range-scss": "^1.5.2",
+    "jodit": "3.5.4",
     "js-search": "^2.0.0",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "nhsuk-frontend": "4.0.0",
-    "regenerator-runtime": "^0.13.7",
-    "jodit": "3.5.4"
+    "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
