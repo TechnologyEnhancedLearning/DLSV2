@@ -6,15 +6,15 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Configuration;
     using MimeKit;
 
     public interface IRegistrationService
     {
         (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
-            string baseUrl,
-            string userIp
+            string userIp,
+            bool refactoredTrackingSystemEnabled
         );
 
         void RegisterCentreManager(RegistrationModel registrationModel);
@@ -24,43 +24,47 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly ICentresDataService centresDataService;
         private readonly IEmailService emailService;
-        private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly IConfiguration config;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
             IEmailService emailService,
             ICentresDataService centresDataService,
-            ILogger<RegistrationService> logger
+            IConfiguration config
         )
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
-            this.logger = logger;
+            this.config = config;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
-            string baseUrl,
-            string userIp
+            string userIp,
+            bool refactoredTrackingSystemEnabled
         )
         {
-            var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
+            var centreIpPrefixes =
+                centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved =
                 centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";
 
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber =
+                registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 return (candidateNumber, false);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
-
+            passwordDataService.SetPasswordByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.PasswordHash
+            );
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
@@ -69,7 +73,7 @@ namespace DigitalLearningSolutions.Data.Services
                     contactInfo.firstName,
                     delegateRegistrationModel.FirstName,
                     delegateRegistrationModel.LastName,
-                    baseUrl
+                    refactoredTrackingSystemEnabled
                 );
                 emailService.SendEmail(approvalEmail);
             }
@@ -80,7 +84,7 @@ namespace DigitalLearningSolutions.Data.Services
         public void RegisterCentreManager(RegistrationModel registrationModel)
         {
             using var transaction = new TransactionScope();
-            
+
             CreateDelegateAccountForAdmin(registrationModel);
 
             registrationDataService.RegisterCentreManagerAdmin(registrationModel);
@@ -100,43 +104,44 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.JobGroup,
                 registrationModel.PasswordHash
             ) { Approved = true };
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber =
+                registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
-                throw new Exception($"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}");
+                throw new Exception(
+                    $"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}"
+                );
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
+            passwordDataService.SetPasswordByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.PasswordHash
+            );
         }
 
-        private static Email GenerateApprovalEmail(
+        private Email GenerateApprovalEmail(
             string emailAddress,
             string firstName,
             string learnerFirstName,
             string learnerLastName,
-            string baseUrl
+            bool refactoredTrackingSystemEnabled
         )
         {
-            UriBuilder approvalUrl = new UriBuilder(baseUrl);
-            if (!approvalUrl.Path.EndsWith('/'))
-            {
-                approvalUrl.Path += '/';
-            }
-
-            approvalUrl.Path += "TrackingSystem/Delegates/Approve";
-
-            string emailSubject = "Digital Learning Solutions Registration Requires Approval";
+            const string emailSubject = "Digital Learning Solutions Registration Requires Approval";
+            var approvalUrl = refactoredTrackingSystemEnabled
+                ? $"{config["AppRootPath"]}/TrackingSystem/Delegates/Approve"
+                : $"{config["CurrentSystemBaseUrl"]}/tracking/approvedelegates";
 
             BodyBuilder body = new BodyBuilder
             {
                 TextBody = $@"Dear {firstName},
                             A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.
-                            To approve or reject their registration please follow this link: {approvalUrl.Uri}
+                            To approve or reject their registration please follow this link: {approvalUrl}
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
                                 <p>Dear {firstName},</p>
                                 <p>A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.</p>
-                                <p>To approve or reject their registration please follow this link: <a href=""{approvalUrl.Uri}"">{approvalUrl.Uri}</a></p>
+                                <p>To approve or reject their registration please follow this link: <a href=""{approvalUrl}"">{approvalUrl}</a></p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>"
             };
