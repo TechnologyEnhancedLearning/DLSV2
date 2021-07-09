@@ -39,6 +39,7 @@
 
         public bool IsLocked => FailedLoginCount >= FailedLoginThreshold;
         public bool IsCmsAdministrator => ImportOnly && IsContentManager;
+        public bool IsCmsManager => IsContentManager && !ImportOnly;
 
         public override UserReference ToUserReference()
         {

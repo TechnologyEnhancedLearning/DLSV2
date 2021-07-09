@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\common.ts" />
     <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
@@ -37,6 +38,7 @@
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
     <None Remove="Scripts\supervisor\staffList.ts" />
+    <None Remove="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
@@ -91,6 +94,7 @@
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

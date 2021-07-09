@@ -234,7 +234,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 101,
                 Active = false,
                 AllCentres = false,
-                ArchivedDate = null,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
                 DelegateCount = 25,
@@ -243,7 +242,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CompletedCount = 5
             };
 
-            result.Should().HaveCount(267);
+            result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
     }

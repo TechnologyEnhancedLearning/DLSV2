@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -15,6 +17,15 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 5, isContentCreator: true);
+            var expectedTags = new List<SearchableTagViewModel>
+            {
+                new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked),
+                new SearchableTagViewModel(AdminRoleFilterOptions.CentreAdministrator),
+                new SearchableTagViewModel(AdminRoleFilterOptions.Supervisor),
+                new SearchableTagViewModel(AdminRoleFilterOptions.Trainer),
+                new SearchableTagViewModel(AdminRoleFilterOptions.CmsAdministrator),
+                new SearchableTagViewModel(AdminRoleFilterOptions.ContentCreatorLicense)
+            };
 
             // When
             var result = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser).ToList();
@@ -22,14 +33,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(7);
-                result.Should().Contain(("Locked", nameof(AdminUser.IsLocked) + "|true"));
-                result.Should().Contain(("Centre administrator", nameof(AdminUser.IsCentreAdmin) + "|true"));
-                result.Should().Contain(("Supervisor", nameof(AdminUser.IsSupervisor) + "|true"));
-                result.Should().Contain(("Trainer", nameof(AdminUser.IsTrainer) + "|true"));
-                result.Should().Contain(("CMS manager", nameof(AdminUser.IsContentManager) + "|true"));
-                result.Should().Contain(("Content Creator license", nameof(AdminUser.IsContentCreator) + "|true"));
-                result.Should().Contain(("CMS administrator", nameof(AdminUser.IsCmsAdministrator) + "|true"));
+                result.Should().BeEquivalentTo(expectedTags);
             }
         }
     }

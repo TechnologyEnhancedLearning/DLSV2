@@ -10,35 +10,52 @@
 
 <h2 class="side-nav__heading">Support</h2>
 <ul class="nhsuk-list side-nav__list">
-  <vc:side-menu-link
-    asp-action="Index"
-    asp-controller="Support"
-    asp-all-route-data="@routeData"
-    link-text="Support"
-    is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Support"
+                     asp-all-route-data="@routeData"
+                     link-text="Support"
+                     is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
 
-  <vc:side-menu-link-with-href
-    href="@configuration["CurrentSystemBaseUrl"]/help/Introduction.html"
-    link-text="Help documentation"
-    is-current-page="@(Model.CurrentPage == SupportPage.HelpDocumentation)" />
+  @if (Model.CurrentPage == SupportPage.HelpDocumentation)
+  {
+    <li class="side-nav__item side-nav__item--selected" aria-current="page">
+      <span class="nhsuk-contents-list__current">Help documentation</span>
+    </li>
+  }
+  else
+  {
+    <li class="side-nav__item">
+      <a class="side-nav__link" href="@configuration["CurrentSystemBaseUrl"]/help/Introduction.html" target="_blank">
+        Help documentation
+      </a>
+    </li>
+  }
 
-  <vc:side-menu-link-with-href
-    href="@configuration["CurrentSystemBaseUrl"]/tracking/faqs"
-    link-text="FAQs"
-    is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
+  <vc:side-menu-link-with-href href="@configuration["CurrentSystemBaseUrl"]/tracking/faqs"
+                               link-text="FAQs"
+                               is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
-  <vc:side-menu-link-with-href
-    href="@configuration["CurrentSystemBaseUrl"]/tracking/resources"
-    link-text="Resources"
-    is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
+  <vc:side-menu-link-with-href href="@configuration["CurrentSystemBaseUrl"]/tracking/resources"
+                               link-text="Resources"
+                               is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
-  <vc:side-menu-link-with-href
-    href="@configuration["CurrentSystemBaseUrl"]/tracking/tickets"
-    link-text="Support tickets"
-    is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
+  <vc:side-menu-link-with-href href="@configuration["CurrentSystemBaseUrl"]/tracking/tickets"
+                               link-text="Support tickets"
+                               is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
-  <vc:side-menu-link-with-href
-    href="https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true"
-    link-text="Change requests"
-    is-current-page="@(Model.CurrentPage == SupportPage.ChangeRequests)" />
+  @if (Model.CurrentPage == SupportPage.ChangeRequests)
+  {
+    <li class="side-nav__item side-nav__item--selected" aria-current="page">
+      <span class="nhsuk-contents-list__current">Change requests</span>
+    </li>
+  }
+  else
+  {
+    <li class="side-nav__item">
+      <a class="side-nav__link" href="https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true" target="_blank" rel="noreferrer">
+        Change requests
+      </a>
+    </li>
+  }
+
 </ul>

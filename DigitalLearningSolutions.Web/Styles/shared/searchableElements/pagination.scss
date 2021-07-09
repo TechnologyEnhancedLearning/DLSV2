@@ -1,0 +1,84 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "common";
+
+.nhsuk-pagination {
+  padding: 0;
+}
+
+.nhsuk-pagination__list {
+  display: flex;
+}
+
+.pagination-button {
+  &--next {
+    float: right;
+    align-items: flex-start;
+  }
+
+  &--previous {
+    float: left;
+    align-items: flex-end;
+  }
+}
+
+.pagination-button-container {
+  width: 38%;
+}
+
+.page-indicator-container {
+  width: 24%;
+  text-align: center;
+}
+
+#page-indicator {
+  @include nhsuk-typography-responsive(24);
+  padding-top: 1px;
+}
+
+button.nhsuk-pagination__link {
+  border: none;
+  background-color: transparent;
+  color: $nhsuk-link-color;
+  display: flex;
+  width: auto;
+  // Since IE is bad at drawing boxes the correct size
+  overflow: visible;
+
+  @include mq($until: tablet) {
+    flex-direction: column;
+  }
+
+  &.nhsuk-pagination__link--prev {
+    @include mq($until: tablet) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  &.nhsuk-pagination__link--next {
+    float: right;
+  }
+
+  &:hover {
+    color: $nhsuk-link-hover-color;
+  }
+
+  &:active {
+    color: $nhsuk-link-active-color;
+  }
+}
+
+.nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-right, .nhsuk-pagination__link .nhsuk-icon.nhsuk-icon__arrow-left {
+  display: inline-block;
+  position: static;
+  flex-shrink: 0;
+}
+
+.nhsuk-pagination__title {
+  @include mq($until: tablet) {
+    padding: 0 !important;
+  }
+
+  .nhsuk-pagination-item--next & {
+    text-align: left;
+  }
+}

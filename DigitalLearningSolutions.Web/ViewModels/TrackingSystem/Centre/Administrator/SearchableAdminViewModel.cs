@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SearchableAdminViewModel
+    public class SearchableAdminViewModel : BaseFilterableViewModel
     {
         public SearchableAdminViewModel(AdminUser adminUser)
         {
@@ -25,7 +25,5 @@
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }
-
-        public IEnumerable<(string, string)> Tags { get; set; }
     }
 }

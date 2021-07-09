@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -28,27 +29,23 @@
         [HttpPost]
         public async Task<IActionResult> Index(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var currentPassword = model.CurrentPassword!;
-
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
-            var verifiedLinkedUsersAccounts =
-                userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, currentPassword);
+            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(model.CurrentPassword)
+                ? new UserAccountSet()
+                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
 
-            var passwordIsInvalid = !verifiedLinkedUsersAccounts.Any();
-
-            if (passwordIsInvalid)
+            if (!verifiedLinkedUsersAccounts.Any())
             {
                 ModelState.AddModelError(
-                    nameof(model.CurrentPassword),
+                    nameof(ChangePasswordViewModel.CurrentPassword),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return View(model);
             }
 

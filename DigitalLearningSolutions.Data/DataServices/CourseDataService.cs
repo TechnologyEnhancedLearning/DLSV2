@@ -157,7 +157,6 @@
                         cu.CentreID,
                         cu.Active,
                         cu.AllCentres,
-                        ap.ArchivedDate,
                         ap.ApplicationName,
                         cu.CustomisationName,
                         {DelegateCountQuery},
@@ -169,7 +168,8 @@
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
-                        AND ca.CentreID = @centreId",
+                        AND ca.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }

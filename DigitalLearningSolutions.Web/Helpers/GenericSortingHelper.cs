@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class GenericSortingHelper
     {
