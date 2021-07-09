@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -41,7 +42,7 @@
                 new List<AdminUser>(),
                 categories,
                 searchString,
-                $"CategoryName|CategoryName|Word\r\n{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
+                $"CategoryName|CategoryName|Word{FilteringHelper.FilterSeparator}{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>

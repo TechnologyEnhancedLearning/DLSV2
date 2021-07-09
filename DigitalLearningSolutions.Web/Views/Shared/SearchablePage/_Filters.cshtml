@@ -3,17 +3,15 @@
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filters</label>
 <div class="js-only-block" id="filter-select">
-  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector" id="filter-selector">
+  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector" id="filter-selector" name="filterCategorySelector" aria-label="Select filter category">
     <option value="" disabled selected="selected">Select filter category</option>
-    @foreach (var filter in Model.Filters)
-    {
+    @foreach (var filter in Model.Filters) {
       <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
     }
   </select>
 </div>
 <div id="filters-container">
-  @foreach (var filter in Model.Filters)
-  {
+  @foreach (var filter in Model.Filters) {
     <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
       <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
         <input type="hidden" name="searchString" value="@Model.SearchString" />
