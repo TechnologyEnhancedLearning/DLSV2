@@ -13,6 +13,7 @@
         private readonly ISupervisorService supervisorService;
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
+        private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IConfigService configService;
         private readonly ICustomPromptsService customPromptsService;
         private readonly ILogger<SupervisorController> logger;
@@ -21,6 +22,7 @@
            ISupervisorService supervisorService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
+           ISelfAssessmentService selfAssessmentService,
           IConfigService configService,
           ICustomPromptsService customPromptsService,
            ILogger<SupervisorController> logger,
@@ -29,6 +31,7 @@
             this.supervisorService = supervisorService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
+            this.selfAssessmentService = selfAssessmentService;
             this.configService = configService;
             this.customPromptsService = customPromptsService;
             this.logger = logger;

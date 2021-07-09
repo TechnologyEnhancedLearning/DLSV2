@@ -15,6 +15,7 @@
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
+        DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -216,6 +217,23 @@ FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
              Candidates AS c ON ca.CandidateID = c.CandidateID
 WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL)", new { adminId }
                 );
+        }
+
+        public DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId)
+        {
+            return connection.Query<DelegateSelfAssessment>(
+                @"SELECT ca.ID, sa.Name AS RoleName, cas.SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                 (SELECT COUNT(*) AS Expr1
+                 FROM    CandidateAssessmentSupervisorVerifications AS casv
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested
+                FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+                CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                SelfAssessments AS sa ON cas.ID = sa.ID LEFT OUTER JOIN
+                NRPProfessionalGroups AS pg ON sa.NRPProfessionalGroupID = pg.ID LEFT OUTER JOIN
+                NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
+                NRPRoles AS r ON sa.NRPRoleID = r.ID
+                WHERE (ca.ID = @candidateAssessmentId)", new { candidateAssessmentId, adminId }
+                ).FirstOrDefault();
         }
     }
 }

@@ -39,7 +39,7 @@
             var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            var model = new MyStaffListViewModel(supervisorDelegateDetails,centreCustomPrompts,searchString,sortBy,sortDirection,page);
+            var model = new MyStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, searchString, sortBy, sortDirection, page);
             return View("MyStaffList", model);
         }
         [HttpPost]
@@ -132,8 +132,25 @@
         {
             var adminId = GetAdminID();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-
-            return View("ReviewDelegateSelfAssessment");
+            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId).ToList();
+            foreach (var competency in reviewedCompetencies)
+            {
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                    }
+                }
+            }
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var model = new ReviewDelegateSelfAssessmentViewModel()
+            {
+                SupervisorDelegateDetail = superviseDelegate,
+                DelegateSelfAssessment = delegateSelfAssessment,
+                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+            };
+            return View("ReviewDelegateSelfAssessment", model);
         }
     }
 }

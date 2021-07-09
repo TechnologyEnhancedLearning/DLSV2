@@ -47,14 +47,7 @@
         }&nbsp;
         @if (delegateSelfAssessment.LaunchCount > 0)
         {
-          if (delegateSelfAssessment.VerificationRequested > 0)
-          {
-            <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Review</a>
-          }
-          else
-          {
-            <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">View</a>
-          }
+            <span class="nhsuk-table-responsive__heading">Actions </span><a asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">@(delegateSelfAssessment.VerificationRequested > 0 ? "Review" : "View")</a>
         }
       </td>
     </tr>

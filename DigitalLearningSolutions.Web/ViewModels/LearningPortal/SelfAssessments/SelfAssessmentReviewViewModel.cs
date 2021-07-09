@@ -7,7 +7,7 @@
     public class SelfAssessmentReviewViewModel
     {
         public CurrentSelfAssessment SelfAssessment { get; set; }
-        public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
+        public IEnumerable<IGrouping<string, ReviewedCompetency>> CompetencyGroups { get; set; }
         public int PreviousCompetencyNumber { get; set; }
     }
 }

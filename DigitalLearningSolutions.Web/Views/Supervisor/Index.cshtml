@@ -65,7 +65,7 @@
     {
       <li class="nhsuk-contents-list__item">
           <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="Supervisor" asp-route-candidateAssessmentId="@toDoItem.ID" asp-action="ReviewDelegateSelfAssessment">
-            Review profile assessment, @toDoItem.ProfileName, for @toDoItem.DelegateName (requested @toDoItem.Requested.ToShortDateString())
+            Review @toDoItem.ProfileName, for @toDoItem.DelegateName (requested @toDoItem.Requested.ToShortDateString())
           </a>
       </li>
     }
