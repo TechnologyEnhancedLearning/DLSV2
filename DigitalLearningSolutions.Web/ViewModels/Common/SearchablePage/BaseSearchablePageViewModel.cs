@@ -18,12 +18,17 @@
         public readonly string? SearchString;
 
         public int MatchingSearchResults;
+        
+        public readonly bool FilterEnabled;
+        public readonly bool SortEnabled;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
-            string sortBy,
-            string sortDirection,
             int page,
+            bool sortEnabled,
+            bool filterEnabled,
+            string? sortBy = null,
+            string? sortDirection = null,
             string? filterString = null,
             int itemsPerPage = 10
         )
@@ -33,17 +38,16 @@
             SearchString = searchString;
             FilterString = filterString;
             Page = page;
+            SortEnabled = sortEnabled;
+            FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
             this.itemsPerPage = itemsPerPage;
         }
 
-        public string SortDirection { get; set; }
 
-        public string SortBy { get; set; }
+        public string? SortDirection { get; set; }
 
-        public int Page { get; protected set; }
-
-        public int TotalPages { get; protected set; }
+        public string? SortBy { get; set; }
 
         public IEnumerable<SelectListItem> SortBySelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(SortOptions);
@@ -51,6 +55,10 @@
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
+
+        public int Page { get; protected set; }
+
+        public int TotalPages { get; protected set; }
 
         protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {

@@ -17,16 +17,22 @@ export interface SearchableData {
 
 export class SearchSortAndPaginate {
   private page: number;
+  private readonly filterEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string) {
+  constructor(route: string, filterEnabled: boolean = false) {
     this.page = 1;
+    this.filterEnabled = filterEnabled;
+
     SearchSortAndPaginate.getSearchableElements(route).then((searchableData) => {
       if (searchableData === undefined) {
         return;
       }
 
-      setupFilter(() => this.onFilterUpdated(searchableData))
+      if (filterEnabled){
+        setupFilter(() => this.onFilterUpdated(searchableData));
+      }
+
       setUpSearch(() => this.onSearchUpdated(searchableData));
       setupSort(() => this.searchSortAndPaginate(searchableData));
       setupPagination(
@@ -59,7 +65,9 @@ export class SearchSortAndPaginate {
 
   private searchSortAndPaginate(searchableData: SearchableData): void {
     const searchedElements = search(searchableData.searchableElements);
-    const filteredElements = filterSearchableElements(searchedElements, searchableData.possibleFilters);
+    const filteredElements = this.filterEnabled
+      ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
+      : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
 
     if (this.shouldDisplayResultCount()){
@@ -135,7 +143,7 @@ export class SearchSortAndPaginate {
   }
 
   private shouldDisplayResultCount(): boolean {
-    const filterString = getFilterBy();
+    const filterString = this.filterEnabled ? getFilterBy() : false;
     const searchString = getQuery();
     return filterString || searchString ? true : false;
   }

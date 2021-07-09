@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -28,25 +27,12 @@
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            int page = 1,
             string? filterBy = null,
-            string? filterValue = null
+            string? filterValue = null,
+            int page = 1
         )
         {
-            if (filterValue != null)
-            {
-                if (filterBy != null)
-                {
-                    if (!filterBy.Contains(filterValue))
-                    {
-                        filterBy = filterBy + FilteringHelper.FilterSeparator + filterValue;
-                    }
-                }
-                else
-                {
-                    filterBy = filterValue;
-                }
-            }
+            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
@@ -57,8 +43,6 @@
                 adminUsersAtCentre,
                 categories,
                 searchString,
-                DefaultSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
                 filterBy,
                 page
             );

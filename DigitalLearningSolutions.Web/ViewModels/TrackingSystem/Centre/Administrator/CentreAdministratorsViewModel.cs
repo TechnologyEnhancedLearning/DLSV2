@@ -31,17 +31,15 @@
             IEnumerable<AdminUser> adminUsers,
             IEnumerable<string> categories,
             string? searchString,
-            string sortBy,
-            string sortDirection,
             string? filterString,
             int page
-        ) : base(searchString, sortBy, sortDirection, page, filterString)
+        ) : base(searchString, page, false, true, filterString: filterString)
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
-                sortBy,
-                sortDirection
+                DefaultSortByOptions.Name.PropertyName,
+                BaseSearchablePageViewModel.Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterString).ToList();
