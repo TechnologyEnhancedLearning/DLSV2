@@ -13,7 +13,8 @@ export interface AppliedFilterTag {
   filterValue: string;
 }
 
-const newlineSeparator: string = '\r\n';
+export const separator: string ='|';
+export const filterSeparator: string = '╡';
 
 export function setupFilter(onFilterUpdated: VoidFunction): void {
   setUpFilterSubmitButtons();
@@ -63,13 +64,13 @@ function setUpClearFiltersButton() {
 }
 
 function getAppliedFilters(filterBy: string): AppliedFilter[] {
-  return filterBy.split(newlineSeparator).map((filter) => {
+  return filterBy.split(filterSeparator).map((filter) => {
     return newAppliedFilterFromFilter(filter);
   });
 }
 
 function newAppliedFilterFromFilter(filter: string): AppliedFilter {
-  const splitFilter = filter.split('|');
+  const splitFilter = filter.split(separator);
   return <AppliedFilter>{
     group: splitFilter[0],
     propertyName: splitFilter[1],
@@ -104,7 +105,7 @@ function addNewFilterToFilterBy(filterValue: string): void {
   if (!filterBy.includes(filterValue)) {
     let newFilter;
     if (filterBy) {
-      newFilter = filterBy + newlineSeparator + filterValue;
+      newFilter = filterBy + filterSeparator + filterValue;
     } else {
       newFilter = filterValue;
     }
@@ -165,7 +166,7 @@ function clearAppliedFilters() {
 
 function updateAppliedFilters(filterBy: string, possibleFilters: AppliedFilterTag[]) {
   const appliedFilterContainer = getAppliedFilterContainer();
-  const listOfFilters = filterBy.split(newlineSeparator);
+  const listOfFilters = filterBy.split(filterSeparator);
   appliedFilterContainer.textContent = '';
   listOfFilters.forEach(
     (filter) => appliedFilterContainer.appendChild(getMatchingFilterTag(possibleFilters, filter)),

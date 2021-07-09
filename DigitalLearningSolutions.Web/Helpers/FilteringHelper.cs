@@ -9,13 +9,14 @@
     public static class FilteringHelper
     {
         public const char Separator = '|';
+        public const char FilterSeparator = '╡';
 
         public static IEnumerable<T> FilterItems<T>(
             IQueryable<T> items,
             string? filterBy
         ) where T : BaseSearchableItem
         {
-            var listOfFilters = NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(filterBy);
+            var listOfFilters = filterBy?.Split(FilterSeparator).ToList() ?? new List<string>();
 
             var appliedFilters = listOfFilters.Select(filter => new AppliedFilter(filter));
 

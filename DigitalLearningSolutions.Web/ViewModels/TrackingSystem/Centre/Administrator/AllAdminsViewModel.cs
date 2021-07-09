@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 

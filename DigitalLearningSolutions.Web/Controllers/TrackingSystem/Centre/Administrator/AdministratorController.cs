@@ -35,7 +35,17 @@
         {
             if (filterValue != null)
             {
-                filterBy = NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(filterBy, filterValue);
+                if (filterBy != null)
+                {
+                    if (!filterBy.Contains(filterValue))
+                    {
+                        filterBy = filterBy + FilteringHelper.FilterSeparator + filterValue;
+                    }
+                }
+                else
+                {
+                    filterBy = filterValue;
+                }
             }
 
             var centreId = User.GetCentreId();

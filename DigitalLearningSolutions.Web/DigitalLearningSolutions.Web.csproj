@@ -86,6 +86,7 @@
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\search.ts" />
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\searchSortAndPaginate.ts" />
     <TypeScriptCompile Include="Scripts\searchSortAndPaginate\sort.ts" />
+    <TypeScriptCompile Include="Scripts\spec\filter.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\getSearchableElements.ts" />
     <TypeScriptCompile Include="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\paginate.spec.ts" />

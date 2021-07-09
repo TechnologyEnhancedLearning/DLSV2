@@ -63,9 +63,9 @@ export class SearchSortAndPaginate {
     const sortedElements = sortSearchableElements(filteredElements);
 
     if (this.shouldDisplayResultCount()){
-      this.updateResultCount(sortedElements.length);
+      SearchSortAndPaginate.updateResultCount(sortedElements.length);
     } else {
-      this.hideResultCount();
+      SearchSortAndPaginate.hideResultCount();
     }
 
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
@@ -147,14 +147,14 @@ export class SearchSortAndPaginate {
     return filterString || searchString ? true : false;
   }
 
-  private updateResultCount(count: number): void {
+  static updateResultCount(count: number): void {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
     resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
   }
 
-  private hideResultCount(): void {
+  static hideResultCount(): void {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
     resultCount.hidden = true;
     resultCount.setAttribute('aria-hidden', 'true');
