@@ -12,7 +12,7 @@
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public partial class SupervisorController
     {

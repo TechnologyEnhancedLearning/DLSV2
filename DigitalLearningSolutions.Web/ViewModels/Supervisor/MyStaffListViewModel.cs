@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using System.Collections.Generic;
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
