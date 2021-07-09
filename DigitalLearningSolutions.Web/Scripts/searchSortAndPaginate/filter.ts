@@ -136,6 +136,7 @@ function hideAllFilterDropdowns(): void {
   for (let dropdown of allDropdowns) {
     const dropdownElement = <HTMLElement>dropdown;
     dropdownElement.hidden = true;
+    dropdownElement.setAttribute('aria-hidden', 'true');
   }
 }
 
@@ -146,6 +147,7 @@ function showSelectedFilterDropdown(): void {
   const selectedDropdown = selector.value;
   const selectedDropdownElement = <HTMLElement>document.getElementById(selectedDropdown);
   selectedDropdownElement.hidden = false;
+  selectedDropdownElement.setAttribute('aria-hidden', 'false');
 }
 
 function resetFilterSelectorDropdown(): void {
@@ -184,11 +186,13 @@ function updateAllFilterByElementsByName(newFilter: string): void {
 function showAppliedFilters(): void {
   const element = getAppliedFiltersElement();
   element.hidden = false;
+  element.setAttribute('aria-hidden', 'false');
 }
 
 function hideAppliedFilters(): void {
   const element = getAppliedFiltersElement();
   element.hidden = true;
+  element.setAttribute('aria-hidden', 'true');
 }
 
 function clearAppliedFilters() {
