@@ -40,6 +40,72 @@ describe('filter', () => {
     expect(filteredElements.length).toBe(1);
     expect(filteredElements[0].title).toBe('b: Course');
   });
+
+  it('should return expected results with 2 filters in the same group', () => {
+    // Given
+    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c`);
+    const test = document.documentElement.innerHTML;
+
+    // When
+    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+
+    // Then
+    expect(filteredElements.length).toBe(2);
+    expect(filteredElements[0].title).toBe('a: Course');
+  });
+
+  it('should return expected results with a mix of grouped and ungrouped filters', () => {
+    // Given
+    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`);
+    const test = document.documentElement.innerHTML;
+
+    // When
+    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+
+    // Then
+    expect(filteredElements.length).toBe(1);
+    expect(filteredElements[0].title).toBe('c: Course');
+  });
+});
+
+describe('applied filters', () => {
+  it('should be hidden with no filter', () => {
+    // Given
+    createFilterableElements('');
+
+    // When
+    filterSearchableElements(getSearchableElements(), getPossibleFilters());
+
+    // Then
+    const appliedFilters = document.getElementById('applied-filters');
+    expect(appliedFilters?.hidden).toBeTruthy();
+  });
+
+  it('should be visible with a filter', () => {
+    // Given
+    createFilterableElements('Number|Number|2');
+
+    // When
+    filterSearchableElements(getSearchableElements(), getPossibleFilters());
+
+    // Then
+    const appliedFilters = document.getElementById('applied-filters');
+    expect(appliedFilters?.hidden).toBeFalsy();
+  });
+});
+
+describe('applied filter container', () => {
+  it('should have the same number of children as there are filters', () => {
+    // Given
+    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`);
+
+    // When
+    filterSearchableElements(getSearchableElements(), getPossibleFilters());
+
+    // Then
+    const appliedFilters = document.getElementById('applied-filter-container');
+    expect(appliedFilters?.children.length).toBe(3);
+  });
 });
 
 function getPossibleFilters(): AppliedFilterTag[] {
@@ -56,7 +122,7 @@ function createFilterableElements(filterBy: string) {
       <head></head>
       <body>
         <input type="text" id="filter-by" value="${filterBy}"/>
-        <div id="applied-filters">
+        <div id="applied-filters" hidden>
             <div class="applied-filter-container" id="applied-filter-container"></div>
         </div>
         <span id="page-indicator"></span>
@@ -80,7 +146,7 @@ function createFilterableElements(filterBy: string) {
             </div>
           </div>
           <div class="searchable-element" id="course-c">
-            <span name="name" class="searchable-element-title">a: Course</span>
+            <span name="name" class="searchable-element-title">c: Course</span>
             <div class="card-filter-tag" data-filter-value="Name|Name|c">
               <strong>Name: c</strong>
             </div>
@@ -91,6 +157,7 @@ function createFilterableElements(filterBy: string) {
         </div>
         <div class="filter-tag" data-filter-value="Name|Name|a">Name: a</div>
         <div class="filter-tag" data-filter-value="Name|Name|b">Name: b</div>
+        <div class="filter-tag" data-filter-value="Name|Name|c">Name: c</div>
         <div class="filter-tag" data-filter-value="Number|Number|1">Number: 1</div>
         <div class="filter-tag" data-filter-value="Number|Number|2">Number: 2</div>
         <div class="nhsuk-pagination-item--previous"></div>
