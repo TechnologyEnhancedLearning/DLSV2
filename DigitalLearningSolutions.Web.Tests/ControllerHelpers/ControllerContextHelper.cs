@@ -19,6 +19,7 @@
         public const string EmailAddress = "email";
         public const bool IsCentreAdmin = false;
         public const bool IsFrameworkDeveloper = false;
+        public const int AdminCategoryId = 0;
 
         public static T WithDefaultContext<T>(this T controller) where T : Controller
         {
@@ -48,7 +49,8 @@
             int? delegateId = DelegateId,
             string? emailAddress = EmailAddress,
             bool isCentreAdmin = IsCentreAdmin,
-            bool isFrameworkDeveloper = IsFrameworkDeveloper
+            bool isFrameworkDeveloper = IsFrameworkDeveloper,
+            int adminCategoryId = AdminCategoryId
         ) where T : Controller
         {
             var authenticationType = isAuthenticated ? "mock" : string.Empty;
@@ -63,7 +65,8 @@
                         new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
                         new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
-                        new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString())
+                        new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
+                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString())
                     },
                     authenticationType
                 )

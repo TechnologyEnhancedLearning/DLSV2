@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -105,6 +104,27 @@
 
             // Then
             result.Should().BeEquivalentTo("Role type");
+        }
+
+        [Test]
+        public void GetCourseCustomPrompts_returns_populated_CourseCustomPromptsResult()
+        {
+            // Given
+            var expectedCourseCustomPromptsResult =
+                CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult(
+                    1379,
+                    customField1Prompt: null,
+                    customField1Options: "Yes\nNo\nNot sure",
+                    customField1Mandatory: true,
+                    customField2Prompt: null,
+                    customField2Options:"Yes\nNo\nNot sure"
+                    );
+
+            // When
+            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
+
+            // Then
+            returnedCourseCustomPromptsResult.Should().BeEquivalentTo(expectedCourseCustomPromptsResult);
         }
     }
 }

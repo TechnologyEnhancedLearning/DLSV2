@@ -14,6 +14,16 @@
             return new CentreCustomPrompts(centreId, customPrompts);
         }
 
+        public static CourseCustomPrompts GetDefaultCourseCustomPrompts
+        (
+            List<CustomPrompt> customPrompts,
+            int customisationId = 27920,
+            int centreId = 101
+        )
+        {
+            return new CourseCustomPrompts(customisationId, centreId, customPrompts);
+        }
+
         public static CustomPrompt GetDefaultCustomPrompt
         (
             int promptNumber,
@@ -90,6 +100,36 @@
                 CustomField6Prompt = customField6Prompt,
                 CustomField6Options = customField6Options,
                 CustomField6Mandatory = customField6Mandatory
+            };
+        }
+
+        public static CourseCustomPromptsResult GetDefaultCourseCustomPromptsResult(
+            int customisationId = 27920,
+            int centreId = 101,
+            string? customField1Prompt = "System Access Granted",
+            string? customField1Options = "Yes\r\nNo",
+            bool customField1Mandatory = false,
+            string? customField2Prompt = "Access Permissions",
+            string? customField2Options = "",
+            bool customField2Mandatory = false,
+            string? customField3Prompt = null,
+            string? customField3Options = "",
+            bool customField3Mandatory = false
+        )
+        {
+            return new CourseCustomPromptsResult
+            {
+                CustomisationId = customisationId,
+                CentreId = centreId,
+                CustomField1Prompt = customField1Prompt,
+                CustomField1Options = customField1Options,
+                CustomField1Mandatory = customField1Mandatory,
+                CustomField2Prompt = customField2Prompt,
+                CustomField2Options = customField2Options,
+                CustomField2Mandatory = customField2Mandatory,
+                CustomField3Prompt = customField3Prompt,
+                CustomField3Options = customField3Options,
+                CustomField3Mandatory = customField3Mandatory
             };
         }
     }
