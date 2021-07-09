@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
@@ -15,12 +11,14 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre
         [Test]
         public void UsageStatsTableViewModel_reverses_data_in_time()
         {
-            // when
+            // given
             var monthlyData = new[]
             {
                 new MonthOfActivity((1, 2001), null),
                 new MonthOfActivity((2, 2002), null)
             };
+
+            // when
             var model = new UsageStatsTableViewModel(monthlyData);
 
             // then
