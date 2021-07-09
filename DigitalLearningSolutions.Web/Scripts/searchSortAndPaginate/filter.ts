@@ -19,6 +19,8 @@ export const filterSeparator: string = '╡';
 export function setupFilter(onFilterUpdated: VoidFunction): void {
   setUpFilterSubmitButtons();
   setUpClearFiltersButton();
+  setUpFilterSelectorDropdown();
+  hideAllFilterDropdowns();
   document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
 }
 
@@ -52,6 +54,8 @@ function setUpFilterSubmitButtons() {
     element.addEventListener('click', (e) => {
       e.preventDefault();
       appendNewFilterToFilterBy(element);
+      hideAllFilterDropdowns();
+      resetFilterSelectorDropdown();
     });
   }
 }
@@ -60,6 +64,12 @@ function setUpClearFiltersButton() {
   document.getElementById('clear-filters')?.addEventListener('click', (e) => {
     e.preventDefault();
     clearFilters();
+  })
+}
+
+function setUpFilterSelectorDropdown() {
+  document.getElementById('filter-selector')?.addEventListener('change', (e) => {
+    showSelectedFilterDropdown();
   })
 }
 
@@ -119,6 +129,28 @@ function clearFilters(): void {
   updateFilterByById('');
   clearAppliedFilters();
   hideAppliedFilters();
+}
+
+function hideAllFilterDropdowns(): void {
+  const allDropdowns = Array.from(document.getElementsByClassName('filter-dropdown-container'));
+  for (let dropdown of allDropdowns) {
+    const dropdownElement = <HTMLElement>dropdown;
+    dropdownElement.hidden = true;
+  }
+}
+
+function showSelectedFilterDropdown(): void {
+  hideAllFilterDropdowns();
+
+  const selector = getFilterSelectorDropdown();
+  const selectedDropdown = selector.value;
+  const selectedDropdownElement = <HTMLElement>document.getElementById(selectedDropdown);
+  selectedDropdownElement.hidden = false;
+}
+
+function resetFilterSelectorDropdown(): void {
+  const selector = getFilterSelectorDropdown();
+  selector.selectedIndex = 0;
 }
 
 function doesElementMatchFilterValue(searchableElement: SearchableElement, filter: string): boolean {
@@ -183,5 +215,9 @@ function getAppliedFilterContainer(): Element {
 
 function getAppliedFiltersElement(): HTMLElement {
   return <HTMLElement>document.getElementById('applied-filters');
+}
+
+function getFilterSelectorDropdown(): HTMLSelectElement {
+  return <HTMLSelectElement>document.getElementById('filter-selector');
 }
 
