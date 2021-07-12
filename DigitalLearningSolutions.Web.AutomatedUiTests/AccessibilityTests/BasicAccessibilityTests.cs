@@ -40,6 +40,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
+        [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
