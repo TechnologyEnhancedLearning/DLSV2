@@ -4,7 +4,6 @@
 import { JSDOM } from 'jsdom';
 import { SearchSortAndPaginate } from '../searchSortAndPaginate/searchSortAndPaginate';
 import getSearchableElements from './getSearchableElements';
-import * as searchCourses from "../searchSortAndPaginate/search";
 
 describe('titleFromCardElement', () => {
   it('correctly extracts the title', () => {
@@ -190,5 +189,3 @@ function createCourseCards() {
       </html>
     `).window.document;
 }
-
-

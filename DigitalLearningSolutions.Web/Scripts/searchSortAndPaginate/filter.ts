@@ -1,5 +1,5 @@
-﻿import * as _ from 'lodash';
-import {SearchableElement} from './searchSortAndPaginate';
+import * as _ from 'lodash';
+import { SearchableElement } from './searchSortAndPaginate';
 
 export interface AppliedFilter {
   group: string;
@@ -13,8 +13,8 @@ export interface AppliedFilterTag {
   filterValue: string;
 }
 
-export const separator: string ='|';
-export const filterSeparator: string = '╡';
+export const separator = '|';
+export const filterSeparator = '╡';
 
 export function setupFilter(onFilterUpdated: VoidFunction): void {
   setUpFilterSubmitButtons();
@@ -25,31 +25,37 @@ export function setupFilter(onFilterUpdated: VoidFunction): void {
 }
 
 export function filterSearchableElements(
-  searchableElements: SearchableElement[], possibleFilters: AppliedFilterTag[]
+  searchableElements: SearchableElement[], possibleFilters: AppliedFilterTag[],
 ): SearchableElement[] {
+  let filteredSearchableElements = searchableElements;
   const filterBy = getFilterBy();
   const appliedFilters = getAppliedFilters(filterBy);
 
   const filterGroups = _.groupBy(appliedFilters, (filter) => filter.group);
 
   _.forEach(filterGroups, (appliedFiltersInGroup) => {
-    const itemsToFilter = searchableElements;
-    const setOfFilteredLists = _.map(appliedFiltersInGroup, (af) => filterElements(itemsToFilter, af));
+    const itemsToFilter = filteredSearchableElements;
+    const setOfFilteredLists = _.map(
+      appliedFiltersInGroup,
+      (af) => filterElements(itemsToFilter, af),
+    );
     const flattenedElements = _.flatten(setOfFilteredLists);
-    searchableElements = _.uniq(flattenedElements);
-  })
+    filteredSearchableElements = _.uniq(flattenedElements);
+  });
 
   if (filterBy) {
     updateAppliedFilters(filterBy, possibleFilters);
     showAppliedFilters();
   }
 
-  return searchableElements;
+  return filteredSearchableElements;
 }
 
 function setUpFilterSubmitButtons() {
-  const filterSubmits = Array.from(document.getElementsByClassName('filter-submit__dropdown'));
-  for (let filterSubmit of filterSubmits) {
+  const filterSubmits = Array.from(
+    document.getElementsByClassName('filter-submit__dropdown'),
+  );
+  filterSubmits.forEach((filterSubmit) => {
     const element = <HTMLInputElement>filterSubmit;
     element.addEventListener('click', (e) => {
       e.preventDefault();
@@ -57,26 +63,27 @@ function setUpFilterSubmitButtons() {
       hideAllFilterDropdowns();
       resetFilterSelectorDropdown();
     });
-  }
+  });
 }
 
 function setUpClearFiltersButton() {
-  document.getElementById('clear-filters')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    clearFilters();
-  })
+  document.getElementById('clear-filters')?.
+    addEventListener('click', (e) => {
+      e.preventDefault();
+      clearFilters();
+    });
 }
 
 function setUpFilterSelectorDropdown() {
-  document.getElementById('filter-selector')?.addEventListener('change', (e) => {
-    showSelectedFilterDropdown();
-  })
+  document.getElementById('filter-selector')?.
+    addEventListener('change', () => {
+      showSelectedFilterDropdown();
+    });
 }
 
 function getAppliedFilters(filterBy: string): AppliedFilter[] {
-  return filterBy.split(filterSeparator).map((filter) => {
-    return newAppliedFilterFromFilter(filter);
-  });
+  return filterBy.split(filterSeparator)
+    .map((filter) => newAppliedFilterFromFilter(filter));
 }
 
 function newAppliedFilterFromFilter(filter: string): AppliedFilter {
@@ -85,24 +92,28 @@ function newAppliedFilterFromFilter(filter: string): AppliedFilter {
     group: splitFilter[0],
     propertyName: splitFilter[1],
     propertyValue: splitFilter[2],
-    filterValue: filter
-  }
+    filterValue: filter,
+  };
 }
 
-function filterElements(searchableElements: SearchableElement[], appliedFilter: AppliedFilter): SearchableElement[] {
+function filterElements(
+  searchableElements: SearchableElement[],
+  appliedFilter: AppliedFilter,
+): SearchableElement[] {
   return _.filter<SearchableElement>(
     searchableElements,
-    function (o) {
-      return doesElementMatchFilterValue(o, appliedFilter.filterValue);
-    });
+    (o) => doesElementMatchFilterValue(o, appliedFilter.filterValue),
+  );
 }
 
 function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): void {
-  const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit)
+  const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
   addNewFilterToFilterBy(filterValue);
 }
 
-function getSelectedFilterFromDropdownAndResetDropdown(filterSubmit: HTMLInputElement): string {
+function getSelectedFilterFromDropdownAndResetDropdown(
+  filterSubmit: HTMLInputElement,
+): string {
   const filterId = filterSubmit.id.replace('-submit', '');
   const filterElement = <HTMLSelectElement>document.getElementById(filterId);
   const filterValue = filterElement.value;
@@ -132,12 +143,14 @@ function clearFilters(): void {
 }
 
 function hideAllFilterDropdowns(): void {
-  const allDropdowns = Array.from(document.getElementsByClassName('filter-dropdown-container'));
-  for (let dropdown of allDropdowns) {
+  const allDropdowns = Array.from(
+    document.getElementsByClassName('filter-dropdown-container'),
+  );
+  allDropdowns.forEach((dropdown) => {
     const dropdownElement = <HTMLElement>dropdown;
     dropdownElement.hidden = true;
     dropdownElement.setAttribute('aria-hidden', 'true');
-  }
+  });
 }
 
 function showSelectedFilterDropdown(): void {
@@ -155,8 +168,12 @@ function resetFilterSelectorDropdown(): void {
   selector.selectedIndex = 0;
 }
 
-function doesElementMatchFilterValue(searchableElement: SearchableElement, filter: string): boolean {
-  const filterElement = searchableElement.element.querySelector(`[data-filter-value="${filter}"]`);
+function doesElementMatchFilterValue(
+  searchableElement: SearchableElement,
+  filter: string,
+): boolean {
+  const filterElement = searchableElement.element
+    .querySelector(`[data-filter-value="${filter}"]`);
   const filterValue = filterElement?.getAttribute('data-filter-value')?.trim() ?? '';
   return filterValue === filter;
 }
@@ -177,10 +194,10 @@ function getFilterByElement(): HTMLInputElement {
 
 function updateAllFilterByElementsByName(newFilter: string): void {
   const filterByElements = Array.from(document.getElementsByName('filterBy'));
-  for (let filterElement of filterByElements) {
+  filterByElements.forEach((filterElement) => {
     const element = <HTMLInputElement>filterElement;
     element.value = newFilter;
-  }
+  });
 }
 
 function showAppliedFilters(): void {
@@ -210,7 +227,11 @@ function updateAppliedFilters(filterBy: string, possibleFilters: AppliedFilterTa
 }
 
 function getMatchingFilterTag(possibleFilters: AppliedFilterTag[], filter: string): Element {
-  return _.find(possibleFilters, (pf) => pf.filterValue === filter)!.element;
+  const appliedFilterTag = <AppliedFilterTag>_.find(
+    possibleFilters,
+    (pf) => pf.filterValue === filter,
+  );
+  return appliedFilterTag.element;
 }
 
 function getAppliedFilterContainer(): Element {
@@ -224,4 +245,3 @@ function getAppliedFiltersElement(): HTMLElement {
 function getFilterSelectorDropdown(): HTMLSelectElement {
   return <HTMLSelectElement>document.getElementById('filter-selector');
 }
-

@@ -1,6 +1,8 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
-import {setupFilter, filterSearchableElements, getFilterBy, AppliedFilterTag} from './filter'
-import {getQuery, search, setUpSearch} from './search';
+import {
+  setupFilter, filterSearchableElements, getFilterBy, AppliedFilterTag,
+} from './filter';
+import { getQuery, search, setUpSearch } from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
 import getPathForEndpoint from '../common';
@@ -17,10 +19,11 @@ export interface SearchableData {
 
 export class SearchSortAndPaginate {
   private page: number;
+
   private readonly filterEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string, filterEnabled: boolean = false) {
+  constructor(route: string, filterEnabled = false) {
     this.page = 1;
     this.filterEnabled = filterEnabled;
 
@@ -29,7 +32,7 @@ export class SearchSortAndPaginate {
         return;
       }
 
-      if (filterEnabled){
+      if (filterEnabled) {
         setupFilter(() => this.onFilterUpdated(searchableData));
       }
 
@@ -70,7 +73,7 @@ export class SearchSortAndPaginate {
       : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
 
-    if (this.shouldDisplayResultCount()){
+    if (this.shouldDisplayResultCount()) {
       SearchSortAndPaginate.updateResultCount(sortedElements.length);
     } else {
       SearchSortAndPaginate.hideResultCount();
@@ -99,9 +102,9 @@ export class SearchSortAndPaginate {
           filterValue: SearchSortAndPaginate.filterValueFromElement(element),
         }));
         return {
-          searchableElements: searchableElements,
-          possibleFilters: possibleAppliedFilters
-        }
+          searchableElements,
+          possibleFilters: possibleAppliedFilters,
+        };
       });
   }
 
@@ -145,7 +148,7 @@ export class SearchSortAndPaginate {
   private shouldDisplayResultCount(): boolean {
     const filterString = this.filterEnabled ? getFilterBy() : false;
     const searchString = getQuery();
-    return filterString || searchString ? true : false;
+    return !!(filterString || searchString);
   }
 
   static updateResultCount(count: number): void {

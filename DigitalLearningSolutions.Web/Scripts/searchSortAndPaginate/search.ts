@@ -29,11 +29,11 @@ export function search(searchableElements: SearchableElement[]): SearchableEleme
   return results;
 }
 
-export function getQuery() {
+export function getQuery(): string {
   const searchBox = getSearchBox();
   return searchBox.value;
 }
 
-function getSearchBox() {
+function getSearchBox(): HTMLInputElement {
   return <HTMLInputElement>document.getElementById('search-field');
 }

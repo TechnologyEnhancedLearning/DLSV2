@@ -1,6 +1,6 @@
-﻿/* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/ban-ts-comment */
 import { JSDOM } from 'jsdom';
-import {AppliedFilterTag, filterSearchableElements, filterSeparator} from '../searchSortAndPaginate/filter';
+import { AppliedFilterTag, filterSearchableElements, filterSeparator } from '../searchSortAndPaginate/filter';
 import getSearchableElements from './getSearchableElements';
 
 describe('filter', () => {
@@ -9,7 +9,10 @@ describe('filter', () => {
     createFilterableElements('');
 
     // When
-    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+    const filteredElements = filterSearchableElements(
+      getSearchableElements(),
+      getPossibleFilters(),
+    );
 
     // Then
     expect(filteredElements.length).toBe(3);
@@ -21,7 +24,10 @@ describe('filter', () => {
     createFilterableElements('Number|Number|2');
 
     // When
-    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+    const filteredElements = filterSearchableElements(
+      getSearchableElements(),
+      getPossibleFilters(),
+    );
 
     // Then
     expect(filteredElements.length).toBe(2);
@@ -31,10 +37,12 @@ describe('filter', () => {
   it('should return expected results with 2 filters in different groups', () => {
     // Given
     createFilterableElements(`Number|Number|2${filterSeparator}Name|Name|b`);
-    const test = document.documentElement.innerHTML;
 
     // When
-    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+    const filteredElements = filterSearchableElements(
+      getSearchableElements(),
+      getPossibleFilters(),
+    );
 
     // Then
     expect(filteredElements.length).toBe(1);
@@ -44,10 +52,12 @@ describe('filter', () => {
   it('should return expected results with 2 filters in the same group', () => {
     // Given
     createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c`);
-    const test = document.documentElement.innerHTML;
 
     // When
-    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+    const filteredElements = filterSearchableElements(
+      getSearchableElements(),
+      getPossibleFilters(),
+    );
 
     // Then
     expect(filteredElements.length).toBe(2);
@@ -56,11 +66,15 @@ describe('filter', () => {
 
   it('should return expected results with a mix of grouped and ungrouped filters', () => {
     // Given
-    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`);
-    const test = document.documentElement.innerHTML;
+    createFilterableElements(
+      `Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`,
+    );
 
     // When
-    const filteredElements = filterSearchableElements(getSearchableElements(), getPossibleFilters());
+    const filteredElements = filterSearchableElements(
+      getSearchableElements(),
+      getPossibleFilters(),
+    );
 
     // Then
     expect(filteredElements.length).toBe(1);
@@ -97,7 +111,9 @@ describe('applied filters', () => {
 describe('applied filter container', () => {
   it('should have the same number of children as there are filters', () => {
     // Given
-    createFilterableElements(`Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`);
+    createFilterableElements(
+      `Name|Name|a${filterSeparator}Name|Name|c${filterSeparator}Number|Number|1`,
+    );
 
     // When
     filterSearchableElements(getSearchableElements(), getPossibleFilters());
