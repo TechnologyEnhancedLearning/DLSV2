@@ -39,7 +39,7 @@
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
                 DefaultSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending
+                Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterString).ToList();

@@ -3,7 +3,10 @@
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filters</label>
 <div class="js-only-block" id="filter-select">
-  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector" id="filter-selector" name="filterCategorySelector" aria-label="Select filter category">
+  <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector"
+          id="filter-selector"
+          name="filterCategorySelector"
+          aria-label="Select filter category">
     <option value="" disabled selected="selected">Select filter category</option>
     @foreach (var filter in Model.Filters) {
       <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
@@ -20,7 +23,10 @@
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
         }
-        <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
+        <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
+                name="filterValue"
+                id="@filter.FilterProperty"
+                aria-label="@filter.FilterName filter">
           <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
           @foreach (var filterOption in filter.FilterOptions) {
             <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>

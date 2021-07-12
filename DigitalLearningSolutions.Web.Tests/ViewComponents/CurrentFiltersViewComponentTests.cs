@@ -47,7 +47,11 @@
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
-                new AppliedFilterViewModel(AdminRoleFilterOptions.CentreAdministrator.DisplayText, "Role", AdminRoleFilterOptions.CentreAdministrator.FilterValue),
+                new AppliedFilterViewModel(
+                    AdminRoleFilterOptions.CentreAdministrator.DisplayText,
+                    "Role",
+                    AdminRoleFilterOptions.CentreAdministrator.FilterValue
+                ),
                 new AppliedFilterViewModel("Word", "Category", "CategoryName|CategoryName|Word")
             };
 
