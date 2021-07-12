@@ -6,7 +6,7 @@
 
     public class CentreRankingViewModel
     {
-        public CentreRankingViewModel(IEnumerable<CentreRanking> centreRanks, int centreId)
+        public CentreRankingViewModel(IEnumerable<CentreRanking> centreRanks, int centreId, int? regionId, int? period)
         {
             var centreRanksList = centreRanks.ToList();
 
@@ -26,5 +26,9 @@
         public IEnumerable<CentreRankViewModel> Centres { get; set; }
 
         public bool CentreHasNoActivity { get; set; }
+
+        public int? RegionId { get; set; }
+
+        public int? Period { get; set; }
     }
 }

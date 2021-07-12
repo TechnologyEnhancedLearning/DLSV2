@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration
-
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Ranking
 @using Microsoft.Extensions.Configuration
@@ -19,7 +18,7 @@
 }
 
 @section NavBreadcrumbs {
-  <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml"/>
+  <partial name="~/Views/TrackingSystem/Shared/_CentreDashboardBreadcrumbs.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
@@ -27,7 +26,42 @@
     <h1 class="nhsuk-heading-xl">Centre ranking</h1>
 
     <p class="nhsuk-body-l">The top ten Digital Learning Solutions centres by learner course launches.</p>
+  </div>
+</div>
 
+<div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+  <form method="get" asp-controller="Ranking" asp-action="Index">
+    <div class="nhsuk-grid-column-one-quarter">
+      <vc:select-list asp-for="RegionId"
+                      label="Region"
+                      value="@Model.RegionId.ToString()"
+                      hint-text=""
+                      deselectable="true"
+                      css-class="nhsuk-u-width-full"
+                      default-option="All"
+                      select-list-options="@ViewBag.RegionOptions" />
+    </div>
+    <div class="nhsuk-grid-column-one-quarter">
+      <vc:select-list asp-for="Period"
+                      label="Period"
+                      value="@Model.Period.ToString()"
+                      hint-text=""
+                      deselectable="true"
+                      css-class="nhsuk-u-width-full"
+                      default-option="@null"
+                      select-list-options="@ViewBag.PeriodOptions" />
+    </div>
+    <div class="nhsuk-grid-column-one-quarter">
+      <div class="nhsuk-label desktop-only-spacing">
+        &nbsp;
+      </div>
+      <button class="nhsuk-search__submit filter-submit__dropdown" type="submit">Apply filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
     @if (User.HasSuperAdminPermissions()) {
       <partial name="_RankingSuperAdminTable" model="Model" />
     } else {
@@ -36,7 +70,9 @@
 
     @if (Model.CentreHasNoActivity) {
       <p class="current-centre nhsuk-body-l nhsuk-u-padding-left-2 nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3"
-         aria-current="true">Your centre overall rank: no activity</p>
+         aria-current="true">
+        Your centre overall rank: no activity
+      </p>
     }
   </div>
 </div>

@@ -28,7 +28,7 @@
         public void CentreRankingViewModel_populates_expected_values_from_centre_ranks_with_centre_in_top_ten()
         {
             // When
-            var result = new CentreRankingViewModel(centreRankings, 3);
+            var result = new CentreRankingViewModel(centreRankings, 3, null, null);
 
             // Then
             using (new AssertionScope())
@@ -46,7 +46,7 @@
             var centreRankingsWithExtraCentre = centreRankings.Append(CentreTestHelper.GetCentreRank(20));
 
             // When
-            var result = new CentreRankingViewModel(centreRankingsWithExtraCentre, 20);
+            var result = new CentreRankingViewModel(centreRankingsWithExtraCentre, 20, null, null);
 
             // Then
             using (new AssertionScope())
@@ -61,7 +61,7 @@
             CentreRankingViewModel_populates_expected_values_from_centre_ranks_when_centre_has_no_data()
         {
             // When
-            var result = new CentreRankingViewModel(centreRankings, 20);
+            var result = new CentreRankingViewModel(centreRankings, 20, null, null);
 
             // Then
             using (new AssertionScope())
@@ -78,7 +78,7 @@
             var shortedCentreRankings = centreRankings.Take(5);
 
             // When
-            var result = new CentreRankingViewModel(shortedCentreRankings, 20);
+            var result = new CentreRankingViewModel(shortedCentreRankings, 20, null, null);
 
             // Then
             using (new AssertionScope())
