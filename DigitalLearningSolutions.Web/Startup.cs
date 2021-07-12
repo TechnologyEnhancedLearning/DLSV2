@@ -181,6 +181,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
 
             RegisterWebServiceFilters(services);
         }
