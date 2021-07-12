@@ -5,11 +5,11 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ReviewDelegateSelfAssessmentViewModel
+    public class ReviewSelfAssessmentViewModel
     {
         public SupervisorDelegateDetail? SupervisorDelegateDetail { get; set; }
         public DelegateSelfAssessment DelegateSelfAssessment { get; set; }
-        public IEnumerable<IGrouping<string, ReviewedCompetency>> CompetencyGroups { get; set; }
+        public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
 
     }
 }

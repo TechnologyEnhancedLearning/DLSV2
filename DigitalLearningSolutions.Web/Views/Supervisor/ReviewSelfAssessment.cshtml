@@ -1,0 +1,85 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@model ReviewSelfAssessmentViewModel;
+@{
+  ViewData["Title"] = "Review Self Assessment";
+  ViewData["Application"] = "Supervisor";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+             asp-action="DelegateProfileAssessments"
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
+          </li>
+        <li class="nhsuk-breadcrumb__item">
+          @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+        </li>
+        </ol>
+    </div>
+  </nav>
+}
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+    </h1>
+  </summary>
+  <div class="nhsuk-details__text">
+    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+  </div>
+</details>
+<h2>@Model.DelegateSelfAssessment.RoleName</h2>
+@if (Model.CompetencyGroups.Any())
+{
+  foreach (var competencyGroup in Model.CompetencyGroups)
+  {
+    <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
+      <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Capability
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Question
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Response
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Status
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+        @foreach (var competency in competencyGroup)
+        {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Capability </span>@competency.Name
+          </td>
+          <partial name="Shared/_AssessmentQuestionReviewCells" model="competency.AssessmentQuestions.First()" />
+        </tr>
+            @foreach (var question in competency.AssessmentQuestions.Skip(1))
+            {
+            <tr role="row" class="nhsuk-table__row">
+              <partial name="Shared/_AssessmentQuestionReviewCells" model="question" />
+              </tr>
+              }
+          }
+          </tbody>
+      </table>  
+        }
+        }

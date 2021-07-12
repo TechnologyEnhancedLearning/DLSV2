@@ -83,7 +83,7 @@
             // Given
             const int competencyNumber = 1;
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var competency = new ReviewedCompetency();
+            var competency = new Competency();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetNthCompetency(competencyNumber, selfAssessment.Id, CandidateId)).Returns(competency);
             var expectedModel = new SelfAssessmentCompetencyViewModel(selfAssessment, competency, competencyNumber, selfAssessment.NumberOfCompetencies);
@@ -246,10 +246,10 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var competencies = new List<ReviewedCompetency>()
+            var competencies = new List<Competency>()
             {
-                new ReviewedCompetency() { CompetencyGroup = "A" },
-                new ReviewedCompetency() { CompetencyGroup = "A" }
+                new Competency() { CompetencyGroup = "A" },
+                new Competency() { CompetencyGroup = "A" }
             };
             var expectedModel = new SelfAssessmentReviewViewModel()
             {
@@ -300,7 +300,7 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var competencies = new List<ReviewedCompetency>();
+            var competencies = new List<Competency>();
             var expectedModel = new SelfAssessmentReviewViewModel()
             {
                 SelfAssessment = selfAssessment,

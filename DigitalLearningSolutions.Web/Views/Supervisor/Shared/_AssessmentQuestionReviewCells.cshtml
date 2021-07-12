@@ -1,0 +1,101 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
+@model AssessmentQuestion 
+
+
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Questions </span>
+  <span class="status-tag">
+
+    @Model.Question
+
+  </span>
+</td>
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Responses </span>
+  @if (Model.Result == null)
+  {
+    <span class="nhsuk-u-font-weight-bold">No response</span>
+  }
+  else
+  {
+    @if (Model.LevelDescriptors != null)
+
+    {
+      foreach (var levelDescriptor in Model.LevelDescriptors)
+      {
+        if (levelDescriptor.LevelValue == Model.Result)
+        {
+
+          <span class="nhsuk-u-font-weight-bold">
+            @levelDescriptor.LevelLabel
+          </span>
+          break;
+        }
+      }
+    }
+    else
+    {
+
+      <span class="nhsuk-u-font-weight-bold">
+        @Model.Result/@Model.MaxValue
+      </span>
+    }
+  }
+</td>
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Questions </span>
+  <span class="status-tag">
+
+    @if (Model.SelfAssessmentResultSupervisorVerificationId == null)
+    {
+      
+      if (Model.Result != null)
+      {
+  <span class="nhsuk-tag nhsuk-tag status-tag">
+    In progress
+  </span> }
+          else
+          {
+  <span class="nhsuk-tag nhsuk-tag--grey status-tag">
+    Not started
+  </span> }
+
+        }
+        else if (Model.Verified != null)
+        {
+          if ((bool)Model.SignedOff)
+          {
+            <span class="nhsuk-tag nhsuk-tag--green status-tag">
+              Verified
+            </span>
+          }
+          else
+          {
+            <span class="nhsuk-tag nhsuk-tag--red status-tag">
+              Rejected
+            </span>
+          }
+
+        }
+        else
+        {
+          if ((bool)Model.UserIsVerifier)
+          {
+            <span class="nhsuk-tag nhsuk-tag--red status-tag">
+              Review requested
+            </span>
+          }
+          else
+          {
+            <span class="nhsuk-tag nhsuk-tag--yellow status-tag">
+              Pending review
+            </span>
+          }
+        }
+
+  </span>
+</td>
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Actions </span>
+  <a asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-resultId="@Model.Id">@(Model.Requested != null && Model.Verified == null ? "Review" : "View")<span class="nhsuk-u-visually-hidden"> capability</span></a>
+</td>

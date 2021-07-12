@@ -44,7 +44,7 @@
         AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
         LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue, bool zeroBased);
-        Models.SelfAssessments.ReviewedCompetency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
+        Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
         CommentReplies GetCommentRepliesById(int commentId, int adminId);
@@ -1196,10 +1196,10 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                 );
             }
         }
-        public Models.SelfAssessments.ReviewedCompetency GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
+        public Models.SelfAssessments.Competency GetFrameworkCompetencyForPreview(int frameworkCompetencyId)
         {
-            Models.SelfAssessments.ReviewedCompetency? competencyResult = null;
-            return connection.Query<Models.SelfAssessments.ReviewedCompetency, Models.SelfAssessments.AssessmentQuestion, Models.SelfAssessments.ReviewedCompetency>(
+            Models.SelfAssessments.Competency? competencyResult = null;
+            return connection.Query<Models.SelfAssessments.Competency, Models.SelfAssessments.AssessmentQuestion, Models.SelfAssessments.Competency>(
                 @"SELECT C.ID       AS Id,
                                                   C.Name AS Name,
                                                   C.Description AS Description,

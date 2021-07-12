@@ -132,7 +132,7 @@
         {
             var adminId = GetAdminID();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId).ToList();
+            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList();
             foreach (var competency in reviewedCompetencies)
             {
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
@@ -144,13 +144,28 @@
                 }
             }
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
-            var model = new ReviewDelegateSelfAssessmentViewModel()
+            var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessment = delegateSelfAssessment,
                 CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
             };
-            return View("ReviewDelegateSelfAssessment", model);
+            return View("ReviewSelfAssessment", model);
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/Review/{competencyId}")]
+        public IActionResult ReviewCompetencySelfAssessment(int supervisorDelegateId, int candidateAssessmentId, int competencyId)
+        {
+            var adminId = GetAdminID();
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentId(competencyId, candidateAssessmentId, adminId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var model = new ReviewCompetencySelfAsessmentViewModel()
+            {
+                DelegateSelfAssessment = delegateSelfAssessment,
+                SupervisorDelegate = supervisorDelegate,
+                Competency = competency
+            };
+            return View("ReviewCompetencySelfAsessment", model);
         }
     }
 }

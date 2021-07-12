@@ -5,19 +5,19 @@
     public class SelfAssessmentCompetencyViewModel
     {
         public readonly SelfAssessment Assessment;
-        public readonly ReviewedCompetency ReviewedCompetency;
+        public readonly Competency Competency;
         public readonly int CompetencyNumber;
         public readonly int TotalNumberOfCompetencies;
 
         public SelfAssessmentCompetencyViewModel(
             CurrentSelfAssessment assessment,
-            ReviewedCompetency reviewedCompetency,
+            Competency competency,
             int competencyNumber,
             int totalNumberOfCompetencies
         )
         {
             Assessment = assessment;
-            ReviewedCompetency = reviewedCompetency;
+            Competency = competency;
             CompetencyNumber = competencyNumber;
             TotalNumberOfCompetencies = totalNumberOfCompetencies;
         }

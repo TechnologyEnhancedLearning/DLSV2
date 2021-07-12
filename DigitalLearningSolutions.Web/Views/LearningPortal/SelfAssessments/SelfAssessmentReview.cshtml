@@ -40,7 +40,35 @@
                 <div class="nhsuk-grid-column-one-third">
                   <h5 class="review-question">@question.Question</h5>
                   <p class="review-result">
-                    @(Html.Raw(question.Result == null ?  "<span class ='nhsuk-u-visually-hidden'> No answer submitted</span>-" : question.Result + " / " + question.MaxValue))
+                    @if (question.Result == null)
+                    {
+                      <span class="nhsuk-u-font-weight-bold">No response</span>
+                    }
+                    else
+                    {
+                      @if (question.LevelDescriptors != null)
+
+                      {
+                        foreach (var levelDescriptor in question.LevelDescriptors)
+                        {
+                          if (levelDescriptor.LevelValue == question.Result)
+                          {
+
+                            <span class="nhsuk-u-font-weight-bold">
+                              @levelDescriptor.LevelLabel
+                            </span>
+                            break;
+                          }
+                        }
+                      }
+                      else
+                      {
+
+                        <span class="nhsuk-u-font-weight-bold">
+                          @question.Result/@question.MaxValue
+                        </span>
+                      }
+                    }
                   </p>
                 </div>
               }

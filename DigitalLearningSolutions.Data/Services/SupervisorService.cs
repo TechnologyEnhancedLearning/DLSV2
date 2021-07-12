@@ -17,6 +17,7 @@
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId);
+        DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -198,12 +199,21 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested
                 FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                 CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
-                SelfAssessments AS sa ON cas.ID = sa.ID LEFT OUTER JOIN
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT OUTER JOIN
                 NRPProfessionalGroups AS pg ON sa.NRPProfessionalGroupID = pg.ID LEFT OUTER JOIN
                 NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
                 NRPRoles AS r ON sa.NRPRoleID = r.ID
                 WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
                 );
+        }
+        public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
+        {
+            return connection.Query<DelegateSelfAssessment>(
+               @"SELECT ca.ID, sa.Name AS RoleName, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate
+                FROM CandidateAssessments AS ca INNER JOIN
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                WHERE (ca.ID = @candidateAssessmentId)", new { candidateAssessmentId }
+               ).FirstOrDefault();
         }
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId)
         {

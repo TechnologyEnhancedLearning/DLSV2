@@ -1,0 +1,48 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
+@model ReviewCompetencySelfAsessmentViewModel;
+@{
+  ViewData["Title"] = "Review Competency";
+  ViewData["Application"] = "Supervisor";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+             asp-action="DelegateProfileAssessments"
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName</a>
+          </li>
+          <li class="nhsuk-breadcrumb__item">
+            <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+               asp-action="ReviewDelegateSelfAssessment"
+               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+               asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+            </a>
+          </li>
+          <li class="nhsuk-breadcrumb__item">
+            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0,32) + "..." : Model.Competency.Name )
+          </li>
+        </ol>
+      </div>
+    </nav>
+}
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+      @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
+    </h1>
+  </summary>
+  <div class="nhsuk-details__text">
+    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
+  </div>
+</details>
+<h2>@Model.Competency.Name</h2>
