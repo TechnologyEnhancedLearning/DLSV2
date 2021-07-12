@@ -6,7 +6,9 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Centre/Dashboard")]
     public class DashboardController : Controller
