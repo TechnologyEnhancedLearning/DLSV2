@@ -28,6 +28,10 @@
     text-align: right;
     padding-left: nhsuk-spacing(3);
   }
+
+  @include govuk-media-query($until: desktop) {
+    margin-bottom: nhsuk-spacing(3);
+  }
 }
 
 .preference-tag {

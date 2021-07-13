@@ -40,7 +40,7 @@
             viewModel.TrainersColour.Should().Be("green");
             viewModel.CustomCourses.Should().Be("10 / 12");
             viewModel.CustomCoursesColour.Should().Be("yellow");
-            viewModel.ServerSpace.Should().Be("1KiB / 1GiB");
+            viewModel.ServerSpace.Should().Be("1KB / 1GB");
             viewModel.ServerSpaceColour.Should().Be("green");
         }
 

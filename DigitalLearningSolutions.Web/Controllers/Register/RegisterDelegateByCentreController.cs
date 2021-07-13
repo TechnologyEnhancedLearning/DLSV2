@@ -16,9 +16,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
     using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.PasswordViewModel;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.SummaryViewModel;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
@@ -43,12 +44,12 @@
                 searchString,
                 "SearchableName",
                 "Ascending",
-                $"CategoryName|Word\r\n{AdminFilterOptions.CentreAdministrator.FilterValue}",
+                $"CategoryName|CategoryName|Word\r\n{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
-                new AppliedFilterViewModel(AdminFilterOptions.CentreAdministrator.DisplayText, "Role"),
+                new AppliedFilterViewModel(AdminRoleFilterOptions.CentreAdministrator.DisplayText, "Role"),
                 new AppliedFilterViewModel("Word", "Category")
             };
 

@@ -27,6 +27,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.FeatureManagement;
     using Serilog;
 
     public class Startup
@@ -95,6 +96,8 @@ namespace DigitalLearningSolutions.Web
                     options.Cookie.IsEssential = true;
                 }
             );
+
+            services.AddFeatureManagement();
 
             var mvcBuilder = services
                 .AddControllersWithViews()
@@ -178,6 +181,7 @@ namespace DigitalLearningSolutions.Web
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
 
             RegisterWebServiceFilters(services);
         }
@@ -194,7 +198,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
         }
 
-        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
+        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions

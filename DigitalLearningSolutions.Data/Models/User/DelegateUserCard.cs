@@ -6,5 +6,7 @@
         public bool ExternalReg { get; set; }
         public bool Active { get; set; }
         public int? AdminId { get; set; }
+        public string? AliasId { get; set; }
+        public int JobGroupId { get; set; }
     }
 }

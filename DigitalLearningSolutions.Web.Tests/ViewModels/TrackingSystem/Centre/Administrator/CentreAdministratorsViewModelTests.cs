@@ -4,7 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FluentAssertions;
@@ -73,17 +73,17 @@
             // Given
             var roleOptions = new[]
             {
-                AdminFilterOptions.CentreAdministrator,
-                AdminFilterOptions.Supervisor,
-                AdminFilterOptions.Trainer,
-                AdminFilterOptions.ContentCreatorLicense,
-                AdminFilterOptions.CmsAdministrator,
-                AdminFilterOptions.CmsManager
+                AdminRoleFilterOptions.CentreAdministrator,
+                AdminRoleFilterOptions.Supervisor,
+                AdminRoleFilterOptions.Trainer,
+                AdminRoleFilterOptions.ContentCreatorLicense,
+                AdminRoleFilterOptions.CmsAdministrator,
+                AdminRoleFilterOptions.CmsManager
             };
             var accountStatusOptions = new[]
             {
-                AdminFilterOptions.IsLocked,
-                AdminFilterOptions.IsNotLocked
+                AdminAccountStatusFilterOptions.IsLocked,
+                AdminAccountStatusFilterOptions.IsNotLocked
             };
             var expectedFilters = new[]
             {
