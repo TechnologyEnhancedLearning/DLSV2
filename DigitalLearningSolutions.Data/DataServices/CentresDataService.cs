@@ -26,7 +26,6 @@
         void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone,
@@ -175,7 +174,6 @@
         public void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone = null,
@@ -192,7 +190,6 @@
                     pwTelephone = @telephone,
                     pwEmail = @email,
                     pwPostCode = @postcode,
-                    showOnMap = @showOnMap,
                     lat = @latitude,
                     long = @longitude,
                     pwHours = @openingHours,
@@ -206,7 +203,6 @@
                     telephone,
                     email,
                     postcode,
-                    showOnMap,
                     longitude,
                     latitude,
                     openingHours,

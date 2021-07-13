@@ -119,7 +119,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             centresDataService.UpdateCentreWebsiteDetails(
                 centreId,
                 model.CentrePostcode,
-                model.ShowCentreOnMap,
                 latitude,
                 longitude,
                 model.CentreTelephone,
