@@ -91,7 +91,13 @@ namespace DigitalLearningSolutions.Data.Services
                 return candidateNumber;
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
+            if (delegateRegistrationModel.PasswordHash != null)
+            {
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash
+                );
+            }
 
             return candidateNumber;
         }

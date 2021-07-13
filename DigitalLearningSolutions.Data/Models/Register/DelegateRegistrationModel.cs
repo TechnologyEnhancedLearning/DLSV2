@@ -10,7 +10,7 @@
             string email,
             int centre,
             int jobGroup,
-            string passwordHash,
+            string? passwordHash,
             string? answer1,
             string? answer2,
             string? answer3,
