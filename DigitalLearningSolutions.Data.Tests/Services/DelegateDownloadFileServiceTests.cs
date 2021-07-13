@@ -14,6 +14,58 @@
 
     public class DelegateDownloadFileServiceTests
     {
+        private readonly List<DelegateUserCard> delegateUserCards = new List<DelegateUserCard>
+        {
+            new DelegateUserCard
+            {
+                FirstName = "A",
+                LastName = "Test",
+                EmailAddress = null,
+                CandidateNumber = "TT95",
+                Answer1 = "xxxx",
+                Answer2 = "xxxxxxxxx",
+                Answer3 = null,
+                Answer4 = null,
+                Answer5 = null,
+                Answer6 = null,
+                Active = true,
+                AliasId = null,
+                JobGroupId = 1
+            },
+            new DelegateUserCard
+            {
+                FirstName = "Fake",
+                LastName = "Person",
+                EmailAddress = "Test@Test",
+                CandidateNumber = "TU67",
+                Answer1 = null,
+                Answer2 = null,
+                Answer3 = null,
+                Answer4 = null,
+                Answer5 = null,
+                Answer6 = null,
+                Active = true,
+                AliasId = null,
+                JobGroupId = 1
+            },
+            new DelegateUserCard
+            {
+                FirstName = "Test",
+                LastName = "User",
+                EmailAddress = null,
+                CandidateNumber = "TM323",
+                Answer1 = "xx",
+                Answer2 = "xxxxxxxx",
+                Answer3 = null,
+                Answer4 = null,
+                Answer5 = null,
+                Answer6 = null,
+                Active = true,
+                AliasId = null,
+                JobGroupId = 2
+            }
+        };
+
         private IDelegateDownloadFileService delegateDownloadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserDataService userDataService = null!;
@@ -38,59 +90,7 @@
                 new[] { (2, "Doctor"), (3, "Health Professional"), (1, "Nursing") }
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(
-                new List<DelegateUserCard>
-                {
-                    new DelegateUserCard
-                    {
-                        FirstName = "A",
-                        LastName = "Test",
-                        EmailAddress = null,
-                        CandidateNumber = "TT95",
-                        Answer1 = "xxxx",
-                        Answer2 = "xxxxxxxxx",
-                        Answer3 = null,
-                        Answer4 = null,
-                        Answer5 = null,
-                        Answer6 = null,
-                        Active = true,
-                        AliasId = null,
-                        JobGroupId = 1
-                    },
-                    new DelegateUserCard
-                    {
-                        FirstName = "Fake",
-                        LastName = "Person",
-                        EmailAddress = "Test@Test",
-                        CandidateNumber = "TU67",
-                        Answer1 = null,
-                        Answer2 = null,
-                        Answer3 = null,
-                        Answer4 = null,
-                        Answer5 = null,
-                        Answer6 = null,
-                        Active = true,
-                        AliasId = null,
-                        JobGroupId = 1
-                    },
-                    new DelegateUserCard
-                    {
-                        FirstName = "Test",
-                        LastName = "User",
-                        EmailAddress = null,
-                        CandidateNumber = "TM323",
-                        Answer1 = "xx",
-                        Answer2 = "xxxxxxxx",
-                        Answer3 = null,
-                        Answer4 = null,
-                        Answer5 = null,
-                        Answer6 = null,
-                        Active = true,
-                        AliasId = null,
-                        JobGroupId = 2
-                    }
-                }
-            );
+            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
 
             // When
             var resultBytes = delegateDownloadFileService.GetDelegateDownloadFileForCentre(2);
