@@ -16,6 +16,8 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")">
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
@@ -25,11 +27,18 @@
 
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
+
     <h2 class="nhsuk-heading-m">Usage stats</h2>
-    <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel"/>
+
+    <div class="js-only-block">
+      <div class="ct-chart ct-perfect-fourth"></div>
+    </div>
+    <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />
     </nav>
   </div>
 </div>
+
+<script src="@Url.Content("~/js/trackingSystem/reports.js")"></script>

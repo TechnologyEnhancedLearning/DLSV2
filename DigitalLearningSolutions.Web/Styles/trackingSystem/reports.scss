@@ -1,0 +1,60 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "~chartist/dist/scss/chartist";
+
+$dark-blue: #005EB8;
+$medium-blue: #699AFC;
+$light-blue: #8EBAFF;
+
+.ct-line {
+  stroke-width: 5px;
+
+  @include mq($until: tablet) {
+    stroke-width: 4px;
+  }
+}
+
+.ct-point {
+  @include mq($until: tablet) {
+    stroke-width: 8px;
+  }
+}
+
+.ct-series-a .ct-line {
+  stroke: $dark-blue;
+}
+
+.ct-series-a .ct-point {
+  stroke: $dark-blue;
+}
+
+.ct-series-b .ct-line {
+  stroke: $medium-blue;
+}
+
+.ct-series-b .ct-point {
+  stroke: $medium-blue;
+}
+
+.ct-series-c .ct-line {
+  stroke: $light-blue;
+}
+
+.ct-series-c .ct-point {
+  stroke: $light-blue;
+}
+
+.ct-label {
+  color: $nhsuk-secondary-text-color;
+}
+
+.ct-label.ct-label.ct-horizontal {
+  white-space: nowrap;
+  justify-content: flex-end;
+  text-align: right;
+  transform-origin: 100% 0;
+  transform: translate(-100%) rotate(-45deg);
+
+  @include mq($until: tablet) {
+    transform: translate(-100%) rotate(-60deg);
+  }
+}

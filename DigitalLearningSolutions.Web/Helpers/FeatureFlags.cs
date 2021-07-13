@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    public enum FeatureFlags
+    public static class FeatureFlags
     {
-        Login
+        public const string RefactoredTrackingSystem = "RefactoredTrackingSystem";
     }
 }
