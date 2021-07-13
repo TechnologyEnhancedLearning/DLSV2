@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public static class SelectListHelper
@@ -24,6 +27,12 @@
         public static IEnumerable<SelectListItem> MapOptionsToSelectListItems(IEnumerable<(string Text, string Value)> options)
         {
             return options.Select(option => new SelectListItem(option.Text, option.Value));
+        }
+
+        public static IEnumerable<SelectListItem> MapPeriodOptionsToSelectListItem(int? selectedId = null)
+        {
+            var values = Enumeration.GetAll<Period>();
+            return values.Select(v => new SelectListItem(v.Name, v.Id.ToString(), v.Id == selectedId));
         }
     }
 }

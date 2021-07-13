@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -24,11 +25,19 @@
             CentreTestHelper.GetCentreRank(10)
         };
 
+        private readonly List<(int, string)> regions = new List<(int, string)>
+        {
+            (1, "North"),
+            (2, "South"),
+            (3, "East"),
+            (4, "West")
+        };
+
         [Test]
         public void CentreRankingViewModel_populates_expected_values_from_centre_ranks_with_centre_in_top_ten()
         {
             // When
-            var result = new CentreRankingViewModel(centreRankings, 3, null, null);
+            var result = new CentreRankingViewModel(centreRankings, 3, regions);
 
             // Then
             using (new AssertionScope())
@@ -46,7 +55,7 @@
             var centreRankingsWithExtraCentre = centreRankings.Append(CentreTestHelper.GetCentreRank(20));
 
             // When
-            var result = new CentreRankingViewModel(centreRankingsWithExtraCentre, 20, null, null);
+            var result = new CentreRankingViewModel(centreRankingsWithExtraCentre, 20, regions);
 
             // Then
             using (new AssertionScope())
@@ -61,7 +70,7 @@
             CentreRankingViewModel_populates_expected_values_from_centre_ranks_when_centre_has_no_data()
         {
             // When
-            var result = new CentreRankingViewModel(centreRankings, 20, null, null);
+            var result = new CentreRankingViewModel(centreRankings, 20, regions);
 
             // Then
             using (new AssertionScope())
@@ -78,7 +87,7 @@
             var shortedCentreRankings = centreRankings.Take(5);
 
             // When
-            var result = new CentreRankingViewModel(shortedCentreRankings, 20, null, null);
+            var result = new CentreRankingViewModel(shortedCentreRankings, 20, regions);
 
             // Then
             using (new AssertionScope())

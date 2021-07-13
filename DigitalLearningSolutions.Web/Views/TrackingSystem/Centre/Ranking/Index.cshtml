@@ -32,24 +32,24 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
   <form method="get" asp-controller="Ranking" asp-action="Index">
     <div class="nhsuk-grid-column-one-quarter">
-      <vc:select-list asp-for="RegionId"
+      <vc:select-list asp-for="@nameof(Model.RegionId)"
                       label="Region"
                       value="@Model.RegionId.ToString()"
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-full"
                       default-option="All"
-                      select-list-options="@ViewBag.RegionOptions" />
+                      select-list-options="@Model.RegionOptions" />
     </div>
     <div class="nhsuk-grid-column-one-quarter">
       <vc:select-list asp-for="Period"
                       label="Period"
-                      value="@Model.Period.ToString()"
+                      value="@Model.PeriodId.ToString()"
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-full"
                       default-option="@null"
-                      select-list-options="@ViewBag.PeriodOptions" />
+                      select-list-options="@Model.PeriodOptions" />
     </div>
     <div class="nhsuk-grid-column-one-quarter">
       <div class="nhsuk-label desktop-only-spacing">

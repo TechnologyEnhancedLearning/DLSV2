@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks.Sources;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -93,6 +94,28 @@
                 result.ElementAt(1).Value.Should().Be(Item2);
                 result.ElementAt(1).Text.Should().Be(Item2);
                 result.ElementAt(1).Selected.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void MapPeriodOptionsToSelectListItem_returns_expected_list()
+        {
+            // When
+            var result = SelectListHelper.MapPeriodOptionsToSelectListItem(14);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNullOrEmpty();
+                result.Count().Should().Be(5);
+
+                result.ElementAt(0).Value.Should().Be("7");
+                result.ElementAt(0).Text.Should().Be("Week");
+                result.ElementAt(0).Selected.Should().BeFalse();
+
+                result.ElementAt(1).Value.Should().Be("14");
+                result.ElementAt(1).Text.Should().Be("Fortnight");
+                result.ElementAt(1).Selected.Should().BeTrue();
             }
         }
     }

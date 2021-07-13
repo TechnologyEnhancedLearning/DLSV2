@@ -6,9 +6,9 @@
 
     public interface IRegionDataService
     {
-        public IEnumerable<(int, string)> GetRegionsAlphabetical();
-
+        public IEnumerable<(int regionId, string regionName)> GetRegionsAlphabetical();
     }
+
     public class RegionDataService : IRegionDataService
     {
         private readonly IDbConnection connection;
@@ -18,14 +18,13 @@
             this.connection = connection;
         }
 
-        public IEnumerable<(int, string)> GetRegionsAlphabetical()
+        public IEnumerable<(int regionId, string regionName)> GetRegionsAlphabetical()
         {
-            var jobGroups = connection.Query<(int, string)>(
+            return connection.Query<(int, string)>(
                 @"SELECT RegionID, RegionName
                         FROM Regions
                         ORDER BY RegionName"
             );
-            return jobGroups;
         }
     }
 }
