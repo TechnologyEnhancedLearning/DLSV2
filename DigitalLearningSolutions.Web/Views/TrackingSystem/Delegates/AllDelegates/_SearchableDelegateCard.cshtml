@@ -61,7 +61,7 @@
         }
       </dl>
 
-      <a class="nhsuk-button" role="button">Manage delegate</a>
+      <a class="nhsuk-button" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model.Id" role="button">Manage delegate</a>
       <a class="nhsuk-button nhsuk-button--secondary" role="button">Set password</a>
     </div>
   </details>
