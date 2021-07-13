@@ -46,7 +46,7 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, 1200);
 
             // Then
-            result.Should().Be("12B / 1.2KiB");
+            result.Should().Be("12B / 1KB");
         }
 
         [Test]
@@ -56,7 +56,7 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, Gibibyte);
 
             // Then
-            result.Should().Be("12B / 1GiB");
+            result.Should().Be("12B / 1GB");
         }
 
         [Test]
@@ -69,7 +69,7 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, bytes);
 
             // Then
-            result.Should().Be("12B / 1024MiB");
+            result.Should().Be("12B / 1024MB");
         }
 
         [Test]
