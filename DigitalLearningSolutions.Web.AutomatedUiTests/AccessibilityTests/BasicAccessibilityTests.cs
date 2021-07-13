@@ -32,9 +32,15 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
-        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
+        [InlineData(
+            "/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails",
+            "Edit centre content on DLS website"
+        )]
         [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts", "Manage delegate registration prompts")]
-        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove", "Remove delegate registration prompt")]
+        [InlineData(
+            "/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove",
+            "Remove delegate registration prompt"
+        )]
         [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]

@@ -1,15 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class AdminFieldsViewModel
+    public class AdminFieldsViewModel : DisplayPromptsViewModel
     {
-        public AdminFieldsViewModel(CourseCustomPrompts courseCustomPrompts)
+        public AdminFieldsViewModel(CourseCustomPrompts courseCustomPrompts) : base(courseCustomPrompts.CourseAdminFields)
         {
-            AdminFields = courseCustomPrompts.CourseAdminFields;
         }
-
-        public IEnumerable<CustomPrompt> AdminFields { get; set; }
     }
 }

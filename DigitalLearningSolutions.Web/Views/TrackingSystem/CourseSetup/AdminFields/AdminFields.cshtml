@@ -10,16 +10,16 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var canAddNewField = Model.AdminFields.Count() < 3;
+  var canAddNewField = Model.CustomFields.Count < 3;
 }
 
 @section NavMenuItems {
-    <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-  }
+  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
 
 @section NavBreadcrumbs {
-    <partial name ="/Views/TrackingSystem/Shared/_CentreCourseSetupBreadcrumbs.cshtml"/>
-  }
+  <partial name="/Views/TrackingSystem/Shared/_CentreCourseSetupBreadcrumbs.cshtml" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
@@ -32,27 +32,17 @@
       To request additions to the list of available fields, please raise a ticket.
     </p>
 
-    @foreach (var field in Model.AdminFields) {
-      <partial name="_AdminFieldCard.cshtml" model="field"/>
-    }
+    <div class="@(canAddNewField ? "nhsuk-u-margin-bottom-3" : "nhsuk-u-margin-bottom-7")">
+      @foreach (var field in Model.CustomFields) {
+        <partial name="_AdminFieldCard.cshtml" model="field" />
+      }
 
-  </div>
-</div>
-
-@if (canAddNewField) {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button" role="button" href="#">Add admin field</a>
+      @if (canAddNewField) {
+        <a class="nhsuk-button" role="button" href="#">Add admin field</a>
+      }
     </div>
-  </div>
-}
 
-<div class="nhsuk-grid-row nhsuk-u-margin-top-7">
-  <div class="nhsuk-grid-column-full">
-    <vc:back-link asp-controller="" asp-action="" link-text="Go back"/>
+    <vc:back-link asp-controller="" asp-action="" link-text="Go back" />
+
   </div>
 </div>
-
-
-
-
