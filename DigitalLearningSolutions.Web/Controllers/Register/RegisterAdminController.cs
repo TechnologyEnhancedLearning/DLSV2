@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -168,7 +169,7 @@
             {
                 return new StatusCodeResult(500);
             }
-            
+
             var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
             registrationService.RegisterCentreManager(registrationModel);
 
@@ -188,8 +189,10 @@
                 return false;
             }
 
+            var adminUsers = userDataService.GetAdminUsersByCentreId(centreId);
+            var hasCentreManagerAdmin = adminUsers.Any(user => user.IsCentreManager);
             var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
-            return !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
+            return !hasCentreManagerAdmin && !autoRegistered && !string.IsNullOrWhiteSpace(autoRegisterManagerEmail);
         }
 
         private void SetAdminRegistrationData(int centreId)
