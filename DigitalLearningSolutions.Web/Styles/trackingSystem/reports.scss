@@ -19,8 +19,26 @@ $light-blue: #8EBAFF;
   }
 }
 
+.legend {
+    text-align: center;
+}
+
+.legend li {
+  list-style-type: none;
+  display: inline-block;
+
+  @include mq($until: tablet) {
+    display: list-item;
+  }
+}
+
+.legend-line {
+    stroke-width: 10px;
+}
+
 .ct-series-a .ct-line {
   stroke: $dark-blue;
+  stroke-dasharray: 5px 10px;
 }
 
 .ct-series-a .ct-point {
@@ -29,6 +47,7 @@ $light-blue: #8EBAFF;
 
 .ct-series-b .ct-line {
   stroke: $medium-blue;
+  stroke-dasharray: 10px 5px;
 }
 
 .ct-series-b .ct-point {

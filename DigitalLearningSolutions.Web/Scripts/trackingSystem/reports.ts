@@ -1,5 +1,4 @@
 import Chartist from 'chartist';
-import 'chartist-plugin-axistitle';
 import getPathForEndpoint from '../common';
 
 interface IActivityDataRowModel {
@@ -28,7 +27,9 @@ const options = {
     scaleMinSpace: 10,
     onlyInteger: true,
   },
-  chartPadding: { bottom: 32 },
+  chartPadding: {
+    bottom: 32
+  },
 };
 
 request.onload = () => {
