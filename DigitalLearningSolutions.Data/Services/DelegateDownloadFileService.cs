@@ -43,7 +43,7 @@
         private void PopulateDelegatesSheet(IXLWorkbook workbook, int centreId)
         {
             var delegateRecords = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var delegates = delegateRecords.Select(
+            var delegates = delegateRecords.OrderBy(x => x.LastName).Select(
                 x => new
                 {
                     x.LastName,
