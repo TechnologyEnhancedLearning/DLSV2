@@ -31,7 +31,7 @@
             return File(
                 content,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"ITSP Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx"
+                $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx"
             );
         }
     }
