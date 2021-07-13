@@ -1,0 +1,23 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
+  ViewData["Title"] = "View delegate";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml"/>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">View delegate</h1>
+  </div>
+</div>

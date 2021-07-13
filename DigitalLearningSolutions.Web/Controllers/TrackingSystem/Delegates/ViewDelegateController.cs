@@ -12,7 +12,7 @@
     {
         public IActionResult Index(int delegateId)
         {
-            return new ObjectResult(delegateId);
+            return View();
         }
     }
 }
