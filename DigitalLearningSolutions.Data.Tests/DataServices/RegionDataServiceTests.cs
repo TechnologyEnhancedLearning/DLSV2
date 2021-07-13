@@ -18,7 +18,7 @@
         }
 
         [Test]
-        public void Get_job_groups_should_contain_a_job_group()
+        public void Get_regions_should_contain_a_region()
         {
             // When
             var result = regionDataService.GetRegionsAlphabetical().ToList();
