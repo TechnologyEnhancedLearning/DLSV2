@@ -441,6 +441,8 @@
             userCard.SelfReg.Should().BeFalse();
             userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().BeNull();
+            userCard.AliasId.Should().BeNull();
+            userCard.JobGroupId.Should().Be(1);
         }
 
         [Test]
@@ -455,6 +457,8 @@
             userCard.SelfReg.Should().BeTrue();
             userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().Be(74);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(6);
         }
     }
 }
