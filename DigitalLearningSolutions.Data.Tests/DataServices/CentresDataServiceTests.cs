@@ -182,7 +182,6 @@
                 const string telephone = "0118999 88199 9119725   3";
                 const string email = "totallyrealemail@noreally.itis";
                 const string postcode = "POST CDE";
-                const bool showOnMap = false;
                 const double latitude = 52.9534611;
                 const double longitude = -1.1493326;
                 const string openingHours = "2:30am - 2:31am Sundays";
@@ -195,7 +194,6 @@
                 centresDataService.UpdateCentreWebsiteDetails(
                     2,
                     postcode,
-                    showOnMap,
                     latitude,
                     longitude,
                     telephone,
@@ -214,7 +212,6 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
-                    updatedCentre.ShowOnMap.Should().BeFalse();
                     updatedCentre.Latitude.Should().Be(latitude);
                     updatedCentre.Longitude.Should().Be(longitude);
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
