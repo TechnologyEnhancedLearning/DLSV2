@@ -42,7 +42,7 @@
                       select-list-options="@Model.RegionOptions" />
     </div>
     <div class="nhsuk-grid-column-one-quarter">
-      <vc:select-list asp-for="Period"
+      <vc:select-list asp-for="@nameof(Model.PeriodId)"
                       label="Period"
                       value="@Model.PeriodId.ToString()"
                       hint-text=""
@@ -52,10 +52,9 @@
                       select-list-options="@Model.PeriodOptions" />
     </div>
     <div class="nhsuk-grid-column-one-quarter">
-      <div class="nhsuk-label desktop-only-spacing">
-        &nbsp;
+      <div class="nhsuk-form-group">
+        <button class="nhsuk-search__submit filter-submit__dropdown desktop-only-spacing" type="submit">Apply filter</button>
       </div>
-      <button class="nhsuk-search__submit filter-submit__dropdown" type="submit">Apply filter</button>
     </div>
   </form>
 </div>
