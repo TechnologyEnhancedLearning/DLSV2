@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Register
 {
+    using System;
+
     public class DelegateRegistrationModel : RegistrationModel
     {
         public DelegateRegistrationModel(
@@ -44,5 +46,9 @@
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
+
+        public string? AliasId { get; set; }
+
+        public DateTime? NotifyDate { get; set; }
     }
 }

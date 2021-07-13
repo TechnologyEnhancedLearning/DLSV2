@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Data.Services
             bool refactoredTrackingSystemEnabled
         );
 
+        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
+
         void RegisterCentreManager(RegistrationModel registrationModel);
     }
 
@@ -79,6 +81,19 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
+        }
+
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
+        {
+            var candidateNumber = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
+            if (candidateNumber == "-1" || candidateNumber == "-4")
+            {
+                return candidateNumber;
+            }
+
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash);
+
+            return candidateNumber;
         }
 
         public void RegisterCentreManager(RegistrationModel registrationModel)
