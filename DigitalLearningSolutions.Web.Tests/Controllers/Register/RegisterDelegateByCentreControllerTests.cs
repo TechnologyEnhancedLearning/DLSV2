@@ -23,6 +23,7 @@
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private ICryptoService cryptoService = null!;
+        private IRegistrationService registrationService = null!;
 
         [SetUp]
         public void Setup()
@@ -32,12 +33,13 @@
             userDataService = A.Fake<IUserDataService>();
             customPromptHelper = A.Fake<CustomPromptHelper>();
             cryptoService = A.Fake<ICryptoService>();
+            registrationService = A.Fake<IRegistrationService>();
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
                     userService,
                     customPromptHelper,
                     cryptoService,
-                    userDataService
+                    userDataService,registrationService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

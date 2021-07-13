@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly ICryptoService cryptoService;
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
@@ -39,13 +40,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IUserService userService,
             CustomPromptHelper customPromptHelper,
             ICryptoService cryptoService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IRegistrationService registrationService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
             this.userDataService = userDataService;
+            this.registrationService = registrationService;
             this.cryptoService = cryptoService;
         }
 
@@ -206,10 +209,21 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            // TODO: actually register the delegate
+            var candidateNumber =
+                registrationService.RegisterDelegateByCentre(
+                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data)
+                );
+
+            switch (candidateNumber)
+            {
+                case "-1":
+                    return RedirectToAction("Error", "LearningSolutions");
+                case "-4":
+                    return RedirectToAction("Index");
+            }
 
             TempData.Clear();
-            TempData.Add("delegateNumber", "XY1234");
+            TempData.Add("delegateNumber", candidateNumber);
             TempData.Add("emailSent", data.ShouldSendEmail);
             TempData.Add("passwordSet", data.IsPasswordSet);
             return RedirectToAction("Confirmation");
