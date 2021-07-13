@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
@@ -28,6 +29,7 @@
         [Test]
         public void GetDelegateDownloadFileForCentre_returns_expected_excel_data()
         {
+            // Given
             using var expectedWorkbook = new XLWorkbook(
                 TestContext.CurrentContext.TestDirectory + "\\TestData\\DelegateUploadTest.xlsx"
             );
@@ -98,10 +100,12 @@
             // Then
             using (new AssertionScope())
             {
+                resultWorkbook.Worksheets.Count.Should().Be(expectedWorkbook.Worksheets.Count);
                 foreach (var resultWorksheet in resultWorkbook.Worksheets)
                 {
                     var expectedWorksheet = expectedWorkbook.Worksheets.Worksheet(resultWorksheet.Name);
                     var cells = resultWorksheet.CellsUsed();
+                    cells.Count().Should().Be(expectedWorksheet.CellsUsed().Count());
 
                     foreach (var cell in cells)
                     {

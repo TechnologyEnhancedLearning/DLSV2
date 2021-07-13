@@ -19,7 +19,7 @@
             this.centresService = centresService;
         }
 
-        public IActionResult Index(int? regionId = null)
+        public IActionResult Index()
         {
             var centreId = User.GetCentreId();
             // TODO: HEEDLS-469 Populate these numbers from filters
