@@ -28,7 +28,7 @@ const options = {
     onlyInteger: true,
   },
   chartPadding: {
-    bottom: 32
+    bottom: 32,
   },
 };
 
