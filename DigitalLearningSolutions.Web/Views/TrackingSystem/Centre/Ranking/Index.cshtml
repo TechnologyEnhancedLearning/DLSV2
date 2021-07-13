@@ -62,16 +62,22 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (User.HasSuperAdminPermissions()) {
-      <partial name="_RankingSuperAdminTable" model="Model" />
-    } else {
-      <partial name="_RankingStandardUserTable" model="Model" />
-    }
+    @if (Model.Centres.Any()) {
+      @if (User.HasSuperAdminPermissions()) {
+        <partial name="_RankingSuperAdminTable" model="Model" />
+      } else {
+        <partial name="_RankingStandardUserTable" model="Model" />
+      }
 
-    @if (Model.CentreHasNoActivity) {
-      <p class="current-centre nhsuk-body-l nhsuk-u-padding-left-2 nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3"
-         aria-current="true">
-        Your centre overall rank: no activity
+      @if (Model.CentreHasNoActivity) {
+        <p class="current-centre nhsuk-body-l nhsuk-u-padding-left-2 nhsuk-u-padding-top-3 nhsuk-u-padding-bottom-3"
+           aria-current="true">
+          Your centre overall rank: no activity
+        </p>
+      }
+    } else {
+      <p class="nhsuk-body-m">
+        No activity in the selected region for the selected period.
       </p>
     }
   </div>
