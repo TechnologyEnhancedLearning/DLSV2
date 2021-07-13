@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using ConfirmationViewModel =
+        DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.ConfirmationViewModel;
     using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.PasswordViewModel;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.SummaryViewModel;
 
@@ -202,7 +204,30 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
-            return new OkResult();
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+
+            // TODO: actually register the delegate
+
+            TempData.Clear();
+            TempData.Add("delegateNumber", "XY1234");
+            TempData.Add("emailSent", data.ShouldSendEmail);
+            TempData.Add("passwordSet", data.IsPasswordSet);
+            return RedirectToAction("Confirmation");
+        }
+
+        [HttpGet]
+        public IActionResult Confirmation()
+        {
+            var delegateNumber = (string?)TempData.Peek("delegateNumber");
+            var emailSent = (bool)TempData.Peek("emailSent");
+            var passwordSet = (bool)TempData.Peek("passwordSet");
+            if (delegateNumber == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = new ConfirmationViewModel(delegateNumber, emailSent, passwordSet);
+            return View(viewModel);
         }
 
         private void SetCentreDelegateRegistrationData(int centreId)
