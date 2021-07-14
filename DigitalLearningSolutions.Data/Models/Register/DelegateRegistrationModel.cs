@@ -37,7 +37,7 @@
             string email,
             int centre,
             int jobGroup,
-            string passwordHash
+            string? passwordHash
         ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
 
         public string? Answer1 { get; set; }
