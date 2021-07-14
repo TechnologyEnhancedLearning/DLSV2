@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
     using System.Collections.Generic;
-    using System.Globalization;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -16,15 +15,9 @@
             Email = data.Email;
             Alias = data.Alias;
             IsPasswordSet = data.IsPasswordSet;
-            PreviousAction = "Password";
-            ShouldSendEmail = data.ShouldSendEmail;
-            if (ShouldSendEmail)
+            if (data.ShouldSendEmail)
             {
-                CultureInfo originalCulture = CultureInfo.CurrentCulture;
-                CultureInfo.CurrentCulture = new CultureInfo("en-GB");
-                WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToShortDateString();
-                CultureInfo.CurrentCulture = originalCulture;
-                PreviousAction = "WelcomeEmail";
+                WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString("dd/MM/yyyy");
             }
         }
 
@@ -33,10 +26,10 @@
         public string? Email { get; set; }
         public string? Alias { get; set; }
         public bool IsPasswordSet { get; set; }
-        public bool ShouldSendEmail { get; set; }
         public string? WelcomeEmailDate { get; set; }
+        public bool ShouldSendEmail => WelcomeEmailDate != null;
         public string? JobGroup { get; set; }
         public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
-        public string PreviousAction { get; set; }
+        public string PreviousAction => ShouldSendEmail ? "WelcomeEmail" : "Password";
     }
 }
