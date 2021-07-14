@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Models;
 
     public class WelcomeEmailViewModel
     {
-        public WelcomeEmailViewModel() {}
+        public WelcomeEmailViewModel() { }
 
         public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
         {

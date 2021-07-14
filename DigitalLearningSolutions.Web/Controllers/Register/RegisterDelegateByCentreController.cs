@@ -12,13 +12,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.PasswordViewModel;
-    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.SummaryViewModel;
+    using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.PasswordViewModel;
+    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]

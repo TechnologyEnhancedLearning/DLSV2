@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
     using System.Collections.Generic;
     using System.Globalization;

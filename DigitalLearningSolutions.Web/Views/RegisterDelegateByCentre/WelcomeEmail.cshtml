@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 @model WelcomeEmailViewModel
 
 @{
@@ -35,7 +35,14 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="WelcomeEmail">
       <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
         <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input" id="ShouldSendEmail" name="ShouldSendEmail" asp-for="ShouldSendEmail" type="checkbox" value="true" aria-controls="conditional-welcome-email-date" aria-expanded="@Model.ShouldSendEmail">
+          <input class="nhsuk-checkboxes__input"
+                 id="ShouldSendEmail"
+                 name="ShouldSendEmail"
+                 asp-for="ShouldSendEmail"
+                 type="checkbox"
+                 value="true"
+                 aria-controls="conditional-welcome-email-date"
+                 aria-expanded="@Model.ShouldSendEmail">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
             Send welcome email to registered delegate
           </label>

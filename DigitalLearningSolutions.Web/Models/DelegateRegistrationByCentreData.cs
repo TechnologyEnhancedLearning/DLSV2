@@ -2,7 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
 
     public class DelegateRegistrationByCentreData : DelegateRegistrationData
     {
