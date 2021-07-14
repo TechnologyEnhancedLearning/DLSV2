@@ -9,7 +9,7 @@
         public readonly bool HasYearError;
 
         public DateInputViewModel(
-            string name,
+            string id,
             string label,
             string? dayId,
             string? monthId,
@@ -21,7 +21,7 @@
             string? hintText = null
         )
         {
-            Name = name;
+            Id = id;
             Label = label;
             DayId = dayId ?? "Day";
             MonthId = monthId ?? "Month";
@@ -36,7 +36,7 @@
             HasYearError = validationResult is { YearValid: false };
         }
 
-        public string Name { get; set; }
+        public string Id { get; set; }
         public string Label { get; set; }
         public string DayId { get; set; }
         public string MonthId { get; set; }

@@ -12,15 +12,14 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using ConfirmationViewModel =
-        DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.ConfirmationViewModel;
-    using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.PasswordViewModel;
-    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre.SummaryViewModel;
+        DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.ConfirmationViewModel;
+    using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -155,7 +154,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            if (!ValidateWelcomeEmail(model))
+            model.CleanDate();
+            SetWelcomeEmailValidationResult(model);
+            if (model.DateValidationResult is { DateValid: false })
             {
                 return View(model);
             }
@@ -296,14 +297,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private bool ValidateWelcomeEmail(WelcomeEmailViewModel model)
+        private void SetWelcomeEmailValidationResult(WelcomeEmailViewModel model)
         {
             if (!model.ShouldSendEmail)
             {
-                model.Day = null;
-                model.Month = null;
-                model.Year = null;
-                return true;
+                return;
             }
 
             var validationResult = DateValidator.ValidateRequiredDate(
@@ -313,7 +311,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 "Email delivery date"
             );
             model.DateValidationResult = validationResult;
-            return validationResult.DateValid;
         }
 
         private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(

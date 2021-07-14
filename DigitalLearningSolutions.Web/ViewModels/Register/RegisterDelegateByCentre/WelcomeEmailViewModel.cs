@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
     using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Models;
 
     public class WelcomeEmailViewModel
     {
-        public WelcomeEmailViewModel() {}
+        public WelcomeEmailViewModel() { }
 
         public WelcomeEmailViewModel(DelegateRegistrationByCentreData data)
         {
@@ -23,5 +23,15 @@
         public int? Year { get; set; }
         public bool ShouldSendEmail { get; set; }
         public DateValidator.ValidationResult? DateValidationResult { get; set; }
+
+        public void CleanDate()
+        {
+            if (!ShouldSendEmail)
+            {
+                Day = null;
+                Month = null;
+                Year = null;
+            }
+        }
     }
 }

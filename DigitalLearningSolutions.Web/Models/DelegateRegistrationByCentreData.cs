@@ -2,18 +2,17 @@
 {
     using System;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using DigitalLearningSolutions.Web.ViewModels.RegisterDelegateByCentre;
+    using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
 
     public class DelegateRegistrationByCentreData : DelegateRegistrationData
     {
         public DelegateRegistrationByCentreData() { }
         public DelegateRegistrationByCentreData(int centreId) : base(centreId) { }
-        public string? Alias { get; set; }
 
+        public string? Alias { get; set; }
         public DateTime? WelcomeEmailDate { get; set; }
 
         public bool ShouldSendEmail => WelcomeEmailDate.HasValue;
-
         public bool IsPasswordSet => PasswordHash != null;
 
         public override void SetPersonalInformation(PersonalInformationViewModel model)

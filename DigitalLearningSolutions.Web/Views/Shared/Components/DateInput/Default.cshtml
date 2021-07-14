@@ -7,12 +7,12 @@
   var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
 }
 
-<fieldset class="nhsuk-fieldset" aria-describedby="@Model.Name-hint" role="group">
+<fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
   <legend class="nhsuk-fieldset__legend nhsuk-label">
     @Model.Label
   </legend>
   @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Name-hint">
+    <div class="nhsuk-hint" id="@Model.Id-hint">
       @Model.HintText
     </div>
   }
@@ -23,7 +23,7 @@
     </span>
   }
 
-  <div class="nhsuk-date-input" id="welcome-email-date">
+  <div class="nhsuk-date-input" id="@Model.Id">
     <div class="nhsuk-date-input__item">
       <div class="nhsuk-form-group">
         <label class="nhsuk-label" for="@Model.DayId">Day</label>

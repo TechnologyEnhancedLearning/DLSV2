@@ -117,7 +117,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             A.CallTo(() => passwordResetService.InvalidateResetPasswordForEmailAsync("email"))
@@ -133,7 +133,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             A.CallTo(() => passwordService.ChangePasswordAsync("email", "testPass-9"))
@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             var result = await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             result.Should().BeViewResult().WithViewName("Success");
@@ -165,7 +165,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             unauthenticatedController.TempData.Peek<ResetPasswordData>().Should().BeNull();
@@ -182,7 +182,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             unauthenticatedController.TempData.Peek<ResetPasswordData>().Should().BeNull();
@@ -199,7 +199,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             unauthenticatedController.TempData.Peek<ResetPasswordData>().Should()
@@ -216,7 +216,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             var result = await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -231,7 +231,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
 
             // When
             var result = await unauthenticatedController.Index(
-                new PasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
+                new ConfirmPasswordViewModel { Password = "testPass-9", ConfirmPassword = "testPass-9" });
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Error").WithControllerName(null);
