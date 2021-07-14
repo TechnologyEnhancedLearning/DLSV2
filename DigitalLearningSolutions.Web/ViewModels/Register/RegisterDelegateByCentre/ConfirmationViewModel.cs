@@ -2,15 +2,15 @@
 {
     public class ConfirmationViewModel
     {
-        public ConfirmationViewModel(string delegateNumber, bool emailSent, bool passwordSet)
+        public ConfirmationViewModel(string delegateNumber, bool emailWillBeSent, bool passwordSet)
         {
             DelegateNumber = delegateNumber;
-            EmailSent = emailSent;
+            EmailWillBeSent = emailWillBeSent;
             PasswordSet = passwordSet;
         }
 
         public string DelegateNumber { get; set; }
-        public bool EmailSent { get; set; }
+        public bool EmailWillBeSent { get; set; }
         public bool PasswordSet { get; set; }
     }
 }

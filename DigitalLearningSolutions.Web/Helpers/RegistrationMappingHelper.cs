@@ -49,8 +49,10 @@
                 data.Answer3,
                 data.Answer4,
                 data.Answer5,
-                data.Answer6
-            ) {AliasId = data.Alias, NotifyDate = data.WelcomeEmailDate};
+                data.Answer6,
+                data.Alias,
+                data.WelcomeEmailDate
+            );
         }
     }
 }

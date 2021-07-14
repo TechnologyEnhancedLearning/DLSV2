@@ -65,7 +65,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.PasswordHash
+                delegateRegistrationModel.PasswordHash!
             );
             if (!delegateRegistrationModel.Approved)
             {
@@ -123,7 +123,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.Email,
                 registrationModel.Centre,
                 registrationModel.JobGroup,
-                registrationModel.PasswordHash
+                registrationModel.PasswordHash!
             ) { Approved = true };
             var candidateNumber =
                 registrationDataService.RegisterDelegate(delegateRegistrationModel);
@@ -136,7 +136,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.PasswordHash
+                delegateRegistrationModel.PasswordHash!
             );
         }
 

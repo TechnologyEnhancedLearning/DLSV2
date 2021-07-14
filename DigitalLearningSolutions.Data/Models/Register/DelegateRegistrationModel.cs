@@ -16,7 +16,10 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
+            string? answer6,
+            string? aliasId = null,
+            DateTime? notifyDate = null
+        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -24,6 +27,8 @@
             Answer4 = answer4;
             Answer5 = answer5;
             Answer6 = answer6;
+            AliasId = aliasId;
+            NotifyDate = notifyDate;
         }
 
         public DelegateRegistrationModel(
