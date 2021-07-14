@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -46,7 +47,7 @@
 
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
-            var model = new DisplayRegistrationPromptsViewModel(customPrompts);
+            var model = new DisplayPromptsViewModel(customPrompts.CustomPrompts);
 
             return View(model);
         }

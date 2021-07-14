@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -50,7 +50,7 @@
             var result = controller.AdminFields(1);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DisplayPromptsViewModel>();
         }
     }
 }

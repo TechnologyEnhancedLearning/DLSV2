@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -32,7 +32,7 @@
                 return NotFound();
             }
 
-            var model = new AdminFieldsViewModel(courseCustomPrompts);
+            var model = new DisplayPromptsViewModel(courseCustomPrompts.CourseAdminFields);
             return View(model);
         }
     }
