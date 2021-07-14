@@ -160,12 +160,13 @@
         public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId)
         {
             var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
-            return result == null ? null :
-                new CourseCustomPrompts(
-                result.CustomisationId,
-                result.CentreId,
-                PopulateCustomPromptListFromCourseCustomPromptsResult(result)
-            );
+            return result == null
+                ? null
+                : new CourseCustomPrompts(
+                    customisationId,
+                    centreId,
+                    PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+                );
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(

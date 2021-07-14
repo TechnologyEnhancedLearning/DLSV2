@@ -104,8 +104,6 @@
         }
 
         public static CourseCustomPromptsResult GetDefaultCourseCustomPromptsResult(
-            int customisationId = 27920,
-            int centreId = 101,
             string? customField1Prompt = "System Access Granted",
             string? customField1Options = "Yes\r\nNo",
             bool customField1Mandatory = false,
@@ -119,8 +117,6 @@
         {
             return new CourseCustomPromptsResult
             {
-                CustomisationId = customisationId,
-                CentreId = centreId,
                 CustomField1Prompt = customField1Prompt,
                 CustomField1Options = customField1Options,
                 CustomField1Mandatory = customField1Mandatory,

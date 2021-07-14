@@ -2,9 +2,6 @@
 {
     public class CourseCustomPromptsResult
     {
-        public int CustomisationId { get; set; }
-        public int CentreId { get; set; }
-
         public string? CustomField1Prompt { get; set; }
         public string? CustomField1Options { get; set; }
         public bool CustomField1Mandatory { get; set; }

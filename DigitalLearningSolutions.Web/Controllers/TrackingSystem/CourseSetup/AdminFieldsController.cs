@@ -5,7 +5,9 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CourseSetup")]
     public class AdminFieldsController : Controller

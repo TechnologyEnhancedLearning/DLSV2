@@ -80,7 +80,8 @@
                 // When
                 customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
                 var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
-                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1).Item2;
+                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1)
+                    .Item2;
 
                 // Then
                 using (new AssertionScope())
@@ -112,13 +113,12 @@
             // Given
             var expectedCourseCustomPromptsResult =
                 CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult(
-                    1379,
-                    customField1Prompt: null,
-                    customField1Options: "Yes\nNo\nNot sure",
-                    customField1Mandatory: true,
-                    customField2Prompt: null,
-                    customField2Options:"Yes\nNo\nNot sure"
-                    );
+                    null,
+                    "Yes\nNo\nNot sure",
+                    true,
+                    null,
+                    "Yes\nNo\nNot sure"
+                );
 
             // When
             var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);

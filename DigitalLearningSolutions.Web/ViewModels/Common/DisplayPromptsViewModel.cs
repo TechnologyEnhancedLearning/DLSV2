@@ -8,8 +8,15 @@
     {
         public DisplayPromptsViewModel(IEnumerable<CustomPrompt> customPrompts)
         {
-            CustomFields = customPrompts.Select(cp =>
-                    new CustomPromptManagementViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory,cp.Options))
+            CustomFields = customPrompts.Select(
+                    cp =>
+                        new CustomPromptManagementViewModel(
+                            cp.CustomPromptNumber,
+                            cp.CustomPromptText,
+                            cp.Mandatory,
+                            cp.Options
+                        )
+                )
                 .ToList();
         }
 
