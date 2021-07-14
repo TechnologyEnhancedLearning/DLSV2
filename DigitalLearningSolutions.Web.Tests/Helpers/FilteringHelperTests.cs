@@ -18,7 +18,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            var filterBy = "Name|a";
+            var filterBy = "Name|Name|a";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -32,7 +32,49 @@
         {
             // Given
             var expectedItems = new[] { ItemA1 }.AsQueryable();
-            var filterBy = "Name|a\r\nNumber|1";
+            var filterBy = "Name|Name|a\r\nNumber|Number|1";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void FilterItems_with_filters_in_same_group_returns_union_of_filters()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3, ItemB2 }.AsQueryable();
+            var filterBy = "Group|Name|a\r\nGroup|Name|b";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void FilterItems_with_filters_in_same_group_returns_no_duplicates()
+        {
+            // Given
+            var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
+            var filterBy = "Group|Name|a\r\nGroup|Name|a";
+
+            // When
+            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedItems);
+        }
+
+        [Test]
+        public void FilterItems_with_some_filters_in_same_group_returns_expected_items()
+        {
+            // Given
+            var expectedItems = new[] { ItemA3 }.AsQueryable();
+            var filterBy = "Group|Name|a\r\nGroup|Name|b\r\nNumber|Number|3";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);

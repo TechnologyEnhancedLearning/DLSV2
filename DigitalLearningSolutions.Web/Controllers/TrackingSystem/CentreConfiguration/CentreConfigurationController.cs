@@ -7,7 +7,9 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CentreConfiguration")]
     public class CentreConfigurationController : Controller
@@ -117,7 +119,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
             centresDataService.UpdateCentreWebsiteDetails(
                 centreId,
                 model.CentrePostcode,
-                model.ShowCentreOnMap,
                 latitude,
                 longitude,
                 model.CentreTelephone,

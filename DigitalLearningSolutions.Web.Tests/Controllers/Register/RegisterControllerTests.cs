@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -14,6 +14,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class RegisterControllerTests
@@ -25,6 +26,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserService userService = null!;
+        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
@@ -35,13 +37,16 @@
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
             customPromptHelper = A.Fake<CustomPromptHelper>();
+            featureManager = A.Fake<IFeatureManager>();
+
             controller = new RegisterController(
                     centresDataService,
                     jobGroupsDataService,
                     registrationService,
                     cryptoService,
                     userService,
-                    customPromptHelper
+                    customPromptHelper,
+                    featureManager
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

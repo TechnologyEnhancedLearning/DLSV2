@@ -5,7 +5,7 @@
     public static class DisplayStringHelper
     {
         private const string Divider = " / ";
-        private static readonly string[] Units = { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+        private static readonly string[] Units = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
 
         public static string FormatNumberWithLimit(int number, int limit)
         {
@@ -30,7 +30,9 @@
             }
 
             var place = Convert.ToInt32(Math.Floor(Math.Log(byteCount, 1024)));
-            var number = Math.Round(byteCount / Math.Pow(1024, place), 1);
+            // Do not include decimal place below GB
+            var decimalPlaces = place <= 2 ? 0 : 1;
+            var number = Math.Round(byteCount / Math.Pow(1024, place), decimalPlaces);
             return (Math.Sign(byteCount) * number) + Units[place];
         }
     }

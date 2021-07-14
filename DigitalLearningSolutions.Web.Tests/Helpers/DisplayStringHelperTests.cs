@@ -8,6 +8,7 @@
     public class DisplayStringHelperTests
     {
         private const long Gibibyte = 1073741824;
+        private const long Mebibyte = 1048576;
 
         [Test]
         public void GenerateNumberWithLimitDisplayString_returns_expected_string_with_limit()
@@ -46,7 +47,7 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, 1200);
 
             // Then
-            result.Should().Be("12B / 1.2KiB");
+            result.Should().Be("12B / 1KB");
         }
 
         [Test]
@@ -56,7 +57,27 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, Gibibyte);
 
             // Then
-            result.Should().Be("12B / 1GiB");
+            result.Should().Be("12B / 1GB");
+        }
+
+        [Test]
+        public void FormatBytesWithLimit_returns_expected_string_for_gibibytes_with_decimal()
+        {
+            // When
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, Gibibyte + 500000000);
+
+            // Then
+            result.Should().Be("12B / 1.5GB");
+        }
+
+        [Test]
+        public void FormatBytesWithLimit_returns_expected_string_for_mebibytes_with_decimal()
+        {
+            // When
+            var result = DisplayStringHelper.FormatBytesWithLimit(12, Mebibyte + 800000);
+
+            // Then
+            result.Should().Be("12B / 2MB");
         }
 
         [Test]
@@ -69,7 +90,7 @@
             var result = DisplayStringHelper.FormatBytesWithLimit(12, bytes);
 
             // Then
-            result.Should().Be("12B / 1024MiB");
+            result.Should().Be("12B / 1024MB");
         }
 
         [Test]
