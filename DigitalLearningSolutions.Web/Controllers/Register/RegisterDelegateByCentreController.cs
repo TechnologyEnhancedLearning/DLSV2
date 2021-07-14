@@ -17,7 +17,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using PasswordViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.PasswordViewModel;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
