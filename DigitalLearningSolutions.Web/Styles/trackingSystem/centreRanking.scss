@@ -22,9 +22,12 @@ $current-centre-highlight: $color_nhsuk-pale-yellow;
   bottom: 0;
 }
 
-.desktop-only-spacing {
-  @include govuk-media-query($until: desktop) {
-    min-height: 1px;
-    display: none;
-  }
+.ranking-flex-container {
+    display: flex;
+}
+
+.ranking-flex-container .apply-filter-flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }

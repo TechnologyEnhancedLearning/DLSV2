@@ -30,7 +30,7 @@
 </div>
 
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
-  <form method="get" asp-controller="Ranking" asp-action="Index">
+  <form class="ranking-flex-container" method="get" asp-controller="Ranking" asp-action="Index">
     <div class="nhsuk-grid-column-one-quarter">
       <vc:select-list asp-for="@nameof(Model.RegionId)"
                       label="Region"
@@ -51,9 +51,9 @@
                       default-option="@null"
                       select-list-options="@Model.PeriodOptions" />
     </div>
-    <div class="nhsuk-grid-column-one-quarter">
+    <div class="nhsuk-grid-column-one-quarter apply-filter-flex-container">
       <div class="nhsuk-form-group">
-        <button class="nhsuk-search__submit filter-submit__dropdown desktop-only-spacing" type="submit">Apply filter</button>
+        <button class="nhsuk-search__submit filter-submit__dropdown" type="submit">Apply filter</button>
       </div>
     </div>
   </form>
