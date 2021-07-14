@@ -23,5 +23,15 @@
         public int? Year { get; set; }
         public bool ShouldSendEmail { get; set; }
         public DateValidator.ValidationResult? DateValidationResult { get; set; }
+
+        public void CleanDate()
+        {
+            if (!ShouldSendEmail)
+            {
+                Day = null;
+                Month = null;
+                Year = null;
+            }
+        }
     }
 }

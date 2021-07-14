@@ -149,7 +149,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            if (!ValidateWelcomeEmail(model))
+            model.CleanDate();
+            SetWelcomeEmailValidationResult(model);
+            if (model.DateValidationResult is { DateValid: false })
             {
                 return View(model);
             }
@@ -256,14 +258,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private bool ValidateWelcomeEmail(WelcomeEmailViewModel model)
+        private void SetWelcomeEmailValidationResult(WelcomeEmailViewModel model)
         {
             if (!model.ShouldSendEmail)
             {
-                model.Day = null;
-                model.Month = null;
-                model.Year = null;
-                return true;
+                return;
             }
 
             var validationResult = DateValidator.ValidateRequiredDate(
@@ -273,7 +272,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 "Email delivery date"
             );
             model.DateValidationResult = validationResult;
-            return validationResult.DateValid;
         }
 
         private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(

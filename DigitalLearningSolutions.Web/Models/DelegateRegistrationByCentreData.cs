@@ -8,12 +8,11 @@
     {
         public DelegateRegistrationByCentreData() { }
         public DelegateRegistrationByCentreData(int centreId) : base(centreId) { }
-        public string? Alias { get; set; }
 
+        public string? Alias { get; set; }
         public DateTime? WelcomeEmailDate { get; set; }
 
         public bool ShouldSendEmail => WelcomeEmailDate.HasValue;
-
         public bool IsPasswordSet => PasswordHash != null;
 
         public override void SetPersonalInformation(PersonalInformationViewModel model)
