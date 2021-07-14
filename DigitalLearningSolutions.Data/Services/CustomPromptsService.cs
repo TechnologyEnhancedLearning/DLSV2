@@ -32,6 +32,7 @@
         public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -154,6 +155,18 @@
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
         {
             return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
+        }
+
+        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId)
+        {
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
+            return result == null
+                ? null
+                : new CourseCustomPrompts(
+                    customisationId,
+                    centreId,
+                    PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+                );
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(
@@ -342,6 +355,53 @@
         )
         {
             return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
+        }
+
+        private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
+            CourseCustomPromptsResult? result
+        )
+        {
+            var list = new List<CustomPrompt>();
+
+            if (result == null)
+            {
+                return list;
+            }
+
+            var prompt1 = PopulateCustomPrompt(
+                1,
+                result.CustomField1Prompt,
+                result.CustomField1Options,
+                result.CustomField1Mandatory
+            );
+            if (prompt1 != null)
+            {
+                list.Add(prompt1);
+            }
+
+            var prompt2 = PopulateCustomPrompt(
+                2,
+                result.CustomField2Prompt,
+                result.CustomField2Options,
+                result.CustomField2Mandatory
+            );
+            if (prompt2 != null)
+            {
+                list.Add(prompt2);
+            }
+
+            var prompt3 = PopulateCustomPrompt(
+                3,
+                result.CustomField3Prompt,
+                result.CustomField3Options,
+                result.CustomField3Mandatory
+            );
+            if (prompt3 != null)
+            {
+                list.Add(prompt3);
+            }
+
+            return list;
         }
     }
 }

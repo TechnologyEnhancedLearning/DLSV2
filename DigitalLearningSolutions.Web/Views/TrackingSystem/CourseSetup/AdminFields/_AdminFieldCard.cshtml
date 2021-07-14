@@ -1,0 +1,39 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@model CustomPromptManagementViewModel
+
+<div class="nhsuk-panel card-with-buttons">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text">
+        @Model.CustomPromptName
+      </span>
+    </summary>
+    <div class="nhsuk-details__text nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          @if (Model.Options.Count == 0) {
+            <p>This is a free text field. Admins can input any text.</p>
+          } else {
+            <p class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-0">Answers to choose from:</p>
+            <ul>
+              @foreach (var answer in Model.Options) {
+                <li class="word-break">@answer</li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button" href="#">
+        Edit
+      </a>
+      <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" role="button" href="#">
+        Remove
+      </a>
+    </div>
+  </div>
+</div>
