@@ -9,7 +9,7 @@
         /// <summary>
         /// Render DateInput view component.
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="id"></param>
         /// <param name="label"></param>
         /// <param name="dayId"></param>
         /// <param name="monthId"></param>
@@ -18,7 +18,7 @@
         /// <param name="hintText">Leave blank for no hint.</param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
-            string name,
+            string id,
             string label,
             string dayId,
             string monthId,
@@ -37,7 +37,7 @@
             var yearValue = yearProperty?.GetValue(model)?.ToString();
 
             var viewModel = new DateInputViewModel(
-                name,
+                id,
                 label,
                 dayId,
                 monthId,
