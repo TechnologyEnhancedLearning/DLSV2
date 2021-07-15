@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -26,17 +28,18 @@
             this.regionDataService = regionDataService;
         }
 
-        public IActionResult Index(int? regionId = null, int? period = null)
+        public IActionResult Index(int? regionId = null, int? periodId = null)
         {
-            period ??= Period.Fortnight.Id;
+            Enumeration.TryGetFromIdOrName<Period>(periodId.ToString() ?? string.Empty, out var period);
+            period ??= Period.Fortnight;
 
             var centreId = User.GetCentreId();
 
             var regions = regionDataService.GetRegionsAlphabetical();
 
-            var centreRankings = centresService.GetCentresForCentreRankingPage(centreId, period!.Value, regionId);
+            var centreRankings = centresService.GetCentresForCentreRankingPage(centreId, period.Days, regionId);
 
-            var model = new CentreRankingViewModel(centreRankings, centreId, regions, regionId, period);
+            var model = new CentreRankingViewModel(centreRankings, centreId, regions, regionId, period.Id);
 
             return View(model);
         }

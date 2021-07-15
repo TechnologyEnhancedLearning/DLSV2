@@ -28,11 +28,5 @@
         {
             return options.Select(option => new SelectListItem(option.Text, option.Value));
         }
-
-        public static IEnumerable<SelectListItem> MapPeriodOptionsToSelectListItem(int? selectedId = null)
-        {
-            var values = Enumeration.GetAll<Period>();
-            return values.Select(v => new SelectListItem(v.Name, v.Id.ToString(), v.Id == selectedId));
-        }
     }
 }

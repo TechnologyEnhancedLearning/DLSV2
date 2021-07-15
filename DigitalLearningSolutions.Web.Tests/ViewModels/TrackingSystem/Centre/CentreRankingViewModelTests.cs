@@ -96,5 +96,49 @@
                 result.CentreHasNoActivity.Should().BeTrue();
             }
         }
+
+        [Test]
+        public void CentreRankingViewModel_populates_region_options_correctly()
+        {
+            // When
+            var result = new CentreRankingViewModel(centreRankings, 3, regions, 4);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.RegionOptions.Should().NotBeNullOrEmpty();
+                result.RegionOptions.Count().Should().Be(4);
+
+                result.RegionOptions.ElementAt(0).Value.Should().Be("1");
+                result.RegionOptions.ElementAt(0).Text.Should().Be("North");
+                result.RegionOptions.ElementAt(0).Selected.Should().BeFalse();
+
+                result.RegionOptions.ElementAt(3).Value.Should().Be("4");
+                result.RegionOptions.ElementAt(3).Text.Should().Be("West");
+                result.RegionOptions.ElementAt(3).Selected.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void GeneratePeriodSelectListWithSelectedItem_returns_expected_list()
+        {
+            // When
+            var result = CentreRankingViewModel.GeneratePeriodSelectListWithSelectedItem(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNullOrEmpty();
+                result.Count().Should().Be(5);
+
+                result.ElementAt(0).Value.Should().Be("0");
+                result.ElementAt(0).Text.Should().Be("Week");
+                result.ElementAt(0).Selected.Should().BeFalse();
+
+                result.ElementAt(1).Value.Should().Be("1");
+                result.ElementAt(1).Text.Should().Be("Fortnight");
+                result.ElementAt(1).Selected.Should().BeTrue();
+            }
+        }
     }
 }

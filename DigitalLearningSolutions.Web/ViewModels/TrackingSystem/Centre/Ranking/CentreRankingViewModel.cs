@@ -2,8 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CentreRankingViewModel
@@ -13,7 +15,7 @@
             int centreId,
             IEnumerable<(int, string)> regions,
             int? regionId = null,
-            int? period = null
+            int? periodId = null
         )
         {
             var centreRanksList = centreRanks.ToList();
@@ -31,9 +33,9 @@
             CentreHasNoActivity = centreRanksList.All(cr => cr.CentreId != centreId);
 
             RegionId = regionId;
-            PeriodId = period;
+            PeriodId = periodId;
             RegionOptions = SelectListHelper.MapOptionsToSelectListItems(regions, regionId);
-            PeriodOptions = SelectListHelper.MapPeriodOptionsToSelectListItem(period);
+            PeriodOptions = GeneratePeriodSelectListWithSelectedItem(periodId);
         }
 
         public IEnumerable<CentreRankViewModel> Centres { get; set; }
@@ -47,5 +49,11 @@
         public int? PeriodId { get; set; }
 
         public IEnumerable<SelectListItem> PeriodOptions { get; set; }
+
+        public static IEnumerable<SelectListItem> GeneratePeriodSelectListWithSelectedItem(int? selectedId = null)
+        {
+            var values = Enumeration.GetAll<Period>();
+            return values.Select(v => new SelectListItem(v.Name, v.Id.ToString(), v.Id == selectedId));
+        }
     }
 }
