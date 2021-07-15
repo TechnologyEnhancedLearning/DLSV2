@@ -15,7 +15,7 @@
             int centreId,
             IEnumerable<(int, string)> regions,
             int? regionId = null,
-            Period period = null
+            Period? period = null
         )
         {
             var centreRanksList = centreRanks.ToList();
@@ -35,7 +35,7 @@
             RegionId = regionId;
             Period = period;
             RegionOptions = SelectListHelper.MapOptionsToSelectListItems(regions, regionId);
-            PeriodOptions = GeneratePeriodSelectListWithSelectedItem(period.Id);
+            PeriodOptions = GeneratePeriodSelectListWithSelectedItem(period?.Id);
         }
 
         public IEnumerable<CentreRankViewModel> Centres { get; set; }

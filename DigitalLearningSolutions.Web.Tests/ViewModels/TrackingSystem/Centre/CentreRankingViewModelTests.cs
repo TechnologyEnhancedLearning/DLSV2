@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Ranking;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -123,7 +124,7 @@
         public void GeneratePeriodSelectListWithSelectedItem_returns_expected_list()
         {
             // When
-            var result = new CentreRankingViewModel(centreRankings, 3, regions, 4, 1).PeriodOptions;
+            var result = new CentreRankingViewModel(centreRankings, 3, regions, 4, Period.Fortnight).PeriodOptions;
 
             // Then
             using (new AssertionScope())
