@@ -219,7 +219,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostRemoveSignature(EditCentreDetailsViewModel model)
         {
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreSignature));
             model.CentreSignature = null;
@@ -246,7 +246,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostRemoveLogo(EditCentreDetailsViewModel model)
         {
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreLogo));
             model.CentreLogo = null;

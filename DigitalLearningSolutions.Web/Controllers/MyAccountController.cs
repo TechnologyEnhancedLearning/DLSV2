@@ -150,7 +150,7 @@
         private IActionResult EditDetailsPostRemoveImage(EditDetailsViewModel model)
         {
             // We don't want to display validation errors on other fields in this case
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
             model.ProfileImage = null;

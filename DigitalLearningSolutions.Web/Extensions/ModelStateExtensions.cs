@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.Extensions
                           && (entry.Errors?.Any() ?? false);
         }
 
-        internal static void ClearErrorsForAllFields(this ModelStateDictionary modelStateDictionary)
+        internal static void ClearAllErrors(this ModelStateDictionary modelStateDictionary)
         {
             ClearErrorsForAllFieldsExcept(modelStateDictionary, null);
         }

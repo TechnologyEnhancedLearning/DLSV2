@@ -315,7 +315,7 @@
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             if (!ModelState.IsValid)
             {
@@ -367,7 +367,7 @@
             bool saveToTempData = false
         )
         {
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             var optionsString =
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
@@ -384,7 +384,7 @@
 
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
-            ModelState.ClearErrorsForAllFields();
+            ModelState.ClearAllErrors();
 
             if (!ModelState.IsValid)
             {
