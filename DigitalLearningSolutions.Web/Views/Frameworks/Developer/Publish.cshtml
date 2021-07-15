@@ -5,6 +5,9 @@
   ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
 @section NavBreadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
@@ -71,10 +74,10 @@
             {
               @if (review.ReviewRequested.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
               {
-              <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-frameworkId="@review.FrameworkID" asp-route-frameworkCollaboratorId="@review.FrameworkCollaboratorID">
-                Send reminder
-              </a>
-            <text>&nbsp;</text>
+                <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-frameworkId="@review.FrameworkID" asp-route-frameworkCollaboratorId="@review.FrameworkCollaboratorID">
+                  Send reminder
+                </a>
+                <text>&nbsp;</text>
               }
               <a asp-action="RemoveRequest" asp-route-frameworkId="@review.FrameworkID" asp-route-reviewId="@review.ID">
                 Remove request
@@ -120,12 +123,12 @@
       </div>
     }
   </div>
-    <div class="nhsuk-grid-column-full">
-      @if (Model.CanPublish)
-      {
-        <a role="button" asp-action="PublishFramework" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish Framework</a>
-      }
-      <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
-    </div>
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CanPublish)
+    {
+      <a role="button" asp-action="PublishFramework" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button">Publish Framework</a>
+    }
+    <a role="button" asp-action="SendForReview" asp-route-frameworkId="@Model.DetailFramework.ID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
   </div>
+</div>
 
