@@ -6,7 +6,6 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Mappers;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -453,6 +452,37 @@
 
             // Then
             var userCard = userCards.Single(user => user.Id == 97055);
+            userCard.Active.Should().BeTrue();
+            userCard.SelfReg.Should().BeTrue();
+            userCard.ExternalReg.Should().BeFalse();
+            userCard.AdminId.Should().Be(74);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(6);
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_populates_DelegateUser_fields_correctly()
+        {
+            // Given
+            var expected = UserTestHelper.GetDefaultDelegateUser(
+                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
+                jobGroupName: "Nursing / midwifery"
+            );
+
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(2);
+
+            // Then
+            userCard.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_populates_DelegateUserCard_fields_correctly()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(97055)!;
+
+            // Then
             userCard.Active.Should().BeTrue();
             userCard.SelfReg.Should().BeTrue();
             userCard.ExternalReg.Should().BeFalse();

@@ -11,6 +11,7 @@
     {
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
+        public DelegateUserCard? GetDelegateUserCardById(int id);
         public List<AdminUser> GetAdminUsersByCentreId(int centreId);
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
@@ -126,6 +127,47 @@
                         cd.Answer5,
                         cd.Answer6,
                         jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.CandidateId = @id",
+                new { id }
+            ).SingleOrDefault();
+
+            return user;
+        }
+
+        public DelegateUserCard? GetDelegateUserCardById(int id)
+        {
+            var user = connection.Query<DelegateUserCard>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupId,
+                        jg.JobGroupName,
+                        cd.SelfReg,
+                        cd.ExternalReg,
+                        cd.Active,
+                        (SELECT AdminID
+                         FROM AdminUsers au
+                         WHERE au.Email = cd.EmailAddress AND au.CentreID = cd.CentreID
+                        ) AS AdminID,
+                        cd.AliasID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
