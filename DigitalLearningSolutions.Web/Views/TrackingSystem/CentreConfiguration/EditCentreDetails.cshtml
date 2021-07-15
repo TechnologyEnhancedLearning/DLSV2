@@ -82,7 +82,7 @@
         </div>
         <div class="nhsuk-grid-column-one-half">
           @if (Model.CentreLogo != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre Logo Picture" />
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreLogo)" alt="Centre logo picture" />
           } else {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder logo image" />
           }
