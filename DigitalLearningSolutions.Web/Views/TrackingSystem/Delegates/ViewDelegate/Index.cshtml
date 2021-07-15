@@ -58,7 +58,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Email</dt>
-        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.Email</dd>
+        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.Email ?? "-")</dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -68,23 +68,23 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Alias</dt>
-        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.AliasId</dd>
+        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.AliasId ?? "-")</dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Registration date</dt>
-        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.RegistrationDate</dd>
+        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.RegistrationDate ?? "-")</dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Job group</dt>
-        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.JobGroup</dd>
+        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.JobGroup ?? "-")</dd>
       </div>
 
       @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
-          <dd class="nhsuk-summary-list__value">@customField.Answer</dd>
+          <dd class="nhsuk-summary-list__value">@(customField.Answer ?? "-")</dd>
         </div>
       }
     </dl>
