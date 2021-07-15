@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
@@ -162,7 +163,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
                 "removeSignature" => EditCentreDetailsPostRemoveSignature(model),
                 "previewLogo" => EditCentreDetailsPostPreviewLogo(model),
                 "removeLogo" => EditCentreDetailsPostRemoveLogo(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
@@ -200,7 +201,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostPreviewSignature(EditCentreDetailsViewModel model)
         {
-            ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreSignatureFile));
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreSignatureFile));
 
             if (!ModelState.IsValid)
             {
@@ -218,7 +219,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostRemoveSignature(EditCentreDetailsViewModel model)
         {
-            ClearErrorsForAllFields();
+            ModelState.ClearErrorsForAllFields();
 
             ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreSignature));
             model.CentreSignature = null;
@@ -227,7 +228,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostPreviewLogo(EditCentreDetailsViewModel model)
         {
-            ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreLogoFile));
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditCentreDetailsViewModel.CentreLogoFile));
 
             if (!ModelState.IsValid)
             {
@@ -245,25 +246,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfigur
 
         private IActionResult EditCentreDetailsPostRemoveLogo(EditCentreDetailsViewModel model)
         {
-            ClearErrorsForAllFields();
+            ModelState.ClearErrorsForAllFields();
 
             ModelState.Remove(nameof(EditCentreDetailsViewModel.CentreLogo));
             model.CentreLogo = null;
             return View(model);
-        }
-
-        private void ClearErrorsForAllFields()
-        {
-            ClearErrorsForAllFieldsExcept(null);
-        }
-
-        private void ClearErrorsForAllFieldsExcept(string? fieldName)
-        {
-            foreach (var key in ModelState.Keys.Where(k => k != fieldName))
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
         }
     }
 }

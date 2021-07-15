@@ -315,7 +315,7 @@
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            IgnoreAddNewAnswerValidation();
+            ModelState.ClearErrorsForAllFields();
 
             if (!ModelState.IsValid)
             {
@@ -367,7 +367,7 @@
             bool saveToTempData = false
         )
         {
-            IgnoreAddNewAnswerValidation();
+            ModelState.ClearErrorsForAllFields();
 
             var optionsString =
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
@@ -384,7 +384,7 @@
 
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
-            IgnoreAddNewAnswerValidation();
+            ModelState.ClearErrorsForAllFields();
 
             if (!ModelState.IsValid)
             {
@@ -455,15 +455,6 @@
                 nameof(RegistrationPromptAnswersViewModel.Answer),
                 $"The complete list of answers must be 4000 characters or fewer ({remainingLength} characters remaining for the new answer)"
             );
-        }
-
-        private void IgnoreAddNewAnswerValidation()
-        {
-            foreach (var key in ModelState.Keys)
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
         }
 
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
