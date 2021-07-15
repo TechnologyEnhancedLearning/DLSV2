@@ -149,7 +149,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            model.CleanDate();
+            model.ClearDateIfNotSendEmail();
             SetWelcomeEmailValidationResult(model);
             if (model.DateValidationResult is { DateValid: false })
             {

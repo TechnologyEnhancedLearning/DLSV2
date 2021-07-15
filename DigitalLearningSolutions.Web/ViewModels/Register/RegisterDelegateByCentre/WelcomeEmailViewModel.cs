@@ -24,7 +24,7 @@
         public bool ShouldSendEmail { get; set; }
         public DateValidator.ValidationResult? DateValidationResult { get; set; }
 
-        public void CleanDate()
+        public void ClearDateIfNotSendEmail()
         {
             if (!ShouldSendEmail)
             {
