@@ -64,10 +64,10 @@ function parseDate(dateString: string): Date {
 
 function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
-  return element.value;
+  return element?.value ?? 'Name';
 }
 
 function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
-  return element.value;
+  return element?.value ?? 'Ascending';
 }

@@ -7,14 +7,12 @@
     public class SearchBoxViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            string aspController,
-            string aspAction,
             BaseSearchablePageViewModel searchablePageViewModel,
             string label,
             string? cssClass
         )
         {
-            return View(new SearchBoxViewModel(aspController, aspAction, searchablePageViewModel, label, cssClass));
+            return View(new SearchBoxViewModel(searchablePageViewModel, label, cssClass));
         }
     }
 }

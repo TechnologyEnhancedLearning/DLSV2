@@ -1,5 +1,8 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
-import { search, setUpSearch } from './search';
+import {
+  setupFilter, filterSearchableElements, getFilterBy, AppliedFilterTag,
+} from './filter';
+import { getQuery, search, setUpSearch } from './search';
 import { setupSort, sortSearchableElements } from './sort';
 import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
 import getPathForEndpoint from '../common';
@@ -9,62 +12,99 @@ export interface SearchableElement {
   title: string;
 }
 
+export interface SearchableData {
+  searchableElements: SearchableElement[];
+  possibleFilters: AppliedFilterTag[];
+}
+
 export class SearchSortAndPaginate {
   private page: number;
 
+  private readonly filterEnabled: boolean;
+
   // Route proved should be a relative path with no leading /
-  constructor(route: string) {
+  constructor(route: string, filterEnabled = false) {
     this.page = 1;
-    SearchSortAndPaginate.getSearchableElements(route).then((allSearchableElements) => {
-      if (allSearchableElements === undefined) {
+    this.filterEnabled = filterEnabled;
+
+    SearchSortAndPaginate.getSearchableElements(route).then((searchableData) => {
+      if (searchableData === undefined) {
         return;
       }
 
-      setUpSearch(() => this.onSearchUpdated(allSearchableElements));
-      setupSort(() => this.searchSortAndPaginate(allSearchableElements));
+      if (filterEnabled) {
+        setupFilter(() => this.onFilterUpdated(searchableData));
+      }
+
+      setUpSearch(() => this.onSearchUpdated(searchableData));
+      setupSort(() => this.searchSortAndPaginate(searchableData));
       setupPagination(
-        () => this.onNextPagePressed(allSearchableElements),
-        () => this.onPreviousPagePressed(allSearchableElements),
+        () => this.onNextPagePressed(searchableData),
+        () => this.onPreviousPagePressed(searchableData),
       );
-      this.searchSortAndPaginate(allSearchableElements);
+      this.searchSortAndPaginate(searchableData);
     });
   }
 
-  private onSearchUpdated(allSearchableElements: SearchableElement[]): void {
+  private onFilterUpdated(searchableData: SearchableData): void {
     this.page = 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private onNextPagePressed(allSearchableElements: SearchableElement[]): void {
+  private onSearchUpdated(searchableData: SearchableData): void {
+    this.page = 1;
+    this.searchSortAndPaginate(searchableData);
+  }
+
+  private onNextPagePressed(searchableData: SearchableData): void {
     this.page += 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private onPreviousPagePressed(allSearchableElements: SearchableElement[]): void {
+  private onPreviousPagePressed(searchableData: SearchableData): void {
     this.page -= 1;
-    this.searchSortAndPaginate(allSearchableElements);
+    this.searchSortAndPaginate(searchableData);
   }
 
-  private searchSortAndPaginate(searchableElements: SearchableElement[]): void {
-    const filteredElements = search(searchableElements);
+  private searchSortAndPaginate(searchableData: SearchableData): void {
+    const searchedElements = search(searchableData.searchableElements);
+    const filteredElements = this.filterEnabled
+      ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
+      : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
+
+    if (this.shouldDisplayResultCount()) {
+      SearchSortAndPaginate.updateResultCount(sortedElements.length);
+    } else {
+      SearchSortAndPaginate.hideResultCount();
+    }
+
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
     SearchSortAndPaginate.displaySearchableElements(paginatedElements);
   }
 
-  static getSearchableElements(route: string): Promise<SearchableElement[] | undefined> {
+  static getSearchableElements(route: string): Promise<SearchableData | undefined> {
     return SearchSortAndPaginate.fetchAllSearchableElements(route)
-      .then((response): SearchableElement[] | undefined => {
+      .then((response): SearchableData | undefined => {
         if (response === null) {
           return undefined;
         }
 
-        const searchableElements = Array.from(response.getElementsByClassName('searchable-element'));
-        return searchableElements.map((element) => ({
+        const elements = Array.from(response.getElementsByClassName('searchable-element'));
+        const searchableElements = elements.map((element) => ({
           element,
           title: SearchSortAndPaginate.titleFromElement(element),
         }));
+        const tags = Array.from(response.getElementsByClassName('filter-tag'));
+        const possibleAppliedFilters = tags.map((element) => ({
+          element,
+          filterValue: SearchSortAndPaginate.filterValueFromElement(element),
+        }));
+        return {
+          searchableElements,
+          possibleFilters: possibleAppliedFilters,
+        };
       });
   }
 
@@ -88,6 +128,10 @@ export class SearchSortAndPaginate {
     return titleSpan?.textContent ?? '';
   }
 
+  static filterValueFromElement(element: Element): string {
+    return element.getAttribute('data-filter-value')?.trim() ?? '';
+  }
+
   static displaySearchableElements(searchableElements: SearchableElement[]): void {
     const searchableElementsContainer = document.getElementById('searchable-elements');
     if (!searchableElementsContainer) {
@@ -99,5 +143,24 @@ export class SearchSortAndPaginate {
     );
     // This is required to polyfill the new elements in IE
     Details();
+  }
+
+  private shouldDisplayResultCount(): boolean {
+    const filterString = this.filterEnabled ? getFilterBy() : false;
+    const searchString = getQuery();
+    return !!(filterString || searchString);
+  }
+
+  static updateResultCount(count: number): void {
+    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+    resultCount.hidden = false;
+    resultCount.setAttribute('aria-hidden', 'false');
+    resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+  }
+
+  static hideResultCount(): void {
+    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+    resultCount.hidden = true;
+    resultCount.setAttribute('aria-hidden', 'true');
   }
 }

@@ -37,8 +37,8 @@ describe('getCourseCards', () => {
     mockXHR.onload();
     cardsPromise.then((cards) => {
       // Then
-      expect(cards?.length).toBe(2);
-      expect(cards![0].title).toBe('a: Course');
+      expect(cards?.searchableElements.length).toBe(2);
+      expect(cards!.searchableElements[0].title).toBe('a: Course');
     });
   });
 
@@ -93,6 +93,69 @@ describe('displayCards', () => {
 
     // Then
     expect(getSearchableElements().length).toBe(2);
+  });
+});
+
+describe('updateResultCount', () => {
+  it('should make the result count visible', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortAndPaginate.updateResultCount(0);
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.hidden).toBeFalsy();
+    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('false');
+  });
+
+  it('should show the correct result count', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortAndPaginate.updateResultCount(5);
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.textContent).toBe('5 matching results');
+  });
+});
+
+describe('hideResultCount', () => {
+  it('should make the result count invisible', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span aria-hidden="false" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortAndPaginate.hideResultCount();
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.hidden).toBeTruthy();
+    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('true');
   });
 });
 

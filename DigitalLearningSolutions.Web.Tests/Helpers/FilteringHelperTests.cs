@@ -32,7 +32,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA1 }.AsQueryable();
-            var filterBy = "Name|Name|a\r\nNumber|Number|1";
+            var filterBy = $"Name|Name|a{FilteringHelper.FilterSeparator}Number|Number|1";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -46,7 +46,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3, ItemB2 }.AsQueryable();
-            var filterBy = "Group|Name|a\r\nGroup|Name|b";
+            var filterBy = $"Group|Name|a{FilteringHelper.FilterSeparator}Group|Name|b";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -60,7 +60,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            var filterBy = "Group|Name|a\r\nGroup|Name|a";
+            var filterBy = $"Group|Name|a{FilteringHelper.FilterSeparator}Group|Name|a";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
@@ -74,7 +74,7 @@
         {
             // Given
             var expectedItems = new[] { ItemA3 }.AsQueryable();
-            var filterBy = "Group|Name|a\r\nGroup|Name|b\r\nNumber|Number|3";
+            var filterBy = $"Group|Name|a{FilteringHelper.FilterSeparator}Group|Name|b{FilteringHelper.FilterSeparator}Number|Number|3";
 
             // When
             var result = FilteringHelper.FilterItems(InputItems, filterBy);
