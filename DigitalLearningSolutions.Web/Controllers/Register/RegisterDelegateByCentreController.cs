@@ -218,7 +218,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             switch (candidateNumber)
             {
                 case "-1":
-                    return RedirectToAction("Error", "LearningSolutions");
+                    return StatusCode(500);
                 case "-4":
                     return RedirectToAction("Index");
             }
@@ -236,6 +236,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var delegateNumber = (string?)TempData.Peek("delegateNumber");
             var emailSent = (bool)TempData.Peek("emailSent");
             var passwordSet = (bool)TempData.Peek("passwordSet");
+            TempData.Clear();
             if (delegateNumber == null)
             {
                 return RedirectToAction("Index");

@@ -43,7 +43,7 @@
                 data.Email!,
                 data.Centre!.Value,
                 data.JobGroup!.Value,
-                data.IsPasswordSet ? data.PasswordHash! : null,
+                data.PasswordHash,
                 data.Answer1,
                 data.Answer2,
                 data.Answer3,

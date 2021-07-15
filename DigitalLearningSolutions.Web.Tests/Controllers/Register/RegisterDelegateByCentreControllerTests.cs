@@ -18,12 +18,12 @@
     public class RegisterDelegateByCentreControllerTests
     {
         private RegisterDelegateByCentreController controller = null!;
+        private ICryptoService cryptoService = null!;
         private CustomPromptHelper customPromptHelper = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private ICryptoService cryptoService = null!;
-        private IRegistrationService registrationService = null!;
 
         [SetUp]
         public void Setup()
@@ -39,7 +39,8 @@
                     userService,
                     customPromptHelper,
                     cryptoService,
-                    userDataService,registrationService
+                    userDataService,
+                    registrationService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();
