@@ -40,7 +40,6 @@
                 () => centresDataService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     A<string>._,
-                    A<bool>._,
                     A<double>._,
                     A<double>._,
                     A<string>._,
@@ -299,7 +298,6 @@
                 () => centresDataService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     "AA123",
-                    A<bool>._,
                     latitude,
                     longitude,
                     A<string>._,

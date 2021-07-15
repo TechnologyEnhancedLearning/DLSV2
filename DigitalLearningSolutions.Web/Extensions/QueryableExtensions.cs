@@ -26,6 +26,11 @@
             return source.ThenByDescending(ToLambda<T>(propertyName));
         }
 
+        public static IQueryable<T> Where<T>(this IQueryable<T> source, string propertyName, object? propertyValue)
+        {
+            return source.Where(ToEqualityLambda<T>(propertyName, propertyValue));
+        }
+
         private static Expression<Func<T, object>> ToLambda<T>(string propertyName)
         {
             var parameter = Expression.Parameter(typeof(T));
@@ -33,6 +38,15 @@
             var propAsObject = Expression.Convert(property, typeof(object));
 
             return Expression.Lambda<Func<T, object>>(propAsObject, parameter);
+        }
+
+        private static Expression<Func<T, bool>> ToEqualityLambda<T>(string propertyName, object? comparisonValue)
+        {
+            var parameter = Expression.Parameter(typeof(T));
+            var property = Expression.Property(parameter, propertyName);
+            var objectEquality = Expression.Equal(property, Expression.Constant(comparisonValue));
+
+            return Expression.Lambda<Func<T, bool>>(objectEquality, parameter);
         }
     }
 }

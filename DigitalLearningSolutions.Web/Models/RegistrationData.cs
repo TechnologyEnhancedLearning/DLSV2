@@ -27,7 +27,7 @@
 
         public string? PasswordHash { get; set; }
 
-        public void SetPersonalInformation(PersonalInformationViewModel model)
+        public virtual void SetPersonalInformation(PersonalInformationViewModel model)
         {
             Centre = model.Centre;
             Email = model.Email;

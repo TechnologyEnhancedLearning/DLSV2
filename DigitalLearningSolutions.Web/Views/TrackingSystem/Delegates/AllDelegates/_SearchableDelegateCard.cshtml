@@ -1,0 +1,68 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@model SearchableDelegateViewModel
+@{
+  var activeTagCss = Model.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+  var passwordTagCss = Model.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+}
+
+@*TODO: Search and sort functionality is part of HEEDLS-491.
+  Filename includes 'Searchable' to avoid having to change name later*@
+
+<div class="nhsuk-expander-group" id="@Model.Id-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
+        @Model.Name (@Model.CandidateNumber)
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <div class="nhsuk-u-margin-bottom-4">
+        <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
+        <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
+        <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
+        @if (Model.IsAdmin) {
+          <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
+        }
+      </div>
+
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">Name</dt>
+          <dd class="nhsuk-summary-list__value">@Model.Name</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">Email</dt>
+          <dd class="nhsuk-summary-list__value">@Model.Email</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">ID</dt>
+          <dd class="nhsuk-summary-list__value">@Model.CandidateNumber</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">Registration date</dt>
+          <dd class="nhsuk-summary-list__value">@Model.RegistrationDate</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">Job group</dt>
+          <dd class="nhsuk-summary-list__value">@Model.JobGroup</dd>
+        </div>
+
+        @foreach (CustomFieldViewModel customField in Model.CustomFields) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
+            <dd class="nhsuk-summary-list__value">@customField.Answer</dd>
+          </div>
+        }
+      </dl>
+
+      <a class="nhsuk-button" role="button">Manage delegate</a>
+      <a class="nhsuk-button nhsuk-button--secondary" role="button">Set password</a>
+    </div>
+  </details>
+</div>

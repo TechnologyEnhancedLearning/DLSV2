@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -20,6 +21,7 @@
         private RegisterAdminController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
@@ -28,11 +30,13 @@
             centresDataService = A.Fake<ICentresDataService>();
             cryptoService = A.Fake<ICryptoService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            registrationService = A.Fake<IRegistrationService>();
             userDataService = A.Fake<IUserDataService>();
             controller = new RegisterAdminController(
                     centresDataService,
                     cryptoService,
                     jobGroupsDataService,
+                    registrationService,
                     userDataService
                 )
                 .WithDefaultContext()
@@ -40,7 +44,7 @@
         }
 
         [Test]
-        public void IndexGet_with_no_centreId_param_shows_error()
+        public void IndexGet_with_no_centreId_param_shows_notfound_error()
         {
             // When
             var result = controller.Index();
@@ -50,7 +54,7 @@
         }
 
         [Test]
-        public void IndexGet_with_invalid_centreId_param_shows_error()
+        public void IndexGet_with_invalid_centreId_param_shows_notfound_error()
         {
             // Given
             const int centreId = 7;
@@ -65,12 +69,13 @@
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregistered_true_shows_error()
+        public void IndexGet_with_centre_autoregistered_true_shows_notfound_error()
         {
             // Given
             const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((true, "email@email"));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
 
             // When
             var result = controller.Index(centreId);
@@ -78,16 +83,18 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregisteremail_null_shows_error()
+        public void IndexGet_with_centre_autoregisteremail_null_shows_notfound_error()
         {
             // Given
             const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, null));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
 
             // When
             var result = controller.Index(centreId);
@@ -95,16 +102,18 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregisteremail_empty_shows_error()
+        public void IndexGet_with_centre_autoregisteremail_empty_shows_notfound_error()
         {
             // Given
             const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, string.Empty));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
 
             // When
             var result = controller.Index(centreId);
@@ -112,6 +121,29 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void IndexGet_with_centre_with_active_centre_manager_shows_notfound_error()
+        {
+            // Given
+            const int centreId = 7;
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
+
+            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true };
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId))
+                .Returns(new List<AdminUser> { centreManagerAdmin });
+
+            // When
+            var result = controller.Index(centreId);
+
+            // Then
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeNotFoundResult();
         }
 
@@ -122,6 +154,7 @@
             const int centreId = 7;
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).Returns(new List<AdminUser>());
 
             // When
             var result = controller.Index(centreId);
@@ -129,6 +162,7 @@
             // Then
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
             var data = controller.TempData.Peek<RegistrationData>()!;
             data.Centre.Should().Be(centreId);
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
@@ -214,6 +248,58 @@
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
+        }
+
+        [TestCase(true, "correct@email", "correct@email")]
+        [TestCase(false, null, "correct@email")]
+        [TestCase(false, "", null)]
+        [TestCase(false, null, null)]
+        [TestCase(false, "correct@email", "wrong@email")]
+        public void SummaryPost_with_admin_registration_not_allowed_throws_error(
+            bool autoRegistered,
+            string autoRegisterManagerEmail,
+            string userEmail
+        )
+        {
+            // Given
+            const int centreId = 7;
+            var model = new SummaryViewModel
+            {
+                Terms = true
+            };
+            var data = new RegistrationData { Centre = centreId, Email = userEmail };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId))
+                .Returns((autoRegistered, autoRegisterManagerEmail));
+
+            // When
+            var result = controller.Summary(model);
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public void SummaryPost_with_email_already_in_use_fails_validation()
+        {
+            // Given
+            const int centreId = 7;
+            const string email = "right@email";
+            var model = new SummaryViewModel
+            {
+                Terms = true
+            };
+            var data = new RegistrationData { Centre = centreId, Email = email };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
+
+            // When
+            var result = controller.Summary(model);
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
     }
 }

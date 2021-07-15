@@ -30,9 +30,9 @@
             // Then
             viewModel.Administrators.Should().Be("7");
             viewModel.Supervisors.Should().Be("6");
-            viewModel.CmsAdministrators.Should().Be("4 / 3");
+            viewModel.CmsAdministrators.Should().Be("3 / 3");
             viewModel.CmsAdministratorsColour.Should().Be("red");
-            viewModel.CmsManagers.Should().Be("1 / 13");
+            viewModel.CmsManagers.Should().Be("2 / 13");
             viewModel.CmsManagersColour.Should().Be("green");
             viewModel.ContentCreators.Should().Be("2 / 14");
             viewModel.ContentCreatorsColour.Should().Be("green");
@@ -40,7 +40,7 @@
             viewModel.TrainersColour.Should().Be("green");
             viewModel.CustomCourses.Should().Be("10 / 12");
             viewModel.CustomCoursesColour.Should().Be("yellow");
-            viewModel.ServerSpace.Should().Be("1KiB / 1GiB");
+            viewModel.ServerSpace.Should().Be("1KB / 1GB");
             viewModel.ServerSpaceColour.Should().Be("green");
         }
 
@@ -65,9 +65,9 @@
             // Then
             viewModel.Administrators.Should().Be("7");
             viewModel.Supervisors.Should().Be("6");
-            viewModel.CmsAdministrators.Should().Be("4");
+            viewModel.CmsAdministrators.Should().Be("3");
             viewModel.CmsAdministratorsColour.Should().Be("blue");
-            viewModel.CmsManagers.Should().Be("1");
+            viewModel.CmsManagers.Should().Be("2");
             viewModel.CmsManagersColour.Should().Be("blue");
             viewModel.ContentCreators.Should().Be("2");
             viewModel.ContentCreatorsColour.Should().Be("blue");

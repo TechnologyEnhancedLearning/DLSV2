@@ -7,19 +7,19 @@
   <li class="nhsuk-header__navigation-item">
     <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre
-      <partial name="_NhsChevronRight"/>
+      <partial name="_NhsChevronRight" />
     </a>
   </li>
   <li class="nhsuk-header__navigation-item">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/delegates">
+    <a class="nhsuk-header__navigation-link" asp-controller="AllDelegates" asp-action="Index">
       Delegates
-      <partial name="_NhsChevronRight"/>
+      <partial name="_NhsChevronRight" />
     </a>
   </li>
   <li class="nhsuk-header__navigation-item">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursesetup">
+    <a class="nhsuk-header__navigation-link" asp-controller="CourseSetup" asp-action="Index">
       Course setup
-      <partial name="_NhsChevronRight"/>
+      <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
@@ -27,7 +27,7 @@
   <li class="nhsuk-header__navigation-item">
     <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
       Admin
-      <partial name="_NhsChevronRight"/>
+      <partial name="_NhsChevronRight" />
     </a>
   </li>
 }

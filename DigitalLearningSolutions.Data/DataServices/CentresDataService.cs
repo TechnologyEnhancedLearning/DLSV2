@@ -26,7 +26,6 @@
         void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone,
@@ -49,6 +48,7 @@
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
+        void SetCentreAutoRegistered(int centreId);
         IEnumerable<CentreRanking> GetCentreRanks(DateTime dateSince, int? regionId, int resultsCount, int centreId);
     }
 
@@ -182,7 +182,6 @@
         public void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone = null,
@@ -199,7 +198,6 @@
                     pwTelephone = @telephone,
                     pwEmail = @email,
                     pwPostCode = @postcode,
-                    showOnMap = @showOnMap,
                     lat = @latitude,
                     long = @longitude,
                     pwHours = @openingHours,
@@ -213,7 +211,6 @@
                     telephone,
                     email,
                     postcode,
-                    showOnMap,
                     longitude,
                     latitude,
                     openingHours,
@@ -323,6 +320,16 @@
                     WHERE Ranking <= @resultsCount OR CentreID = @centreId
                     ORDER BY Ranking",
                 new { dateSince, regionId, resultsCount, centreId }
+            );
+        }
+
+        public void SetCentreAutoRegistered(int centreId)
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    AutoRegistered = 1
+                WHERE CentreId = @centreId",
+                new { centreId }
             );
         }
     }

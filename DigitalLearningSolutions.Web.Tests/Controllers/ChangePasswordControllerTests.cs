@@ -29,7 +29,7 @@
             passwordService = A.Fake<IPasswordService>();
             authenticatedController = new ChangePasswordController(passwordService, userService)
                 .WithDefaultContext()
-                .WithMockUser(isAuthenticated: true, adminId: LoggedInAdminId, delegateId: LoggedInDelegateId);
+                .WithMockUser(true, adminId: LoggedInAdminId, delegateId: LoggedInDelegateId);
         }
 
         [Test]
@@ -76,13 +76,15 @@
         {
             // Given
             var user = Builder<AdminUser>.CreateNew().Build();
-            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, new DelegateUser[] { }), "current-password");
+            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, null), "current-password");
 
             // When
             var result = await authenticatedController.Index(
                 new ChangePasswordViewModel
                 {
-                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password",
+                    Password = "new-password",
+                    ConfirmPassword = "new-password",
+                    CurrentPassword = "current-password"
                 }
             );
 
@@ -105,7 +107,9 @@
             await authenticatedController.Index(
                 new ChangePasswordViewModel
                 {
-                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password",
+                    Password = "new-password",
+                    ConfirmPassword = "new-password",
+                    CurrentPassword = "current-password"
                 }
             );
 
@@ -129,7 +133,9 @@
             await authenticatedController.Index(
                 new ChangePasswordViewModel
                 {
-                    Password = "new-password", ConfirmPassword = "new-password", CurrentPassword = "current-password"
+                    Password = "new-password",
+                    ConfirmPassword = "new-password",
+                    CurrentPassword = "current-password"
                 }
             );
 
@@ -152,7 +158,7 @@
         private void GivenPasswordVerificationFails()
         {
             A.CallTo(() => userService.GetVerifiedLinkedUsersAccounts(A<int>._, A<int>._, A<string>._))
-                .Returns(new UserAccountSet(null, new List<DelegateUser>()));
+                .Returns(new UserAccountSet());
         }
 
         private void ThenMustHaveChangedPasswordForUsersOnce(string newPassword, IEnumerable<User> expectedUsers)

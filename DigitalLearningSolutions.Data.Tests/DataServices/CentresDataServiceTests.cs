@@ -182,7 +182,6 @@
                 const string telephone = "0118999 88199 9119725   3";
                 const string email = "totallyrealemail@noreally.itis";
                 const string postcode = "POST CDE";
-                const bool showOnMap = false;
                 const double latitude = 52.9534611;
                 const double longitude = -1.1493326;
                 const string openingHours = "2:30am - 2:31am Sundays";
@@ -192,11 +191,9 @@
                 const string otherInformation = "This is not the information you're looking for";
 
                 // When
-                centresDataService.UpdateCentreWebsiteDetails
-                (
+                centresDataService.UpdateCentreWebsiteDetails(
                     2,
                     postcode,
-                    showOnMap,
                     latitude,
                     longitude,
                     telephone,
@@ -215,7 +212,6 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
-                    updatedCentre.ShowOnMap.Should().BeFalse();
                     updatedCentre.Latitude.Should().Be(latitude);
                     updatedCentre.Longitude.Should().Be(longitude);
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
@@ -272,6 +268,27 @@
             // Then
             result.autoRegistered.Should().BeTrue();
             result.autoRegisterManagerEmail.Should().Be(".vhrnaui@bywdskc");
+        }
+
+        [Test]
+        public void SetCentreAutoRegistered_should_set_AutoRegistered_true()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int centreId = 7;
+
+                // When
+                centresDataService.SetCentreAutoRegistered(centreId);
+
+                // Then
+                centresDataService.GetCentreAutoRegisterValues(centreId).autoRegistered.Should().BeTrue();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

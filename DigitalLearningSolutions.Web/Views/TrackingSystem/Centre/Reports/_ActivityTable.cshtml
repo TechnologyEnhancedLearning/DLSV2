@@ -1,0 +1,40 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+
+@model UsageStatsTableViewModel
+
+<table role="table" class="nhsuk-table-responsive">
+  <thead role="rowgroup" class="nhsuk-table__head">
+    <tr role="row">
+      <th role="columnheader" scope="col">
+        Period
+      </th>
+      <th role="columnheader" scope="col">
+        Completions
+      </th>
+      <th role="columnheader" scope="col">
+        Evaluations
+      </th>
+      <th role="columnheader" scope="col">
+        Registrations
+      </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+  @foreach (var activityRow in Model.Rows) {
+    <tr role="row" class="nhsuk-table__row">
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Registrations </span>@activityRow.Registrations
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

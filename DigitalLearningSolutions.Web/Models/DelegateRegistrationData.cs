@@ -4,6 +4,13 @@
 
     public class DelegateRegistrationData : RegistrationData
     {
+        public DelegateRegistrationData() { }
+
+        public DelegateRegistrationData(int? centreId) : base(centreId)
+        {
+            IsCentreSpecificRegistration = centreId.HasValue;
+        }
+
         public bool IsCentreSpecificRegistration { get; set; }
 
         public string? Answer1 { get; set; }
@@ -12,7 +19,7 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
-        
+
         public override void SetLearnerInformation(LearnerInformationViewModel model)
         {
             JobGroup = model.JobGroup;

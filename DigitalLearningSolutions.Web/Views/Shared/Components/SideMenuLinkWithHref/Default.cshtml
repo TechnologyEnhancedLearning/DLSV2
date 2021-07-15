@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model SideMenuLinkWithHrefViewModel
 
 @if (Model.IsCurrentPage) {
@@ -7,6 +7,8 @@
   </li>
 } else {
   <li class="side-nav__item">
-    <a class="side-nav__link" href="@Model.Href" asp-all-route-data="@Model.AspAllRouteData">@Model.LinkText</a>
+    <a class="side-nav__link" href="@Model.Href" asp-all-route-data="@Model.AspAllRouteData">
+      @Model.LinkText
+    </a>
   </li>
 }

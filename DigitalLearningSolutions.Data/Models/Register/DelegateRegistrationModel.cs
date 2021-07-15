@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Register
 {
-    public class DelegateRegistrationModel
+    public class DelegateRegistrationModel : RegistrationModel
     {
         public DelegateRegistrationModel(
             string firstName,
@@ -14,15 +14,8 @@
             string? answer3,
             string? answer4,
             string? answer5,
-            string? answer6)
+            string? answer6) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
         {
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            Centre = centre;
-            JobGroup = jobGroup;
-            PasswordHash = passwordHash;
-            Approved = false;
             Answer1 = answer1;
             Answer2 = answer2;
             Answer3 = answer3;
@@ -31,19 +24,14 @@
             Answer6 = answer6;
         }
 
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        public string Email { get; set; }
-
-        public int Centre { get; set; }
-
-        public int JobGroup { get; set; }
-
-        public string PasswordHash { get; set; }
-
-        public bool Approved { get; set; }
+        public DelegateRegistrationModel(
+            string firstName,
+            string lastName,
+            string email,
+            int centre,
+            int jobGroup,
+            string passwordHash
+        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
 
         public string? Answer1 { get; set; }
 

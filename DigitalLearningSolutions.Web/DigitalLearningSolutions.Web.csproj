@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\common.ts" />
     <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
     <None Remove="Scripts\index.d.ts" />
@@ -36,6 +37,7 @@
     <None Remove="Scripts\searchSortAndPaginate\sort.ts" />
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
+    <None Remove="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +48,8 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement" Version="2.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
@@ -66,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
@@ -89,6 +94,7 @@
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

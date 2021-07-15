@@ -16,14 +16,43 @@
         void RemoveCurrentCourse(int progressId, int candidateId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
     }
 
-    public class CourseDataDataService : ICourseDataService
+    public class CourseDataService : ICourseDataService
     {
-        private readonly IDbConnection connection;
-        private readonly ILogger<CourseDataDataService> logger;
+        private const string DelegateCountQuery =
+            @"(SELECT COUNT(pr.CandidateID)
+                FROM dbo.Progress AS pr
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                WHERE pr.CustomisationID = cu.CustomisationID
+                AND can.CentreID = @centreId) AS DelegateCount";
 
-        public CourseDataDataService(IDbConnection connection, ILogger<CourseDataDataService> logger)
+        private const string CompletedCountQuery =
+            @"(SELECT COUNT(pr.CandidateID)
+                FROM dbo.Progress AS pr
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+                AND can.CentreID = @centreId) AS CompletedCount";
+
+        private const string AllAttemptsQuery =
+            @"(SELECT COUNT(aa.AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
+                AND can.CentreID = @centreId) AS AllAttempts";
+
+        private const string AttemptsPassedQuery =
+            @"(SELECT COUNT(aa.AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
+                AND can.CentreID = @centreId) AS AttemptsPassed";
+
+        private readonly IDbConnection connection;
+        private readonly ILogger<CourseDataService> logger;
+
+        public CourseDataService(IDbConnection connection, ILogger<CourseDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -125,6 +154,31 @@
                         WHERE Active = 1 AND CentreID = @centreId 
 	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
                 new { centreId, adminCategoryId }
+            );
+        }
+
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId)
+        {
+            return connection.Query<CourseStatistics>(
+                @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        cu.AllCentres,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        {DelegateCountQuery},
+                        {CompletedCountQuery},
+                        {AllAttemptsQuery},
+                        {AttemptsPassedQuery}
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL",
+                new { centreId, categoryId }
             );
         }
     }
