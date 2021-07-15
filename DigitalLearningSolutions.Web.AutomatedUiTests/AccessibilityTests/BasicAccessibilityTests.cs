@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
+        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreDetails", "Edit centre details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData(
             "/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails",

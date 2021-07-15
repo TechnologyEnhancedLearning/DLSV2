@@ -22,7 +22,7 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
-          Banner text
+          Centre support details
         </dt>
         <dd class="nhsuk-summary-list__value">
           @Model.BannerText
@@ -55,6 +55,10 @@
         </dd>
       </div>
     </dl>
+
+    <a class="nhsuk-button" role="button" asp-action="EditCentreDetails">
+      Edit
+    </a>
 
     <a class="nhsuk-button nhsuk-button--secondary" role="button" href="@Configuration["CurrentSystemBaseUrl"]/tracking/finalise?Preview=1" target="_blank">
       Preview certificate
