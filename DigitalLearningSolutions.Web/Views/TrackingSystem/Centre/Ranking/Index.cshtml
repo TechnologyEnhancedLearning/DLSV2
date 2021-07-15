@@ -42,9 +42,9 @@
                       select-list-options="@Model.RegionOptions" />
     </div>
     <div class="nhsuk-grid-column-one-quarter">
-      <vc:select-list asp-for="@nameof(Model.PeriodId)"
+      <vc:select-list asp-for="Period"
                       label="Period"
-                      value="@Model.PeriodId.ToString()"
+                      value="@Model.Period?.Id.ToString()"
                       hint-text=""
                       deselectable="true"
                       css-class="nhsuk-u-width-full"

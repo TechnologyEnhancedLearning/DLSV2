@@ -15,7 +15,7 @@
             int centreId,
             IEnumerable<(int, string)> regions,
             int? regionId = null,
-            int? periodId = null
+            Period period = null
         )
         {
             var centreRanksList = centreRanks.ToList();
@@ -33,9 +33,9 @@
             CentreHasNoActivity = centreRanksList.All(cr => cr.CentreId != centreId);
 
             RegionId = regionId;
-            PeriodId = periodId;
+            Period = period;
             RegionOptions = SelectListHelper.MapOptionsToSelectListItems(regions, regionId);
-            PeriodOptions = GeneratePeriodSelectListWithSelectedItem(periodId);
+            PeriodOptions = GeneratePeriodSelectListWithSelectedItem(period.Id);
         }
 
         public IEnumerable<CentreRankViewModel> Centres { get; set; }
@@ -46,11 +46,11 @@
 
         public IEnumerable<SelectListItem> RegionOptions { get; set; }
 
-        public int? PeriodId { get; set; }
+        public Period? Period { get; set; }
 
         public IEnumerable<SelectListItem> PeriodOptions { get; set; }
 
-        public static IEnumerable<SelectListItem> GeneratePeriodSelectListWithSelectedItem(int? selectedId = null)
+        private static IEnumerable<SelectListItem> GeneratePeriodSelectListWithSelectedItem(int? selectedId = null)
         {
             var values = Enumeration.GetAll<Period>();
             return values.Select(v => new SelectListItem(v.Name, v.Id.ToString(), v.Id == selectedId));

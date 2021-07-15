@@ -28,9 +28,8 @@
             this.regionDataService = regionDataService;
         }
 
-        public IActionResult Index(int? regionId = null, int? periodId = null)
+        public IActionResult Index(int? regionId = null, Period? period = null)
         {
-            Enumeration.TryGetFromIdOrName<Period>(periodId.ToString() ?? string.Empty, out var period);
             period ??= Period.Fortnight;
 
             var centreId = User.GetCentreId();
@@ -39,7 +38,7 @@
 
             var centreRankings = centresService.GetCentresForCentreRankingPage(centreId, period.Days, regionId);
 
-            var model = new CentreRankingViewModel(centreRankings, centreId, regions, regionId, period.Id);
+            var model = new CentreRankingViewModel(centreRankings, centreId, regions, regionId, period);
 
             return View(model);
         }

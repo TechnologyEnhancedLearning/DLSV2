@@ -123,7 +123,7 @@
         public void GeneratePeriodSelectListWithSelectedItem_returns_expected_list()
         {
             // When
-            var result = CentreRankingViewModel.GeneratePeriodSelectListWithSelectedItem(1);
+            var result = new CentreRankingViewModel(centreRankings, 3, regions, 4, 1).PeriodOptions;
 
             // Then
             using (new AssertionScope())
