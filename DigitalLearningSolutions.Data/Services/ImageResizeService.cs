@@ -6,6 +6,7 @@
     using System.Drawing.Imaging;
     using System.IO;
     using Microsoft.AspNetCore.Http;
+    using Org.BouncyCastle.Crypto.Tls;
 
     public interface IImageResizeService
     {
@@ -93,9 +94,9 @@
 
         private Image ResizeImageByMaxSideLength(Image image, int maxSideLengthPx)
         {
-            var ratioX = Math.Min((float)maxSideLengthPx / (float)image.Width, 1);
-            var ratioY = Math.Min((float)maxSideLengthPx / (float)image.Height, 1);
-            var ratio = Math.Min(ratioX, ratioY);
+            var longestSideLengthPx = Math.Max(image.Width, image.Height);
+            // No need to resize if image is smaller than the max size
+            var ratio = Math.Min((float)maxSideLengthPx / (float)longestSideLengthPx, 1);
 
             var newWidth = (int)(image.Width * ratio);
             var newHeight = (int)(image.Height * ratio);
