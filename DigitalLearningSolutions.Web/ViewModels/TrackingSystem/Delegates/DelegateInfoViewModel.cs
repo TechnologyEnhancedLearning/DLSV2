@@ -24,6 +24,7 @@
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd-MM-yyyy");
             }
+            AliasId = delegateUser.AliasId;
 
             CustomFields = customFields;
         }
@@ -41,6 +42,7 @@
         public string? Email { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
+        public string? AliasId { get; set; }
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
     }

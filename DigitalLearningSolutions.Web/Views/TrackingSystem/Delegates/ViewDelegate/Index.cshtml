@@ -1,11 +1,18 @@
-﻿@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@using Microsoft.Extensions.Configuration
+@model ViewDelegateViewModel
 
 @{
   ViewData["Title"] = "View delegate";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+
+  var activeTagCss = Model.DelegateInfo.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+  var passwordTagCss = Model.DelegateInfo.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+
 }
 
 @section NavMenuItems {
@@ -13,11 +20,62 @@
 }
 
 @section NavBreadcrumbs {
-  <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml"/>
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_AllDelegatesBreadcrumbs.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">View delegate</h1>
+    <h1 class="nhsuk-heading-xl">
+      @Model.DelegateInfo.Name
+    </h1>
+
+    <div class="nhsuk-u-margin-bottom-4">
+      <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
+      <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
+      <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
+      @if (Model.DelegateInfo.IsAdmin) {
+        <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
+      }
+    </div>
+
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">Name</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.Name</dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">Email</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.Email</dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">ID</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.CandidateNumber</dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">Alias</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.AliasId</dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">Registration date</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.RegistrationDate</dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">Job group</dt>
+        <dd class="nhsuk-summary-list__value">@Model.DelegateInfo.JobGroup</dd>
+      </div>
+
+      @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
+          <dd class="nhsuk-summary-list__value">@customField.Answer</dd>
+        </div>
+      }
+    </dl>
+
   </div>
 </div>
