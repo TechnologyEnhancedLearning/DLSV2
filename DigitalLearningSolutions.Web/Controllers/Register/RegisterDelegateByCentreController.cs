@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using ConfirmationViewModel =
+        DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.ConfirmationViewModel;
     using SummaryViewModel = DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.SummaryViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -28,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly ICryptoService cryptoService;
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
@@ -36,13 +39,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IUserService userService,
             CustomPromptHelper customPromptHelper,
             ICryptoService cryptoService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IRegistrationService registrationService
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
             this.userDataService = userDataService;
+            this.registrationService = registrationService;
             this.cryptoService = cryptoService;
         }
 
@@ -203,7 +208,42 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
-            return new OkResult();
+            var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+
+            var candidateNumber =
+                registrationService.RegisterDelegateByCentre(
+                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data)
+                );
+
+            switch (candidateNumber)
+            {
+                case "-1":
+                    return StatusCode(500);
+                case "-4":
+                    return RedirectToAction("Index");
+            }
+
+            TempData.Clear();
+            TempData.Add("delegateNumber", candidateNumber);
+            TempData.Add("emailSent", data.ShouldSendEmail);
+            TempData.Add("passwordSet", data.IsPasswordSet);
+            return RedirectToAction("Confirmation");
+        }
+
+        [HttpGet]
+        public IActionResult Confirmation()
+        {
+            var delegateNumber = (string?)TempData.Peek("delegateNumber");
+            var emailSent = (bool)TempData.Peek("emailSent");
+            var passwordSet = (bool)TempData.Peek("passwordSet");
+            TempData.Clear();
+            if (delegateNumber == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = new ConfirmationViewModel(delegateNumber, emailSent, passwordSet);
+            return View(viewModel);
         }
 
         private void SetCentreDelegateRegistrationData(int centreId)
