@@ -26,7 +26,6 @@
         void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone,
@@ -36,6 +35,14 @@
             string? organisationsCovered,
             string? trainingVenues,
             string? otherInformation
+        );
+
+        void UpdateCentreDetails(
+            int centreId,
+            string? notifyEmail,
+            string bannerText,
+            byte[]? centreSignature,
+            byte[]? centreLogo
         );
 
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
@@ -175,7 +182,6 @@
         public void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            bool showOnMap,
             double latitude,
             double longitude,
             string? telephone = null,
@@ -192,7 +198,6 @@
                     pwTelephone = @telephone,
                     pwEmail = @email,
                     pwPostCode = @postcode,
-                    showOnMap = @showOnMap,
                     lat = @latitude,
                     long = @longitude,
                     pwHours = @openingHours,
@@ -206,7 +211,6 @@
                     telephone,
                     email,
                     postcode,
-                    showOnMap,
                     longitude,
                     latitude,
                     openingHours,
@@ -214,6 +218,32 @@
                     organisationsCovered,
                     trainingVenues,
                     otherInformation,
+                    centreId
+                }
+            );
+        }
+
+        public void UpdateCentreDetails(
+            int centreId,
+            string? notifyEmail,
+            string bannerText,
+            byte[]? centreSignature,
+            byte[]? centreLogo
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    NotifyEmail = @notifyEmail,
+                    BannerText = @bannerText,
+                    SignatureImage = @centreSignature,
+                    CentreLogo = @centreLogo
+                WHERE CentreId = @centreId",
+                new
+                {
+                    notifyEmail,
+                    bannerText,
+                    centreSignature,
+                    centreLogo,
                     centreId
                 }
             );

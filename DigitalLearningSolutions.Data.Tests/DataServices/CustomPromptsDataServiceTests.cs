@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -81,7 +80,8 @@
                 // When
                 customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
                 var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
-                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1).Item2;
+                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1)
+                    .Item2;
 
                 // Then
                 using (new AssertionScope())
@@ -105,6 +105,26 @@
 
             // Then
             result.Should().BeEquivalentTo("Role type");
+        }
+
+        [Test]
+        public void GetCourseCustomPrompts_returns_populated_CourseCustomPromptsResult()
+        {
+            // Given
+            var expectedCourseCustomPromptsResult =
+                CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult(
+                    null,
+                    "Yes\nNo\nNot sure",
+                    true,
+                    null,
+                    "Yes\nNo\nNot sure"
+                );
+
+            // When
+            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
+
+            // Then
+            returnedCourseCustomPromptsResult.Should().BeEquivalentTo(expectedCourseCustomPromptsResult);
         }
     }
 }

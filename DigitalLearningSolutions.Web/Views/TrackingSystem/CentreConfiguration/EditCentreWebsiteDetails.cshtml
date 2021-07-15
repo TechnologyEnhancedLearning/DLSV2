@@ -23,7 +23,6 @@
                            nameof(Model.CentreTelephone),
                            nameof(Model.CentreEmail),
                            nameof(Model.CentrePostcode),
-                           nameof(Model.ShowCentreOnMap),
                            nameof(Model.OpeningHours),
                            nameof(Model.CentreWebAddress),
                            nameof(Model.OrganisationsCovered),
@@ -58,13 +57,6 @@
                      autocomplete=""
                      hint-text=""
                      css-class="nhsuk-u-width-one-half" />
-
-      <div class="nhsuk-checkboxes__item nhsuk-form-group">
-        <input class="nhsuk-checkboxes__input" type="checkbox" id="ShowCentreOnMap" spellcheck="false" asp-for="ShowCentreOnMap" />
-        <label class="nhsuk-label nhsuk-checkboxes__label" for="ShowCentreOnMap">
-          Show centre on map
-        </label>
-      </div>
 
       <vc:text-input asp-for="OpeningHours"
                      label="Opening hours"

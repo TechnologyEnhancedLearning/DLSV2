@@ -9,6 +9,7 @@
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
         int RegisterCentreManagerAdmin(RegistrationModel registrationModel);
     }
 
@@ -42,6 +43,38 @@
                 ExternalReg = 0,
                 SelfReg = 1,
                 NotifyDate = DateTime.UtcNow,
+                Bulk = 0
+            };
+
+            var candidateNumber = connection.QueryFirstOrDefault<string>(
+                "uspSaveNewCandidate_V10",
+                values,
+                commandType: CommandType.StoredProcedure);
+
+            return candidateNumber;
+        }
+
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
+        {
+            var values = new
+            {
+                delegateRegistrationModel.FirstName,
+                delegateRegistrationModel.LastName,
+                delegateRegistrationModel.Email,
+                CentreID = delegateRegistrationModel.Centre,
+                JobGroupID = delegateRegistrationModel.JobGroup,
+                Active = 1,
+                Approved = 1,
+                delegateRegistrationModel.Answer1,
+                delegateRegistrationModel.Answer2,
+                delegateRegistrationModel.Answer3,
+                delegateRegistrationModel.Answer4,
+                delegateRegistrationModel.Answer5,
+                delegateRegistrationModel.Answer6,
+                AliasID = delegateRegistrationModel.AliasId,
+                ExternalReg = 0,
+                SelfReg = 0,
+                delegateRegistrationModel.NotifyDate,
                 Bulk = 0
             };
 

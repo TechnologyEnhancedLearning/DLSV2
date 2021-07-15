@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -131,11 +132,7 @@
         private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)
         {
             // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys.Where(k => k != nameof(EditDetailsViewModel.ProfileImageFile)))
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsViewModel.ProfileImageFile));
 
             if (!ModelState.IsValid)
             {
@@ -154,11 +151,7 @@
         private IActionResult EditDetailsPostRemoveImage(EditDetailsViewModel model)
         {
             // We don't want to display validation errors on other fields in this case
-            foreach (var key in ModelState.Keys)
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
+            ModelState.ClearAllErrors();
 
             ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
             model.ProfileImage = null;

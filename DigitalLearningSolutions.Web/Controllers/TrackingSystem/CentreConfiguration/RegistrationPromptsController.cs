@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -46,7 +47,7 @@
 
             var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
-            var model = new DisplayRegistrationPromptsViewModel(customPrompts);
+            var model = new DisplayPromptsViewModel(customPrompts.CustomPrompts);
 
             return View(model);
         }
@@ -317,12 +318,7 @@
 
         private IActionResult EditRegistrationPromptPostSave(EditRegistrationPromptViewModel model)
         {
-            IgnoreAddNewAnswerValidation();
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            ModelState.ClearAllErrors();
 
             customPromptsService.UpdateCustomPromptForCentre(
                 User.GetCentreId(),
@@ -369,7 +365,7 @@
             bool saveToTempData = false
         )
         {
-            IgnoreAddNewAnswerValidation();
+            ModelState.ClearAllErrors();
 
             var optionsString =
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
@@ -386,12 +382,7 @@
 
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
-            IgnoreAddNewAnswerValidation();
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            ModelState.ClearAllErrors();
 
             UpdateTempDataWithAnswersModelValues(model);
 
@@ -457,15 +448,6 @@
                 nameof(RegistrationPromptAnswersViewModel.Answer),
                 $"The complete list of answers must be 4000 characters or fewer ({remainingLength} characters remaining for the new answer)"
             );
-        }
-
-        private void IgnoreAddNewAnswerValidation()
-        {
-            foreach (var key in ModelState.Keys)
-            {
-                ModelState[key].Errors.Clear();
-                ModelState[key].ValidationState = ModelValidationState.Valid;
-            }
         }
 
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
