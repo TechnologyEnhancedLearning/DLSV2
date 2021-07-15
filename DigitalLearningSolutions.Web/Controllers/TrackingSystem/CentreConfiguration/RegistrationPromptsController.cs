@@ -320,11 +320,6 @@
         {
             ModelState.ClearAllErrors();
 
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             customPromptsService.UpdateCustomPromptForCentre(
                 User.GetCentreId(),
                 model.PromptNumber,
@@ -388,11 +383,6 @@
         private IActionResult AddRegistrationPromptConfigureAnswersPostNext(RegistrationPromptAnswersViewModel model)
         {
             ModelState.ClearAllErrors();
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
 
             UpdateTempDataWithAnswersModelValues(model);
 
