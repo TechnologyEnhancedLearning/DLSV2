@@ -31,6 +31,15 @@
             dropdown.SelectByValue(selectedValue);
         }
 
+        public static void SetCheckboxState(this IWebDriver driver, string inputId, bool checkState)
+        {
+            var answer = driver.FindElement(By.Id(inputId));
+            if (answer.Selected != checkState)
+            {
+                answer.Click();
+            }
+        }
+
         public static void SubmitForm(this IWebDriver driver)
         {
             var selectPromptForm = driver.FindElement(By.TagName("form"));
