@@ -23,11 +23,15 @@ $current-centre-highlight: $color_nhsuk-pale-yellow;
 }
 
 .ranking-flex-container {
+  @include govuk-media-query($from: tablet) {
     display: flex;
+  }
 }
 
 .ranking-flex-container .apply-filter-flex-container {
+  @include govuk-media-query($from: tablet) {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+  }
 }
