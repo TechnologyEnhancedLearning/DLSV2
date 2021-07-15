@@ -4,6 +4,8 @@
 @using Microsoft.Extensions.Configuration
 @model ViewDelegateViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/viewDelegate.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "View delegate";
   ViewData["Application"] = "Tracking System";
@@ -25,11 +27,20 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">
-      @Model.DelegateInfo.Name
-    </h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">@Model.DelegateInfo.Name</h1>
+      </div>
+      @if (Model.DelegateInfo.IsActive) {
+        <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
+          <a class="nhsuk-button nhsuk-button--secondary view-delegate-button " role="button">
+            Send Welcome Email
+          </a>
+        </div>
+      }
+    </div>
 
-    <div class="nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-u-margin-bottom-5">
       <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
       <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
       <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
@@ -38,6 +49,7 @@
       }
     </div>
 
+    <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-2">Details</h2>
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Name</dt>
@@ -76,6 +88,27 @@
         </div>
       }
     </dl>
+
+    <div class="nhsuk-u-margin-top-4">
+      @if (Model.DelegateInfo.IsActive) {
+        <a class="nhsuk-button view-delegate-button" role="button">
+          Edit details
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+          Set password
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+          Promote to admin
+        </a>
+        <a class="nhsuk-button delete-button view-delegate-button" role="button">
+          Deactivate account
+        </a>
+      } else {
+        <a class="nhsuk-button view-delegate-button" role="button">
+          Reactivate account
+        </a>
+      }
+    </div>
 
   </div>
 </div>
