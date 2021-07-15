@@ -11,27 +11,23 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var hintText = @"To change your {0}, select a new image and click the Preview button to preview it.
+  const string hintText = @"To change your {0}, select a new image and click the Preview button to preview it.
                     To remove your {0} click the remove button.
                     Changes will not be made until the Save button below is clicked.";
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml"/>
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.NotifyEmail),
-                                                   nameof(Model.BannerText),
-                                                   nameof(Model.CentreSignatureFile),
-                                                   nameof(Model.CentreLogoFile)})" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.NotifyEmail), nameof(Model.BannerText), nameof(Model.CentreSignatureFile), nameof(Model.CentreLogoFile) })" />
     }
 
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit centre details</h1>
-    <form class="nhsuk-u-margin-bottom-8" method="post" novalidate asp-action="EditCentreDetails" enctype="multipart/form-data">
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditCentreDetails" enctype="multipart/form-data">
       <div class="hidden-submit">
         <button name="action" class="nhsuk-button" value="save">Save</button>
       </div>
@@ -61,11 +57,11 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-half">
           <input type="hidden" asp-for="CentreSignature" />
-          <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="@string.Format(hintText,"signature")" css-class="nhsuk-u-width-full" />
+          <vc:file-input asp-for="CentreSignatureFile" label="Centre signature" hint-text="@string.Format(hintText, "signature")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">
           @if (Model.CentreSignature != null) {
-            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre Signature Picture" />
+            <img class="nhsuk-image__img centre-detail-image__downsize" src="data:image;base64,@Convert.ToBase64String(Model.CentreSignature)" alt="Centre signature picture" />
           } else {
             <img class="nhsuk-image__img centre-detail--placeholder-image__downsize" src="@Url.Content("~/images/imagePlaceholder.svg")" alt="Placeholder signature image" />
           }
@@ -82,7 +78,7 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-half">
           <input type="hidden" asp-for="CentreLogo" />
-          <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="@string.Format(hintText,"logo")" css-class="nhsuk-u-width-full" />
+          <vc:file-input asp-for="CentreLogoFile" label="Centre logo" hint-text="@string.Format(hintText, "logo")" css-class="nhsuk-u-width-full" />
         </div>
         <div class="nhsuk-grid-column-one-half">
           @if (Model.CentreLogo != null) {
@@ -102,10 +98,8 @@
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </form>
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel"/>
-      </div>
-    </div>
+
+    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel" />
+
   </div>
 </div>
