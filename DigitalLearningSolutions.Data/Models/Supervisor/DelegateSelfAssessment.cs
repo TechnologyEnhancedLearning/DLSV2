@@ -15,5 +15,6 @@
         public string? SubGroup { get; set; }
         public string? RoleProfile { get; set; }
         public int VerificationRequested { get; set; }
+        public int ResultsVerificationRequests { get; set; }
     }
 }

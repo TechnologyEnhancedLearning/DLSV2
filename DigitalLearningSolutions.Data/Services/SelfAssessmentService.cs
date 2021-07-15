@@ -19,7 +19,7 @@
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
-        Competency GetCompetencyByCandidateAssessmentId(int competencyId, int candidateAssessmentId, int adminId);
+        Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -40,6 +40,7 @@
             @"LatestAssessmentResults AS
                          (SELECT s.CompetencyID,
                                  s.AssessmentQuestionID,
+                                 s.ID AS ResultID,
                                  s.Result,
 								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
 								 sv.Requested,
@@ -67,6 +68,7 @@
             @"LatestAssessmentResults AS
                          (SELECT s.CompetencyID,
                                  s.AssessmentQuestionID,
+                                 s.ID AS ResultID,
                                  s.Result,
 								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
 								 sv.Requested,
@@ -104,6 +106,7 @@
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
+                                                  LAR.ResultId,
                                                   LAR.Result,
 												  LAR.SelfAssessmentResultSupervisorVerificationId,
 												  LAR.Requested,
@@ -485,14 +488,14 @@ CA.LaunchCount, CA.SubmittedDate
                     WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, minValue, maxValue, adjustBy }
                );
         }
-        public Competency? GetCompetencyByCandidateAssessmentId(int competencyId, int candidateAssessmentId, int adminId)
+        public Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId)
         {
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE C.ID = @competencyId",
+                    WHERE ResultId = @resultId",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -503,7 +506,7 @@ CA.LaunchCount, CA.SubmittedDate
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
-                param: new { competencyId, candidateAssessmentId, adminId }
+                param: new { resultId, candidateAssessmentId, adminId }
             ).FirstOrDefault();
         }
     }

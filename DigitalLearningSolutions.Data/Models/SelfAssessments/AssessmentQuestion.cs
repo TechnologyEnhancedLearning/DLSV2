@@ -10,6 +10,7 @@
         public string Question { get; set; }
         public string? MaxValueDescription { get; set; }
         public string? MinValueDescription { get; set; }
+        public int? ResultId { get; set; }
         public int? Result { get; set; }
         public string? ScoringInstructions { get; set; }
         public int MinValue { get; set; }

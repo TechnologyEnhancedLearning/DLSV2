@@ -1,11 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Review Competency";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -45,4 +46,154 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
   </div>
 </details>
-<h2>@Model.Competency.Name</h2>
+<h2>Self Assessment Outcome</h2>
+<dl class="nhsuk-summary-list">
+
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    @Model.Competency.Vocabulary
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.Competency.Name
+  </dd>
+
+  </div>
+  @if (Model.Competency.Description != null)
+  {
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Description
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Html.Raw(Model.Competency.Description)
+    </dd>
+    </div>
+  }
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Question
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.Competency.AssessmentQuestions.First().Question
+  </dd>
+
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Response
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
+  </dd>
+
+  </div>
+  @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
+  {
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Comments
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Html.Raw(Model.Competency.AssessmentQuestions.First().SupportingComments)
+    </dd>
+    </div>
+  }
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Status
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
+  </dd>
+
+  </div>
+</dl>
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@new []{ nameof(ReviewCompetencySelfAsessmentViewModel) }" />
+}
+
+@if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Requested != null && ViewContext.RouteData.Values["viewMode"].ToString() == "Review" && (bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+{
+  <div class="nhsuk-card">
+    <div class="nhsuk-card__content">
+      <form method="post">
+        <fieldset class="nhsuk-fieldset">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h2 class="nhsuk-fieldset__heading">
+              Review Self Assessment Outcome
+            </h2>
+          </legend>
+          <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
+          <nhs-form-group nhs-validation-for="SupervisorComments">
+            <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
+          </nhs-form-group>
+
+          <nhs-form-group nhs-validation-for="SignedOff">
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="cb-sign-off" name="SignedOff" asp-for="SignedOff" type="checkbox">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
+                Sign-off self-assessment outcome
+              </label>
+              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-sign-off-item-hint">
+                I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+              </div>
+            </div>
+          </nhs-form-group>
+        </fieldset>
+        <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+}
+else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null)
+{
+  <h2>Review Outcome</h2>
+  @if (Model.Competency.AssessmentQuestions.First().Verified == null)
+  {
+    <p>Awaiting review by @((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier? "you": "another supervisor") .</p>
+  }
+  else
+  {
+
+    <dl class="nhsuk-summary-list">
+      @if (Model.SupervisorComments != null)
+      {
+        <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Reviewer comments
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Html.Raw(Model.SupervisorComments)
+        </dd>
+
+        </div>
+      }
+
+      <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Signed off
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @if (Model.SignedOff)
+        {
+          <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
+        }
+        else
+        {
+          <span class="nhsuk-tag nhsuk-tag--red">No</span>
+        }
+      </dd>
+
+      </div>
+    </dl>
+    @if((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+          {
+            <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
+          }
+  }
+}
+
