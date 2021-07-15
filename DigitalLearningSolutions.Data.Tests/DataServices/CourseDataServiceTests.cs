@@ -239,7 +239,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 DelegateCount = 25,
                 AllAttempts = 49,
                 AttemptsPassed = 34,
-                CompletedCount = 5
+                CompletedCount = 5,
+                HideInLearnerPortal = false,
+                CategoryName = "Office 2007",
+                LearningMinutes = "N/A"
             };
 
             result.Should().HaveCount(260);

@@ -33,11 +33,3 @@
 .hidden {
   display: none !important;
 }
-
-.js-only-inline {
-  display: none;
-}
-
-.js-enabled .js-only-inline {
-  display: inline;
-}

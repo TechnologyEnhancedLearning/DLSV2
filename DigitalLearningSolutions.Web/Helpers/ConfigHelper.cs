@@ -10,6 +10,7 @@
         public const string DefaultConnectionStringName = "DefaultConnection";
         public const string UnitTestConnectionStringName = "UnitTestConnection";
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
+        public const string AppRootPathName = "AppRootPath";
         public const string MapsApiKey = "MapsAPIKey";
 
         public static IConfigurationRoot GetAppConfig()

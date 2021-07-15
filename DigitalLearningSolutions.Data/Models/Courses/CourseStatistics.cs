@@ -15,6 +15,9 @@
         public int InProgressCount => DelegateCount - CompletedCount;
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
+        public bool HideInLearnerPortal { get; set; }
+        public string CategoryName { get; set; }
+        public string LearningMinutes { get; set; }
 
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName

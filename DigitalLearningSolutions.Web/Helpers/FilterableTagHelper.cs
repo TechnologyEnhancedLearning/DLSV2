@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -10,7 +11,7 @@
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForAdminUser(AdminUser adminUser)
         {
             var tags = new List<SearchableTagViewModel>();
-            
+
             if (adminUser.IsLocked)
             {
                 tags.Add(new SearchableTagViewModel(AdminAccountStatusFilterOptions.IsLocked));
@@ -48,6 +49,33 @@
             if (adminUser.IsCmsManager)
             {
                 tags.Add(new SearchableTagViewModel(AdminRoleFilterOptions.CmsManager));
+            }
+
+            return tags;
+        }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseStatistics(
+            CourseStatistics courseStatistics
+        )
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            if (courseStatistics.Active)
+            {
+                tags.Add(new SearchableTagViewModel(CourseActiveStatusFilterOptions.IsActive));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseActiveStatusFilterOptions.IsInactive));
+            }
+
+            if (courseStatistics.HideInLearnerPortal)
+            {
+                tags.Add(new SearchableTagViewModel(CourseHiddenInLearningPortalStatusFilterOptions.IsHidden));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseHiddenInLearningPortalStatusFilterOptions.IsNotHidden));
             }
 
             return tags;
