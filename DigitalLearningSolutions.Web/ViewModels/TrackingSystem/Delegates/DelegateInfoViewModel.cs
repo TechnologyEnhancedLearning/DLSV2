@@ -22,7 +22,7 @@
             JobGroup = delegateUser.JobGroupName;
             if (delegateUser.DateRegistered.HasValue)
             {
-                RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd-MM-yyyy");
+                RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd/MM/yyyy");
             }
             AliasId = delegateUser.AliasId;
 
