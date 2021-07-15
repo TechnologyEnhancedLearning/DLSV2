@@ -122,12 +122,12 @@
         [HttpGet]
         public IActionResult Password()
         {
-            return View(new PasswordViewModel());
+            return View(new ConfirmPasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
         [HttpPost]
-        public IActionResult Password(PasswordViewModel model)
+        public IActionResult Password(ConfirmPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {

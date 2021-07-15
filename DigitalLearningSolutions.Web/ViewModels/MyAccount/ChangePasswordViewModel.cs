@@ -3,7 +3,7 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class ChangePasswordViewModel : PasswordViewModel
+    public class ChangePasswordViewModel : ConfirmPasswordViewModel
     {
         [Required(ErrorMessage = "Enter your password")]
         [DataType(DataType.Password)]
