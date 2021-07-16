@@ -7,20 +7,20 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class SearchableDelegateViewModelTests
+    public class ViewDelegateViewModelTests
     {
         private readonly List<CustomFieldViewModel> customFields = new List<CustomFieldViewModel>();
 
         [Test]
-        public void SearchableDelegateViewModel_sets_active_tag_name_correctly()
+        public void ViewDelegateViewModel_sets_active_tag_name_correctly()
         {
             // Given
             var activeUser = new DelegateUserCard { Active = true };
             var inactiveUser = new DelegateUserCard { Active = false };
 
             // When
-            var activeModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(activeUser, customFields));
-            var inactiveModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(inactiveUser, customFields));
+            var activeModel = new ViewDelegateViewModel(new DelegateInfoViewModel(activeUser, customFields));
+            var inactiveModel = new ViewDelegateViewModel(new DelegateInfoViewModel(inactiveUser, customFields));
 
             // Then
             activeModel.ActiveTagName.Should().Be("Active");
@@ -28,15 +28,15 @@
         }
 
         [Test]
-        public void SearchableDelegateViewModel_sets_password_tag_name_correctly()
+        public void ViewDelegateViewModel_sets_password_tag_name_correctly()
         {
             // Given
             var pwSetUser = new DelegateUserCard { Password = "pw" };
             var pwNotSetUser = new DelegateUserCard { Password = null };
 
             // When
-            var pwSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwSetUser, customFields));
-            var pwNotSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwNotSetUser, customFields));
+            var pwSetModel = new ViewDelegateViewModel(new DelegateInfoViewModel(pwSetUser, customFields));
+            var pwNotSetModel = new ViewDelegateViewModel(new DelegateInfoViewModel(pwNotSetUser, customFields));
 
             // Then
             pwSetModel.PasswordTagName.Should().Be("Password set");
@@ -44,7 +44,7 @@
         }
 
         [Test]
-        public void SearchableDelegateViewModel_sets_regstatus_tag_name_correctly()
+        public void ViewDelegateViewModel_sets_regstatus_tag_name_correctly()
         {
             // Given
             var selfRegUser = new DelegateUserCard { SelfReg = true, ExternalReg = false };
@@ -52,11 +52,11 @@
             var centreRegUser = new DelegateUserCard { SelfReg = false };
 
             // When
-            var selfRegModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegUser, customFields));
+            var selfRegModel = new ViewDelegateViewModel(new DelegateInfoViewModel(selfRegUser, customFields));
             var selfRegExternalModel =
-                new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegExternalUser, customFields));
+                new ViewDelegateViewModel(new DelegateInfoViewModel(selfRegExternalUser, customFields));
             var centreRegModel =
-                new SearchableDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields));
+                new ViewDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields));
 
             // Then
             selfRegModel.RegStatusTagName.Should().Be("Self registered");
