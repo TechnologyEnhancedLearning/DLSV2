@@ -374,9 +374,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to USE [mbdbx101]
-        ///GO
-        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -386,7 +384,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_237_GetActiveAvailableTweak_DOWN {
             get {
@@ -395,9 +393,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to USE [mbdbx101]
-        ///GO
-        ////****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///SET QUOTED_IDENTIFIER ON
@@ -407,11 +403,55 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisa [rest of string was truncated]&quot;;.
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_237_GetActiveAvailableTweak_UP {
             get {
                 return ResourceManager.GetString("DLSV2_237_GetActiveAvailableTweak_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetLinkedFieldNameForCentreByID]    Script Date: 16/07/2021 09:23:22 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 12/10/2018
+        ///-- Description:	Return the field name for centre group linked field ID
+        ///-- =============================================
+        ///ALTER FUNCTION [dbo].[GetLinkedFieldNameForCentreByID] 
+        ///(
+        ///	-- Add the parameters for the function here
+        ///	@ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_272_AlterGetLinkedFieldNameFunction_DOWN {
+            get {
+                return ResourceManager.GetString("DLSV2_272_AlterGetLinkedFieldNameFunction_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  UserDefinedFunction [dbo].[GetLinkedFieldNameForCentreByID]    Script Date: 16/07/2021 09:23:22 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 12/10/2018
+        ///-- Description:	Return the field name for centre group linked field ID
+        ///-- =============================================
+        ///ALTER FUNCTION [dbo].[GetLinkedFieldNameForCentreByID] 
+        ///(
+        ///	-- Add the parameters for the function here
+        ///	@ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_272_AlterGetLinkedFieldNameFunction_UP {
+            get {
+                return ResourceManager.GetString("DLSV2_272_AlterGetLinkedFieldNameFunction_UP", resourceCulture);
             }
         }
         
