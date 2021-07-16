@@ -1,0 +1,32 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
+@model AssessmentQuestion
+
+@if (Model.Result == null)
+{
+  <span class="nhsuk-u-font-weight-bold status-tag">No response</span>
+}
+else
+{
+  @if (Model.LevelDescriptors != null)
+
+  {
+    foreach (var levelDescriptor in Model.LevelDescriptors)
+    {
+      if (levelDescriptor.LevelValue == Model.Result)
+      {
+
+        <span class="nhsuk-u-font-weight-bold">
+          @levelDescriptor.LevelLabel
+        </span>
+        break;
+      }
+    }
+  }
+  else
+  {
+
+    <span class="nhsuk-u-font-weight-bold">
+      @Model.Result/@Model.MaxValue
+    </span>
+  }
+}
