@@ -41,12 +41,12 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Error");
             }
 
-            return View(new PasswordViewModel());
+            return View(new ConfirmPasswordViewModel());
         }
 
         [HttpPost]
         [ServiceFilter(typeof(RedirectEmptySessionData<ResetPasswordData>))]
-        public async Task<IActionResult> Index(PasswordViewModel viewModel)
+        public async Task<IActionResult> Index(ConfirmPasswordViewModel viewModel)
         {
             var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
 

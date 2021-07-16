@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
             }
             else if (Enumeration.TryGetFromIdOrName<T>(enumerationName.FirstValue, out var result, true))
             {
-                bindingContext.Result = ModelBindingResult.Success(result);
+                bindingContext.Result = ModelBindingResult.Success(result!);
             }
             else
             {

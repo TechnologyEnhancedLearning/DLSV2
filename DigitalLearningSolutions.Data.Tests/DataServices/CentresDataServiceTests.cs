@@ -182,7 +182,6 @@
                 const string telephone = "0118999 88199 9119725   3";
                 const string email = "totallyrealemail@noreally.itis";
                 const string postcode = "POST CDE";
-                const bool showOnMap = false;
                 const double latitude = 52.9534611;
                 const double longitude = -1.1493326;
                 const string openingHours = "2:30am - 2:31am Sundays";
@@ -195,7 +194,6 @@
                 centresDataService.UpdateCentreWebsiteDetails(
                     2,
                     postcode,
-                    showOnMap,
                     latitude,
                     longitude,
                     telephone,
@@ -214,7 +212,6 @@
                     updatedCentre.CentreTelephone.Should().BeEquivalentTo(telephone);
                     updatedCentre.CentreEmail.Should().BeEquivalentTo(email);
                     updatedCentre.CentrePostcode.Should().BeEquivalentTo(postcode);
-                    updatedCentre.ShowOnMap.Should().BeFalse();
                     updatedCentre.Latitude.Should().Be(latitude);
                     updatedCentre.Longitude.Should().Be(longitude);
                     updatedCentre.OpeningHours.Should().BeEquivalentTo(openingHours);
@@ -222,6 +219,38 @@
                     updatedCentre.OrganisationsCovered.Should().BeEquivalentTo(organisationsCovered);
                     updatedCentre.TrainingVenues.Should().BeEquivalentTo(trainingVenues);
                     updatedCentre.OtherInformation.Should().BeEquivalentTo(otherInformation);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateCentreDetails_updates_centre()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string notifyEmail = "test@centre.com";
+                const string bannerText = "Test banner text";
+                var signature = new byte[100];
+                var logo = new byte[200];
+
+
+                // When
+                centresDataService.UpdateCentreDetails(2, notifyEmail, bannerText, signature, logo);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCentre.NotifyEmail.Should().BeEquivalentTo(notifyEmail);
+                    updatedCentre.BannerText.Should().BeEquivalentTo(bannerText);
+                    updatedCentre.SignatureImage.Should().BeEquivalentTo(signature);
+                    updatedCentre.CentreLogo.Should().BeEquivalentTo(logo);
                 }
             }
             finally

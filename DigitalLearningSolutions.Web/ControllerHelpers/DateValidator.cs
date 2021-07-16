@@ -39,6 +39,35 @@
             public int? Year { get; }
         }
 
+        public static ValidationResult ValidateRequiredDate(int? day, int? month, int? year, string name)
+        {
+            day ??= 0;
+            month ??= 0;
+            year ??= 0;
+
+            try
+            {
+                var newDate = new DateTime(year.Value, month.Value, day.Value);
+                if (newDate <= DateTime.Today)
+                {
+                    return new ValidationResult(day.Value, month.Value, year.Value)
+                    {
+                        DateValid = false,
+                        DayValid = false,
+                        MonthValid = false,
+                        YearValid = false,
+                        ErrorMessage = "Email delivery date must be in the future"
+                    };
+                }
+
+                return new ValidationResult(day.Value, month.Value, year.Value);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return GetValidationError(day.Value, month.Value, year.Value, name);
+            }
+        }
+
         public static ValidationResult ValidateDate(int day, int month, int year)
         {
             if (day == 0 && month == 0 && year == 0)
@@ -70,11 +99,11 @@
             }
             catch (ArgumentOutOfRangeException)
             {
-                return GetValidationError(day, month, year);
+                return GetValidationError(day, month, year, "Complete by date");
             }
         }
 
-        private static ValidationResult GetValidationError(int day, int month, int year)
+        private static ValidationResult GetValidationError(int day, int month, int year, string name)
         {
             var error = new ValidationResult(day, month, year) { DateValid = false };
 
@@ -93,7 +122,7 @@
                 error.YearValid = false;
             }
 
-            error.ErrorMessage = ConstructErrorMessage(day, month, year);
+            error.ErrorMessage = ConstructErrorMessage(day, month, year, name);
 
             return error;
         }
@@ -113,7 +142,7 @@
             return year > 1752 && year < 10000;
         }
 
-        private static string ConstructErrorMessage(int day, int month, int year)
+        private static string ConstructErrorMessage(int day, int month, int year, string name)
         {
             List<string> emptyElements = new List<string>();
 
@@ -134,10 +163,10 @@
 
             if (emptyElements.Any())
             {
-                return "Complete by date must include a " + string.Join(" and ", emptyElements);
+                return name + " must include a " + string.Join(" and ", emptyElements);
             }
 
-            return "Complete by date must be a real date";
+            return name + " must be a real date";
         }
     }
 }

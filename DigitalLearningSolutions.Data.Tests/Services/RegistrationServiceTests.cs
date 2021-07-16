@@ -346,5 +346,35 @@
             A.CallTo(() => centresDataService.SetCentreAutoRegistered(testRegistrationModel.Centre))
                 .MustNotHaveHappened();
         }
+
+        [Test]
+        public void RegisterDelegateByCentre_sets_password_if_passwordHash_not_null()
+        {
+            // Given
+            var model = new DelegateRegistrationModel("firstName", "lastName", "email", 0, 0, PasswordHash);
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
+
+            // When
+            registrationService.RegisterDelegateByCentre(model);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash)).MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_does_not_set_password_if_passwordHash_is_null()
+        {
+            // Given
+            var model = new DelegateRegistrationModel("firstName", "lastName", "email", 0, 0, null);
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
+
+            // When
+            registrationService.RegisterDelegateByCentre(model);
+
+            // Then
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)).MustNotHaveHappened();
+        }
     }
 }

@@ -22,6 +22,7 @@
         );
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -131,6 +132,38 @@
                     WHERE CentreID = @centreId",
                 new { centreId }
             ).Single();
+        }
+
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
+        {
+            var result = connection.Query<CourseCustomPromptsResult>(
+                @"SELECT
+                        cp1.CoursePrompt AS CustomField1Prompt,
+                        cu.Q1Options AS CustomField1Options, 
+                        cu.Q1Mandatory AS CustomField1Mandatory, 
+                        cp2.CoursePrompt AS CustomField2Prompt,
+                        cu.Q2Options AS CustomField2Options, 
+                        cu.Q2Mandatory AS CustomField2Mandatory,
+                        cp3.CoursePrompt AS CustomField3Prompt,
+                        cu.Q3Options AS CustomField3Options, 
+                        cu.Q3Mandatory AS CustomField3Mandatory
+                    FROM 
+                        Customisations AS cu
+                    LEFT JOIN CoursePrompts AS cp1 
+                        ON cu.CourseField1PromptID = cp1.CoursePromptID
+                    LEFT JOIN CoursePrompts AS cp2 
+                        ON cu.CourseField2PromptID = cp2.CoursePromptID
+                    LEFT JOIN CoursePrompts AS cp3 
+                        ON cu.CourseField3PromptID = cp3.CoursePromptID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).SingleOrDefault();
+
+            return result;
         }
     }
 }

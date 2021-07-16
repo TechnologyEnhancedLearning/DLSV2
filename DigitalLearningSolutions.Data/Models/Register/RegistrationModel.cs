@@ -8,7 +8,7 @@
             string email,
             int centre,
             int jobGroup,
-            string passwordHash
+            string? passwordHash
         )
         {
             FirstName = firstName;
@@ -30,7 +30,7 @@
 
         public int JobGroup { get; set; }
 
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         public bool Approved { get; set; }
     }
