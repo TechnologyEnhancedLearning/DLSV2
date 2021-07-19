@@ -132,13 +132,13 @@
         public string GetCurrentActivitiesUrl()
         {
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += "/LearningPortal/Current";
+            dlsUrlBuilder.Path += "LearningPortal/Current";
             return dlsUrlBuilder.Uri.ToString();
         }
         public string GetSelfAssessmentUrl(int selfAssessmentId)
         {
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
+            dlsUrlBuilder.Path += $"LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
             return dlsUrlBuilder.Uri.ToString();
         }
         public UriBuilder GetDLSUriBuilder()
@@ -204,7 +204,7 @@
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
             string emailSubjectLine = "Accepted Supervisor Invitation - Digital Learning Solutions";
-            dlsUrlBuilder.Path += $"/Supervisor/MyStaff";
+            dlsUrlBuilder.Path += $"Supervisor/Staff/List";
             builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
 You are now confirmed as a supervisor for this delegate.
@@ -219,7 +219,7 @@ To manage their role profile assessments, please visit {dlsUrlBuilder.Uri.ToStri
             string emailSubjectLine = "REJECTED Supervisor Invitation - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
-            dlsUrlBuilder.Path += $"/Supervisor/MyStaff";
+            dlsUrlBuilder.Path += $"Supervisor/Staff/List";
             builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has rejected your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
 This delegate has been removed from your supervisor team.
