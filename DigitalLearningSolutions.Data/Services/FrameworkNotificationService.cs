@@ -17,6 +17,7 @@
         void SendSupervisorDelegateAcceptance(int supervisorDelegateId);
         void SendSupervisorDelegateRejected(int supervisorDelegateId);
         void SendSupervisorDelegateConfirmed(int superviseDelegateId);
+        void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -25,12 +26,14 @@
         private readonly IFrameworkService frameworkService;
         private readonly IRoleProfileService roleProfileService;
         private readonly ISupervisorService supervisorService;
+        private readonly ISelfAssessmentService selfAssessmentService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
            IConfigService configService,
            IEmailService emailService,
            IRoleProfileService roleProfileService,
-           ISupervisorService supervisorService
+           ISupervisorService supervisorService,
+           ISelfAssessmentService selfAssessmentService
        )
         {
             this.frameworkService = frameworkService;
@@ -38,6 +41,7 @@
             this.emailService = emailService;
             this.roleProfileService = roleProfileService;
             this.supervisorService = supervisorService;
+            this.selfAssessmentService = selfAssessmentService;
         }
 
         public void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment)
@@ -121,14 +125,29 @@
         }
         public string GetFrameworkUrl(int frameworkId, string tab)
         {
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                       throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
-            ;
-            var frameworkUrl = new UriBuilder(trackingSystemBaseUrl);
+            var frameworkUrl = GetDLSUriBuilder();
             frameworkUrl.Path += $"Framework/{frameworkId}/{tab}/";
             return frameworkUrl.Uri.ToString();
         }
-
+        public string GetCurrentActivitiesUrl()
+        {
+            var dlsUrlBuilder = GetDLSUriBuilder();
+            dlsUrlBuilder.Path += "/LearningPortal/Current";
+            return dlsUrlBuilder.Uri.ToString();
+        }
+        public string GetSelfAssessmentUrl(int selfAssessmentId)
+        {
+            var dlsUrlBuilder = GetDLSUriBuilder();
+            dlsUrlBuilder.Path += $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Overview";
+            return dlsUrlBuilder.Uri.ToString();
+        }
+        public UriBuilder GetDLSUriBuilder()
+        {
+            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
+                                       throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
+            ;
+            return new UriBuilder(trackingSystemBaseUrl);
+        }
         public void SendReviewOutcomeNotification(int reviewId)
         {
             var outcomeNotification = frameworkService.GetFrameworkReviewNotification(reviewId);
@@ -155,12 +174,9 @@
         public void SendSupervisorDelegateInvite(int supervisorDelegateId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
-            var dlsUrlBuilder = new UriBuilder(trackingSystemBaseUrl);
+            var dlsUrlBuilder = GetDLSUriBuilder();
             if (supervisorDelegate.CandidateID == null)
             {
                 dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegateId}";
@@ -185,12 +201,8 @@
         public void SendSupervisorDelegateAcceptance(int supervisorDelegateId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
-            string emailSubjectLine = "Accepted Supervisor Invitation - Digital Learning Solutions";
             var builder = new BodyBuilder();
-            var dlsUrlBuilder = new UriBuilder(trackingSystemBaseUrl);
+            var dlsUrlBuilder = GetDLSUriBuilder();
             dlsUrlBuilder.Path += $"/Supervisor/MyStaff";
             builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
@@ -203,12 +215,9 @@ To manage their role profile assessments, please visit {dlsUrlBuilder.Uri.ToStri
         public void SendSupervisorDelegateRejected(int supervisorDelegateId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             string emailSubjectLine = "REJECTED Supervisor Invitation - Digital Learning Solutions";
             var builder = new BodyBuilder();
-            var dlsUrlBuilder = new UriBuilder(trackingSystemBaseUrl);
+            var dlsUrlBuilder = GetDLSUriBuilder();
             dlsUrlBuilder.Path += $"/Supervisor/MyStaff";
             builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has rejected your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
@@ -221,17 +230,30 @@ To manage your team, please visit {dlsUrlBuilder.Uri.ToString()}.";
         public void SendSupervisorDelegateConfirmed(int supervisorDelegateId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                        throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             string emailSubjectLine = "Supervisor Confirmed - Digital Learning Solutions";
             var builder = new BodyBuilder();
-            var dlsUrlBuilder = new UriBuilder(trackingSystemBaseUrl);
-            dlsUrlBuilder.Path += $"/LearningPortal/Current";
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
                                {supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.
-To access your role profile assessments, please visit {dlsUrlBuilder.Uri.ToString()}.";
+To access your role profile assessments, please visit {GetCurrentActivitiesUrl()}.";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to access your role profile assessments.</p>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " signed of your self assessment " : " did not sign off your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            var selfAssessmentUri = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               {supervisorDelegate.SupervisorName} has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.
+                               {commentString}
+                               To access your {delegateSelfAssessment.RoleName} self assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} self assessment.</p>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }

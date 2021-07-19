@@ -4,6 +4,7 @@
     public class DelegateSelfAssessment
     {
         public int ID { get; set; }
+        public int SelfAssessmentID { get; set; }
         public string RoleName { get; set; }
         public string? SupervisorRoleTitle { get; set; }
         public DateTime StartedDate { get; set; }

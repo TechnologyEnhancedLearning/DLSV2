@@ -182,6 +182,7 @@
             if (supervisorService.UpdateSelfAssessmentResultSupervisorVerifications(resultSupervisorVerificationId, supervisorComments, signedOff, GetAdminID()))
             {
                 //send notification to delegate:
+                frameworkNotificationService.SendSupervisorResultReviewed(GetAdminID(), supervisorDelegateId, candidateAssessmentId, resultId);
             };
             return RedirectToAction("ReviewCompetencySelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "View", resultId = resultId });
         }
