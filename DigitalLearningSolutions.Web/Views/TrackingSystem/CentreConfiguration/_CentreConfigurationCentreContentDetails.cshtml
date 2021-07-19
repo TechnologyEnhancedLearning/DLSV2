@@ -17,105 +17,63 @@
         <dt class="nhsuk-summary-list__key">
           Centre telephone
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreTelephone ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreTelephone)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreTelephone" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreEmail ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreEmail)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre postcode
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentrePostcode ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentrePostcode)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentrePostcode" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Show centre on map
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @showCentreOnMap
-        </dd>
+        <partial name="_SummaryFieldValue" model="@showCentreOnMap" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Opening hours
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.OpeningHours ?? "-")
-          @if (string.IsNullOrEmpty(Model.OpeningHours)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.OpeningHours" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre web address
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreWebAddress ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreWebAddress)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreWebAddress" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Organisations covered
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@(Model.OrganisationsCovered ?? "-")</span>
-          @if (string.IsNullOrEmpty(Model.OrganisationsCovered)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.OrganisationsCovered" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Training venues
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@(Model.TrainingVenues ?? "-")</span>
-          @if (string.IsNullOrEmpty(Model.TrainingVenues)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.TrainingVenues" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Other information
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@(Model.OtherInformation ?? "-")</span>
-          @if (string.IsNullOrEmpty(Model.OtherInformation)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.OtherInformation" />
       </div>
     </dl>
 

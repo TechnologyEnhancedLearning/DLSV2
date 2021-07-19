@@ -16,114 +16,77 @@
         <dt class="nhsuk-summary-list__key">
           Centre ranking
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.CentreRank
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.CentreRank" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre name
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.CentreName
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.CentreName" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre number
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.CentreId
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.CentreId.ToString()" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Region
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.Region
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.Region" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Contract type
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.ContractType
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.ContractType" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre manager
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreDetails.CentreManager ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreDetails.CentreManager)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.CentreManager" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreDetails.Email ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreDetails.Email)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.Email" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Contact number
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreDetails.Telephone ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreDetails.Telephone)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.Telephone" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre support details
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreDetails.BannerText ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreDetails.BannerText)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.BannerText" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Your IP address
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.IpAddress
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.IpAddress" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Pre-approved IPs
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.CentreDetails.ApprovedIps ?? "-")
-          @if (string.IsNullOrEmpty(Model.CentreDetails.ApprovedIps)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CentreDetails.ApprovedIps" />
       </div>
 
     </dl>

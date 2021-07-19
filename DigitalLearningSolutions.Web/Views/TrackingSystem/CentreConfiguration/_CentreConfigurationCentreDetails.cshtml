@@ -15,24 +15,14 @@
         <dt class="nhsuk-summary-list__key">
           Notify email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.NotifyEmail ?? "-")
-          @if (string.IsNullOrEmpty(Model.NotifyEmail)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.NotifyEmail" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Banner text
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.BannerText ?? "-")
-          @if (string.IsNullOrEmpty(Model.BannerText)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.BannerText" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">

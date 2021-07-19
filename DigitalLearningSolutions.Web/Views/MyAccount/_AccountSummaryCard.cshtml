@@ -8,9 +8,7 @@
         <dt class="nhsuk-summary-list__key">
           Centre
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.Centre
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.Centre" />
       </div>
 
       @if (Model.User?.Length > 0) {
@@ -18,9 +16,7 @@
           <dt class="nhsuk-summary-list__key">
             User
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.User
-          </dd>
+          <partial name="_SummaryFieldValue" model="@Model.User" />
         </div>
       }
 
@@ -29,9 +25,7 @@
           <dt class="nhsuk-summary-list__key">
             Delegate id
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.DelegateNumber
-          </dd>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateNumber" />
         </div>
       }
     </dl>

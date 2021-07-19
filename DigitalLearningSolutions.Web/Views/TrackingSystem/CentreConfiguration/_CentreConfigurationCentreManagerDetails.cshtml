@@ -13,48 +13,28 @@
         <dt class="nhsuk-summary-list__key">
           First name
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.ContactForename ?? "-")
-          @if (string.IsNullOrEmpty(Model.ContactForename)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactForename" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Last name
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.ContactSurname ?? "-")
-          @if (string.IsNullOrEmpty(Model.ContactSurname)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactSurname" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.ContactEmail ?? "-")
-          @if (string.IsNullOrEmpty(Model.ContactEmail)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactEmail" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Telephone
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.ContactTelephone ?? "-")
-          @if (string.IsNullOrEmpty(Model.ContactTelephone)) {
-            <span class="nhsuk-u-visually-hidden">No value set</span>
-          }
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactTelephone" />
       </div>
     </dl>
 
