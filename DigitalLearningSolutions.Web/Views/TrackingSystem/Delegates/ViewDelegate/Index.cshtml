@@ -56,7 +56,7 @@
         <dt class="nhsuk-summary-list__key">Email</dt>
         <dd class="nhsuk-summary-list__value">
           @(Model.DelegateInfo.Email ?? "-")
-          @if (Model.DelegateInfo.Email == null) {
+          @if (string.IsNullOrEmpty(Model.DelegateInfo.Email)) {
             <span class="nhsuk-u-visually-hidden">No value set</span>
           }
         </dd>
@@ -71,7 +71,7 @@
         <dt class="nhsuk-summary-list__key">Alias</dt>
         <dd class="nhsuk-summary-list__value">
           @(Model.DelegateInfo.AliasId ?? "-")
-          @if (Model.DelegateInfo.AliasId == null) {
+          @if (string.IsNullOrEmpty(Model.DelegateInfo.AliasId)) {
             <span class="nhsuk-u-visually-hidden">No value set</span>
           }
         </dd>
@@ -81,7 +81,7 @@
         <dt class="nhsuk-summary-list__key">Registration date</dt>
         <dd class="nhsuk-summary-list__value">
           @(Model.DelegateInfo.RegistrationDate ?? "-")
-          @if (Model.DelegateInfo.RegistrationDate == null) {
+          @if (string.IsNullOrEmpty(Model.DelegateInfo.RegistrationDate)) {
             <span class="nhsuk-u-visually-hidden">No value set</span>
           }
         </dd>
@@ -91,7 +91,7 @@
         <dt class="nhsuk-summary-list__key">Job group</dt>
         <dd class="nhsuk-summary-list__value">
           @(Model.DelegateInfo.JobGroup ?? "-")
-          @if (Model.DelegateInfo.JobGroup == null) {
+          @if (string.IsNullOrEmpty(Model.DelegateInfo.JobGroup)) {
             <span class="nhsuk-u-visually-hidden">No value set</span>
           }
         </dd>
@@ -102,7 +102,7 @@
           <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
           <dd class="nhsuk-summary-list__value">
             @(customField.Answer ?? "-")
-            @if (customField.Answer == null) {
+            @if (string.IsNullOrEmpty(customField.Answer)) {
               <span class="nhsuk-u-visually-hidden">No value set</span>
             }
           </dd>

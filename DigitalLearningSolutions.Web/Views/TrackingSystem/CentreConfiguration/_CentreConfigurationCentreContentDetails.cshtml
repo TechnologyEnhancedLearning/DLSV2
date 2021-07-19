@@ -18,7 +18,10 @@
           Centre telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreTelephone
+          @(Model.CentreTelephone ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreTelephone)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -27,7 +30,10 @@
           Centre email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreEmail
+          @(Model.CentreEmail ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreEmail)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -36,7 +42,10 @@
           Centre postcode
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentrePostcode
+          @(Model.CentrePostcode ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentrePostcode)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -54,7 +63,10 @@
           Opening hours
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.OpeningHours
+          @(Model.OpeningHours ?? "-")
+          @if (string.IsNullOrEmpty(Model.OpeningHours)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -63,7 +75,10 @@
           Centre web address
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreWebAddress
+          @(Model.CentreWebAddress ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreWebAddress)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -72,7 +87,10 @@
           Organisations covered
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@Model.OrganisationsCovered</span>
+          <span class="preserve-whitespace">@(Model.OrganisationsCovered ?? "-")</span>
+          @if (string.IsNullOrEmpty(Model.OrganisationsCovered)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -81,7 +99,10 @@
           Training venues
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@Model.TrainingVenues</span>
+          <span class="preserve-whitespace">@(Model.TrainingVenues ?? "-")</span>
+          @if (string.IsNullOrEmpty(Model.TrainingVenues)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -90,7 +111,10 @@
           Other information
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <span class="preserve-whitespace">@Model.OtherInformation</span>
+          <span class="preserve-whitespace">@(Model.OtherInformation ?? "-")</span>
+          @if (string.IsNullOrEmpty(Model.OtherInformation)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
     </dl>

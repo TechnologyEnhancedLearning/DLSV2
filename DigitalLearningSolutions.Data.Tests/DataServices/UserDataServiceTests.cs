@@ -445,7 +445,7 @@
         }
 
         [Test]
-        public void GetDelegateUserCardsByCentreId_populates_DelegateUserCard_admin_fields_correctly()
+        public void GetDelegateUserCardsByCentreId_populates_DelegateUserCard_fields_correctly()
         {
             // When
             var userCards = userDataService.GetDelegateUserCardsByCentreId(101);

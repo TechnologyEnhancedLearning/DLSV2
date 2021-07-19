@@ -14,7 +14,10 @@
           First name
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.ContactForename
+          @(Model.ContactForename ?? "-")
+          @if (string.IsNullOrEmpty(Model.ContactForename)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -23,7 +26,10 @@
           Last name
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.ContactSurname
+          @(Model.ContactSurname ?? "-")
+          @if (string.IsNullOrEmpty(Model.ContactSurname)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -32,7 +38,10 @@
           Email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.ContactEmail
+          @(Model.ContactEmail ?? "-")
+          @if (string.IsNullOrEmpty(Model.ContactEmail)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -41,7 +50,10 @@
           Telephone
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.ContactTelephone
+          @(Model.ContactTelephone ?? "-")
+          @if (string.IsNullOrEmpty(Model.ContactTelephone)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
     </dl>

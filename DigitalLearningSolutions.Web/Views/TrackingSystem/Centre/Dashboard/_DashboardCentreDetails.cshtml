@@ -62,7 +62,10 @@
           Centre manager
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.CentreManager
+          @(Model.CentreDetails.CentreManager ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreDetails.CentreManager)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -71,7 +74,10 @@
           Email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.Email
+          @(Model.CentreDetails.Email ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreDetails.Email)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -80,7 +86,10 @@
           Contact number
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.Telephone
+          @(Model.CentreDetails.Telephone ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreDetails.Telephone)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -89,7 +98,10 @@
           Centre support details
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.BannerText
+          @(Model.CentreDetails.BannerText ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreDetails.BannerText)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -107,7 +119,10 @@
           Pre-approved IPs
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CentreDetails.ApprovedIps
+          @(Model.CentreDetails.ApprovedIps ?? "-")
+          @if (string.IsNullOrEmpty(Model.CentreDetails.ApprovedIps)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 

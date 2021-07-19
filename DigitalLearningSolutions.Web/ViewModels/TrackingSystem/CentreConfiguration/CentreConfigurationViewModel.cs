@@ -32,8 +32,8 @@
         public int CentreId { get; set; }
         public string CentreName { get; set; }
         public string RegionName { get; set; }
-        public string NotifyEmail { get; set; }
-        public string BannerText { get; set; }
+        public string? NotifyEmail { get; set; }
+        public string? BannerText { get; set; }
         public byte[]? SignatureImage { get; set; }
         public byte[]? CentreLogo { get; set; }
         public string? ContactForename { get; set; }

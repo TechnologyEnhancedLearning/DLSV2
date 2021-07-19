@@ -16,7 +16,10 @@
           Notify email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.NotifyEmail
+          @(Model.NotifyEmail ?? "-")
+          @if (string.IsNullOrEmpty(Model.NotifyEmail)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
@@ -25,7 +28,10 @@
           Banner text
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.BannerText
+          @(Model.BannerText ?? "-")
+          @if (string.IsNullOrEmpty(Model.BannerText)) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
         </dd>
       </div>
 
