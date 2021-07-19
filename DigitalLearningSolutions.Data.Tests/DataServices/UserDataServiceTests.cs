@@ -451,13 +451,13 @@
             var userCards = userDataService.GetDelegateUserCardsByCentreId(101);
 
             // Then
-            var userCard = userCards.Single(user => user.Id == 254480);
+            var userCard = userCards.Single(user => user.Id == 3);
             userCard.Active.Should().BeTrue();
-            userCard.SelfReg.Should().BeTrue();
-            userCard.ExternalReg.Should().BeTrue();
+            userCard.SelfReg.Should().BeFalse();
+            userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().Be(1);
-            userCard.AliasId.Should().Be("kevin.whittaker1@nhs.net");
-            userCard.JobGroupId.Should().Be(9);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(10);
         }
 
         [Test]
@@ -472,13 +472,28 @@
         }
 
         [Test]
-        public void GetDelegateUserCardsByCentreId_does_not_match_Admin_if_Admin_email_address_is_blank()
+        public void GetDelegateUserCardsByCentreId_does_not_match_admin_if_admin_email_address_is_blank()
         {
             // When
             var userCards = userDataService.GetDelegateUserCardsByCentreId(279);
 
             // Then
             var userCard = userCards.First(user => user.EmailAddress == "");
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_does_not_match_admin_if_password_does_not_match()
+        {
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(101);
+
+            // Then
+            var adminUser = userDataService.GetAdminUserById(1)!;
+            var userCard = userCards.Single(user => user.Id == 254480);
+            userCard.EmailAddress.Should().Be(adminUser.EmailAddress);
+            userCard.CentreId.Should().Be(adminUser.CentreId);
+            userCard.Password.Should().NotBe(adminUser.Password);
             userCard.AdminId.Should().BeNull();
         }
 
@@ -502,15 +517,15 @@
         public void GetDelegateUserCardById_populates_DelegateUserCard_fields_correctly()
         {
             // When
-            var userCard = userDataService.GetDelegateUserCardById(254480)!;
+            var userCard = userDataService.GetDelegateUserCardById(3)!;
 
             // Then
             userCard.Active.Should().BeTrue();
-            userCard.SelfReg.Should().BeTrue();
-            userCard.ExternalReg.Should().BeTrue();
+            userCard.SelfReg.Should().BeFalse();
+            userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().Be(1);
-            userCard.AliasId.Should().Be("kevin.whittaker1@nhs.net");
-            userCard.JobGroupId.Should().Be(9);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(10);
         }
 
         [Test]
@@ -524,12 +539,26 @@
         }
 
         [Test]
-        public void GetDelegateUserCardById_does_not_match_Admin_if_Admin_email_address_is_blank()
+        public void GetDelegateUserCardById_does_not_match_admin_if_admin_email_address_is_blank()
         {
             // When
             var userCard = userDataService.GetDelegateUserCardById(41300)!;
 
             // Then
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_does_not_match_admin_if_password_does_not_match()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(254480)!;
+
+            // Then
+            var adminUser = userDataService.GetAdminUserById(1)!;
+            userCard.EmailAddress.Should().Be(adminUser.EmailAddress);
+            userCard.CentreId.Should().Be(adminUser.CentreId);
+            userCard.Password.Should().NotBe(adminUser.Password);
             userCard.AdminId.Should().BeNull();
         }
     }

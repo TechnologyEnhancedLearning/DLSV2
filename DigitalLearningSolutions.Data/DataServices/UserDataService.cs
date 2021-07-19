@@ -165,7 +165,9 @@
                         cd.Active,
                         (SELECT AdminID
                          FROM AdminUsers au
-                         WHERE au.Email = cd.EmailAddress
+                         WHERE (au.Email = cd.EmailAddress
+                                OR au.Email = cd.AliasID)
+                         AND au.Password = cd.Password
                          AND au.CentreID = cd.CentreID
                          AND au.Email != ''
                         ) AS AdminID,
@@ -249,7 +251,9 @@
                         cd.Active,
                         (SELECT AdminID
                          FROM AdminUsers au
-                         WHERE au.Email = cd.EmailAddress
+                         WHERE (au.Email = cd.EmailAddress
+                                OR au.Email = cd.AliasID)
+                         AND au.Password = cd.Password
                          AND au.CentreID = cd.CentreID
                          AND au.Email != ''
                         ) AS AdminID,
