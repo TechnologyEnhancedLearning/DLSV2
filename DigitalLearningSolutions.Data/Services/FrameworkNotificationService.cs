@@ -203,6 +203,7 @@
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
+            string emailSubjectLine = "Accepted Supervisor Invitation - Digital Learning Solutions";
             dlsUrlBuilder.Path += $"/Supervisor/MyStaff";
             builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
@@ -235,7 +236,7 @@ To manage your team, please visit {dlsUrlBuilder.Uri.ToString()}.";
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
                                {supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.
 To access your role profile assessments, please visit {GetCurrentActivitiesUrl()}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to access your role profile assessments.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your role profile assessments.</p>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
