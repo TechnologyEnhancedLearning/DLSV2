@@ -2,18 +2,18 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model SearchableDelegateViewModel
 @{
-  var activeTagCss = Model.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
-  var passwordTagCss = Model.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+  var activeTagCss = Model.DelegateInfo.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
+  var passwordTagCss = Model.DelegateInfo.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
 }
 
 @*TODO: Search and sort functionality is part of HEEDLS-491.
   Filename includes 'Searchable' to avoid having to change name later*@
 
-<div class="nhsuk-expander-group" id="@Model.Id-card">
+<div class="nhsuk-expander-group" id="@Model.DelegateInfo.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text" id="@Model.Id-name" name="name">
-        @Model.Name (@Model.CandidateNumber)
+      <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name" name="name">
+        @Model.DelegateInfo.Name (@Model.DelegateInfo.CandidateNumber)
       </span>
     </summary>
 
@@ -22,46 +22,56 @@
         <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
         <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
         <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
-        @if (Model.IsAdmin) {
+        @if (Model.DelegateInfo.IsAdmin) {
           <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
         }
       </div>
 
       <dl class="nhsuk-summary-list details-list-with-button">
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">Name</dt>
-          <dd class="nhsuk-summary-list__value">@Model.Name</dd>
+          <dt class="nhsuk-summary-list__key">
+            Name
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Name" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">Email</dt>
-          <dd class="nhsuk-summary-list__value">@Model.Email</dd>
+          <dt class="nhsuk-summary-list__key">
+            Email
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.Email" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">ID</dt>
-          <dd class="nhsuk-summary-list__value">@Model.CandidateNumber</dd>
+          <dt class="nhsuk-summary-list__key">
+            ID
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.CandidateNumber" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">Registration date</dt>
-          <dd class="nhsuk-summary-list__value">@Model.RegistrationDate</dd>
+          <dt class="nhsuk-summary-list__key">
+            Registration date
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">Job group</dt>
-          <dd class="nhsuk-summary-list__value">@Model.JobGroup</dd>
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
         </div>
 
-        @foreach (CustomFieldViewModel customField in Model.CustomFields) {
+        @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
-            <dd class="nhsuk-summary-list__value">@customField.Answer</dd>
+            <partial name="_SummaryFieldValue" model="@customField.Answer" />
           </div>
         }
       </dl>
 
-      <a class="nhsuk-button" role="button">Manage delegate</a>
+      <a class="nhsuk-button" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">Manage delegate</a>
       <a class="nhsuk-button nhsuk-button--secondary" role="button">Set password</a>
     </div>
   </details>

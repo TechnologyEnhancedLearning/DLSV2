@@ -13,36 +13,28 @@
         <dt class="nhsuk-summary-list__key">
           First name
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.ContactForename
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactForename" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Last name
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.ContactSurname
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactSurname" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.ContactEmail
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactEmail" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Telephone
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.ContactTelephone
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.ContactTelephone" />
       </div>
     </dl>
 
