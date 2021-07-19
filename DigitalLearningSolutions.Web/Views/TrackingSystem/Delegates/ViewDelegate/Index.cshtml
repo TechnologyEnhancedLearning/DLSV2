@@ -11,10 +11,8 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-
   var activeTagCss = Model.DelegateInfo.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
   var passwordTagCss = Model.DelegateInfo.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
-
 }
 
 @section NavMenuItems {
@@ -31,8 +29,8 @@
   </div>
   @if (Model.DelegateInfo.IsActive) {
     <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
-      <a class="nhsuk-button nhsuk-button--secondary view-delegate-button " role="button">
-        Send Welcome Email
+      <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+        Send welcome email
       </a>
     </div>
   }
@@ -56,7 +54,12 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Email</dt>
-        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.Email ?? "-")</dd>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.DelegateInfo.Email ?? "-")
+          @if (Model.DelegateInfo.Email == null) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
+        </dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -66,23 +69,43 @@
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Alias</dt>
-        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.AliasId ?? "-")</dd>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.DelegateInfo.AliasId ?? "-")
+          @if (Model.DelegateInfo.AliasId == null) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
+        </dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Registration date</dt>
-        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.RegistrationDate ?? "-")</dd>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.DelegateInfo.RegistrationDate ?? "-")
+          @if (Model.DelegateInfo.RegistrationDate == null) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
+        </dd>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">Job group</dt>
-        <dd class="nhsuk-summary-list__value">@(Model.DelegateInfo.JobGroup ?? "-")</dd>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.DelegateInfo.JobGroup ?? "-")
+          @if (Model.DelegateInfo.JobGroup == null) {
+            <span class="nhsuk-u-visually-hidden">No value set</span>
+          }
+        </dd>
       </div>
 
       @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
-          <dd class="nhsuk-summary-list__value">@(customField.Answer ?? "-")</dd>
+          <dd class="nhsuk-summary-list__value">
+            @(customField.Answer ?? "-")
+            @if (customField.Answer == null) {
+              <span class="nhsuk-u-visually-hidden">No value set</span>
+            }
+          </dd>
         </div>
       }
     </dl>
