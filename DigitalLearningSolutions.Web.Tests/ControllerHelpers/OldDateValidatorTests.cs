@@ -4,13 +4,13 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class DateValidatorTests
+    public class OldDateValidatorTests
     {
         [Test]
         public void Date_validator_returns_valid_for_valid_date()
         {
             // When
-            var result = DateValidator.ValidateDate(1, 1, 3020);
+            var result = OldDateValidator.ValidateDate(1, 1, 3020);
 
             // Then
             result.DateValid.Should().BeTrue();
@@ -23,7 +23,7 @@
         public void Date_validator_returns_valid_for_empty_date()
         {
             // When
-            var result = DateValidator.ValidateDate(0, 0, 0);
+            var result = OldDateValidator.ValidateDate(0, 0, 0);
 
             // Then
             result.DateValid.Should().BeTrue();
@@ -36,7 +36,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_day_missing()
         {
             // When
-            var result = DateValidator.ValidateDate(0, 1, 2020);
+            var result = OldDateValidator.ValidateDate(0, 1, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -48,7 +48,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_day_and_month_missing()
         {
             // When
-            var result = DateValidator.ValidateDate(0, 0, 2020);
+            var result = OldDateValidator.ValidateDate(0, 0, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -60,7 +60,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_day_and_year_missing()
         {
             // When
-            var result = DateValidator.ValidateDate(0, 1, 0);
+            var result = OldDateValidator.ValidateDate(0, 1, 0);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -74,7 +74,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_month_missing()
         {
             // When
-            var result = DateValidator.ValidateDate(1, 0, 2020);
+            var result = OldDateValidator.ValidateDate(1, 0, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -86,7 +86,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_month_and_year_missing()
         {
             // When
-            var result = DateValidator.ValidateDate(1, 0, 0);
+            var result = OldDateValidator.ValidateDate(1, 0, 0);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -100,7 +100,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_bad_day()
         {
             // When
-            var result = DateValidator.ValidateDate(32, 1, 2020);
+            var result = OldDateValidator.ValidateDate(32, 1, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -112,7 +112,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_bad_month()
         {
             // When
-            var result = DateValidator.ValidateDate(31, 13, 2020);
+            var result = OldDateValidator.ValidateDate(31, 13, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -124,7 +124,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_bad_year()
         {
             // When
-            var result = DateValidator.ValidateDate(31, 1, 20201);
+            var result = OldDateValidator.ValidateDate(31, 1, 20201);
 
             // Then
             result.DateValid.Should().BeFalse();
@@ -136,7 +136,7 @@
         public void Date_validator_returns_invalid_for_a_date_with_bad_date()
         {
             // When
-            var result = DateValidator.ValidateDate(31, 2, 2020);
+            var result = OldDateValidator.ValidateDate(31, 2, 2020);
 
             // Then
             result.DateValid.Should().BeFalse();

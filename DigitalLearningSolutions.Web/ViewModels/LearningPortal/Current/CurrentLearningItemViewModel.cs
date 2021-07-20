@@ -7,7 +7,7 @@
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
     {
         public DateTime? CompleteByDate { get; }
-        public DateValidator.ValidationResult? CompleteByValidationResult { get; set; }
+        public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
 
         public CurrentLearningItemViewModel(
             CurrentLearningItem course
