@@ -1,0 +1,89 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@model DelegateCourseInfoViewModel
+
+<div class="nhsuk-expander-group" id="@Model.CustomisationId-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.CustomisationId-name" name="name">
+        @Model.ApplicationName - @Model.CustomisationName
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Enrolled
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Enrolled" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Supervisor
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Supervisor" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Complete by
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CompleteBy" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Last updated
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.LastUpdated" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Completed
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Completed" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Evaluated
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Evaluated" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Enrollment method
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.EnrollmentMethod" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Logins
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.LoginCount.ToString()" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Learning time
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.LearningTime" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Diagnostic score
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DiagnosticScore.ToString()" />
+        </div>
+      </dl>
+
+      <a class="nhsuk-button nhsuk-button--secondary" role="button">See learning log</a>
+      <a class="nhsuk-button delete-button" role="button">Remove</a>
+    </div>
+  </details>
+</div>
