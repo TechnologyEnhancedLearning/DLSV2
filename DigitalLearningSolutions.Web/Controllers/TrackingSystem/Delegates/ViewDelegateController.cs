@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
@@ -12,13 +13,19 @@
     [Route("TrackingSystem/Delegates/View/{delegateId:int}")]
     public class ViewDelegateController : Controller
     {
+        private readonly ICourseDataService courseDataService;
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IUserDataService userDataService;
 
-        public ViewDelegateController(IUserDataService userDataService, CustomPromptHelper customPromptHelper)
+        public ViewDelegateController(
+            IUserDataService userDataService,
+            CustomPromptHelper customPromptHelper,
+            ICourseDataService courseDataService
+        )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
+            this.courseDataService = courseDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -32,9 +39,12 @@
             }
 
             var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-            var delegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
-            var model = new ViewDelegateViewModel(delegateInfo);
+            var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
+            var courseInfoViewModelList = courseDataService.GetDelegateCoursesInfo(delegateId)
+                .Select(info => new DelegateCourseInfoViewModel(info));
+
+            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModelList);
             return View(model);
         }
     }
