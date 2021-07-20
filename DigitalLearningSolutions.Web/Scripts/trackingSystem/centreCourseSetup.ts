@@ -12,7 +12,7 @@ function setupCourseLinkClipboardCopiers() {
       const linkId = currentLink.id;
       const customisationId = linkId.slice(copyLinkIdPrefix.length);
       currentLink.addEventListener('click', () => { copyLaunchCourseLinkToClipboard(customisationId); });
-    }
+    },
   );
 }
 
