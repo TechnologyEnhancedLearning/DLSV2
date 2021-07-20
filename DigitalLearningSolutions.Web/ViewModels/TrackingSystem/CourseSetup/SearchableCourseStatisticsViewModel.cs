@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -23,11 +24,16 @@
         public string CourseName { get; set; }
         public string CategoryName { get; set; }
         public string LearningMinutes { get; set; }
-        public string GenerateEmailHref => $"mailto:?subject={GenerateEmailSubject}&body={GenerateEmailContent}";
-        private string GenerateEmailSubject => $"Digital Learning Solutions Course Link - {CourseName}";
-        private string GenerateEmailContent => $"To start your {CourseName} course, click {LaunchCourseLink}";
 
-        private string LaunchCourseLink =>
-            $"{ConfigHelper.GetAppConfig()[ConfigHelper.AppRootPathName]}/LearningMenu/{CustomisationId}";
+        public string EmailHref => GenerateEmailHref();
+
+        private string GenerateEmailHref()
+        {
+            var launchCourseLink =
+                $"{ConfigHelper.GetAppConfig()[ConfigHelper.AppRootPathName]}/LearningMenu/{CustomisationId}";
+            var subject = Uri.EscapeDataString($"Digital Learning Solutions Course Link - {CourseName}");
+            var content = Uri.EscapeDataString($"To start your {CourseName} course, go to {launchCourseLink}");
+            return $"mailto:?subject={subject}&body={content}";
+        }
     }
 }

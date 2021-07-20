@@ -4,9 +4,9 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public static class CourseActiveStatusFilterOptions
+    public static class CourseStatusFilterOptions
     {
-        private const string Group = "ActiveStatus";
+        private const string Group = "Status";
 
         public static readonly FilterOptionViewModel IsInactive = new FilterOptionViewModel(
             "Inactive",
@@ -19,20 +19,15 @@
             Group + FilteringHelper.Separator + nameof(CourseStatistics.Active) + FilteringHelper.Separator + "true",
             FilterStatus.Success
         );
-    }
 
-    public static class CourseHiddenInLearningPortalStatusFilterOptions
-    {
-        private const string Group = "HiddenInLearningPortalStatus";
-
-        public static readonly FilterOptionViewModel IsHidden = new FilterOptionViewModel(
+        public static readonly FilterOptionViewModel IsHiddenInLearningPortal = new FilterOptionViewModel(
             "Hidden in Learning Portal",
             Group + FilteringHelper.Separator + nameof(CourseStatistics.HideInLearnerPortal) +
             FilteringHelper.Separator + "true",
             FilterStatus.Warning
         );
 
-        public static readonly FilterOptionViewModel IsNotHidden = new FilterOptionViewModel(
+        public static readonly FilterOptionViewModel IsNotHiddenInLearningPortal = new FilterOptionViewModel(
             "Visible in Learning Portal",
             Group + FilteringHelper.Separator + nameof(CourseStatistics.HideInLearnerPortal) +
             FilteringHelper.Separator + "true",

@@ -62,20 +62,20 @@
 
             if (courseStatistics.Active)
             {
-                tags.Add(new SearchableTagViewModel(CourseActiveStatusFilterOptions.IsActive));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsActive));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(CourseActiveStatusFilterOptions.IsInactive));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive));
             }
 
             if (courseStatistics.HideInLearnerPortal)
             {
-                tags.Add(new SearchableTagViewModel(CourseHiddenInLearningPortalStatusFilterOptions.IsHidden));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsHiddenInLearningPortal));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(CourseHiddenInLearningPortalStatusFilterOptions.IsNotHidden));
+                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsNotHiddenInLearningPortal));
             }
 
             return tags;

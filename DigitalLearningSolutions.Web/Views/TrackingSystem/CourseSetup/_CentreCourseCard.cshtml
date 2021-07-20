@@ -54,13 +54,17 @@
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
           <p class="nhsuk-u-margin-bottom-0">Want to share the course?</p>
-          <a href="@Model.GenerateEmailHref">Generate email</a>
+          <a href="@Model.EmailHref">Generate email</a>
         </div>
-
       </div>
+
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          <a href="#" class="js-only-inline copy-course-link nhsuk-link--no-visited-state" id="copy-course-@Model.CustomisationId">Copy course link</a>
+          <button class="js-only-inline copy-course-button nhsuk-link--no-visited-state"
+                  id="copy-course-@Model.CustomisationId"
+                  role="button">
+            Copy course link
+          </button>
           <p class="non-js-only">To share this course with others, click Launch Course and copy the URL to the clipboard.</p>
         </div>
       </div>

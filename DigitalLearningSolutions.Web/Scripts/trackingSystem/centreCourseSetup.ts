@@ -1,42 +1,47 @@
-const copyCourseLinkClass = 'copy-course-link';
+const copyCourseLinkClass = 'copy-course-button';
 const copyLinkIdPrefix = 'copy-course-';
 const launchCourseButtonIdPrefix = 'launch-course-';
 
 setupCourseLinkClipboardCopiers();
 
 function setupCourseLinkClipboardCopiers() {
-  const copyCourseLinks = document.getElementsByClassName(copyCourseLinkClass);
+  const copyCourseLinks = Array.from(document.getElementsByClassName(copyCourseLinkClass));
 
-  for (let i = 0; i < copyCourseLinks.length; i += 1) {
-    const currentLink = copyCourseLinks[i];
-    const linkId = currentLink.id;
-    const customisationId = linkId.slice(copyLinkIdPrefix.length);
-
-    currentLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      copyLaunchCourseLinkToClipboard(customisationId);
-    });
-  }
+  copyCourseLinks.forEach(
+    (currentLink) => {
+      const linkId = currentLink.id;
+      const customisationId = linkId.slice(copyLinkIdPrefix.length);
+      currentLink.addEventListener('click', () => { copyLaunchCourseLinkToClipboard(customisationId); });
+    }
+  );
 }
 
 function copyLaunchCourseLinkToClipboard(customisationId: string) {
   const launchCourseButtonId = launchCourseButtonIdPrefix + customisationId;
-  const copyText = document.getElementById(launchCourseButtonId) as HTMLAnchorElement;
-  const link = copyText.href;
+  const launchCourseButton = document.getElementById(launchCourseButtonId) as HTMLAnchorElement;
+  const link = launchCourseButton.href;
   const succeeded = copyTextToClipboard(link);
-  let alertMessage: string;
-
-  if (succeeded) {
-    alertMessage = `Copied the text: ${link}`;
-  } else {
-    alertMessage = `Copy not supported or blocked. Try manually selecting and copying: ${link}`;
-  }
+  const alertMessage = succeeded
+    ? `Copied the text: ${link}`
+    : `Copy not supported or blocked. Try manually selecting and copying: ${link}`;
 
   alert(alertMessage);
 }
 
-function copyTextToClipboard(textToCopy: string) : boolean {
+function copyTextToClipboard(textToCopy: string): boolean {
+  let succeeded: boolean;
+
+  try {
+    navigator.clipboard.writeText(textToCopy);
+    succeeded = true;
+  } catch (e) {
+    succeeded = copyTextToClipboardFallback(textToCopy);
+  }
+
+  return succeeded;
+}
+
+function copyTextToClipboardFallback(textToCopy: string): boolean {
   const hiddenInput = document.body.appendChild(document.createElement('input'));
   hiddenInput.value = textToCopy;
   hiddenInput.select();
