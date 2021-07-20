@@ -1,0 +1,69 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
+@model WelcomeEmailViewModel
+
+@{
+  var errorHasOccurred = Model.DateValidationResult is { DateValid: false };
+  ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
+  const string dateInputId = "welcome-email-date";
+  const string conditionalDateInputId = "conditional-welcome-email-date";
+  var exampleDate = DateTime.Today;
+  var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
+  var errorCss = errorHasOccurred ? "nhsuk-form-group--error nhsuk-u-padding-left-5" : "";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+          There is a problem
+        </h2>
+        <div class="nhsuk-error-summary__body">
+          <ul class="nhsuk-list nhsuk-error-summary__list">
+            <li>
+              <a href="#@dateInputId">@Model.DateValidationResult!.ErrorMessage</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    }
+
+    <h1 class="nhsuk-heading-xl">Welcome email</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="WelcomeEmail">
+      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input"
+                 id="ShouldSendEmail"
+                 name="ShouldSendEmail"
+                 asp-for="ShouldSendEmail"
+                 type="checkbox"
+                 value="true"
+                 aria-controls="@conditionalDateInputId"
+                 aria-expanded="@Model.ShouldSendEmail">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
+            Send welcome email to registered delegate
+          </label>
+        </div>
+
+        <div class="@emailDateCss @errorCss" id="@conditionalDateInputId">
+          <vc:date-input id="@dateInputId"
+                         label="Deliver email on or after:"
+                         day-id="Day"
+                         month-id="Month"
+                         year-id="Year"
+                         validation-result="@Model.DateValidationResult"
+                         hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+        </div>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="LearnerInformation" link-text="Go back" />
+  </div>
+</div>

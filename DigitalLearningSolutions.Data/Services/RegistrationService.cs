@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Data.Services
             bool refactoredTrackingSystemEnabled
         );
 
+        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
+
         void RegisterCentreManager(RegistrationModel registrationModel);
     }
 
@@ -63,7 +65,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.PasswordHash
+                delegateRegistrationModel.PasswordHash!
             );
             if (!delegateRegistrationModel.Approved)
             {
@@ -79,6 +81,25 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return (candidateNumber, delegateRegistrationModel.Approved);
+        }
+
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
+        {
+            var candidateNumber = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
+            if (candidateNumber == "-1" || candidateNumber == "-4")
+            {
+                return candidateNumber;
+            }
+
+            if (delegateRegistrationModel.PasswordHash != null)
+            {
+                passwordDataService.SetPasswordByCandidateNumber(
+                    candidateNumber,
+                    delegateRegistrationModel.PasswordHash
+                );
+            }
+
+            return candidateNumber;
         }
 
         public void RegisterCentreManager(RegistrationModel registrationModel)
@@ -102,7 +123,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.Email,
                 registrationModel.Centre,
                 registrationModel.JobGroup,
-                registrationModel.PasswordHash
+                registrationModel.PasswordHash!
             ) { Approved = true };
             var candidateNumber =
                 registrationDataService.RegisterDelegate(delegateRegistrationModel);
@@ -115,7 +136,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.PasswordHash
+                delegateRegistrationModel.PasswordHash!
             );
         }
 

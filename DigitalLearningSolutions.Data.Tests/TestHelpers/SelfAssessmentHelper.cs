@@ -38,6 +38,7 @@
             string name = "name",
             string? description = "description",
             string competencyGroup = "competencyGroup",
+            string? vocabulary = "Capability",
             List<AssessmentQuestion> assessmentQuestions = null
         )
         {
@@ -47,6 +48,7 @@
                 Name = name,
                 Description = description,
                 CompetencyGroup = competencyGroup,
+                Vocabulary = vocabulary,
                 AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()
             };
         }

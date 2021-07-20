@@ -160,12 +160,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         [HttpGet]
         public IActionResult Password()
         {
-            return View(new PasswordViewModel());
+            return View(new ConfirmPasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult Password(PasswordViewModel model)
+        public IActionResult Password(ConfirmPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {

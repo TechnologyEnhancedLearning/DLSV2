@@ -34,5 +34,25 @@
                 data.Answer6
             );
         }
+
+        public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationByCentreData data)
+        {
+            return new DelegateRegistrationModel(
+                data.FirstName!,
+                data.LastName!,
+                data.Email!,
+                data.Centre!.Value,
+                data.JobGroup!.Value,
+                data.PasswordHash,
+                data.Answer1,
+                data.Answer2,
+                data.Answer3,
+                data.Answer4,
+                data.Answer5,
+                data.Answer6,
+                data.Alias,
+                data.WelcomeEmailDate
+            );
+        }
     }
 }

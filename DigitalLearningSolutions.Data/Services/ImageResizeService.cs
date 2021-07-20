@@ -6,10 +6,13 @@
     using System.Drawing.Imaging;
     using System.IO;
     using Microsoft.AspNetCore.Http;
+    using Org.BouncyCastle.Crypto.Tls;
 
     public interface IImageResizeService
     {
         public byte[] ResizeProfilePicture(IFormFile formProfileImage);
+
+        public byte[] ResizeCentreImage(IFormFile formCentreImage);
     }
 
     public class ImageResizeService : IImageResizeService
@@ -22,6 +25,14 @@
             return SquareImageFromMemoryStream(memoryStream, 300);
         }
 
+        public byte[] ResizeCentreImage(IFormFile formCentreImage)
+        {
+            using var memoryStream = new MemoryStream();
+            formCentreImage.CopyTo(memoryStream);
+
+            return ResizedImageFromMemoryStream(memoryStream, 500);
+        }
+
         private byte[] SquareImageFromMemoryStream(MemoryStream memoryStream, int targetSideLengthPx)
         {
             using var image = Image.FromStream(memoryStream);
@@ -29,6 +40,17 @@
             using var squareImage = CropImageToCentredSquare(image);
 
             using var resizedImage = ResizeSquareImage(squareImage, targetSideLengthPx);
+
+            using var result = new MemoryStream();
+            resizedImage.Save(result, ImageFormat.Jpeg);
+            return result.ToArray();
+        }
+
+        private byte[] ResizedImageFromMemoryStream(MemoryStream memoryStream, int maxSideLengthPx)
+        {
+            using var image = Image.FromStream(memoryStream);
+
+            using var resizedImage = ResizeImageByMaxSideLength(image, maxSideLengthPx);
 
             using var result = new MemoryStream();
             resizedImage.Save(result, ImageFormat.Jpeg);
@@ -67,8 +89,25 @@
 
         private Image ResizeSquareImage(Image image, int sideLengthPx)
         {
-            var destRect = new Rectangle(0, 0, sideLengthPx, sideLengthPx);
-            var returnImage = new Bitmap(sideLengthPx, sideLengthPx);
+            return ResizeImageToDimensions(image, sideLengthPx, sideLengthPx);
+        }
+
+        private Image ResizeImageByMaxSideLength(Image image, int maxSideLengthPx)
+        {
+            var longestSideLengthPx = Math.Max(image.Width, image.Height);
+            // No need to resize if image is smaller than the max size
+            var ratio = Math.Min((float)maxSideLengthPx / (float)longestSideLengthPx, 1);
+
+            var newWidth = (int)(image.Width * ratio);
+            var newHeight = (int)(image.Height * ratio);
+
+            return ResizeImageToDimensions(image, newWidth, newHeight);
+        }
+
+        private Image ResizeImageToDimensions(Image image, int widthPx, int heightPx)
+        {
+            var destRect = new Rectangle(0, 0, widthPx, heightPx);
+            var returnImage = new Bitmap(widthPx, heightPx);
 
             returnImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 

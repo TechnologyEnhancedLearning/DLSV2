@@ -5,14 +5,12 @@
   <label class="nhsuk-label" for="@Model.Name">
     @Model.Label
   </label>
-  @if (Model.HintText != null)
-  {
+  @if (Model.HintText != null) {
     <div class="nhsuk-hint" id="@Model.Name-hint">
       @Model.HintText
     </div>
   }
-  @if (Model.HasError)
-  {
+  @if (Model.HasError) {
     <span class="nhsuk-error-message" id="@Model.Name-error">
       <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
     </span>
@@ -23,6 +21,8 @@
           name="@Model.Name"
           value="@Model.Value"
           asp-items="Model.SelectListOptions">
-    <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected") >@Model.DefaultOption</option>
+    @if (Model.DefaultOption != null) {
+      <option value="" disabled="@(!Model.Deselectable)" selected=@(Model.Value != null ? "" : "selected")>@Model.DefaultOption</option>
+    }
   </select>
 </div>

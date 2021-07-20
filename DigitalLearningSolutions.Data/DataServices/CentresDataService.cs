@@ -37,6 +37,14 @@
             string? otherInformation
         );
 
+        void UpdateCentreDetails(
+            int centreId,
+            string? notifyEmail,
+            string bannerText,
+            byte[]? centreSignature,
+            byte[]? centreLogo
+        );
+
         (string firstName, string lastName, string email) GetCentreManagerDetails(int centreId);
         string[] GetCentreIpPrefixes(int centreId);
         (bool autoRegistered, string? autoRegisterManagerEmail) GetCentreAutoRegisterValues(int centreId);
@@ -210,6 +218,32 @@
                     organisationsCovered,
                     trainingVenues,
                     otherInformation,
+                    centreId
+                }
+            );
+        }
+
+        public void UpdateCentreDetails(
+            int centreId,
+            string? notifyEmail,
+            string bannerText,
+            byte[]? centreSignature,
+            byte[]? centreLogo
+        )
+        {
+            connection.Execute(
+                @"UPDATE Centres SET
+                    NotifyEmail = @notifyEmail,
+                    BannerText = @bannerText,
+                    SignatureImage = @centreSignature,
+                    CentreLogo = @centreLogo
+                WHERE CentreId = @centreId",
+                new
+                {
+                    notifyEmail,
+                    bannerText,
+                    centreSignature,
+                    centreLogo,
                     centreId
                 }
             );

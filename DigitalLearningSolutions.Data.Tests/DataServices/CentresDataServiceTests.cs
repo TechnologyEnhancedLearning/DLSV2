@@ -228,6 +228,38 @@
         }
 
         [Test]
+        public void UpdateCentreDetails_updates_centre()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string notifyEmail = "test@centre.com";
+                const string bannerText = "Test banner text";
+                var signature = new byte[100];
+                var logo = new byte[200];
+
+
+                // When
+                centresDataService.UpdateCentreDetails(2, notifyEmail, bannerText, signature, logo);
+                var updatedCentre = centresDataService.GetCentreDetailsById(2)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCentre.NotifyEmail.Should().BeEquivalentTo(notifyEmail);
+                    updatedCentre.BannerText.Should().BeEquivalentTo(bannerText);
+                    updatedCentre.SignatureImage.Should().BeEquivalentTo(signature);
+                    updatedCentre.CentreLogo.Should().BeEquivalentTo(logo);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
         public void GetCentreAutoRegisterValues_should_return_correct_values()
         {
             // When

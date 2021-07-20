@@ -28,7 +28,7 @@
                 .WithColumn("AssessmentQuestionID").AsInt32().NotNullable().PrimaryKey().ForeignKey("Competencies", "ID");
             Create.Table("CandidateAssessments")
                 .WithColumn("CandidateID").AsInt32().NotNullable().PrimaryKey().ForeignKey("Candidates", "CandidateID")
-                .WithColumn("SelfAssessmentID").AsInt32().NotNullable().PrimaryKey().ForeignKey("SelfAssessments", "ID"); ;
+                .WithColumn("SelfAssessmentID").AsInt32().NotNullable().PrimaryKey().ForeignKey("SelfAssessments", "ID");
             Create.Table("SelfAssessmentStructure")
                 .WithColumn("SelfAssessmentID").AsInt32().NotNullable().PrimaryKey().ForeignKey("SelfAssessments", "ID")
                 .WithColumn("CompetencyID").AsInt32().NotNullable().PrimaryKey().ForeignKey("Competencies", "ID");

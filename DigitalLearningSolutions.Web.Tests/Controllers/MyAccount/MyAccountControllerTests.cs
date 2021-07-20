@@ -124,7 +124,7 @@
         }
 
         [Test]
-        public void EditDetailsPostSave_with_profile_image_fails_validation()
+        public void EditDetailsPostSave_without_previewing_profile_image_fails_validation()
         {
             // Given
             var myAccountController = new MyAccountController(

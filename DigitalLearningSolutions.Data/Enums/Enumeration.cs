@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Data.Enums
 
         public static bool TryGetFromIdOrName<T>(
             string idOrName,
-            out T enumeration,
+            out T? enumeration,
             bool ignoreCase = false
         )
             where T : Enumeration
@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Data.Enums
 
         private static bool TryParse<TEnumeration>(
             Func<TEnumeration, bool> predicate,
-            out TEnumeration enumeration)
+            out TEnumeration? enumeration)
             where TEnumeration : Enumeration
         {
             enumeration = GetAll<TEnumeration>().FirstOrDefault(predicate);

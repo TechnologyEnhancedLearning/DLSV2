@@ -10,7 +10,7 @@
         Role Profile
       </th>
       <th role="columnheader" class="" scope="col">
-        National Job Profile Linkage
+        National Profile Link
       </th>
       <th role="columnheader" class="" scope="col">
         Created
@@ -41,9 +41,9 @@
           </span>
         </td>
         <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">National Job Profile Linkage </span>
+          <span class="nhsuk-table-responsive__heading">National Profile Link </span>
           <span class="roleprofile-linkage">
-            @roleProfile.NRPProfessionalGroup
+            @(roleProfile.NRPProfessionalGroup != null ? @roleProfile.NRPProfessionalGroup : "None/Generic")
             @(roleProfile.NRPSubGroupID != null ? " / " + roleProfile.NRPSubGroup : "")
             @(roleProfile.NRPRoleID != null ? " / " + roleProfile.NRPRole : "")
           </span>

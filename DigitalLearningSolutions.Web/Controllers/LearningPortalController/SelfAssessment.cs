@@ -105,6 +105,16 @@
             selfAssessmentService.UpdateLastAccessed(assessment.Id, User.GetCandidateIdKnownNotNull());
 
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, User.GetCandidateIdKnownNotNull()).ToList();
+            foreach (var competency in competencies)
+            {
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                    }
+                }
+            }
             var model = new SelfAssessmentReviewViewModel()
             {
                 SelfAssessment = assessment,

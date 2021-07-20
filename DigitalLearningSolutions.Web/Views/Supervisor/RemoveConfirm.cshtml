@@ -1,0 +1,36 @@
+﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+@using Microsoft.Extensions.Configuration
+@model SupervisorDelegateDetail;
+@inject IConfiguration Configuration;
+@{
+  ViewData["Application"] = "Supervisor";
+  ViewData["Title"] = "My Staff - Confirm Remove";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
+  ViewData["HeaderPathName"] = "My Staff";
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading">Confirm Remove Staff Member</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
+        <div class="nhsuk-u-font-weight-bold">
+          Staff member:
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+        @Model.FirstName @Model.LastName (@Model.DelegateEmail)
+      </div>
+    </div>
+    <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
+    <p class="nhsuk-body-m">Are you sure that you wish to remove them from your staff list?</p>
+    <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate" asp-route-supervisorDelegateId="@Model.ID">
+      Remove
+    </a>
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList">
+     Cancel
+    </a>
+  </div>
+</div>
