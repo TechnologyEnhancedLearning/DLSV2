@@ -187,6 +187,7 @@
         {
             return connection.Query<DelegateCourseInfo>(
                 @$"SELECT
+                        cu.CustomisationID AS CustomisationId,
                         ap.ApplicationName,
                         cu.CustomisationName,
                         (SELECT CONCAT(Forename, ' ', Surname)

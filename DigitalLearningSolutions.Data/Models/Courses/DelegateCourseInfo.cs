@@ -7,6 +7,7 @@
         public DelegateCourseInfo() { }
 
         public DelegateCourseInfo(
+            int customisationId,
             string applicationName,
             string customisationName,
             string? supervisor,
@@ -22,6 +23,7 @@
             bool isAssessed
         )
         {
+            CustomisationId = customisationId;
             ApplicationName = applicationName;
             CustomisationName = customisationName;
             Supervisor = supervisor;
@@ -37,6 +39,7 @@
             IsAssessed = isAssessed;
         }
 
+        public int CustomisationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? Supervisor { get; set; }

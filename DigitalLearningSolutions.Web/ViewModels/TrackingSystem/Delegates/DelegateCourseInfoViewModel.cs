@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
-    using System;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public class DelegateCourseInfoViewModel
     {
         public DelegateCourseInfoViewModel(DelegateCourseInfo info)
         {
+            CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
             Supervisor = info.Supervisor;
@@ -38,6 +38,7 @@
             IsAssessed = info.IsAssessed;
         }
 
+        public int CustomisationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? Supervisor { get; set; }

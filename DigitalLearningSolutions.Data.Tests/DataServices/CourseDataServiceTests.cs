@@ -255,6 +255,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             var enrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
             var expected = new DelegateCourseInfo(
+                27915,
                 "LinkedIn",
                 "Cohort Testing",
                 "Kevin Whittaker (Developer)",
