@@ -4,13 +4,13 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public static class NewDateValidator
+    public static class DateValidator
     {
         public static DateValidationResult ValidateDate(
             int? day,
             int? month,
             int? year,
-            string name,
+            string name = "Date",
             bool required = false
         )
         {
@@ -21,7 +21,8 @@
 
             if (!day.HasValue || !month.HasValue || !year.HasValue)
             {
-                return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, name + " is required");
+                var errorMessage = name + (required ? " is required" : " must have day, month and year");
+                return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
             }
 
             return ValidateDate(day.Value, month.Value, year.Value, name);
