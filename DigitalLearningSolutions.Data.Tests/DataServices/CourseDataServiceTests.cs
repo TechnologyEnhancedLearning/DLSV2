@@ -245,5 +245,32 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
+
+        [Test]
+        public void GetDelegateCoursesInfo_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var results = courseDataService.GetDelegateCoursesInfo(20).ToList();
+
+            // Then
+            var enrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
+            var expected = new DelegateCourseInfo(
+                "LinkedIn",
+                "Cohort Testing",
+                "Kevin Whittaker (Developer)",
+                enrollmentDate,
+                enrollmentDate,
+                null,
+                null,
+                null,
+                3,
+                0,
+                0,
+                null,
+                true
+            );
+            results.Should().HaveCount(4);
+            results[3].Should().BeEquivalentTo(expected);
+        }
     }
 }

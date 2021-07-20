@@ -17,6 +17,7 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
+        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -179,6 +180,36 @@
                         AND ca.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
+        {
+            return connection.Query<DelegateCourseInfo>(
+                @$"SELECT
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        (SELECT CONCAT(Forename, ' ', Surname)
+                         FROM AdminUsers
+                         WHERE AdminID = pr.SupervisorAdminId
+                        ) AS Supervisor,
+                        pr.FirstSubmittedTime AS Enrolled,
+                        pr.SubmittedTime AS LastUpdated,
+                        pr.CompleteByDate AS CompleteBy,
+                        pr.Completed AS Completed,
+                        pr.Evaluated AS Evaluated,
+                        pr.EnrollmentMethodID AS EnrollmentMethodId,
+                        pr.LoginCount,
+                        pr.Duration AS LearningTime,
+                        pr.DiagnosticScore,
+                        cu.IsAssessed
+                    FROM dbo.Customisations cu
+                    INNER JOIN dbo.Applications ap ON ap.ApplicationID = cu.ApplicationID
+                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+                    WHERE pr.CandidateID = @delegateId
+                        AND pr.RemovedDate IS NULL
+                        AND pr.SystemRefreshed = 0",
+                new { delegateId }
             );
         }
     }
