@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Models;
 
     public class WelcomeEmailViewModel : IValidatableObject
@@ -26,19 +27,13 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // TODO: perform real date validation here
-            var results = new List<ValidationResult>
+            if (!ShouldSendEmail)
             {
-                new ValidationResult(
-                    "Day/Year issue",
-                    new[] { "Day" }
-                ),
-                new ValidationResult(
-                    "",
-                    new[] { "Year" }
-                )
-            };
-            return results;
+                return new List<ValidationResult>();
+            }
+
+            var dateValidationResult = NewDateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true);
+            return NewDateValidator.ToValidationResultList(dateValidationResult, "Day", "Month", "Year");
         }
 
         public void ClearDateIfNotSendEmail()
