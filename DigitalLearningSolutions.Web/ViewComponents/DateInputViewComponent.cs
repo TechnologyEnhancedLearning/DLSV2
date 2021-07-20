@@ -13,6 +13,7 @@
         /// <param name="dayId"></param>
         /// <param name="monthId"></param>
         /// <param name="yearId"></param>
+        /// <param name="cssClass">Leave blank for no custom css class.</param>
         /// <param name="hintText">Leave blank for no hint.</param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
@@ -21,6 +22,7 @@
             string dayId,
             string monthId,
             string yearId,
+            string cssClass,
             string hintText
         )
         {
@@ -49,10 +51,11 @@
                 dayValue,
                 monthValue,
                 yearValue,
-                dayErrors?.Count != 0,
-                monthErrors?.Count != 0,
-                yearErrors?.Count != 0,
+                dayErrors?.Count > 0,
+                monthErrors?.Count > 0,
+                yearErrors?.Count > 0,
                 errorMessage,
+                string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );
             return View(viewModel);

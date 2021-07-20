@@ -2,57 +2,60 @@
 @model DateInputViewModel
 
 @{
+  var errorCss = Model.HasError ? "nhsuk-form-group--error" : "";
   var dayErrorCss = Model.HasDayError ? "nhsuk-input--error" : "";
   var monthErrorCss = Model.HasMonthError ? "nhsuk-input--error" : "";
   var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
 }
 
-<fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
-  <legend class="nhsuk-fieldset__legend nhsuk-label">
-    @Model.Label
-  </legend>
-  @if (Model.HintText != null) {
-    <div class="nhsuk-hint" id="@Model.Id-hint">
-      @Model.HintText
-    </div>
-  }
+<div class="@Model.CssClass @errorCss" id="@Model.Id">
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
+    <legend class="nhsuk-fieldset__legend nhsuk-label">
+      @Model.Label
+    </legend>
+    @if (Model.HintText != null) {
+      <div class="nhsuk-hint" id="@Model.Id-hint">
+        @Model.HintText
+      </div>
+    }
 
-  @if (Model.HasError) {
-    <span class="error-message--margin-bottom-1 nhsuk-error-message">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-    </span>
-  }
+    @if (Model.HasError) {
+      <span class="error-message--margin-bottom-1 nhsuk-error-message">
+        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+      </span>
+    }
 
-  <div class="nhsuk-date-input" id="@Model.Id">
-    <div class="nhsuk-date-input__item">
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="@Model.DayId">Day</label>
-        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
-               id="@Model.DayId"
-               name="@Model.DayId"
-               value="@Model.DayValue"
-               type="number" />
+    <div class="nhsuk-date-input">
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.DayId">Day</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
+                 id="@Model.DayId"
+                 name="@Model.DayId"
+                 value="@Model.DayValue"
+                 type="number" />
+        </div>
+      </div>
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.MonthId">Month</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
+                 id="@Model.MonthId"
+                 name="@Model.MonthId"
+                 value="@Model.MonthValue"
+                 type="number" />
+        </div>
+      </div>
+      <div class="nhsuk-date-input__item">
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="@Model.YearId">Year</label>
+          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorCss"
+                 id="@Model.YearId"
+                 name="@Model.YearId"
+                 value="@Model.YearValue"
+                 type="number" />
+        </div>
       </div>
     </div>
-    <div class="nhsuk-date-input__item">
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="@Model.MonthId">Month</label>
-        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
-               id="@Model.MonthId"
-               name="@Model.MonthId"
-               value="@Model.MonthValue"
-               type="number" />
-      </div>
-    </div>
-    <div class="nhsuk-date-input__item">
-      <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="@Model.YearId">Year</label>
-        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorCss"
-               id="@Model.YearId"
-               name="@Model.YearId"
-               value="@Model.YearValue"
-               type="number" />
-      </div>
-    </div>
-  </div>
-</fieldset>
+  </fieldset>
+</div>

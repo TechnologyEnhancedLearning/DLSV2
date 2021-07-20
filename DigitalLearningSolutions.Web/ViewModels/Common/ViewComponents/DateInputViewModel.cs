@@ -19,6 +19,7 @@
             bool hasMonthError,
             bool hasYearError,
             string? errorMessage,
+            string? cssClass = null,
             string? hintText = null
         )
         {
@@ -30,6 +31,7 @@
             DayValue = dayValue;
             MonthValue = monthValue;
             YearValue = yearValue;
+            CssClass = cssClass;
             HintText = hintText;
             HasDayError = hasDayError;
             HasMonthError = hasMonthError;
@@ -45,6 +47,7 @@
         public string? DayValue { get; set; }
         public string? MonthValue { get; set; }
         public string? YearValue { get; set; }
+        public string? CssClass { get; set; }
         public string? HintText { get; set; }
         public bool HasError => HasDayError || HasMonthError || HasYearError;
         public string? ErrorMessage { get; set; }
