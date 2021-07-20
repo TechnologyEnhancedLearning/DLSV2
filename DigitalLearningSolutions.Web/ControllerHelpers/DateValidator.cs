@@ -30,42 +30,29 @@
 
         private static DateValidationResult ValidateDate(int day, int month, int year, string name)
         {
+            var invalidDay = day < 1 || day > 31;
+            var invalidMonth = month < 1 || month > 12;
+            var invalidYear = year < 1753 || year > 10000;
+
+            if (invalidDay || invalidMonth || invalidYear)
+            {
+                return new DateValidationResult(invalidDay, invalidMonth, invalidYear, name + " must be a real date");
+            }
+
             try
             {
-                if (year < 1753)
-                {
-                    // The minimum year the DB can store is 1753
-                    throw new ArgumentOutOfRangeException();
-                }
-
                 var date = new DateTime(year, month, day);
                 if (date <= DateTime.Today)
                 {
                     return new DateValidationResult(name + " must be in the future");
                 }
-
-                return new DateValidationResult();
             }
             catch (ArgumentOutOfRangeException)
             {
-                return GetDateErrorResult(day, month, year, name);
-            }
-        }
-
-        private static DateValidationResult GetDateErrorResult(int day, int month, int year, string name)
-        {
-            var invalidDay = day < 1 || day > 31;
-            var invalidMonth = month < 1 || month > 12;
-            var invalidYear = year < 1753 || year > 10000;
-
-            if (!invalidDay && !invalidMonth && !invalidYear)
-            {
-                invalidDay = true;
-                invalidMonth = true;
-                invalidYear = true;
+                return new DateValidationResult(name + " must be a real date");
             }
 
-            return new DateValidationResult(invalidDay, invalidMonth, invalidYear, name + " must be a real date");
+            return new DateValidationResult();
         }
 
         internal static List<ValidationResult> ToValidationResultList(
