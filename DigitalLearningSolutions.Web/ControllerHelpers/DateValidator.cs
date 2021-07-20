@@ -14,14 +14,14 @@
             bool required = false
         )
         {
-            if (!required && !day.HasValue && !month.HasValue && !year.HasValue)
+            if (!day.HasValue && !month.HasValue && !year.HasValue)
             {
-                return new DateValidationResult();
+                return required ? new DateValidationResult(name + " is required") : new DateValidationResult();
             }
 
             if (!day.HasValue || !month.HasValue || !year.HasValue)
             {
-                var errorMessage = name + (required ? " is required" : " must have day, month and year");
+                var errorMessage = GetMissingValuesErrorMessage(day, month, year, name);
                 return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
             }
 
@@ -32,7 +32,7 @@
         {
             var invalidDay = day < 1 || day > 31;
             var invalidMonth = month < 1 || month > 12;
-            var invalidYear = year < 1753 || year > 10000;
+            var invalidYear = year < 1;
 
             if (invalidDay || invalidMonth || invalidYear)
             {
@@ -53,6 +53,27 @@
             }
 
             return new DateValidationResult();
+        }
+
+        private static string GetMissingValuesErrorMessage(int? day, int? month, int? year, string name)
+        {
+            var missingValues = new List<string>();
+            if (!day.HasValue)
+            {
+                missingValues.Add("day");
+            }
+
+            if (!month.HasValue)
+            {
+                missingValues.Add("month");
+            }
+
+            if (!year.HasValue)
+            {
+                missingValues.Add("year");
+            }
+
+            return name + " must have a " + string.Join(" and ", missingValues);
         }
 
         internal static List<ValidationResult> ToValidationResultList(

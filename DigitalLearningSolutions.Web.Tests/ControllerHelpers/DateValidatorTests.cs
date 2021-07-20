@@ -45,13 +45,13 @@
             result.ErrorMessage.Should().Be("Date is required");
         }
 
-        [TestCase(null, 1, 3000)]
-        [TestCase(1, null, 3000)]
-        [TestCase(1, 1, null)]
-        [TestCase(null, null, 3000)]
-        [TestCase(null, 1, null)]
-        [TestCase(1, null, null)]
-        public void ValidateDate_returns_appropriate_error_if_some_values_missing(int? day, int? month, int? year)
+        [TestCase(null, 1, 3000, "day")]
+        [TestCase(1, null, 3000, "month")]
+        [TestCase(1, 1, null, "year")]
+        [TestCase(null, null, 3000, "day and month")]
+        [TestCase(null, 1, null, "day and year")]
+        [TestCase(1, null, null, "month and year")]
+        public void ValidateDate_returns_appropriate_error_if_some_values_missing(int? day, int? month, int? year, string errorMessageEnding)
         {
             // When
             var result = DateValidator.ValidateDate(day, month, year);
@@ -60,15 +60,14 @@
             result.HasDayError.Should().Be(!day.HasValue);
             result.HasMonthError.Should().Be(!month.HasValue);
             result.HasYearError.Should().Be(!year.HasValue);
-            result.ErrorMessage.Should().Be("Date must have day, month and year");
+            result.ErrorMessage.Should().Be("Date must have a " + errorMessageEnding);
         }
 
         [TestCase(0, 1, 3000, true, false, false)]
         [TestCase(32, 1, 3000, true, false, false)]
         [TestCase(1, 0, 3000, false, true, false)]
         [TestCase(1, 13, 3000, false, true, false)]
-        [TestCase(1, 1, 1700, false, false, true)]
-        [TestCase(1, 1, 20000, false, false, true)]
+        [TestCase(1, 1, 0, false, false, true)]
         [TestCase(0, 0, 3000, true, true, false)]
         [TestCase(0, 1, 0, true, false, true)]
         [TestCase(1, 0, 0, false, true, true)]
