@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -18,6 +18,7 @@
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
+        (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -186,7 +187,7 @@
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
-                @$"SELECT
+                @"SELECT
                         cu.CustomisationID AS CustomisationId,
                         ap.ApplicationName,
                         cu.CustomisationName,
@@ -207,13 +208,31 @@
                         pr.Answer1,
                         pr.Answer2,
                         pr.Answer3
-                    FROM dbo.Customisations cu
-                    INNER JOIN dbo.Applications ap ON ap.ApplicationID = cu.ApplicationID
+                    FROM Customisations cu
+                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
                     INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
                     WHERE pr.CandidateID = @delegateId
                         AND pr.RemovedDate IS NULL
                         AND pr.SystemRefreshed = 0",
                 new { delegateId }
+            );
+        }
+
+        public (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(
+            int delegateId,
+            int customisationId
+        )
+        {
+            return connection.QueryFirstOrDefault<(int, int)>(
+                @"SELECT COUNT(aa.Status) AS TotalAttempts,
+                        COUNT(CASE WHEN aa.Status=1 THEN 1 END) AS AttemptsPassed
+                    FROM AssessAttempts aa
+                    INNER JOIN Progress AS pr ON pr.ProgressID = aa.ProgressID
+                    WHERE pr.CustomisationID = @customisationId
+                        AND pr.CandidateID = @delegateId
+                        AND pr.RemovedDate IS NULL
+                        AND pr.SystemRefreshed = 0",
+                new { delegateId, customisationId }
             );
         }
     }

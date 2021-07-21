@@ -54,7 +54,9 @@
                             centreId,
                             includeArchived: true
                         );
-                        return new DelegateCourseInfoViewModel(info, courseCustomPrompts?.CourseAdminFields);
+                        var attemptStats =
+                            courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId);
+                        return new DelegateCourseInfoViewModel(info, courseCustomPrompts?.CourseAdminFields, attemptStats);
                     }
                 );
 

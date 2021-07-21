@@ -10,6 +10,7 @@
 
     public class DelegateCourseInfoViewModelTests
     {
+        private readonly (int totalAttempts, int attemptsPassed) attemptStats = (0, 0);
         private readonly List<CustomPrompt> customPrompts = new List<CustomPrompt>();
 
         [Test]
@@ -28,7 +29,7 @@
             };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPrompts);
+            var model = new DelegateCourseInfoViewModel(info, customPrompts, attemptStats);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -51,10 +52,31 @@
             var info = new DelegateCourseInfo { EnrollmentMethodId = enrollmentMethodId };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPrompts);
+            var model = new DelegateCourseInfoViewModel(info, customPrompts, attemptStats);
 
             // Then
             model.EnrollmentMethod.Should().Be(enrollmentMethod);
+        }
+
+        [TestCase(0, 0, null)]
+        [TestCase(0, 1, null)]
+        [TestCase(2, 1, 0.5)]
+        [TestCase(4, 1, 0.25)]
+        public void DelegateCourseInfoViewModel_sets_pass_ratio_correctly(
+            int totalAttempts,
+            int attemptsPassed,
+            double? passRatio
+        )
+        {
+            // When
+            var model = new DelegateCourseInfoViewModel(
+                new DelegateCourseInfo(),
+                customPrompts,
+                (totalAttempts, attemptsPassed)
+            );
+
+            // Then
+            model.PassRatio.Should().Be(passRatio);
         }
     }
 }

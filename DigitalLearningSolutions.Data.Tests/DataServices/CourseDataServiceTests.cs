@@ -276,5 +276,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             results.Should().HaveCount(4);
             results[3].Should().BeEquivalentTo(expected);
         }
+
+        [Test]
+        public void GetDelegateCoursesAttemptStats_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var (totalAttempts, attemptsPassed) = courseDataService.GetDelegateCourseAttemptStats(11, 100);
+
+            // Then
+            totalAttempts.Should().Be(23);
+            attemptsPassed.Should().Be(11);
+        }
     }
 }

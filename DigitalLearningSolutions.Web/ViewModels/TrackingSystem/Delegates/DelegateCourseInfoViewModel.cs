@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -6,7 +6,11 @@
 
     public class DelegateCourseInfoViewModel
     {
-        public DelegateCourseInfoViewModel(DelegateCourseInfo info, List<CustomPrompt>? customPrompts)
+        public DelegateCourseInfoViewModel(
+            DelegateCourseInfo info,
+            List<CustomPrompt>? customPrompts,
+            (int totalAttempts, int attemptsPassed) attemptStats
+        )
         {
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
@@ -41,6 +45,8 @@
             CustomAnswers = new List<string?> { info.Answer1, info.Answer2, info.Answer3 };
 
             CustomPrompts = customPrompts ?? new List<CustomPrompt>();
+            TotalAttempts = attemptStats.totalAttempts;
+            AttemptsPassed = attemptStats.attemptsPassed;
         }
 
         public int CustomisationId { get; set; }
@@ -60,5 +66,9 @@
         public List<string?> CustomAnswers { get; set; }
 
         public List<CustomPrompt> CustomPrompts { get; set; }
+        public int TotalAttempts { get; set; }
+        public int AttemptsPassed { get; set; }
+
+        public double? PassRatio => TotalAttempts != 0 ? AttemptsPassed / (double)TotalAttempts : (double?)null;
     }
 }
