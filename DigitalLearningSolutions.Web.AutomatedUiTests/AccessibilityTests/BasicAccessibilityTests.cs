@@ -47,6 +47,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
         [InlineData("/TrackingSystem/CourseSetup/10716/AdminFields", "Manage course admin fields")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/View/1", "xxxxx xxxxxxxxx")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
