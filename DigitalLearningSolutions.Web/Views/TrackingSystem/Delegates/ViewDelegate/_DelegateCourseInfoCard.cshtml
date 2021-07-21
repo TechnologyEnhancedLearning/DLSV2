@@ -23,6 +23,9 @@
             Supervisor
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Supervisor" />
+          <dd class="nhsuk-summary-list__actions">
+            <a href="#">Edit<span class="nhsuk-u-visually-hidden"> supervisor</span></a>
+          </dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -30,6 +33,9 @@
             Complete by
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.CompleteBy" />
+          <dd class="nhsuk-summary-list__actions">
+            <a href="#">Edit<span class="nhsuk-u-visually-hidden"> complete by date</span></a>
+          </dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -44,6 +50,11 @@
             Completed
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
+          @if (Model.Completed == null) {
+            <dd class="nhsuk-summary-list__actions">
+              <a href="#">Set completed date</a>
+            </dd>
+          }
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
