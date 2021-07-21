@@ -12,27 +12,21 @@
           <dt class="nhsuk-summary-list__key">
             First name
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.FirstName
-          </dd>
+          <partial name="_SummaryFieldValue" model="@Model.FirstName" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
             Last name
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.Surname
-          </dd>
+          <partial name="_SummaryFieldValue" model="@Model.Surname" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
             Email address
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.User
-          </dd>
+          <partial name="_SummaryFieldValue" model="@Model.User" />
         </div>
 
         @if (Model.DelegateNumber != null) {
@@ -40,9 +34,7 @@
             <dt class="nhsuk-summary-list__key">
               Job group
             </dt>
-            <dd class="nhsuk-summary-list__value">
-              @Model.JobGroup
-            </dd>
+            <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
           </div>
 
           foreach (var customField in Model.CustomFields) {

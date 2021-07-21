@@ -15,18 +15,14 @@
         <dt class="nhsuk-summary-list__key">
           Notify email
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.NotifyEmail
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.NotifyEmail" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Centre support details
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.BannerText
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.BannerText" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
