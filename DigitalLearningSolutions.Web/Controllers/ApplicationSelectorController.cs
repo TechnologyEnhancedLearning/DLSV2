@@ -13,7 +13,7 @@
         public IActionResult Index()
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
-            var trackingSystemAccess = User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false;
+            var trackingSystemAccess = User.GetCustomClaimAsBool(CustomClaimTypes.UserUserAdmin) | User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreManager) | User.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false;
             var contentManagementSystemAccess =
                 User.GetCustomClaimAsBool(CustomClaimTypes.UserAuthenticatedCm) ?? false;
             var superviseAccess = User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) ?? false;
