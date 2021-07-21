@@ -14,19 +14,17 @@ else
     {
       if (levelDescriptor.LevelValue == Model.Result)
       {
-
-        <span class="nhsuk-u-font-weight-bold">
-          @levelDescriptor.LevelLabel
-        </span>
+<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
+  @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "not meeting role expectations" : Model.ResultRAG == 2 ? "partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+</span>
         break;
       }
     }
   }
   else
   {
-
-    <span class="nhsuk-u-font-weight-bold">
-      @Model.Result/@Model.MaxValue
-    </span>
+<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
+  @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "(not meeting role expectations" : Model.ResultRAG == 2 ? " partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+</span>
   }
 }
