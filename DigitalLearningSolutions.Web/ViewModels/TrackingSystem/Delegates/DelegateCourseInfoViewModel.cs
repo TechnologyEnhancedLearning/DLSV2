@@ -1,11 +1,12 @@
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public class DelegateCourseInfoViewModel
     {
-        public DelegateCourseInfoViewModel(DelegateCourseInfo info)
+        public DelegateCourseInfoViewModel(DelegateCourseInfo info, List<CustomPrompt>? customPrompts)
         {
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
@@ -38,6 +39,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
             CustomAnswers = new List<string?> { info.Answer1, info.Answer2, info.Answer3 };
+
+            CustomPrompts = customPrompts ?? new List<CustomPrompt>();
         }
 
         public int CustomisationId { get; set; }
@@ -55,5 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
         public List<string?> CustomAnswers { get; set; }
+
+        public List<CustomPrompt> CustomPrompts { get; set; }
     }
 }

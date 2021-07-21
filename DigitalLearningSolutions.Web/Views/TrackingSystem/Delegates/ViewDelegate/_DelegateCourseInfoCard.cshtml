@@ -80,6 +80,14 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.DiagnosticScore.ToString()" />
         </div>
+        @foreach (var customField in Model.CustomPrompts) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              @customField.CustomPromptText
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CustomAnswers[customField.CustomPromptNumber - 1]" />
+          </div>
+        }
       </dl>
 
       <a class="nhsuk-button nhsuk-button--secondary" role="button">See learning log</a>

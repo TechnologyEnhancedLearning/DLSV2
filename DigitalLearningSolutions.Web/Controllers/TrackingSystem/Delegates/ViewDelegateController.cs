@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
@@ -15,24 +16,27 @@
     {
         private readonly ICourseDataService courseDataService;
         private readonly CustomPromptHelper customPromptHelper;
+        private readonly ICustomPromptsService customPromptsService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             CustomPromptHelper customPromptHelper,
-            ICourseDataService courseDataService
+            ICourseDataService courseDataService,
+            ICustomPromptsService customPromptsService
         )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
             this.courseDataService = courseDataService;
+            this.customPromptsService = customPromptsService;
         }
 
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
 
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
             if (delegateUser == null || delegateUser.CentreId != centreId)
             {
                 return new NotFoundResult();
@@ -42,7 +46,17 @@
             var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
             var courseInfoViewModelList = courseDataService.GetDelegateCoursesInfo(delegateId)
-                .Select(info => new DelegateCourseInfoViewModel(info));
+                .Select(
+                    info =>
+                    {
+                        var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+                            info.CustomisationId,
+                            centreId,
+                            includeArchived: true
+                        );
+                        return new DelegateCourseInfoViewModel(info, courseCustomPrompts?.CourseAdminFields);
+                    }
+                );
 
             var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModelList);
             return View(model);

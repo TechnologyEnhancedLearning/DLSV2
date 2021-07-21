@@ -1,13 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class DelegateCourseInfoViewModelTests
     {
+        private readonly List<CustomPrompt> customPrompts = new List<CustomPrompt>();
+
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
         {
@@ -24,7 +28,7 @@
             };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info);
+            var model = new DelegateCourseInfoViewModel(info, customPrompts);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -47,7 +51,7 @@
             var info = new DelegateCourseInfo { EnrollmentMethodId = enrollmentMethodId };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info);
+            var model = new DelegateCourseInfoViewModel(info, customPrompts);
 
             // Then
             model.EnrollmentMethod.Should().Be(enrollmentMethod);
