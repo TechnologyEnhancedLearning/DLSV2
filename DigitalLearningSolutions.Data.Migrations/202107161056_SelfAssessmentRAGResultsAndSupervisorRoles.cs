@@ -38,7 +38,5 @@
             Delete.Column("SupervisorResultsReview").FromTable("SelfAssessments");
             Delete.Column("RAGResults").FromTable("SelfAssessments");
         }
-
-        
     }
 }

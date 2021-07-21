@@ -18,6 +18,7 @@
         void SendSupervisorDelegateRejected(int supervisorDelegateId);
         void SendSupervisorDelegateConfirmed(int superviseDelegateId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
+        void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -249,12 +250,30 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " signed of your self assessment " : " did not sign off your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
             var builder = new BodyBuilder();
-            var selfAssessmentUri = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
                                {supervisorDelegate.SupervisorName} has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.
                                {commentString}
-                               To access your {delegateSelfAssessment.RoleName} self assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} self assessment.</p>";
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var completeByString = completeByDate == null ? $"Your {delegateSelfAssessment.SupervisorRoleTitle} did not specify a date by which the self assessment should be completed." : $"Your {delegateSelfAssessment.SupervisorRoleTitle} indicated that this self assessment should be completed by {completeByDate.Value.ToShortDateString()}.";
+            var supervisorReviewString = delegateSelfAssessment.SupervisorResultsReview | delegateSelfAssessment.SupervisorSelfAssessmentReview ? $"You will be able to request review for your self assessments against this profile from your {delegateSelfAssessment.SupervisorRoleTitle}." : "";
+            string emailSubjectLine = $"You have been enrolled on the profile assessment {delegateSelfAssessment.RoleName} by {supervisorDelegate.SupervisorName} - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               {supervisorDelegate.SupervisorName} has enrolled you on the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.
+                               {supervisorDelegate.SupervisorName} has identified themselves as your {delegateSelfAssessment.SupervisorRoleTitle} for this activity.
+                               {completeByString}
+                               {supervisorReviewString}
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has enrolled you on the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.</p>{(completeByString.Length > 0 ? $"<p>{completeByString}</p>": "")}{(supervisorReviewString.Length > 0 ? $"<p>{supervisorReviewString}</p>" : "")}<p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} self assessment.</p>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
