@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
-import { SearchableElement } from './searchSortAndPaginate';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
 
-export interface AppliedFilter {
+export interface IAppliedFilter {
   group: string;
   propertyName: string;
   propertyValue: string;
   filterValue: string;
 }
 
-export interface AppliedFilterTag {
+export interface IAppliedFilterTag {
   element: Element;
   filterValue: string;
 }
@@ -16,7 +16,7 @@ export interface AppliedFilterTag {
 export const separator = '|';
 export const filterSeparator = '╡';
 
-export function setupFilter(onFilterUpdated: VoidFunction): void {
+export function setUpFilter(onFilterUpdated: VoidFunction): void {
   setUpFilterSubmitButtons();
   setUpClearFiltersButton();
   setUpFilterSelectorDropdown();
@@ -25,8 +25,9 @@ export function setupFilter(onFilterUpdated: VoidFunction): void {
 }
 
 export function filterSearchableElements(
-  searchableElements: SearchableElement[], possibleFilters: AppliedFilterTag[],
-): SearchableElement[] {
+  searchableElements: ISearchableElement[],
+  possibleFilters: IAppliedFilterTag[],
+): ISearchableElement[] {
   let filteredSearchableElements = searchableElements;
   const filterBy = getFilterBy();
   const appliedFilters = getAppliedFilters(filterBy);
@@ -59,9 +60,11 @@ function setUpFilterSubmitButtons() {
     const element = <HTMLInputElement>filterSubmit;
     element.addEventListener('click', (e) => {
       e.preventDefault();
-      appendNewFilterToFilterBy(element);
-      hideAllFilterDropdowns();
-      resetFilterSelectorDropdown();
+      const newFilter = appendNewFilterToFilterBy(element);
+      if (newFilter) {
+        hideAllFilterDropdowns();
+        resetFilterSelectorDropdown();
+      }
     });
   });
 }
@@ -81,14 +84,14 @@ function setUpFilterSelectorDropdown() {
     });
 }
 
-function getAppliedFilters(filterBy: string): AppliedFilter[] {
+function getAppliedFilters(filterBy: string): IAppliedFilter[] {
   return filterBy.split(filterSeparator)
     .map((filter) => newAppliedFilterFromFilter(filter));
 }
 
-function newAppliedFilterFromFilter(filter: string): AppliedFilter {
+function newAppliedFilterFromFilter(filter: string): IAppliedFilter {
   const splitFilter = filter.split(separator);
-  return <AppliedFilter>{
+  return <IAppliedFilter>{
     group: splitFilter[0],
     propertyName: splitFilter[1],
     propertyValue: splitFilter[2],
@@ -97,18 +100,19 @@ function newAppliedFilterFromFilter(filter: string): AppliedFilter {
 }
 
 function filterElements(
-  searchableElements: SearchableElement[],
-  appliedFilter: AppliedFilter,
-): SearchableElement[] {
-  return _.filter<SearchableElement>(
+  searchableElements: ISearchableElement[],
+  appliedFilter: IAppliedFilter,
+): ISearchableElement[] {
+  return _.filter<ISearchableElement>(
     searchableElements,
     (o) => doesElementMatchFilterValue(o, appliedFilter.filterValue),
   );
 }
 
-function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): void {
+function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): string {
   const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
   addNewFilterToFilterBy(filterValue);
+  return filterValue;
 }
 
 function getSelectedFilterFromDropdownAndResetDropdown(
@@ -169,7 +173,7 @@ function resetFilterSelectorDropdown(): void {
 }
 
 function doesElementMatchFilterValue(
-  searchableElement: SearchableElement,
+  searchableElement: ISearchableElement,
   filter: string,
 ): boolean {
   const filterElement = searchableElement.element
@@ -217,7 +221,7 @@ function clearAppliedFilters() {
   appliedFilterContainer.textContent = '';
 }
 
-function updateAppliedFilters(filterBy: string, possibleFilters: AppliedFilterTag[]) {
+function updateAppliedFilters(filterBy: string, possibleFilters: IAppliedFilterTag[]) {
   const appliedFilterContainer = getAppliedFilterContainer();
   const listOfFilters = filterBy.split(filterSeparator);
   appliedFilterContainer.textContent = '';
@@ -226,8 +230,8 @@ function updateAppliedFilters(filterBy: string, possibleFilters: AppliedFilterTa
   );
 }
 
-function getMatchingFilterTag(possibleFilters: AppliedFilterTag[], filter: string): Element {
-  const appliedFilterTag = <AppliedFilterTag>_.find(
+function getMatchingFilterTag(possibleFilters: IAppliedFilterTag[], filter: string): Element {
+  const appliedFilterTag = <IAppliedFilterTag>_.find(
     possibleFilters,
     (pf) => pf.filterValue === filter,
   );

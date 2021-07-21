@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { SearchableElement } from '../searchSortAndPaginate/searchSortAndPaginate';
+import { ISearchableElement } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
-export default function getSearchableElements(): SearchableElement[] {
+export default function getSearchableElements(): ISearchableElement[] {
   return Array.from(document.getElementById('searchable-elements')!.children).map((searchableElement) => ({
     title: searchableElement.getElementsByClassName('searchable-element-title')[0].textContent,
     element: searchableElement,
-  } as SearchableElement));
+  } as ISearchableElement));
 }

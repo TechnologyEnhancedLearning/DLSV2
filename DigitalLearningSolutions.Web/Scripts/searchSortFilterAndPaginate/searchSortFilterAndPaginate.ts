@@ -1,23 +1,23 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
 import {
-  setupFilter, filterSearchableElements, getFilterBy, AppliedFilterTag,
+  setUpFilter, filterSearchableElements, getFilterBy, IAppliedFilterTag,
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
-import { setupSort, sortSearchableElements } from './sort';
-import { ITEMS_PER_PAGE, paginateResults, setupPagination } from './paginate';
+import { setUpSort, sortSearchableElements } from './sort';
+import { ITEMS_PER_PAGE, paginateResults, setUpPagination } from './paginate';
 import getPathForEndpoint from '../common';
 
-export interface SearchableElement {
+export interface ISearchableElement {
   element: Element;
   title: string;
 }
 
-export interface SearchableData {
-  searchableElements: SearchableElement[];
-  possibleFilters: AppliedFilterTag[];
+export interface ISearchableData {
+  searchableElements: ISearchableElement[];
+  possibleFilters: IAppliedFilterTag[];
 }
 
-export class SearchSortAndPaginate {
+export class SearchSortFilterAndPaginate {
   private page: number;
 
   private readonly filterEnabled: boolean;
@@ -27,18 +27,18 @@ export class SearchSortAndPaginate {
     this.page = 1;
     this.filterEnabled = filterEnabled;
 
-    SearchSortAndPaginate.getSearchableElements(route).then((searchableData) => {
+    SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
       if (searchableData === undefined) {
         return;
       }
 
       if (filterEnabled) {
-        setupFilter(() => this.onFilterUpdated(searchableData));
+        setUpFilter(() => this.onFilterUpdated(searchableData));
       }
 
       setUpSearch(() => this.onSearchUpdated(searchableData));
-      setupSort(() => this.searchSortAndPaginate(searchableData));
-      setupPagination(
+      setUpSort(() => this.searchSortAndPaginate(searchableData));
+      setUpPagination(
         () => this.onNextPagePressed(searchableData),
         () => this.onPreviousPagePressed(searchableData),
       );
@@ -46,27 +46,27 @@ export class SearchSortAndPaginate {
     });
   }
 
-  private onFilterUpdated(searchableData: SearchableData): void {
+  private onFilterUpdated(searchableData: ISearchableData): void {
     this.page = 1;
     this.searchSortAndPaginate(searchableData);
   }
 
-  private onSearchUpdated(searchableData: SearchableData): void {
+  private onSearchUpdated(searchableData: ISearchableData): void {
     this.page = 1;
     this.searchSortAndPaginate(searchableData);
   }
 
-  private onNextPagePressed(searchableData: SearchableData): void {
+  private onNextPagePressed(searchableData: ISearchableData): void {
     this.page += 1;
     this.searchSortAndPaginate(searchableData);
   }
 
-  private onPreviousPagePressed(searchableData: SearchableData): void {
+  private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.page -= 1;
     this.searchSortAndPaginate(searchableData);
   }
 
-  private searchSortAndPaginate(searchableData: SearchableData): void {
+  private searchSortAndPaginate(searchableData: ISearchableData): void {
     const searchedElements = search(searchableData.searchableElements);
     const filteredElements = this.filterEnabled
       ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
@@ -74,19 +74,19 @@ export class SearchSortAndPaginate {
     const sortedElements = sortSearchableElements(filteredElements);
 
     if (this.shouldDisplayResultCount()) {
-      SearchSortAndPaginate.updateResultCount(sortedElements.length);
+      SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
     } else {
-      SearchSortAndPaginate.hideResultCount();
+      SearchSortFilterAndPaginate.hideResultCount();
     }
 
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
-    SearchSortAndPaginate.displaySearchableElements(paginatedElements);
+    SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
 
-  static getSearchableElements(route: string): Promise<SearchableData | undefined> {
-    return SearchSortAndPaginate.fetchAllSearchableElements(route)
-      .then((response): SearchableData | undefined => {
+  static getSearchableElements(route: string): Promise<ISearchableData | undefined> {
+    return SearchSortFilterAndPaginate.fetchAllSearchableElements(route)
+      .then((response): ISearchableData | undefined => {
         if (response === null) {
           return undefined;
         }
@@ -94,12 +94,12 @@ export class SearchSortAndPaginate {
         const elements = Array.from(response.getElementsByClassName('searchable-element'));
         const searchableElements = elements.map((element) => ({
           element,
-          title: SearchSortAndPaginate.titleFromElement(element),
+          title: SearchSortFilterAndPaginate.titleFromElement(element),
         }));
         const tags = Array.from(response.getElementsByClassName('filter-tag'));
         const possibleAppliedFilters = tags.map((element) => ({
           element,
-          filterValue: SearchSortAndPaginate.filterValueFromElement(element),
+          filterValue: SearchSortFilterAndPaginate.filterValueFromElement(element),
         }));
         return {
           searchableElements,
@@ -132,7 +132,7 @@ export class SearchSortAndPaginate {
     return element.getAttribute('data-filter-value')?.trim() ?? '';
   }
 
-  static displaySearchableElements(searchableElements: SearchableElement[]): void {
+  static displaySearchableElements(searchableElements: ISearchableElement[]): void {
     const searchableElementsContainer = document.getElementById('searchable-elements');
     if (!searchableElementsContainer) {
       return;

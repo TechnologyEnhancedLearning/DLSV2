@@ -1,5 +1,5 @@
 import * as JsSearch from 'js-search';
-import { SearchableElement } from './searchSortAndPaginate';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
 
 export function setUpSearch(onSearchUpdated: VoidFunction): void {
   const searchInput = getSearchBox();
@@ -14,7 +14,7 @@ export function setUpSearch(onSearchUpdated: VoidFunction): void {
   );
 }
 
-export function search(searchableElements: SearchableElement[]): SearchableElement[] {
+export function search(searchableElements: ISearchableElement[]): ISearchableElement[] {
   const query = getQuery();
   if (query.length === 0) {
     return searchableElements;
@@ -25,7 +25,7 @@ export function search(searchableElements: SearchableElement[]): SearchableEleme
   searchEngine.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
   searchEngine.addIndex('title');
   searchEngine.addDocuments(searchableElements);
-  const results = <SearchableElement[]>searchEngine.search(query);
+  const results = <ISearchableElement[]>searchEngine.search(query);
   return results;
 }
 

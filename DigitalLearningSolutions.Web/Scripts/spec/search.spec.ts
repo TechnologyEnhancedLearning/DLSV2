@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
-import * as searchCourses from '../searchSortAndPaginate/search';
+import * as searchCourses from '../searchSortFilterAndPaginate/search';
 import getSearchableElements from './getSearchableElements';
 
 describe('search', () => {

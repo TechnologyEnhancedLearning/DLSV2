@@ -1,8 +1,8 @@
-import { SearchableElement } from './searchSortAndPaginate';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
 
 export const ITEMS_PER_PAGE = 10;
 
-export function setupPagination(
+export function setUpPagination(
   onNextPressed: VoidFunction,
   onPreviousPressed: VoidFunction,
 ): void {
@@ -23,10 +23,10 @@ export function setupPagination(
 }
 
 export function paginateResults(
-  results: SearchableElement[],
+  results: ISearchableElement[],
   page: number,
   totalPages: number,
-): SearchableElement[] {
+): ISearchableElement[] {
   updatePageNumber(page, totalPages);
   updatePageButtonVisibility(page, totalPages);
   return results.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);

@@ -2,9 +2,9 @@
 
 namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
-    public abstract class BaseJavascriptFilterableViewModel
+    public abstract class BaseJavaScriptFilterableViewModel
     {
-        protected BaseJavascriptFilterableViewModel()
+        protected BaseJavaScriptFilterableViewModel()
         {
             Filters = new List<AppliedFilterViewModel>();
         }

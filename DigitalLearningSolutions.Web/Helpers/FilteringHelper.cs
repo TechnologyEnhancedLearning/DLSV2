@@ -11,24 +11,19 @@
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
 
-        public static string? AddNewFilterToFilterBy(string? filterBy, string? filterValue)
+        public static string? AddNewFilterToFilterBy(string? filterBy, string? newFilterValue)
         {
-            if (filterValue != null)
+            if (filterBy == null)
             {
-                if (filterBy != null)
-                {
-                    if (!filterBy.Contains(filterValue))
-                    {
-                        filterBy = filterBy + FilteringHelper.FilterSeparator + filterValue;
-                    }
-                }
-                else
-                {
-                    filterBy = filterValue;
-                }
+                return newFilterValue;
             }
 
-            return filterBy;
+            if (newFilterValue == null || filterBy.Contains(newFilterValue))
+            {
+                return filterBy;
+            }
+
+            return filterBy + FilterSeparator + newFilterValue;
         }
 
         public static IEnumerable<T> FilterItems<T>(

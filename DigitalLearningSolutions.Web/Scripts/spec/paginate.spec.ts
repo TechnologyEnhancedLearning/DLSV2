@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
-import * as paginate from '../searchSortAndPaginate/paginate';
+import * as paginate from '../searchSortFilterAndPaginate/paginate';
 import getSearchableElements from './getSearchableElements';
 
 describe('paginateResults', () => {

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -36,7 +37,7 @@
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+            var categories = GetCategories(centreId);
 
             var model = new CentreAdministratorsViewModel(
                 centreId,
@@ -55,9 +56,16 @@
         {
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+            var categories = GetCategories(centreId);
             var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
             return View("AllAdmins", model);
+        }
+
+        private IEnumerable<string> GetCategories(int centreId)
+        {
+            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+            categories = categories.Prepend("All");
+            return categories;
         }
     }
 }

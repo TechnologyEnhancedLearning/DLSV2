@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/ban-ts-comment */
 import { JSDOM } from 'jsdom';
-import { AppliedFilterTag, filterSearchableElements, filterSeparator } from '../searchSortAndPaginate/filter';
+import { IAppliedFilterTag, filterSearchableElements, filterSeparator } from '../searchSortFilterAndPaginate/filter';
 import getSearchableElements from './getSearchableElements';
 
 describe('filter', () => {
@@ -124,7 +124,7 @@ describe('applied filter container', () => {
   });
 });
 
-function getPossibleFilters(): AppliedFilterTag[] {
+function getPossibleFilters(): IAppliedFilterTag[] {
   const tags = Array.from(document.getElementsByClassName('filter-tag'));
   return tags.map((element) => ({
     element,
