@@ -32,7 +32,13 @@
         public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+
+        public CourseCustomPrompts? GetCustomPromptsForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId = 0,
+            bool includeArchived = false
+        );
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -157,16 +163,25 @@
             return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
         }
 
-        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId)
+        public CourseCustomPrompts? GetCustomPromptsForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId = 0,
+            bool includeArchived = false
+        )
         {
-            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
-            return result == null
-                ? null
-                : new CourseCustomPrompts(
-                    customisationId,
-                    centreId,
-                    PopulateCustomPromptListFromCourseCustomPromptsResult(result)
-                );
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId);
+            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId ||
+                !includeArchived && result.ArchivedDate.HasValue)
+            {
+                return null;
+            }
+
+            return new CourseCustomPrompts(
+                customisationId,
+                centreId,
+                PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+            );
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(

@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public static class CustomPromptsTestHelper
     {
-        public static CentreCustomPrompts GetDefaultCentreCustomPrompts
-        (
+        public static CentreCustomPrompts GetDefaultCentreCustomPrompts(
             List<CustomPrompt> customPrompts,
             int centreId = 29
         )
@@ -14,8 +14,7 @@
             return new CentreCustomPrompts(centreId, customPrompts);
         }
 
-        public static CourseCustomPrompts GetDefaultCourseCustomPrompts
-        (
+        public static CourseCustomPrompts GetDefaultCourseCustomPrompts(
             List<CustomPrompt> customPrompts,
             int customisationId = 27920,
             int centreId = 101
@@ -24,8 +23,7 @@
             return new CourseCustomPrompts(customisationId, centreId, customPrompts);
         }
 
-        public static CustomPrompt GetDefaultCustomPrompt
-        (
+        public static CustomPrompt GetDefaultCustomPrompt(
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
@@ -35,8 +33,7 @@
             return new CustomPrompt(promptNumber, text, options, mandatory);
         }
 
-        public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers
-        (
+        public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers(
             List<CustomPromptWithAnswer> customPrompts,
             int centreId = 29
         )
@@ -44,8 +41,7 @@
             return new CentreCustomPromptsWithAnswers(centreId, customPrompts);
         }
 
-        public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer
-        (
+        public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer(
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
@@ -56,8 +52,7 @@
             return new CustomPromptWithAnswer(promptNumber, text, options, mandatory, answer);
         }
 
-        public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult
-        (
+        public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult(
             int centreId = 29,
             string? customField1Prompt = "Group",
             string? customField1Options = "Clinical\r\nNon-Clinical",
@@ -112,7 +107,9 @@
             bool customField2Mandatory = false,
             string? customField3Prompt = null,
             string? customField3Options = "",
-            bool customField3Mandatory = false
+            bool customField3Mandatory = false,
+            DateTime? archivedDate = null,
+            int courseCategoryId = 0
         )
         {
             return new CourseCustomPromptsResult
@@ -125,7 +122,9 @@
                 CustomField2Mandatory = customField2Mandatory,
                 CustomField3Prompt = customField3Prompt,
                 CustomField3Options = customField3Options,
-                CustomField3Mandatory = customField3Mandatory
+                CustomField3Mandatory = customField3Mandatory,
+                ArchivedDate = archivedDate,
+                CourseCategoryId = courseCategoryId
             };
         }
     }

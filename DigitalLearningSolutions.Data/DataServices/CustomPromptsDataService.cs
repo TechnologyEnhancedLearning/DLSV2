@@ -22,7 +22,7 @@
         );
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId);
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -134,7 +134,7 @@
             ).Single();
         }
 
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId)
         {
             var result = connection.Query<CourseCustomPromptsResult>(
                 @"SELECT
@@ -146,7 +146,9 @@
                         cu.Q2Mandatory AS CustomField2Mandatory,
                         cp3.CoursePrompt AS CustomField3Prompt,
                         cu.Q3Options AS CustomField3Options, 
-                        cu.Q3Mandatory AS CustomField3Mandatory
+                        cu.Q3Mandatory AS CustomField3Mandatory,
+                        ap.CourseCategoryID,
+                        ap.ArchivedDate
                     FROM 
                         Customisations AS cu
                     LEFT JOIN CoursePrompts AS cp1 
@@ -156,11 +158,9 @@
                     LEFT JOIN CoursePrompts AS cp3 
                         ON cu.CourseField3PromptID = cp3.CoursePromptID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
-                        AND cu.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL
+                    WHERE cu.CentreID = @centreId
                         AND cu.CustomisationID = @customisationId",
-                new { customisationId, centreId, categoryId }
+                new { customisationId, centreId }
             ).SingleOrDefault();
 
             return result;

@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
+    using System;
+
     public class CourseCustomPromptsResult
     {
         public string? CustomField1Prompt { get; set; }
@@ -13,5 +15,8 @@
         public string? CustomField3Prompt { get; set; }
         public string? CustomField3Options { get; set; }
         public bool CustomField3Mandatory { get; set; }
+
+        public int CourseCategoryId { get; set; }
+        public DateTime? ArchivedDate { get; set; }
     }
 }
