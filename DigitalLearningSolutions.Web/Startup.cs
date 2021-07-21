@@ -189,6 +189,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
+            services.AddScoped<IGroupsDataService, GroupsDataService>();
             RegisterWebServiceFilters(services);
         }
 

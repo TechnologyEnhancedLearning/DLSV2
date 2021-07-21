@@ -1,0 +1,66 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model DelegateGroupsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/delegateGroups.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Groups";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-third">
+        <h1 id="page-heading" class="nhsuk-heading-xl">Groups</h1>
+      </div>
+      <div class="nhsuk-grid-column-two-thirds all-delegates-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary all-delegates-button" role="button">
+          Add
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary all-delegates-button" role="button">
+          Generate
+        </a>
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        @if (!Model.DelegateGroups.Any())
+          {
+            <p class="nhsuk-u-margin-top-4" role="alert">
+              <b>No delegates found</b>
+            </p>
+          }
+          else
+          {
+            <div id="searchable-elements">
+              @foreach (var groupModel in Model.DelegateGroups)
+              {
+                <partial name="_SearchableDelegateGroupCard" model="groupModel" />
+              }
+            </div>
+          }
+      </div>
+    </div>
+
+    <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
+    </nav>
+  </div>
+</div>

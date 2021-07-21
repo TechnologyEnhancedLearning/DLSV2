@@ -1,0 +1,8 @@
+﻿@import 'delegateCommon';
+
+.nhsuk-details__text > .nhsuk-button {
+  @include govuk-media-query($from: desktop) {
+    margin-right: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(3) !important;
+  }
+}
