@@ -99,6 +99,7 @@
                 @"SELECT CentreID, CentreName
                         FROM Centres
                         WHERE Active = 1
+                        AND kbSelfRegister = 1
                         ORDER BY CentreName"
             );
             return centres;
