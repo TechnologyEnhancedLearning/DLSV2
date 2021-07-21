@@ -1,5 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public class DelegateCourseInfoViewModel
@@ -36,6 +37,7 @@
             LearningTime = info.LearningTime + " mins";
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
+            CustomAnswers = new List<string?> { info.Answer1, info.Answer2, info.Answer3 };
         }
 
         public int CustomisationId { get; set; }
@@ -52,5 +54,6 @@
         public string LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
+        public List<string?> CustomAnswers { get; set; }
     }
 }

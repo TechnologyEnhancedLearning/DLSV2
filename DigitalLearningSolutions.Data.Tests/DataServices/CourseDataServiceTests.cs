@@ -268,7 +268,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 0,
                 0,
                 null,
-                true
+                true,
+                null,
+                null,
+                null
             );
             results.Should().HaveCount(4);
             results[3].Should().BeEquivalentTo(expected);

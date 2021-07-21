@@ -20,7 +20,10 @@
             int loginCount,
             int learningTime,
             int? diagnosticScore,
-            bool isAssessed
+            bool isAssessed,
+            string? answer1,
+            string? answer2,
+            string? answer3
         )
         {
             CustomisationId = customisationId;
@@ -37,6 +40,9 @@
             LearningTime = learningTime;
             DiagnosticScore = diagnosticScore;
             IsAssessed = isAssessed;
+            Answer1 = answer1;
+            Answer2 = answer2;
+            Answer3 = answer3;
         }
 
         public int CustomisationId { get; set; }
@@ -53,5 +59,9 @@
         public int LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
+        public string? Answer1 { get; set; }
+        public string? Answer2 { get; set; }
+        public string? Answer3 { get; set; }
+
     }
 }

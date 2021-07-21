@@ -203,7 +203,10 @@
                         pr.LoginCount,
                         pr.Duration AS LearningTime,
                         pr.DiagnosticScore,
-                        cu.IsAssessed
+                        cu.IsAssessed,
+                        pr.Answer1,
+                        pr.Answer2,
+                        pr.Answer3
                     FROM dbo.Customisations cu
                     INNER JOIN dbo.Applications ap ON ap.ApplicationID = cu.ApplicationID
                     INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
