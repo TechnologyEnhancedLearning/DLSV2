@@ -153,6 +153,7 @@ function hideAllFilterDropdowns(): void {
   allDropdowns.forEach((dropdown) => {
     const dropdownElement = <HTMLElement>dropdown;
     dropdownElement.hidden = true;
+    dropdownElement.style.display = 'none';
     dropdownElement.setAttribute('aria-hidden', 'true');
   });
 }
@@ -164,6 +165,7 @@ function showSelectedFilterDropdown(): void {
   const selectedDropdown = selector.value;
   const selectedDropdownElement = <HTMLElement>document.getElementById(selectedDropdown);
   selectedDropdownElement.hidden = false;
+  selectedDropdownElement.style.display = 'block';
   selectedDropdownElement.setAttribute('aria-hidden', 'false');
 }
 

@@ -32,11 +32,6 @@ $button-hover-colour: #4c6272;
 
   @include mq($from: tablet) {
     height: 40px;
-    width: 70%;
-  }
-
-  @include mq($from: desktop) {
-    width: 80%;
   }
 }
 

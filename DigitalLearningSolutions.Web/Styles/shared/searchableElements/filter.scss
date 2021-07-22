@@ -1,11 +1,18 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
-@import "common";
+﻿@import "common";
 
 .filter-dropdown {
   @extend .input-with-submit-button;
 
   @include mq($until: tablet) {
     width: 63%;
+  }
+
+  @include mq($from: desktop) {
+    .js-enabled & {
+      width: 74%;
+    }
+
+    width: 80%;
   }
 }
 
@@ -23,7 +30,6 @@
   &:focus {
     border: 4px solid $color_nhsuk_black;
     box-shadow: 0 0 0 4px $nhsuk-focus-color;
-    margin-right: 4px;
   }
 
   &::-webkit-search-cancel-button {
@@ -37,7 +43,22 @@
   }
 
   @include mq($from: desktop) {
-    width: 80%;
+    width: 41%;
+    float: left;
+    margin-right: nhsuk-spacing(2);
+  }
+}
+
+.filter-dropdown-container {
+  .js-enabled & {
+    display: none;
+  }
+
+  @include mq($from: desktop) {
+    .js-enabled & {
+      width: calc(59% - 12px);
+      float: left;
+    }
   }
 }
 
