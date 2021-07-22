@@ -115,12 +115,12 @@
           </div>
         }
 
-        @foreach (var customField in Model.CustomPrompts) {
+        @foreach (var customPromptWithAnswer in Model.CustomPromptsWithAnswers) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
-              @customField.CustomPromptText
+              @customPromptWithAnswer.CustomPromptText
             </dt>
-            <partial name="_SummaryFieldValue" model="@Model.CustomAnswers[customField.CustomPromptNumber - 1]" />
+            <partial name="_SummaryFieldValue" model="@customPromptWithAnswer.Answer" />
           </div>
         }
       </dl>

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -319,6 +320,35 @@
 
             // Then
             result.Should().BeEquivalentTo(expectedCoursePrompts);
+        }
+
+        [Test]
+        public void GetCustomPromptsWithAnswersForCourse_Returns_Populated_List_of_CustomPromptWithAnswer()
+        {
+            // Given
+            const string answer1 = "ans1";
+            const string answer2 = "ans2";
+            var expected1 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                1,
+                "System Access Granted",
+                "Yes\r\nNo",
+                answer: answer1
+            );
+            var expected2 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                2,
+                "Access Permissions",
+                answer: answer2
+            );
+            var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
+            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult());
+            var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
+
+            // When
+            var result = customPromptsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 27920, 101);
+
+            // Then
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }

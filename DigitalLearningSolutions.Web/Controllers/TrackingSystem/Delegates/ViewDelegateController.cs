@@ -49,14 +49,15 @@
                 .Select(
                     info =>
                     {
-                        var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+                        var courseCustomPromptsWithAnswers = customPromptsService.GetCustomPromptsWithAnswersForCourse(
+                            info,
                             info.CustomisationId,
                             centreId,
                             includeArchived: true
                         );
                         var attemptStats =
                             courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId);
-                        return new DelegateCourseInfoViewModel(info, courseCustomPrompts?.CourseAdminFields, attemptStats);
+                        return new DelegateCourseInfoViewModel(info, courseCustomPromptsWithAnswers, attemptStats);
                     }
                 );
 

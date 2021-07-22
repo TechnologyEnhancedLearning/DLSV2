@@ -11,7 +11,7 @@
     public class DelegateCourseInfoViewModelTests
     {
         private readonly (int totalAttempts, int attemptsPassed) attemptStats = (0, 0);
-        private readonly List<CustomPrompt> customPrompts = new List<CustomPrompt>();
+        private readonly List<CustomPromptWithAnswer> customPromptsWithAnswers = new List<CustomPromptWithAnswer>();
 
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
@@ -29,7 +29,7 @@
             };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPrompts, attemptStats);
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -52,7 +52,7 @@
             var info = new DelegateCourseInfo { EnrollmentMethodId = enrollmentMethodId };
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPrompts, attemptStats);
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
 
             // Then
             model.EnrollmentMethod.Should().Be(enrollmentMethod);
@@ -71,7 +71,7 @@
             // When
             var model = new DelegateCourseInfoViewModel(
                 new DelegateCourseInfo(),
-                customPrompts,
+                customPromptsWithAnswers,
                 (totalAttempts, attemptsPassed)
             );
 

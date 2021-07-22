@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
     {
         public DelegateCourseInfoViewModel(
             DelegateCourseInfo info,
-            List<CustomPrompt>? customPrompts,
+            List<CustomPromptWithAnswer>? customPromptsWithAnswers,
             (int totalAttempts, int attemptsPassed) attemptStats
         )
         {
@@ -42,9 +42,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             LearningTime = info.LearningTime + " mins";
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
-            CustomAnswers = new List<string?> { info.Answer1, info.Answer2, info.Answer3 };
 
-            CustomPrompts = customPrompts ?? new List<CustomPrompt>();
+            CustomPromptsWithAnswers = customPromptsWithAnswers ?? new List<CustomPromptWithAnswer>();
             TotalAttempts = attemptStats.totalAttempts;
             AttemptsPassed = attemptStats.attemptsPassed;
         }
@@ -63,9 +62,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public string LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
-        public List<string?> CustomAnswers { get; set; }
 
-        public List<CustomPrompt> CustomPrompts { get; set; }
+        public List<CustomPromptWithAnswer> CustomPromptsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
 
