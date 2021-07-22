@@ -2,16 +2,16 @@ const copyCourseLinkClass = 'copy-course-button';
 const copyLinkIdPrefix = 'copy-course-';
 const launchCourseButtonIdPrefix = 'launch-course-';
 
-setupCourseLinkClipboardCopiers();
+setUpCourseLinkClipboardCopiers();
 
-function setupCourseLinkClipboardCopiers() {
+function setUpCourseLinkClipboardCopiers() {
   const copyCourseLinks = Array.from(document.getElementsByClassName(copyCourseLinkClass));
 
   copyCourseLinks.forEach(
     (currentLink) => {
       const linkId = currentLink.id;
       const customisationId = linkId.slice(copyLinkIdPrefix.length);
-      currentLink.addEventListener('click', () => { copyLaunchCourseLinkToClipboard(customisationId); });
+      currentLink.addEventListener('click', () => copyLaunchCourseLinkToClipboard(customisationId));
     },
   );
 }
@@ -29,16 +29,12 @@ function copyLaunchCourseLinkToClipboard(customisationId: string) {
 }
 
 function copyTextToClipboard(textToCopy: string): boolean {
-  let succeeded: boolean;
-
   try {
     navigator.clipboard.writeText(textToCopy);
-    succeeded = true;
+    return true;
   } catch (e) {
-    succeeded = copyTextToClipboardFallback(textToCopy);
+    return copyTextToClipboardFallback(textToCopy);
   }
-
-  return succeeded;
 }
 
 function copyTextToClipboardFallback(textToCopy: string): boolean {
