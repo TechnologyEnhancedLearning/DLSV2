@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -58,6 +59,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
 
-        public double? PassRatio => TotalAttempts != 0 ? AttemptsPassed / (double)TotalAttempts : (double?)null;
+        public double? PassRate =>
+            TotalAttempts != 0 ? Math.Round(100 * AttemptsPassed / (double)TotalAttempts) : (double?)null;
     }
 }

@@ -120,7 +120,7 @@
             <dt class="nhsuk-summary-list__key">
               Pass ratio
             </dt>
-            <partial name="_SummaryFieldValue" model="@Model.PassRatio.ToString()" />
+            <partial name="_SummaryFieldValue" model="@(Model.PassRate + "%")" />
             <dd class="nhsuk-summary-list__actions"></dd>
           </div>
         }

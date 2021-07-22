@@ -60,12 +60,14 @@
 
         [TestCase(0, 0, null)]
         [TestCase(0, 1, null)]
-        [TestCase(2, 1, 0.5)]
-        [TestCase(4, 1, 0.25)]
-        public void DelegateCourseInfoViewModel_sets_pass_ratio_correctly(
+        [TestCase(2, 1, 50)]
+        [TestCase(3, 1, 33)]
+        [TestCase(4, 1, 25)]
+        [TestCase(100, 1, 1)]
+        public void DelegateCourseInfoViewModel_sets_pass_rate_correctly(
             int totalAttempts,
             int attemptsPassed,
-            double? passRatio
+            double? passRate
         )
         {
             // When
@@ -76,7 +78,7 @@
             );
 
             // Then
-            model.PassRatio.Should().Be(passRatio);
+            model.PassRate.Should().Be(passRate);
         }
     }
 }
