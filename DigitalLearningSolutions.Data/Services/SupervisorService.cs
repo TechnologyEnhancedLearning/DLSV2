@@ -203,7 +203,7 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
         public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
@@ -223,7 +223,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
         {
             return connection.Query<DelegateSelfAssessment>(
-               @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
+               @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
@@ -414,7 +414,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public bool RemoveCandidateAssessment(int candidateAssessmentId)
         {
             var numberOfAffectedRows = connection.Execute(
-         @"UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
+         @"UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2, 
             WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL",
         new { candidateAssessmentId });
             if (numberOfAffectedRows < 1)
