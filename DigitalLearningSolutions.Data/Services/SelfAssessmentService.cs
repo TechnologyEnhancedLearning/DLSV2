@@ -65,7 +65,7 @@
                                 ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
 
                           WHERE CandidateID = @candidateId
-                            AND SelfAssessmentID = @selfAssessmentId
+                            AND s.SelfAssessmentID = @selfAssessmentId
                          )";
         private const string SpecificAssessmentResults =
             @"LatestAssessmentResults AS
@@ -215,8 +215,8 @@ CA.LaunchCount, CA.SubmittedDate
                 $@"WITH CompetencyRowNumber AS
                      (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
                              CompetencyID
-                      FROM SelfAssessmentStructure
-                      WHERE SelfAssessmentID = @selfAssessmentId
+                      FROM SelfAssessmentStructure as sas
+                      WHERE sas.SelfAssessmentID = @selfAssessmentId
                      ),
                      {LatestAssessmentResults}
                     SELECT {CompetencyFields}
