@@ -30,13 +30,15 @@
 
         private static DateValidationResult ValidateDate(int day, int month, int year, string name)
         {
+            // note: the minimum year the DB can store is 1753
             var invalidDay = day < 1 || day > 31;
             var invalidMonth = month < 1 || month > 12;
-            var invalidYear = year < 1;
+            var invalidYear = year < 1 || year > 9999;
 
             if (invalidDay || invalidMonth || invalidYear)
             {
-                return new DateValidationResult(invalidDay, invalidMonth, invalidYear, name + " must be a real date");
+                var errorMessage = GetInvalidValuesErrorMessage(invalidDay, invalidMonth, invalidYear, name);
+                return new DateValidationResult(invalidDay, invalidMonth, invalidYear, errorMessage);
             }
 
             try
@@ -58,6 +60,7 @@
         private static string GetMissingValuesErrorMessage(int? day, int? month, int? year, string name)
         {
             var missingValues = new List<string>();
+
             if (!day.HasValue)
             {
                 missingValues.Add("day");
@@ -74,6 +77,29 @@
             }
 
             return name + " must include a " + string.Join(" and a ", missingValues);
+        }
+
+        private static string GetInvalidValuesErrorMessage(bool invalidDay, bool invalidMonth, bool invalidYear, string name)
+        {
+            var invalidValues = new List<string>();
+
+            if (invalidDay)
+            {
+                invalidValues.Add("day");
+            }
+
+            if (invalidMonth)
+            {
+                invalidValues.Add("month");
+            }
+
+            if (invalidYear)
+            {
+                invalidValues.Add("year");
+            }
+
+            if (invalidValues.Count == 3) return name + " must be a real date";
+            return name + " must include a real " + string.Join(" and ", invalidValues);
         }
 
         internal static List<ValidationResult> ToValidationResultList(
