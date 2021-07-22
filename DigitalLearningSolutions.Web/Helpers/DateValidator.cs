@@ -79,7 +79,12 @@
             return name + " must include a " + string.Join(" and a ", missingValues);
         }
 
-        private static string GetInvalidValuesErrorMessage(bool invalidDay, bool invalidMonth, bool invalidYear, string name)
+        private static string GetInvalidValuesErrorMessage(
+            bool invalidDay,
+            bool invalidMonth,
+            bool invalidYear,
+            string name
+        )
         {
             var invalidValues = new List<string>();
 
@@ -98,38 +103,12 @@
                 invalidValues.Add("year");
             }
 
-            if (invalidValues.Count == 3) return name + " must be a real date";
+            if (invalidValues.Count == 3)
+            {
+                return name + " must be a real date";
+            }
+
             return name + " must include a real " + string.Join(" and ", invalidValues);
-        }
-
-        internal static List<ValidationResult> ToValidationResultList(
-            DateValidationResult result,
-            string dayId,
-            string monthId,
-            string yearId
-        )
-        {
-            var results = new List<ValidationResult>();
-            var errorMessageAdded = false;
-
-            if (result.HasDayError)
-            {
-                results.Add(new ValidationResult(result.ErrorMessage, new[] { dayId }));
-                errorMessageAdded = true;
-            }
-
-            if (result.HasMonthError)
-            {
-                results.Add(new ValidationResult(!errorMessageAdded ? result.ErrorMessage : "", new[] { monthId }));
-                errorMessageAdded = true;
-            }
-
-            if (result.HasYearError)
-            {
-                results.Add(new ValidationResult(!errorMessageAdded ? result.ErrorMessage : "", new[] { yearId }));
-            }
-
-            return results;
         }
 
         public class DateValidationResult
@@ -155,6 +134,39 @@
                 HasMonthError = hasMonthError;
                 HasYearError = hasYearError;
                 ErrorMessage = errorMessage;
+            }
+
+            public List<ValidationResult> ToValidationResultList(
+                string dayId,
+                string monthId,
+                string yearId
+            )
+            {
+                var results = new List<ValidationResult>();
+                var errorMessageAdded = false;
+
+                if (HasDayError)
+                {
+                    results.Add(new ValidationResult(ErrorMessage, new[] { dayId }));
+                    errorMessageAdded = true;
+                }
+
+                if (HasMonthError)
+                {
+                    // Should only add error message once per date to avoid duplicates in error summary component, but still highlight all inputs with errors
+                    var errorMessage = !errorMessageAdded ? ErrorMessage : "";
+                    results.Add(new ValidationResult(errorMessage, new[] { monthId }));
+                    errorMessageAdded = true;
+                }
+
+                if (HasYearError)
+                {
+                    // Should only add error message once per date to avoid duplicates in error summary component, but still highlight all inputs with errors
+                    var errorMessage = !errorMessageAdded ? ErrorMessage : "";
+                    results.Add(new ValidationResult(errorMessage, new[] { yearId }));
+                }
+
+                return results;
             }
         }
     }

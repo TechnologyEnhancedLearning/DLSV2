@@ -32,8 +32,8 @@
                 return new List<ValidationResult>();
             }
 
-            var dateValidationResult = DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true);
-            return DateValidator.ToValidationResultList(dateValidationResult, nameof(Day), nameof(Month), nameof(Year));
+            return DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true)
+                .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
 
         public void ClearDateIfNotSendEmail()
