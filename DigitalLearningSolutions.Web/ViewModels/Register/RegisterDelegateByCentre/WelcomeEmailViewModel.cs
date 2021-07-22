@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
 
     public class WelcomeEmailViewModel : IValidatableObject
@@ -33,7 +33,7 @@
             }
 
             var dateValidationResult = DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true);
-            return DateValidator.ToValidationResultList(dateValidationResult, "Day", "Month", "Year");
+            return DateValidator.ToValidationResultList(dateValidationResult, nameof(Day), nameof(Month), nameof(Year));
         }
 
         public void ClearDateIfNotSendEmail()

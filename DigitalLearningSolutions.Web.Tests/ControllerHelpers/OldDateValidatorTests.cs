@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
-    using DigitalLearningSolutions.Web.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
 

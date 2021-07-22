@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
-    using DigitalLearningSolutions.Web.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -60,7 +60,7 @@
             result.HasDayError.Should().Be(!day.HasValue);
             result.HasMonthError.Should().Be(!month.HasValue);
             result.HasYearError.Should().Be(!year.HasValue);
-            result.ErrorMessage.Should().Be("Date must have " + errorMessageEnding);
+            result.ErrorMessage.Should().Be("Date must include " + errorMessageEnding);
         }
 
         [TestCase(0, 1, 3000, true, false, false)]

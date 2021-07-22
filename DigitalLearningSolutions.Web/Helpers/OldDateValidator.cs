@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ControllerHelpers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
     using System.Collections.Generic;

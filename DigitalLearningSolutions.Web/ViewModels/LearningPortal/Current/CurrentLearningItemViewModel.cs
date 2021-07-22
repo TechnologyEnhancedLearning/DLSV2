@@ -2,7 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
     {

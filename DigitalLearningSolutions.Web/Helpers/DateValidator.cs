@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ControllerHelpers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -73,7 +73,7 @@
                 missingValues.Add("year");
             }
 
-            return name + " must have a " + string.Join(" and a ", missingValues);
+            return name + " must include a " + string.Join(" and a ", missingValues);
         }
 
         internal static List<ValidationResult> ToValidationResultList(
