@@ -18,18 +18,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             Supervisor = info.Supervisor;
             Enrolled = info.Enrolled.ToString("dd/MM/yyyy");
             LastUpdated = info.LastUpdated.ToString("dd/MM/yyyy");
-            if (info.CompleteBy.HasValue)
-            {
-                CompleteBy = info.CompleteBy.Value.ToString("dd/MM/yyyy");
-            }
-            if (info.Completed.HasValue)
-            {
-                Completed = info.Completed.Value.ToString("dd/MM/yyyy");
-            }
-            if (info.Evaluated.HasValue)
-            {
-                Evaluated = info.Evaluated.Value.ToString("dd/MM/yyyy");
-            }
+            CompleteBy = info.CompleteBy?.ToString("dd/MM/yyyy");
+            Completed = info.Completed?.ToString("dd/MM/yyyy");
+            Evaluated = info.Evaluated?.ToString("dd/MM/yyyy");
             EnrollmentMethod = info.EnrollmentMethodId switch
             {
                 1 => "Self enrolled",

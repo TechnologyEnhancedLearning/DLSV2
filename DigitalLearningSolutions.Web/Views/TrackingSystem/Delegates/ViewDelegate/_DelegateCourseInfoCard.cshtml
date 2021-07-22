@@ -16,6 +16,7 @@
             Enrolled
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Enrolled" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -43,6 +44,7 @@
             Last updated
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.LastUpdated" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -50,11 +52,11 @@
             Completed
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
-          @if (Model.Completed == null) {
-            <dd class="nhsuk-summary-list__actions">
+          <dd class="nhsuk-summary-list__actions">
+            @if (Model.Completed == null) {
               <a href="#">Set completed date</a>
-            </dd>
-          }
+            }
+          </dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -62,6 +64,7 @@
             Evaluated
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Evaluated" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -69,6 +72,7 @@
             Enrollment method
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.EnrollmentMethod" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -76,6 +80,7 @@
             Logins
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.LoginCount.ToString()" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -83,6 +88,7 @@
             Learning time
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.LearningTime" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -90,6 +96,7 @@
             Diagnostic score
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.DiagnosticScore.ToString()" />
+          <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
         @if (Model.IsAssessed) {
@@ -97,14 +104,16 @@
             <dt class="nhsuk-summary-list__key">
               Assessments passed
             </dt>
-            <partial name="_SummaryFieldValue" model="@Model.TotalAttempts.ToString()" />
+            <partial name="_SummaryFieldValue" model="@Model.AttemptsPassed.ToString()" />
+            <dd class="nhsuk-summary-list__actions"></dd>
           </div>
 
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
               Assessment attempts
             </dt>
-            <partial name="_SummaryFieldValue" model="@Model.AttemptsPassed.ToString()" />
+            <partial name="_SummaryFieldValue" model="@Model.TotalAttempts.ToString()" />
+            <dd class="nhsuk-summary-list__actions"></dd>
           </div>
 
           <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -112,6 +121,7 @@
               Pass ratio
             </dt>
             <partial name="_SummaryFieldValue" model="@Model.PassRatio.ToString()" />
+            <dd class="nhsuk-summary-list__actions"></dd>
           </div>
         }
 
@@ -121,6 +131,7 @@
               @customPromptWithAnswer.CustomPromptText
             </dt>
             <partial name="_SummaryFieldValue" model="@customPromptWithAnswer.Answer" />
+            <dd class="nhsuk-summary-list__actions"></dd>
           </div>
         }
       </dl>
