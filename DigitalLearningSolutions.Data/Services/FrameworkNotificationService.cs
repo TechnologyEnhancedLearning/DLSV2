@@ -19,6 +19,7 @@
         void SendSupervisorDelegateConfirmed(int superviseDelegateId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate);
+        void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -185,7 +186,7 @@
                               You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}).
                               To register, visit {dlsUrlBuilder.Uri.ToString()}.
                               Registering using this link will confirm your acceptance of the invite. Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.";
-                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p>";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
             }
             else
             {
@@ -194,7 +195,7 @@
                               You have been identified as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
                               You are already registered as a delegate at the supervisor's DLS centre. To respond to their invite, please visit {dlsUrlBuilder.Uri.ToString()} (you may need to sign in using your existing DLS credentials).
                               Once you have accepted the invite, your supervisor will be able to assign role profile assessments and view and validate your self assessment results.";
-                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear  {supervisorDelegate.FirstName},</p><p>You have been identified as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a> in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p>You are already registered as a delegate at the supervisor's DLS centre. <a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to respond to their invite (you may need to sign in using your existing DLS credentials).</p><p>Once you have accepted the invite, your supervisor will be able to assign role profile assessments and view and validate your self assessment results.</p>";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear  {supervisorDelegate.FirstName},</p><p>You have been identified as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName}</a> in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p>You are already registered as a delegate at the supervisor's DLS centre. <a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to respond to their invite (you may need to sign in using your existing DLS credentials).</p><p>Once you have accepted the invite, your supervisor will be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
             }
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
@@ -210,7 +211,7 @@
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
 You are now confirmed as a supervisor for this delegate.
 To manage their role profile assessments, please visit {dlsUrlBuilder.Uri.ToString()}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName}</p><p>{supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.</p><p>You are now confirmed as a supervisor for this delegate.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to manage their role profile assessments.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName}</p><p>{supervisorDelegate.FirstName} {supervisorDelegate.LastName} has accepted your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.</p><p>You are now confirmed as a supervisor for this delegate.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to manage their role profile assessments.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.SupervisorEmail));
         }
 
@@ -225,7 +226,7 @@ To manage their role profile assessments, please visit {dlsUrlBuilder.Uri.ToStri
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} has rejected your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.
 This delegate has been removed from your supervisor team.
 To manage your team, please visit {dlsUrlBuilder.Uri.ToString()}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName}</p><p>{supervisorDelegate.FirstName} {supervisorDelegate.LastName} has rejected your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.</p><p>This delegate has been removed from your supervisor team.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to manage your team.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName}</p><p>{supervisorDelegate.FirstName} {supervisorDelegate.LastName} has rejected your invitation to become a member of your team in the NHS Health Education England, Digital Learning Solutions platform.</p><p>This delegate has been removed from your supervisor team.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to manage your team.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.SupervisorEmail));
         }
 
@@ -237,7 +238,7 @@ To manage your team, please visit {dlsUrlBuilder.Uri.ToString()}.";
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
                                {supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.
 To access your role profile assessments, please visit {GetCurrentActivitiesUrl()}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your role profile assessments.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has accepted your request to be your supervisor for profile asessment activities in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your role profile assessments.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
@@ -254,7 +255,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                                {supervisorDelegate.SupervisorName} has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.
                                {commentString}
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
@@ -273,7 +274,21 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                                {completeByString}
                                {supervisorReviewString}
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has enrolled you on the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.</p>{(completeByString.Length > 0 ? $"<p>{completeByString}</p>": "")}{(supervisorReviewString.Length > 0 ? $"<p>{supervisorReviewString}</p>" : "")}<p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} self assessment.</p>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has enrolled you on the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.</p>{(completeByString.Length > 0 ? $"<p>{completeByString}</p>": "")}{(supervisorReviewString.Length > 0 ? $"<p>{supervisorReviewString}</p>" : "")}<p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            string emailSubjectLine = $"Reminder to complete the profile assessment {delegateSelfAssessment.RoleName} - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               This is a reminder sent by your {delegateSelfAssessment.RoleName}, {supervisorDelegate.SupervisorName}, to complete the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>This is a reminder sent by your {delegateSelfAssessment.RoleName}, {supervisorDelegate.SupervisorName}, to complete the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
