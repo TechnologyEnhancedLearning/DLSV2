@@ -40,7 +40,7 @@
 
             var errorMessage = dayErrors?.Count > 0 ? dayErrors[0].ErrorMessage :
                                monthErrors?.Count > 0 ? monthErrors[0].ErrorMessage :
-                               yearErrors?.Count > 0 ? yearErrors?[0]?.ErrorMessage : null;
+                               yearErrors?.Count > 0 ? yearErrors[0].ErrorMessage : null;
 
             var viewModel = new DateInputViewModel(
                 id,

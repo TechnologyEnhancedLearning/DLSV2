@@ -19,13 +19,13 @@
                 return required ? new DateValidationResult(name + " is required") : new DateValidationResult();
             }
 
-            if (!day.HasValue || !month.HasValue || !year.HasValue)
+            if (day.HasValue && month.HasValue && year.HasValue)
             {
-                var errorMessage = GetMissingValuesErrorMessage(day, month, year, name);
-                return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
+                return ValidateDate(day.Value, month.Value, year.Value, name);
             }
 
-            return ValidateDate(day.Value, month.Value, year.Value, name);
+            var errorMessage = GetMissingValuesErrorMessage(day, month, year, name);
+            return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
         private static DateValidationResult ValidateDate(int day, int month, int year, string name)
@@ -73,7 +73,7 @@
                 missingValues.Add("year");
             }
 
-            return name + " must have a " + string.Join(" and ", missingValues);
+            return name + " must have a " + string.Join(" and a ", missingValues);
         }
 
         internal static List<ValidationResult> ToValidationResultList(
