@@ -45,12 +45,12 @@
             result.ErrorMessage.Should().Be("Date is required");
         }
 
-        [TestCase(null, 1, 3000, "day")]
-        [TestCase(1, null, 3000, "month")]
-        [TestCase(1, 1, null, "year")]
-        [TestCase(null, null, 3000, "day and month")]
-        [TestCase(null, 1, null, "day and year")]
-        [TestCase(1, null, null, "month and year")]
+        [TestCase(null, 1, 3000, "a day")]
+        [TestCase(1, null, 3000, "a month")]
+        [TestCase(1, 1, null, "a year")]
+        [TestCase(null, null, 3000, "a day and a month")]
+        [TestCase(null, 1, null, "a day and a year")]
+        [TestCase(1, null, null, "a month and a year")]
         public void ValidateDate_returns_appropriate_error_if_some_values_missing(int? day, int? month, int? year, string errorMessageEnding)
         {
             // When
@@ -60,7 +60,7 @@
             result.HasDayError.Should().Be(!day.HasValue);
             result.HasMonthError.Should().Be(!month.HasValue);
             result.HasYearError.Should().Be(!year.HasValue);
-            result.ErrorMessage.Should().Be("Date must have a " + errorMessageEnding);
+            result.ErrorMessage.Should().Be("Date must have " + errorMessageEnding);
         }
 
         [TestCase(0, 1, 3000, true, false, false)]
