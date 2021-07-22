@@ -95,6 +95,17 @@
         }
 
         [Test]
+        public void Get_active_centres_should_not_contain_a_centre_where_a_delegate_cannot_self_register()
+        {
+            // When
+            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
+
+            // Then
+            result.Contains((4, "Brighton and Sussex University Hospitals NHS Trust"))
+                .Should().BeFalse();
+        }
+
+        [Test]
         public void GetCentreDetailsById_should_return_the_correct_values()
         {
             // Given
