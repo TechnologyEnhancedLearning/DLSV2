@@ -8,7 +8,7 @@
 
         public string GroupLabel { get; set; }
 
-        public string GroupDescription { get; set; }
+        public string? GroupDescription { get; set; }
 
         public int DelegateCount { get; set; }
 

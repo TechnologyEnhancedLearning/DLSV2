@@ -10,7 +10,7 @@
 
     public class GroupsDataServiceTests
     {
-        private GroupsDataService groupsDataService;
+        private GroupsDataService groupsDataService = null!;
 
         [SetUp]
         public void Setup()
