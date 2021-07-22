@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
 
-        public double? PassRate =>
-            TotalAttempts != 0 ? Math.Round(100 * AttemptsPassed / (double)TotalAttempts) : (double?)null;
+        public string? PassRate =>
+            TotalAttempts != 0 ? Math.Round(100 * AttemptsPassed / (double)TotalAttempts) + "%" : null;
     }
 }
