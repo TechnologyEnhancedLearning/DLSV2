@@ -29,6 +29,7 @@
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
+        bool RemoveCandidateAssessment(int candidateAssessmentId);
         //INSERT DATA
         int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
@@ -216,7 +217,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                  NRPSubGroups AS sg ON sa.NRPSubGroupID = sg.ID LEFT OUTER JOIN
                  NRPRoles AS r ON sa.NRPRoleID = r.ID
                  LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                 WHERE (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
+                 WHERE (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
                 );
         }
         public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
@@ -408,6 +409,22 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 }
                 return existingId;
             }
+        }
+
+        public bool RemoveCandidateAssessment(int candidateAssessmentId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+         @"UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
+            WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL",
+        new { candidateAssessmentId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing Candidate Assessment as db update failed. candidateAssessmentId: {candidateAssessmentId}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }
