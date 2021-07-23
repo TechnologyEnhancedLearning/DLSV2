@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
@@ -151,17 +150,18 @@
             result.ErrorMessage.Should().Be("What's required is required");
         }
 
-        [TestCase(true, false, false)]
-        [TestCase(false, true, false)]
-        [TestCase(false, false, true)]
-        [TestCase(true, true, false)]
-        [TestCase(true, false, true)]
-        [TestCase(false, true, true)]
-        [TestCase(true, true, true)]
+        [TestCase(true, false, false, "Day")]
+        [TestCase(false, true, false, "Month")]
+        [TestCase(false, false, true, "Year")]
+        [TestCase(true, true, false, "Day", "Month")]
+        [TestCase(true, false, true, "Day", "Year")]
+        [TestCase(false, true, true, "Month", "Year")]
+        [TestCase(true, true, true, "Day", "Month", "Year")]
         public void ToValidationResultList_includes_one_error_for_each_erroneous_part_of_date(
             bool hasDayError,
             bool hasMonthError,
-            bool hasYearError
+            bool hasYearError,
+            params string[] errorMemberNames
         )
         {
             // Given
@@ -171,32 +171,19 @@
                 hasYearError,
                 "msg"
             );
-            var errorMemberNames = new List<string>();
-            if (hasDayError)
-            {
-                errorMemberNames.Add("Day");
-            }
-
-            if (hasMonthError)
-            {
-                errorMemberNames.Add("Month");
-            }
-
-            if (hasYearError)
-            {
-                errorMemberNames.Add("Year");
-            }
 
             // When
             var result = dateValidationResult.ToValidationResultList("Day", "Month", "Year");
 
             // Then
-            result.Should().HaveCount(errorMemberNames.Count);
-            errorMemberNames.ForEach(
-                memberName => result.Should().Contain(
-                    error => error.MemberNames.Count() == 1 && error.MemberNames.Contains(memberName)
-                )
-            );
+            result.Should().HaveCount(errorMemberNames.Length);
+            foreach (var memberName in errorMemberNames)
+            {
+                result.Should().Contain(
+                    validationResult =>
+                        validationResult.MemberNames.Count() == 1 && validationResult.MemberNames.Contains(memberName)
+                );
+            }
         }
 
         [Test]
