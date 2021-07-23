@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
+    using DigitalLearningSolutions.Web.ControllerHelpers;
+
     public class DateInputViewModel
     {
         public readonly bool HasDayError;
@@ -9,34 +11,29 @@
         public DateInputViewModel(
             string id,
             string label,
-            string dayId,
-            string monthId,
-            string yearId,
+            string? dayId,
+            string? monthId,
+            string? yearId,
             string? dayValue,
             string? monthValue,
             string? yearValue,
-            bool hasDayError,
-            bool hasMonthError,
-            bool hasYearError,
-            string? errorMessage,
-            string? cssClass = null,
+            DateValidator.ValidationResult? validationResult,
             string? hintText = null
         )
         {
             Id = id;
             Label = label;
-            DayId = dayId;
-            MonthId = monthId;
-            YearId = yearId;
+            DayId = dayId ?? "Day";
+            MonthId = monthId ?? "Month";
+            YearId = yearId ?? "Year";
             DayValue = dayValue;
             MonthValue = monthValue;
             YearValue = yearValue;
-            CssClass = cssClass;
             HintText = hintText;
-            HasDayError = hasDayError;
-            HasMonthError = hasMonthError;
-            HasYearError = hasYearError;
-            ErrorMessage = errorMessage;
+            ErrorMessage = validationResult?.ErrorMessage;
+            HasDayError = validationResult is { DayValid: false };
+            HasMonthError = validationResult is { MonthValid: false };
+            HasYearError = validationResult is { YearValid: false };
         }
 
         public string Id { get; set; }
@@ -47,7 +44,6 @@
         public string? DayValue { get; set; }
         public string? MonthValue { get; set; }
         public string? YearValue { get; set; }
-        public string? CssClass { get; set; }
         public string? HintText { get; set; }
         public bool HasError => HasDayError || HasMonthError || HasYearError;
         public string? ErrorMessage { get; set; }
