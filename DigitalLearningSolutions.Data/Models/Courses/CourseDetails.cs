@@ -44,7 +44,7 @@
         {
             get
             {
-                if (RefreshToCustomisationId == 0)
+                if (RefreshToCustomisationId == 0 || RefreshToCustomisationId == CustomisationId)
                 {
                     return "Same course";
                 }
