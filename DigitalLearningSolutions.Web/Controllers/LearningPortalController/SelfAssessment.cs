@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Mvc;
@@ -140,7 +139,7 @@
                 return RedirectToAction("Current");
             }
 
-            var validationResult = DateValidator.ValidateDate(day, month, year);
+            var validationResult = OldDateValidator.ValidateDate(day, month, year);
             if (!validationResult.DateValid)
             {
                 return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
@@ -165,7 +164,7 @@
 
             if (day != null && month != null && year != null)
             {
-                model.CompleteByValidationResult = DateValidator.ValidateDate(day.Value, month.Value, year.Value);
+                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
             }
 
             return View("Current/SetCompleteByDate", model);
