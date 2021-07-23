@@ -331,7 +331,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetActiveCentresForDelegateSelfRegistrationAlphabetical(),
+                centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical(),
                 model.Centre
             );
         }
