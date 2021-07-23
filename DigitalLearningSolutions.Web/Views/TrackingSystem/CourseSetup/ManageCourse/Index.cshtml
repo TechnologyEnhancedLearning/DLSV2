@@ -1,0 +1,57 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.Extensions.Configuration
+@model ManageCourseViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = Model.CourseName;
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+  <partial name="/Views/TrackingSystem/Shared/_CentreCourseSetupBreadcrumbs.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">@Model.CourseName</h1>
+
+    <div class="nhsuk-inset-text">
+      <span class="nhsuk-u-visually-hidden">Information: </span>
+      @if (Model.Active) {
+        <p>This is an active course</p>
+      } else {
+        <p>This course is not active</p>
+      }
+    </div>
+
+    <partial name="_CourseSummaryCard" model="Model.SummaryViewModel" />
+    <partial name="_CourseDetailsExpandable" model="Model.DetailsViewModel" />
+    <partial name="_CourseOptionsExpandable" model="Model.OptionsViewModel" />
+    <partial name="_LearningPathwayDefaultsExpandable" model="Model.LearningPortalDefaultsViewModel" />
+
+    <a class="nhsuk-button nhsuk-u-margin-right-2"
+       role="button"
+       href="#">
+      View course content
+    </a>
+
+    <a class="nhsuk-button"
+       role="button"
+       asp-controller="AdminFields"
+       asp-action="AdminFields"
+       asp-route-customisationId="@Model.CustomisationId">
+      Manage course admin fields
+    </a>
+
+  </div>
+</div>

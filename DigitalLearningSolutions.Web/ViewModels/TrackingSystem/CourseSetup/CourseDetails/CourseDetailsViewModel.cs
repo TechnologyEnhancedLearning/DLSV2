@@ -1,0 +1,26 @@
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+{
+    using DigitalLearningSolutions.Data.Models.Courses;
+
+    public class CourseDetailsViewModel
+    {
+        public CourseDetailsViewModel(CourseDetails courseDetails)
+        {
+            Password = courseDetails.Password;
+            NotificationEmails = courseDetails.NotificationEmails;
+            PlAssess = courseDetails.PlAssess;
+            IsAssessed = courseDetails.IsAssessed;
+            DiagAssess = courseDetails.DiagAssess;
+            TutCompletionThreshold = courseDetails.TutCompletionThreshold;
+            DiagCompletionThreshold = courseDetails.DiagCompletionThreshold;
+        }
+
+        public string? Password { get; set; }
+        public string? NotificationEmails { get; set; }
+        public bool PlAssess { get; set; }
+        public bool IsAssessed { get; set; }
+        public bool DiagAssess { get; set; }
+        public int TutCompletionThreshold { get; set; }
+        public int DiagCompletionThreshold { get; set; }
+    }
+}

@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -10,33 +10,35 @@
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CourseSetup")]
-    public class AdminFieldsController : Controller
+    public class ManageCourseController : Controller
     {
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICourseDataService courseDataService;
 
-        public AdminFieldsController(ICustomPromptsService customPromptsService)
+        public ManageCourseController(ICourseDataService courseDataService)
         {
-            this.customPromptsService = customPromptsService;
+            this.courseDataService = courseDataService;
         }
 
         [HttpGet]
-        [Route("{customisationId}/AdminFields")]
-        public IActionResult AdminFields(int customisationId)
+        [Route("{customisationId:int}/Manage")]
+        public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+
+            var courseDetails = courseDataService.GetCourseDetailsByIdAtCentreForCategoryId(
                 customisationId,
                 centreId,
                 categoryId.Value
             );
 
-            if (courseCustomPrompts == null)
+            if (courseDetails == null)
             {
                 return NotFound();
             }
 
-            var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
+            var model = new ManageCourseViewModel(courseDetails);
+
             return View(model);
         }
     }

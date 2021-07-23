@@ -1,0 +1,90 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model LearningPathwayDefaultsViewModel
+
+<details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-8">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Learning Pathway defaults
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Complete within
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CompleteWithinMonths @(Model.CompleteWithinMonths == 1 ? "month" : "months")
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Completion valid for
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CompletionValidFor @(Model.CompletionValidFor == 1 ? "month" : "months")
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Mandatory
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.Mandatory ? "Yes" : "No")
+        </dd>
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Auto-refresh
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.AutoRefresh ? "Yes" : "No")
+        </dd>
+      </div>
+
+      @if (Model.AutoRefresh) {
+        <div>
+          <p class="nhsuk-u-font-size-32 nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4">
+            Auto-refresh details
+          </p>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Course to refresh to
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.RefreshToCourseName
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Enrol on refresher
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.AutoRefreshMonths @(Model.AutoRefreshMonths == 1 ? "month < expiry" : "months < expiry")
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Apply to self-enrolments
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @(Model.ApplyLpDefaultsToSelfEnrol ? "Yes" : "No")
+          </dd>
+        </div>
+      }
+
+    </dl>
+
+    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" href="">
+      Edit
+    </a>
+
+  </div>
+</details>
