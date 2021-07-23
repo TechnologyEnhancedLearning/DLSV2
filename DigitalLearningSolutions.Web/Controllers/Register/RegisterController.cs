@@ -22,10 +22,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly CustomPromptHelper customPromptHelper;
+        private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
-        private readonly IFeatureManager featureManager;
 
         public RegisterController(
             ICentresDataService centresDataService,
@@ -331,7 +331,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetActiveCentresAlphabetical(),
+                centresDataService.GetActiveCentresForDelegateSelfRegistrationAlphabetical(),
                 model.Centre
             );
         }
