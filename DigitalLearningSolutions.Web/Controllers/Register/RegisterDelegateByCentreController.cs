@@ -5,7 +5,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -155,8 +154,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             model.ClearDateIfNotSendEmail();
-            SetWelcomeEmailValidationResult(model);
-            if (model.DateValidationResult is { DateValid: false })
+
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -296,22 +295,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                     "A user with this alias is already registered at this centre"
                 );
             }
-        }
-
-        private void SetWelcomeEmailValidationResult(WelcomeEmailViewModel model)
-        {
-            if (!model.ShouldSendEmail)
-            {
-                return;
-            }
-
-            var validationResult = DateValidator.ValidateRequiredDate(
-                model.Day,
-                model.Month,
-                model.Year,
-                "Email delivery date"
-            );
-            model.DateValidationResult = validationResult;
         }
 
         private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
