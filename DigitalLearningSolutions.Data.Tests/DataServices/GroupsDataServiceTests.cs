@@ -38,7 +38,6 @@
                 SyncFieldChanges = true
             };
             
-
             // When
             var result = groupsDataService.GetGroupsForCentre(101).ToList();
 

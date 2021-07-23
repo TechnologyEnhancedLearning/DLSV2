@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
-    using DocumentFormat.OpenXml.Presentation;
-
     public class Group
     {
         public int GroupId { get; set; }

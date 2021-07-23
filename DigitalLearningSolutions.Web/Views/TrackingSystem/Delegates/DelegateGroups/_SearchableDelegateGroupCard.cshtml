@@ -18,15 +18,14 @@
           <dd class="nhsuk-summary-list__value">
             @Model.Name
           </dd>
-          @if (Model.LinkedToField == 0) {
-            <dd class="nhsuk-summary-list__actions">
+
+          <dd class="nhsuk-summary-list__actions">
+            @if (Model.LinkedToField == 0) {
               <a href="#">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
-            </dd>
-          } else {
-            <dd class="nhsuk-summary-list__actions" />
-          }
+            }
+          </dd>
         </div>
 
         <div class="nhsuk-summary-list__row">

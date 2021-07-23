@@ -10,6 +10,7 @@
         {
             DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g));
         }
+
         public IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups { get; set; }
     }
 }

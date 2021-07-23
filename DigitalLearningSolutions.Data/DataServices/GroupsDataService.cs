@@ -47,7 +47,8 @@
                     JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
                     JOIN Centres AS c ON c.CentreID = g.CentreID
                     WHERE RemovedDate IS NULL AND g.CentreID = @centreId",
-                new { centreId });
+                new { centreId }
+            );
         }
     }
 }
