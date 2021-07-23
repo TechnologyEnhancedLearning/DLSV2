@@ -217,6 +217,7 @@
             if (countResults > 0)
             {
                 //Send notification
+                frameworkNotificationService.SendSupervisorMultipleResultsReviewed(GetAdminID(), supervisorDelegateId, candidateAssessmentId, countResults);
             }
             return RedirectToAction("ReviewDelegateSelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "Review" });
         }

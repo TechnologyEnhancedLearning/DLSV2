@@ -20,6 +20,7 @@
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId);
+        void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -289,6 +290,20 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                                This is a reminder sent by your {delegateSelfAssessment.RoleName}, {supervisorDelegate.SupervisorName}, to complete the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>This is a reminder sent by your {delegateSelfAssessment.RoleName}, {supervisorDelegate.SupervisorName}, to complete the profile assessment '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Signed-off {countResults} results - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               {supervisorDelegate.SupervisorName} has signed-off {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p> {supervisorDelegate.SupervisorName} has signed-off {countResults} of your self assessment results against the {delegateSelfAssessment.RoleName} profile assessment in the NHS Health Education England, Digital Learning Solutions platform.</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
