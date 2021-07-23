@@ -20,7 +20,7 @@
             this.connection = connection;
         }
 
-        public IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, DateTime start, DateTime end)
+        public IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, ActivityFilterData filterData)
         {
             return connection.Query<MonthOfActivity>(
                 @"SELECT
@@ -30,10 +30,15 @@
                         SUM(CONVERT(INT, Evaluated)) AS Evaluations,
                         SUM(CONVERT(INT, Registered)) AS Registrations 
                     FROM tActivityLog
-                        WHERE (LogDate > @start AND LogDate < @end AND CentreID = @centreId)
+                        WHERE (LogDate > @start
+                               AND LogDate < @end
+                               AND CentreID = @centreId
+                               AND JobGroupID = @jobGroupId
+                               AND CustomisationID = @customisationId
+                               AND CourseCategoryId = @courseCategoryId)
                     GROUP BY LogYear, LogMonth
                     ORDER BY LogYear, LogMonth",
-                new { centreId, start, end }
+                new { centreId, filterData.StartDate, filterData.EndDate, filterData.JobGroupId, filterData.CustomisationId }
             );
         }
     }
