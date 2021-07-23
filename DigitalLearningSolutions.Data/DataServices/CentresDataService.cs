@@ -12,7 +12,7 @@
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
-        IEnumerable<(int, string)> GetActiveCentresAlphabetical();
+        IEnumerable<(int, string)> GetActiveCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
 
         void UpdateCentreManagerDetails(
@@ -92,7 +92,7 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
+        public IEnumerable<(int, string)> GetActiveCentresForDelegateSelfRegistrationAlphabetical()
         {
             var centres = connection.Query<(int, string)>
             (

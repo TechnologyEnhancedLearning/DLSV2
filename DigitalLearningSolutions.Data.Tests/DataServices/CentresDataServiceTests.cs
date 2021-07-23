@@ -74,20 +74,20 @@
         }
 
         [Test]
-        public void Get_active_centres_should_contain_an_active_centre()
+        public void Get_active_centres_for_delegate_self_registration_should_contain_an_active_centre()
         {
             // When
-            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
+            var result = centresDataService.GetActiveCentresForDelegateSelfRegistrationAlphabetical().ToList();
 
             // Then
             result.Contains((2, "North West Boroughs Healthcare NHS Foundation Trust")).Should().BeTrue();
         }
 
         [Test]
-        public void Get_active_centres_should_not_contain_an_inactive_centre()
+        public void Get_active_centres_for_delegate_self_registration_should_not_contain_an_inactive_centre()
         {
             // When
-            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
+            var result = centresDataService.GetActiveCentresForDelegateSelfRegistrationAlphabetical().ToList();
 
             // Then
             result.Contains((6, "Closed_Basildon and Thurrock University Hospitals NHS Foundation Trust"))
@@ -95,10 +95,11 @@
         }
 
         [Test]
-        public void Get_active_centres_should_not_contain_a_centre_where_a_delegate_cannot_self_register()
+        public void
+            Get_active_centres_for_delegate_self_registration_should_not_contain_a_centre_where_a_delegate_cannot_self_register()
         {
             // When
-            var result = centresDataService.GetActiveCentresAlphabetical().ToList();
+            var result = centresDataService.GetActiveCentresForDelegateSelfRegistrationAlphabetical().ToList();
 
             // Then
             result.Contains((4, "Brighton and Sussex University Hospitals NHS Trust"))
@@ -249,7 +250,6 @@
                 const string bannerText = "Test banner text";
                 var signature = new byte[100];
                 var logo = new byte[200];
-
 
                 // When
                 centresDataService.UpdateCentreDetails(2, notifyEmail, bannerText, signature, logo);
