@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -147,6 +149,102 @@
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
             result.ErrorMessage.Should().Be("What's required is required");
+        }
+
+        [TestCase(true, false, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(true, true, false)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, true)]
+        [TestCase(true, true, true)]
+        public void ToValidationResultList_includes_one_error_for_each_erroneous_part_of_date(
+            bool hasDayError,
+            bool hasMonthError,
+            bool hasYearError
+        )
+        {
+            // Given
+            var dateValidationResult = new DateValidator.DateValidationResult(
+                hasDayError,
+                hasMonthError,
+                hasYearError,
+                "msg"
+            );
+            var errorMemberNames = new List<string>();
+            if (hasDayError)
+            {
+                errorMemberNames.Add("Day");
+            }
+
+            if (hasMonthError)
+            {
+                errorMemberNames.Add("Month");
+            }
+
+            if (hasYearError)
+            {
+                errorMemberNames.Add("Year");
+            }
+
+            // When
+            var result = dateValidationResult.ToValidationResultList("Day", "Month", "Year");
+
+            // Then
+            result.Should().HaveCount(errorMemberNames.Count);
+            errorMemberNames.ForEach(
+                memberName => result.Should().Contain(
+                    error => error.MemberNames.Count() == 1 && error.MemberNames.Contains(memberName)
+                )
+            );
+        }
+
+        [Test]
+        public void ToValidationResultList_includes_errors_in_appropriate_order()
+        {
+            // Given
+            var dateValidationResult = new DateValidator.DateValidationResult(true, true, true, "msg");
+
+            // When
+            var result = dateValidationResult.ToValidationResultList("Day", "Month", "Year");
+
+            // Then
+            result[0].MemberNames.Should().Contain("Day");
+            result[1].MemberNames.Should().Contain("Month");
+            result[2].MemberNames.Should().Contain("Year");
+        }
+
+        [Test]
+        public void ToValidationResultList_only_includes_message_for_first_erroneous_part_of_date()
+        {
+            // Given
+            const string errorMessage = "msg";
+            var dateValidationResult = new DateValidator.DateValidationResult(false, true, true, errorMessage);
+
+            // When
+            var result = dateValidationResult.ToValidationResultList("Day", "Month", "Year");
+
+            // Then
+            result[0].ErrorMessage.Should().Be(errorMessage);
+            result[1].ErrorMessage.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void ToValidationResultList_uses_correct_member_names_for_errors()
+        {
+            // Given
+            var dateValidationResult = new DateValidator.DateValidationResult(true, true, true, "msg");
+            const string dayId = "TheDay";
+            const string monthId = "TheMonth";
+            const string yearId = "TheYear";
+
+            // When
+            var result = dateValidationResult.ToValidationResultList(dayId, monthId, yearId);
+
+            // Then
+            result[0].MemberNames.Should().Contain(dayId);
+            result[1].MemberNames.Should().Contain(monthId);
+            result[2].MemberNames.Should().Contain(yearId);
         }
     }
 }
