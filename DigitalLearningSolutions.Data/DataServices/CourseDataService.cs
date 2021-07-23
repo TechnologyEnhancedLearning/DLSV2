@@ -200,7 +200,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         pr.CompleteByDate AS CompleteBy,
                         pr.Completed AS Completed,
                         pr.Evaluated AS Evaluated,
-                        pr.EnrollmentMethodID AS EnrollmentMethodId,
+                        pr.EnrollmentMethodID AS EnrolmentMethodId,
                         pr.LoginCount,
                         pr.Duration AS LearningTime,
                         pr.DiagnosticScore,

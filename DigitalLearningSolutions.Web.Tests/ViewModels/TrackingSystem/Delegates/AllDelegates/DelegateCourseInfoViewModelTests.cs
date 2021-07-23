@@ -49,13 +49,13 @@
         )
         {
             // Given
-            var info = new DelegateCourseInfo { EnrollmentMethodId = enrollmentMethodId };
+            var info = new DelegateCourseInfo { EnrolmentMethodId = enrollmentMethodId };
 
             // When
             var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
 
             // Then
-            model.EnrollmentMethod.Should().Be(enrollmentMethod);
+            model.EnrolmentMethod.Should().Be(enrollmentMethod);
         }
 
         [TestCase(0, 0, null)]

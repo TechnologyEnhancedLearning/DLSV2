@@ -16,7 +16,7 @@
             DateTime? completeBy,
             DateTime? completed,
             DateTime? evaluated,
-            int enrollmentMethodId,
+            int enrolmentMethodId,
             int loginCount,
             int learningTime,
             int? diagnosticScore,
@@ -35,7 +35,7 @@
             CompleteBy = completeBy;
             Completed = completed;
             Evaluated = evaluated;
-            EnrollmentMethodId = enrollmentMethodId;
+            EnrolmentMethodId = enrolmentMethodId;
             LoginCount = loginCount;
             LearningTime = learningTime;
             DiagnosticScore = diagnosticScore;
@@ -54,7 +54,7 @@
         public DateTime? CompleteBy { get; set; }
         public DateTime? Completed { get; set; }
         public DateTime? Evaluated { get; set; }
-        public int EnrollmentMethodId { get; set; }
+        public int EnrolmentMethodId { get; set; }
         public int LoginCount { get; set; }
         public int LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }

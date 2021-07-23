@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             CompleteBy = info.CompleteBy?.ToString("dd/MM/yyyy");
             Completed = info.Completed?.ToString("dd/MM/yyyy");
             Evaluated = info.Evaluated?.ToString("dd/MM/yyyy");
-            EnrollmentMethod = info.EnrollmentMethodId switch
+            EnrolmentMethod = info.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
                 2 => "Administrator",
@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public string? CompleteBy { get; set; }
         public string? Completed { get; set; }
         public string? Evaluated { get; set; }
-        public string EnrollmentMethod { get; set; }
+        public string EnrolmentMethod { get; set; }
         public int LoginCount { get; set; }
         public string LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }
