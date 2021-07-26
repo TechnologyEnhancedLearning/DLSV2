@@ -80,5 +80,38 @@
             // Then
             model.PassRate.Should().Be(passRate);
         }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_without_customisation_name_sets_course_name_correctly()
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                ApplicationName = "my application", CustomisationName = ""
+            };
+
+            // When
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+
+            // Then
+            model.CourseName.Should().Be("my application");
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_with_customisation_name_sets_course_name_correctly()
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                ApplicationName = "my application",
+                CustomisationName = "my customisation"
+            };
+
+            // When
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+
+            // Then
+            model.CourseName.Should().Be("my application - my customisation");
+        }
     }
 }

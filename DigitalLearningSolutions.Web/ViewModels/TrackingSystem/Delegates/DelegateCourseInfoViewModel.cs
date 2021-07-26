@@ -59,6 +59,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
 
+        public string CourseName =>
+            ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");
+
         public string? PassRate =>
             TotalAttempts != 0 ? Math.Round(100 * AttemptsPassed / (double)TotalAttempts) + "%" : null;
     }
