@@ -257,38 +257,11 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             const int categoryId = 0;
             var fixedCreationDateTime = DateTime.UtcNow;
-            var expectedCourseDetails = new CourseDetails
-            {
-                CustomisationId = 100,
-                CentreId = 101,
-                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
-                CustomisationName = "Standard",
-                CurrentVersion = 12,
-                CreatedTime = fixedCreationDateTime,
-                LastAccessed = new DateTime(2014, 03, 31, 13, 00, 23, 457),
-                Password = null,
-                NotificationEmails = null,
-                PlAssess = false,
-                IsAssessed = true,
-                TutCompletionThreshold = 100,
-                DiagAssess = false,
-                DiagCompletionThreshold = 85,
-                SelfRegister = true,
-                DiagObjSelect = true,
-                HideInLearnerPortal = false,
-                Active = false,
-                DelegateCount = 25,
-                CompletedCount = 5,
-                CompleteWithinMonths = 0,
-                ValidityMonths = 0,
-                Mandatory = false,
-                AutoRefresh = false,
-                RefreshToCustomisationId = 0,
-                RefreshToApplicationName = null,
-                RefreshToCustomisationName = null,
-                AutoRefreshMonths = 0,
-                ApplyLpDefaultsToSelfEnrol = false
-            };
+            var expectedLastAccess = new DateTime(2014, 03, 31, 13, 00, 23, 457);
+            var expectedCourseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
+                createdTime: fixedCreationDateTime,
+                lastAccessed: expectedLastAccess
+            );
 
             // When
             var result =

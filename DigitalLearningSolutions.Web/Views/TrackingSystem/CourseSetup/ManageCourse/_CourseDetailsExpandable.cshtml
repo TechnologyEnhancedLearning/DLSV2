@@ -21,7 +21,9 @@
           <dt class="nhsuk-summary-list__key">
             Password
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.Password" />
+          <dd class="nhsuk-summary-list__value">
+            @Model.Password
+          </dd>
         }
       </div>
 
@@ -37,7 +39,9 @@
           <dt class="nhsuk-summary-list__key">
             Course completion notification email
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.NotificationEmails" />
+          <dd class="nhsuk-summary-list__value">
+            @Model.NotificationEmails
+          </dd>
         }
       </div>
 

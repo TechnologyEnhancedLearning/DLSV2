@@ -31,18 +31,14 @@
         <dt class="nhsuk-summary-list__key">
           Mandatory
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.Mandatory ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.Mandatory"/>
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Auto-refresh
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.AutoRefresh ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.AutoRefresh" />
       </div>
 
       @if (Model.AutoRefresh) {
@@ -75,7 +71,7 @@
             Apply to self-enrolments
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @(Model.ApplyLpDefaultsToSelfEnrol ? "Yes" : "No")
+            <partial name="_SummaryBooleanField" model="Model.ApplyLpDefaultsToSelfEnrol"/>
           </dd>
         </div>
       }

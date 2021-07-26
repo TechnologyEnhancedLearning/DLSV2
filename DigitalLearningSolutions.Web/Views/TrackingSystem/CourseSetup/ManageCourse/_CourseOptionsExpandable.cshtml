@@ -14,36 +14,28 @@
         <dt class="nhsuk-summary-list__key">
           Active
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.Active ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.Active" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Allow self-enrolment
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.AllowSelfEnrolment ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.AllowSelfEnrolment" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Hide in Learning Portal
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.HideInLearningPortal ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.HideInLearningPortal" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Allow diagnostic objective selection
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.DiagnosticObjectiveSelection ? "Yes" : "No")
-        </dd>
+        <partial name="_SummaryBooleanField" model="Model.DiagnosticObjectiveSelection" />
       </div>
     </dl>
 
