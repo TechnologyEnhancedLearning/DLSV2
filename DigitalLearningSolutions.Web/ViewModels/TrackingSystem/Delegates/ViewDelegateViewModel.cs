@@ -7,16 +7,16 @@
     {
         public ViewDelegateViewModel(
             DelegateInfoViewModel delegateInfoViewModel,
-            IEnumerable<DelegateCourseInfoViewModel> courseInfoViewModelList
+            IEnumerable<DelegateCourseInfoViewModel> courseInfoViewModels
         )
         {
             DelegateInfo = delegateInfoViewModel;
-            CourseInfoList = courseInfoViewModelList.ToList();
+            DelegateCourses = courseInfoViewModels.ToList();
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
 
-        public List<DelegateCourseInfoViewModel> CourseInfoList { get; set; }
+        public List<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
 
         public string RegStatusTagName =>
             DelegateInfo.IsSelfReg

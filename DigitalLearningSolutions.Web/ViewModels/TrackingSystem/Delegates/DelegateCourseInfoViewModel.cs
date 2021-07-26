@@ -7,9 +7,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 
     public class DelegateCourseInfoViewModel
     {
+        private const string DateFormat = "dd/MM/yyyy";
+
         public DelegateCourseInfoViewModel(
             DelegateCourseInfo info,
-            List<CustomPromptWithAnswer>? customPromptsWithAnswers,
+            List<CustomPromptWithAnswer>? courseCustomPromptsWithAnswers,
             (int totalAttempts, int attemptsPassed) attemptStats
         )
         {
@@ -17,11 +19,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
             Supervisor = info.Supervisor;
-            Enrolled = info.Enrolled.ToString("dd/MM/yyyy");
-            LastUpdated = info.LastUpdated.ToString("dd/MM/yyyy");
-            CompleteBy = info.CompleteBy?.ToString("dd/MM/yyyy");
-            Completed = info.Completed?.ToString("dd/MM/yyyy");
-            Evaluated = info.Evaluated?.ToString("dd/MM/yyyy");
+            Enrolled = info.Enrolled.ToString(DateFormat);
+            LastUpdated = info.LastUpdated.ToString(DateFormat);
+            CompleteBy = info.CompleteBy?.ToString(DateFormat);
+            Completed = info.Completed?.ToString(DateFormat);
+            Evaluated = info.Evaluated?.ToString(DateFormat);
             EnrolmentMethod = info.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
@@ -35,7 +37,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
 
-            CustomPromptsWithAnswers = customPromptsWithAnswers ?? new List<CustomPromptWithAnswer>();
+            CourseCustomPromptsWithAnswers = courseCustomPromptsWithAnswers ?? new List<CustomPromptWithAnswer>();
             TotalAttempts = attemptStats.totalAttempts;
             AttemptsPassed = attemptStats.attemptsPassed;
         }
@@ -55,7 +57,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
 
-        public List<CustomPromptWithAnswer> CustomPromptsWithAnswers { get; set; }
+        public List<CustomPromptWithAnswer> CourseCustomPromptsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
 

@@ -1,4 +1,4 @@
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model DelegateCourseInfoViewModel
 
 <div class="nhsuk-expander-group" id="@Model.CustomisationId-card">
@@ -125,12 +125,12 @@
           </div>
         }
 
-        @foreach (var customPromptWithAnswer in Model.CustomPromptsWithAnswers) {
+        @foreach (var courseCustomPrompt in Model.CourseCustomPromptsWithAnswers) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
-              @customPromptWithAnswer.CustomPromptText
+              @courseCustomPrompt.CustomPromptText
             </dt>
-            <partial name="_SummaryFieldValue" model="@customPromptWithAnswer.Answer" />
+            <partial name="_SummaryFieldValue" model="@courseCustomPrompt.Answer" />
             <dd class="nhsuk-summary-list__actions"></dd>
           </div>
         }

@@ -12,7 +12,7 @@
         private readonly List<CustomFieldViewModel> customFields = new List<CustomFieldViewModel>();
 
         private readonly List<DelegateCourseInfoViewModel>
-            delegateCourseInfos = new List<DelegateCourseInfoViewModel>();
+            delegateCourses = new List<DelegateCourseInfoViewModel>();
 
         [Test]
         public void ViewDelegateViewModel_sets_active_tag_name_correctly()
@@ -24,11 +24,11 @@
             // When
             var activeModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(activeUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
             var inactiveModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(inactiveUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
 
             // Then
@@ -46,11 +46,11 @@
             // When
             var pwSetModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(pwSetUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
             var pwNotSetModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(pwNotSetUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
 
             // Then
@@ -69,14 +69,14 @@
             // When
             var selfRegModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(selfRegUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
             var selfRegExternalModel = new ViewDelegateViewModel(
                 new DelegateInfoViewModel(selfRegExternalUser, customFields),
-                delegateCourseInfos
+                delegateCourses
             );
             var centreRegModel =
-                new ViewDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields), delegateCourseInfos);
+                new ViewDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields), delegateCourses);
 
             // Then
             selfRegModel.RegStatusTagName.Should().Be("Self registered");

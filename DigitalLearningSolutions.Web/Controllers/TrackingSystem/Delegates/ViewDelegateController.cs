@@ -45,7 +45,7 @@
             var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
             var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
-            var courseInfoViewModelList = courseDataService.GetDelegateCoursesInfo(delegateId)
+            var courseInfoViewModels = courseDataService.GetDelegateCoursesInfo(delegateId)
                 .Select(
                     info =>
                     {
@@ -61,7 +61,7 @@
                     }
                 );
 
-            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModelList);
+            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
             return View(model);
         }
     }

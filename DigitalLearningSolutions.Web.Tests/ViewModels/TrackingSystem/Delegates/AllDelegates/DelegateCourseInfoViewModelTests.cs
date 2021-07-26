@@ -24,8 +24,11 @@
             var evaluatedDate = new DateTime(2021, 05, 5);
             var info = new DelegateCourseInfo
             {
-                Enrolled = enrolledDate, LastUpdated = updatedDate, CompleteBy = completeByDate,
-                Completed = completedDate, Evaluated = evaluatedDate
+                Enrolled = enrolledDate,
+                LastUpdated = updatedDate,
+                CompleteBy = completeByDate,
+                Completed = completedDate,
+                Evaluated = evaluatedDate
             };
 
             // When
