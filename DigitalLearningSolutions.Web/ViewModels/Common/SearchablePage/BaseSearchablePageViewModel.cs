@@ -11,7 +11,7 @@
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
 
-        public readonly string? FilterString;
+        public readonly string? FilterBy;
 
         private readonly int itemsPerPage;
 
@@ -29,14 +29,14 @@
             bool filterEnabled,
             string? sortBy = null,
             string? sortDirection = null,
-            string? filterString = null,
+            string? filterBy = null,
             int itemsPerPage = 10
         )
         {
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
-            FilterString = filterString;
+            FilterBy = filterBy;
             Page = page;
             SortEnabled = sortEnabled;
             FilterEnabled = filterEnabled;

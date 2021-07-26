@@ -82,7 +82,10 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
-                        ISNULL(cc.CategoryName, 'All') AS CategoryName,
+                        CASE
+                            WHEN au.CategoryID = 0 THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
@@ -156,7 +159,10 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
-                        ISNULL(cc.CategoryName, 'All') AS CategoryName,
+                        CASE
+                            WHEN au.CategoryID = 0 THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
@@ -234,7 +240,10 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
-                        ISNULL(cc.CategoryName, 'All') AS CategoryName,
+                        CASE
+                            WHEN au.CategoryID = 0 THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
@@ -322,7 +331,10 @@
                         au.SummaryReports,
                         au.UserAdmin AS IsUserAdmin,
                         au.CategoryID,
-                        ISNULL(cc.CategoryName, 'All') AS CategoryName,
+                        CASE
+                            WHEN au.CategoryID = 0 THEN 'All'
+                            ELSE cc.CategoryName
+                        END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,

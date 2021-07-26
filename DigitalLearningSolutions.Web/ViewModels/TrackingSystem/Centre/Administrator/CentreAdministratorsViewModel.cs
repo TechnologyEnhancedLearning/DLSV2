@@ -13,9 +13,9 @@
             IEnumerable<AdminUser> adminUsers,
             IEnumerable<string> categories,
             string? searchString,
-            string? filterString,
+            string? filterBy,
             int page
-        ) : base(searchString, page, false, true, filterString: filterString)
+        ) : base(searchString, page, false, true, filterBy: filterBy)
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -24,7 +24,7 @@
                 Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterString).ToList();
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);

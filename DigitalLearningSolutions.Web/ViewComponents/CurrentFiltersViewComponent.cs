@@ -12,7 +12,7 @@
             BaseSearchablePageViewModel searchablePageViewModel
         )
         {
-            var currentFilters = searchablePageViewModel.FilterString?.Split(FilteringHelper.FilterSeparator).ToList() ?? new List<string>();
+            var currentFilters = searchablePageViewModel.FilterBy?.Split(FilteringHelper.FilterSeparator).ToList() ?? new List<string>();
 
             var appliedFilters = currentFilters.Select(
                 currentFilter => PopulateAppliedFilterViewModel(searchablePageViewModel, currentFilter)

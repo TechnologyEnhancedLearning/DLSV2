@@ -18,7 +18,7 @@
     <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
       <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
         <input type="hidden" name="searchString" value="@Model.SearchString" />
-        <input type="hidden" name="filterBy" value="@Model.FilterString" />
+        <input type="hidden" name="filterBy" value="@Model.FilterBy" />
         @if (Model.SortEnabled) {
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />

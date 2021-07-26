@@ -4,7 +4,7 @@
 <form method="get" role="search">
   @if (Model.SearchablePageViewModel.FilterEnabled)
   {
-    <input type="hidden" id="filter-by" name="filterBy" value="@Model.SearchablePageViewModel.FilterString" />
+    <input type="hidden" id="filter-by" name="filterBy" value="@Model.SearchablePageViewModel.FilterBy" />
   }
   @if (Model.SearchablePageViewModel.SortEnabled) {
     <input type="hidden" id="select-sort-by" name="sortBy" value="@Model.SearchablePageViewModel.SortBy" />
