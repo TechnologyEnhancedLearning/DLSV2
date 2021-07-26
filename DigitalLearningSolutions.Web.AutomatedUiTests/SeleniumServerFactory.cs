@@ -39,6 +39,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             return WebHost.CreateDefaultBuilder(Array.Empty<string>())
                 .UseStartup<TStartup>()
                 .UseSerilog()
+                .UseUrls("http://127.0.0.1:0")
                 .ConfigureAppConfiguration(configBuilder =>
                 {
                     var jsonConfigSources = configBuilder.Sources
