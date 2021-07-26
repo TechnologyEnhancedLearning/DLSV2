@@ -21,7 +21,7 @@
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
         private readonly ISectionContentDataService sectionContentDataService;
-        private readonly ITutorialContentService tutorialContentService;
+        private readonly ITutorialContentDataService tutorialContentDataService;
         private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
         private readonly IPostLearningAssessmentService postLearningAssessmentService;
@@ -33,7 +33,7 @@
             IConfigService configService,
             ICourseContentService courseContentService,
             ISectionContentDataService sectionContentDataService,
-            ITutorialContentService tutorialContentService,
+            ITutorialContentDataService tutorialContentDataService,
             IDiagnosticAssessmentDataService diagnosticAssessmentDataService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
             IPostLearningAssessmentService postLearningAssessmentService,
@@ -45,7 +45,7 @@
             this.config = config;
             this.configService = configService;
             this.courseContentService = courseContentService;
-            this.tutorialContentService = tutorialContentService;
+            this.tutorialContentDataService = tutorialContentDataService;
             this.sessionService = sessionService;
             this.sectionContentDataService = sectionContentDataService;
             this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
@@ -386,7 +386,7 @@
             var centreId = User.GetCentreId();
 
             var tutorialInformation =
-                tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             if (tutorialInformation == null)
             {
@@ -423,7 +423,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             if (tutorialContent?.TutorialPath == null)
             {
@@ -466,7 +466,7 @@
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
 
-            var tutorialVideo = tutorialContentService.GetTutorialVideo(customisationId, sectionId, tutorialId);
+            var tutorialVideo = tutorialContentDataService.GetTutorialVideo(customisationId, sectionId, tutorialId);
 
             if (tutorialVideo == null)
             {
