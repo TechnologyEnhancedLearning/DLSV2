@@ -46,7 +46,7 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
   </div>
 </details>
-<h2>Self Assessment Outcome</h2>
+<h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
 <dl class="nhsuk-summary-list">
 
   <div class="nhsuk-summary-list__row">
@@ -134,7 +134,7 @@
         <fieldset class="nhsuk-fieldset">
           <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
             <h2 class="nhsuk-fieldset__heading">
-              Review Self Assessment Outcome
+              Review @Model.Competency.Vocabulary Self Assessment Result
             </h2>
           </legend>
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
@@ -146,7 +146,7 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="cb-sign-off" name="SignedOff" asp-for="SignedOff" type="checkbox">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-                Sign-off self-assessment outcome
+                Sign-off self-assessment result
               </label>
               <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-sign-off-item-hint">
                 I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()

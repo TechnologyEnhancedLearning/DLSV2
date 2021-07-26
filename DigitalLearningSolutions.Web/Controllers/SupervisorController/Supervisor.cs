@@ -189,7 +189,39 @@
             };
             return RedirectToAction("ReviewCompetencySelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "View", resultId = resultId });
         }
-        public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/VerifyMultiple/")]
+        public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId).ToList();
+            var model = new ReviewSelfAssessmentViewModel()
+            {
+                SupervisorDelegateDetail = superviseDelegate,
+                DelegateSelfAssessment = delegateSelfAssessment,
+                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+            };
+            return View("VerifyMultipleResults", model);
+        }
+        [HttpPost]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/VerifyMultiple/")]
+        public IActionResult SubmitVerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId, List<int> resultChecked)
+        {
+            int countResults = 0;
+            foreach (var result in resultChecked)
+            {
+                if (supervisorService.UpdateSelfAssessmentResultSupervisorVerifications(result, null, true, GetAdminID()))
+                { countResults += 1; }
+            }
+            if (countResults > 0)
+            {
+                //Send notification
+                frameworkNotificationService.SendSupervisorMultipleResultsReviewed(GetAdminID(), supervisorDelegateId, candidateAssessmentId, countResults);
+            }
+            return RedirectToAction("ReviewDelegateSelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "Review" });
+        }
+            public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             TempData.Clear();
             var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile();
