@@ -157,7 +157,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialContentService, TutorialContentService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<ISectionContentService, SectionContentService>();
+            services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();

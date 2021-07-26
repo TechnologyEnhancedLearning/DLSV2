@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Data;
@@ -7,17 +7,17 @@
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using Microsoft.Extensions.Logging;
 
-    public interface ISectionContentService
+    public interface ISectionContentDataService
     {
         SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
     }
 
-    public class SectionContentService : ISectionContentService
+    public class SectionContentDataService : ISectionContentDataService
     {
         private readonly IDbConnection connection;
-        private readonly ILogger<SectionContentService> logger;
+        private readonly ILogger<SectionContentDataService> logger;
 
-        public SectionContentService(IDbConnection connection, ILogger<SectionContentService> logger)
+        public SectionContentDataService(IDbConnection connection, ILogger<SectionContentDataService> logger)
         {
             this.connection = connection;
             this.logger = logger;
@@ -171,7 +171,7 @@
                     else if (section.DiagnosticStatus)
                     {
                         sectionContent.DiagnosticStatus = section.DiagnosticStatus;
-                        sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, section.DiagnosticAttempts);
+                        sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, (int)section.DiagnosticAttempts);
                         sectionContent.SectionScore += section.SectionScore;
                         sectionContent.MaxSectionScore += section.MaxSectionScore;
                     }
