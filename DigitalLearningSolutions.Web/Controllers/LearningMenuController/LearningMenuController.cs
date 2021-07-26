@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningMenu;
@@ -19,7 +20,7 @@
         private readonly IConfigService configService;
         private readonly ICourseContentService courseContentService;
         private readonly ISessionService sessionService;
-        private readonly ISectionContentService sectionContentService;
+        private readonly ISectionContentDataService sectionContentDataService;
         private readonly ITutorialContentService tutorialContentService;
         private readonly IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private readonly IDiagnosticAssessmentService diagnosticAssessmentService;
@@ -31,7 +32,7 @@
             IConfiguration config,
             IConfigService configService,
             ICourseContentService courseContentService,
-            ISectionContentService sectionContentService,
+            ISectionContentDataService sectionContentDataService,
             ITutorialContentService tutorialContentService,
             IDiagnosticAssessmentDataService diagnosticAssessmentDataService,
             IDiagnosticAssessmentService diagnosticAssessmentService,
@@ -46,7 +47,7 @@
             this.courseContentService = courseContentService;
             this.tutorialContentService = tutorialContentService;
             this.sessionService = sessionService;
-            this.sectionContentService = sectionContentService;
+            this.sectionContentDataService = sectionContentDataService;
             this.diagnosticAssessmentDataService = diagnosticAssessmentDataService;
             this.diagnosticAssessmentService = diagnosticAssessmentService;
             this.postLearningAssessmentService = postLearningAssessmentService;
@@ -161,7 +162,7 @@
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             var centreId = User.GetCentreId();
-            var sectionContent = sectionContentService.GetSectionContent(customisationId, candidateId, sectionId);
+            var sectionContent = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
             if (sectionContent == null)
             {
