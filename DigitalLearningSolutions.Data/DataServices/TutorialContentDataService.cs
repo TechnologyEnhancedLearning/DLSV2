@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
-    public interface ITutorialContentService
+    public interface ITutorialContentDataService
     {
         TutorialInformation? GetTutorialInformation(
             int candidateId,
@@ -17,11 +17,11 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
     }
 
-    public class TutorialContentService : ITutorialContentService
+    public class TutorialContentDataService : ITutorialContentDataService
     {
         private readonly IDbConnection connection;
 
-        public TutorialContentService(IDbConnection connection)
+        public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

@@ -17,7 +17,7 @@
     {
         private LearningMenuController controller;
         private ICourseContentService courseContentService;
-        private ITutorialContentService tutorialContentService;
+        private ITutorialContentDataService tutorialContentDataService;
         private ISessionService sessionService;
         private ISectionContentDataService sectionContentDataService;
         private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
@@ -40,7 +40,7 @@
             config = A.Fake<IConfiguration>();
             configService = A.Fake<IConfigService>();
             courseContentService = A.Fake<ICourseContentService>();
-            tutorialContentService = A.Fake<ITutorialContentService>();
+            tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             sessionService = A.Fake<ISessionService>();
             sectionContentDataService = A.Fake<ISectionContentDataService>();
             diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
@@ -61,7 +61,7 @@
                 configService,
                 courseContentService,
                 sectionContentDataService,
-                tutorialContentService,
+                tutorialContentDataService,
                 diagnosticAssessmentDataService,
                 diagnosticAssessmentService,
                 postLearningAssessmentService,
