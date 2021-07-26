@@ -88,7 +88,6 @@
                new { adminId }
            );
         }
-
         public RoleProfileBase GetRoleProfileBaseById(int roleProfileId, int adminId)
         {
             return connection.Query<RoleProfileBase>(

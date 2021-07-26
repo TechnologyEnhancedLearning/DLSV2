@@ -25,5 +25,6 @@
         public string? SupervisorComments { get; set; }
         public bool? SignedOff { get; set; }
         public bool? UserIsVerifier { get; set; }
+        public int ResultRAG { get; set; }
     }
 }

@@ -37,7 +37,21 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
   </div>
 </details>
-<h2>@Model.DelegateSelfAssessment.RoleName</h2>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds">
+    <h2>@Model.DelegateSelfAssessment.RoleName</h2>
+  </div>
+  <div class="nhsuk-grid-column-one-third">
+    @if (Model.DelegateSelfAssessment.VerificationRequested > 0)
+    {
+      <a role="button" asp-action="SubmitProfileAssessmentReview" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Review profile assessment</a>
+    }
+    @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
+    {
+      <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Verify multiple results</a>
+    }
+  </div>
+</div>
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
