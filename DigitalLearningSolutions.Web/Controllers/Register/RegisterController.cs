@@ -1,8 +1,9 @@
-namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -13,6 +14,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement;
 
     public class RegisterController : Controller
     {
@@ -20,6 +22,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly CustomPromptHelper customPromptHelper;
+        private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserService userService;
@@ -30,7 +33,8 @@ namespace DigitalLearningSolutions.Web.Controllers
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserService userService,
-            CustomPromptHelper customPromptHelper
+            CustomPromptHelper customPromptHelper,
+            IFeatureManager featureManager
         )
         {
             this.centresDataService = centresDataService;
@@ -39,6 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.cryptoService = cryptoService;
             this.userService = userService;
             this.customPromptHelper = customPromptHelper;
+            this.featureManager = featureManager;
         }
 
         public IActionResult Index(int? centreId = null)
@@ -155,12 +160,12 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpGet]
         public IActionResult Password()
         {
-            return View(new PasswordViewModel());
+            return View(new ConfirmPasswordViewModel());
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult Password(PasswordViewModel model)
+        public IActionResult Password(ConfirmPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -186,7 +191,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
-        public IActionResult Summary(SummaryViewModel model)
+        public async Task<IActionResult> Summary(SummaryViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationData>()!;
 
@@ -204,13 +209,15 @@ namespace DigitalLearningSolutions.Web.Controllers
             }
 
             var centreId = (int)data.Centre;
-            var baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            var refactoredTrackingSystemEnabled =
+                await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem);
+
             var userIp = Request.GetUserIpAddressFromRequest();
             var (candidateNumber, approved) =
                 registrationService.RegisterDelegate(
                     RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
-                    baseUrl,
-                    userIp
+                    userIp,
+                    refactoredTrackingSystemEnabled
                 );
 
             if (candidateNumber == "-1")
@@ -324,7 +331,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             model.CentreName = model.Centre.HasValue ? centresDataService.GetCentreName(model.Centre.Value) : null;
             model.CentreOptions = SelectListHelper.MapOptionsToSelectListItems(
-                centresDataService.GetActiveCentresAlphabetical(),
+                centresDataService.GetCentresForDelegateSelfRegistrationAlphabetical(),
                 model.Centre
             );
         }

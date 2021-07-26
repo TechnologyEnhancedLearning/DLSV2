@@ -27,6 +27,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.FeatureManagement;
     using Serilog;
 
     public class Startup
@@ -78,6 +79,10 @@ namespace DigitalLearningSolutions.Web
                         policy => CustomPolicies.ConfigurePolicyUserCentreManager(policy)
                     );
                     options.AddPolicy(
+                        CustomPolicies.UserSupervisor,
+                        policy => CustomPolicies.ConfigurePolicyUserSupervisor(policy)
+                    );
+					options.AddPolicy(
                         CustomPolicies.UserCentreAdminOrFrameworksAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
                     );
@@ -96,6 +101,8 @@ namespace DigitalLearningSolutions.Web
                 }
             );
 
+            services.AddFeatureManagement();
+
             var mvcBuilder = services
                 .AddControllersWithViews()
                 .AddRazorOptions(
@@ -105,6 +112,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CentreConfiguration/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -176,9 +184,11 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<IActivityService, ActivityService>();
-
+            services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
+            services.AddScoped<IRegionDataService, RegionDataService>();
             RegisterWebServiceFilters(services);
         }
 
@@ -194,7 +204,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
         }
 
-        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner)
+        public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
         {
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions

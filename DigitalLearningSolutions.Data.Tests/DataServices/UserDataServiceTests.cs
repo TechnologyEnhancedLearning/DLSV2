@@ -6,7 +6,6 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Mappers;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -441,20 +440,126 @@
             userCard.SelfReg.Should().BeFalse();
             userCard.ExternalReg.Should().BeFalse();
             userCard.AdminId.Should().BeNull();
+            userCard.AliasId.Should().BeNull();
+            userCard.JobGroupId.Should().Be(1);
         }
 
         [Test]
-        public void GetDelegateUserCardsByCentreId_populates_DelegateUserCard_admin_fields_correctly()
+        public void GetDelegateUserCardsByCentreId_populates_DelegateUserCard_fields_correctly()
+        {
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(101);
+
+            // Then
+            var userCard = userCards.Single(user => user.Id == 3);
+            userCard.Active.Should().BeTrue();
+            userCard.SelfReg.Should().BeFalse();
+            userCard.ExternalReg.Should().BeFalse();
+            userCard.AdminId.Should().Be(1);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(10);
+        }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_does_not_match_admin_if_not_admin_in_this_centre()
+        {
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(409);
+
+            // Then
+            var userCard = userCards.Single(user => user.Id == 268530);
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_does_not_match_admin_if_admin_email_address_is_blank()
         {
             // When
             var userCards = userDataService.GetDelegateUserCardsByCentreId(279);
 
             // Then
-            var userCard = userCards.Single(user => user.Id == 97055);
+            var userCard = userCards.First(user => user.EmailAddress == "");
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardsByCentreId_does_not_match_admin_if_password_does_not_match()
+        {
+            // When
+            var userCards = userDataService.GetDelegateUserCardsByCentreId(101);
+
+            // Then
+            var adminUser = userDataService.GetAdminUserById(1)!;
+            var userCard = userCards.Single(user => user.Id == 254480);
+            userCard.EmailAddress.Should().Be(adminUser.EmailAddress);
+            userCard.CentreId.Should().Be(adminUser.CentreId);
+            userCard.Password.Should().NotBe(adminUser.Password);
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_populates_DelegateUser_fields_correctly()
+        {
+            // Given
+            var expected = UserTestHelper.GetDefaultDelegateUser(
+                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
+                jobGroupName: "Nursing / midwifery"
+            );
+
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(2);
+
+            // Then
+            userCard.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_populates_DelegateUserCard_fields_correctly()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(3)!;
+
+            // Then
             userCard.Active.Should().BeTrue();
-            userCard.SelfReg.Should().BeTrue();
+            userCard.SelfReg.Should().BeFalse();
             userCard.ExternalReg.Should().BeFalse();
-            userCard.AdminId.Should().Be(74);
+            userCard.AdminId.Should().Be(1);
+            userCard.AliasId.Should().Be("");
+            userCard.JobGroupId.Should().Be(10);
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_does_not_match_admin_if_not_admin_in_this_centre()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(268530)!;
+
+            // Then
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_does_not_match_admin_if_admin_email_address_is_blank()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(41300)!;
+
+            // Then
+            userCard.AdminId.Should().BeNull();
+        }
+
+        [Test]
+        public void GetDelegateUserCardById_does_not_match_admin_if_password_does_not_match()
+        {
+            // When
+            var userCard = userDataService.GetDelegateUserCardById(254480)!;
+
+            // Then
+            var adminUser = userDataService.GetAdminUserById(1)!;
+            userCard.EmailAddress.Should().Be(adminUser.EmailAddress);
+            userCard.CentreId.Should().Be(adminUser.CentreId);
+            userCard.Password.Should().NotBe(adminUser.Password);
+            userCard.AdminId.Should().BeNull();
         }
     }
 }

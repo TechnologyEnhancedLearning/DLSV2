@@ -11,6 +11,7 @@
     {
         public AdminUser? GetAdminUserById(int id);
         public DelegateUser? GetDelegateUserById(int id);
+        public DelegateUserCard? GetDelegateUserCardById(int id);
         public List<AdminUser> GetAdminUsersByCentreId(int centreId);
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
         public AdminUser? GetAdminUserByUsername(string username);
@@ -139,6 +140,51 @@
             return user;
         }
 
+        public DelegateUserCard? GetDelegateUserCardById(int id)
+        {
+            var user = connection.Query<DelegateUserCard>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Approved,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupId,
+                        jg.JobGroupName,
+                        cd.SelfReg,
+                        cd.ExternalReg,
+                        cd.Active,
+                        (SELECT AdminID
+                         FROM AdminUsers au
+                         WHERE (au.Email = cd.EmailAddress
+                                OR au.Email = cd.AliasID)
+                         AND au.Password = cd.Password
+                         AND au.CentreID = cd.CentreID
+                         AND au.Email != ''
+                        ) AS AdminID,
+                        cd.AliasID
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.CandidateId = @id",
+                new { id }
+            ).SingleOrDefault();
+
+            return user;
+        }
+
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
             var users = connection.Query<AdminUser>(
@@ -204,14 +250,20 @@
                         cd.Answer4,
                         cd.Answer5,
                         cd.Answer6,
+                        cd.JobGroupId,
                         jg.JobGroupName,
                         cd.SelfReg,
                         cd.ExternalReg,
                         cd.Active,
                         (SELECT AdminID
                          FROM AdminUsers au
-                         WHERE au.Email = cd.EmailAddress AND au.CentreID = cd.CentreID
-                        ) AS AdminID
+                         WHERE (au.Email = cd.EmailAddress
+                                OR au.Email = cd.AliasID)
+                         AND au.Password = cd.Password
+                         AND au.CentreID = cd.CentreID
+                         AND au.Email != ''
+                        ) AS AdminID,
+                        cd.AliasID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID

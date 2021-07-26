@@ -22,24 +22,32 @@
     public class CourseDataService : ICourseDataService
     {
         private const string DelegateCountQuery =
-            @"(SELECT COUNT(CandidateID)
+            @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                WHERE pr.CustomisationID = cu.CustomisationID) AS DelegateCount";
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                WHERE pr.CustomisationID = cu.CustomisationID
+                AND can.CentreID = @centreId) AS DelegateCount";
 
         private const string CompletedCountQuery =
-            @"(SELECT COUNT(CandidateID)
+            @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL) AS CompletedCount";
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
+                AND can.CentreID = @centreId) AS CompletedCount";
 
         private const string AllAttemptsQuery =
-            @"(SELECT COUNT(AssessAttemptID)
+            @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL) AS AllAttempts";
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
+                AND can.CentreID = @centreId) AS AllAttempts";
 
         private const string AttemptsPassedQuery =
-            @"(SELECT COUNT(AssessAttemptID)
+            @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
-                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1) AS AttemptsPassed";
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
+                AND can.CentreID = @centreId) AS AttemptsPassed";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -162,10 +170,14 @@
                         {DelegateCountQuery},
                         {CompletedCountQuery},
                         {AllAttemptsQuery},
-                        {AttemptsPassedQuery}
+                        {AttemptsPassedQuery},
+                        cu.HideInLearnerPortal,
+                        cc.CategoryName,
+                        cu.LearningTimeMins AS LearningMinutes
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId

@@ -6,7 +6,9 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
@@ -28,7 +30,8 @@
                 delegateUser =>
                 {
                     var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    return new SearchableDelegateViewModel(delegateUser, customFields);
+                    var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
+                    return new SearchableDelegateViewModel(delegateInfoViewModel);
                 }
             );
             var model = new AllDelegatesViewModel(centreId, searchableDelegateViewModels);

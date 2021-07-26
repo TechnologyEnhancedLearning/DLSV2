@@ -18,7 +18,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ICentresDataService centresDataService = null!;
         private ICourseDataService courseDataService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private ISupervisorService supervisorService = null!;
         private INotificationService notificationService = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
         private IConfiguration config = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private const string BaseUrl = "https://www.dls.nhs.uk";
@@ -32,7 +34,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             centresDataService = A.Fake<ICentresDataService>();
             courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
+            supervisorService = A.Fake<ISupervisorService>();
             notificationService = A.Fake<INotificationService>();
+            frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
@@ -48,7 +52,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 centresDataService,
                 courseDataService,
                 selfAssessmentService,
+                supervisorService,
                 notificationService,
+                frameworkNotificationService,
                 logger,
                 config,
                 filteredApiHelperService

@@ -1,0 +1,67 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model MyAccountViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+    <h2 class="nhsuk-card__heading">
+      My Details
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            First name
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.FirstName" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Last name
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.Surname" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Email address
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.User" />
+        </div>
+
+        @if (Model.DelegateNumber != null) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Job group
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
+          </div>
+
+          foreach (var customField in Model.CustomFields) {
+            <partial name="../Shared/_CustomPromptSummaryListRow" model="@customField" />
+          }
+        }
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key profile-picture__label">
+            Profile picture (optional)
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @if (Model.ProfilePicture != null) {
+              <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfilePicture)" alt="Profile Picture" />
+            } else {
+              <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
+            }
+          </dd>
+        </div>
+      </dl>
+
+      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" role="button">
+        Edit details
+      </a>
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ChangePassword" asp-action="Index" role="button">
+        Change password
+      </a>
+    </div>
+  </div>
+</div>

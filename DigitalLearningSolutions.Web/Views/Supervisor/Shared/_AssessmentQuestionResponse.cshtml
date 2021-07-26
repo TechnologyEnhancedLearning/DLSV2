@@ -1,0 +1,30 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
+@model AssessmentQuestion
+
+@if (Model.Result == null)
+{
+  <span class="nhsuk-u-font-weight-bold status-tag">No response</span>
+}
+else
+{
+  @if (Model.LevelDescriptors != null)
+
+  {
+    foreach (var levelDescriptor in Model.LevelDescriptors)
+    {
+      if (levelDescriptor.LevelValue == Model.Result)
+      {
+<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
+  @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "not meeting role expectations" : Model.ResultRAG == 2 ? "partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+</span>
+        break;
+      }
+    }
+  }
+  else
+  {
+<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
+  @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "(not meeting role expectations" : Model.ResultRAG == 2 ? " partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+</span>
+  }
+}

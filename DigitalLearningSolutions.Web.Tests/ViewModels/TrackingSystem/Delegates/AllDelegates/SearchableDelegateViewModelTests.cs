@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -20,8 +19,8 @@
             var inactiveUser = new DelegateUserCard { Active = false };
 
             // When
-            var activeModel = new SearchableDelegateViewModel(activeUser, customFields);
-            var inactiveModel = new SearchableDelegateViewModel(inactiveUser, customFields);
+            var activeModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(activeUser, customFields));
+            var inactiveModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(inactiveUser, customFields));
 
             // Then
             activeModel.ActiveTagName.Should().Be("Active");
@@ -36,8 +35,8 @@
             var pwNotSetUser = new DelegateUserCard { Password = null };
 
             // When
-            var pwSetModel = new SearchableDelegateViewModel(pwSetUser, customFields);
-            var pwNotSetModel = new SearchableDelegateViewModel(pwNotSetUser, customFields);
+            var pwSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwSetUser, customFields));
+            var pwNotSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwNotSetUser, customFields));
 
             // Then
             pwSetModel.PasswordTagName.Should().Be("Password set");
@@ -53,28 +52,16 @@
             var centreRegUser = new DelegateUserCard { SelfReg = false };
 
             // When
-            var selfRegModel = new SearchableDelegateViewModel(selfRegUser, customFields);
-            var selfRegExternalModel = new SearchableDelegateViewModel(selfRegExternalUser, customFields);
-            var centreRegModel = new SearchableDelegateViewModel(centreRegUser, customFields);
+            var selfRegModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegUser, customFields));
+            var selfRegExternalModel =
+                new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegExternalUser, customFields));
+            var centreRegModel =
+                new SearchableDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields));
 
             // Then
             selfRegModel.RegStatusTagName.Should().Be("Self registered");
             selfRegExternalModel.RegStatusTagName.Should().Be("Self registered (External)");
             centreRegModel.RegStatusTagName.Should().Be("Registered by centre");
-        }
-
-        [Test]
-        public void SearchableDelegateViewModel_sets_reg_date_string_correctly()
-        {
-            // Given
-            var date = new DateTime(2021, 05, 13);
-            var user = new DelegateUserCard { DateRegistered = date };
-
-            // When
-            var model = new SearchableDelegateViewModel(user, customFields);
-
-            // Then
-            model.RegistrationDate.Should().Be("13/05/2021");
         }
     }
 }

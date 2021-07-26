@@ -31,15 +31,25 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
         [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
+        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreDetails", "Edit centre details")]
         [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
-        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails", "Edit centre content on DLS website")]
+        [InlineData(
+            "/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails",
+            "Edit centre content on DLS website"
+        )]
         [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts", "Manage delegate registration prompts")]
-        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove", "Remove delegate registration prompt")]
+        [InlineData(
+            "/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove",
+            "Remove delegate registration prompt"
+        )]
         [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
+        [InlineData("/TrackingSystem/CourseSetup/10716/AdminFields", "Manage course admin fields")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
+        [InlineData("/TrackingSystem/Delegates/View/1", "xxxxx xxxxxxxxx")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
+        [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]

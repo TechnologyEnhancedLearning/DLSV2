@@ -197,8 +197,10 @@ function createCourseCards() {
             <p name="passed-sections">0/6</p>
           </div>
         </div>
+<div class="nhsuk-pagination" role="navigation" aria-label="Pagination">
         <div class="nhsuk-pagination-item--previous"></div>
         <div class="nhsuk-pagination-item--next"></div>
+</div>
       </body>
       </html>
     `).window.document;

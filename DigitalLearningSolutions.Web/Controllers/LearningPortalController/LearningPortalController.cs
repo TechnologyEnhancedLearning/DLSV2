@@ -15,7 +15,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICentresDataService centresDataService;
         private readonly ICourseDataService courseDataService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ISupervisorService supervisorService;
         private readonly INotificationService notificationService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly IConfiguration config;
         private readonly IFilteredApiHelperService filteredApiHelperService;
@@ -24,7 +26,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
             ISelfAssessmentService selfAssessmentService,
+            ISupervisorService supervisorService,
             INotificationService notificationService,
+            IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
             IFilteredApiHelperService filteredApiHelperService)
@@ -32,7 +36,9 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
             this.selfAssessmentService = selfAssessmentService;
+            this.supervisorService = supervisorService;
             this.notificationService = notificationService;
+            this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
             this.config = config;
             this.filteredApiHelperService = filteredApiHelperService;
@@ -42,7 +48,10 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         {
             return User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber) ?? "";
         }
-
+        private int GetCandidateId()
+        {
+            return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.LearnCandidateId);
+        }
         private string? GetBannerText()
         {
             var centreId = User.GetCentreId();

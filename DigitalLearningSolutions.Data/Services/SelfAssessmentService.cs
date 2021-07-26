@@ -18,6 +18,9 @@
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased);
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
+        Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -36,9 +39,17 @@
 
         private const string LatestAssessmentResults =
             @"LatestAssessmentResults AS
-                         (SELECT CompetencyID,
-                                 AssessmentQuestionID,
-                                 Result
+                         (SELECT s.CompetencyID,
+                                 s.AssessmentQuestionID,
+                                 s.ID AS ResultID,
+                                 s.Result,
+								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
+								 sv.Requested,
+								 sv.Verified,
+								 sv.Comments,
+								 sv.SignedOff,
+                                 0 AS UserIsVerifier,
+                                 COALESCE (rr.LevelRAG, 0) AS ResultRAG
                           FROM SelfAssessmentResults s
                                    INNER JOIN (
                               SELECT MAX(ID) as ID
@@ -49,13 +60,52 @@
                                        AssessmentQuestionID
                           ) t
                                               ON s.ID = t.ID
+											  LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
+											  ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
+                                LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+
                           WHERE CandidateID = @candidateId
-                            AND SelfAssessmentID = @selfAssessmentId
+                            AND s.SelfAssessmentID = @selfAssessmentId
+                         )";
+        private const string SpecificAssessmentResults =
+            @"LatestAssessmentResults AS
+                         (SELECT s.CompetencyID,
+                                 s.AssessmentQuestionID,
+                                 s.ID AS ResultID,
+                                 s.Result,
+								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
+								 sv.Requested,
+								 sv.Verified,
+								 sv.Comments,
+								 sv.SignedOff, 
+								 CAST(CASE WHEN COALESCE(sd.SupervisorAdminID, 0) = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsVerifier,
+                                 COALESCE (rr.LevelRAG, 0) AS ResultRAG
+                           FROM CandidateAssessments ca INNER JOIN SelfAssessmentResults s ON s.CandidateID = ca.CandidateID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                                   INNER JOIN (
+                              SELECT MAX(s1.ID) as ID
+                              FROM SelfAssessmentResults AS s1 INNER JOIN CandidateAssessments AS ca1 ON  s1.CandidateID = ca1.CandidateID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                              WHERE ca1.ID = @candidateAssessmentId
+                              GROUP BY CompetencyID,
+                                       AssessmentQuestionID
+                          ) t
+                                              ON s.ID = t.ID
+											  LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
+											  ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
+											  LEFT OUTER JOIN CandidateAssessmentSupervisors AS cas 
+											  ON sv.CandidateAssessmentSupervisorID = cas.ID
+											  LEFT OUTER JOIN SupervisorDelegates AS sd
+											  ON cas.SupervisorDelegateId = sd.ID
+
+                                LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+                          WHERE ca.ID = @candidateAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
+                                                  COALESCE((SELECT TOP(1) FrameworkConfig FROM Frameworks F INNER JOIN FrameworkCompetencies AS FC ON FC.FrameworkID = F.ID WHERE FC.CompetencyID = C.ID), 'Capability') AS Vocabulary,
                                                   AQ.ID         AS Id,
                                                   AQ.Question,
                                                   AQ.MaxValueDescription,
@@ -64,7 +114,15 @@
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
-                                                  LAR.Result";
+                                                  LAR.ResultId,
+                                                  LAR.Result,
+												  LAR.SelfAssessmentResultSupervisorVerificationId,
+												  LAR.Requested,
+												  LAR.Verified,
+												  LAR.Comments AS SupervisorComments,
+												  LAR.SignedOff,
+                                                  LAR.UserIsVerifier,
+                                                  LAR.ResultRAG";
 
         private const string CompetencyTables =
             @"Competencies AS C
@@ -84,6 +142,14 @@
                         INNER JOIN CompetencyGroups AS CG
                             ON SAS.CompetencyGroupID = CG.ID
                                     AND SAS.SelfAssessmentID = @selfAssessmentId";
+
+        private const string SpecificCompetencyTables = @"Competencies AS C INNER JOIN
+             CompetencyAssessmentQuestions AS CAQ ON CAQ.CompetencyID = C.ID INNER JOIN
+             AssessmentQuestions AS AQ ON AQ.ID = CAQ.AssessmentQuestionID INNER JOIN
+             CandidateAssessments AS CA ON CA.ID = @candidateAssessmentId LEFT OUTER JOIN
+             LatestAssessmentResults AS LAR ON LAR.CompetencyID = C.ID AND LAR.AssessmentQuestionID = AQ.ID INNER JOIN
+             SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID AND SAS.SelfAssessmentID = CA.SelfAssessmentID INNER JOIN
+             CompetencyGroups AS CG ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = CA.SelfAssessmentID";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
@@ -150,8 +216,8 @@ CA.LaunchCount, CA.SubmittedDate
                 $@"WITH CompetencyRowNumber AS
                      (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
                              CompetencyID
-                      FROM SelfAssessmentStructure
-                      WHERE SelfAssessmentID = @selfAssessmentId
+                      FROM SelfAssessmentStructure as sas
+                      WHERE sas.SelfAssessmentID = @selfAssessmentId
                      ),
                      {LatestAssessmentResults}
                     SELECT {CompetencyFields}
@@ -247,6 +313,47 @@ CA.LaunchCount, CA.SubmittedDate
                     return competency;
                 },
                 param: new { selfAssessmentId, candidateId }
+            );
+            return result.GroupBy(competency => competency.Id).Select(group =>
+            {
+                var groupedCompetency = group.First();
+                groupedCompetency.AssessmentQuestions = group.Select(competency => competency.AssessmentQuestions.Single()).ToList();
+                return groupedCompetency;
+            });
+        }
+        public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId)
+        {
+            var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
+                $@"WITH {SpecificAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {SpecificCompetencyTables}",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                param: new { candidateAssessmentId, adminId }
+            );
+            return result.GroupBy(competency => competency.Id).Select(group =>
+            {
+                var groupedCompetency = group.First();
+                groupedCompetency.AssessmentQuestions = group.Select(competency => competency.AssessmentQuestions.Single()).ToList();
+                return groupedCompetency;
+            });
+        }
+        public IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId)
+        {
+            var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
+                $@"WITH {SpecificAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {SpecificCompetencyTables}
+                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                param: new { candidateAssessmentId, adminId }
             );
             return result.GroupBy(competency => competency.Id).Select(group =>
             {
@@ -410,6 +517,27 @@ CA.LaunchCount, CA.SubmittedDate
                     LEFT OUTER JOIN AssessmentQuestionLevels AS AQL ON q1.n = AQL.LevelValue AND AQL.AssessmentQuestionID = @assessmentQuestionId
                     WHERE (q1.n BETWEEN @minValue AND @maxValue)", new { assessmentQuestionId, minValue, maxValue, adjustBy }
                );
+        }
+        public Competency? GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId)
+        {
+            Competency? competencyResult = null;
+            return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
+                $@"WITH {SpecificAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {SpecificCompetencyTables}
+                    WHERE ResultId = @resultId",
+                (competency, assessmentQuestion) =>
+                {
+                    if (competencyResult == null)
+                    {
+                        competencyResult = competency;
+                    }
+
+                    competencyResult.AssessmentQuestions.Add(assessmentQuestion);
+                    return competencyResult;
+                },
+                param: new { resultId, candidateAssessmentId, adminId }
+            ).FirstOrDefault();
         }
     }
 }

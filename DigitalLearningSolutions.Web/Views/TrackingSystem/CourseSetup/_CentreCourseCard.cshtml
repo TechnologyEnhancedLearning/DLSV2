@@ -8,21 +8,72 @@
         @Model.CourseName
       </span>
     </summary>
+
     <div class="nhsuk-details__text">
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Category
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CategoryName
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Learning minutes
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.LearningMinutes
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Total delegates
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.DelegateCount
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            In progress
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.InProgressCount
+          </dd>
+        </div>
+
+      </dl>
+
+      <p class="nhsuk-u-margin-bottom-0">Want to share the course?</p>
+      <a href="@Model.EmailHref">Generate email</a>
+      <button class="js-only-block copy-course-button nhsuk-link--no-visited-state"
+              id="copy-course-@Model.CustomisationId"
+              role="button">
+        Copy course link
+      </button>
+      <p class="non-js-only">To share this course with others, click Launch Course and copy the URL to the clipboard.</p>
 
     </div>
   </details>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
-      <a class="nhsuk-button nhsuk-u-margin-right-2"
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
          role="button"
+         id="launch-course-@Model.CustomisationId"
          asp-controller="LearningMenu"
          asp-action="Index"
          asp-route-customisationId="@Model.CustomisationId">
         Launch course
       </a>
-      <a class="nhsuk-button nhsuk-button--secondary" role="button" href="#">
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" role="button" href="#">
         Manage course
       </a>
     </div>
