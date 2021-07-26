@@ -18,7 +18,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
-            Supervisor = info.Supervisor;
+            SupervisorForename = info.SupervisorForename;
+            SupervisorSurname = info.SupervisorSurname;
             Enrolled = info.Enrolled.ToString(DateFormat);
             LastUpdated = info.LastUpdated.ToString(DateFormat);
             CompleteBy = info.CompleteBy?.ToString(DateFormat);
@@ -45,7 +46,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public int CustomisationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
-        public string? Supervisor { get; set; }
+        public string? SupervisorForename { get; set; }
+        public string? SupervisorSurname { get; set; }
         public string Enrolled { get; set; }
         public string LastUpdated { get; set; }
         public string? CompleteBy { get; set; }
@@ -60,6 +62,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
         public List<CustomPromptWithAnswer> CourseCustomPromptsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
+
+        public string? Supervisor
+        {
+            get
+            {
+                // SupervisorSurname is not nullable in db; will only be null if no supervisor
+                if (SupervisorSurname == null)
+                {
+                    return null;
+                }
+
+                return (string.IsNullOrEmpty(SupervisorForename) ? "" : $"{SupervisorForename} ") + SupervisorSurname;
+            }
+        }
 
         public string CourseName =>
             ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");

@@ -191,10 +191,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.CustomisationID AS CustomisationId,
                         ap.ApplicationName,
                         cu.CustomisationName,
-                        (SELECT CONCAT(Forename, ' ', Surname)
-                         FROM AdminUsers
-                         WHERE AdminID = pr.SupervisorAdminId
-                        ) AS Supervisor,
+                        au.Forename AS SupervisorForename,
+                        au.Surname AS SupervisorSurname,
                         pr.FirstSubmittedTime AS Enrolled,
                         pr.SubmittedTime AS LastUpdated,
                         pr.CompleteByDate AS CompleteBy,
@@ -211,9 +209,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM Customisations cu
                     INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
                     INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+                    LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
                     WHERE pr.CandidateID = @delegateId
-                        AND pr.RemovedDate IS NULL
-                        AND pr.SystemRefreshed = 0",
+                        AND pr.RemovedDate IS NULL",
                 new { delegateId }
             );
         }
@@ -230,8 +228,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Progress AS pr ON pr.ProgressID = aa.ProgressID
                     WHERE pr.CustomisationID = @customisationId
                         AND pr.CandidateID = @delegateId
-                        AND pr.RemovedDate IS NULL
-                        AND pr.SystemRefreshed = 0",
+                        AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
         }

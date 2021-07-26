@@ -116,5 +116,55 @@
             // Then
             model.CourseName.Should().Be("my application - my customisation");
         }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_without_supervisor_surname_sets_supervisor_correctly()
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                SupervisorSurname = null
+            };
+
+            // When
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+
+            // Then
+            model.Supervisor.Should().BeNull();
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_without_supervisor_forename_sets_supervisor_correctly()
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                SupervisorForename = "",
+                SupervisorSurname = "surname"
+            };
+
+            // When
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+
+            // Then
+            model.Supervisor.Should().Be("surname");
+        }
+
+        [Test]
+        public void DelegateCourseInfoViewModel_with_supervisor_forename_sets_supervisor_correctly()
+        {
+            // Given
+            var info = new DelegateCourseInfo
+            {
+                SupervisorForename = "firstname",
+                SupervisorSurname = "surname"
+            };
+
+            // When
+            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+
+            // Then
+            model.Supervisor.Should().Be("firstname surname");
+        }
     }
 }

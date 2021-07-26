@@ -10,7 +10,8 @@
             int customisationId,
             string applicationName,
             string customisationName,
-            string? supervisor,
+            string? supervisorForename,
+            string? supervisorSurname,
             DateTime enrolled,
             DateTime lastUpdated,
             DateTime? completeBy,
@@ -29,7 +30,8 @@
             CustomisationId = customisationId;
             ApplicationName = applicationName;
             CustomisationName = customisationName;
-            Supervisor = supervisor;
+            SupervisorForename = supervisorForename;
+            SupervisorSurname = supervisorSurname;
             Enrolled = enrolled;
             LastUpdated = lastUpdated;
             CompleteBy = completeBy;
@@ -48,7 +50,8 @@
         public int CustomisationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
-        public string? Supervisor { get; set; }
+        public string? SupervisorForename { get; set; }
+        public string? SupervisorSurname { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime? CompleteBy { get; set; }
@@ -62,6 +65,5 @@
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
-
     }
 }
