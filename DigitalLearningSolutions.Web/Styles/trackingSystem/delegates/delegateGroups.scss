@@ -3,6 +3,12 @@
 .nhsuk-details__text > .nhsuk-button {
   @include govuk-media-query($from: desktop) {
     margin-right: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(0) !important;
+  }
+}
+
+.nhsuk-details__text > .left-button {
+  @include govuk-media-query($from: desktop, $until: 828px) {
     margin-bottom: nhsuk-spacing(3) !important;
   }
 }

@@ -15,9 +15,7 @@
           <dt class="nhsuk-summary-list__key">
             Name
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.Name
-          </dd>
+          <partial name="_SummaryFieldValue" model="Model.Name"/>
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
@@ -32,9 +30,7 @@
           <dt class="nhsuk-summary-list__key">
             Description
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.Description
-          </dd>
+          <partial name="_SummaryFieldValue" model="Model.Description" />
           <dd class="nhsuk-summary-list__actions">
             <a href="#">
               Edit<span class="nhsuk-u-visually-hidden"> description</span>
@@ -103,15 +99,15 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button left-button-mobile-margin-bottom card-button" role="button">
+      <a class="nhsuk-button left-button" role="button">
         View delegates
       </a>
 
-      <a class="nhsuk-button left-button-mobile-margin-bottom card-button" role="button">
+      <a class="nhsuk-button" role="button">
         View courses
       </a>
 
-      <a class="nhsuk-button delete-button card-button" role="button">
+      <a class="nhsuk-button delete-button" role="button">
         Delete group
       </a>
     </div>
