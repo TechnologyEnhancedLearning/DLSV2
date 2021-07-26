@@ -12,7 +12,7 @@
     {
         string? GetBannerText(int centreId);
         string? GetCentreName(int centreId);
-        IEnumerable<(int, string)> GetActiveCentresAlphabetical();
+        IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
 
         void UpdateCentreManagerDetails(
@@ -92,13 +92,14 @@
             return name;
         }
 
-        public IEnumerable<(int, string)> GetActiveCentresAlphabetical()
+        public IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical()
         {
             var centres = connection.Query<(int, string)>
             (
                 @"SELECT CentreID, CentreName
                         FROM Centres
                         WHERE Active = 1
+                        AND kbSelfRegister = 1
                         ORDER BY CentreName"
             );
             return centres;
