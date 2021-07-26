@@ -30,9 +30,10 @@
         default-option="Select a job group"
         select-list-options="@Model.JobGroupOptions" />
 
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterAdmin" asp-action="PersonalInformation" role="button">Back</a>
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="RegisterAdmin" asp-action="PersonalInformation" link-text="Go back" />
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>

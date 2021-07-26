@@ -25,43 +25,41 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
 
-      <vc:select-list
-        asp-for="JobGroup"
-        label="Job Group"
-        value="@Model.JobGroup?.ToString()"
-        hint-text=""
-        deselectable="false"
-        css-class="nhsuk-u-width-one-half"
-        default-option="Select a job group"
-        select-list-options="@Model.JobGroupOptions" />
+      <vc:select-list asp-for="JobGroup"
+                      label="Job Group"
+                      value="@Model.JobGroup?.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a job group"
+                      select-list-options="@Model.JobGroupOptions" />
 
       @foreach (var customField in Model.CustomFields) {
         if (customField.Options.Any()) {
-          <vc:select-list
-            asp-for="@("Answer" + customField.CustomFieldId)"
-            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
-            value="@customField.Answer"
-            hint-text=""
-            deselectable="@(!customField.Mandatory)"
-            css-class="nhsuk-u-width-one-half"
-            default-option="Select a @customField.CustomPrompt.ToLower()"
-            select-list-options="@customField.Options" />
+          <vc:select-list asp-for="@("Answer" + customField.CustomFieldId)"
+                          label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                          value="@customField.Answer"
+                          hint-text=""
+                          deselectable="@(!customField.Mandatory)"
+                          css-class="nhsuk-u-width-one-half"
+                          default-option="Select a @customField.CustomPrompt.ToLower()"
+                          select-list-options="@customField.Options" />
         } else {
-          <vc:text-input
-            asp-for="@("Answer" + customField.CustomFieldId)"
-            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
-            populate-with-current-value="true"
-            type="text"
-            spell-check="false"
-            hint-text=""
-            autocomplete=""
-            css-class="nhsuk-u-width-one-half" />
+          <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
+                         label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="false"
+                         hint-text=""
+                         autocomplete=""
+                         css-class="nhsuk-u-width-one-half" />
         }
       }
 
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterDelegateByCentre" asp-action="PersonalInformation" role="button">Back</a>
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="RegisterDelegateByCentre" asp-action="PersonalInformation" link-text="Go back" />
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
   </div>
 </div>

@@ -1,0 +1,13 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+.nhsuk-back-link__link {
+  padding-left: 24px;
+}
+
+.nhsuk-icon__close {
+  height: 24px;
+  left: -2px; /* 2 */
+  position: absolute;
+  top: -1px; /* 3 */
+  width: 24px;
+}

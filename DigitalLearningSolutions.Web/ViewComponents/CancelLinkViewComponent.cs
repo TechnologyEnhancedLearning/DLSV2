@@ -4,16 +4,15 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    public class BackLinkViewComponent : ViewComponent
+    public class CancelLinkViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
             string aspController,
             string aspAction,
-            Dictionary<string, string> aspAllRouteData,
-            string linkText
+            Dictionary<string, string> aspAllRouteData
         )
         {
-            return View(new LinkViewModel(aspController, aspAction, linkText, aspAllRouteData));
+            return View(new LinkViewModel(aspController, aspAction, "Cancel", aspAllRouteData));
         }
     }
 }
