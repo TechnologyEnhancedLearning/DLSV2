@@ -14,7 +14,6 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
-    using DigitalLearningSolutions.Web.ControllerHelpers;
 
     public partial class SupervisorController
     {
@@ -302,7 +301,7 @@
             };
             if (day != null && month != null && year != null)
             {
-                model.CompleteByValidationResult = DateValidator.ValidateDate(day.Value, month.Value, year.Value);
+                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
             }
             return View("EnrolDelegateSetCompleteBy", model);
         }
@@ -313,7 +312,7 @@
             SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
             if (day != 0 | month != 0 | year != 0)
             {
-                var validationResult = DateValidator.ValidateDate(day, month, year);
+                var validationResult = OldDateValidator.ValidateDate(day, month, year);
                 if (!validationResult.DateValid)
                 {
                     return RedirectToAction("EnrolDelegateCompleteBy", new { supervisorDelegateId, day, month, year });
