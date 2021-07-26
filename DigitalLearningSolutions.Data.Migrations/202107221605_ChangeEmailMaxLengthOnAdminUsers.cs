@@ -19,7 +19,6 @@
             Alter.Column("Email").OnTable("AdminUsers").AsString(250);
             Create.Index("IX_AdminUsers_Email").OnTable("AdminUsers").OnColumn("Email").Ascending().WithOptions()
                 .Unique().WithOptions().NonClustered();
-            ;
         }
     }
 }
