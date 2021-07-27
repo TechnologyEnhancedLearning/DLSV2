@@ -28,8 +28,11 @@ export function getSortValue(
   sortBy: string,
 ): string | number | Date {
   switch (sortBy) {
+    case 'SearchableName':
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
+    case 'DateRegistered':
+      return parseDate(getElementText(searchableElement, 'registration-date'));
     case 'StartedDate':
       return parseDate(getElementText(searchableElement, 'started-date'));
     case 'LastAccessed':

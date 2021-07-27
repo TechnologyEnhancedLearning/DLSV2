@@ -45,7 +45,8 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DelegateSortByOptions.Name
+            DelegateSortByOptions.Name,
+            DelegateSortByOptions.RegistrationDate
         };
     }
 }
