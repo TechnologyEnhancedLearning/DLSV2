@@ -19,10 +19,9 @@
       <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
         <input type="hidden" name="searchString" value="@Model.SearchString" />
         <input type="hidden" name="filterBy" value="@Model.FilterBy" />
-        @if (Model.SortEnabled) {
-          <input type="hidden" name="sortBy" value="@Model.SortBy" />
-          <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-        }
+        <input type="hidden" name="sortBy" value="@Model.SortBy" />
+        <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+        
         <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
                 name="filterValue"
                 id="@filter.FilterProperty"
@@ -32,7 +31,7 @@
             <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
           }
         </select>
-        <button class="nhsuk-search__submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
+        <button class="nhsuk-search__submit filter-submit" type="submit" id="@filter.FilterProperty-submit">
           Add filter
         </button>
       </form>

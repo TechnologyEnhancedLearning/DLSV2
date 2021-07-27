@@ -39,7 +39,7 @@
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCategories(centreId);
+            var categories = GetCourseCategories(centreId);
 
             var model = new CentreAdministratorsViewModel(
                 centreId,
@@ -58,12 +58,12 @@
         {
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var categories = GetCategories(centreId);
+            var categories = GetCourseCategories(centreId);
             var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
             return View("AllAdmins", model);
         }
 
-        private IEnumerable<string> GetCategories(int centreId)
+        private IEnumerable<string> GetCourseCategories(int centreId)
         {
             var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
             categories = categories.Prepend("All");

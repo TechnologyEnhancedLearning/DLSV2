@@ -18,7 +18,7 @@
             string sortDirection,
             int page,
             bool isFrameworkDeveloper
-        ) : base(searchString, page, true, false, sortBy, sortDirection, itemsPerPage: 12)
+        ) : base(searchString, page,  false, sortBy, sortDirection, itemsPerPage: 12)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 brandedFrameworks.AsQueryable(),

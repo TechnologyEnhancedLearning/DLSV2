@@ -8,6 +8,7 @@
 
     public abstract class BaseSearchablePageViewModel
     {
+        public const string DefaultSortOption = "SearchableName";
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
 
@@ -20,15 +21,13 @@
         public int MatchingSearchResults;
         
         public readonly bool FilterEnabled;
-        public readonly bool SortEnabled;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
             int page,
-            bool sortEnabled,
             bool filterEnabled,
-            string? sortBy = null,
-            string? sortDirection = null,
+            string sortBy = DefaultSortOption,
+            string sortDirection = Ascending,
             string? filterBy = null,
             int itemsPerPage = 10
         )
@@ -38,16 +37,15 @@
             SearchString = searchString;
             FilterBy = filterBy;
             Page = page;
-            SortEnabled = sortEnabled;
             FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
             this.itemsPerPage = itemsPerPage;
         }
 
 
-        public string? SortDirection { get; set; }
+        public string SortDirection { get; set; }
 
-        public string? SortBy { get; set; }
+        public string SortBy { get; set; }
 
         public IEnumerable<SelectListItem> SortBySelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(SortOptions);

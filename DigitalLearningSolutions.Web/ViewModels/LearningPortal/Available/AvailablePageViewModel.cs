@@ -18,7 +18,7 @@
             string sortDirection,
             string? bannerText,
             int page
-        ) : base(searchString, page, true, false, sortBy, sortDirection)
+        ) : base(searchString, page, false, sortBy, sortDirection)
         {
             BannerText = bannerText;
             var sortedItems = GenericSortingHelper.SortAllItems(

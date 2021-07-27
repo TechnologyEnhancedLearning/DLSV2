@@ -1,6 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Models.User
-@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @model SearchableAdminViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
@@ -27,8 +25,7 @@
           <dt class="nhsuk-summary-list__key">
             Course category
           </dt>
-          <dd class="nhsuk-summary-list__value" data-filter-value="@(nameof(AdminUser.CategoryName) + FilteringHelper.Separator + nameof(AdminUser.CategoryName) +
-                        FilteringHelper.Separator + Model.CategoryName)">
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
             @Model.CategoryName
           </dd>
         </div>

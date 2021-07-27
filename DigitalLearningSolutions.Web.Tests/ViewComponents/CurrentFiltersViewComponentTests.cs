@@ -42,7 +42,7 @@
                 new List<AdminUser>(),
                 categories,
                 searchString,
-                $"CategoryName|CategoryName|Word{FilteringHelper.FilterSeparator}{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
+                $"CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>

@@ -15,12 +15,12 @@
             string? searchString,
             string? filterBy,
             int page
-        ) : base(searchString, page, false, true, filterBy: filterBy)
+        ) : base(searchString, page, true, filterBy: filterBy)
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
-                DefaultSortByOptions.Name.PropertyName,
+                DefaultSortOption,
                 Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);

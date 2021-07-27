@@ -1,6 +1,6 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
 import {
-  setUpFilter, filterSearchableElements, getFilterBy, IAppliedFilterTag,
+  setUpFilter, filterSearchableElements, getFilterByValue, IAppliedFilterTag,
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
@@ -146,7 +146,7 @@ export class SearchSortFilterAndPaginate {
   }
 
   private shouldDisplayResultCount(): boolean {
-    const filterString = this.filterEnabled ? getFilterBy() : false;
+    const filterString = this.filterEnabled ? getFilterByValue() : false;
     const searchString = getQuery();
     return !!(filterString || searchString);
   }

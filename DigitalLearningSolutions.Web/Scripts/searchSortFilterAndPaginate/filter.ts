@@ -29,7 +29,7 @@ export function filterSearchableElements(
   possibleFilters: IAppliedFilterTag[],
 ): ISearchableElement[] {
   let filteredSearchableElements = searchableElements;
-  const filterBy = getFilterBy();
+  const filterBy = getFilterByValue();
   const appliedFilters = getAppliedFilters(filterBy);
 
   const filterGroups = _.groupBy(appliedFilters, (filter) => filter.group);
@@ -54,7 +54,7 @@ export function filterSearchableElements(
 
 function setUpFilterSubmitButtons() {
   const filterSubmits = Array.from(
-    document.getElementsByClassName('filter-submit__dropdown'),
+    document.getElementsByClassName('filter-submit'),
   );
   filterSubmits.forEach((filterSubmit) => {
     const element = <HTMLInputElement>filterSubmit;
@@ -103,15 +103,14 @@ function filterElements(
   searchableElements: ISearchableElement[],
   appliedFilter: IAppliedFilter,
 ): ISearchableElement[] {
-  return _.filter<ISearchableElement>(
-    searchableElements,
-    (o) => doesElementMatchFilterValue(o, appliedFilter.filterValue),
+  return searchableElements.filter(
+    (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
   );
 }
 
 function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): string {
   const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
-  addNewFilterToFilterBy(filterValue);
+  addNewFilterValueToFilterBy(filterValue);
   return filterValue;
 }
 
@@ -125,33 +124,28 @@ function getSelectedFilterFromDropdownAndResetDropdown(
   return filterValue;
 }
 
-function addNewFilterToFilterBy(filterValue: string): void {
-  const filterBy = getFilterBy();
-  if (!filterBy.includes(filterValue)) {
-    let newFilter;
-    if (filterBy) {
-      newFilter = filterBy + filterSeparator + filterValue;
-    } else {
-      newFilter = filterValue;
-    }
-    updateAllFilterByElementsByName(newFilter);
-    updateFilterByById(newFilter);
+function addNewFilterValueToFilterBy(newFilterValue: string): void {
+  const filterBy = getFilterByValue();
+  if (!filterBy.includes(newFilterValue)) {
+    const updatedFilterBy = filterBy ? filterBy + filterSeparator + newFilterValue : newFilterValue;
+    updateAllFilterByHiddenInputs(updatedFilterBy);
+    updateFilterBy(updatedFilterBy);
   }
 }
 
 function clearFilters(): void {
-  updateAllFilterByElementsByName('');
-  updateFilterByById('');
+  updateAllFilterByHiddenInputs('');
+  updateFilterBy('');
   clearAppliedFilters();
   hideAppliedFilters();
 }
 
 function hideAllFilterDropdowns(): void {
-  const allDropdowns = Array.from(
+  const allDropdowns = <HTMLElement[]>Array.from(
     document.getElementsByClassName('filter-dropdown-container'),
   );
   allDropdowns.forEach((dropdown) => {
-    const dropdownElement = <HTMLElement>dropdown;
+    const dropdownElement = dropdown;
     dropdownElement.hidden = true;
     dropdownElement.style.display = 'none';
     dropdownElement.setAttribute('aria-hidden', 'true');
@@ -184,11 +178,11 @@ function doesElementMatchFilterValue(
   return filterValue === filter;
 }
 
-export function getFilterBy(): string {
+export function getFilterByValue(): string {
   return getFilterByElement().value;
 }
 
-function updateFilterByById(newFilter: string): void {
+function updateFilterBy(newFilter: string): void {
   const element = getFilterByElement();
   element.value = newFilter;
   element.dispatchEvent(new Event('change'));
@@ -198,7 +192,7 @@ function getFilterByElement(): HTMLInputElement {
   return <HTMLInputElement>document.getElementById('filter-by');
 }
 
-function updateAllFilterByElementsByName(newFilter: string): void {
+function updateAllFilterByHiddenInputs(newFilter: string): void {
   const filterByElements = Array.from(document.getElementsByName('filterBy'));
   filterByElements.forEach((filterElement) => {
     const element = <HTMLInputElement>filterElement;
@@ -233,8 +227,7 @@ function updateAppliedFilters(filterBy: string, possibleFilters: IAppliedFilterT
 }
 
 function getMatchingFilterTag(possibleFilters: IAppliedFilterTag[], filter: string): Element {
-  const appliedFilterTag = <IAppliedFilterTag>_.find(
-    possibleFilters,
+  const appliedFilterTag = <IAppliedFilterTag>possibleFilters.find(
     (pf) => pf.filterValue === filter,
   );
   return appliedFilterTag.element;
