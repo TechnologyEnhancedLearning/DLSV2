@@ -15,7 +15,7 @@
             // Given
             var testDateTime = new DateTime(2012, 12, 21, 22, 22, 22);
             var courseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
-                createdTime: testDateTime,
+                createdDate: testDateTime,
                 lastAccessed: testDateTime
             );
 
@@ -25,7 +25,7 @@
             // Then
             using (new AssertionScope())
             {
-                viewModel.CreatedTime.Should().Be("21/12/2012");
+                viewModel.CreatedDate.Should().Be("21/12/2012");
                 viewModel.LastAccessed.Should().Be("21/12/2012");
             }
         }
