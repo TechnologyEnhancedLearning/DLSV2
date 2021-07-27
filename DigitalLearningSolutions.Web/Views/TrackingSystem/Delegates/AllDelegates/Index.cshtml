@@ -45,21 +45,26 @@
       </div>
     </div>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        @if (!Model.Delegates.Any()) {
-          <p class="nhsuk-u-margin-top-4" role="alert">
-            <b>No delegates found</b>
-          </p>
-        } else {
-          <div id="searchable-elements">
-            @foreach (var delegateModel in Model.Delegates) {
-              <partial name="_SearchableDelegateCard" model="delegateModel" />
-            }
-          </div>
-        }
+    <form method="get">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          @if (!Model.Delegates.Any()) {
+            <p class="nhsuk-u-margin-top-4" role="alert">
+              <b>No delegates found</b>
+            </p>
+          } else {
+            <div id="searchable-elements">
+              @foreach (var delegateModel in Model.Delegates) {
+                <partial name="_SearchableDelegateCard" model="delegateModel" />
+              }
+            </div>
+          }
+          @if (Model.TotalPages > 1) {
+            <partial name="SearchablePage/_Pagination" model="Model" />
+          }
+        </div>
       </div>
-    </div>
+    </form>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />

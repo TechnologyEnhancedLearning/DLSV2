@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
@@ -22,19 +21,12 @@
             this.customPromptHelper = customPromptHelper;
         }
 
-        public IActionResult Index()
+        [Route("{page=1:int}")]
+        public IActionResult Index(int page = 1)
         {
             var centreId = User.GetCentreId();
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Take(10);
-            var searchableDelegateViewModels = delegateUsers.Select(
-                delegateUser =>
-                {
-                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
-                    return new SearchableDelegateViewModel(delegateInfoViewModel);
-                }
-            );
-            var model = new AllDelegatesViewModel(centreId, searchableDelegateViewModels);
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var model = new AllDelegatesViewModel(centreId, delegateUsers, page, customPromptHelper);
 
             return View(model);
         }
