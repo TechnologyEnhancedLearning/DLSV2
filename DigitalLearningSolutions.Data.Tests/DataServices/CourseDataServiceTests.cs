@@ -239,11 +239,38 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 DelegateCount = 25,
                 AllAttempts = 49,
                 AttemptsPassed = 34,
-                CompletedCount = 5
+                CompletedCount = 5,
+                HideInLearnerPortal = false,
+                CategoryName = "Office 2007",
+                LearningMinutes = "N/A"
             };
 
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void GetCourseDetailsByIdAtCentreForCategoryId_should_return_course_details_correctly()
+        {
+            // Given
+            const int customisationId = 100;
+            const int centreId = 101;
+            const int categoryId = 0;
+            var fixedCreationDateTime = DateTime.UtcNow;
+            var expectedLastAccess = new DateTime(2014, 03, 31, 13, 00, 23, 457);
+            var expectedCourseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
+                createdDate: fixedCreationDateTime,
+                lastAccessed: expectedLastAccess
+            );
+
+            // When
+            var result =
+                courseDataService.GetCourseDetails(customisationId, centreId, categoryId)!;
+            // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
+            result.CreatedDate = fixedCreationDateTime;
+
+            // Then
+            result.Should().BeEquivalentTo(expectedCourseDetails);
         }
     }
 }

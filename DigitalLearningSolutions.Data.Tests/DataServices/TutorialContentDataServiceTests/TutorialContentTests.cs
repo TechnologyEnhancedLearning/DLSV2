@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services.TutorialContentServiceTests
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.TutorialContentDataServiceTests
 {
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using FluentAssertions;
     using NUnit.Framework;
 
-    internal partial class TutorialContentServiceTests
+    internal partial class TutorialContentDataServiceTests
     {
         [Test]
         public void Get_tutorial_content_should_return_tutorial_content()
@@ -15,7 +15,7 @@
             const int tutorialId = 50;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeEquivalentTo(new TutorialContent(
@@ -37,7 +37,7 @@
             const int tutorialId = 50;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -52,7 +52,7 @@
             const int tutorialId = 50;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -67,7 +67,7 @@
             const int tutorialId = 500;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -82,7 +82,7 @@
             const int tutorialId = 52;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -97,7 +97,7 @@
             const int tutorialId = 49;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -112,7 +112,7 @@
             const int tutorialId = 1142;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();
@@ -127,7 +127,7 @@
             const int tutorialId = 1197;
 
             // When
-            var tutorialContent = tutorialContentService.GetTutorialContent(customisationId, sectionId, tutorialId);
+            var tutorialContent = tutorialContentDataService.GetTutorialContent(customisationId, sectionId, tutorialId);
 
             // Then
             tutorialContent.Should().BeNull();

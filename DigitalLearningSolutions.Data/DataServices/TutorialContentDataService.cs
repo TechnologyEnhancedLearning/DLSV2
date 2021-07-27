@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
-    public interface ITutorialContentService
+    public interface ITutorialContentDataService
     {
         TutorialInformation? GetTutorialInformation(
             int candidateId,
@@ -17,11 +17,11 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
     }
 
-    public class TutorialContentService : ITutorialContentService
+    public class TutorialContentDataService : ITutorialContentDataService
     {
         private readonly IDbConnection connection;
 
-        public TutorialContentService(IDbConnection connection)
+        public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
         }
@@ -45,7 +45,7 @@
                 // Using this list of other tutorials in the course we can work out if there is another item in the
                 // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
                 // and if there are other sections (valid tutorials with a different tutorial ID, or with assessments or
-                // consolidation material. See the SectionContentService for the definition of a valid section.
+                // consolidation material. See the SectionContentDataService for the definition of a valid section.
 
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,
