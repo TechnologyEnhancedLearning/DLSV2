@@ -8,7 +8,7 @@
         {
             Password = courseDetails.Password;
             NotificationEmails = courseDetails.NotificationEmails;
-            PlAssess = courseDetails.PlAssess;
+            PostLearningAssessment = courseDetails.PostLearningAssessment;
             IsAssessed = courseDetails.IsAssessed;
             DiagAssess = courseDetails.DiagAssess;
             TutCompletionThreshold = courseDetails.TutCompletionThreshold;
@@ -17,7 +17,7 @@
 
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
-        public bool PlAssess { get; set; }
+        public bool PostLearningAssessment { get; set; }
         public bool IsAssessed { get; set; }
         public bool DiagAssess { get; set; }
         public int TutCompletionThreshold { get; set; }

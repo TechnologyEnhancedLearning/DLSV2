@@ -18,7 +18,7 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
-        CourseDetails? GetCourseDetailsByIdAtCentreForCategoryId(int customisationId, int centreId, int categoryId);
+        CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -58,7 +58,7 @@
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID
                 AND can.CentreID = @centreId
-                AND SystemRefreshed = 0 AND RemovedDate IS NULL
+                AND RemovedDate IS NULL
                 ORDER BY SubmittedTime DESC) AS LastAccessed";
 
         private readonly IDbConnection connection;
@@ -198,7 +198,7 @@
             );
         }
 
-        public CourseDetails? GetCourseDetailsByIdAtCentreForCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId)
         {
             return connection.Query<CourseDetails>(
                 @$"SELECT
@@ -211,7 +211,7 @@
                         cu.CreatedTime,
                         cu.[Password],
                         cu.NotificationEmails,
-                        ap.PLAssess,
+                        ap.PLAssess AS PostLearningAssessment,
                         cu.IsAssessed,
                         ap.DiagAssess,
                         cu.TutCompletionThreshold,

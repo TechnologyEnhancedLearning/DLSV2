@@ -46,7 +46,7 @@
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
-        @if (Model.PlAssess) {
+        @if (Model.PostLearningAssessment) {
           <dt class="nhsuk-summary-list__key">
             Completion criteria
           </dt>
@@ -56,7 +56,8 @@
             </dd>
           } else if (Model.DiagAssess) {
             <dd class="nhsuk-summary-list__value">
-              Required diagnostic percentage: @Model.DiagCompletionThreshold%
+              <p>Required learning percentage: @Model.TutCompletionThreshold%</p>
+              <p>Required diagnostic percentage: @Model.DiagCompletionThreshold%</p>
             </dd>
           } else {
             <dd class="nhsuk-summary-list__value">

@@ -14,7 +14,7 @@
           Complete within
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CompleteWithinMonths @(Model.CompleteWithinMonths == 1 ? "month" : "months")
+          @Model.CompleteWithinMonths
         </dd>
       </div>
 
@@ -23,7 +23,7 @@
           Completion valid for
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CompletionValidFor @(Model.CompletionValidFor == 1 ? "month" : "months")
+          @Model.CompletionValidFor
         </dd>
       </div>
 
@@ -31,7 +31,7 @@
         <dt class="nhsuk-summary-list__key">
           Mandatory
         </dt>
-        <partial name="_SummaryBooleanField" model="Model.Mandatory"/>
+        <partial name="_SummaryBooleanField" model="Model.Mandatory" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -42,11 +42,9 @@
       </div>
 
       @if (Model.AutoRefresh) {
-        <div>
-          <p class="nhsuk-u-font-size-24 nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-6">
-            Auto-refresh details
-          </p>
-        </div>
+        <h2 class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-6">
+          Auto-refresh details
+        </h2>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
@@ -62,7 +60,7 @@
             Enrol on refresher
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.AutoRefreshMonths @(Model.AutoRefreshMonths == 1 ? "month < expiry" : "months < expiry")
+            @Model.AutoRefreshMonths
           </dd>
         </div>
 
@@ -70,7 +68,7 @@
           <dt class="nhsuk-summary-list__key">
             Apply to self-enrolments
           </dt>
-          <partial name="_SummaryBooleanField" model="Model.ApplyLpDefaultsToSelfEnrol"/>
+          <partial name="_SummaryBooleanField" model="Model.ApplyLpDefaultsToSelfEnrol" />
         </div>
       }
 

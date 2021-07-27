@@ -265,7 +265,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result =
-                courseDataService.GetCourseDetailsByIdAtCentreForCategoryId(customisationId, centreId, categoryId)!;
+                courseDataService.GetCourseDetails(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
             result.CreatedTime = fixedCreationDateTime;
 
