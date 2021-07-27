@@ -1,15 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using Microsoft.Extensions.Logging;
 
     public interface ISectionContentDataService
     {
         SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
+        IEnumerable<Section> GetSectionsByApplicationId(int applicationId);
     }
 
     public class SectionContentDataService : ISectionContentDataService
@@ -186,6 +189,19 @@
                 new { customisationId, candidateId, sectionId },
                 splitOn: "TutorialName"
             ).FirstOrDefault();
+        }
+
+        public IEnumerable<Section> GetSectionsByApplicationId(int applicationId)
+        {
+            return connection.Query<Section>(
+                @"SELECT 
+                        SectionID,
+                        SectionName
+                    FROM dbo.Sections 
+                    WHERE ApplicationID = @applicationId
+                    AND ArchivedDate IS NULL",
+                new { applicationId }
+            );
         }
     }
 }
