@@ -4,10 +4,12 @@
   padding-left: 24px;
 }
 
+// Slightly modified version of the nhsuk-icon__chevron-left css used
+// for the NHS back link. Values so that the X svg lines up nicely
 .nhsuk-icon__close {
   height: 24px;
-  left: -2px; /* 2 */
+  left: -2px;
   position: absolute;
-  top: -1px; /* 3 */
+  top: -1px;
   width: 24px;
 }
