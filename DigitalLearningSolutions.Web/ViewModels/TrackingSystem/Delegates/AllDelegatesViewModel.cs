@@ -11,16 +11,17 @@
         public AllDelegatesViewModel(
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
+            CustomPromptHelper customPromptHelper,
             int page,
-            CustomPromptHelper customPromptHelper
-        ) : base(null, DefaultSortByOptions.Name.PropertyName, Ascending, page)
+            string? searchString
+        ) : base(searchString, DefaultSortByOptions.Name.PropertyName, Ascending, page)
         {
             CentreId = centreId;
-
-            var delegateUsers = delegateUserCards.ToList();
-            MatchingSearchResults = delegateUsers.Count;
+            
+            var searchedItems = GenericSearchHelper.SearchItems(delegateUserCards, SearchString).ToList();
+            MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(delegateUsers);
+            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
 
             Delegates = paginatedItems.Select(
                 delegateUser =>

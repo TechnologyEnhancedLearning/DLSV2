@@ -45,14 +45,29 @@
       </div>
     </div>
 
+    <div class="nhsuk-grid-row">
+      <form method="get" role="search">
+        <vc:search-box label="Search delegates"
+                       asp-controller="AllDelegates"
+                       asp-action="Index"
+                       searchable-page-view-model="@Model"
+                       css-class="nhsuk-grid-column-one-half" />
+      </form>
+    </div>
+
     <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
+          <input type="hidden" id="searchString" value="@Model.SearchString" />
+          <input type="hidden" id="select-sort-by" value="Name" />
+          <input type="hidden" id="select-sort-direction" value="Ascending" />
           @if (!Model.Delegates.Any()) {
             <p class="nhsuk-u-margin-top-4" role="alert">
               <b>No delegates found</b>
             </p>
           } else {
+            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
             <div id="searchable-elements">
               @foreach (var delegateModel in Model.Delegates) {
                 <partial name="_SearchableDelegateCard" model="delegateModel" />
@@ -71,3 +86,7 @@
     </nav>
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>
+}

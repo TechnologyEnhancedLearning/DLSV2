@@ -9,11 +9,11 @@
 @*TODO: Search and sort functionality is part of HEEDLS-491.
   Filename includes 'Searchable' to avoid having to change name later*@
 
-<div class="nhsuk-expander-group" id="@Model.DelegateInfo.Id-card">
+<div class="searchable-element nhsuk-expander-group" id="@Model.DelegateInfo.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name" name="name">
-        @Model.DelegateInfo.Name (@Model.DelegateInfo.CandidateNumber)
+        <span class="searchable-element-title">@Model.DelegateInfo.Name</span> (@Model.DelegateInfo.CandidateNumber)
       </span>
     </summary>
 
