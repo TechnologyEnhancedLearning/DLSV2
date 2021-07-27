@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
@@ -28,6 +28,12 @@
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
             var model = new AllDelegatesViewModel(centreId, delegateUsers, page, customPromptHelper);
 
+        [Route("AllDelegateItems")]
+        public IActionResult AllDelegateItems()
+        {
+            var centreId = User.GetCentreId();
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, customPromptHelper);
             return View(model);
         }
     }
