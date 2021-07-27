@@ -47,6 +47,8 @@
 
     <div class="nhsuk-grid-row">
       <form method="get" role="search">
+        @*<input type="hidden" name="sortBy" value="@Model.SortBy" />
+        <input type="hidden" name="sortDirection" value="@Model.SortDirection" />*@
         <vc:search-box label="Search delegates"
                        asp-controller="AllDelegates"
                        asp-action="Index"
@@ -55,26 +57,55 @@
       </form>
     </div>
 
+    <div class="nhsuk-grid-row">
+      <form method="get" role="search">
+        @*<input type="hidden" name="searchString" value="@Model.SearchString" />*@
+        <div class="sort-row nhsuk-form-group">
+          <div class="sort-select-container">
+            <select class="nhsuk-select sort-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
+          </div>
+          <div class="sort-select-container">
+            <select class="nhsuk-select sort-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
+              <option value="Ascending">Ascending</option>
+              <option value="Descending">Descending</option>
+            </select>
+          </div>
+          <div class="non-js-only">
+            <div class="sort-button-container">
+              <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
+                Sort
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
     <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          <input type="hidden" id="searchString" value="@Model.SearchString" />
-          <input type="hidden" id="select-sort-by" value="Name" />
-          <input type="hidden" id="select-sort-direction" value="Ascending" />
-          @if (!Model.Delegates.Any()) {
+          @*<input type="hidden" id="searchString" value="@Model.SearchString" />
+          <input type="hidden" id="sortBy" value="@Model.SortBy" />
+          <input type="hidden" id="sortDirection" value="@Model.SortDirection" />*@
+          @if (!Model.Delegates.Any())
+          {
             <p class="nhsuk-u-margin-top-4" role="alert">
               <b>No delegates found</b>
             </p>
-          } else {
+          }
+          else
+          {
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
             <div id="searchable-elements">
-              @foreach (var delegateModel in Model.Delegates) {
+              @foreach (var delegateModel in Model.Delegates)
+              {
                 <partial name="_SearchableDelegateCard" model="delegateModel" />
               }
             </div>
           }
-          @if (Model.TotalPages > 1) {
+          @if (Model.TotalPages > 1)
+          {
             <partial name="SearchablePage/_Pagination" model="Model" />
           }
         </div>
@@ -85,7 +116,7 @@
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />
     </nav>
   </div>
-</div>
+  </div>
 
 @section scripts {
   <script src="@Url.Content("~/js/trackingSystem/allDelegates.js")" asp-append-version="true"></script>

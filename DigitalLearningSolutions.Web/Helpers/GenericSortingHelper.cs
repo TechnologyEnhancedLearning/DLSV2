@@ -78,4 +78,9 @@
     {
         public static readonly (string DisplayText, string PropertyName) Name = ("SearchableName", nameof(BaseSearchableItem.SearchableName));
     }
+
+    public static class DelegateSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Delegate Name", "Name");
+    }
 }

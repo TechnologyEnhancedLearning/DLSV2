@@ -13,12 +13,19 @@
             IEnumerable<DelegateUserCard> delegateUserCards,
             CustomPromptHelper customPromptHelper,
             int page,
-            string? searchString
-        ) : base(searchString, DefaultSortByOptions.Name.PropertyName, Ascending, page)
+            string? searchString,
+            string sortBy,
+            string sortDirection
+        ) : base(searchString, sortBy, sortDirection, page)
         {
             CentreId = centreId;
-            
-            var searchedItems = GenericSearchHelper.SearchItems(delegateUserCards, SearchString).ToList();
+
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                delegateUserCards.AsQueryable(),
+                sortBy,
+                sortDirection
+            );
+            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(searchedItems);
@@ -38,7 +45,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DefaultSortByOptions.Name
+            DelegateSortByOptions.Name
         };
     }
 }

@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,27 @@
         }
 
         [Route("{page=1:int}")]
-        public IActionResult Index(int page = 1, string? searchString = null)
+        public IActionResult Index(
+            int page = 1,
+            string? searchString = null,
+            string? sortBy = null,
+            string? sortDirection = null
+        )
         {
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            sortDirection ??= BaseSearchablePageViewModel.Ascending;
+
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var model = new AllDelegatesViewModel(centreId, delegateUsers, customPromptHelper, page, searchString);
+            var model = new AllDelegatesViewModel(
+                centreId,
+                delegateUsers,
+                customPromptHelper,
+                page,
+                searchString,
+                sortBy,
+                sortDirection
+            );
 
             return View(model);
         }
