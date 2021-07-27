@@ -23,4 +23,5 @@
 <a class=@(Model.UserBookmark != null ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button") asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">
   Go to Question 1
 </a>
+<a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id">Overview</a>
 
