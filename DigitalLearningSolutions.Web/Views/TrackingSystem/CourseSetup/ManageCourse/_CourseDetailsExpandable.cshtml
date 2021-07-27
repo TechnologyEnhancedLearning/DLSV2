@@ -46,24 +46,22 @@
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
-        @if (Model.PostLearningAssessment) {
-          <dt class="nhsuk-summary-list__key">
-            Completion criteria
-          </dt>
-          @if (Model.IsAssessed) {
-            <dd class="nhsuk-summary-list__value">
-              Post learning assessment
-            </dd>
-          } else if (Model.DiagAssess) {
-            <dd class="nhsuk-summary-list__value">
-              <p>Required learning percentage: @Model.TutCompletionThreshold%</p>
-              <p>Required diagnostic percentage: @Model.DiagCompletionThreshold%</p>
-            </dd>
-          } else {
-            <dd class="nhsuk-summary-list__value">
-              Required learning percentage: @Model.TutCompletionThreshold%
-            </dd>
-          }
+        <dt class="nhsuk-summary-list__key">
+          Completion criteria
+        </dt>
+        @if (Model.PostLearningAssessment && Model.IsAssessed) {
+          <dd class="nhsuk-summary-list__value">
+            Post learning assessment
+          </dd>
+        } else if (Model.DiagAssess) {
+          <dd class="nhsuk-summary-list__value">
+            <p>Required learning percentage: @Model.TutCompletionThreshold%</p>
+            <p>Required diagnostic percentage: @Model.DiagCompletionThreshold%</p>
+          </dd>
+        } else {
+          <dd class="nhsuk-summary-list__value">
+            Required learning percentage: @Model.TutCompletionThreshold%
+          </dd>
         }
       </div>
 
