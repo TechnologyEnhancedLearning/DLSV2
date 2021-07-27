@@ -1,0 +1,49 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model CourseSummaryViewModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content basic-card-content">
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Current version
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CurrentVersion
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Created
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CreatedTime
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Last accessed
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.LastAccessed
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Active learners
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.ActiveLearners
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Completions
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Completions
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
