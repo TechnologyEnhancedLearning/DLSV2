@@ -43,7 +43,7 @@
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, User.GetCandidateIdKnownNotNull());
             if (competency == null)
             {
-                return RedirectToAction("SelfAssessmentReview", new { selfAssessmentId = assessment.Id });
+                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id });
             }
             else
             {
@@ -89,15 +89,15 @@
             return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
         }
 
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Review")]
-        public IActionResult SelfAssessmentReview(int selfAssessmentId)
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview")]
+        public IActionResult SelfAssessmentOverview(int selfAssessmentId)
         {
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Review";
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Overview";
             selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment review for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                logger.LogWarning($"Attempt to display self assessment overview for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
@@ -114,13 +114,13 @@
                     }
                 }
             }
-            var model = new SelfAssessmentReviewViewModel()
+            var model = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = assessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1)
             };
-            return View("SelfAssessments/SelfAssessmentReview", model);
+            return View("SelfAssessments/SelfAssessmentOverview", model);
         }
 
         [HttpPost]
