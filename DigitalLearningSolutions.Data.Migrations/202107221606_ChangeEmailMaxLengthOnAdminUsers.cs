@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202107221605)]
+    [Migration(202107221606)]
     public class ChangeEmailMaxLengthOnAdminUsers : Migration
     {
         public override void Up()
