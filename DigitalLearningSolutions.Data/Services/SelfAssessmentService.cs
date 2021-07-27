@@ -224,7 +224,8 @@ CA.LaunchCount, CA.SubmittedDate
                     FROM {CompetencyTables}
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
-                    WHERE CRN.RowNo = @n",
+                    WHERE CRN.RowNo = @n
+                    ORDER BY CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -306,7 +307,8 @@ CA.LaunchCount, CA.SubmittedDate
             var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {CompetencyTables}",
+                    FROM {CompetencyTables} 
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -326,7 +328,8 @@ CA.LaunchCount, CA.SubmittedDate
             var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {SpecificCompetencyTables}",
+                    FROM {SpecificCompetencyTables}
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -347,7 +350,8 @@ CA.LaunchCount, CA.SubmittedDate
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)",
+                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
