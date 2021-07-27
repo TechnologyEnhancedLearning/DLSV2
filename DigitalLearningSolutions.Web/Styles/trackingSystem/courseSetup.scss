@@ -17,10 +17,6 @@
   }
 
   &:focus {
-    background-color: $nhsuk-focus-color;
-    color: $nhsuk-focus-text-color;
-    box-shadow: 0 -2px $nhsuk-focus-color, 0 4px $nhsuk-focus-text-color;
-    outline: 4px solid transparent;
-    text-decoration: none;
+    @include nhsuk-focused-text;
   }
 }
