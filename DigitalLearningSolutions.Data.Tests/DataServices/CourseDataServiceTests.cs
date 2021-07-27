@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var fixedCreationDateTime = DateTime.UtcNow;
             var expectedLastAccess = new DateTime(2014, 03, 31, 13, 00, 23, 457);
             var expectedCourseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
-                createdTime: fixedCreationDateTime,
+                createdDate: fixedCreationDateTime,
                 lastAccessed: expectedLastAccess
             );
 
@@ -267,7 +267,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var result =
                 courseDataService.GetCourseDetails(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
-            result.CreatedTime = fixedCreationDateTime;
+            result.CreatedDate = fixedCreationDateTime;
 
             // Then
             result.Should().BeEquivalentTo(expectedCourseDetails);
