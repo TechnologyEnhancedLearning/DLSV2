@@ -508,7 +508,7 @@ CA.LaunchCount, CA.SubmittedDate
 
         public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased)
         {
-            int adjustBy = zeroBased ? -1 : 0;
+            int adjustBy = zeroBased ? 1 : 0;
             return connection.Query<LevelDescriptor>(
                @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, 0 AS UpdatedByAdminID
                     FROM
