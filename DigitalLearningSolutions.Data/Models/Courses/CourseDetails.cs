@@ -9,7 +9,7 @@
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public int CurrentVersion { get; set; }
-        public DateTime CreatedTime { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime? LastAccessed { get; set; }
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
