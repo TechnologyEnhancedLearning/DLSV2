@@ -34,12 +34,9 @@ function copyTextToClipboard(textToCopy: string): void {
     return;
   }
 
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    displaySuccessAlert(textToCopy);
-  },
-  () => {
-    displayFailureAlert(textToCopy);
-  });
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => displaySuccessAlert(textToCopy))
+    .catch(() => displayFailureAlert(textToCopy));
 }
 
 function copyTextToClipboardFallback(textToCopy: string): boolean {
