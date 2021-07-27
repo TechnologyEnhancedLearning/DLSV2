@@ -24,20 +24,22 @@ function copyLaunchCourseLinkToClipboard(customisationId: string) {
 }
 
 function copyTextToClipboard(textToCopy: string): void {
-  try {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      displaySuccessAlert(textToCopy);
-    }, () => {
-      displayFailureAlert(textToCopy);
-    });
-  } catch (e) {
+  if (!navigator.clipboard) {
     const succeeded = copyTextToClipboardFallback(textToCopy);
     if (succeeded) {
       displaySuccessAlert(textToCopy);
     } else {
       displayFailureAlert(textToCopy);
     }
+    return;
   }
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    displaySuccessAlert(textToCopy);
+  },
+  () => {
+    displayFailureAlert(textToCopy);
+  });
 }
 
 function copyTextToClipboardFallback(textToCopy: string): boolean {
@@ -61,6 +63,6 @@ function displaySuccessAlert(text: string): void {
   alert(`Copied the text: ${text}`);
 }
 
-function displayFailureAlert(text: string) :void {
+function displayFailureAlert(text: string): void {
   alert(`Copy not supported or blocked. Try manually selecting and copying: ${text}`);
 }
