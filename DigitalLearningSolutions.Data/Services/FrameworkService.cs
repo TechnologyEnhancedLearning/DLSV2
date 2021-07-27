@@ -1070,7 +1070,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                  $@"{AssessmentQuestionFields}{AssessmentQuestionDetailFields}
                     {AssessmentQuestionTables}
                     WHERE AQ.ID = @assessmentQuestionId
-                     ORDER BY [Question]", new { adminId, assessmentQuestionId }
+                     ORDER BY AQ.Ordering", new { adminId, assessmentQuestionId }
                 );
         }
         public LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level)
