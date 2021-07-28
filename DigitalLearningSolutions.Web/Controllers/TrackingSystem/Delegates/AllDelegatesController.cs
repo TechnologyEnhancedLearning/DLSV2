@@ -27,11 +27,10 @@
             int page = 1,
             string? searchString = null,
             string? sortBy = null,
-            string? sortDirection = null
+            string sortDirection = BaseSearchablePageViewModel.Ascending
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            sortDirection ??= BaseSearchablePageViewModel.Ascending;
 
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
