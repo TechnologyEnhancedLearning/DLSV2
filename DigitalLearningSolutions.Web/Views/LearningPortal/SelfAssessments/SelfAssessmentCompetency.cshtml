@@ -6,7 +6,8 @@
   ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item">Self Assessment</li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Assessment.Id">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.Competency.RowNo</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
