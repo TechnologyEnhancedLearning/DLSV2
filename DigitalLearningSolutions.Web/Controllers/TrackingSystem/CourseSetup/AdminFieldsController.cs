@@ -2,7 +2,9 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -39,5 +41,26 @@
             var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
             return View(model);
         }
-    }
+
+        [HttpGet]
+        [Route("{customisationId}/AdminFields/Edit")]
+        public IActionResult EditAdminField(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            var data = TempData.Get<EditAdminFieldData>();
+
+            var model = data != null
+              ? data.EditModel!
+              : new EditAdminFieldViewModel();
+
+            return View(model);
+        }
+  }
 }
