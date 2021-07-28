@@ -6,7 +6,9 @@ import getSearchableElements from './getSearchableElements';
 describe('getSortValue', () => {
   it.each`
   fieldName             | fieldValue        | sortBy                  | expectedSortValue
+  ${'name'}             | ${'Example name'} | ${'SearchableName'}        | ${'example name'}
   ${'name'}             | ${'Example name'} | ${'Name'}        | ${'example name'}
+  ${'registration-date'}| ${'01/01/2020'}   | ${'DateRegistered'}      | ${new Date('01/01/2020')}
   ${'started-date'}     | ${'01/01/2020'}   | ${'StartedDate'}      | ${new Date('01/01/2020')}
   ${'accessed-date'}    | ${'02/02/2020'}   | ${'LastAccessed'} | ${new Date('02/02/2020')}
   ${'complete-by-date'} | ${'03/03/2020'}   | ${'CompleteByDate'}   | ${new Date('03/03/2020')}
@@ -216,6 +218,57 @@ describe('sortSearchableElements available', () => {
   ${'Category'} | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
   ${'Topic'}    | ${'Ascending'}  | ${'course-c'} | ${'course-b'} | ${'course-a'}
   ${'Topic'}    | ${'Descending'} | ${'course-a'} | ${'course-b'} | ${'course-c'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
+describe('sortSearchableElements delegates', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="delegate-a">
+            <span name="name" class="searchable-element-title">A: Delegate</span>
+            <p name="registration-date">02/02/2021</p>
+          </div>
+          <div class="searchable-element" id="delegate-b">
+            <span name="name" class="searchable-element-title">B: Delegate</span>
+            <p name="registration-date">01/01/2021</p>
+          </div>
+          <div class="searchable-element" id="delegate-c">
+            <span name="name" class="searchable-element-title">C: Delegate</span>
+            <p name="registration-date">03/03/2021</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy                | sortDirection   | firstId       | secondId      | thirdId
+  ${'SearchableName'}   | ${'Ascending'}  | ${'delegate-a'} | ${'delegate-b'} | ${'delegate-c'}
+  ${'SearchableName'}   | ${'Descending'} | ${'delegate-c'} | ${'delegate-b'} | ${'delegate-a'}
+  ${'DateRegistered'} | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-a'} | ${'delegate-c'}
+  ${'DateRegistered'} | ${'Descending'} | ${'delegate-c'} | ${'delegate-a'} | ${'delegate-b'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {
