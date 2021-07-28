@@ -14,22 +14,19 @@
     [Route("TrackingSystem/Delegates/View/{delegateId:int}")]
     public class ViewDelegateController : Controller
     {
-        private readonly ICourseDataService courseDataService;
+        private readonly ICourseService courseService;
         private readonly CustomPromptHelper customPromptHelper;
-        private readonly ICustomPromptsService customPromptsService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             CustomPromptHelper customPromptHelper,
-            ICourseDataService courseDataService,
-            ICustomPromptsService customPromptsService
+            ICourseService courseService
         )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
-            this.courseDataService = courseDataService;
-            this.customPromptsService = customPromptsService;
+            this.courseService = courseService;
         }
 
         public IActionResult Index(int delegateId)
@@ -45,21 +42,8 @@
             var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
             var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
-            var courseInfoViewModels = courseDataService.GetDelegateCoursesInfo(delegateId)
-                .Select(
-                    info =>
-                    {
-                        var courseCustomPromptsWithAnswers = customPromptsService.GetCustomPromptsWithAnswersForCourse(
-                            info,
-                            info.CustomisationId,
-                            centreId,
-                            includeArchived: true
-                        );
-                        var attemptStats =
-                            courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId);
-                        return new DelegateCourseInfoViewModel(info, courseCustomPromptsWithAnswers, attemptStats);
-                    }
-                );
+            var courseInfoViewModels = courseService.GetAllCoursesForDelegate(delegateId, centreId)
+                .Select(x => new DelegateCourseInfoViewModel(x.info, x.prompts, x.stats));
 
             var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
             return View(model);

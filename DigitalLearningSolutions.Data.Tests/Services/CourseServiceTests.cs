@@ -1,5 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -15,6 +16,7 @@
         private const int AdminCategoryId = 0;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
+        private ICustomPromptsService customPromptsService = null!;
 
         [SetUp]
         public void Setup()
@@ -22,8 +24,9 @@
             courseDataService = A.Fake<ICourseDataService>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForCategoryId(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
-
-            courseService = new CourseService(courseDataService);
+            customPromptsService = A.Fake<ICustomPromptsService>();
+            courseService = new CourseService(courseDataService, customPromptsService);
+            
         }
 
         [Test]
