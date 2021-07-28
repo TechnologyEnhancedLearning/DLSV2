@@ -22,7 +22,7 @@
         );
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId);
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -164,6 +164,61 @@
             ).SingleOrDefault();
 
             return result;
+        }
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            connection.Execute(
+                @$"UPDATE Customisations
+                    SET
+                        Q{promptNumber}Mandatory = @mandatory,
+                        Q{promptNumber}Options = @options
+                    WHERE CustomisationID = @customisationId",
+                new { mandatory, options, customisationId }
+            );
+        }
+        public IEnumerable<(int, string)> GetCourseCustomPromptsAlphabetical()
+        {
+            var adminFields = connection.Query<(int, string)>
+            (
+                @"SELECT CoursePromptID, CoursePrompt
+                        FROM CoursePrompts
+                        WHERE Active = 1
+                        ORDER BY CoursePrompt"
+            );
+            return adminFields;
+        }
+
+        public void UpdateCustomPromptForCourse(
+            int customisationId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        )
+        {
+            connection.Execute(
+                @$"UPDATE Customisations
+                    SET
+                        CustomField{promptNumber}PromptId = @promptId,
+                        F{promptNumber}Mandatory = @mandatory,
+                        F{promptNumber}Options = @options
+                    WHERE CentreID = @centreId",
+                new { promptId, mandatory, options, customisationId }
+            );
+        }
+
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber)
+        {
+            return connection.Query<string>(
+                @$"SELECT
+                        cp.CustomPrompt  
+                    FROM Customisations c
+                    LEFT JOIN CustomPrompts cp
+                        ON c.CustomField{promptNumber}PromptID = cp.CustomPromptID
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId }
+            ).Single();
         }
     }
 }
