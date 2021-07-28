@@ -50,9 +50,8 @@
           <dt class="nhsuk-summary-list__key">
             Registration date
           </dt>
-          <span name="registration-date">
-            <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
-          </span>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.RegistrationDate" />
+          <div hidden name="registration-date">@Model.DelegateInfo.RegistrationDate</div>
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
