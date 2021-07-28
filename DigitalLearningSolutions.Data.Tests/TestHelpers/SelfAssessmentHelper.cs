@@ -35,6 +35,7 @@
 
         public static Competency CreateDefaultCompetency(
             int id = 1,
+            int rowNo = 1,
             string name = "name",
             string? description = "description",
             string competencyGroup = "competencyGroup",
@@ -45,6 +46,7 @@
             return new Competency()
             {
                 Id = id,
+                RowNo = rowNo,
                 Name = name,
                 Description = description,
                 CompetencyGroup = competencyGroup,
