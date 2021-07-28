@@ -31,12 +31,12 @@
 
             // Find these by making a list of other tutorials in the course, to then find tutorials in this section,
             // and other sections (because a section must contain at least one tutorial), using a similar approach to
-            // the one used in the TutorialContentService.
+            // the one used in the TutorialContentDataService.
 
             // Using this list of other tutorials in the course we can work out if there is another item in the
             // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
             // and if there are other sections (valid tutorials with a different section ID, or with assessments or
-            // consolidation material). See the SectionContentService for the definition of a valid section.
+            // consolidation material). See the SectionContentDataService for the definition of a valid section.
 
             DiagnosticAssessment? diagnosticAssessment = null;
             return connection.Query<DiagnosticAssessment, DiagnosticTutorial, DiagnosticAssessment>(

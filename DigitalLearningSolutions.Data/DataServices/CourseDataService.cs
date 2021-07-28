@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
@@ -19,6 +20,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -28,7 +30,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 FROM dbo.Progress AS pr
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
                 WHERE pr.CustomisationID = cu.CustomisationID
-                AND can.CentreID = @centreId) AS DelegateCount";
+                AND can.CentreID = @centreId
+                AND RemovedDate IS NULL) AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
@@ -50,6 +53,15 @@ namespace DigitalLearningSolutions.Data.DataServices
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CentreID = @centreId) AS AttemptsPassed";
+
+        private const string LastAccessedQuery =
+            @"(SELECT TOP 1 SubmittedTime
+                FROM dbo.Progress AS pr
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
+                WHERE pr.CustomisationID = cu.CustomisationID
+                AND can.CentreID = @centreId
+                AND RemovedDate IS NULL
+                ORDER BY SubmittedTime DESC) AS LastAccessed";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -235,6 +247,52 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
+        }
+
+        public CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseDetails>(
+                @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        cu.CurrentVersion,
+                        cu.CreatedDate,
+                        cu.[Password],
+                        cu.NotificationEmails,
+                        ap.PLAssess AS PostLearningAssessment,
+                        cu.IsAssessed,
+                        ap.DiagAssess,
+                        cu.TutCompletionThreshold,
+                        cu.DiagCompletionThreshold,
+                        cu.SelfRegister,
+                        cu.DiagObjSelect,
+                        cu.HideInLearnerPortal,
+                        cu.CompleteWithinMonths,
+                        cu.ValidityMonths,
+                        cu.Mandatory,
+                        cu.AutoRefresh,
+                        cu.RefreshToCustomisationID,
+                        refreshToCu.CustomisationName AS refreshToCustomisationName,
+                        refreshToAp.ApplicationName AS refreshToApplicationName,
+                        cu.AutoRefreshMonths,
+                        cu.ApplyLPDefaultsToSelfEnrol,
+                        {LastAccessedQuery},
+                        {DelegateCountQuery},
+                        {CompletedCountQuery}
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
         }
     }
 }

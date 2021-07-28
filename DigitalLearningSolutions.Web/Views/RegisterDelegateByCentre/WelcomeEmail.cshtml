@@ -2,13 +2,13 @@
 @model WelcomeEmailViewModel
 
 @{
-  var errorHasOccurred = Model.DateValidationResult is { DateValid: false };
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Register Delegate - Welcome Email" : "Register Delegate - Welcome Email";
   const string dateInputId = "welcome-email-date";
-  const string conditionalDateInputId = "conditional-welcome-email-date";
   var exampleDate = DateTime.Today;
-  var emailDateCss = "nhsuk-checkboxes__conditional" + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden");
-  var errorCss = errorHasOccurred ? "nhsuk-form-group--error nhsuk-u-padding-left-5" : "";
+  var emailDateCss = "nhsuk-checkboxes__conditional"
+                     + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
+                     + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
 }
 
 @section NavMenuItems {
@@ -18,18 +18,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-        <h2 class="nhsuk-error-summary__title" id="error-summary-title">
-          There is a problem
-        </h2>
-        <div class="nhsuk-error-summary__body">
-          <ul class="nhsuk-list nhsuk-error-summary__list">
-            <li>
-              <a href="#@dateInputId">@Model.DateValidationResult!.ErrorMessage</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Welcome email</h1>
@@ -43,22 +32,20 @@
                  asp-for="ShouldSendEmail"
                  type="checkbox"
                  value="true"
-                 aria-controls="@conditionalDateInputId"
+                 aria-controls="@dateInputId"
                  aria-expanded="@Model.ShouldSendEmail">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
             Send welcome email to registered delegate
           </label>
         </div>
 
-        <div class="@emailDateCss @errorCss" id="@conditionalDateInputId">
-          <vc:date-input id="@dateInputId"
-                         label="Deliver email on or after:"
-                         day-id="Day"
-                         month-id="Month"
-                         year-id="Year"
-                         validation-result="@Model.DateValidationResult"
-                         hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
-        </div>
+        <vc:date-input id="@dateInputId"
+                       label="Deliver email on or after:"
+                       day-id="Day"
+                       month-id="Month"
+                       year-id="Year"
+                       css-class="@emailDateCss"
+                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
       </div>
 
       <button class="nhsuk-button" type="submit">Next</button>

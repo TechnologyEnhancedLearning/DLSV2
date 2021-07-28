@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.Common
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.Extensions.Configuration
-@model DisplayPromptsViewModel
+@model AdminFieldsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
@@ -11,6 +11,7 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var canAddNewField = Model.CustomFields.Count < 3;
+  var backLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 @section NavMenuItems {
@@ -18,7 +19,21 @@
 }
 
 @section NavBreadcrumbs {
-  <partial name="/Views/TrackingSystem/Shared/_CentreCourseSetupBreadcrumbs.cshtml" />
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link" asp-controller="CourseSetup" asp-action="Index">Centre course setup</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Manage course</a>
+        </li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Back to manage course</a>
+      </p>
+    </div>
+  </nav>
 }
 
 <div class="nhsuk-grid-row">
@@ -42,7 +57,7 @@
       }
     </div>
 
-    <vc:back-link asp-controller="" asp-action="" link-text="Go back" />
+    <vc:back-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@backLinkData" link-text="Go back" />
 
   </div>
 </div>
