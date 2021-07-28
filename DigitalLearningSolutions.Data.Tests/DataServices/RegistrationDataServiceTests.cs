@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;

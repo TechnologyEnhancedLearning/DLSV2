@@ -5,6 +5,7 @@
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
     public interface IDelegateDownloadFileService
     {

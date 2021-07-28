@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web
     using System.Threading.Tasks;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.User;

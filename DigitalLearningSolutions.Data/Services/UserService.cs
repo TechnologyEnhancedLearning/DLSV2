@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
