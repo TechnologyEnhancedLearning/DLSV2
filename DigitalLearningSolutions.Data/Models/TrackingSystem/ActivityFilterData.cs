@@ -2,7 +2,7 @@
 {
     using System;
 
-    class ActivityFilterData
+    public class ActivityFilterData
     {
         public int JobGroupId { get; set; }
         public int CourseCategoryId { get; set; }

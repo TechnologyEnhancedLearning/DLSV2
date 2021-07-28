@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
@@ -8,7 +7,7 @@
 
     public interface IActivityDataService
     {
-        IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, DateTime start, DateTime end);
+        IEnumerable<ActivityLog> GetRawActivity(int centreId, ActivityFilterData filterData);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -20,25 +19,25 @@
             this.connection = connection;
         }
 
-        public IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, ActivityFilterData filterData)
+        public IEnumerable<ActivityLog> GetRawActivity(int centreId, ActivityFilterData filterData)
         {
-            return connection.Query<MonthOfActivity>(
+            return connection.Query<ActivityLog>(
                 @"SELECT
-                        LogYear AS Year,
-                        LogMonth AS Month,
-                        SUM(CONVERT(INT, Completed)) AS Completions,
-                        SUM(CONVERT(INT, Evaluated)) AS Evaluations,
-                        SUM(CONVERT(INT, Registered)) AS Registrations 
+                        LogDate,
+                        LogYear,
+                        LogQuarter,
+                        LogMonth,
+                        Completion,
+                        Evaluation,
+                        Registration
                     FROM tActivityLog
-                        WHERE (LogDate > @start
-                               AND LogDate < @end
+                        WHERE (LogDate > @startDate
+                               AND LogDate < @endDate
                                AND CentreID = @centreId
                                AND JobGroupID = @jobGroupId
                                AND CustomisationID = @customisationId
-                               AND CourseCategoryId = @courseCategoryId)
-                    GROUP BY LogYear, LogMonth
-                    ORDER BY LogYear, LogMonth",
-                new { centreId, filterData.StartDate, filterData.EndDate, filterData.JobGroupId, filterData.CustomisationId }
+                               AND CourseCategoryId = @courseCategoryId)",
+                new { centreId, filterData.StartDate, filterData.EndDate, filterData.JobGroupId, filterData.CustomisationId, filterData.CourseCategoryId }
             );
         }
     }

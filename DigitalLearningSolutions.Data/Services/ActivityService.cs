@@ -1,9 +1,10 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.Helpers;
 
@@ -40,6 +41,84 @@ namespace DigitalLearningSolutions.Data.Services
                     return new MonthOfActivity(slot, monthData);
                 }
             );
+        }
+
+        public void GetFilteredActivity(int centreId, ActivityFilterData filterData)
+        {
+            var activityData = activityDataService.GetRawActivity(centreId, filterData);
+
+            // group by year, quarter, month easy
+            // group by 
+        }
+
+        private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval, DateTime endDate)
+        {
+            IEnumerable<IGrouping<DateInformation, ActivityLog>> groupedData;
+
+            switch (interval)
+            {
+                case ReportInterval.Days:
+                    groupedData = activityData.GroupBy(x => new DateInformation
+                    {
+                        Day = x.LogDate.Day,
+                        Month = x.LogMonth,
+                        Year = x.LogYear
+                    });
+                    break;
+                case ReportInterval.Weeks:
+                    groupedData = activityData.GroupBy(x => new DateInformation
+                    {
+                        WeeksAgo = (endDate - x.LogDate).Days / 7
+                    });
+                    break;
+                case ReportInterval.Months:
+                    groupedData = activityData.GroupBy(x => new DateInformation
+                    {
+                        Month = x.LogMonth,
+                        Year = x.LogYear
+                    });
+                    break;
+                case ReportInterval.Quarters:
+                    groupedData = activityData.GroupBy(x => new DateInformation
+                    {
+                        Quarter = x.LogQuarter,
+                        Year = x.LogYear
+                    });
+                    break;
+                default:
+                    groupedData = activityData.GroupBy(x => new DateInformation
+                    {
+                        Year = x.LogYear
+                    });
+                    break;
+            }
+
+            return groupedData.Select(
+                x => new PeriodOfActivity
+                {
+                    DateInformation = x.Key,
+                    Registrations = x.Sum(y => y.Registration),
+                    Completions = x.Sum(y => y.Completion),
+                    Evaluations = x.Sum(y => y.Evaluation)
+                }
+            );
+        }
+
+        public class DateInformation
+        {
+            public int Day { get; set; }
+            public int WeeksAgo { get; set; }
+            public int Month { get; set; }
+            public int Quarter { get; set; }
+            public int Year { get; set; }
+        }
+
+        public class PeriodOfActivity
+        {
+            public DateInformation DateInformation { get; set; }
+            public int Completions { get; set; }
+            public int Evaluations { get; set; }
+            public int Registrations { get; set; }
         }
     }
 }
