@@ -147,8 +147,7 @@
                         cp3.CoursePrompt AS CustomField3Prompt,
                         cu.Q3Options AS CustomField3Options, 
                         cu.Q3Mandatory AS CustomField3Mandatory,
-                        ap.CourseCategoryID,
-                        ap.ArchivedDate
+                        ap.CourseCategoryID
                     FROM 
                         Customisations AS cu
                     LEFT JOIN CoursePrompts AS cp1 

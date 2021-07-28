@@ -108,7 +108,6 @@
             string? customField3Prompt = null,
             string? customField3Options = "",
             bool customField3Mandatory = false,
-            DateTime? archivedDate = null,
             int courseCategoryId = 0
         )
         {
@@ -123,7 +122,6 @@
                 CustomField3Prompt = customField3Prompt,
                 CustomField3Options = customField3Options,
                 CustomField3Mandatory = customField3Mandatory,
-                ArchivedDate = archivedDate,
                 CourseCategoryId = courseCategoryId
             };
         }

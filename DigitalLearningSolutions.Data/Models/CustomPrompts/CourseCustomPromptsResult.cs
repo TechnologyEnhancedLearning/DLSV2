@@ -17,6 +17,5 @@
         public bool CustomField3Mandatory { get; set; }
 
         public int CourseCategoryId { get; set; }
-        public DateTime? ArchivedDate { get; set; }
     }
 }
