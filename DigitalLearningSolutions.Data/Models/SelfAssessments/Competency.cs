@@ -5,6 +5,7 @@
     public class Competency
     {
         public int Id { get; set; }
+        public int RowNo { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public string CompetencyGroup { get; set; }

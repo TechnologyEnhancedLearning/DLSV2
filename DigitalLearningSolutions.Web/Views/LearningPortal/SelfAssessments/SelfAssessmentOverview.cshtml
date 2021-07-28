@@ -11,99 +11,98 @@
   <li class="nhsuk-breadcrumb__item">Self Assessment</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>@Model.SelfAssessment.Name - Review</h1>
-<h2>Check through your answers</h2>
+<h1>@Model.SelfAssessment.Name - Overview</h1>
 
-
-@foreach (var competencyGroup in @Model.CompetencyGroups)
+@if (Model.CompetencyGroups.Any())
 {
-  <div class="nhsuk-panel competency-group-panel">
-    <details class="nhsuk-details nhsuk-expander">
-      <summary class="nhsuk-details__summary">
-        <span class="competency-group-title nhsuk-details__summary-text">
-          @competencyGroup.Key
-        </span>
-      </summary>
-
-      <div class="nhsuk-details__text">
-        <partial name="SelfAssessments/_MeanScores"
-                 view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-        @foreach (var competency in competencyGroup)
-        {
-          <div class="nhsuk-panel review-card">
-            <div class="nhsuk-grid-row">
-              <div class="nhsuk-grid-column-one-third">
-                <h4>@competency.Name</h4>
-              </div>
-              @foreach (var question in competency.AssessmentQuestions)
+  foreach (var competencyGroup in Model.CompetencyGroups)
+  {
+    <div class="nhsuk-panel competency-group-panel">
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="competency-group-title nhsuk-details__summary-text">
+            @competencyGroup.Key
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+          <partial name="SelfAssessments/_MeanScores"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+          <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
+            @*<caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>*@
+            <thead role="rowgroup" class="nhsuk-table__head">
+              <tr role="row">
+                <th role="columnheader" class="" scope="col">
+                  @competencyGroup.First().Vocabulary
+                </th>
+                <th role="columnheader" class="" scope="col">
+                  Question
+                </th>
+                <th role="columnheader" class="" scope="col">
+                  Response
+                </th>
+                <th role="columnheader" class="" scope="col">
+                  Status
+                </th>
+                <th role="columnheader" class="" scope="col">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+              @foreach (var competency in competencyGroup)
               {
-                <div class="nhsuk-grid-column-one-third">
-                  <h5 class="review-question">@question.Question</h5>
-                  <p class="review-result">
-                    @if (question.Result == null)
-                    {
-                      <span class="nhsuk-u-font-weight-bold">No response</span>
-                    }
-                    else
-                    {
-                      @if (question.LevelDescriptors != null)
+              <tr role="row" class="nhsuk-table__row first-row">
+                <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-competencyNumber="@competency.RowNo">
+                    <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+                  </a>
+                </td>
+                <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Actions </span>
+                    
+                </td>
+              </tr>
+                @foreach (var question in competency.AssessmentQuestions.Skip(1))
+                {
+            <tr role="row" class="nhsuk-table__row">
+              <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
+              <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                <span class="nhsuk-table-responsive__heading">Actions </span>
+                
+              </td>
+            </tr>
 
-                      {
-                        foreach (var levelDescriptor in question.LevelDescriptors)
-                        {
-                          if (levelDescriptor.LevelValue == question.Result)
-                          {
-
-                            <span class="nhsuk-u-font-weight-bold">
-                              @levelDescriptor.LevelLabel
-                            </span>
-                            break;
-                          }
-                        }
-                      }
-                      else
-                      {
-
-                        <span class="nhsuk-u-font-weight-bold">
-                          @question.Result/@question.MaxValue
-                        </span>
-                      }
-                    }
-                  </p>
-                </div>
+                }
               }
-            </div>
-          </div>
-        }
+            </tbody>
+          </table>
+        </div>
+      </details>
       </div>
-    </details>
-    <div class="outer-score-container">
-      <partial name="SelfAssessments/_MeanScores"
-               view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-    </div>
-  </div>
-}
+      }
+      }
 
-@if (Model.SelfAssessment.UseFilteredApi)
-{
-<p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to retrieve a list of recommended learning resources.</p>
-  <a class="nhsuk-button finish-review-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentFilteredResults" : "FilteredRecommendations")>
-    Submit self assessment
-  </a>
-}
-else
-{
-  <a class="nhsuk-button finish-review-button" asp-action="Current">
-    Finish self assessment
-  </a>
-}
+      @if (Model.SelfAssessment.UseFilteredApi)
+      {
+        <p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to retrieve a list of recommended learning resources.</p>
+        <a class="nhsuk-button finish-review-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentFilteredResults" : "FilteredRecommendations")>
+          Submit self assessment
+        </a>
+      }
+      else
+      {
+        <a class="nhsuk-button finish-review-button" asp-action="Current">
+          Close self assessment
+        </a>
+      }
 
 
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-competencyNumber="@(Model.PreviousCompetencyNumber)">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-    </svg>
-    Previous question
-  </a>
-</div>
+      <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-competencyNumber="@(Model.PreviousCompetencyNumber)">
+          <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+          </svg>
+          Previous question
+        </a>
+      </div>
