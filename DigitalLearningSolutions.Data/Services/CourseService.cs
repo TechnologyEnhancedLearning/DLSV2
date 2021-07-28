@@ -50,8 +50,7 @@
                     var courseCustomPromptsWithAnswers = customPromptsService.GetCustomPromptsWithAnswersForCourse(
                         info,
                         info.CustomisationId,
-                        centreId,
-                        includeArchived: true
+                        centreId
                     );
                     var attemptStats = info.IsAssessed
                         ? courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId)

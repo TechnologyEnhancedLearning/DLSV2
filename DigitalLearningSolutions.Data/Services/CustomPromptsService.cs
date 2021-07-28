@@ -37,16 +37,14 @@
         public CourseCustomPrompts? GetCustomPromptsForCourse(
             int customisationId,
             int centreId,
-            int categoryId = 0,
-            bool includeArchived = false
+            int categoryId = 0
         );
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
             int centreId,
-            int categoryId = 0,
-            bool includeArchived = false
+            int categoryId = 0
         );
     }
 
@@ -175,11 +173,10 @@
         public CourseCustomPrompts? GetCustomPromptsForCourse(
             int customisationId,
             int centreId,
-            int categoryId = 0,
-            bool includeArchived = false
+            int categoryId = 0
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId, includeArchived);
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
             if (result == null)
             {
                 return null;
@@ -196,11 +193,10 @@
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
             int centreId,
-            int categoryId = 0,
-            bool includeArchived = false
+            int categoryId = 0
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId, includeArchived);
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
 
             return PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(result, delegateCourseInfo);
         }
@@ -208,13 +204,11 @@
         private CourseCustomPromptsResult? GetCourseCustomPromptsResultForCourse(
             int customisationId,
             int centreId,
-            int categoryId,
-            bool includeArchived
+            int categoryId
         )
         {
             var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId);
-            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId ||
-                !includeArchived && result.ArchivedDate.HasValue)
+            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
             {
                 return null;
             }

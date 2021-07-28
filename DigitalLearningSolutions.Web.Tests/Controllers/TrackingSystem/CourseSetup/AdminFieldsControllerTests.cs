@@ -28,7 +28,7 @@
         public void AdminFields_returns_NotFound_when_no_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._, A<bool>._))
+            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(null);
 
             // When
@@ -44,7 +44,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._, A<bool>._))
+            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts));
 
             // When
