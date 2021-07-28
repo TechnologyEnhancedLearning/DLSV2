@@ -13,6 +13,11 @@
         private readonly (int totalAttempts, int attemptsPassed) attemptStats = (0, 0);
         private readonly List<CustomPromptWithAnswer> customPromptsWithAnswers = new List<CustomPromptWithAnswer>();
 
+        private DelegateCourseDetails GetDetailsFromInfo(DelegateCourseInfo info)
+        {
+            return new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
+        }
+
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
         {
@@ -30,9 +35,10 @@
                 Completed = completedDate,
                 Evaluated = evaluatedDate
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -53,9 +59,10 @@
         {
             // Given
             var info = new DelegateCourseInfo { EnrolmentMethodId = enrollmentMethodId };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.EnrolmentMethod.Should().Be(enrollmentMethod);
@@ -73,12 +80,15 @@
             string? passRate
         )
         {
-            // When
-            var model = new DelegateCourseInfoViewModel(
+            // Given
+            var details = new DelegateCourseDetails(
                 new DelegateCourseInfo(),
                 customPromptsWithAnswers,
                 (totalAttempts, attemptsPassed)
             );
+
+            // When
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.PassRate.Should().Be(passRate);
@@ -92,9 +102,10 @@
             {
                 ApplicationName = "my application", CustomisationName = ""
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.CourseName.Should().Be("my application");
@@ -109,9 +120,10 @@
                 ApplicationName = "my application",
                 CustomisationName = "my customisation"
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.CourseName.Should().Be("my application - my customisation");
@@ -125,9 +137,10 @@
             {
                 SupervisorSurname = null
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().BeNull();
@@ -142,9 +155,10 @@
                 SupervisorForename = "",
                 SupervisorSurname = "surname"
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().Be("surname");
@@ -159,9 +173,10 @@
                 SupervisorForename = "firstname",
                 SupervisorSurname = "surname"
             };
+            var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(info, customPromptsWithAnswers, attemptStats);
+            var model = new DelegateCourseInfoViewModel(details);
 
             // Then
             model.Supervisor.Should().Be("firstname surname");
