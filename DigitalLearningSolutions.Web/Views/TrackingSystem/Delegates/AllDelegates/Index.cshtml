@@ -45,41 +45,45 @@
       </div>
     </div>
 
+
     <div class="nhsuk-grid-row">
       <form method="get" role="search">
         <input type="hidden" name="sortBy" value="@Model.SortBy" />
         <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-        <vc:search-box label="Search delegates"
-                       asp-controller="AllDelegates"
-                       asp-action="Index"
-                       searchable-page-view-model="@Model"
-                       css-class="nhsuk-grid-column-one-half" />
+        <div id="search">
+          <label class="nhsuk-label" for="search-field">Search:</label>
+          <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString">
+          <button class="nhsuk-search__submit non-js-only" type="submit" asp-action="Index" asp-route-page="1">
+            <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z"></path>
+            </svg>
+            <span class="nhsuk-u-visually-hidden">Search</span>
+          </button>
+        </div>
       </form>
     </div>
 
     <div class="nhsuk-grid-row">
       <form method="get" role="search">
         <input type="hidden" name="searchString" value="@Model.SearchString" />
-        <div class="sort-row nhsuk-form-group">
-          <div class="sort-select-container">
-            <select class="nhsuk-select sort-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
-          </div>
-          <div class="sort-select-container">
-            <select class="nhsuk-select sort-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort Direction">
-              <option value="Ascending">Ascending</option>
-              <option value="Descending">Descending</option>
-            </select>
-          </div>
+        <div class="nhsuk-grid-column-full nhsuk-form-group Xsort-row">
+          <label class="nhsuk-label" for="select-sort-by">
+            Sort by:
+          </label>
+          <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
+          <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort direction">
+            <option value="Ascending">Ascending</option>
+            <option value="Descending">Descending</option>
+          </select>
           <div class="non-js-only">
-            <div class="sort-button-container">
-              <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
-                Sort
-              </button>
-            </div>
+            <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
+              Sort
+            </button>
           </div>
         </div>
       </form>
     </div>
+
 
     <form method="get">
       <div class="nhsuk-grid-row">
