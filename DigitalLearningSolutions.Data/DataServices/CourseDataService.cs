@@ -227,6 +227,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
                     LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
                     WHERE pr.CandidateID = @delegateId
+                        AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
                 new { delegateId }
             );
