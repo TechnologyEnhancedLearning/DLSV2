@@ -43,7 +43,7 @@
             var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
             var courseInfoViewModels = courseService.GetAllCoursesForDelegate(delegateId, centreId)
-                .Select(x => new DelegateCourseInfoViewModel(x.info, x.prompts, x.stats));
+                .Select(x => new DelegateCourseInfoViewModel(x));
 
             var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
             return View(model);

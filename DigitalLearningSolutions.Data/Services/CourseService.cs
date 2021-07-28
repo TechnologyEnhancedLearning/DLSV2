@@ -4,18 +4,12 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public interface ICourseService
     {
-        public IEnumerable<(DelegateCourseInfo info, List<CustomPromptWithAnswer> prompts, (int, int) stats)>
-            GetAllCoursesForDelegate(
-                int delegateId,
-                int centreId
-            );
-
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
     }
 
     public class CourseService : ICourseService
@@ -41,13 +35,12 @@
             return allCourses.Where(c => c.CentreId == centreId);
         }
 
-        public IEnumerable<(DelegateCourseInfo info, List<CustomPromptWithAnswer> prompts, (int, int) stats)>
-            GetAllCoursesForDelegate(int delegateId, int centreId)
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId)
         {
             return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
                 info =>
                 {
-                    var courseCustomPromptsWithAnswers = customPromptsService.GetCustomPromptsWithAnswersForCourse(
+                    var customPrompts = customPromptsService.GetCustomPromptsWithAnswersForCourse(
                         info,
                         info.CustomisationId,
                         centreId
@@ -55,7 +48,7 @@
                     var attemptStats = info.IsAssessed
                         ? courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId)
                         : (0, 0);
-                    return (info, courseCustomPromptsWithAnswers, attemptStats);
+                    return new DelegateCourseDetails(info, customPrompts, attemptStats);
                 }
             );
         }

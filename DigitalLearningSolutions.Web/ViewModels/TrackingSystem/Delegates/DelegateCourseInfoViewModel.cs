@@ -9,12 +9,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
     {
         private const string DateFormat = "dd/MM/yyyy";
 
-        public DelegateCourseInfoViewModel(
-            DelegateCourseInfo info,
-            List<CustomPromptWithAnswer>? courseCustomPromptsWithAnswers,
-            (int totalAttempts, int attemptsPassed) attemptStats
-        )
+        public DelegateCourseInfoViewModel(DelegateCourseDetails details)
         {
+            var info = details.DelegateCourseInfo;
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
@@ -38,9 +35,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
 
-            CourseCustomPromptsWithAnswers = courseCustomPromptsWithAnswers ?? new List<CustomPromptWithAnswer>();
-            TotalAttempts = attemptStats.totalAttempts;
-            AttemptsPassed = attemptStats.attemptsPassed;
+            CourseCustomPromptsWithAnswers = details.CustomPrompts;
+            TotalAttempts = details.AttemptStats.totalAttempts;
+            AttemptsPassed = details.AttemptStats.attemptsPassed;
         }
 
         public int CustomisationId { get; set; }
