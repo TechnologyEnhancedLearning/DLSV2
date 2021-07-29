@@ -100,6 +100,29 @@
             };
         }
 
+        public static AdminUser GetDefaultCategoryNameAllAdminUser()
+        {
+            return GetDefaultAdminUser(
+                id: 11,
+                centreId: 59,
+                centreName: "Guy's and St Thomas' NHS Foundation Trust",
+                firstName: "xxxxxxx",
+                lastName: "xxxxxx",
+                emailAddress: "ub.e@onlrxghciatsk",
+                password: "AKqPfVDoD0/Ri1sRMHn3VQPU4DafOB/9cKp9XPDGyHpO2GB00G0A/3Ss68XPV6fbEg==",
+                isContentManager: false,
+                publishToAll: false,
+                isUserAdmin: false,
+                categoryId: 0,
+                categoryName: "All",
+                isSupervisor: false,
+                isTrainer: false,
+                isFrameworkDeveloper: false,
+                importOnly: false,
+                failedLoginCount: 5
+            );
+        }
+
         public static DelegateRegistrationModel GetDefaultDelegateRegistrationModel(
             string firstName = "FirstName",
             string lastName = "Test",

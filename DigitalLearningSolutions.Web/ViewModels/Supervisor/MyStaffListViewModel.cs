@@ -8,7 +8,6 @@
     using System.Collections.Generic;
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
-
         public MyStaffListViewModel(
             IEnumerable<SupervisorDelegateDetail> supervisorDelegateDetails,
             CentreCustomPrompts centreCustomPrompts,
@@ -16,7 +15,7 @@
             string sortBy,
             string sortDirection,
             int page
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, page, false, sortBy, sortDirection)
         {
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(

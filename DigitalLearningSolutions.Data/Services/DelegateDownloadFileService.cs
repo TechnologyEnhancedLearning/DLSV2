@@ -5,6 +5,7 @@
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
 
     public interface IDelegateDownloadFileService
     {
@@ -31,7 +32,7 @@
         public byte[] GetDelegateDownloadFileForCentre(int centreId)
         {
             using var workbook = new XLWorkbook();
-            
+
             PopulateDelegatesSheet(workbook, centreId);
             PopulateJobGroupsSheet(workbook);
 

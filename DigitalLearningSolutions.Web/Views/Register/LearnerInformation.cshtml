@@ -21,13 +21,13 @@
                                                    nameof(Model.Answer4),
                                                    nameof(Model.Answer5),
                                                    nameof(Model.Answer6)
-                                                 })"/>
+                                                 })" />
     }
-      
+
     <h1 class="nhsuk-heading-xl">Learner information</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
-      
+
       <vc:select-list
         asp-for="JobGroup"
         label="Job Group"
@@ -62,9 +62,10 @@
         }
       }
 
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Register" asp-action="PersonalInformation" role="button">Back</a>
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
-    <vc:back-link asp-controller="Register" asp-action="PersonalInformation" link-text="Go back" />
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>

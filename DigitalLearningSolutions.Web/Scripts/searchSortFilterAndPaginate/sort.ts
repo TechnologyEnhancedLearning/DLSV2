@@ -1,19 +1,19 @@
 import moment from 'moment';
 import * as _ from 'lodash';
-import { SearchableElement } from './searchSortAndPaginate';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
 
-export function setupSort(onSortUpdated: VoidFunction): void {
+export function setUpSort(onSortUpdated: VoidFunction): void {
   document.getElementById('select-sort-by')?.addEventListener('change', onSortUpdated);
   document.getElementById('select-sort-direction')?.addEventListener('change', onSortUpdated);
 }
 
 export function sortSearchableElements(
-  searchableElements: SearchableElement[],
-): SearchableElement[] {
+  searchableElements: ISearchableElement[],
+): ISearchableElement[] {
   const sortBy = getSortBy();
   const sortDirection = getSortDirection();
 
-  return _.orderBy<SearchableElement>(
+  return _.orderBy<ISearchableElement>(
     searchableElements,
     [(searchableElement) => getSortValue(searchableElement, sortBy)],
     [(sortDirection === 'Descending') ? 'desc' : 'asc'],
@@ -24,7 +24,7 @@ export function sortSearchableElements(
 // property name of the C# object to be sorted on, and should always match the value set in
 // GenericSortingHelper.cs
 export function getSortValue(
-  searchableElement: SearchableElement,
+  searchableElement: ISearchableElement,
   sortBy: string,
 ): string | number | Date {
   switch (sortBy) {
@@ -53,7 +53,7 @@ export function getSortValue(
   }
 }
 
-function getElementText(searchableElement: SearchableElement, elementName: string): string {
+function getElementText(searchableElement: ISearchableElement, elementName: string): string {
   return searchableElement.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
 }
 
@@ -64,10 +64,10 @@ function parseDate(dateString: string): Date {
 
 function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
-  return element.value;
+  return element?.value ?? 'Name';
 }
 
 function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
-  return element.value;
+  return element?.value ?? 'Ascending';
 }
