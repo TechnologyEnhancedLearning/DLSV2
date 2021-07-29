@@ -217,5 +217,18 @@ details.nhsuk-details {
 }
 
 .nhsuk-table__row:hover{
-    background-color: inherit !important;
+    background-color: inherit;
+}
+.row-outer:target {
+  background-color: rgba(255, 249, 146, 1);
+  animation: fade 4s forwards;
+}
+@keyframes fade {
+  from {
+    background-color: rgba(255, 249, 146, 1);
+  }
+
+  to {
+    background-color: rgba(255, 249, 146, 0);
+  }
 }
