@@ -26,32 +26,31 @@
       </th>
     </tr>
   </thead>
-  <tbody class="nhsuk-table__body">
-    @foreach (var competency in Model)
-    {
-      <tr role="row" id="comp-@competency.RowNo" class="nhsuk-table__row first-row">
-        <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
-            <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
-          </a>
-        </td>
-        <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />
-        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-          <span class="nhsuk-table-responsive__heading">Actions </span>
 
-        </td>
-      </tr>
-      @foreach (var question in competency.AssessmentQuestions.Skip(1))
-      {
-        <tr role="row" class="nhsuk-table__row">
-          <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Actions </span>
+  @foreach (var competency in Model)
+  {
+<tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
+  <tr role="row" class="nhsuk-table__row first-row">
+    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+      <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+    </td>
+    <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />
+    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+      <span class="nhsuk-table-responsive__heading">Actions </span>
+      <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
+        Review
+      </a>
+    </td>
+  </tr>
+  @foreach (var question in competency.AssessmentQuestions.Skip(1))
+  {
+    <tr role="row" class="nhsuk-table__row">
+      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
 
-          </td>
-        </tr>
+    </tr>
 
+  }
+</tbody>
       }
-    }
-  </tbody>
-</table>
+    
+  </table>

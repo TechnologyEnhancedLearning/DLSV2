@@ -8,7 +8,8 @@
   ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item">Self Assessment</li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item">Overview</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - Overview</h1>
@@ -47,7 +48,7 @@
           <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
         </div>
       </div>
-     
+
     }
   }
 }
