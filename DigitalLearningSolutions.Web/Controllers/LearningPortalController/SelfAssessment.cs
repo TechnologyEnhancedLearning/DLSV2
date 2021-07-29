@@ -86,7 +86,14 @@
                 }
             }
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateID, true);
-            return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
+            if (assessment.LinearNavigation)
+            {
+                return RedirectToAction("SelfAssessmentCompetency", new { competencyNumber = competencyNumber + 1 });
+            }
+            else
+            {
+                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId });
+            }
         }
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview")]
