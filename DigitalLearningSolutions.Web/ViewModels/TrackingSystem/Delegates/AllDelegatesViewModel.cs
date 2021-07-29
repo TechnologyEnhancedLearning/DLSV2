@@ -16,7 +16,7 @@
             string? searchString,
             string sortBy,
             string sortDirection
-        ) : base(searchString, sortBy, sortDirection, page)
+        ) : base(searchString, page, false, sortBy, sortDirection)
         {
             CentreId = centreId;
 
