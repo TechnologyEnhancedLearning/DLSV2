@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@model DelegateGroupsSideNavViewModel
+
+<h2 class="side-nav__heading">@Model.GroupName</h2>
+<ul class="nhsuk-list side-nav__list">
+
+  <vc:side-menu-link asp-action="Delegates"
+                     asp-controller="DelegateGroups"
+                     link-text="Delegates"
+                     is-current-page="@(Model.Page == DelegateGroupPage.Delegates)" />
+
+  <vc:side-menu-link asp-action=""
+                     asp-controller=""
+                     link-text="Courses"
+                     is-current-page="@(Model.Page == DelegateGroupPage.Courses)" />
+
+</ul>

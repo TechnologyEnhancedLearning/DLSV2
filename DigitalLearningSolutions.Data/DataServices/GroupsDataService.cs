@@ -2,12 +2,17 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsDataService
     {
         IEnumerable<Group> GetGroupsForCentre(int centreId);
+
+        IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
+
+        string GetGroupNameForGroupId(int groupId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -49,6 +54,35 @@
                     WHERE RemovedDate IS NULL AND g.CentreID = @centreId",
                 new { centreId }
             );
+        }
+
+        public IEnumerable<GroupDelegate> GetGroupDelegates(int groupId)
+        {
+            return connection.Query<GroupDelegate>(
+                @"SELECT
+                        GroupDelegateID
+	                    GroupID,
+	                    DelegateID,
+                        FirstName,
+                        LastName,
+                        EmailAddress,
+                        CandidateNumber	                   
+                    FROM GroupDelegates AS gd
+                    JOIN Candidates AS c ON c.CandidateID = gd.DelegateID
+                    WHERE gd.GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public string GetGroupNameForGroupId(int groupId)
+        {
+            return connection.Query<string>(
+                @"SELECT 
+	                    GroupLabel
+                    FROM Groups
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            ).Single();
         }
     }
 }
