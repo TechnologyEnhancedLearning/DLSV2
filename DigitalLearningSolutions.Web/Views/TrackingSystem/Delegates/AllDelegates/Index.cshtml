@@ -52,24 +52,7 @@
     </div>
 
     <div class="nhsuk-grid-row">
-      <form method="get" role="search">
-        <input type="hidden" name="searchString" value="@Model.SearchString" />
-        <div class="nhsuk-grid-column-full nhsuk-form-group">
-          <label class="nhsuk-label" for="select-sort-by">
-            Sort by:
-          </label>
-          <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
-          <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort direction">
-            <option value="Ascending">Ascending</option>
-            <option value="Descending">Descending</option>
-          </select>
-          <div class="non-js-only">
-            <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
-              Sort
-            </button>
-          </div>
-        </div>
-      </form>
+      <partial name="SearchablePage/_Sort" model="@Model" />
     </div>
 
     <div class="nhsuk-grid-row">

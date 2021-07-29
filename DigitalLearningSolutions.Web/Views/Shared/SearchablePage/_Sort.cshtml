@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model BaseSearchablePageViewModel
+@{
+  const string dropdownCss = "sort-dropdown nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2";
+}
+
+<form method="get" role="search">
+  <input type="hidden" name="searchString" value="@Model.SearchString" />
+  @if (Model.FilterEnabled) {
+    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+  }
+  <div class="nhsuk-grid-column-full nhsuk-form-group">
+    <label class="nhsuk-label" for="select-sort-by">
+      Sort by:
+    </label>
+    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown @dropdownCss" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
+    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown @dropdownCss" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort direction">
+      <option value="Ascending">Ascending</option>
+      <option value="Descending">Descending</option>
+    </select>
+    <div class="non-js-only">
+      <button class="nhsuk-button nhsuk-button--secondary button-small" type="submit">
+        Sort
+      </button>
+    </div>
+  </div>
+</form>
