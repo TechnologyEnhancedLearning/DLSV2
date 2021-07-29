@@ -28,7 +28,11 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full nhsuk-u-margin-left-4">
-      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2" role="button" href="#">
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button"
+         asp-controller="AdminFields"
+         asp-action="EditAdminField"
+         asp-route-customisationId="@Model.CustomFieldId">
         Edit
       </a>
       <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" role="button" href="#">
