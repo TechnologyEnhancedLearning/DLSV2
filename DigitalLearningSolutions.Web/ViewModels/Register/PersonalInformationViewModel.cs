@@ -36,7 +36,7 @@
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Enter an email address")]
-        [MaxLength(250, ErrorMessage = "Email address must be 250 characters or fewer")]
+        [MaxLength(255, ErrorMessage = "Email address must be 255 characters or fewer")]
         [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         [NoWhitespace("Email address must not contain any whitespace characters")]
         public string? Email { get; set; }

@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
-    using DigitalLearningSolutions.Web.ControllerHelpers;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
 
-    public class WelcomeEmailViewModel
+    public class WelcomeEmailViewModel : IValidatableObject
     {
         public WelcomeEmailViewModel() { }
 
@@ -22,7 +24,17 @@
         public int? Month { get; set; }
         public int? Year { get; set; }
         public bool ShouldSendEmail { get; set; }
-        public DateValidator.ValidationResult? DateValidationResult { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!ShouldSendEmail)
+            {
+                return new List<ValidationResult>();
+            }
+
+            return DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true)
+                .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
+        }
 
         public void ClearDateIfNotSendEmail()
         {

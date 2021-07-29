@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services.TutorialContentServiceTests
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.TutorialContentDataServiceTests
 {
     using System.Transactions;
     using FluentAssertions;
     using NUnit.Framework;
 
-    internal partial class TutorialContentServiceTests
+    internal partial class TutorialContentDataServiceTests
     {
         [Test]
         public void Get_tutorial_information_should_return_null_nextTutorial_if_last_tutorial_in_section()
@@ -16,7 +16,7 @@
             const int tutorialId = 52;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -33,7 +33,7 @@
             const int tutorialId = 94;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -53,7 +53,7 @@
             const int nextTutorialId = 4263;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -74,7 +74,7 @@
             const int nextSectionId = 978;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -93,7 +93,7 @@
             const int nextTutorialId = 3333;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -112,7 +112,7 @@
             const int nextTutorialId = 1583; // Skipping over archived 1536, 1537, 1581
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -131,7 +131,7 @@
             const int nextSectionId = 2193;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -150,7 +150,7 @@
             const int nextSectionId = 1960; // Skips archived section 1959
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -175,7 +175,7 @@
                 const int expectedNextSectionId = 2088;
 
                 // When
-                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
                 // Then
                 tutorial.Should().NotBeNull();
@@ -200,7 +200,7 @@
                 sectionContentTestHelper.UpdatePostLearningAssessmentPath(expectedNextSectionId, null);
 
                 // When
-                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
                 // Then
                 tutorial.Should().NotBeNull();
@@ -227,7 +227,7 @@
                 const int expectedNextSectionId = 150;
 
                 // When
-                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
                 // Then
                 tutorial.Should().NotBeNull();
@@ -247,7 +247,7 @@
             const int expectedNextSectionId = 105; // All tutorials are CustomisationTutorials.Status and DiagStatus = 0
                                                    // Customisations.IsAssessed = 1 and Sections.PLAssessPath is not null
                                                    // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -271,7 +271,7 @@
                 const int expectedNextSectionId = 106;
 
                 // When
-                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
                 // Then
                 tutorial.Should().NotBeNull();
@@ -301,7 +301,7 @@
                 // SectionID: 2086, SectionNumber: 11
 
                 // When
-                var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+                var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
                 // Then
                 tutorial.Should().NotBeNull();
@@ -325,7 +325,7 @@
             const int nextTutorialId = 928;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -349,7 +349,7 @@
             const int nextTutorialId = 929;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();
@@ -373,7 +373,7 @@
             const int nextTutorialId = 930;
 
             // When
-            var tutorial = tutorialContentService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
+            var tutorial = tutorialContentDataService.GetTutorialInformation(candidateId, customisationId, sectionId, tutorialId);
 
             // Then
             tutorial.Should().NotBeNull();

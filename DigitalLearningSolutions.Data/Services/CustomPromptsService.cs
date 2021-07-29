@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -33,7 +34,19 @@
         public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+
+        public CourseCustomPrompts? GetCustomPromptsForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        );
+
+        public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
+            DelegateCourseInfo delegateCourseInfo,
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        );
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -158,16 +171,50 @@
             return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
         }
 
-        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId)
+        public CourseCustomPrompts? GetCustomPromptsForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        )
         {
-            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
-            return result == null
-                ? null
-                : new CourseCustomPrompts(
-                    customisationId,
-                    centreId,
-                    PopulateCustomPromptListFromCourseCustomPromptsResult(result)
-                );
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
+            if (result == null)
+            {
+                return null;
+            }
+
+            return new CourseCustomPrompts(
+                customisationId,
+                centreId,
+                PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+            );
+        }
+
+        public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
+            DelegateCourseInfo delegateCourseInfo,
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        )
+        {
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
+
+            return PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(result, delegateCourseInfo);
+        }
+
+        private CourseCustomPromptsResult? GetCourseCustomPromptsResultForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId
+        )
+        {
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId);
+            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
+            {
+                return null;
+            }
+
+            return result;
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(
@@ -396,6 +443,57 @@
                 result.CustomField3Prompt,
                 result.CustomField3Options,
                 result.CustomField3Mandatory
+            );
+            if (prompt3 != null)
+            {
+                list.Add(prompt3);
+            }
+
+            return list;
+        }
+
+        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(
+            CourseCustomPromptsResult? result,
+            DelegateCourseInfo delegateCourseInfo
+        )
+        {
+            var list = new List<CustomPromptWithAnswer>();
+
+            if (result == null)
+            {
+                return list;
+            }
+
+            var prompt1 = PopulateCustomPromptWithAnswer(
+                1,
+                result.CustomField1Prompt,
+                result.CustomField1Options,
+                result.CustomField1Mandatory,
+                delegateCourseInfo.Answer1
+            );
+            if (prompt1 != null)
+            {
+                list.Add(prompt1);
+            }
+
+            var prompt2 = PopulateCustomPromptWithAnswer(
+                2,
+                result.CustomField2Prompt,
+                result.CustomField2Options,
+                result.CustomField2Mandatory,
+                delegateCourseInfo.Answer2
+            );
+            if (prompt2 != null)
+            {
+                list.Add(prompt2);
+            }
+
+            var prompt3 = PopulateCustomPromptWithAnswer(
+                3,
+                result.CustomField3Prompt,
+                result.CustomField3Options,
+                result.CustomField3Mandatory,
+                delegateCourseInfo.Answer3
             );
             if (prompt3 != null)
             {

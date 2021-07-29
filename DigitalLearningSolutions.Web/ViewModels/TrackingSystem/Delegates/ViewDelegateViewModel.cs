@@ -1,13 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class ViewDelegateViewModel
     {
-        public ViewDelegateViewModel(DelegateInfoViewModel delegateInfoViewModel)
+        public ViewDelegateViewModel(
+            DelegateInfoViewModel delegateInfoViewModel,
+            IEnumerable<DelegateCourseInfoViewModel> courseInfoViewModels
+        )
         {
             DelegateInfo = delegateInfoViewModel;
+            DelegateCourses = courseInfoViewModels.ToList();
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
+
+        public List<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
 
         public string RegStatusTagName =>
             DelegateInfo.IsSelfReg

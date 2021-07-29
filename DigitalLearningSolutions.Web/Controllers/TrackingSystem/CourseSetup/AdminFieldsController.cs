@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -25,14 +25,18 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(customisationId, centreId, categoryId.Value);
+            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
 
             if (courseCustomPrompts == null)
             {
                 return NotFound();
             }
 
-            var model = new DisplayPromptsViewModel(courseCustomPrompts.CourseAdminFields);
+            var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
             return View(model);
         }
     }
