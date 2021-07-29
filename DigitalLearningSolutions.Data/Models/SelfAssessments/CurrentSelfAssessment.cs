@@ -7,6 +7,5 @@
         public bool UnprocessedUpdates { get; set; }
         public int LaunchCount { get; set; }
         public DateTime? SubmittedDate { get; set; }
-        public bool LinearNavigation { get; set; }
     }
 }
