@@ -92,7 +92,7 @@
             }
             else
             {
-                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId });
+                return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId }) + "#comp-" + competencyNumber.ToString());
             }
         }
 

@@ -29,7 +29,7 @@
   <tbody class="nhsuk-table__body">
     @foreach (var competency in Model)
     {
-      <tr role="row" class="nhsuk-table__row first-row">
+      <tr role="row" id="comp-@competency.RowNo" class="nhsuk-table__row first-row">
         <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
           <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
             <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
