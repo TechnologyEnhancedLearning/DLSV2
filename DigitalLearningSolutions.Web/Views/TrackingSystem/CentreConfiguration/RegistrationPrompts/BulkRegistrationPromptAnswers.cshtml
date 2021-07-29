@@ -35,15 +35,15 @@
                     spell-check="false"
                     hint-text=""
                     css-class=""
-                    character-count="4000"/>
+                    character-count="4000" />
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
     @if (!Model.IsAddPromptJourney) {
       var routeData = new Dictionary<string, string> { { "promptNumber", Model.PromptNumber!.Value.ToString() } };
-      <vc:back-link asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-all-route-data="@routeData" link-text="Cancel" />
+      <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="EditRegistrationPrompt" asp-all-route-data="@routeData" />
     } else {
-      <vc:back-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptConfigureAnswers" link-text="Cancel" />
+      <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptConfigureAnswers" />
     }
   </div>
 </div>

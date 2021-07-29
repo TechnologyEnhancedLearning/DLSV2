@@ -86,7 +86,8 @@
 
     <form method="post" asp-action="Summary">
       <vc:terms-conditions asp-for="Terms" />
-      <button class="nhsuk-button" type="submit">Register</button>
+      <button class="nhsuk-button" type="submit">Submit</button>
     </form>
+    <vc:cancel-link asp-controller="Home" asp-action="Index" />
   </div>
 </div>

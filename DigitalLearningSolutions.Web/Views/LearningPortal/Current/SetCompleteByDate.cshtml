@@ -15,21 +15,18 @@
 }
 
 @{
-  var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);
+  var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
   string prefillDay;
   string prefillMonth;
   string prefillYear;
-  if (Model.CompleteByValidationResult?.DateValid == false)
-  {
+  if (Model.CompleteByValidationResult?.DateValid == false) {
     prefillDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
     prefillMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
     prefillYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
     prefillDay = prefillDay == "0" ? "" : prefillDay;
     prefillMonth = prefillMonth == "0" ? "" : prefillMonth;
     prefillYear = prefillYear == "0" ? "" : prefillYear;
-  }
-  else
-  {
+  } else {
     prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
     prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
     prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
@@ -50,14 +47,12 @@
         <span class="nhsuk-hint" id="example-hint">
           For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
         </span>
-        @if (Model is CurrentCourseViewModel)
-        {
+        @if (Model is CurrentCourseViewModel) {
           <span class="nhsuk-hint">
             Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity.
           </span>
         }
-        @if (Model.CompleteByValidationResult?.DateValid == false)
-        {
+        @if (Model.CompleteByValidationResult?.DateValid == false) {
           <span class="nhsuk-error-message" id="validation-message" role="alert">
             <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
           </span>
@@ -88,17 +83,14 @@
             </div>
           </div>
         </div>
-        @if (Model is CurrentCourseViewModel)
-        {
+        @if (Model is CurrentCourseViewModel) {
           <input name="progressId" type="hidden" value="@Model.ProgressId" />
-        }
-        else
-        {
+        } else {
           <input name="selfAssessmentId" type="hidden" value="@Model.Id" />
         }
       </fieldset>
       <button class="nhsuk-button nhsuk-u-margin-top-5" id="save-button" type="submit">Save changes</button>
     </form>
   </div>
-  <vc:back-link asp-controller="LearningPortal" asp-action="Current" link-text="Cancel" />
+  <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
 </div>

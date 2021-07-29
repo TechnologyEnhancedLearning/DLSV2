@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface ILoginService
@@ -13,8 +13,7 @@
             List<DelegateUser> unverifiedDelegateUsers
         );
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser
-        (
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(
             DelegateUser delegateUser,
             string password
         );

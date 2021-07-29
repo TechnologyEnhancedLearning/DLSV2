@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
@@ -12,9 +13,9 @@
     public class RegistrationDataServiceTests
     {
         private SqlConnection connection = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
-        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
 
         [SetUp]
         public void SetUp()

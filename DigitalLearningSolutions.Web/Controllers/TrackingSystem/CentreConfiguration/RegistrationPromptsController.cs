@@ -2,7 +2,7 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -13,7 +13,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -125,7 +124,8 @@
             }
 
             var editData = TempData.Peek<EditRegistrationPromptData>()!;
-            editData.EditModel!.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
+            editData.EditModel!.OptionsString =
+                NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             TempData.Set(editData);
 
             return RedirectToAction("EditRegistrationPrompt", new { promptNumber = model.PromptNumber });
@@ -240,7 +240,8 @@
             }
 
             var addData = TempData.Peek<AddRegistrationPromptData>()!;
-            addData.ConfigureAnswersViewModel!.OptionsString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
+            addData.ConfigureAnswersViewModel!.OptionsString =
+                NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             TempData.Set(addData);
 
             return RedirectToAction("AddRegistrationPromptConfigureAnswers");
