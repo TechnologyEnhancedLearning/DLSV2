@@ -45,28 +45,16 @@
       </div>
     </div>
 
-
     <div class="nhsuk-grid-row">
-      <form method="get" role="search">
-        <input type="hidden" name="sortBy" value="@Model.SortBy" />
-        <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-        <div id="search">
-          <label class="nhsuk-label" for="search-field">Search:</label>
-          <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString">
-          <button class="nhsuk-search__submit non-js-only" type="submit" asp-action="Index" asp-route-page="1">
-            <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M19.71 18.29l-4.11-4.1a7 7 0 1 0-1.41 1.41l4.1 4.11a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM5 10a5 5 0 1 1 5 5 5 5 0 0 1-5-5z"></path>
-            </svg>
-            <span class="nhsuk-u-visually-hidden">Search</span>
-          </button>
-        </div>
-      </form>
+      <vc:search-box label="Search delegates"
+                     searchable-page-view-model="@Model"
+                     css-class="nhsuk-grid-column-full" />
     </div>
 
     <div class="nhsuk-grid-row">
       <form method="get" role="search">
         <input type="hidden" name="searchString" value="@Model.SearchString" />
-        <div class="nhsuk-grid-column-full nhsuk-form-group Xsort-row">
+        <div class="nhsuk-grid-column-full nhsuk-form-group">
           <label class="nhsuk-label" for="select-sort-by">
             Sort by:
           </label>
@@ -84,32 +72,26 @@
       </form>
     </div>
 
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        @if (!Model.Delegates.Any()) {
+          <p class="nhsuk-u-margin-top-4" role="alert">
+            <b>No delegates found</b>
+          </p>
+        } else {
+          <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
-    <form method="get">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <input type="hidden" name="searchString" value="@Model.SearchString" />
-          <input type="hidden" name="sortBy" value="@Model.SortBy" />
-          <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-          @if (!Model.Delegates.Any()) {
-            <p class="nhsuk-u-margin-top-4" role="alert">
-              <b>No delegates found</b>
-            </p>
-          } else {
-            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-
-            <div id="searchable-elements">
-              @foreach (var delegateModel in Model.Delegates) {
-                <partial name="_SearchableDelegateCard" model="delegateModel" />
-              }
-            </div>
-          }
-          @if (Model.TotalPages > 1) {
-            <partial name="SearchablePage/_Pagination" model="Model" />
-          }
-        </div>
+          <div id="searchable-elements">
+            @foreach (var delegateModel in Model.Delegates) {
+              <partial name="_SearchableDelegateCard" model="delegateModel" />
+            }
+          </div>
+        }
+        @if (Model.TotalPages > 1) {
+          <partial name="SearchablePage/_Pagination" model="Model" />
+        }
       </div>
-    </form>
+    </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />
