@@ -49,9 +49,9 @@ request.onload = () => {
         const xOrigin = Number(element.getNode().getAttribute("x"));
         const yOrigin = element.getNode().getAttribute("y");
         const width = Number(element.getNode().getAttribute("width"));
-        const height = element.getNode().getAttribute("height");
-          element.attr({
-          transform: `translate(-${width}) rotate(-45 ${xOrigin + width} ${yOrigin})`
+        const rotation = document.documentElement.clientWidth > 640 ? -45 : -60;
+        element.attr({
+          transform: `translate(-${width}) rotate(${rotation} ${xOrigin + width} ${yOrigin})`
         });
       }
     });
