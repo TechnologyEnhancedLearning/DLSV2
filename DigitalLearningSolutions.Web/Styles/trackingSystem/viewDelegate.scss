@@ -23,3 +23,13 @@
     width: 100%;
   }
 }
+
+/* Give some of the 'value' space to 'actions' when displayed side-by-side */
+@include mq($from: tablet) {
+  .nhsuk-summary-list__value {
+    width: 40%;
+  }
+  .nhsuk-summary-list__actions {
+    width: 30%;
+  }
+}

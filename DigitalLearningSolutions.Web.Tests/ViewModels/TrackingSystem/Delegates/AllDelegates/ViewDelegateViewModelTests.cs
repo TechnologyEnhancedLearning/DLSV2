@@ -11,6 +11,9 @@
     {
         private readonly List<CustomFieldViewModel> customFields = new List<CustomFieldViewModel>();
 
+        private readonly List<DelegateCourseInfoViewModel>
+            delegateCourses = new List<DelegateCourseInfoViewModel>();
+
         [Test]
         public void ViewDelegateViewModel_sets_active_tag_name_correctly()
         {
@@ -19,8 +22,14 @@
             var inactiveUser = new DelegateUserCard { Active = false };
 
             // When
-            var activeModel = new ViewDelegateViewModel(new DelegateInfoViewModel(activeUser, customFields));
-            var inactiveModel = new ViewDelegateViewModel(new DelegateInfoViewModel(inactiveUser, customFields));
+            var activeModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(activeUser, customFields),
+                delegateCourses
+            );
+            var inactiveModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(inactiveUser, customFields),
+                delegateCourses
+            );
 
             // Then
             activeModel.ActiveTagName.Should().Be("Active");
@@ -35,8 +44,14 @@
             var pwNotSetUser = new DelegateUserCard { Password = null };
 
             // When
-            var pwSetModel = new ViewDelegateViewModel(new DelegateInfoViewModel(pwSetUser, customFields));
-            var pwNotSetModel = new ViewDelegateViewModel(new DelegateInfoViewModel(pwNotSetUser, customFields));
+            var pwSetModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(pwSetUser, customFields),
+                delegateCourses
+            );
+            var pwNotSetModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(pwNotSetUser, customFields),
+                delegateCourses
+            );
 
             // Then
             pwSetModel.PasswordTagName.Should().Be("Password set");
@@ -52,11 +67,16 @@
             var centreRegUser = new DelegateUserCard { SelfReg = false };
 
             // When
-            var selfRegModel = new ViewDelegateViewModel(new DelegateInfoViewModel(selfRegUser, customFields));
-            var selfRegExternalModel =
-                new ViewDelegateViewModel(new DelegateInfoViewModel(selfRegExternalUser, customFields));
+            var selfRegModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(selfRegUser, customFields),
+                delegateCourses
+            );
+            var selfRegExternalModel = new ViewDelegateViewModel(
+                new DelegateInfoViewModel(selfRegExternalUser, customFields),
+                delegateCourses
+            );
             var centreRegModel =
-                new ViewDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields));
+                new ViewDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields), delegateCourses);
 
             // Then
             selfRegModel.RegStatusTagName.Should().Be("Self registered");

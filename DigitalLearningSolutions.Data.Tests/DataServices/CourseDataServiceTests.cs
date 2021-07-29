@@ -272,5 +272,48 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             result.Should().BeEquivalentTo(expectedCourseDetails);
         }
+
+        [Test]
+        public void GetDelegateCoursesInfo_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var results = courseDataService.GetDelegateCoursesInfo(20).ToList();
+
+            // Then
+            var enrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
+            var expected = new DelegateCourseInfo(
+                27915,
+                "LinkedIn",
+                "Cohort Testing",
+                "Kevin",
+                "Whittaker (Developer)",
+                enrollmentDate,
+                enrollmentDate,
+                null,
+                null,
+                null,
+                3,
+                0,
+                0,
+                null,
+                true,
+                null,
+                null,
+                null
+            );
+            results.Should().HaveCount(4);
+            results[3].Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void GetDelegateCoursesAttemptStats_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var (totalAttempts, attemptsPassed) = courseDataService.GetDelegateCourseAttemptStats(11, 100);
+
+            // Then
+            totalAttempts.Should().Be(23);
+            attemptsPassed.Should().Be(11);
+        }
     }
 }
