@@ -288,8 +288,8 @@
                         ct.[Status],
                         ct.DiagStatus
                     FROM dbo.Tutorials AS tu
-                    LEFT JOIN dbo.CustomisationTutorials AS ct ON ct.TutorialID = tu.TutorialID
-                        AND ct.CustomisationID = @customisationId
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID AND ct.CustomisationID = @customisationId
                     WHERE SectionID = @sectionId
                     AND ArchivedDate IS NULL",
                 new { sectionId, customisationId }

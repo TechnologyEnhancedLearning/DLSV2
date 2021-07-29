@@ -6,7 +6,12 @@
 
     public class CourseContentViewModel
     {
-        public CourseContentViewModel(int customisationId, string courseName, bool postLearningAssessment, IEnumerable<Section> sections)
+        public CourseContentViewModel(
+            int customisationId,
+            string courseName,
+            bool postLearningAssessment,
+            IEnumerable<Section> sections
+        )
         {
             CustomisationId = customisationId;
             CourseName = courseName;

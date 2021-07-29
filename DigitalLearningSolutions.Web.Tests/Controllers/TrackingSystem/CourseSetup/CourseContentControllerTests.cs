@@ -9,9 +9,8 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using FakeItEasy;
-    using NUnit.Framework;
     using FluentAssertions.AspNetCore.Mvc;
-
+    using NUnit.Framework;
 
     internal class CourseContentControllerTests
     {
@@ -42,9 +41,10 @@
 
         [Test]
         public void Index_returns_Index_page_when_appropriate_course_found()
-        { 
+        {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetails(A<int>._, A<int>._, A<int>._)).Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
+            A.CallTo(() => courseDataService.GetCourseDetails(A<int>._, A<int>._, A<int>._))
+                .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionsAndTutorialsForCustomisation(A<int>._, A<int>._))
                 .Returns(new List<Section>());
 

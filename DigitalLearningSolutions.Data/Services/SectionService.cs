@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -10,7 +9,6 @@
     {
         IEnumerable<Section> GetSectionsAndTutorialsForCustomisation(int customisationId, int applicationId);
     }
-
 
     public class SectionService : ISectionService
     {
