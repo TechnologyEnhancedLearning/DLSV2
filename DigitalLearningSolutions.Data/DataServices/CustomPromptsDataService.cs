@@ -23,6 +23,21 @@
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
         public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+
+        public IEnumerable<(int, string)> GetCourseCustomPromptsAlphabetical();
+
+        public void UpdateCustomPromptForCourse(
+            int customisationId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        );
+
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
+
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -176,17 +191,6 @@
                     WHERE CustomisationID = @customisationId",
                 new { mandatory, options, customisationId }
             );
-        }
-        public IEnumerable<(int, string)> GetCourseCustomPromptsAlphabetical()
-        {
-            var adminFields = connection.Query<(int, string)>
-            (
-                @"SELECT CoursePromptID, CoursePrompt
-                        FROM CoursePrompts
-                        WHERE Active = 1
-                        ORDER BY CoursePrompt"
-            );
-            return adminFields;
         }
 
         public void UpdateCustomPromptForCourse(

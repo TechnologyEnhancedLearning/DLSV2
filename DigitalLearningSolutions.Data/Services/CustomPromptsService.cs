@@ -34,19 +34,7 @@
         public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-
-        public CourseCustomPrompts? GetCustomPromptsForCourse(
-            int customisationId,
-            int centreId,
-            int categoryId = 0
-        );
-
-        public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
-            DelegateCourseInfo delegateCourseInfo,
-            int customisationId,
-            int centreId,
-            int categoryId = 0
-        );
+        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -177,17 +165,14 @@
             int categoryId = 0
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
-            if (result == null)
-            {
-                return null;
-            }
-
-            return new CourseCustomPrompts(
-                customisationId,
-                centreId,
-                PopulateCustomPromptListFromCourseCustomPromptsResult(result)
-            );
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
+            return result == null
+                ? null
+                : new CourseCustomPrompts(
+                    customisationId,
+                    centreId,
+                    PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+                );
         }
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
