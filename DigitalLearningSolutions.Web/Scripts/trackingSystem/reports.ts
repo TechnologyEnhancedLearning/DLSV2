@@ -33,7 +33,12 @@ const options = {
 };
 
 request.onload = () => {
-  const data = constructChartistData(request.response);
+  let response = request.response;
+  // IE11 does not support automatic parsing to JSON with XMLHttpRequest.responseType, so we need to manually parse the JSON string
+  if (typeof request.response === 'string') {
+    response = JSON.parse(response);
+  }
+  const data = constructChartistData(response);
   // eslint-disable-next-line no-new
   new Chartist.Line('.ct-chart', data, options);
 };
