@@ -46,12 +46,12 @@ request.onload = () => {
     (foo: any) => {
       const element = foo.element;
       if (element.classes().indexOf('ct-horizontal') >= 0 && element.classes().indexOf('ct-label') >= 0) {
-        const xOrigin = element.getNode().getAttribute("x");
+        const xOrigin = Number(element.getNode().getAttribute("x"));
         const yOrigin = element.getNode().getAttribute("y");
-        const width = element.getNode().getAttribute("width");
+        const width = Number(element.getNode().getAttribute("width"));
         const height = element.getNode().getAttribute("height");
           element.attr({
-          transform: `translate(-${width/2} ${height}) rotate(-45 ${xOrigin} ${yOrigin})`
+          transform: `translate(-${width}) rotate(-45 ${xOrigin + width} ${yOrigin})`
         });
       }
     });
