@@ -13,9 +13,9 @@
     public class RegistrationDataServiceTests
     {
         private SqlConnection connection = null!;
+        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
         private RegistrationDataService service = null!;
         private IUserDataService userDataService = null!;
-        private INotificationPreferencesDataService notificationPreferencesDataService = null!;
 
         [SetUp]
         public void SetUp()

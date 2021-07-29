@@ -10,7 +10,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using Microsoft.Data.SqlClient;
@@ -20,13 +19,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     public class PasswordResetDataServiceTests
     {
         private const string HashNotYetInDb = "HashThatDoesNotExistInTheDatabase";
+        private SqlConnection connection = null!;
+        private PasswordResetDataService service = null!;
+
+        private UserDataService userDataService = null!;
 
         [DatapointSource]
         public UserType[] UserTypes = { UserType.AdminUser, UserType.DelegateUser }; // Used by theories - don't remove!
-
-        private UserDataService userDataService = null!;
-        private PasswordResetDataService service = null!;
-        private SqlConnection connection = null!;
 
         [SetUp]
         public void SetUp()
@@ -46,8 +45,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var testDelegateUser = userType.Equals(UserType.AdminUser)
                 ? (User)UserTestHelper.GetDefaultAdminUser()
                 : UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel
-            (
+            var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
                 testDelegateUser.Id,
@@ -56,8 +54,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
-            (
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
                 testDelegateUser.EmailAddress!,
                 resetPasswordCreateModel.Hash
             );
@@ -85,8 +82,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             var createTime = new DateTime(2021, 1, 1);
             var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel
-            (
+            var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "ResetPasswordHash",
                 testDelegateUser.Id,
@@ -95,8 +91,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
-            (
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
                 emailToCheck,
                 resetPasswordCreateModel.Hash
             );
@@ -114,8 +109,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             var createTime = new DateTime(2021, 1, 1);
             var testDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var resetPasswordCreateModel = new ResetPasswordCreateModel
-            (
+            var resetPasswordCreateModel = new ResetPasswordCreateModel(
                 createTime,
                 "NormalHash",
                 testDelegateUser.Id,
@@ -124,8 +118,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             service.CreatePasswordReset(resetPasswordCreateModel);
-            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync
-            (
+            var matches = await service.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
                 testDelegateUser.EmailAddress!,
                 HashNotYetInDb
             );
@@ -142,7 +135,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var userId = UserTestHelper.GetDefaultAdminUser().Id;
             var userRef = new UserReference(userId, UserType.AdminUser);
-            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var resetPasswordId =
+                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
@@ -161,7 +155,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var userId = UserTestHelper.GetDefaultDelegateUser().Id;
             var userRef = new UserReference(userId, UserType.DelegateUser);
-            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var resetPasswordId =
+                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
@@ -180,7 +175,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var userId = UserTestHelper.GetDefaultAdminUser().Id;
             var userRef = new UserReference(userId, UserType.AdminUser);
-            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var resetPasswordId =
+                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
@@ -198,7 +194,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             var userId = UserTestHelper.GetDefaultDelegateUser().Id;
             var userRef = new UserReference(userId, UserType.DelegateUser);
-            var resetPasswordId = await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
+            var resetPasswordId =
+                await GivenResetPasswordWithHashExistsForUsersAsync(HashNotYetInDb, new[] { userRef });
 
             // When
             await service.RemoveResetPasswordAsync(resetPasswordId);
@@ -209,12 +206,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         /// <summary>
-        /// Adds reset password entity for a list of users.
+        ///     Adds reset password entity for a list of users.
         /// </summary>
         /// <param name="hash">Reset hash.</param>
         /// <param name="users">Must contain at least 1 user.</param>
         /// <returns>The id of the reset password entity.</returns>
-        private async Task<int> GivenResetPasswordWithHashExistsForUsersAsync(string hash, IEnumerable<UserReference> users)
+        private async Task<int> GivenResetPasswordWithHashExistsForUsersAsync(
+            string hash,
+            IEnumerable<UserReference> users
+        )
         {
             var userList = users.ToList();
 

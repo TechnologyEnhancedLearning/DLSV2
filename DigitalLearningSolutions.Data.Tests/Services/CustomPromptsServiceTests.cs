@@ -307,7 +307,8 @@
         public void GetCustomPromptsForCourse_Returns_Populated_CourseCustomPrompts()
         {
             // Given
-            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
+            var expectedPrompt1 =
+                CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Access Permissions");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedCoursePrompts = CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts);

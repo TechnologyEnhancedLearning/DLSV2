@@ -32,7 +32,7 @@
         public byte[] GetDelegateDownloadFileForCentre(int centreId)
         {
             using var workbook = new XLWorkbook();
-            
+
             PopulateDelegatesSheet(workbook, centreId);
             PopulateJobGroupsSheet(workbook);
 

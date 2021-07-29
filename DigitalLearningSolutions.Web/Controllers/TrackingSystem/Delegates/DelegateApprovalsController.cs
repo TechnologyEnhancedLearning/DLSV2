@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -18,7 +17,10 @@
         private readonly IDelegateApprovalsService delegateApprovalsService;
         private readonly IUserDataService userDataService;
 
-        public DelegateApprovalsController(IDelegateApprovalsService delegateApprovalsService, IUserDataService userDataService)
+        public DelegateApprovalsController(
+            IDelegateApprovalsService delegateApprovalsService,
+            IUserDataService userDataService
+        )
         {
             this.delegateApprovalsService = delegateApprovalsService;
             this.userDataService = userDataService;

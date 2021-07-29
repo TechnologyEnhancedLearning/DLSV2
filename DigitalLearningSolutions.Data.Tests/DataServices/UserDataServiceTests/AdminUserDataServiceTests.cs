@@ -24,7 +24,7 @@
         }
 
         [Test]
-        public void GetAdminUserById_Returns_admin_user_with_category_name_all()
+        public void GetAdminUserById_Returns_admin_user_category_name_all()
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser();
@@ -72,16 +72,7 @@
             var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
 
             // Then
-            using (new AssertionScope())
-            {
-                returnedAdminUser.Should().NotBeNull();
-                returnedAdminUser!.Id.Should().Be(expectedAdminUser.Id);
-                returnedAdminUser!.FirstName.Should().BeEquivalentTo(expectedAdminUser.FirstName);
-                returnedAdminUser!.LastName.Should().BeEquivalentTo(expectedAdminUser.LastName);
-                returnedAdminUser!.EmailAddress.Should().BeEquivalentTo(expectedAdminUser.EmailAddress);
-                returnedAdminUser!.Password.Should().BeEquivalentTo(expectedAdminUser.Password);
-                returnedAdminUser!.ResetPasswordId.Should().Be(expectedAdminUser.ResetPasswordId);
-            }
+            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
         }
 
         [Test]
@@ -94,16 +85,7 @@
             var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("ub.e@onlrxghciatsk");
 
             // Then
-            using (new AssertionScope())
-            {
-                returnedAdminUser.Should().NotBeNull();
-                returnedAdminUser!.Id.Should().Be(expectedAdminUser.Id);
-                returnedAdminUser!.FirstName.Should().BeEquivalentTo(expectedAdminUser.FirstName);
-                returnedAdminUser!.LastName.Should().BeEquivalentTo(expectedAdminUser.LastName);
-                returnedAdminUser!.EmailAddress.Should().BeEquivalentTo(expectedAdminUser.EmailAddress);
-                returnedAdminUser!.Password.Should().BeEquivalentTo(expectedAdminUser.Password);
-                returnedAdminUser!.ResetPasswordId.Should().Be(expectedAdminUser.ResetPasswordId);
-            }
+            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
         }
 
         [Test]

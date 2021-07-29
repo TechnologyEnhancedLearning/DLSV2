@@ -10,21 +10,21 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using Microsoft.Extensions.Logging;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class DelegateApprovalsServiceTests
     {
-        private IUserDataService userDataService = null!;
-        private ICustomPromptsService customPromptsService = null!;
-        private IEmailService emailService = null!;
         private ICentresDataService centresDataService = null!;
-        private ILogger<DelegateApprovalsService> logger = null!;
         private IConfiguration config = null!;
+        private ICustomPromptsService customPromptsService = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
+        private IEmailService emailService = null!;
+        private ILogger<DelegateApprovalsService> logger = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void SetUp()
@@ -35,28 +35,53 @@
             centresDataService = A.Fake<ICentresDataService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
             config = A.Fake<IConfiguration>();
-            delegateApprovalsService = new DelegateApprovalsService(userDataService, customPromptsService, emailService, centresDataService, logger, config);
+            delegateApprovalsService = new DelegateApprovalsService(
+                userDataService,
+                customPromptsService,
+                emailService,
+                centresDataService,
+                logger,
+                config
+            );
         }
 
         [Test]
-        public void GetUnapprovedDelegatesWithCustomPromptAnswersForCentre_returns_unapproved_delegates_with_custom_prompt_answers_for_centre()
+        public void
+            GetUnapprovedDelegatesWithCustomPromptAnswersForCentre_returns_unapproved_delegates_with_custom_prompt_answers_for_centre()
         {
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             var expectedUserList = new List<DelegateUser> { expectedDelegateUser };
             var expectedCustomPrompts = new List<CustomPromptWithAnswer>
-                { CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1, options: null, mandatory: true, answer: "answer") };
+            {
+                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                    1,
+                    options: null,
+                    mandatory: true,
+                    answer: "answer"
+                )
+            };
 
             A.CallTo(() => userDataService.GetUnapprovedDelegateUsersByCentreId(2))
                 .Returns(expectedUserList);
-            A.CallTo(() => customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(2, expectedUserList))
-                .Returns(new List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>{(expectedDelegateUser, expectedCustomPrompts)});
+            A.CallTo(
+                    () => customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+                        2,
+                        expectedUserList
+                    )
+                )
+                .Returns(
+                    new List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
+                        { (expectedDelegateUser, expectedCustomPrompts) }
+                );
 
             // When
             var result = delegateApprovalsService.GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(2);
 
             // Then
-            result.Should().BeEquivalentTo(new List<(DelegateUser, List<CustomPromptWithAnswer>)> { (expectedDelegateUser, expectedCustomPrompts) });
+            result.Should().BeEquivalentTo(
+                new List<(DelegateUser, List<CustomPromptWithAnswer>)> { (expectedDelegateUser, expectedCustomPrompts) }
+            );
         }
 
         [Test]
@@ -87,7 +112,8 @@
             Action action = () => delegateApprovalsService.ApproveDelegate(2, 2);
 
             // Then
-            action.Should().Throw<UserAccountNotFoundException>().WithMessage("Delegate user id 2 not found at centre id 2.");
+            action.Should().Throw<UserAccountNotFoundException>()
+                .WithMessage("Delegate user id 2 not found at centre id 2.");
             A.CallTo(() => userDataService.ApproveDelegateUsers(2)).MustNotHaveHappened();
         }
 

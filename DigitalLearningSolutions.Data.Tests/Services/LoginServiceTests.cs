@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -11,9 +10,9 @@
 
     public class LoginServiceTests
     {
-        private ICryptoService cryptoService;
-        private LoginService loginService;
-        private IUserDataService userDataService;
+        private ICryptoService cryptoService = null!;
+        private LoginService loginService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -33,8 +32,7 @@
 
             //When
             var adminUser = UserTestHelper.GetDefaultAdminUser(password: "Automatically Verified");
-            var (verifiedAdminUser, _) = loginService.VerifyUsers
-            (
+            var (verifiedAdminUser, _) = loginService.VerifyUsers(
                 "password",
                 adminUser,
                 new List<DelegateUser>()
@@ -52,8 +50,7 @@
 
             //When
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var (verifiedAdminUser, _) = loginService.VerifyUsers
-            (
+            var (verifiedAdminUser, _) = loginService.VerifyUsers(
                 "password",
                 adminUser,
                 new List<DelegateUser>()
@@ -82,8 +79,7 @@
                 thirdDelegateUser
             };
 
-            var (_, verifiedDelegateUsers) = loginService.VerifyUsers
-            (
+            var (_, verifiedDelegateUsers) = loginService.VerifyUsers(
                 "password",
                 UserTestHelper.GetDefaultAdminUser(),
                 delegateUsers
@@ -113,8 +109,7 @@
                 thirdDelegateUser
             };
 
-            var (_, verifiedDelegateUsers) = loginService.VerifyUsers
-            (
+            var (_, verifiedDelegateUsers) = loginService.VerifyUsers(
                 "password",
                 UserTestHelper.GetDefaultAdminUser(),
                 delegateUsers
@@ -142,8 +137,7 @@
                 thirdDelegateUser
             };
 
-            var (_, verifiedDelegateUsers) = loginService.VerifyUsers
-            (
+            var (_, verifiedDelegateUsers) = loginService.VerifyUsers(
                 "password",
                 UserTestHelper.GetDefaultAdminUser(),
                 delegateUsers
@@ -161,8 +155,7 @@
             var delegateUserWithoutPassword = UserTestHelper.GetDefaultDelegateUser(password: string.Empty);
 
             //When
-            var (_, returnedDelegateList) = loginService.VerifyUsers
-            (
+            var (_, returnedDelegateList) = loginService.VerifyUsers(
                 "password",
                 UserTestHelper.GetDefaultAdminUser(),
                 new List<DelegateUser> { delegateUserWithoutPassword }
@@ -179,8 +172,7 @@
             var delegateUserWithoutEmail = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
 
             // When
-            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser
-            (
+            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                 delegateUserWithoutEmail,
                 "password"
             );
@@ -197,8 +189,7 @@
             A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(null);
 
             // When
-            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser
-            (
+            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                 UserTestHelper.GetDefaultDelegateUser(),
                 "password"
             );
@@ -217,8 +208,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser
-            (
+            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                 UserTestHelper.GetDefaultDelegateUser(centreId: 2),
                 "password"
             );
@@ -237,8 +227,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser
-            (
+            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                 UserTestHelper.GetDefaultDelegateUser(),
                 "password"
             );

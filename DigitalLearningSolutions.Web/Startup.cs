@@ -83,7 +83,7 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserSupervisor,
                         policy => CustomPolicies.ConfigurePolicyUserSupervisor(policy)
                     );
-					options.AddPolicy(
+                    options.AddPolicy(
                         CustomPolicies.UserCentreAdminOrFrameworksAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
                     );

@@ -10,9 +10,9 @@
 
     public class PasswordDataServiceTests
     {
+        private const string PasswordHashNotYetInDb = "I haven't used this password before!";
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
-        private const string PasswordHashNotYetInDb = "I haven't used this password before!";
 
         [SetUp]
         public void Setup()
