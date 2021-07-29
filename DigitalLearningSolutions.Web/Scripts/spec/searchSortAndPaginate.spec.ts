@@ -2,7 +2,7 @@
 @typescript-eslint/no-explicit-any,
 @typescript-eslint/ban-ts-comment */
 import { JSDOM } from 'jsdom';
-import { SearchSortAndPaginate } from '../searchSortAndPaginate/searchSortAndPaginate';
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 import getSearchableElements from './getSearchableElements';
 
 describe('titleFromCardElement', () => {
@@ -12,7 +12,7 @@ describe('titleFromCardElement', () => {
 
     // When
     const element = document.getElementById('course-a');
-    const title = SearchSortAndPaginate.titleFromElement(element!);
+    const title = SearchSortFilterAndPaginate.titleFromElement(element!);
 
     // Then
     expect(title).toBe('a: Course');
@@ -32,13 +32,13 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '' } } as any;
 
     // When
-    const cardsPromise = SearchSortAndPaginate.getSearchableElements('route');
+    const cardsPromise = SearchSortFilterAndPaginate.getSearchableElements('route');
     // @ts-ignore
     mockXHR.onload();
     cardsPromise.then((cards) => {
       // Then
-      expect(cards?.length).toBe(2);
-      expect(cards![0].title).toBe('a: Course');
+      expect(cards?.searchableElements.length).toBe(2);
+      expect(cards!.searchableElements[0].title).toBe('a: Course');
     });
   });
 
@@ -55,7 +55,7 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '/LearningPortal/Current/1' } } as any;
 
     // When
-    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
+    SearchSortFilterAndPaginate.getSearchableElements('LearningPortal/test');
 
     // Then
     expect(mockOpen).toHaveBeenCalledWith('GET', '/LearningPortal/test', true);
@@ -74,7 +74,7 @@ describe('getCourseCards', () => {
     global.window = { location: { pathname: '/dev/LearningPortal/Current/1' } } as any;
 
     // When
-    SearchSortAndPaginate.getSearchableElements('LearningPortal/test');
+    SearchSortFilterAndPaginate.getSearchableElements('LearningPortal/test');
 
     // Then
     expect(mockOpen).toHaveBeenCalledWith('GET', '/dev/LearningPortal/test', true);
@@ -89,10 +89,73 @@ describe('displayCards', () => {
 
     // When
     document.getElementById('searchable-elements')!.innerHTML = '';
-    SearchSortAndPaginate.displaySearchableElements(cards);
+    SearchSortFilterAndPaginate.displaySearchableElements(cards);
 
     // Then
     expect(getSearchableElements().length).toBe(2);
+  });
+});
+
+describe('updateResultCount', () => {
+  it('should make the result count visible', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortFilterAndPaginate.updateResultCount(0);
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.hidden).toBeFalsy();
+    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('false');
+  });
+
+  it('should show the correct result count', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortFilterAndPaginate.updateResultCount(5);
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.textContent).toBe('5 matching results');
+  });
+});
+
+describe('hideResultCount', () => {
+  it('should make the result count invisible', () => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+        <span aria-hidden="false" aria-live="polite" id="results-count">0 matching results</span>
+      </body>
+      </html>
+    `).window.document;
+
+    // When
+    SearchSortFilterAndPaginate.hideResultCount();
+
+    // Then
+    const resultCountElements = document.getElementById('results-count');
+    expect(resultCountElements?.hidden).toBeTruthy();
+    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('true');
   });
 });
 

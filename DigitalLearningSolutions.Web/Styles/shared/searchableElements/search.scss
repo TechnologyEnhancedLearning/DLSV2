@@ -9,6 +9,14 @@
     width: 79%;
   }
 
+  @include mq($from: tablet) {
+    width: 70%;
+  }
+
+  @include mq($from: desktop) {
+    width: 80%;
+  }
+
   @include mq($from: large-desktop) {
     width: 85%;
   }
