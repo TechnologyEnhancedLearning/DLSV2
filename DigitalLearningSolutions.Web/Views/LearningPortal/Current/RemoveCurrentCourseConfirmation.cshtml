@@ -11,7 +11,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems"/>
+  <partial name="Shared/_NavMenuItems" />
 }
 
 <div>
@@ -33,6 +33,6 @@
       </button>
     </form>
   </div>
-  
-  <vc:back-link asp-controller="LearningPortal" asp-action="Current" link-text="Cancel" />
+
+  <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
 </div>

@@ -27,7 +27,8 @@
                            nameof(Model.CentreWebAddress),
                            nameof(Model.OrganisationsCovered),
                            nameof(Model.TrainingVenues),
-                           nameof(Model.OtherInformation) })" />
+                           nameof(Model.OtherInformation)
+                         })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit centre content on DLS website</h1>
@@ -82,7 +83,7 @@
                     spell-check="false"
                     hint-text=""
                     css-class="nhsuk-u-width-one-half"
-                    character-count="null"/>
+                    character-count="null" />
 
       <vc:text-area asp-for="TrainingVenues"
                     label="Training venues"
@@ -91,7 +92,7 @@
                     spell-check="false"
                     hint-text=""
                     css-class="nhsuk-u-width-one-half"
-                    character-count="null"/>
+                    character-count="null" />
 
       <vc:text-area asp-for="OtherInformation"
                     label="Other information"
@@ -100,12 +101,12 @@
                     spell-check="false"
                     hint-text=""
                     css-class="nhsuk-u-width-one-half"
-                    character-count="null"/>
+                    character-count="null" />
 
       <button class="nhsuk-button" type="submit" value="save">Save</button>
     </form>
 
-    <vc:back-link asp-controller="CentreConfiguration" asp-action="Index" link-text="Cancel" />
+    <vc:cancel-link asp-controller="CentreConfiguration" asp-action="Index" />
 
   </div>
 </div>

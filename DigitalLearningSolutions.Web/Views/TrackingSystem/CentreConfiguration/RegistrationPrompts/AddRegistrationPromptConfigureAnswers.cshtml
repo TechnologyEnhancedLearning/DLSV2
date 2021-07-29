@@ -54,9 +54,10 @@
         <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@RegistrationPromptsController.BulkAction">Bulk edit</button>
       </div>
 
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptSelectPrompt" role="button">Back</a>
       <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.NextAction">Next</button>
     </form>
 
-    <vc:back-link asp-controller="RegistrationPrompts" asp-action="AddRegistrationPromptSelectPrompt" link-text="Go back" />
+    <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="Index" />
   </div>
 </div>

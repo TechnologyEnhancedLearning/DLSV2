@@ -30,6 +30,5 @@
         public bool ShouldSendEmail => WelcomeEmailDate != null;
         public string? JobGroup { get; set; }
         public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
-        public string PreviousAction => ShouldSendEmail ? "WelcomeEmail" : "Password";
     }
 }
