@@ -196,7 +196,7 @@ SA.UseFilteredApi,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, CA.SubmittedDate
+CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -205,7 +205,7 @@ CA.LaunchCount, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation",
                 new { candidateId, selfAssessmentId }
             );
         }
