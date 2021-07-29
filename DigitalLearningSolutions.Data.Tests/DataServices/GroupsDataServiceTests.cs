@@ -48,5 +48,32 @@
                 result.First(x => x.GroupId == 34).Should().BeEquivalentTo(expectedFirstGroup);
             }
         }
+
+        [Test]
+        public void GetGroupDelegates_returns_expected_delegates()
+        {
+            // Given
+            var expectedFirstGroupDelegate = GroupTestHelper.GetDefaultGroupDelegate();
+
+            // When
+            var result = groupsDataService.GetGroupDelegates(5).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(24);
+                result.First(x => x.GroupDelegateId == 62).Should().BeEquivalentTo(expectedFirstGroupDelegate);
+            }
+        }
+
+        [Test]
+        public void GetGroupNameForGroupId_returns_expected_name()
+        {
+            // When
+            var result = groupsDataService.GetGroupNameForGroupId(5);
+
+            // Then
+            result.Should().BeEquivalentTo("Activities worker or coordinator");
+        }
     }
 }

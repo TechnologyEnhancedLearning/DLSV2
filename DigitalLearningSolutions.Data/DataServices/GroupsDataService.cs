@@ -60,7 +60,7 @@
         {
             return connection.Query<GroupDelegate>(
                 @"SELECT
-                        GroupDelegateID
+                        GroupDelegateID,
 	                    GroupID,
 	                    DelegateID,
                         FirstName,
