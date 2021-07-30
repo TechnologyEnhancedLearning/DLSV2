@@ -33,6 +33,17 @@
 
 .filter-submit {
   @extend .right-submit-button;
+
+  &__dropdown {
+    @extend .right-submit-button;
+    background-color: $button-dark-blue;
+  }
+
+  &__clear {
+    @extend .right-submit-button;
+    border-radius: 4px;
+    background-color: $color_nhsuk-red;
+  }
 }
 
 .applied-filter-container {
