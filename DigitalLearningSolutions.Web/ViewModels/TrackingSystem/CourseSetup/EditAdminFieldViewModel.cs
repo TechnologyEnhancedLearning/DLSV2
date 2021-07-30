@@ -10,32 +10,15 @@
             IncludeAnswersTableCaption = true;
         }
 
-        public EditAdminFieldViewModel(
-            int customisationId,
-            int promptNumber,
-            string prompt,
-            bool mandatory,
-            string optionsString,
-            string? answer = null
-        )
-            : base(customisationId, optionsString, answer, true)
+        public EditAdminFieldViewModel(CustomPrompt customPrompt, int customisationId)
         {
             CustomisationId = customisationId;
-            PromptNumber = promptNumber;
-            Prompt = prompt;
-            Mandatory = mandatory;
-        }
-
-        public EditAdminFieldViewModel(CustomPrompt customPrompt)
-        {
             PromptNumber = customPrompt.CustomPromptNumber;
             Prompt = customPrompt.CustomPromptText;
             Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
             IncludeAnswersTableCaption = true;
         }
-
-        public int CustomisationId { get; set; }
 
         public int PromptNumber { get; set; }
 

@@ -74,7 +74,7 @@
 
             var model = data != null
                 ? data.EditModel!
-                : new EditAdminFieldViewModel(courseCustomPrompt);
+                : new EditAdminFieldViewModel(courseCustomPrompt, customisationId);
 
             return View(model);
         }
