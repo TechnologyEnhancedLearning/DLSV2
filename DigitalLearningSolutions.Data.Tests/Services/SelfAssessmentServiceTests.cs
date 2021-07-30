@@ -44,7 +44,8 @@
                 32,
                 new DateTime(2020, 09, 01, 14, 10, 37, 447), null, null,
                 false,
-                true
+                true,
+                false
             );
 
             result.Should().BeEquivalentTo(expectedSelfAssessment);

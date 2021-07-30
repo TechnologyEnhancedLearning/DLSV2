@@ -63,7 +63,7 @@
 											  LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
 											  ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
 
                           WHERE CandidateID = @candidateId
                             AND s.SelfAssessmentID = @selfAssessmentId
@@ -98,7 +98,7 @@
 											  ON cas.SupervisorDelegateId = sd.ID
 
                                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
                           WHERE ca.ID = @candidateAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
