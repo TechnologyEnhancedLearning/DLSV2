@@ -117,11 +117,12 @@
                     "Yes\nNo\nNot sure",
                     true,
                     null,
-                    "Yes\nNo\nNot sure"
+                    "Yes\nNo\nNot sure",
+                    courseCategoryId: 2
                 );
 
             // When
-            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
+            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101);
 
             // Then
             returnedCourseCustomPromptsResult.Should().BeEquivalentTo(expectedCourseCustomPromptsResult);

@@ -20,21 +20,23 @@ function copyLaunchCourseLinkToClipboard(customisationId: string) {
   const launchCourseButtonId = launchCourseButtonIdPrefix + customisationId;
   const launchCourseButton = document.getElementById(launchCourseButtonId) as HTMLAnchorElement;
   const link = launchCourseButton.href;
-  const succeeded = copyTextToClipboard(link);
-  const alertMessage = succeeded
-    ? `Copied the text: ${link}`
-    : `Copy not supported or blocked. Try manually selecting and copying: ${link}`;
-
-  alert(alertMessage);
+  copyTextToClipboard(link);
 }
 
-function copyTextToClipboard(textToCopy: string): boolean {
-  try {
-    navigator.clipboard.writeText(textToCopy);
-    return true;
-  } catch (e) {
-    return copyTextToClipboardFallback(textToCopy);
+function copyTextToClipboard(textToCopy: string): void {
+  if (!navigator.clipboard) {
+    const succeeded = copyTextToClipboardFallback(textToCopy);
+    if (succeeded) {
+      displaySuccessAlert(textToCopy);
+    } else {
+      displayFailureAlert(textToCopy);
+    }
+    return;
   }
+
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => displaySuccessAlert(textToCopy))
+    .catch(() => displayFailureAlert(textToCopy));
 }
 
 function copyTextToClipboardFallback(textToCopy: string): boolean {
@@ -52,4 +54,12 @@ function copyTextToClipboardFallback(textToCopy: string): boolean {
 
   document.body.removeChild(hiddenInput);
   return succeeded;
+}
+
+function displaySuccessAlert(text: string): void {
+  alert(`Copied the text: ${text}`);
+}
+
+function displayFailureAlert(text: string): void {
+  alert(`Copy not supported or blocked. Try manually selecting and copying: ${text}`);
 }

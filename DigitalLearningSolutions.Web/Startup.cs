@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web
     using System.Threading.Tasks;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.User;
@@ -82,7 +83,7 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserSupervisor,
                         policy => CustomPolicies.ConfigurePolicyUserSupervisor(policy)
                     );
-					options.AddPolicy(
+                    options.AddPolicy(
                         CustomPolicies.UserCentreAdminOrFrameworksAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
                     );
@@ -154,10 +155,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICourseContentService, CourseContentService>();
-            services.AddScoped<ITutorialContentService, TutorialContentService>();
+            services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<ISectionContentService, SectionContentService>();
+            services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();

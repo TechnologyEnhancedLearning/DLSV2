@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 

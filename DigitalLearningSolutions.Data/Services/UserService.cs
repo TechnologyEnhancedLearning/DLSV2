@@ -2,7 +2,7 @@ namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
@@ -168,11 +168,6 @@ namespace DigitalLearningSolutions.Data.Services
             return adminUsersWithNewEmail == null && delegateUsersWithNewEmail.Count(u => u.CentreId == centreId) == 0;
         }
 
-        private static bool UserEmailHasChanged(User? user, string emailAddress)
-        {
-            return user != null && user.EmailAddress != emailAddress;
-        }
-
         public UserAccountSet GetVerifiedLinkedUsersAccounts(
             int? adminId,
             int? delegateId,
@@ -202,6 +197,11 @@ namespace DigitalLearningSolutions.Data.Services
             var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             return verifiedLinkedUsersAccounts.Any();
+        }
+
+        private static bool UserEmailHasChanged(User? user, string emailAddress)
+        {
+            return user != null && user.EmailAddress != emailAddress;
         }
     }
 }

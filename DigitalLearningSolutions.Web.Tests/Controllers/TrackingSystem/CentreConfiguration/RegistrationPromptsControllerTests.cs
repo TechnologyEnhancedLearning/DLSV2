@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CentreConfiguration
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CentreConfiguration;
     using DigitalLearningSolutions.Web.Extensions;

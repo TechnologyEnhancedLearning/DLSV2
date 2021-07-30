@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -14,9 +10,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
 
     public class DelegateApprovalsControllerTests
     {
-        private IUserDataService userDataService = null!;
-        private IDelegateApprovalsService delegateApprovalsService = null!;
         private DelegateApprovalsController delegateApprovalsController = null!;
+        private IDelegateApprovalsService delegateApprovalsService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -25,7 +21,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             delegateApprovalsService = A.Fake<IDelegateApprovalsService>();
             delegateApprovalsController = new DelegateApprovalsController(delegateApprovalsService, userDataService)
                 .WithDefaultContext()
-                .WithMockUser(true); ;
+                .WithMockUser(true);
+            ;
         }
 
         [Test]

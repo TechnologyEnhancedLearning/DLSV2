@@ -2,7 +2,7 @@
 @model BaseSearchablePageViewModel
 
 <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
-  @if (Model.SearchString == null && Model.FilterString == null) {
+  @if (Model.SearchString == null && Model.FilterBy == null) {
     <span hidden aria-hidden="true" aria-live="polite" id="results-count">0 matching results</span>
   } else {
     var count = Model.MatchingSearchResults;

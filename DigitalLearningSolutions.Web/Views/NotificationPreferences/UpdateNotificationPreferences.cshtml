@@ -1,6 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-
 @model UpdateNotificationPreferencesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/updateNotificationPreferences.css")" asp-append-version="true">
@@ -9,8 +8,7 @@
   ViewData["Title"] = "Update Notification Preferences";
 }
 
-@if (User.IsDelegateOnlyAccount())
-{
+@if (User.IsDelegateOnlyAccount()) {
   ViewData["Application"] = "Learning Portal";
   @section NavMenuItems {
     <partial name="../LearningPortal/Shared/_NavMenuItems" />
@@ -30,8 +28,7 @@
         <div class="nhsuk-fieldset" aria-describedby="notification-hint">
           <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
           <div class="nhsuk-checkboxes">
-            @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index)))
-            {
+            @foreach (var (notification, index) in Model.Notifications.Select((item, index) => (item, index))) {
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input"
                        id="notification-@index.ToString()"
@@ -55,7 +52,6 @@
       </div>
     </form>
 
-    <vc:back-link asp-controller="NotificationPreferences" asp-action="Index" link-text="Cancel" />
+    <vc:cancel-link asp-controller="NotificationPreferences" asp-action="Index" />
   </div>
 </div>
-

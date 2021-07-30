@@ -3,10 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using Castle.Core.Internal;
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -15,9 +14,9 @@
 
     public class UserServiceTests
     {
-        private ILoginService loginService;
-        private IUserDataService userDataService;
-        private IUserService userService;
+        private ILoginService loginService = null!;
+        private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -203,8 +202,8 @@
                 new AccountDetailsData(adminUser.Id, null, password, firstName, lastName, email, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress))
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress!)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => loginService.VerifyUsers(password, adminUser, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(adminUser, new List<DelegateUser>()));
@@ -236,8 +235,8 @@
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress))
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress!))
                 .Returns(new List<DelegateUser> { delegateUser });
             A.CallTo(() => loginService.VerifyUsers(password, null, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
@@ -327,8 +326,18 @@
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .MustNotHaveHappened();
-            A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(A<int>._, A<int>._, A<string?>._,
-                    A<string?>._, A<string?>._, A<string?>._, A<string?>._, A<string?>._))
+            A.CallTo(
+                    () => userDataService.UpdateDelegateUserCentrePrompts(
+                        A<int>._,
+                        A<int>._,
+                        A<string?>._,
+                        A<string?>._,
+                        A<string?>._,
+                        A<string?>._,
+                        A<string?>._,
+                        A<string?>._
+                    )
+                )
                 .MustNotHaveHappened();
         }
 
@@ -361,7 +370,8 @@
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: oldEmail);
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
-            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(UserTestHelper.GetDefaultAdminUser(id: 1, emailAddress: email));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email))
+                .Returns(UserTestHelper.GetDefaultAdminUser(1, emailAddress: email));
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns(new List<DelegateUser>());
 
             // When
@@ -383,7 +393,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(id: 3, emailAddress: email) });
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email) });
 
             // When
             var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
@@ -404,7 +414,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
-                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(id: 3, emailAddress: email, centreId: 3) });
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
 
             // When
             var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);

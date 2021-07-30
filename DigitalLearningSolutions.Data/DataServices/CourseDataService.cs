@@ -1,8 +1,9 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
@@ -17,6 +18,9 @@
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
+        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
+        (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -26,7 +30,8 @@
                 FROM dbo.Progress AS pr
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
                 WHERE pr.CustomisationID = cu.CustomisationID
-                AND can.CentreID = @centreId) AS DelegateCount";
+                AND can.CentreID = @centreId
+                AND RemovedDate IS NULL) AS DelegateCount";
 
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
@@ -48,6 +53,15 @@
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
                 AND can.CentreID = @centreId) AS AttemptsPassed";
+
+        private const string LastAccessedQuery =
+            @"(SELECT TOP 1 SubmittedTime
+                FROM dbo.Progress AS pr
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
+                WHERE pr.CustomisationID = cu.CustomisationID
+                AND can.CentreID = @centreId
+                AND RemovedDate IS NULL
+                ORDER BY SubmittedTime DESC) AS LastAccessed";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -184,6 +198,102 @@
                         AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
+        }
+
+        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
+        {
+            return connection.Query<DelegateCourseInfo>(
+                @"SELECT
+                        cu.CustomisationID AS CustomisationId,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        au.Forename AS SupervisorForename,
+                        au.Surname AS SupervisorSurname,
+                        pr.FirstSubmittedTime AS Enrolled,
+                        pr.SubmittedTime AS LastUpdated,
+                        pr.CompleteByDate AS CompleteBy,
+                        pr.Completed AS Completed,
+                        pr.Evaluated AS Evaluated,
+                        pr.EnrollmentMethodID AS EnrolmentMethodId,
+                        pr.LoginCount,
+                        pr.Duration AS LearningTime,
+                        pr.DiagnosticScore,
+                        cu.IsAssessed,
+                        pr.Answer1,
+                        pr.Answer2,
+                        pr.Answer3
+                    FROM Customisations cu
+                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
+                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+                    LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
+                    WHERE pr.CandidateID = @delegateId
+                        AND ap.ArchivedDate IS NULL
+                        AND pr.RemovedDate IS NULL",
+                new { delegateId }
+            );
+        }
+
+        public (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(
+            int delegateId,
+            int customisationId
+        )
+        {
+            return connection.QueryFirstOrDefault<(int, int)>(
+                @"SELECT COUNT(aa.Status) AS TotalAttempts,
+                        COUNT(CASE WHEN aa.Status=1 THEN 1 END) AS AttemptsPassed
+                    FROM AssessAttempts aa
+                    INNER JOIN Progress AS pr ON pr.ProgressID = aa.ProgressID
+                    WHERE pr.CustomisationID = @customisationId
+                        AND pr.CandidateID = @delegateId
+                        AND pr.RemovedDate IS NULL",
+                new { delegateId, customisationId }
+            );
+        }
+
+        public CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseDetails>(
+                @$"SELECT
+                        cu.CustomisationID,
+                        cu.CentreID,
+                        cu.Active,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+                        cu.CurrentVersion,
+                        cu.CreatedDate,
+                        cu.[Password],
+                        cu.NotificationEmails,
+                        ap.PLAssess AS PostLearningAssessment,
+                        cu.IsAssessed,
+                        ap.DiagAssess,
+                        cu.TutCompletionThreshold,
+                        cu.DiagCompletionThreshold,
+                        cu.SelfRegister,
+                        cu.DiagObjSelect,
+                        cu.HideInLearnerPortal,
+                        cu.CompleteWithinMonths,
+                        cu.ValidityMonths,
+                        cu.Mandatory,
+                        cu.AutoRefresh,
+                        cu.RefreshToCustomisationID,
+                        refreshToCu.CustomisationName AS refreshToCustomisationName,
+                        refreshToAp.ApplicationName AS refreshToApplicationName,
+                        cu.AutoRefreshMonths,
+                        cu.ApplyLPDefaultsToSelfEnrol,
+                        {LastAccessedQuery},
+                        {DelegateCountQuery},
+                        {CompletedCountQuery}
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
         }
     }
 }

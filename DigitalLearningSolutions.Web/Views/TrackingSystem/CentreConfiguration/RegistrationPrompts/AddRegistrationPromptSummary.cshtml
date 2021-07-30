@@ -54,13 +54,12 @@
         <dd class="nhsuk-summary-list__value">
           @if (Model.Answers.Any()) {
             <ul>
-              @foreach (var answer in Model.Answers)
-              {
+              @foreach (var answer in Model.Answers) {
                 <li class="word-break">@answer</li>
               }
             </ul>
           } else {
-            <partial name="_NoConfiguredAnswers"/>
+            <partial name="_NoConfiguredAnswers" />
           }
         </dd>
         <dd class="nhsuk-summary-list__actions">
@@ -74,5 +73,7 @@
     <form method="post" asp-action="AddRegistrationPromptSummaryPost">
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
+
+    <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="Index" />
   </div>
 </div>

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard;

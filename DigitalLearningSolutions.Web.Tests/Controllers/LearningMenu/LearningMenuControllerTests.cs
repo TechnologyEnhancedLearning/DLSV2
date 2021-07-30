@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningMenu
 {
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -16,9 +17,9 @@
     {
         private LearningMenuController controller;
         private ICourseContentService courseContentService;
-        private ITutorialContentService tutorialContentService;
+        private ITutorialContentDataService tutorialContentDataService;
         private ISessionService sessionService;
-        private ISectionContentService sectionContentService;
+        private ISectionContentDataService sectionContentDataService;
         private IDiagnosticAssessmentDataService diagnosticAssessmentDataService;
         private IDiagnosticAssessmentService diagnosticAssessmentService;
         private IPostLearningAssessmentService postLearningAssessmentService;
@@ -39,9 +40,9 @@
             config = A.Fake<IConfiguration>();
             configService = A.Fake<IConfigService>();
             courseContentService = A.Fake<ICourseContentService>();
-            tutorialContentService = A.Fake<ITutorialContentService>();
+            tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             sessionService = A.Fake<ISessionService>();
-            sectionContentService = A.Fake<ISectionContentService>();
+            sectionContentDataService = A.Fake<ISectionContentDataService>();
             diagnosticAssessmentDataService = A.Fake<IDiagnosticAssessmentDataService>();
             diagnosticAssessmentService = A.Fake<IDiagnosticAssessmentService>();
             postLearningAssessmentService = A.Fake<IPostLearningAssessmentService>();
@@ -59,8 +60,8 @@
                 config,
                 configService,
                 courseContentService,
-                sectionContentService,
-                tutorialContentService,
+                sectionContentDataService,
+                tutorialContentDataService,
                 diagnosticAssessmentDataService,
                 diagnosticAssessmentService,
                 postLearningAssessmentService,

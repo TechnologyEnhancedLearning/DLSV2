@@ -12,8 +12,7 @@
             BaseSearchablePageViewModel searchablePageViewModel
         )
         {
-            var currentFilters =
-                NewlineSeparatedStringListHelper.SplitNewlineSeparatedList(searchablePageViewModel.FilterString);
+            var currentFilters = searchablePageViewModel.FilterBy?.Split(FilteringHelper.FilterSeparator).ToList() ?? new List<string>();
 
             var appliedFilters = currentFilters.Select(
                 currentFilter => PopulateAppliedFilterViewModel(searchablePageViewModel, currentFilter)
@@ -33,7 +32,8 @@
 
             return new AppliedFilterViewModel(
                 GetFilterDisplayText(currentFilter, appliedFilter.FilterOptions),
-                appliedFilter.FilterName
+                appliedFilter.FilterName,
+                GetFilterValue(currentFilter, appliedFilter.FilterOptions)
             );
         }
 
@@ -43,6 +43,14 @@
         )
         {
             return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
+        }
+
+        private static string GetFilterValue(
+            string currentFilter,
+            IEnumerable<FilterOptionViewModel> filterOptions
+        )
+        {
+            return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
         }
 
         private static bool FilterOptionsContainsFilter(

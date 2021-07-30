@@ -3,15 +3,16 @@
     using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class PasswordDataServiceTests
     {
+        private const string PasswordHashNotYetInDb = "I haven't used this password before!";
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
-        private const string PasswordHashNotYetInDb = "I haven't used this password before!";
 
         [SetUp]
         public void Setup()

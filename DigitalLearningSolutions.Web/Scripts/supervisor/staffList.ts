@@ -1,4 +1,4 @@
-import { SearchSortAndPaginate } from '../searchSortAndPaginate/searchSortAndPaginate';
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 // eslint-disable-next-line no-new
-new SearchSortAndPaginate('Supervisor/AllStaffList');
+new SearchSortFilterAndPaginate('Supervisor/AllStaffList');
