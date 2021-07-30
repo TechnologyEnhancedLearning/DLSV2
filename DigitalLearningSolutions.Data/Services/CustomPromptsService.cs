@@ -36,6 +36,15 @@
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
 
         public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+
+        public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
+            DelegateCourseInfo delegateCourseInfo,
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        );
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -192,7 +201,7 @@
             int categoryId
         )
         {
-            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId);
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
             if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
             {
                 return null;
@@ -485,6 +494,11 @@
             }
 
             return list;
+        }
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
         }
     }
 }

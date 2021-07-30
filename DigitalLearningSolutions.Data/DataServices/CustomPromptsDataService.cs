@@ -26,8 +26,6 @@
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
 
-        public IEnumerable<(int, string)> GetCourseCustomPromptsAlphabetical();
-
         public void UpdateCustomPromptForCourse(
             int customisationId,
             int promptNumber,
@@ -149,7 +147,7 @@
             ).Single();
         }
 
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
+        public CourseCustomPromptsResult GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
         {
             var result = connection.Query<CourseCustomPromptsResult>(
                 @"SELECT
