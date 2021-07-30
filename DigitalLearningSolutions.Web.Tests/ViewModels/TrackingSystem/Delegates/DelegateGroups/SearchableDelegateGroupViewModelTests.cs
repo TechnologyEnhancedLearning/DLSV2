@@ -23,8 +23,8 @@
                 AddedByLastName = "Person",
                 LinkedToField = 0,
                 LinkedToFieldName = "None",
-                AddNewRegistrants = false,
-                SyncFieldChanges = false
+                AddNewRegistrantsToGroup = false,
+                SyncChangesToRegistrationInfoWithGroupMembership = false
             };
 
             // When
@@ -41,8 +41,8 @@
                 result.AddedBy.Should().Be("Test Person");
                 result.LinkedToField.Should().Be(0);
                 result.LinkedField.Should().Be("None");
-                result.AddNewRegistrants.Should().Be("No");
-                result.SyncFieldChanges.Should().Be("No");
+                result.AddNewRegistrantsToGroup.Should().Be("No");
+                result.SyncChangesToRegistrationInfoWithGroupMembership.Should().Be("No");
             }
         }
 
@@ -52,8 +52,8 @@
             // Given
             var group = new Group
             {
-                AddNewRegistrants = true,
-                SyncFieldChanges = true
+                AddNewRegistrantsToGroup = true,
+                SyncChangesToRegistrationInfoWithGroupMembership = true
             };
 
             // When
@@ -62,8 +62,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.AddNewRegistrants.Should().Be("Yes");
-                result.SyncFieldChanges.Should().Be("Yes");
+                result.AddNewRegistrantsToGroup.Should().Be("Yes");
+                result.SyncChangesToRegistrationInfoWithGroupMembership.Should().Be("Yes");
             }
         }
     }

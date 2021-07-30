@@ -83,7 +83,7 @@
             New registrants added to the group
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.AddNewRegistrants
+            @Model.AddNewRegistrantsToGroup
           </dd>
           <dd class="nhsuk-summary-list__actions" />
         </div>
@@ -93,21 +93,21 @@
             Changes to field synchronised with group
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.SyncFieldChanges
+            @Model.SyncChangesToRegistrationInfoWithGroupMembership
           </dd>
           <dd class="nhsuk-summary-list__actions" />
         </div>
       </dl>
 
-      <a class="nhsuk-button left-button" role="button">
+      <a class="nhsuk-button nhsuk-button__card-button" role="button">
         View delegates
       </a>
 
-      <a class="nhsuk-button" role="button">
+      <a class="nhsuk-button nhsuk-button__card-button" role="button">
         View courses
       </a>
 
-      <a class="nhsuk-button delete-button" role="button">
+      <a class="nhsuk-button delete-button nhsuk-button__card-button" role="button">
         Delete group
       </a>
     </div>

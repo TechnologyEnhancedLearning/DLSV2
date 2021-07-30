@@ -20,8 +20,8 @@
 
         public string LinkedToFieldName { get; set; }
 
-        public bool AddNewRegistrants { get; set; }
+        public bool AddNewRegistrantsToGroup { get; set; }
 
-        public bool SyncFieldChanges { get; set; }
+        public bool SyncChangesToRegistrationInfoWithGroupMembership { get; set; }
     }
 }

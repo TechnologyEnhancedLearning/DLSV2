@@ -1,12 +1,12 @@
 ﻿@import 'delegateCommon';
 
-.nhsuk-details__text > .nhsuk-button {
+.nhsuk-button.nhsuk-button__card-button {
   margin-right: nhsuk-spacing(2);
-  margin-bottom: nhsuk-spacing(3) !important;
-  margin-top: nhsuk-spacing(0) !important;
+  margin-bottom: nhsuk-spacing(3);
+  margin-top: nhsuk-spacing(0);
 
   @include govuk-media-query($until: tablet) {
-    margin-top: nhsuk-spacing(2) !important;
-    margin-bottom: nhsuk-spacing(2) !important;
+    margin-top: nhsuk-spacing(2);
+    margin-bottom: nhsuk-spacing(2);
   }
 }

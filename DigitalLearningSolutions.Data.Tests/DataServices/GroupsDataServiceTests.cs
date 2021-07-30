@@ -34,8 +34,8 @@
                 AddedByLastName = "Whittaker (Developer)",
                 LinkedToField = 4,
                 LinkedToFieldName = "Job group",
-                AddNewRegistrants = true,
-                SyncFieldChanges = true
+                AddNewRegistrantsToGroup = true,
+                SyncChangesToRegistrationInfoWithGroupMembership = true
             };
             
             // When
