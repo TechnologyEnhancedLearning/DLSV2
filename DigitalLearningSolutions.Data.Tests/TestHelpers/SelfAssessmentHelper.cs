@@ -16,7 +16,8 @@
             DateTime? lastAccessed = null,
             DateTime? completeByDate = null,
             bool useFilteredApi = false,
-            bool unprocessedUpdates = false
+            bool unprocessedUpdates = false,
+            bool linearNavigation = true
         )
         {
             return new CurrentSelfAssessment()
@@ -29,12 +30,14 @@
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
                 UseFilteredApi = useFilteredApi,
-                UnprocessedUpdates = unprocessedUpdates
+                UnprocessedUpdates = unprocessedUpdates,
+                LinearNavigation = linearNavigation
             };
         }
 
         public static Competency CreateDefaultCompetency(
             int id = 1,
+            int rowNo = 1,
             string name = "name",
             string? description = "description",
             string competencyGroup = "competencyGroup",
@@ -45,6 +48,7 @@
             return new Competency()
             {
                 Id = id,
+                RowNo = rowNo,
                 Name = name,
                 Description = description,
                 CompetencyGroup = competencyGroup,
