@@ -49,7 +49,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage", "Level 1 - Microsoft Excel 2010 - Inductions")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
-        [InlineData("/TrackingSystem/Delegates/View/1", "xxxxx xxxxxxxxx")]
         [InlineData("/TrackingSystem/Delegates/View/3", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
