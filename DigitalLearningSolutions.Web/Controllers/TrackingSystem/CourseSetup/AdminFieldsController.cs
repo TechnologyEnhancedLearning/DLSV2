@@ -44,13 +44,17 @@
                 categoryId.Value
             );
 
-            if (courseCustomPrompts == null)
-            {
-                return NotFound();
-            }
-
             var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit/Start")]
+        public IActionResult EditAdminFieldStart(int customisationId, int promptNumber)
+        {
+            TempData.Clear();
+
+            return RedirectToAction("EditAdminField", new { customisationId, promptNumber });
         }
 
         [HttpGet]
@@ -76,7 +80,7 @@
         }
 
         [HttpPost]
-        [Route("{customisationId}/AdminFields/{promptNumber}/Edit")]
+        [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit")]
         public IActionResult EditAdminField(EditAdminFieldViewModel model, string action)
         {
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
@@ -87,6 +91,7 @@
             return action switch
             {
                 SaveAction => EditAdminFieldPostSave(model),
+                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
                 BulkAction => EditAdminFieldBulk(model),
                 _ => RedirectToAction("Error", "LearningSolutions")
             };
@@ -102,6 +107,7 @@
             var model = new BulkAdminFieldAnswersViewModel(
                 data.EditModel.OptionsString,
                 false,
+                customisationId,
                 promptNumber
             );
 
@@ -109,9 +115,13 @@
         }
 
         [HttpPost]
-        [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("AdminFieldsEdit/Bulk")]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
-        public IActionResult EditAdminFieldBulkPost(BulkAdminFieldAnswersViewModel model)
+        public IActionResult EditAdminFieldBulkPost(
+            BulkAdminFieldAnswersViewModel model,
+            int customisationId,
+            int promptNumber
+        )
         {
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
@@ -124,28 +134,34 @@
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             TempData.Set(editData);
 
-            return RedirectToAction("EditAdminField", new { promptNumber = model.PromptNumber });
+            return RedirectToAction(
+                "EditAdminField",
+                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+            );
         }
 
         private IActionResult EditAdminFieldPostSave(EditAdminFieldViewModel model)
         {
             ModelState.ClearAllErrors();
 
-            customPromptsService.UpdateCustomPromptForCentre(
-                User.GetCentreId(),
+            customPromptsService.UpdateCustomPromptForCourse(
+                model.CustomisationId,
                 model.PromptNumber,
                 model.Mandatory,
                 model.OptionsString
             );
 
-            return RedirectToAction("AdminFields");
+            return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
         }
 
         private IActionResult EditAdminFieldBulk(EditAdminFieldViewModel model)
         {
             SetEditAdminFieldTempData(model);
 
-            return RedirectToAction("EditAdminFieldBulk", new { promptNumber = model.PromptNumber });
+            return RedirectToAction(
+                "EditAdminFieldBulk",
+                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+            );
         }
 
         private void SetEditAdminFieldTempData(EditAdminFieldViewModel model)
@@ -162,6 +178,30 @@
                 }
             );
             TempData.Set(data);
+        }
+
+        private IActionResult AdminFieldAnswersPostAddPrompt(
+            AdminFieldAnswersViewModel model,
+            bool saveToTempData = false
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var optionsString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+
+            if (optionsString.Length > 1000)
+            {
+                SetTotalAnswersLengthTooLongError(model);
+                return View(model);
+            }
+
+            SetAdminFieldAnswersViewModelOptions(model, optionsString);
+
+            return View(model);
         }
 
         private IActionResult AdminFieldAnswersPostRemovePrompt(
@@ -191,18 +231,39 @@
             model.Answer = null;
         }
 
+        private void SetTotalAnswersLengthTooLongError(AdminFieldAnswersViewModel model)
+        {
+            if (model.OptionsString == null || model.OptionsString.Length < 2)
+            {
+                return;
+            }
+
+            var remainingLength = 1000 - (model.OptionsString?.Length - 2 ?? 0);
+            ModelState.AddModelError(
+                nameof(AdminFieldAnswersViewModel.Answer),
+                $"The complete list of answers must be 1000 characters or fewer ({remainingLength} characters remaining for the new answer)"
+            );
+        }
+
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
             return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
         }
 
+        private void UpdateTempDataWithAnswersModelValues(AdminFieldAnswersViewModel model)
+        {
+            var data = TempData.Peek<AddAdminFieldData>()!;
+            data.ConfigureAnswersViewModel = model;
+            TempData.Set(data);
+        }
+
         private void ValidateBulkOptionsString(string? optionsString)
         {
-            if (optionsString != null && optionsString.Length > 4000)
+            if (optionsString != null && optionsString.Length > 1000)
             {
                 ModelState.AddModelError(
                     nameof(BulkAdminFieldAnswersViewModel.OptionsString),
-                    "The complete list of answers must be 4000 characters or fewer"
+                    "The complete list of answers must be 1000 characters or fewer"
                 );
             }
 

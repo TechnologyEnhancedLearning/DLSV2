@@ -261,7 +261,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ap.ApplicationName,
                         cu.CustomisationName,
                         cu.CurrentVersion,
-                        cu.CreatedDate,
+                        cu.CreatedTime,
                         cu.[Password],
                         cu.NotificationEmails,
                         ap.PLAssess AS PostLearningAssessment,

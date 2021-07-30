@@ -149,7 +149,7 @@
             ).Single();
         }
 
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId)
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
         {
             var result = connection.Query<CourseCustomPromptsResult>(
                 @"SELECT
@@ -175,8 +175,8 @@
                     WHERE cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
-                new { customisationId, centreId }
-            ).SingleOrDefault();
+                new { customisationId, centreId, categoryId }
+            ).Single();
 
             return result;
         }

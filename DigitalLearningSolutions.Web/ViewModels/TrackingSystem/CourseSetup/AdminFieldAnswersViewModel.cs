@@ -9,15 +9,19 @@
         public AdminFieldAnswersViewModel() { }
 
         public AdminFieldAnswersViewModel(
+            int customisationId,
             string optionsString,
             string? answer = null,
             bool includeAnswersTableCaption = false
         )
         {
+            CustomisationId = customisationId;
             OptionsString = optionsString;
             Answer = answer;
             IncludeAnswersTableCaption = includeAnswersTableCaption;
         }
+
+        public int CustomisationId { get; set; }
 
         public string? OptionsString { get; set; }
 

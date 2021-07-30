@@ -4,10 +4,16 @@
     {
         public BulkAdminFieldAnswersViewModel() { }
 
-        public BulkAdminFieldAnswersViewModel(string? optionsString, bool isAddPromptJourney, int? promptNumber)
+        public BulkAdminFieldAnswersViewModel(
+            string? optionsString,
+            bool isAddPromptJourney,
+            int customisationId,
+            int promptNumber
+        )
         {
             OptionsString = optionsString;
             IsAddPromptJourney = isAddPromptJourney;
+            CustomisationId = customisationId;
             PromptNumber = promptNumber;
         }
 
@@ -15,6 +21,8 @@
 
         public bool IsAddPromptJourney { get; set; }
 
-        public int? PromptNumber { get; set; }
+        public int CustomisationId { get; set; }
+
+        public int PromptNumber { get; set; }
     }
 }

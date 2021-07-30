@@ -18,7 +18,7 @@
             string optionsString,
             string? answer = null
         )
-            : base(optionsString, answer, true)
+            : base(customisationId, optionsString, answer, true)
         {
             CustomisationId = customisationId;
             PromptNumber = promptNumber;
