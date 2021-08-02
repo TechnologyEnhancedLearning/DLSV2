@@ -10,7 +10,7 @@
         [Test]
         [TestCase(false)]
         [TestCase(null)]
-        public void LearningEnabled_should_be_false(bool status)
+        public void LearningEnabled_should_be_false_with_false_or_null_tutorial_status(bool status)
         {
             // Given
             var tutorial = new Tutorial
@@ -28,7 +28,7 @@
         [Test]
         [TestCase(false)]
         [TestCase(null)]
-        public void DiagnosticEnabled_should_be_false(bool status)
+        public void DiagnosticEnabled_should_be_false_with_false_or_null_tutorial_diagnostic_status(bool status)
         {
             // Given
             var tutorial = new Tutorial

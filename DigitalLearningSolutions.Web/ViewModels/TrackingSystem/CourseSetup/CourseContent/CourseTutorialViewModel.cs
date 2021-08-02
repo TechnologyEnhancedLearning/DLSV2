@@ -8,8 +8,8 @@
         {
             TutorialId = tutorial.TutorialId;
             TutorialName = tutorial.TutorialName;
-            LearningEnabled = tutorial.Status.HasValue && tutorial.Status.Value;
-            DiagnosticEnabled = tutorial.DiagStatus.HasValue && tutorial.DiagStatus.Value;
+            LearningEnabled = tutorial.Status ?? false;
+            DiagnosticEnabled = tutorial.DiagStatus ?? false;
         }
 
         public int TutorialId { get; set; }
