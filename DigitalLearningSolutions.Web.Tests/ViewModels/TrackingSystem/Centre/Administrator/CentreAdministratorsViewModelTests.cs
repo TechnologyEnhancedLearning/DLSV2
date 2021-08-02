@@ -39,8 +39,6 @@
                 adminUsers,
                 new List<string>(),
                 null,
-                "SearchableName",
-                "Ascending",
                 null,
                 1
             );
@@ -57,8 +55,6 @@
                 adminUsers,
                 new List<string>(),
                 null,
-                "SearchableName",
-                "Ascending",
                 null,
                 2
             );
@@ -98,8 +94,6 @@
                 adminUsers,
                 new List<string>(),
                 null,
-                "SearchableName",
-                "Ascending",
                 null,
                 2
             );

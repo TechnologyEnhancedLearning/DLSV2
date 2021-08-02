@@ -8,42 +8,44 @@
 
     public abstract class BaseSearchablePageViewModel
     {
+        public const string DefaultSortOption = "SearchableName";
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
 
-        public readonly string? FilterString;
+        public readonly string? FilterBy;
 
         private readonly int itemsPerPage;
 
         public readonly string? SearchString;
 
         public int MatchingSearchResults;
+        
+        public readonly bool FilterEnabled;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
-            string sortBy,
-            string sortDirection,
             int page,
-            string? filterString = null,
+            bool filterEnabled,
+            string sortBy = DefaultSortOption,
+            string sortDirection = Ascending,
+            string? filterBy = null,
             int itemsPerPage = 10
         )
         {
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
-            FilterString = filterString;
+            FilterBy = filterBy;
             Page = page;
+            FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
             this.itemsPerPage = itemsPerPage;
         }
 
+
         public string SortDirection { get; set; }
 
         public string SortBy { get; set; }
-
-        public int Page { get; protected set; }
-
-        public int TotalPages { get; protected set; }
 
         public IEnumerable<SelectListItem> SortBySelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(SortOptions);
@@ -51,6 +53,10 @@
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
+
+        public int Page { get; protected set; }
+
+        public int TotalPages { get; protected set; }
 
         protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
         {

@@ -45,7 +45,7 @@
     } else {
       <p class="nhsuk-body-m">@Model.DelegateCount users have responded to this prompt. Deleting the prompt will permanently delete all of their responses.</p>
     }
-    
+
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveRegistrationPrompt">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
@@ -73,6 +73,6 @@
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete prompt</button>
     </form>
 
-    <vc:back-link asp-controller="RegistrationPrompts" asp-action="Index" link-text="Cancel" />
+    <vc:cancel-link asp-controller="RegistrationPrompts" asp-action="Index" />
   </div>
 </div>

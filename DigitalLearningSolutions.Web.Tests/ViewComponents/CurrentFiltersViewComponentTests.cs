@@ -42,15 +42,17 @@
                 new List<AdminUser>(),
                 categories,
                 searchString,
-                "SearchableName",
-                "Ascending",
-                $"CategoryName|CategoryName|Word\r\n{AdminRoleFilterOptions.CentreAdministrator.FilterValue}",
+                $"CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
-                new AppliedFilterViewModel(AdminRoleFilterOptions.CentreAdministrator.DisplayText, "Role"),
-                new AppliedFilterViewModel("Word", "Category")
+                new AppliedFilterViewModel(
+                    AdminRoleFilterOptions.CentreAdministrator.DisplayText,
+                    "Role",
+                    AdminRoleFilterOptions.CentreAdministrator.FilterValue
+                ),
+                new AppliedFilterViewModel("Word", "Category", "CategoryName|CategoryName|Word")
             };
 
             var expectedFilterViewModel = new CurrentFiltersViewModel(expectedAppliedFilters, searchString);

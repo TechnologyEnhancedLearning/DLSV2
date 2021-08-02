@@ -76,6 +76,6 @@
 
     public static class DefaultSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) Name = ("SearchableName", nameof(BaseSearchableItem.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) Name = (BaseSearchablePageViewModel.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
     }
 }

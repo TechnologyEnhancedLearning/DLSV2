@@ -22,6 +22,10 @@
 
         public string CategoryName { get; set; }
 
+        public string CategoryFilter => nameof(AdminUser.CategoryName) + FilteringHelper.Separator +
+                                        nameof(AdminUser.CategoryName) +
+                                        FilteringHelper.Separator + CategoryName;
+
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }

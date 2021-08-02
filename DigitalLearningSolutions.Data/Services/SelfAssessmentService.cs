@@ -63,7 +63,7 @@
 											  LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
 											  ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
 
                           WHERE CandidateID = @candidateId
                             AND s.SelfAssessmentID = @selfAssessmentId
@@ -98,10 +98,11 @@
 											  ON cas.SupervisorDelegateId = sd.ID
 
                                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID
+                                ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
                           WHERE ca.ID = @candidateAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
+                                                  ROW_NUMBER() OVER (PARTITION BY CAQ.Ordering ORDER BY SAS.Ordering) as RowNo,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
@@ -195,7 +196,7 @@ SA.UseFilteredApi,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, CA.SubmittedDate
+CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -204,7 +205,7 @@ CA.LaunchCount, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -224,7 +225,8 @@ CA.LaunchCount, CA.SubmittedDate
                     FROM {CompetencyTables}
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
-                    WHERE CRN.RowNo = @n",
+                    WHERE CRN.RowNo = @n
+                    ORDER BY CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -306,7 +308,8 @@ CA.LaunchCount, CA.SubmittedDate
             var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {CompetencyTables}",
+                    FROM {CompetencyTables} 
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -326,7 +329,8 @@ CA.LaunchCount, CA.SubmittedDate
             var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {SpecificCompetencyTables}",
+                    FROM {SpecificCompetencyTables}
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -347,7 +351,8 @@ CA.LaunchCount, CA.SubmittedDate
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)",
+                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     competency.AssessmentQuestions.Add(assessmentQuestion);
@@ -508,7 +513,7 @@ CA.LaunchCount, CA.SubmittedDate
 
         public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased)
         {
-            int adjustBy = zeroBased ? -1 : 0;
+            int adjustBy = zeroBased ? 1 : 0;
             return connection.Query<LevelDescriptor>(
                @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, 0 AS UpdatedByAdminID
                     FROM

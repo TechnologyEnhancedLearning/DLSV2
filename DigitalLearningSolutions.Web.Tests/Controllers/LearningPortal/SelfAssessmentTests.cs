@@ -137,7 +137,7 @@
             var result = controller.SelfAssessmentCompetency(SelfAssessmentId, competencyNumber);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("SelfAssessmentReview");
+            result.Should().BeRedirectToActionResult().WithActionName("SelfAssessmentOverview");
         }
 
         [Test]
@@ -242,7 +242,7 @@
         }
 
         [Test]
-        public void SelfAssessmentReview_Should_Return_View()
+        public void SelfAssessmentOverview_Should_Return_View()
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
@@ -251,7 +251,7 @@
                 new Competency() { CompetencyGroup = "A" },
                 new Competency() { CompetencyGroup = "A" }
             };
-            var expectedModel = new SelfAssessmentReviewViewModel()
+            var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
@@ -261,47 +261,47 @@
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentReview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessments/SelfAssessmentReview")
+                .WithViewName("SelfAssessments/SelfAssessmentOverview")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 
         [Test]
-        public void SelfAssessmentReview_action_should_update_last_accessed()
+        public void SelfAssessmentOverview_action_should_update_last_accessed()
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SelfAssessmentReview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId);
 
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
         }
         [Test]
-        public void SelfAssessmentReview_action_should_update_user_bookmark()
+        public void SelfAssessmentOverview_action_should_update_user_bookmark()
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Review";
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Overview";
             // When
-            controller.SelfAssessmentReview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId);
 
             // Then
             A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl)).MustHaveHappened();
         }
         [Test]
-        public void SelfAssessmentReview_Should_Have_Previous_Competency_Number_One_When_Empty()
+        public void SelfAssessmentOverview_Should_Have_Previous_Competency_Number_One_When_Empty()
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
-            var expectedModel = new SelfAssessmentReviewViewModel()
+            var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
@@ -311,22 +311,22 @@
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentReview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
 
             // Then
             result.Should().BeViewResult()
-                .WithViewName("SelfAssessments/SelfAssessmentReview")
+                .WithViewName("SelfAssessments/SelfAssessmentOverview")
                 .Model.Should().BeEquivalentTo(expectedModel);
         }
 
         [Test]
-        public void SelfAssessmentReview_action_without_self_assessment_should_return_403()
+        public void SelfAssessmentOverview_action_without_self_assessment_should_return_403()
         {
             // Given
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SelfAssessmentReview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
 
             // Then
             result.Should()

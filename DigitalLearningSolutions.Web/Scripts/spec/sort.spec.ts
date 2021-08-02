@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/ban-ts-comment */
 import { JSDOM } from 'jsdom';
-import { getSortValue, sortSearchableElements } from '../searchSortAndPaginate/sort';
+import { getSortValue, sortSearchableElements } from '../searchSortFilterAndPaginate/sort';
 import getSearchableElements from './getSearchableElements';
 
 describe('getSortValue', () => {

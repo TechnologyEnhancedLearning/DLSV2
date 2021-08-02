@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -24,18 +24,14 @@
 
     public class DelegateApprovalsService : IDelegateApprovalsService
     {
+        private readonly ICentresDataService centresDataService;
+        private readonly IConfiguration config;
         private readonly ICustomPromptsService customPromptsService;
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
-        private readonly IConfiguration config;
-        private readonly ICentresDataService centresDataService;
 
-        private string LoginUrl => config["AppRootPath"] + "/Login";
-        private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
-
-        public DelegateApprovalsService
-        (
+        public DelegateApprovalsService(
             IUserDataService userDataService,
             ICustomPromptsService customPromptsService,
             IEmailService emailService,
@@ -51,6 +47,9 @@
             this.logger = logger;
             this.config = config;
         }
+
+        private string LoginUrl => config["AppRootPath"] + "/Login";
+        private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
 
         public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
             GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId)
@@ -68,7 +67,9 @@
 
             if (delegateUser == null || delegateUser.CentreId != centreId)
             {
-                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
+                throw new UserAccountNotFoundException(
+                    $"Delegate user id {delegateId} not found at centre id {centreId}."
+                );
             }
 
             if (delegateUser.Approved)
@@ -92,6 +93,29 @@
             SendDelegateApprovalEmails(delegateUsers);
         }
 
+        public void RejectDelegate(int delegateId, int centreId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                throw new UserAccountNotFoundException(
+                    $"Delegate user id {delegateId} not found at centre id {centreId}."
+                );
+            }
+
+            if (delegateUser.Approved)
+            {
+                logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
+                throw new UserAccountInvalidStateException(
+                    $"Delegate user id {delegateId} cannot be rejected as they are already approved."
+                );
+            }
+
+            userDataService.RemoveDelegateUser(delegateId);
+            SendRejectionEmail(delegateUser);
+        }
+
         private void SendDelegateApprovalEmails(params DelegateUser[] delegateUsers)
         {
             var approvalEmails = new List<Email>();
@@ -103,9 +127,10 @@
                 }
                 else
                 {
-                    var centreInformationUrl = centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
-                        ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
-                        : null;
+                    var centreInformationUrl =
+                        centresDataService.GetCentreDetailsById(delegateUser.CentreId)?.ShowOnMap == true
+                            ? FindCentreUrl + $"?centreId={delegateUser.CentreId}"
+                            : null;
                     var delegateApprovalEmail = GenerateDelegateApprovalEmail(
                         delegateUser.CandidateNumber,
                         delegateUser.EmailAddress,
@@ -119,26 +144,6 @@
             emailService.SendEmails(approvalEmails);
         }
 
-        public void RejectDelegate(int delegateId, int centreId)
-        {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-
-            if (delegateUser == null || delegateUser.CentreId != centreId)
-            {
-                throw new UserAccountNotFoundException($"Delegate user id {delegateId} not found at centre id {centreId}.");
-            }
-            if (delegateUser.Approved)
-            {
-                logger.LogWarning($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
-                throw new UserAccountInvalidStateException($"Delegate user id {delegateId} cannot be rejected as they are already approved.");
-            }
-            else
-            {
-                userDataService.RemoveDelegateUser(delegateId);
-                SendRejectionEmail(delegateUser);
-            }
-        }
-
         private void SendRejectionEmail(DelegateUser delegateUser)
         {
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
@@ -147,7 +152,12 @@
             }
             else
             {
-                var delegateRejectionEmail = GenerateDelegateRejectionEmail(delegateUser.FirstName, delegateUser.CentreName, delegateUser.EmailAddress, FindCentreUrl);
+                var delegateRejectionEmail = GenerateDelegateRejectionEmail(
+                    delegateUser.FirstName,
+                    delegateUser.CentreName,
+                    delegateUser.EmailAddress,
+                    FindCentreUrl
+                );
                 emailService.SendEmail(delegateRejectionEmail);
             }
         }
@@ -157,8 +167,7 @@
             logger.LogWarning($"Delegate user id {id} has no email associated with their account.");
         }
 
-        private static Email GenerateDelegateApprovalEmail
-        (
+        private static Email GenerateDelegateApprovalEmail(
             string candidateNumber,
             string emailAddress,
             string? loginUrl,
@@ -189,7 +198,8 @@
             string? delegateName,
             string centreName,
             string emailAddress,
-            string findCentreUrl)
+            string findCentreUrl
+        )
         {
             string emailSubject = "Digital Learning Solutions Registration Rejected";
 

@@ -278,3 +278,10 @@ nav, .nhsuk-header__navigation, #header-navigation {
     background-color: shade($color_nhsuk-red, 50%);
   }
 }
+.first-row td {
+  border-top: 2px solid #d8dde0;
+}
+.status-tag {
+  overflow: hidden;
+  white-space: nowrap;
+}

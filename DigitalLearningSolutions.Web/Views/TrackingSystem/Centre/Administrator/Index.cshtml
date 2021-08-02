@@ -29,76 +29,48 @@
       <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-4">
         <h1 class="nhsuk-heading-xl">Centre administrators</h1>
 
-        <vc:number-of-administrators centre-id="@Model.CentreId" />
+        <vc:number-of-administrators centre-id="Model.CentreId" />
       </div>
     </div>
 
     <div class="nhsuk-grid-row">
-      <form method="get" role="search">
-        <input type="hidden" name="filterBy" value="@Model.FilterString" />
-        <vc:search-box label="Search administrators"
-                       asp-controller="Administrator"
-                       asp-action="Index"
-                       searchable-page-view-model="@Model"
-                       css-class="nhsuk-grid-column-one-half" />
-      </form>
+      <vc:search-box label="Search administrators"
+                     searchable-page-view-model="Model"
+                     css-class="nhsuk-grid-column-one-half" />
     </div>
 
     <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full" id="filters-container">
-        <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filters</label>
-        @foreach (var filter in Model.Filters) {
-          <div id="filter-@filter.FilterProperty">
-            <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-              <input type="hidden" name="searchString" value="@Model.SearchString" />
-              <input type="hidden" name="filterBy" value="@Model.FilterString" />
-              <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown" name="filterValue" id="@filter.FilterProperty" aria-label="@filter.FilterName filter">
-                <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
-                @foreach (var filterOption in filter.FilterOptions) {
-                  <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
-                }
-              </select>
-              <button class="nhsuk-search__submit filter-submit__dropdown non-js-only" type="submit">
-                Add filter
-              </button>
-            </form>
-          </div>
-        }
+      <div class="nhsuk-grid-column-full">
+        <partial name="SearchablePage/_Filters" model="Model" />
       </div>
     </div>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <vc:current-filters searchable-page-view-model="@Model" />
+        <vc:current-filters searchable-page-view-model="Model" />
       </div>
     </div>
 
-    <form method="get">
-      <input type="hidden" id="searchString" value="@Model.SearchString" />
-      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterString" />
-      <input type="hidden" id="select-sort-by" value="Name" />
-      <input type="hidden" id="select-sort-direction" value="Ascending" />
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          @if (!Model.Admins.Any()) {
-            <p class="nhsuk-u-margin-top-4" role="alert">
-              <b>No administrators found</b>
-            </p>
-          } else {
-            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        @if (!Model.Admins.Any()) {
+          <p class="nhsuk-u-margin-top-4" role="alert">
+            <b>No administrators found.</b>
+          </p>
+        } else {
+          <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
-            <div id="searchable-elements">
-              @foreach (var admin in Model.Admins) {
-                <partial name="_SearchableAdminCard" model="admin" />
-              }
-            </div>
-          }
-          @if (Model.TotalPages > 1) {
-            <partial name="SearchablePage/_Pagination" model="Model" />
-          }
-        </div>
+          <div id="searchable-elements">
+            @foreach (var admin in Model.Admins) {
+              <partial name="_SearchableAdminCard" model="admin" />
+            }
+          </div>
+        }
+        @if (Model.TotalPages > 1) {
+          <partial name="SearchablePage/_Pagination" model="Model" />
+        }
       </div>
-    </form>
+    </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Administrators" />
