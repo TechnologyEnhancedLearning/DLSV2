@@ -41,7 +41,9 @@
 
     <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
        role="button"
-       href="#">
+       asp-controller="CourseContent"
+       asp-action="Index"
+       asp-route-customisationId="@Model.CustomisationId">
       View course content
     </a>
 

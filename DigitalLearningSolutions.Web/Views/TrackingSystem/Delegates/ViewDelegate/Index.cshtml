@@ -36,12 +36,20 @@
   }
 
   <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
-    <div class="nhsuk-u-margin-bottom-5">
-      <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
-      <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
-      <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
+    <div class="nhsuk-u-margin-bottom-5 tags">
+      <div class="card-filter-tag">
+        <strong class="@activeTagCss">@(Model.ActiveTagName)</strong>
+      </div>
+      <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.RegStatusTagName)</strong>
+      </div>
+      <div class="card-filter-tag">
+        <strong class="@passwordTagCss">@(Model.PasswordTagName)</strong>
+      </div>
       @if (Model.DelegateInfo.IsAdmin) {
-        <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.PasswordTagName)</strong>
+        </div>
       }
     </div>
 
