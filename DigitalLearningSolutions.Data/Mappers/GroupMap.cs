@@ -7,8 +7,8 @@
     {
         public GroupMap()
         {
-            Map(group => group.AddNewRegistrantsToGroup).ToColumn("AddNewRegistrants");
-            Map(group => group.SyncChangesToRegistrationInfoWithGroupMembership).ToColumn("SyncFieldChanges");
+            Map(group => group.ShouldAddNewRegistrantsToGroup).ToColumn("AddNewRegistrants");
+            Map(group => group.ChangesToRegistrationDetailsShouldChangeGroupMembership).ToColumn("SyncFieldChanges");
         }
     }
 }

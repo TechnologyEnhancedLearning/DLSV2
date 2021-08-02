@@ -17,8 +17,8 @@
             LinkedToField = group.LinkedToField;
             LinkedField = group.LinkedToFieldName;
             AddedBy = $"{group.AddedByFirstName} {group.AddedByLastName}";
-            AddNewRegistrantsToGroup = group.AddNewRegistrantsToGroup ? Yes : No;
-            SyncChangesToRegistrationInfoWithGroupMembership = group.SyncChangesToRegistrationInfoWithGroupMembership ? Yes : No;
+            ShouldAddNewRegistrantsToGroup = group.ShouldAddNewRegistrantsToGroup ? Yes : No;
+            ChangesToRegistrationDetailsShouldChangeGroupMembership = group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
         }
 
         public int Id { get; set; }
@@ -37,8 +37,8 @@
 
         public string AddedBy { get; set; }
 
-        public string AddNewRegistrantsToGroup { get; set; }
+        public string ShouldAddNewRegistrantsToGroup { get; set; }
 
-        public string SyncChangesToRegistrationInfoWithGroupMembership { get; set; }
+        public string ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
     }
 }
