@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import Cookies from 'js-cookie';
 import { ISearchableElement } from './searchSortFilterAndPaginate';
 
 export interface IAppliedFilter {
@@ -15,8 +16,12 @@ export interface IAppliedFilterTag {
 
 export const separator = '|';
 export const filterSeparator = '╡';
+const cookieExpiry = 30;
+let cookieName: string;
 
-export function setUpFilter(onFilterUpdated: VoidFunction): void {
+export function setUpFilter(onFilterUpdated: VoidFunction, filterCookieName: string): void {
+  cookieName = filterCookieName;
+
   setUpFilterSubmitButtons();
   setUpClearFiltersButton();
   setUpFilterSelectorDropdown();
@@ -130,12 +135,14 @@ function addNewFilterValueToFilterBy(newFilterValue: string): void {
     const updatedFilterBy = filterBy ? filterBy + filterSeparator + newFilterValue : newFilterValue;
     updateAllFilterByHiddenInputs(updatedFilterBy);
     updateFilterBy(updatedFilterBy);
+    updateFilterCookie(updatedFilterBy);
   }
 }
 
 function clearFilters(): void {
   updateAllFilterByHiddenInputs('');
   updateFilterBy('');
+  updateFilterCookie('');
   clearAppliedFilters();
   hideAppliedFilters();
 }
@@ -186,6 +193,14 @@ function updateFilterBy(newFilter: string): void {
   const element = getFilterByElement();
   element.value = newFilter;
   element.dispatchEvent(new Event('change'));
+}
+
+function updateFilterCookie(newFilter: string): void {
+  if (newFilter) {
+    Cookies.set(cookieName, newFilter, { expires: cookieExpiry });
+  } else {
+    Cookies.remove(cookieName);
+  }
 }
 
 function getFilterByElement(): HTMLInputElement {

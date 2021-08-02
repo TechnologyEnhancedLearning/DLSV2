@@ -23,7 +23,7 @@ export class SearchSortFilterAndPaginate {
   private readonly filterEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string, filterEnabled = false) {
+  constructor(route: string, filterEnabled = false, filterCookieName = '') {
     this.page = 1;
     this.filterEnabled = filterEnabled;
 
@@ -33,7 +33,7 @@ export class SearchSortFilterAndPaginate {
       }
 
       if (filterEnabled) {
-        setUpFilter(() => this.onFilterUpdated(searchableData));
+        setUpFilter(() => this.onFilterUpdated(searchableData), filterCookieName);
       }
 
       setUpSearch(() => this.onSearchUpdated(searchableData));

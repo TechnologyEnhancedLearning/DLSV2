@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -7,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -15,6 +17,8 @@
     [Route("TrackingSystem/Centre/Administrators")]
     public class AdministratorController : Controller
     {
+        private const string AdminFilterCookieName = "AdminFilter";
+        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
         private readonly ICommonService commonService;
         private readonly IUserDataService userDataService;
 
@@ -35,6 +39,12 @@
             int page = 1
         )
         {
+            // Query parameter should take priority over cookie value
+            if (!Request.Query.ContainsKey(nameof(filterBy)))
+            {
+                filterBy = Request.Cookies[AdminFilterCookieName];
+            }
+
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
             var centreId = User.GetCentreId();
@@ -49,6 +59,22 @@
                 filterBy,
                 page
             );
+
+            if (filterBy != null)
+            {
+                Response.Cookies.Append(
+                    AdminFilterCookieName,
+                    filterBy,
+                    new CookieOptions
+                    {
+                        Expires = CookieExpiry
+                    }
+                );
+            }
+            else
+            {
+                Response.Cookies.Delete(AdminFilterCookieName);
+            }
 
             return View(model);
         }
