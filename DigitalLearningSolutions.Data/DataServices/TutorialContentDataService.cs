@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
     public interface ITutorialContentDataService
@@ -15,6 +17,7 @@
         );
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
+        IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -274,6 +277,23 @@
                 }
                 else throw;
             }
+        }
+
+        public IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId)
+        {
+            return connection.Query<Tutorial>(
+                @"SELECT 
+                        tu.TutorialID,
+                        tu.TutorialName,
+                        ct.[Status],
+                        ct.DiagStatus
+                    FROM dbo.Tutorials AS tu
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID AND ct.CustomisationID = @customisationId
+                    WHERE SectionID = @sectionId
+                    AND ArchivedDate IS NULL",
+                new { sectionId, customisationId }
+            );
         }
     }
 }
