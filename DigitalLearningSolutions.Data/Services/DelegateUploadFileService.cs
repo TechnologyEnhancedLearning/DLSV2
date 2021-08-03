@@ -7,9 +7,35 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using Microsoft.AspNetCore.Http;
 
+    public class BulkUploadResult
+    {
+        public enum ErrorReasons { None }
+
+        public BulkUploadResult(
+            int processed,
+            int registered,
+            int updated,
+            int skipped,
+            IEnumerable<(int RowNumber, ErrorReasons Reason)> errors
+        )
+        {
+            Processed = processed;
+            Registered = registered;
+            Updated = updated;
+            Skipped = skipped;
+            Errors = errors;
+        }
+
+        public IEnumerable<(int RowNumber, ErrorReasons Reason)> Errors { get; set; }
+        public int Processed { get; set; }
+        public int Registered { get; set; }
+        public int Updated { get; set; }
+        public int Skipped { get; set; }
+    }
+
     public interface IDelegateUploadFileService
     {
-        public void ProcessDelegatesFile(IFormFile file);
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -41,13 +67,17 @@
                 .Select(item => item.id);
         }
 
-        public void ProcessDelegatesFile(IFormFile file)
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file)
         {
             var table = OpenDelegatesTable(file);
             if (!ValidateHeaders(table))
             {
                 throw new InvalidHeadersException();
             }
+
+            var (processed, registered, updated, skipped) = (0, 0, 0, 0);
+            var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
+            return new BulkUploadResult(processed, registered, updated, skipped, errors);
         }
 
         private IXLTable OpenDelegatesTable(IFormFile file)
