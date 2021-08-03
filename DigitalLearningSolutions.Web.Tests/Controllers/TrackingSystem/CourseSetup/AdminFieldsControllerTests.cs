@@ -5,10 +5,16 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class AdminFieldsControllerTests
@@ -52,6 +58,156 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<DisplayPromptsViewModel>();
+        }
+
+        [Test]
+        public void PostEditAdminField_save_calls_correct_methods()
+        {
+            // Given
+            var prompt = new CustomPrompt(1, "Test", null, false);
+            var model = new EditAdminFieldViewModel(prompt, 1);
+            const string action = "save";
+
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCourse(
+                    1,
+                    1,
+                    false,
+                    "Test"
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.EditAdminField(model, action);
+
+            // Then
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCourse(
+                    1,
+                    1,
+                    false,
+                    "Test"
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void PostEditAdminField_add_configures_new_answer()
+        {
+            // Given
+            var prompt = new CustomPrompt(1, "Test", "Test", false);
+            var model = new EditAdminFieldViewModel(prompt, 1);
+            const string action = "addPrompt";
+
+            A.CallTo(
+                () => customPromptsService.UpdateCustomPromptForCourse(
+                    1,
+                    1,
+                    false,
+                    "Test"
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.EditAdminField(model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AdminFieldsViewModel>();
+                AssertNumberOfConfiguredAnswersOnView(result, 2);
+            }
+        }
+
+        [Test]
+        public void PostEditRegistrationPrompt_delete_removes_configured_answer()
+        {
+            // Given
+            var prompt = new CustomPrompt(1, "Test", "Test\r\nAnswer", false);
+            var model = new EditAdminFieldViewModel(prompt, 1);
+            const string action = "delete0";
+
+            // When
+            var result = controller.EditAdminField(model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AdminFieldsViewModel>();
+                AssertNumberOfConfiguredAnswersOnView(result, 1);
+            }
+        }
+
+        [Test]
+        public void PostAdminField_bulk_sets_up_temp_data_and_redirects()
+        {
+            // Given
+            var prompt = new CustomPrompt(1, "Test", null, false);
+            var model = new EditAdminFieldViewModel(prompt, 1);
+            const string action = "bulk";
+
+            // When
+            var result = controller.EditAdminField(model, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                AssertEditTempDataIsExpected(model);
+                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPromptBulk");
+            }
+        }
+
+        [Test]
+        public void PostEditAdminField_returns_error_with_unexpected_action()
+        {
+            // Given
+            var prompt = new CustomPrompt(1, "Test", null, false);
+            var model = new EditAdminFieldViewModel(prompt, 1);
+            const string action = "deletetest";
+
+            // When
+            var result = controller.EditAdminField(model, action);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+        }
+
+        [Test]
+        public void AdminFieldBulkPost_updates_temp_data_and_redirects_to_edit()
+        {
+            // Given
+            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1, 1);
+            var prompt1 = new CustomPrompt(1, "Test", null, false);
+            var prompt2 = new CustomPrompt(1, "Test\r\nAnswer", null, false);
+            var initialEditViewModel = new EditAdminFieldViewModel(prompt1, 1);
+            var expectedViewModel = new EditAdminFieldViewModel(prompt2, 1);
+            var initialTempData = new EditAdminFieldData(initialEditViewModel);
+
+            controller.TempData.Set(initialTempData);
+
+            // When
+            var result = controller.EditAdminFieldBulkPost(inputViewModel);
+
+            // Then
+            using (new AssertionScope())
+            {
+                AssertEditTempDataIsExpected(expectedViewModel);
+                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPrompt");
+            }
+        }
+
+        private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
+        {
+            result.Should().BeViewResult();
+            result.As<ViewResult>().Model.As<AdminFieldAnswersViewModel>().Options.Count.Should()
+                .Be(expectedCount);
+        }
+
+        private void AssertEditTempDataIsExpected(EditAdminFieldViewModel expectedData)
+        {
+            controller.TempData.Peek<EditAdminFieldData>()!.EditModel.Should()
+                .BeEquivalentTo(expectedData);
         }
     }
 }

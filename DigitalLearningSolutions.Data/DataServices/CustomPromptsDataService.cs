@@ -33,9 +33,6 @@
             bool mandatory,
             string? options
         );
-
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
-
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -208,19 +205,6 @@
                     WHERE CentreID = @centreId",
                 new { promptId, mandatory, options, customisationId }
             );
-        }
-
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber)
-        {
-            return connection.Query<string>(
-                @$"SELECT
-                        cp.CustomPrompt  
-                    FROM Customisations c
-                    LEFT JOIN CustomPrompts cp
-                        ON c.CustomField{promptNumber}PromptID = cp.CustomPromptID
-                    WHERE CustomisationID = @customisationId",
-                new { customisationId }
-            ).Single();
         }
     }
 }

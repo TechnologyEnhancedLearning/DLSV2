@@ -5,11 +5,6 @@
 
     public class EditAdminFieldViewModel : AdminFieldAnswersViewModel
     {
-        public EditAdminFieldViewModel()
-        {
-            IncludeAnswersTableCaption = true;
-        }
-
         public EditAdminFieldViewModel(CustomPrompt customPrompt, int customisationId)
         {
             CustomisationId = customisationId;

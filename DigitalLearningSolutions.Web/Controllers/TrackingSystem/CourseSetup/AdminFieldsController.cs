@@ -44,6 +44,11 @@
                 categoryId.Value
             );
 
+            if (courseCustomPrompts == null)
+            {
+                return NotFound();
+            }
+
             var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
             return View(model);
         }
@@ -118,9 +123,7 @@
         [Route("AdminFieldsEdit/Bulk")]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulkPost(
-            BulkAdminFieldAnswersViewModel model,
-            int customisationId,
-            int promptNumber
+            BulkAdminFieldAnswersViewModel model
         )
         {
             ValidateBulkOptionsString(model.OptionsString);

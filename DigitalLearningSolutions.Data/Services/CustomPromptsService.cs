@@ -4,8 +4,8 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
@@ -193,6 +193,11 @@
             var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
 
             return PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(result, delegateCourseInfo);
+        }
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
         }
 
         private CourseCustomPromptsResult? GetCourseCustomPromptsResultForCourse(
@@ -494,11 +499,6 @@
             }
 
             return list;
-        }
-
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
-        {
-            customPromptsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
         }
     }
 }

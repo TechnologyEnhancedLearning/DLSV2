@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -346,10 +346,23 @@
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
             // When
-            var result = customPromptsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 27920, 101, 0);
+            var result = customPromptsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 27920, 101);
 
             // Then
             result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void UpdateCustomPromptForCourse_call_data_service()
+        {
+            // Given
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).DoesNothing();
+
+            // When
+            customPromptsService.UpdateCustomPromptForCourse(1, 1, true, null);
+
+            // Then
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).MustHaveHappened();
         }
     }
 }
