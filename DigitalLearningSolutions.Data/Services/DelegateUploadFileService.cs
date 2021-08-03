@@ -9,7 +9,13 @@
 
     public class BulkUploadResult
     {
-        public enum ErrorReasons { None }
+        public enum ErrorReasons
+        {
+            InvalidJobGroupId,
+            InvalidLastName,
+            InvalidFirstName,
+            InvalidActive
+        }
 
         public BulkUploadResult(
             int processed,
@@ -75,9 +81,54 @@
                 throw new InvalidHeadersException();
             }
 
-            var (processed, registered, updated, skipped) = (0, 0, 0, 0);
+            var (registered, updated, skipped) = (0, 0, 0);
             var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
-            return new BulkUploadResult(processed, registered, updated, skipped, errors);
+
+            foreach (var row in table.Rows().Skip(1))
+            {
+                var errorReason = ValidateFields(table, row);
+                if (errorReason.HasValue)
+                {
+                    errors.Add((row.RowNumber(), errorReason.Value));
+                }
+            }
+
+            return new BulkUploadResult(table.RowCount(), registered, updated, skipped, errors);
+        }
+
+        private BulkUploadResult.ErrorReasons? ValidateFields(IXLTable table, IXLRangeRow row)
+        {
+            var jobGroupCol = FindColumn(table, "JobGroupID");
+            var lastNameCol = FindColumn(table, "LastName");
+            var firstNameCol = FindColumn(table, "FirstName");
+            var activeCol = FindColumn(table, "Active");
+
+            if (!row.Cell(jobGroupCol).TryGetValue<int>(out var jobGroupId) || !jobGroupIds.Contains(jobGroupId))
+            {
+                return BulkUploadResult.ErrorReasons.InvalidJobGroupId;
+            }
+
+            if (!row.Cell(lastNameCol).TryGetValue<string>(out var lastName) || string.IsNullOrEmpty(lastName))
+            {
+                return BulkUploadResult.ErrorReasons.InvalidLastName;
+            }
+
+            if (!row.Cell(firstNameCol).TryGetValue<string>(out var firstName) || string.IsNullOrEmpty(firstName))
+            {
+                return BulkUploadResult.ErrorReasons.InvalidFirstName;
+            }
+
+            if (!row.Cell(activeCol).TryGetValue<bool>(out _))
+            {
+                return BulkUploadResult.ErrorReasons.InvalidActive;
+            }
+
+            return null;
+        }
+
+        private int FindColumn(IXLTable table, string name)
+        {
+            return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
         }
 
         private IXLTable OpenDelegatesTable(IFormFile file)

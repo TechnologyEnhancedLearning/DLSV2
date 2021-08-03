@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Services;
@@ -24,7 +25,18 @@
 
         private string MapReasonToErrorMessage(BulkUploadResult.ErrorReasons reason)
         {
-            return reason.ToString();
+            return reason switch
+            {
+                BulkUploadResult.ErrorReasons.InvalidJobGroupId =>
+                    "Job group ID was not valid. Please ensure a valid Job Group ID number is provided (use the 'Download Job Groups references' option for a list of valid IDs).",
+                BulkUploadResult.ErrorReasons.InvalidLastName =>
+                    "Last name was not provided. Last name is a required field and cannot be left blank.",
+                BulkUploadResult.ErrorReasons.InvalidFirstName =>
+                    "First name was not provided. First name is a required field and cannot be left blank.",
+                BulkUploadResult.ErrorReasons.InvalidActive =>
+                    "Active field could not be read. The Active field should contain 'True' or 'False'.",
+                _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
+            };
         }
     }
 }
