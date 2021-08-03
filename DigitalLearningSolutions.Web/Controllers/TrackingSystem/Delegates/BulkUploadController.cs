@@ -60,14 +60,16 @@
                 return View("StartUpload", model);
             }
 
-            var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile);
-
-            if (!delegateUploadFileService.ValidateHeaders(table))
+            try
+            {
+                delegateUploadFileService.ProcessDelegatesFile(model.DelegatesFile);
+            }
+            catch
             {
                 return RedirectToAction("UploadFailed");
             }
 
-            return new ObjectResult(table.RowCount());
+            return new EmptyResult();
         }
 
         [Route("UploadFailed")]

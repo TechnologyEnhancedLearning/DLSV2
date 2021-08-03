@@ -3,12 +3,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using ClosedXML.Excel;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using Microsoft.AspNetCore.Http;
 
     public interface IDelegateUploadFileService
     {
-        public IXLTable OpenDelegatesTable(IFormFile file);
-        public bool ValidateHeaders(IXLTable table);
+        public void ProcessDelegatesFile(IFormFile file);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -32,7 +33,24 @@
             "EmailAddress"
         };
 
-        public IXLTable OpenDelegatesTable(IFormFile file)
+        private readonly IEnumerable<int> jobGroupIds;
+
+        public DelegateUploadFileService(IJobGroupsDataService jobGroupsDataService)
+        {
+            jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical()
+                .Select(item => item.id);
+        }
+
+        public void ProcessDelegatesFile(IFormFile file)
+        {
+            var table = OpenDelegatesTable(file);
+            if (!ValidateHeaders(table))
+            {
+                throw new InvalidHeadersException();
+            }
+        }
+
+        private IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegatesSheetName);
@@ -40,7 +58,7 @@
             return table;
         }
 
-        public bool ValidateHeaders(IXLTable table)
+        private bool ValidateHeaders(IXLTable table)
         {
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             var expectedHeaders = headers.OrderBy(x => x);
