@@ -55,6 +55,7 @@ request.onload = () => {
         const xOrigin = Number(element.getNode().getAttribute('x'));
         const yOrigin = element.getNode().getAttribute('y');
         const width = Number(element.getNode().getAttribute('width'));
+        // this should match the NHS tablet breakpoint
         const mediaQuery = window.matchMedia('(min-width: 641px)');
         const rotation = mediaQuery.matches ? -45 : -60;
         element.attr({
