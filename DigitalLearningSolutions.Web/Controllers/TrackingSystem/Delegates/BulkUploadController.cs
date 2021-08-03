@@ -62,7 +62,19 @@
 
             var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile);
 
+            if (!delegateUploadFileService.ValidateHeaders(table))
+            {
+                return RedirectToAction("UploadFailed");
+            }
+
             return new ObjectResult(table.RowCount());
+        }
+
+        [Route("UploadFailed")]
+        [HttpGet]
+        public IActionResult UploadFailed()
+        {
+            return View("UploadFailed");
         }
     }
 }
