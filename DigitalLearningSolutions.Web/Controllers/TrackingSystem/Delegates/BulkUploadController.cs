@@ -2,7 +2,9 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -45,6 +47,7 @@
         [HttpGet]
         public IActionResult StartUpload()
         {
+            TempData.Clear();
             var model = new UploadDelegatesViewModel();
             return View("StartUpload", model);
         }
@@ -62,14 +65,14 @@
 
             try
             {
-                delegateUploadFileService.ProcessDelegatesFile(model.DelegatesFile);
+                var results = delegateUploadFileService.ProcessDelegatesFile(model.DelegatesFile);
+                TempData.Set(results);
+                return RedirectToAction("UploadCompleted");
             }
             catch
             {
                 return RedirectToAction("UploadFailed");
             }
-
-            return new EmptyResult();
         }
 
         [Route("UploadFailed")]
@@ -77,6 +80,16 @@
         public IActionResult UploadFailed()
         {
             return View("UploadFailed");
+        }
+
+        [Route("UploadCompleted")]
+        [HttpGet]
+        [ServiceFilter(typeof(RedirectEmptySessionData<BulkUploadResult>))]
+        public IActionResult UploadCompleted()
+        {
+            var results = TempData.Get<BulkUploadResult>()!;
+            var model = new BulkUploadResultsViewModel(results);
+            return View("UploadCompleted", model);
         }
     }
 }
