@@ -47,8 +47,9 @@
         {
             var activityData = activityDataService.GetRawActivity(centreId, filterData);
 
-            // group by year, quarter, month easy
-            // group by 
+            var dataByPeriod = GroupActivityData(activityData, filterData.ReportInterval, filterData.EndDate);
+
+            // now need to deal with empty periods
         }
 
         private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval, DateTime endDate)
