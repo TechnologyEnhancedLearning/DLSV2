@@ -4,8 +4,7 @@
 @model EditRolesViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Administrator Roles" : "Edit Administrator Roles";
+  ViewData["Title"] = "Edit Administrator Roles";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
@@ -17,10 +16,6 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.IsCentreAdmin), nameof(Model.IsSupervisor), nameof(Model.IsTrainer), nameof(Model.IsContentCreator), nameof(Model.ContentManagementRole), nameof(Model.LearningCategory) })" />
-    }
-
     <h1 class="nhsuk-heading-xl">Edit administrator roles</h1>
 
     <vc:number-of-administrators centre-id="Model.CentreId" />
