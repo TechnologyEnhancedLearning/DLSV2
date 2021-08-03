@@ -199,10 +199,9 @@ function updateFilterCookieValue(newFilter: string): void {
   Cookies.set(cookieName, newFilter, { expires: cookieMaxLifeInDays });
 }
 
-function clearFilterCookie(): void{
+function clearFilterCookie(): void {
   Cookies.remove(cookieName);
 }
-
 
 function getFilterByElement(): HTMLInputElement {
   return <HTMLInputElement>document.getElementById('filter-by');

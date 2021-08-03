@@ -41,8 +41,8 @@
         {
             // Query parameter should take priority over cookie value
             // We use this method to check for the query parameter rather 
-            // than filterBy != null as that is used to clear the filter 
-            // string when javascript is off.
+            // than filterBy != null as filterBy is set to null to clear 
+            // the filter string when javascript is off.
             if (!Request.Query.ContainsKey(nameof(filterBy)))
             {
                 filterBy = Request.Cookies[AdminFilterCookieName];
