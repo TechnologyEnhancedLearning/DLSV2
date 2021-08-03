@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
@@ -63,18 +64,29 @@
             return View("AllAdmins", model);
         }
 
-        [Route("{userId:int}/EditAdminRoles")]
+        [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
-        public IActionResult EditAdminRoles(int userId)
+        public IActionResult EditAdminRoles(int adminId)
         {
-            var adminInfo = userDataService.GetAdminUserById(userId);
-            if (adminInfo == null)
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (adminUser == null)
             {
-                return RedirectToAction("Index"); // QQ or return to error page?
+                return NotFound();
             }
 
-            var model = new EditRolesViewModel(adminInfo);
+            var centreId = User.GetCentreId();
+            var categories = commonService.GetCategoryListForCentre(centreId);
+            categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+
+            var model = new EditRolesViewModel(adminUser, centreId, categories);
             return View(model);
+        }
+
+        [Route("{adminId:int}/EditAdminRoles")]
+        [HttpPost]
+        public IActionResult EditAdminRoles(EditRolesViewModel model)
+        {
+            return RedirectToAction("Index");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
