@@ -14,7 +14,7 @@
             string groupName,
             IEnumerable<GroupDelegate> groupDelegates,
             int page
-        ) : base(null, DefaultSortByOptions.Name.PropertyName, Ascending, page)
+        ) : base(null, page, false)
         {
             GroupId = groupId;
             NavViewModel = new DelegateGroupsSideNavViewModel(groupName, DelegateGroupPage.Delegates);
