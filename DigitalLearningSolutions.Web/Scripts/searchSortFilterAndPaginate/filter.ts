@@ -16,7 +16,7 @@ export interface IAppliedFilterTag {
 
 export const separator = '|';
 export const filterSeparator = '╡';
-const cookieExpiry = 30;
+const cookieMaxLifeInDays = 30;
 let cookieName: string;
 
 export function setUpFilter(onFilterUpdated: VoidFunction, filterCookieName: string): void {
@@ -135,14 +135,14 @@ function addNewFilterValueToFilterBy(newFilterValue: string): void {
     const updatedFilterBy = filterBy ? filterBy + filterSeparator + newFilterValue : newFilterValue;
     updateAllFilterByHiddenInputs(updatedFilterBy);
     updateFilterBy(updatedFilterBy);
-    updateFilterCookie(updatedFilterBy);
+    updateFilterCookieValue(updatedFilterBy);
   }
 }
 
 function clearFilters(): void {
   updateAllFilterByHiddenInputs('');
   updateFilterBy('');
-  updateFilterCookie('');
+  clearFilterCookie();
   clearAppliedFilters();
   hideAppliedFilters();
 }
@@ -195,13 +195,14 @@ function updateFilterBy(newFilter: string): void {
   element.dispatchEvent(new Event('change'));
 }
 
-function updateFilterCookie(newFilter: string): void {
-  if (newFilter) {
-    Cookies.set(cookieName, newFilter, { expires: cookieExpiry });
-  } else {
-    Cookies.remove(cookieName);
-  }
+function updateFilterCookieValue(newFilter: string): void {
+  Cookies.set(cookieName, newFilter, { expires: cookieMaxLifeInDays });
 }
+
+function clearFilterCookie(): void{
+  Cookies.remove(cookieName);
+}
+
 
 function getFilterByElement(): HTMLInputElement {
   return <HTMLInputElement>document.getElementById('filter-by');
