@@ -28,7 +28,7 @@
 
     <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
       <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
         <div class="nhsuk-checkboxes__item">
           <input class="nhsuk-checkboxes__input"
@@ -53,7 +53,7 @@
                        hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
       </div>
 
-      <vc:file-input asp-for="DelegatesDetailsFile" label="File with update information" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <vc:file-input asp-for="DelegatesFile" label="File with update information" hint-text="" css-class="nhsuk-u-width-one-half" />
 
       <button class="nhsuk-button" type="submit">Upload and process</button>
     </form>

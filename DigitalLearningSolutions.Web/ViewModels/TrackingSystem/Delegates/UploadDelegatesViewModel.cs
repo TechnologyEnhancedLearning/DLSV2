@@ -9,6 +9,6 @@
     {
         [Required(ErrorMessage = "Delegates update file is required.")]
         [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format.")]
-        public IFormFile? DelegatesDetailsFile { get; set; }
+        public IFormFile DelegatesFile { get; set; }
     }
 }
