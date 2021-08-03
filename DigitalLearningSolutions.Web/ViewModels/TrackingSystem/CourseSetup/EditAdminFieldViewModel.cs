@@ -5,6 +5,8 @@
 
     public class EditAdminFieldViewModel : AdminFieldAnswersViewModel
     {
+        public EditAdminFieldViewModel() { }
+
         public EditAdminFieldViewModel(CustomPrompt customPrompt, int customisationId)
         {
             CustomisationId = customisationId;
@@ -12,6 +14,22 @@
             Prompt = customPrompt.CustomPromptText;
             Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
+            IncludeAnswersTableCaption = true;
+        }
+
+        public EditAdminFieldViewModel(
+            int customisationId,
+            int customPromptNumber,
+            string text,
+            string? options,
+            bool mandatory
+        )
+        {
+            CustomisationId = customisationId;
+            PromptNumber = customPromptNumber;
+            Prompt = text;
+            Mandatory = mandatory;
+            OptionsString = options;
             IncludeAnswersTableCaption = true;
         }
 

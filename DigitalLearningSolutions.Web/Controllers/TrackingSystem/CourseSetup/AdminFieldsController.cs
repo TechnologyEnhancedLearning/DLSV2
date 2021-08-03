@@ -20,7 +20,6 @@
     {
         public const string DeleteAction = "delete";
         public const string AddPromptAction = "addPrompt";
-        public const string NextAction = "next";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
         private const string EditPromptCookieName = "EditRegistrationPromptData";
@@ -184,8 +183,7 @@
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(
-            AdminFieldAnswersViewModel model,
-            bool saveToTempData = false
+            AdminFieldAnswersViewModel model
         )
         {
             if (!ModelState.IsValid)
@@ -251,13 +249,6 @@
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
             return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
-        }
-
-        private void UpdateTempDataWithAnswersModelValues(AdminFieldAnswersViewModel model)
-        {
-            var data = TempData.Peek<AddAdminFieldData>()!;
-            data.ConfigureAnswersViewModel = model;
-            TempData.Set(data);
         }
 
         private void ValidateBulkOptionsString(string? optionsString)

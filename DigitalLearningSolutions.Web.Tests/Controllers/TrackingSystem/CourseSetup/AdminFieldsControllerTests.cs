@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using FakeItEasy;
     using FluentAssertions;
@@ -27,7 +26,7 @@
         {
             controller = new AdminFieldsController(customPromptsService)
                 .WithDefaultContext()
-                .WithMockUser(true, 101)                
+                .WithMockUser(true, 101)
                 .WithMockTempData();
         }
 
@@ -65,8 +64,7 @@
         public void PostEditAdminField_save_calls_correct_methods()
         {
             // Given
-            var prompt = new CustomPrompt(1, "Test", null, false);
-            var model = new EditAdminFieldViewModel(prompt, 1);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
             const string action = "save";
 
             A.CallTo(
@@ -74,7 +72,7 @@
                     1,
                     1,
                     false,
-                    "Test"
+                    "Options"
                 )
             ).DoesNothing();
 
@@ -87,7 +85,7 @@
                     1,
                     1,
                     false,
-                    "Test"
+                    "Options"
                 )
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
@@ -97,8 +95,7 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var prompt = new CustomPrompt(1, "Test", "Test", false);
-            var model = new EditAdminFieldViewModel(prompt, 1);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
             const string action = "addPrompt";
 
             A.CallTo(
@@ -144,8 +141,7 @@
         public void PostAdminField_bulk_sets_up_temp_data_and_redirects()
         {
             // Given
-            var prompt = new CustomPrompt(1, "Test", null, false);
-            var model = new EditAdminFieldViewModel(prompt, 1);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
             const string action = "bulk";
 
             // When
@@ -163,8 +159,7 @@
         public void PostEditAdminField_returns_error_with_unexpected_action()
         {
             // Given
-            var prompt = new CustomPrompt(1, "Test", null, false);
-            var model = new EditAdminFieldViewModel(prompt, 1);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
             const string action = "deletetest";
 
             // When
@@ -179,10 +174,8 @@
         {
             // Given
             var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1, 1);
-            var prompt1 = new CustomPrompt(1, "Test", null, false);
-            var prompt2 = new CustomPrompt(1, "Test\r\nAnswer", null, false);
-            var initialEditViewModel = new EditAdminFieldViewModel(prompt1, 1);
-            var expectedViewModel = new EditAdminFieldViewModel(prompt2, 1);
+            var initialEditViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test", false);
+            var expectedViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer", false);
             var initialTempData = new EditAdminFieldData(initialEditViewModel);
 
             controller.TempData.Set(initialTempData);
