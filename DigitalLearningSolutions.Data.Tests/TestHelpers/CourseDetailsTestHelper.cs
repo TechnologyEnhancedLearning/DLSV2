@@ -8,6 +8,7 @@
         public static CourseDetails GetDefaultCourseDetails(
             int customisationId = 100,
             int centreId = 101,
+            int applicationId = 1,
             string applicationName = "Entry Level - Win XP, Office 2003/07 OLD",
             string customisationName = "Standard",
             int currentVersion = 12,
@@ -41,6 +42,7 @@
             {
                 CustomisationId = customisationId,
                 CentreId = centreId,
+                ApplicationId = applicationId,
                 ApplicationName = applicationName,
                 CustomisationName = customisationName,
                 CurrentVersion = currentVersion,

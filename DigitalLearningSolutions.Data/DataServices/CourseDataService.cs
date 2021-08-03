@@ -257,6 +257,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.CustomisationID,
                         cu.CentreID,
                         cu.Active,
+                        cu.ApplicationID,
                         ap.ApplicationName,
                         cu.CustomisationName,
                         cu.CurrentVersion,

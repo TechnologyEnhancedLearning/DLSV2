@@ -11,6 +11,7 @@
         public readonly bool UseFilteredApi;
         public readonly string? UserBookmark;
         public readonly bool UnprocessedUpdates;
+        public readonly bool LinearNavigation;
         public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment)
         {
             Id = selfAssessment.Id;
@@ -19,6 +20,7 @@
             UseFilteredApi = selfAssessment.UseFilteredApi;
             UserBookmark = selfAssessment.UserBookmark;
             UnprocessedUpdates = selfAssessment.UnprocessedUpdates;
+            LinearNavigation = selfAssessment.LinearNavigation;
         }
     }
 }

@@ -14,6 +14,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public partial class SupervisorController
     {
@@ -134,7 +135,19 @@
         {
             var adminId = GetAdminID();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList();
+            var reviewedCompetencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsById(candidateAssessmentId, adminId).ToList());
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
+            var model = new ReviewSelfAssessmentViewModel()
+            {
+                SupervisorDelegateDetail = superviseDelegate,
+                DelegateSelfAssessment = delegateSelfAssessment,
+                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+            };
+            return View("ReviewSelfAssessment", model);
+        }
+
+        private List<Competency> PopulateCompetencyLevelDescriptors(List<Competency> reviewedCompetencies)
+        {
             foreach (var competency in reviewedCompetencies)
             {
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
@@ -145,14 +158,15 @@
                     }
                 }
             }
-            var delegateSelfAssessment = supervisorService.GetSelfAssessmentByCandidateAssessmentId(candidateAssessmentId, adminId);
-            var model = new ReviewSelfAssessmentViewModel()
+            return reviewedCompetencies;
+        }
+        private AssessmentQuestion GetLevelDescriptorsForAssessmentQuestion (AssessmentQuestion assessmentQuestion)
+        {
+            if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
             {
-                SupervisorDelegateDetail = superviseDelegate,
-                DelegateSelfAssessment = delegateSelfAssessment,
-                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
-            };
-            return View("ReviewSelfAssessment", model);
+                assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+            }
+            return assessmentQuestion;
         }
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/")]
         public IActionResult ReviewCompetencySelfAssessment(int supervisorDelegateId, int candidateAssessmentId, string viewMode, int resultId)
@@ -161,11 +175,7 @@
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
             var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
-            var assessmentQuestion = competency.AssessmentQuestions.First();
-            if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-            {
-                assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
-            }
+            var assessmentQuestion = GetLevelDescriptorsForAssessmentQuestion(competency.AssessmentQuestions.First());
             var model = new ReviewCompetencySelfAsessmentViewModel()
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
@@ -194,7 +204,7 @@
             var adminId = GetAdminID();
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
-            var reviewedCompetencies = selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId).ToList();
+            var reviewedCompetencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsForReviewById(candidateAssessmentId, adminId).ToList());
             var model = new ReviewSelfAssessmentViewModel()
             {
                 SupervisorDelegateDetail = superviseDelegate,

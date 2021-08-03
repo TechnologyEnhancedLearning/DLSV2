@@ -6,6 +6,7 @@
     {
         public int CustomisationId { get; set; }
         public int CentreId { get; set; }
+        public int ApplicationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public int CurrentVersion { get; set; }

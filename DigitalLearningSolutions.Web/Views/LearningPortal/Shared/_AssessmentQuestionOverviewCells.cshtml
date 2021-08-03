@@ -1,0 +1,16 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
+@model AssessmentQuestion
+
+
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Questions </span>
+    @Model.Question
+</td>
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Responses </span>
+  <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
+</td>
+<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+  <span class="nhsuk-table-responsive__heading">Questions </span>
+  <partial name="../../Supervisor/Shared/_AssessmentQuestionStatusTag" model="Model" />
+</td>

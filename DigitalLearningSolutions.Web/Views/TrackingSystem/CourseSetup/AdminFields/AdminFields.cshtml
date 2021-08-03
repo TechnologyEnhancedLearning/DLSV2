@@ -19,21 +19,7 @@
 }
 
 @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link" asp-controller="CourseSetup" asp-action="Index">Centre course setup</a>
-        </li>
-        <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Manage course</a>
-        </li>
-      </ol>
-      <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Back to manage course</a>
-      </p>
-    </div>
-  </nav>
+  <partial name="/Views/TrackingSystem/CourseSetup/Shared/_BreadcrumbsToManageCoursePage.cshtml" model="Model.CustomisationId"/>
 }
 
 <div class="nhsuk-grid-row">

@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using System;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CentreConfiguration;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
 
     public class EditRegistrationPromptData
     {

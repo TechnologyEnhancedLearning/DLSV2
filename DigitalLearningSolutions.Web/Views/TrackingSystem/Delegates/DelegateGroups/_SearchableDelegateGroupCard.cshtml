@@ -1,0 +1,115 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@model SearchableDelegateGroupViewModel
+
+<div class="searchable-element nhsuk-panel" id="@Model.Id-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
+        @Model.Name
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      <dl class="nhsuk-summary-list details-list-with-button">
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Name
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.Name"/>
+
+          <dd class="nhsuk-summary-list__actions">
+            @if (Model.LinkedToField == 0) {
+              <a href="#">
+                Edit<span class="nhsuk-u-visually-hidden"> name</span>
+              </a>
+            }
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Description
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.Description" />
+          <dd class="nhsuk-summary-list__actions">
+            <a href="#">
+              Edit<span class="nhsuk-u-visually-hidden"> description</span>
+            </a>
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Delegates
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.DelegateCount
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Courses
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CourseCount
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Added by
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.AddedBy
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Linked field
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.LinkedField
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            New registrants added to the group
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.ShouldAddNewRegistrantsToGroup
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Changes to field synchronised with group
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.ChangesToRegistrationDetailsShouldChangeGroupMembership
+          </dd>
+          <dd class="nhsuk-summary-list__actions" />
+        </div>
+      </dl>
+
+      <a class="nhsuk-button expander-card__button" role="button">
+        View delegates
+      </a>
+
+      <a class="nhsuk-button expander-card__button" role="button">
+        View courses
+      </a>
+
+      <a class="nhsuk-button delete-button expander-card__button" role="button">
+        Delete group
+      </a>
+    </div>
+  </details>
+</div>
