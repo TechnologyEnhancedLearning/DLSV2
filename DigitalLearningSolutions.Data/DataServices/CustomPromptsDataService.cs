@@ -199,10 +199,10 @@
             connection.Execute(
                 @$"UPDATE Customisations
                     SET
-                        CustomField{promptNumber}PromptId = @promptId,
-                        F{promptNumber}Mandatory = @mandatory,
-                        F{promptNumber}Options = @options
-                    WHERE CentreID = @centreId",
+                        CourseField{promptNumber}PromptID = @promptId,
+                        Q{promptNumber}Mandatory = @mandatory,
+                        Q{promptNumber}Options = @options
+                    WHERE CustomisationID = @customisationId",
                 new { promptId, mandatory, options, customisationId }
             );
         }

@@ -27,7 +27,8 @@
         {
             controller = new AdminFieldsController(customPromptsService)
                 .WithDefaultContext()
-                .WithMockUser(true, 101);
+                .WithMockUser(true, 101)                
+                .WithMockTempData();
         }
 
         [Test]
@@ -57,7 +58,7 @@
             var result = controller.AdminFields(1);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DisplayPromptsViewModel>();
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
         }
 
         [Test]
@@ -89,7 +90,7 @@
                     "Test"
                 )
             ).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
         }
 
         [Test]
@@ -115,7 +116,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.Should().BeOfType<AdminFieldsViewModel>();
+                result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
                 AssertNumberOfConfiguredAnswersOnView(result, 2);
             }
         }
@@ -134,7 +135,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.Should().BeOfType<AdminFieldsViewModel>();
+                result.As<ViewResult>().Model.Should().BeOfType<EditAdminFieldViewModel>();
                 AssertNumberOfConfiguredAnswersOnView(result, 1);
             }
         }
@@ -154,7 +155,7 @@
             using (new AssertionScope())
             {
                 AssertEditTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPromptBulk");
+                result.Should().BeRedirectToActionResult().WithActionName("EditAdminFieldBulk");
             }
         }
 
@@ -193,7 +194,7 @@
             using (new AssertionScope())
             {
                 AssertEditTempDataIsExpected(expectedViewModel);
-                result.Should().BeRedirectToActionResult().WithActionName("EditRegistrationPrompt");
+                result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
             }
         }
 
