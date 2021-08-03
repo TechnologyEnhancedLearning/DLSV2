@@ -14,10 +14,15 @@
     public class BulkUploadController : Controller
     {
         private readonly IDelegateDownloadFileService delegateDownloadFileService;
+        private readonly IDelegateUploadFileService delegateUploadFileService;
 
-        public BulkUploadController(IDelegateDownloadFileService delegateDownloadFileService)
+        public BulkUploadController(
+            IDelegateDownloadFileService delegateDownloadFileService,
+            IDelegateUploadFileService delegateUploadFileService
+        )
         {
             this.delegateDownloadFileService = delegateDownloadFileService;
+            this.delegateUploadFileService = delegateUploadFileService;
         }
 
         public IActionResult Index()
@@ -55,7 +60,9 @@
                 return View("StartUpload", model);
             }
 
-            return new EmptyResult();
+            var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile);
+
+            return new ObjectResult(table.RowCount());
         }
     }
 }
