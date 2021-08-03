@@ -25,6 +25,7 @@
                  id="@checkbox.Id"
                  name="@checkbox.Name"
                  aria-describedby="@checkbox.Id-item-hint"
+                 value="true"
                  @(checkbox.Value ? "checked" : string.Empty) />
           <label class="nhsuk-label nhsuk-checkboxes__label" for="@checkbox.Id">
             @checkbox.Label

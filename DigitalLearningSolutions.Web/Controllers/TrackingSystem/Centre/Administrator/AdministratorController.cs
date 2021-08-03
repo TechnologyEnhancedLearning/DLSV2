@@ -84,8 +84,19 @@
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
-        public IActionResult EditAdminRoles(EditRolesViewModel model)
+        public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
         {
+            userDataService.UpdateAdminUserPermissions(
+                adminId,
+                model.IsCentreAdmin,
+                model.IsSupervisor,
+                model.IsTrainer,
+                model.IsContentCreator,
+                model.ContentManagementRole.IsContentManager,
+                model.ContentManagementRole.ImportOnly,
+                model.LearningCategory
+            );
+
             return RedirectToAction("Index");
         }
 

@@ -11,7 +11,7 @@
             string label,
             IEnumerable<CheckboxListItemViewModel> checkboxes,
             bool populateWithCurrentValues,
-            string? hintText = null
+            string? hintText
         )
         {
             var checkboxList = checkboxes.Select(
@@ -24,7 +24,11 @@
                 )
             );
 
-            var viewModel = new CheckboxesViewModel(label, hintText, checkboxList);
+            var viewModel = new CheckboxesViewModel(
+                label,
+                string.IsNullOrEmpty(hintText) ? null : hintText,
+                checkboxList
+            );
 
             return View(viewModel);
         }
