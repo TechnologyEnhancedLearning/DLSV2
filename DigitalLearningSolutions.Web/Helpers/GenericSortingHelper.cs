@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -77,5 +78,11 @@
     public static class DefaultSortByOptions
     {
         public static readonly (string DisplayText, string PropertyName) Name = (BaseSearchablePageViewModel.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
+    }
+
+    public static class DelegateSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(DelegateUserCard.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) RegistrationDate = ("Registration Date", nameof(DelegateUserCard.DateRegistered));
     }
 }
