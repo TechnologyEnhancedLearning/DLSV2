@@ -14,10 +14,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var backLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
-  var routeData = new Dictionary<string, string> {
-    { "customisationId", Model.CustomisationId.ToString() }
-  };
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 @section NavMenuItems {
@@ -106,6 +103,6 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:cancel-link asp-controller="AdminFields" asp-action="AdminFields" asp-all-route-data="@backLinkData" />
+    <vc:cancel-link asp-controller="AdminFields" asp-action="AdminFields" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

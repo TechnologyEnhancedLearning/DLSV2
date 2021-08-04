@@ -9,6 +9,10 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var cancelLinkData = new Dictionary<string, string> {
+    { "customisationId", Model.CustomisationId.ToString() },
+    { "promptNumber", Model.PromptNumber.ToString() }
+  };
 }
 
 @section NavMenuItems {
@@ -39,7 +43,7 @@
       <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 
-    <vc:back-link asp-controller="AdminFields" asp-action="AddAdminFieldConfigureAnswers" link-text="Cancel" />
+    <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@cancelLinkData" />
 
   </div>
 </div>
