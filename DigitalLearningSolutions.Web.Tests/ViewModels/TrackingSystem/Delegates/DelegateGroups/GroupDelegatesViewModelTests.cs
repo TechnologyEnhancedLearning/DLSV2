@@ -34,7 +34,7 @@
         };
 
         [Test]
-        public void Centre_administrators_should_default_to_returning_the_first_ten_admins()
+        public void GroupDelegatesViewModel_should_default_to_returning_the_first_ten_delegate()
         {
             var model = new GroupDelegatesViewModel(
                 1,
@@ -54,7 +54,7 @@
         }
 
         [Test]
-        public void Centre_administrators_should_correctly_return_the_second_page_of_admins()
+        public void GroupDelegatesViewModel_should_correctly_return_the_second_page_of_delegate()
         {
             var model = new GroupDelegatesViewModel(
                 1,
