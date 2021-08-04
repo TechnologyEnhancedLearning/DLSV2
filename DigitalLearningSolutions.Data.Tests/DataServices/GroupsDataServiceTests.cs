@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -68,6 +69,24 @@
         }
 
         [Test]
+        public void GetGroupCourses_returns_expected_courses()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
+            var expectedFirstGroupDelegate = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
+
+            // When
+            var result = groupsDataService.GetGroupCourses(8, 101).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(2);
+                result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupDelegate);
+            }
+        }
+
+        [Test]
         public void GetGroupNameForGroupId_returns_expected_name()
         {
             // When
@@ -75,6 +94,26 @@
 
             // Then
             result.Should().BeEquivalentTo("Activities worker or coordinator");
+        }
+
+        [Test]
+        public void IsGroupAtUserCentre_returns_true_for_correct_centre()
+        {
+            // When
+            var result = groupsDataService.IsGroupAtUserCentre(5, 101);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsGroupAtUserCentre_returns_false_for_incorrect_centre()
+        {
+            // When
+            var result = groupsDataService.IsGroupAtUserCentre(5, 121);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

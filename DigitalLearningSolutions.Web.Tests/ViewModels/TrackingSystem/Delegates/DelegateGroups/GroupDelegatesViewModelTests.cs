@@ -14,7 +14,7 @@
     public class GroupDelegatesViewModelTests
     {
         private readonly DelegateGroupsSideNavViewModel expectedNavViewModel =
-            new DelegateGroupsSideNavViewModel("Group name", DelegateGroupPage.Delegates);
+            new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Delegates);
 
         private GroupDelegate[] groupDelegates = null!;
 
