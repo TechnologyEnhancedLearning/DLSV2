@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -20,11 +21,12 @@
     {
         private readonly ICustomPromptsService customPromptsService = A.Fake<ICustomPromptsService>();
         private AdminFieldsController controller = null!;
+        private readonly IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(customPromptsService)
+            controller = new AdminFieldsController(customPromptsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();

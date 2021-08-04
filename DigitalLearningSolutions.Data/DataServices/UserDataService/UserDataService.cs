@@ -60,6 +60,10 @@
 
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
+
+        public int GetAdminCountWithAnswerForPrompt(int customisationId, int promptNumber);
+
+        public void DeleteAllAnswersForAdminField(int centreId, int promptNumber);
     }
 
     public partial class UserDataService : IUserDataService

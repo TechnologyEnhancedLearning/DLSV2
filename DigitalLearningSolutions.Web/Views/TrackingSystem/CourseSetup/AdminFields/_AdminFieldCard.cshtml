@@ -37,7 +37,12 @@
          asp-route-promptNumber="@Model.CustomFieldId">
         Edit
       </a>
-      <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" role="button" href="#">
+      <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+         role="button"
+         asp-controller="AdminFields"
+         asp-action="RemoveAdminField"
+         asp-route-customisationId="@Model.CustomisationId"
+         asp-route-promptNumber="@Model.CustomFieldId">
         Remove
       </a>
     </div>

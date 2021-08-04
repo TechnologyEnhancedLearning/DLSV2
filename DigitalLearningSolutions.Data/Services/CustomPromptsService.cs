@@ -45,6 +45,10 @@
         );
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+
+        public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
+
+        public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -499,6 +503,32 @@
             }
 
             return list;
+        }
+
+        public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                userDataService.DeleteAllAnswersForAdminField(customisationId, promptNumber);
+                customPromptsDataService.UpdateCustomPromptForCourse(
+                    customisationId,
+                    promptNumber,
+                    0,
+                    false,
+                    null
+                );
+                transaction.Complete();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber)
+        {
+            return customPromptsDataService.GetPromptNameForCustomisationAndPromptNumber(customisationId, promptNumber);
         }
     }
 }
