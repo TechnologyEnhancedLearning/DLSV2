@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
 
@@ -75,11 +76,17 @@
         };
 
         private readonly IEnumerable<int> jobGroupIds;
+        private readonly IRegistrationDataService registrationDataService;
         private readonly IUserDataService userDataService;
 
-        public DelegateUploadFileService(IJobGroupsDataService jobGroupsDataService, IUserDataService userDataService)
+        public DelegateUploadFileService(
+            IJobGroupsDataService jobGroupsDataService,
+            IUserDataService userDataService,
+            IRegistrationDataService registrationDataService
+        )
         {
             this.userDataService = userDataService;
+            this.registrationDataService = registrationDataService;
             jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical()
                 .Select(item => item.id);
         }
@@ -104,41 +111,75 @@
                     continue;
                 }
 
-                var approved = GetApprovedStatusOrDefault(table, row, centreId);
-                if (!approved.HasValue)
+                bool? approved;
+                try
+                {
+                    approved = GetApprovedStatusForUpdate(table, row, centreId);
+                }
+                catch (UserAccountNotFoundException)
                 {
                     errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
                     continue;
                 }
 
-                var record = MapRowToRecord(table, row, centreId, approved!.Value);
-                var status = userDataService.UpdateDelegateRecord(record);
-                switch (status)
+                if (approved.HasValue)
                 {
-                    case 0:
-                        updated += 1;
-                        break;
-                    case 1:
-                        skipped += 1;
-                        break;
-                    case 2:
-                        registered += 1;
-                        break;
-                    case -1:
-                    case -4:
-                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
-                        break;
-                    case -2:
-                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
-                        break;
-                    case -3:
-                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
-                        break;
-                    case -5:
-                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
-                        break;
-                    default:
-                        throw new Exception();
+                    var record = MapRowToDelegateRecord(table, row, centreId, approved.Value);
+                    var status = userDataService.UpdateDelegateRecord(record);
+                    switch (status)
+                    {
+                        case 0:
+                            updated += 1;
+                            break;
+                        case 1:
+                            skipped += 1;
+                            break;
+                        case 2:
+                            registered += 1;
+                            break;
+                        case -1:
+                        case -4:
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
+                            break;
+                        case -2:
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
+                            break;
+                        case -3:
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
+                            break;
+                        case -5:
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(
+                                nameof(status),
+                                status,
+                                "Unknown return value when updating delegate record."
+                            );
+                    }
+                }
+                else
+                {
+                    var model = MapRowToDelegateRegistrationModel(table, row, centreId);
+                    var status = registrationDataService.RegisterDelegateByCentre(model);
+                    switch (status)
+                    {
+                        case "-1":
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
+                            break;
+                        case "-2":
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
+                            break;
+                        case "-3":
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
+                            break;
+                        case "-4":
+                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                            break;
+                        default:
+                            registered += 1;
+                            break;
+                    }
                 }
             }
 
@@ -158,7 +199,12 @@
             return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
         }
 
-        private static DelegateRecord MapRowToRecord(IXLTable table, IXLRangeRow row, int centreId, bool approved)
+        private static DelegateRecord MapRowToDelegateRecord(
+            IXLTable table,
+            IXLRangeRow row,
+            int centreId,
+            bool approved
+        )
         {
             var lastName = row.Cell(FindColumn(table, "LastName")).GetValue<string>();
             var firstName = row.Cell(FindColumn(table, "FirstName")).GetValue<string>();
@@ -189,6 +235,40 @@
                 aliasId,
                 approved,
                 emailAddress
+            );
+        }
+
+        private static DelegateRegistrationModel MapRowToDelegateRegistrationModel(
+            IXLTable table,
+            IXLRangeRow row,
+            int centreId
+        )
+        {
+            var lastName = row.Cell(FindColumn(table, "LastName")).GetValue<string>();
+            var firstName = row.Cell(FindColumn(table, "FirstName")).GetValue<string>();
+            var aliasId = row.Cell(FindColumn(table, "AliasID")).GetValue<string?>();
+            var jobGroupId = row.Cell(FindColumn(table, "JobGroupID")).GetValue<int>();
+            var emailAddress = row.Cell(FindColumn(table, "EmailAddress")).GetValue<string?>();
+            var answer1 = row.Cell(FindColumn(table, "Answer1")).GetValue<string?>();
+            var answer2 = row.Cell(FindColumn(table, "Answer2")).GetValue<string?>();
+            var answer3 = row.Cell(FindColumn(table, "Answer3")).GetValue<string?>();
+            var answer4 = row.Cell(FindColumn(table, "Answer4")).GetValue<string?>();
+            var answer5 = row.Cell(FindColumn(table, "Answer5")).GetValue<string?>();
+            var answer6 = row.Cell(FindColumn(table, "Answer6")).GetValue<string?>();
+            return new DelegateRegistrationModel(
+                firstName,
+                lastName,
+                emailAddress,
+                centreId,
+                jobGroupId,
+                null,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6,
+                aliasId
             );
         }
 
@@ -229,7 +309,7 @@
             return null;
         }
 
-        private bool? GetApprovedStatusOrDefault(IXLTable table, IXLRangeRow row, int centreId)
+        private bool? GetApprovedStatusForUpdate(IXLTable table, IXLRangeRow row, int centreId)
         {
             var delegateIdCol = FindColumn(table, "DelegateID");
             var aliasIdCol = FindColumn(table, "AliasID");
@@ -238,15 +318,20 @@
                 !string.IsNullOrWhiteSpace(delegateId))
             {
                 var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
-                return approvedStatus;
+                if (!approvedStatus.HasValue)
+                {
+                    throw new UserAccountNotFoundException(string.Empty);
+                }
+
+                return approvedStatus.Value;
             }
 
             if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId) && !string.IsNullOrWhiteSpace(delegateId))
             {
-                return userDataService.GetApprovedStatusFromAliasId(aliasId, centreId) ?? true;
+                return userDataService.GetApprovedStatusFromAliasId(aliasId, centreId);
             }
 
-            return true;
+            return null;
         }
     }
 }
