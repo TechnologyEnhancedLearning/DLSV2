@@ -29,7 +29,24 @@
             ReportInterval interval
         )
         {
+            if (Equals(interval, ReportInterval.Days))
+            {
+                return GetDaysBetweenDates(startDate, endDate);
+            }
+            if (Equals(interval, ReportInterval.Weeks))
+            {
+                return GetWeeksBetweenDates(startDate, endDate);
+            }
+            if (Equals(interval, ReportInterval.Months))
+            {
+                return GetMonthsBetweenDates(startDate, endDate);
+            }
+            if (Equals(interval, ReportInterval.Quarters))
+            {
+                return GetQuartersBetweenDates(startDate, endDate);
+            }
 
+            return GetYearsBetweenDates(startDate, endDate);
         }
 
         private static IEnumerable<DateInformation> GetDaysBetweenDates(

@@ -43,67 +43,84 @@
             );
         }
 
-        public void GetFilteredActivity(int centreId, ActivityFilterData filterData)
+        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
         {
             var activityData = activityDataService.GetRawActivity(centreId, filterData);
 
-            var dataByPeriod = GroupActivityData(activityData, filterData.ReportInterval, filterData.EndDate);
+            var dataByPeriod = GroupActivityData(activityData, filterData.ReportInterval);
 
-            // now need to deal with empty periods
+            var dateSlots = DateHelper.GetPeriodsBetweenDates(
+                filterData.StartDate,
+                filterData.EndDate,
+                filterData.ReportInterval
+            );
+
+            return dateSlots.Select(
+                slot =>
+                {
+                    var periodData = dataByPeriod.SingleOrDefault();
+                    return new PeriodOfActivity(slot, periodData);
+                });
         }
 
-        private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval, DateTime endDate)
+        private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval)
         {
             IEnumerable<IGrouping<DateInformation, ActivityLog>> groupedData;
 
-            switch (interval)
+            if (Equals(interval, ReportInterval.Days))
             {
-                case ReportInterval.Days:
-                    groupedData = activityData.GroupBy(x => new DateInformation
-                    {
-                        Day = x.LogDate.Day,
-                        Month = x.LogMonth,
-                        Year = x.LogYear
-                    });
-                    break;
-                case ReportInterval.Weeks:
-                    var referenceDate = new DateTime(1905, 1, 1);
-                    groupedData = activityData.GroupBy(x => new DateInformation
-                    {
-                        WeekBeginning = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
-                    });
-                    break;
-                case ReportInterval.Months:
-                    groupedData = activityData.GroupBy(x => new DateInformation
-                    {
-                        Month = x.LogMonth,
-                        Year = x.LogYear
-                    });
-                    break;
-                case ReportInterval.Quarters:
-                    groupedData = activityData.GroupBy(x => new DateInformation
-                    {
-                        Quarter = x.LogQuarter,
-                        Year = x.LogYear
-                    });
-                    break;
-                default:
-                    groupedData = activityData.GroupBy(x => new DateInformation
-                    {
-                        Year = x.LogYear
-                    });
-                    break;
+                groupedData = activityData.GroupBy(x => new DateInformation
+                {
+                    Interval = interval,
+                    Day = x.LogDate.Day,
+                    Month = x.LogMonth,
+                    Year = x.LogYear
+                });
+            }
+            else if (Equals(interval, ReportInterval.Weeks))
+            {
+                var referenceDate = new DateTime(1905, 1, 1);
+                groupedData = activityData.GroupBy(x => new DateInformation
+                {
+                    Interval = interval,
+                    WeekBeginning = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
+                });
+            }
+            else if (Equals(interval, ReportInterval.Months))
+            {
+                groupedData = activityData.GroupBy(x => new DateInformation
+                {
+                    Interval = interval,
+                    Month = x.LogMonth,
+                    Year = x.LogYear
+                });
+            }
+            else if (Equals(interval, ReportInterval.Quarters))
+            {
+                groupedData = activityData.GroupBy(x => new DateInformation
+                {
+                    Interval = interval,
+                    Quarter = x.LogQuarter,
+                    Year = x.LogYear
+                });
+            }
+            else
+            {
+                groupedData = activityData.GroupBy(x => new DateInformation
+                {
+                    Interval = interval,
+                    Year = x.LogYear
+                });
             }
 
             return groupedData.Select(
-                x => new PeriodOfActivity
-                {
-                    DateInformation = x.Key,
-                    Registrations = x.Sum(y => y.Registration),
-                    Completions = x.Sum(y => y.Completion),
-                    Evaluations = x.Sum(y => y.Evaluation)
-                }
-            );
+                x => new PeriodOfActivity(
+                    x.Key,
+                    x.Sum(y => y.Registration),
+                    x.Sum(y => y.Completion),
+                    x.Sum(y => y.Evaluation)
+                    )
+                );
         }
     }
 
@@ -119,6 +136,22 @@
 
     public class PeriodOfActivity
     {
+        public PeriodOfActivity(DateInformation slot, int registrations, int completions, int evaluations)
+        {
+            DateInformation = slot;
+            Registrations = registrations;
+            Completions = completions;
+            Evaluations = evaluations;
+        }
+
+        public PeriodOfActivity(DateInformation slot, PeriodOfActivity? data)
+        {
+            DateInformation = slot;
+            Completions = data?.Completions ?? 0;
+            Evaluations = data?.Evaluations ?? 0;
+            Registrations = data?.Registrations ?? 0;
+        }
+
         public DateInformation DateInformation { get; set; }
         public int Completions { get; set; }
         public int Evaluations { get; set; }
