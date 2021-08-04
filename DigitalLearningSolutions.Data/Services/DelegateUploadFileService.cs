@@ -97,27 +97,34 @@
                     continue;
                 }
 
-                var delegateIdCol = FindColumn(table, "DelegateID");
-                var aliasIdCol = FindColumn(table, "AliasID");
-                bool approved;
-                if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId))
+                var approved = GetApprovedStatusOrDefault(table, row, centreId);
+                if (!approved.HasValue)
                 {
-                    var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
-                    if (!approvedStatus.HasValue)
-                    {
-                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
-                        continue;
-                    }
-
-                    approved = approvedStatus.Value;
-                }
-                else if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId))
-                {
-                    approved = userDataService.GetApprovedStatusFromAliasId(aliasId, centreId) ?? true;
+                    errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
                 }
             }
 
             return new BulkUploadResult(table.RowCount(), registered, updated, skipped, errors);
+        }
+
+        private static IXLTable OpenDelegatesTable(IFormFile file)
+        {
+            var workbook = new XLWorkbook(file.OpenReadStream());
+            var worksheet = workbook.Worksheet(DelegatesSheetName);
+            var table = worksheet.Tables.Table(0);
+            return table;
+        }
+
+        private static int FindColumn(IXLTable table, string name)
+        {
+            return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
+        }
+
+        private bool ValidateHeaders(IXLTable table)
+        {
+            var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
+            var expectedHeaders = headers.OrderBy(x => x);
+            return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
         private BulkUploadResult.ErrorReasons? ValidateFields(IXLTable table, IXLRangeRow row)
@@ -150,24 +157,23 @@
             return null;
         }
 
-        private int FindColumn(IXLTable table, string name)
+        private bool? GetApprovedStatusOrDefault(IXLTable table, IXLRangeRow row, int centreId)
         {
-            return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
-        }
+            var delegateIdCol = FindColumn(table, "DelegateID");
+            var aliasIdCol = FindColumn(table, "AliasID");
 
-        private IXLTable OpenDelegatesTable(IFormFile file)
-        {
-            var workbook = new XLWorkbook(file.OpenReadStream());
-            var worksheet = workbook.Worksheet(DelegatesSheetName);
-            var table = worksheet.Tables.Table(0);
-            return table;
-        }
+            if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId))
+            {
+                var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
+                return approvedStatus;
+            }
 
-        private bool ValidateHeaders(IXLTable table)
-        {
-            var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
-            var expectedHeaders = headers.OrderBy(x => x);
-            return actualHeaders.SequenceEqual(expectedHeaders);
+            if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId))
+            {
+                return userDataService.GetApprovedStatusFromAliasId(aliasId, centreId) ?? true;
+            }
+
+            return true;
         }
     }
 }
