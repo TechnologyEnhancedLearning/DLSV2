@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -18,7 +18,12 @@ namespace DigitalLearningSolutions.Data.Services
             InvalidLastName,
             InvalidFirstName,
             InvalidActive,
-            NoRecordForDelegateId
+            NoRecordForDelegateId,
+            UnexpectedErrorForUpdate,
+            UnexpectedErrorForCreate,
+            ParameterError,
+            AliasIdInUse,
+            EmailAddressInUse
         }
 
         public BulkUploadResult(
@@ -103,10 +108,41 @@ namespace DigitalLearningSolutions.Data.Services
                 if (!approved.HasValue)
                 {
                     errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
+                    continue;
+                }
+
+                var record = MapRowToRecord(table, row, centreId, approved!.Value);
+                var status = userDataService.UpdateDelegateRecord(record);
+                switch (status)
+                {
+                    case 0:
+                        updated += 1;
+                        break;
+                    case 1:
+                        skipped += 1;
+                        break;
+                    case 2:
+                        registered += 1;
+                        break;
+                    case -1:
+                    case -4:
+                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
+                        break;
+                    case -2:
+                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
+                        break;
+                    case -3:
+                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
+                        break;
+                    case -5:
+                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                        break;
+                    default:
+                        throw new Exception();
                 }
             }
 
-            return new BulkUploadResult(table.RowCount(), registered, updated, skipped, errors);
+            return new BulkUploadResult(table.RowCount() - 1, registered, updated, skipped, errors);
         }
 
         private static IXLTable OpenDelegatesTable(IFormFile file)
@@ -198,13 +234,14 @@ namespace DigitalLearningSolutions.Data.Services
             var delegateIdCol = FindColumn(table, "DelegateID");
             var aliasIdCol = FindColumn(table, "AliasID");
 
-            if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId))
+            if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId) &&
+                !string.IsNullOrWhiteSpace(delegateId))
             {
                 var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
                 return approvedStatus;
             }
 
-            if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId))
+            if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId) && !string.IsNullOrWhiteSpace(delegateId))
             {
                 return userDataService.GetApprovedStatusFromAliasId(aliasId, centreId) ?? true;
             }

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Transactions;
     using Dapper;
@@ -210,6 +211,15 @@
                     AND CentreID = @centreId",
                 new { aliasId, centreId }
             ).SingleOrDefault();
+        }
+
+        public int UpdateDelegateRecord(DelegateRecord record)
+        {
+            return connection.QuerySingle<int>(
+                "uspUpdateCandidate_V7",
+                record,
+                commandType: CommandType.StoredProcedure
+            );
         }
     }
 }

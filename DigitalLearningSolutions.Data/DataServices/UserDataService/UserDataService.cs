@@ -36,6 +36,8 @@
         public DelegateUserCard? GetDelegateUserCardById(int id);
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
+        public int UpdateDelegateRecord(DelegateRecord record);
+
         public void UpdateDelegateUserCentrePrompts(
             int id,
             int jobGroupId,

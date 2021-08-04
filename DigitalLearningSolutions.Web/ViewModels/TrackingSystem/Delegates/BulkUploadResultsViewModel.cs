@@ -37,6 +37,14 @@
                     "Active field could not be read. The Active field should contain 'True' or 'False'.",
                 BulkUploadResult.ErrorReasons.NoRecordForDelegateId =>
                     "No existing delegate record was found with the DelegateID provided.",
+                BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate =>
+                    "Unexpected error when creating Delegate details.",
+                BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate =>
+                    "Unexpected error when updating Delegate details.",
+                BulkUploadResult.ErrorReasons.ParameterError => "Parameter error when updating Delegate details.",
+                BulkUploadResult.ErrorReasons.AliasIdInUse => "The AliasID is already in use by another delegate.",
+                BulkUploadResult.ErrorReasons.EmailAddressInUse =>
+                    "The Email address is already in use by another delegate.",
                 _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
             };
         }
