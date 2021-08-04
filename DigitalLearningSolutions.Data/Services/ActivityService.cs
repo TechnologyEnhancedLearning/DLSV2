@@ -67,9 +67,10 @@
                     });
                     break;
                 case ReportInterval.Weeks:
+                    var referenceDate = new DateTime(1905, 1, 1);
                     groupedData = activityData.GroupBy(x => new DateInformation
                     {
-                        WeeksAgo = (endDate - x.LogDate).Days / 7
+                        WeekBeginning = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
                     });
                     break;
                 case ReportInterval.Months:
@@ -104,22 +105,23 @@
                 }
             );
         }
+    }
 
-        public class DateInformation
-        {
-            public int Day { get; set; }
-            public int WeeksAgo { get; set; }
-            public int Month { get; set; }
-            public int Quarter { get; set; }
-            public int Year { get; set; }
-        }
+    public class DateInformation
+    {
+        public ReportInterval Interval { get; set; }
+        public int Day { get; set; }
+        public DateTime? WeekBeginning { get; set; }
+        public int Month { get; set; }
+        public int Quarter { get; set; }
+        public int Year { get; set; }
+    }
 
-        public class PeriodOfActivity
-        {
-            public DateInformation DateInformation { get; set; }
-            public int Completions { get; set; }
-            public int Evaluations { get; set; }
-            public int Registrations { get; set; }
-        }
+    public class PeriodOfActivity
+    {
+        public DateInformation DateInformation { get; set; }
+        public int Completions { get; set; }
+        public int Evaluations { get; set; }
+        public int Registrations { get; set; }
     }
 }
