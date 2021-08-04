@@ -1,11 +1,13 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
 
     public class BulkUploadResult
@@ -118,6 +120,40 @@
         private static int FindColumn(IXLTable table, string name)
         {
             return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
+        }
+
+        private static DelegateRecord MapRowToRecord(IXLTable table, IXLRangeRow row, int centreId, bool approved)
+        {
+            var lastName = row.Cell(FindColumn(table, "LastName")).GetValue<string>();
+            var firstName = row.Cell(FindColumn(table, "FirstName")).GetValue<string>();
+            var delegateId = row.Cell(FindColumn(table, "DelegateID")).GetValue<string>();
+            var aliasId = row.Cell(FindColumn(table, "AliasID")).GetValue<string?>();
+            var jobGroupId = row.Cell(FindColumn(table, "JobGroupID")).GetValue<int>();
+            var active = row.Cell(FindColumn(table, "Active")).GetValue<bool>();
+            var emailAddress = row.Cell(FindColumn(table, "EmailAddress")).GetValue<string?>();
+            var answer1 = row.Cell(FindColumn(table, "Answer1")).GetValue<string?>();
+            var answer2 = row.Cell(FindColumn(table, "Answer2")).GetValue<string?>();
+            var answer3 = row.Cell(FindColumn(table, "Answer3")).GetValue<string?>();
+            var answer4 = row.Cell(FindColumn(table, "Answer4")).GetValue<string?>();
+            var answer5 = row.Cell(FindColumn(table, "Answer5")).GetValue<string?>();
+            var answer6 = row.Cell(FindColumn(table, "Answer6")).GetValue<string?>();
+            return new DelegateRecord(
+                centreId,
+                delegateId,
+                firstName,
+                lastName,
+                jobGroupId,
+                active,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6,
+                aliasId,
+                approved,
+                emailAddress
+            );
         }
 
         private bool ValidateHeaders(IXLTable table)
