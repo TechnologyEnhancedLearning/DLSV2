@@ -189,5 +189,27 @@
                 new { centreId }
             );
         }
+
+        public bool? GetApprovedStatusFromCandidateNumber(string candidateNumber, int centreId)
+        {
+            return connection.Query<bool?>(
+                @"SELECT Approved
+                    FROM Candidates
+                    WHERE CandidateNumber = @candidateNumber
+                    AND CentreID = @centreId",
+                new { candidateNumber, centreId }
+            ).SingleOrDefault();
+        }
+
+        public bool? GetApprovedStatusFromAliasId(string aliasId, int centreId)
+        {
+            return connection.Query<bool?>(
+                @"SELECT Approved
+                    FROM Candidates
+                    WHERE AliasID = @aliasId
+                    AND CentreID = @centreId",
+                new { aliasId, centreId }
+            ).SingleOrDefault();
+        }
     }
 }

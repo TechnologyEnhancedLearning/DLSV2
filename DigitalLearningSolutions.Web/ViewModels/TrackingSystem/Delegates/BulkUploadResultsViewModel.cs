@@ -35,6 +35,8 @@
                     "First name was not provided. First name is a required field and cannot be left blank.",
                 BulkUploadResult.ErrorReasons.InvalidActive =>
                     "Active field could not be read. The Active field should contain 'True' or 'False'.",
+                BulkUploadResult.ErrorReasons.NoRecordForDelegateId =>
+                    "No existing delegate record was found with the DelegateID provided.",
                 _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
             };
         }

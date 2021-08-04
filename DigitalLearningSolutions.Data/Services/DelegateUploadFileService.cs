@@ -4,6 +4,7 @@
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using Microsoft.AspNetCore.Http;
 
@@ -14,7 +15,8 @@
             InvalidJobGroupId,
             InvalidLastName,
             InvalidFirstName,
-            InvalidActive
+            InvalidActive,
+            NoRecordForDelegateId
         }
 
         public BulkUploadResult(
@@ -41,7 +43,7 @@
 
     public interface IDelegateUploadFileService
     {
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file);
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -66,14 +68,16 @@
         };
 
         private readonly IEnumerable<int> jobGroupIds;
+        private readonly IUserDataService userDataService;
 
-        public DelegateUploadFileService(IJobGroupsDataService jobGroupsDataService)
+        public DelegateUploadFileService(IJobGroupsDataService jobGroupsDataService, IUserDataService userDataService)
         {
+            this.userDataService = userDataService;
             jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical()
                 .Select(item => item.id);
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file)
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId)
         {
             var table = OpenDelegatesTable(file);
             if (!ValidateHeaders(table))
@@ -90,6 +94,26 @@
                 if (errorReason.HasValue)
                 {
                     errors.Add((row.RowNumber(), errorReason.Value));
+                    continue;
+                }
+
+                var delegateIdCol = FindColumn(table, "DelegateID");
+                var aliasIdCol = FindColumn(table, "AliasID");
+                bool approved;
+                if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId))
+                {
+                    var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
+                    if (!approvedStatus.HasValue)
+                    {
+                        errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
+                        continue;
+                    }
+
+                    approved = approvedStatus.Value;
+                }
+                else if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId))
+                {
+                    approved = userDataService.GetApprovedStatusFromAliasId(aliasId, centreId) ?? true;
                 }
             }
 

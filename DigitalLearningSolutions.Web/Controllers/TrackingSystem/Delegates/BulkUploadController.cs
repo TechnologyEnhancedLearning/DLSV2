@@ -65,7 +65,8 @@
 
             try
             {
-                var results = delegateUploadFileService.ProcessDelegatesFile(model.DelegatesFile);
+                var centreId = User.GetCentreId();
+                var results = delegateUploadFileService.ProcessDelegatesFile(model.DelegatesFile, centreId);
                 TempData.Set(results);
                 return RedirectToAction("UploadCompleted");
             }

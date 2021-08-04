@@ -30,6 +30,8 @@
         public void ApproveDelegateUsers(params int[] ids);
         public void RemoveDelegateUser(int delegateId);
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
+        public bool? GetApprovedStatusFromCandidateNumber(string candidateNumber, int centreId);
+        public bool? GetApprovedStatusFromAliasId(string aliasId, int centreId);
 
         public DelegateUserCard? GetDelegateUserCardById(int id);
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
