@@ -16,6 +16,10 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
+@section NavBreadcrumbs {
+  <partial name="_DelegateGroupBreadcrumbs" />
+}
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
@@ -24,7 +28,7 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    
+
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
         <h1 id="page-heading" class="nhsuk-heading-xl">Group delegates</h1>
@@ -39,18 +43,23 @@
     <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          @if (!Model.GroupDelegates.Any()) {
+          @if (!Model.GroupDelegates.Any())
+          {
             <p class="nhsuk-u-margin-top-4" role="alert">
               <b>No delegates found.</b>
             </p>
-          } else {
+          }
+          else
+          {
             <div id="searchable-elements">
-              @foreach (var groupDelegate in Model.GroupDelegates) {
+              @foreach (var groupDelegate in Model.GroupDelegates)
+              {
                 <partial name="_GroupDelegateCard" model="groupDelegate" />
               }
             </div>
           }
-          @if (Model.TotalPages > 1) {
+          @if (Model.TotalPages > 1)
+          {
             <partial name="SearchablePage/_Pagination" model="Model" />
           }
         </div>
