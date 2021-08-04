@@ -4,7 +4,7 @@
     {
         public DelegateRecord(
             int centreId,
-            string delegateId,
+            string? delegateId,
             string? firstName,
             string lastName,
             int jobGroupId,

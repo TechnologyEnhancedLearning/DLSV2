@@ -51,7 +51,8 @@
 
     public interface IDelegateUploadFileService
     {
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId);
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId);
+        public IXLTable OpenDelegatesTable(IFormFile file);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -91,9 +92,8 @@
                 .Select(item => item.id);
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId)
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId)
         {
-            var table = OpenDelegatesTable(file);
             if (!ValidateHeaders(table))
             {
                 throw new InvalidHeadersException();
@@ -101,30 +101,31 @@
 
             var (registered, updated, skipped) = (0, 0, 0);
             var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
+            var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row));
 
-            foreach (var row in table.Rows().Skip(1))
+            foreach (var delegateRow in delegateRows)
             {
-                var errorReason = ValidateFields(table, row);
+                var errorReason = delegateRow.ValidateFields(jobGroupIds);
                 if (errorReason.HasValue)
                 {
-                    errors.Add((row.RowNumber(), errorReason.Value));
+                    errors.Add((delegateRow.RowNumber, errorReason.Value));
                     continue;
                 }
 
                 bool? approved;
                 try
                 {
-                    approved = GetApprovedStatusForUpdate(table, row, centreId);
+                    approved = TryGetExistingApprovedStatus(delegateRow.DelegateId, delegateRow.AliasId, centreId);
                 }
                 catch (UserAccountNotFoundException)
                 {
-                    errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
                     continue;
                 }
 
                 if (approved.HasValue)
                 {
-                    var record = MapRowToDelegateRecord(table, row, centreId, approved.Value);
+                    var record = MapRowToDelegateRecord(delegateRow, centreId, approved.Value);
                     var status = userDataService.UpdateDelegateRecord(record);
                     switch (status)
                     {
@@ -139,16 +140,16 @@
                             break;
                         case -1:
                         case -4:
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
                             break;
                         case -2:
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
                             break;
                         case -3:
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
                             break;
                         case -5:
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException(
@@ -160,21 +161,21 @@
                 }
                 else
                 {
-                    var model = MapRowToDelegateRegistrationModel(table, row, centreId);
+                    var model = MapRowToDelegateRegistrationModel(delegateRow, centreId);
                     var status = registrationDataService.RegisterDelegateByCentre(model);
                     switch (status)
                     {
                         case "-1":
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
                             break;
                         case "-2":
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.ParameterError));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
                             break;
                         case "-3":
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.AliasIdInUse));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
                             break;
                         case "-4":
-                            errors.Add((row.RowNumber(), BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
                             break;
                         default:
                             registered += 1;
@@ -186,7 +187,7 @@
             return new BulkUploadResult(table.RowCount() - 1, registered, updated, skipped, errors);
         }
 
-        private static IXLTable OpenDelegatesTable(IFormFile file)
+        public IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegatesSheetName);
@@ -194,81 +195,50 @@
             return table;
         }
 
-        private static int FindColumn(IXLTable table, string name)
-        {
-            return table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
-        }
-
         private static DelegateRecord MapRowToDelegateRecord(
-            IXLTable table,
-            IXLRangeRow row,
+            DelegateTableRow row,
             int centreId,
             bool approved
         )
         {
-            var lastName = row.Cell(FindColumn(table, "LastName")).GetValue<string>();
-            var firstName = row.Cell(FindColumn(table, "FirstName")).GetValue<string>();
-            var delegateId = row.Cell(FindColumn(table, "DelegateID")).GetValue<string>();
-            var aliasId = row.Cell(FindColumn(table, "AliasID")).GetValue<string?>();
-            var jobGroupId = row.Cell(FindColumn(table, "JobGroupID")).GetValue<int>();
-            var active = row.Cell(FindColumn(table, "Active")).GetValue<bool>();
-            var emailAddress = row.Cell(FindColumn(table, "EmailAddress")).GetValue<string?>();
-            var answer1 = row.Cell(FindColumn(table, "Answer1")).GetValue<string?>();
-            var answer2 = row.Cell(FindColumn(table, "Answer2")).GetValue<string?>();
-            var answer3 = row.Cell(FindColumn(table, "Answer3")).GetValue<string?>();
-            var answer4 = row.Cell(FindColumn(table, "Answer4")).GetValue<string?>();
-            var answer5 = row.Cell(FindColumn(table, "Answer5")).GetValue<string?>();
-            var answer6 = row.Cell(FindColumn(table, "Answer6")).GetValue<string?>();
             return new DelegateRecord(
                 centreId,
-                delegateId,
-                firstName,
-                lastName,
-                jobGroupId,
-                active,
-                answer1,
-                answer2,
-                answer3,
-                answer4,
-                answer5,
-                answer6,
-                aliasId,
+                row.DelegateId,
+                row.FirstName,
+                row.LastName!,
+                int.Parse(row.JobGroupId!),
+                bool.Parse(row.Active!),
+                row.Answer1,
+                row.Answer2,
+                row.Answer3,
+                row.Answer4,
+                row.Answer5,
+                row.Answer6,
+                row.AliasId,
                 approved,
-                emailAddress
+                row.Email
             );
         }
 
         private static DelegateRegistrationModel MapRowToDelegateRegistrationModel(
-            IXLTable table,
-            IXLRangeRow row,
+            DelegateTableRow row,
             int centreId
         )
         {
-            var lastName = row.Cell(FindColumn(table, "LastName")).GetValue<string>();
-            var firstName = row.Cell(FindColumn(table, "FirstName")).GetValue<string>();
-            var aliasId = row.Cell(FindColumn(table, "AliasID")).GetValue<string?>();
-            var jobGroupId = row.Cell(FindColumn(table, "JobGroupID")).GetValue<int>();
-            var emailAddress = row.Cell(FindColumn(table, "EmailAddress")).GetValue<string?>();
-            var answer1 = row.Cell(FindColumn(table, "Answer1")).GetValue<string?>();
-            var answer2 = row.Cell(FindColumn(table, "Answer2")).GetValue<string?>();
-            var answer3 = row.Cell(FindColumn(table, "Answer3")).GetValue<string?>();
-            var answer4 = row.Cell(FindColumn(table, "Answer4")).GetValue<string?>();
-            var answer5 = row.Cell(FindColumn(table, "Answer5")).GetValue<string?>();
-            var answer6 = row.Cell(FindColumn(table, "Answer6")).GetValue<string?>();
             return new DelegateRegistrationModel(
-                firstName,
-                lastName,
-                emailAddress,
+                row.FirstName!,
+                row.LastName!,
+                row.Email,
                 centreId,
-                jobGroupId,
+                int.Parse(row.JobGroupId!),
                 null,
-                answer1,
-                answer2,
-                answer3,
-                answer4,
-                answer5,
-                answer6,
-                aliasId
+                row.Answer1,
+                row.Answer2,
+                row.Answer3,
+                row.Answer4,
+                row.Answer5,
+                row.Answer6,
+                row.AliasId
             );
         }
 
@@ -279,43 +249,9 @@
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
-        private BulkUploadResult.ErrorReasons? ValidateFields(IXLTable table, IXLRangeRow row)
+        private bool? TryGetExistingApprovedStatus(string? delegateId, string? aliasId, int centreId)
         {
-            var jobGroupCol = FindColumn(table, "JobGroupID");
-            var lastNameCol = FindColumn(table, "LastName");
-            var firstNameCol = FindColumn(table, "FirstName");
-            var activeCol = FindColumn(table, "Active");
-
-            if (!row.Cell(jobGroupCol).TryGetValue<int>(out var jobGroupId) || !jobGroupIds.Contains(jobGroupId))
-            {
-                return BulkUploadResult.ErrorReasons.InvalidJobGroupId;
-            }
-
-            if (!row.Cell(lastNameCol).TryGetValue<string>(out var lastName) || string.IsNullOrEmpty(lastName))
-            {
-                return BulkUploadResult.ErrorReasons.InvalidLastName;
-            }
-
-            if (!row.Cell(firstNameCol).TryGetValue<string>(out var firstName) || string.IsNullOrEmpty(firstName))
-            {
-                return BulkUploadResult.ErrorReasons.InvalidFirstName;
-            }
-
-            if (!row.Cell(activeCol).TryGetValue<bool>(out _))
-            {
-                return BulkUploadResult.ErrorReasons.InvalidActive;
-            }
-
-            return null;
-        }
-
-        private bool? GetApprovedStatusForUpdate(IXLTable table, IXLRangeRow row, int centreId)
-        {
-            var delegateIdCol = FindColumn(table, "DelegateID");
-            var aliasIdCol = FindColumn(table, "AliasID");
-
-            if (row.Cell(delegateIdCol).TryGetValue<string>(out var delegateId) &&
-                !string.IsNullOrWhiteSpace(delegateId))
+            if (!string.IsNullOrWhiteSpace(delegateId))
             {
                 var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
                 if (!approvedStatus.HasValue)
@@ -326,12 +262,76 @@
                 return approvedStatus.Value;
             }
 
-            if (row.Cell(aliasIdCol).TryGetValue<string>(out var aliasId) && !string.IsNullOrWhiteSpace(delegateId))
+            return !string.IsNullOrWhiteSpace(aliasId)
+                ? userDataService.GetApprovedStatusFromAliasId(aliasId, centreId)
+                : null;
+        }
+
+        public class DelegateTableRow
+        {
+            public DelegateTableRow(IXLTable table, IXLRangeRow row)
             {
-                return userDataService.GetApprovedStatusFromAliasId(aliasId, centreId);
+                string? FindFieldValue(string name)
+                {
+                    var col = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
+                    return row.Cell(col).GetValue<string?>();
+                }
+
+                RowNumber = row.RowNumber();
+                DelegateId = FindFieldValue("DelegateID");
+                LastName = FindFieldValue("LastName");
+                FirstName = FindFieldValue("FirstName");
+                JobGroupId = FindFieldValue("JobGroupID");
+                Active = FindFieldValue("Active");
+                Answer1 = FindFieldValue("Answer1");
+                Answer2 = FindFieldValue("Answer2");
+                Answer3 = FindFieldValue("Answer3");
+                Answer4 = FindFieldValue("Answer4");
+                Answer5 = FindFieldValue("Answer5");
+                Answer6 = FindFieldValue("Answer6");
+                AliasId = FindFieldValue("AliasID");
+                Email = FindFieldValue("EmailAddress");
             }
 
-            return null;
+            public int RowNumber { get; set; }
+            public string? DelegateId { get; set; }
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public string? JobGroupId { get; set; }
+            public string? Active { get; set; }
+            public string? Answer1 { get; set; }
+            public string? Answer2 { get; set; }
+            public string? Answer3 { get; set; }
+            public string? Answer4 { get; set; }
+            public string? Answer5 { get; set; }
+            public string? Answer6 { get; set; }
+            public string? AliasId { get; set; }
+            public string? Email { get; set; }
+
+            public BulkUploadResult.ErrorReasons? ValidateFields(IEnumerable<int> allowedJobGroupIds)
+            {
+                if (!int.TryParse(JobGroupId, out var jobGroupId) || !allowedJobGroupIds.Contains(jobGroupId))
+                {
+                    return BulkUploadResult.ErrorReasons.InvalidJobGroupId;
+                }
+
+                if (string.IsNullOrEmpty(LastName))
+                {
+                    return BulkUploadResult.ErrorReasons.InvalidLastName;
+                }
+
+                if (string.IsNullOrEmpty(FirstName))
+                {
+                    return BulkUploadResult.ErrorReasons.InvalidFirstName;
+                }
+
+                if (!bool.TryParse(Active, out _))
+                {
+                    return BulkUploadResult.ErrorReasons.InvalidActive;
+                }
+
+                return null;
+            }
         }
     }
 }
