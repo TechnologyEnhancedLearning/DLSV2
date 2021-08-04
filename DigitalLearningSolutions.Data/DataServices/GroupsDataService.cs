@@ -12,7 +12,11 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
+        IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
+
         string GetGroupNameForGroupId(int groupId);
+
+        bool IsGroupAtUserCentre(int groupId, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -74,6 +78,34 @@
             );
         }
 
+        public IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId)
+        {
+            return connection.Query<GroupCourse>(
+                @"SELECT
+                        GroupCustomisationID,
+	                    GroupID,
+	                    gc.CustomisationID,
+	                    ap.ApplicationName,
+                        CustomisationName,
+                        Mandatory AS IsMandatory,
+                        IsAssessed,
+                        AddedDate AS AddedToGroup,
+                        au.Forename AS SupervisorFirstName,
+	                    au.Surname AS SupervisorLastName,
+	                    gc.CompleteWithinMonths,
+	                    ValidityMonths
+                    FROM GroupCustomisations AS gc
+                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
+                    WHERE gc.GroupID = @groupId
+                        AND ca.CentreId = @centreId
+                        AND InactivatedDate IS NULL",
+                new { groupId, centreId }
+            );
+        }
+
         public string GetGroupNameForGroupId(int groupId)
         {
             return connection.Query<string>(
@@ -83,6 +115,17 @@
                     WHERE GroupID = @groupId",
                 new { groupId }
             ).Single();
+        }
+
+        public bool IsGroupAtUserCentre(int groupId, int centreId)
+        {
+            return connection.Query<int>(
+                @"SELECT
+                        GroupID
+                    FROM Groups
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupId, centreId }
+            ).Any();
         }
     }
 }

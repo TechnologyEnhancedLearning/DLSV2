@@ -7,35 +7,35 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class GroupDelegatesViewModel : BaseSearchablePageViewModel
+    public class GroupCoursesViewModel : BaseSearchablePageViewModel
     {
-        public GroupDelegatesViewModel(
+        public GroupCoursesViewModel(
             int groupId,
             string groupName,
-            IEnumerable<GroupDelegate> groupDelegates,
+            IEnumerable<GroupCourse> groupCourses,
             int page
         ) : base(null, page, false)
         {
             GroupId = groupId;
-            NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Delegates);
+            NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Courses);
 
             var sortedItems = GenericSortingHelper.SortAllItems(
-                groupDelegates.AsQueryable(),
+                groupCourses.AsQueryable(),
                 DefaultSortByOptions.Name.PropertyName,
                 Ascending
             ).ToList();
-            
+
             MatchingSearchResults = sortedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(sortedItems);
-            GroupDelegates = paginatedItems.Select(groupDelegate => new GroupDelegateViewModel(groupDelegate));
+            GroupCourses = paginatedItems.Select(groupCourse => new GroupCourseViewModel(groupCourse));
         }
 
         public int GroupId { get; set; }
 
         public DelegateGroupsSideNavViewModel NavViewModel { get; set; }
 
-        public IEnumerable<GroupDelegateViewModel> GroupDelegates { get; }
+        public IEnumerable<GroupCourseViewModel> GroupCourses { get; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
