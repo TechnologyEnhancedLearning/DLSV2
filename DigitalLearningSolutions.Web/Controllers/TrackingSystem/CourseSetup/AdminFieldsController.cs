@@ -225,7 +225,7 @@
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
         {
             customPromptsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
-            return RedirectToAction("AdminFields");
+            return RedirectToAction("AdminFields", new { customisationId });
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(

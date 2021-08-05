@@ -14,8 +14,11 @@
         ) : base(fieldId, promptName, mandatory, options)
         {
             CustomisationId = customisationId;
+            PromptNumber = fieldId;
         }
 
         public int CustomisationId { get; set; }
+
+        public int PromptNumber { get; set; }
     }
 }
