@@ -10,12 +10,14 @@
     {
         public DelegateGroupsViewModel(
             IEnumerable<Group> groups,
+            IEnumerable<(int, string)> registrationPrompts,
             string sortBy,
             string sortDirection,
             string? filterBy,
             int page
         ) : base(null, page, true, sortBy, sortDirection, filterBy)
         {
+            groups = groups.ToList();
             var sortedItems = GenericSortingHelper.SortAllItems(
                 groups.AsQueryable(),
                 sortBy,
@@ -27,6 +29,22 @@
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
+
+            var admins = groups.Select(g => (AddedByAdminID: g.AddedByAdminId, g.AddedByName)).Distinct();
+
+            Filters = new[]
+            {
+                new FilterViewModel(
+                    nameof(Group.AddedByAdminId),
+                    "Added by",
+                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
+                ),
+                new FilterViewModel(
+                    nameof(Group.LinkedToField),
+                    "Linked field",
+                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
+                )
+            };
         }
 
         public IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups { get; set; }

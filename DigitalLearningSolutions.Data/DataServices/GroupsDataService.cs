@@ -35,6 +35,7 @@
 	                    GroupDescription,
 	                    (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
 	                    (SELECT COUNT(*) FROM GroupCustomisations AS gc WHERE gc.GroupID = g.GroupID AND InactivatedDate IS NULL) AS CoursesCount,
+                        g.CreatedByAdminUserID As AddedByAdminId,
 	                    au.Forename AS AddedByFirstName,
 	                    au.Surname AS AddedByLastName,
 	                    LinkedToField,
