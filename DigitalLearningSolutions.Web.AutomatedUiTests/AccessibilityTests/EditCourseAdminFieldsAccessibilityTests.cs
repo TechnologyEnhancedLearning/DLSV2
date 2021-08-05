@@ -10,7 +10,7 @@
         public EditCourseAdminFieldsAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
 
         [Fact]
-        public void EditRegistrationPrompt_journey_has_no_accessibility_errors()
+        public void EditAdminField_journey_has_no_accessibility_errors()
         {
             // Given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
