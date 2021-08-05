@@ -51,7 +51,7 @@
 
     public interface IDelegateUploadFileService
     {
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId);
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime? welcomeEmailDate = null);
         public IXLTable OpenDelegatesTable(IFormFile file);
     }
 
@@ -74,7 +74,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId)
+        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime? welcomeEmailDate)
         {
             if (!ValidateHeaders(table))
             {
@@ -144,7 +144,7 @@
                 }
                 else
                 {
-                    var model = MapRowToDelegateRegistrationModel(delegateRow, centreId);
+                    var model = MapRowToDelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
                     var status = registrationDataService.RegisterDelegateByCentre(model);
                     switch (status)
                     {
@@ -205,7 +205,8 @@
 
         private static DelegateRegistrationModel MapRowToDelegateRegistrationModel(
             DelegateTableRow row,
-            int centreId
+            int centreId,
+            DateTime? welcomeEmailDate
         )
         {
             return new DelegateRegistrationModel(
@@ -221,7 +222,8 @@
                 row.Answer4,
                 row.Answer5,
                 row.Answer6,
-                row.AliasId
+                row.AliasId,
+                welcomeEmailDate
             );
         }
 

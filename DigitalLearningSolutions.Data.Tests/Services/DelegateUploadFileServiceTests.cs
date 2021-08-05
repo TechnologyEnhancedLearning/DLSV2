@@ -1,5 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -63,22 +64,21 @@
             string jobGroupId = "1"
         )
         {
-            return new DelegateDataRow
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                EmailAddress = emailAddress,
-                DelegateID = delegateId,
-                Answer1 = answer1,
-                Answer2 = answer2,
-                Answer3 = answer3,
-                Answer4 = answer4,
-                Answer5 = answer5,
-                Answer6 = answer6,
-                Active = active,
-                AliasID = aliasId,
-                JobGroupID = jobGroupId
-            };
+            return new DelegateDataRow(
+                delegateId,
+                firstName,
+                lastName,
+                jobGroupId,
+                active,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6,
+                aliasId,
+                emailAddress
+            );
         }
 
         private void ShouldNotCreateOrUpdateDelegate()
@@ -452,7 +452,8 @@
         public void ProcessDelegateTable_calls_create_with_correct_delegate_details()
         {
             // Given
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            const string? aliasId = "NEW ALIAS";
+            var row = SampleDelegateDataRow(delegateId: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -472,8 +473,48 @@
                                 model.Answer4 == row.Answer4 &&
                                 model.Answer5 == row.Answer5 &&
                                 model.Answer6 == row.Answer6 &&
-                                model.Email == row.EmailAddress
+                                model.Email == row.EmailAddress &&
+                                model.AliasId == aliasId
                         )
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_calls_create_with_notifyDate_if_welcomeEmailDate_set()
+        {
+            // Given
+            var welcomeEmailDate = new DateTime(3000, 01, 01);
+            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var table = CreateTableFromData(new[] { row });
+
+            // When
+            delegateUploadFileService.ProcessDelegatesFile(table, centreId, welcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                    () => registrationDataService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>.That.Matches(model => model.NotifyDate == welcomeEmailDate)
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ProcessDelegateTable_calls_create_without_notifyDate_if_welcomeEmailDate_not_set()
+        {
+            // Given
+            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var table = CreateTableFromData(new[] { row });
+
+            // When
+            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+
+            // Then
+            A.CallTo(
+                    () => registrationDataService.RegisterDelegateByCentre(
+                        A<DelegateRegistrationModel>.That.Matches(model => !model.NotifyDate.HasValue)
                     )
                 )
                 .MustHaveHappened();
@@ -598,19 +639,50 @@
 
         private class DelegateDataRow
         {
-            public string DelegateID { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public string JobGroupID { get; set; }
-            public string Active { get; set; }
-            public string Answer1 { get; set; }
-            public string Answer2 { get; set; }
-            public string Answer3 { get; set; }
-            public string Answer4 { get; set; }
-            public string Answer5 { get; set; }
-            public string Answer6 { get; set; }
-            public string AliasID { get; set; }
-            public string EmailAddress { get; set; }
+            public DelegateDataRow(
+                string delegateId,
+                string firstName,
+                string lastName,
+                string jobGroupId,
+                string active,
+                string answer1,
+                string answer2,
+                string answer3,
+                string answer4,
+                string answer5,
+                string answer6,
+                string aliasId,
+                string emailAddress
+            )
+            {
+                DelegateID = delegateId;
+                FirstName = firstName;
+                LastName = lastName;
+                JobGroupID = jobGroupId;
+                Active = active;
+                Answer1 = answer1;
+                Answer2 = answer2;
+                Answer3 = answer3;
+                Answer4 = answer4;
+                Answer5 = answer5;
+                Answer6 = answer6;
+                AliasID = aliasId;
+                EmailAddress = emailAddress;
+            }
+
+            public string DelegateID { get; }
+            public string FirstName { get; }
+            public string LastName { get; }
+            public string JobGroupID { get; }
+            public string Active { get; }
+            public string Answer1 { get; }
+            public string Answer2 { get; }
+            public string Answer3 { get; }
+            public string Answer4 { get; }
+            public string Answer5 { get; }
+            public string Answer6 { get; }
+            public string AliasID { get; }
+            public string EmailAddress { get; }
         }
     }
 }
