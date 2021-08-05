@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@model AllDelegateGroupsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  @foreach (var delegateGroup in Model.DelegateGroups)
+  {
+    <partial name="_SearchableDelegateGroupCard" model="delegateGroup" />
+  }
+</body>
+</html>

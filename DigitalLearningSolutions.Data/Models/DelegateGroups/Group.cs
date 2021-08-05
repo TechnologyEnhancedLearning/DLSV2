@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
-    public class Group
+    public class Group : BaseSearchableItem
     {
         public int GroupId { get; set; }
 
@@ -23,5 +23,11 @@
         public bool ShouldAddNewRegistrantsToGroup { get; set; }
 
         public bool ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? GroupLabel;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

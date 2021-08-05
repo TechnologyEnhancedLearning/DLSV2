@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,38 @@
             this.groupsDataService = groupsDataService;
         }
 
-        public IActionResult Index()
+        [Route("{page=1:int}")]
+        public IActionResult Index(
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string? filterBy = null,
+            string? filterValue = null,
+            int page = 1)
+        {
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+
+            var centreId = User.GetCentreId();
+            var groups = groupsDataService.GetGroupsForCentre(centreId);
+            
+            var model = new DelegateGroupsViewModel(
+                groups,
+                sortBy,
+                sortDirection,
+                filterBy,
+                page
+            );
+
+            return View(model);
+        }
+
+        [Route("AllDelegateGroups")]
+        public IActionResult AllDelegateGroups()
         {
             var centreId = User.GetCentreId();
             var groups = groupsDataService.GetGroupsForCentre(centreId);
 
-            var model = new DelegateGroupsViewModel(groups);
+            var model = new AllDelegateGroupsViewModel(groups);
 
             return View(model);
         }
