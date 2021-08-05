@@ -25,9 +25,6 @@
             ValidatePageHeading("Configure answers in bulk");
             var bulkAdditionResult = new AxeBuilder(Driver).Analyze();
 
-            Driver.ClickButtonByText("Next");
-            ValidatePageHeading("Edit delegate registration prompt");
-
             editPageResult.Violations.Should().BeEmpty();
             bulkAdditionResult.Violations.Should().BeEmpty();
         }
