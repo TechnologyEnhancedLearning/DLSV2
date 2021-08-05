@@ -25,6 +25,9 @@
             ValidatePageHeading("Configure answers in bulk");
             var bulkAdditionResult = new AxeBuilder(Driver).Analyze();
 
+            Driver.ClickButtonByText("Submit");
+            ValidatePageHeading("Edit course admin field");
+
             editPageResult.Violations.Should().BeEmpty();
             bulkAdditionResult.Violations.Should().BeEmpty();
         }
