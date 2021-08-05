@@ -2,5 +2,5 @@
 {
     using System;
 
-    internal class InvalidHeadersException : Exception { }
+    public class InvalidHeadersException : Exception { }
 }

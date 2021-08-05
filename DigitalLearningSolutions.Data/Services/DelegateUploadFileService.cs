@@ -58,25 +58,8 @@
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
         private const string DelegatesSheetName = "DelegatesBulkUpload";
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
-        private readonly List<string> headers = new List<string>
-        {
-            "LastName",
-            "FirstName",
-            "DelegateID",
-            "AliasID",
-            "JobGroupID",
-            "Answer1",
-            "Answer2",
-            "Answer3",
-            "Answer4",
-            "Answer5",
-            "Answer6",
-            "Active",
-            "EmailAddress"
-        };
-
-        private readonly IEnumerable<int> jobGroupIds;
         private readonly IRegistrationDataService registrationDataService;
         private readonly IUserDataService userDataService;
 
@@ -88,8 +71,7 @@
         {
             this.userDataService = userDataService;
             this.registrationDataService = registrationDataService;
-            jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical()
-                .Select(item => item.id);
+            this.jobGroupsDataService = jobGroupsDataService;
         }
 
         public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId)
@@ -99,6 +81,7 @@
                 throw new InvalidHeadersException();
             }
 
+            var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var (registered, updated, skipped) = (0, 0, 0);
             var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
             var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row));
@@ -244,8 +227,23 @@
 
         private bool ValidateHeaders(IXLTable table)
         {
+            var expectedHeaders = new List<string>
+            {
+                "LastName",
+                "FirstName",
+                "DelegateID",
+                "AliasID",
+                "JobGroupID",
+                "Answer1",
+                "Answer2",
+                "Answer3",
+                "Answer4",
+                "Answer5",
+                "Answer6",
+                "Active",
+                "EmailAddress"
+            }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
-            var expectedHeaders = headers.OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
