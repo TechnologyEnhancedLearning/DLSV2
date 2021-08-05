@@ -122,8 +122,7 @@
         public void PostEditRegistrationPrompt_delete_removes_configured_answer()
         {
             // Given
-            var prompt = new CustomPrompt(1, "Test", "Test\r\nAnswer", false);
-            var model = new EditAdminFieldViewModel(prompt, 1);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer", false);
             const string action = "delete0";
 
             // When
