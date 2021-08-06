@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using FakeItEasy;
@@ -140,7 +140,15 @@
 
             // When
             var result =
-                customPromptHelper.GetEditCustomFieldViewModelsForCentre(1, Answer1, Answer2, Answer3, null, null, null);
+                customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                    1,
+                    Answer1,
+                    Answer2,
+                    Answer3,
+                    null,
+                    null,
+                    null
+                );
 
             // Then
             using (new AssertionScope())

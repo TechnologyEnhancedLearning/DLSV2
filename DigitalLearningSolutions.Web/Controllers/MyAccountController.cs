@@ -5,13 +5,13 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     [Authorize]
@@ -28,7 +28,8 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            CustomPromptHelper customPromptHelper)
+            CustomPromptHelper customPromptHelper
+        )
         {
             this.customPromptsService = customPromptsService;
             this.userService = userService;
@@ -44,8 +45,10 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts =
-                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(User.GetCentreId(),
-                    delegateUser);
+                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+                    User.GetCentreId(),
+                    delegateUser
+                );
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
 
@@ -101,13 +104,18 @@
 
             if (model.ProfileImageFile != null)
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.ProfileImageFile),
-                    "Preview your new profile picture before saving");
+                ModelState.AddModelError(
+                    nameof(EditDetailsViewModel.ProfileImageFile),
+                    "Preview your new profile picture before saving"
+                );
             }
 
             if (model.Password != null && !userService.IsPasswordValid(userAdminId, userDelegateId, model.Password))
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Password), CommonValidationErrorMessages.IncorrectPassword);
+                ModelState.AddModelError(
+                    nameof(EditDetailsViewModel.Password),
+                    CommonValidationErrorMessages.IncorrectPassword
+                );
             }
 
             if (!ModelState.IsValid)
@@ -117,8 +125,10 @@
 
             if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.Email),
-                        "A user with this email address is already registered at this centre");
+                ModelState.AddModelError(
+                    nameof(EditDetailsViewModel.Email),
+                    "A user with this email address is already registered at this centre"
+                );
                 return View(model);
             }
 
@@ -166,16 +176,28 @@
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
-                model.Answer1, model.Answer2, model.Answer3, model.Answer4,
-                model.Answer5, model.Answer6);
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                User.GetCentreId(),
+                model.Answer1,
+                model.Answer2,
+                model.Answer3,
+                model.Answer4,
+                model.Answer5,
+                model.Answer6
+            );
         }
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(User.GetCentreId(),
-                delegateUser?.Answer1, delegateUser?.Answer2, delegateUser?.Answer3, delegateUser?.Answer4,
-                delegateUser?.Answer5, delegateUser?.Answer6);
+            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                User.GetCentreId(),
+                delegateUser?.Answer1,
+                delegateUser?.Answer2,
+                delegateUser?.Answer3,
+                delegateUser?.Answer4,
+                delegateUser?.Answer5,
+                delegateUser?.Answer6
+            );
         }
 
         private void ValidateJobGroup(EditDetailsViewModel model)
@@ -188,20 +210,33 @@
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)
         {
-            customPromptHelper.ValidateCustomPrompts(User.GetCentreId(),
-                model.Answer1, model.Answer2, model.Answer3, model.Answer4,
-                model.Answer5, model.Answer6, ModelState);
+            customPromptHelper.ValidateCustomPrompts(
+                User.GetCentreId(),
+                model.Answer1,
+                model.Answer2,
+                model.Answer3,
+                model.Answer4,
+                model.Answer5,
+                model.Answer6,
+                ModelState
+            );
         }
 
-        private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(EditDetailsViewModel model, int? userAdminId, int? userDelegateId)
+        private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(
+            EditDetailsViewModel model,
+            int? userAdminId,
+            int? userDelegateId
+        )
         {
-            var accountDetailsData = new AccountDetailsData(userAdminId,
+            var accountDetailsData = new AccountDetailsData(
+                userAdminId,
                 userDelegateId,
                 model.Password!,
                 model.FirstName!,
                 model.LastName!,
                 model.Email!,
-                model.ProfileImage);
+                model.ProfileImage
+            );
 
             var centreAnswersData = userDelegateId == null
                 ? null
@@ -213,7 +248,8 @@
                     model.Answer3,
                     model.Answer4,
                     model.Answer5,
-                    model.Answer6);
+                    model.Answer6
+                );
             return (accountDetailsData, centreAnswersData);
         }
     }

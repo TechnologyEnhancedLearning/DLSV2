@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
@@ -20,8 +20,8 @@
     public class AdminFieldsControllerTests
     {
         private readonly ICustomPromptsService customPromptsService = A.Fake<ICustomPromptsService>();
-        private AdminFieldsController controller = null!;
         private readonly IUserDataService userDataService = null!;
+        private AdminFieldsController controller = null!;
 
         [SetUp]
         public void Setup()
