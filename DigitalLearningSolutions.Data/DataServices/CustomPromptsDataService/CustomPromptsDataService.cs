@@ -32,7 +32,7 @@
             string? options
         );
 
-        public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber);
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
     }
 
     public partial class CustomPromptsDataService : ICustomPromptsDataService

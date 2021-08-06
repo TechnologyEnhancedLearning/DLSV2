@@ -364,5 +364,22 @@
             // Then
             A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).MustHaveHappened();
         }
+
+        [Test]
+        public void RemoveCustomPromptFromCourse_calls_data_service_with_correct_values()
+        {
+            // Given
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)).DoesNothing();
+            A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).DoesNothing();
+
+            // When
+            customPromptsService.RemoveCustomPromptFromCourse(1, 1);
+
+            // Then
+            A.CallTo(
+                () => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
+            ).MustHaveHappened();
+            A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).MustHaveHappened();
+        }
     }
 }

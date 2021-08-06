@@ -30,7 +30,7 @@
 
         public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber)
         {
-            return customPromptsDataService.GetPromptNameForCustomisationAndPromptNumber(customisationId, promptNumber);
+            return customPromptsDataService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(

@@ -54,5 +54,15 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetPromptNameForCourseAndPromptNumber_returns_expected_prompt_name()
+        {
+            // When
+            var result = customPromptsDataService.GetPromptNameForCourseAndPromptNumber(100, 1);
+
+            // Then
+            result.Should().BeEquivalentTo("System Access Granted");
+        }
     }
 }
