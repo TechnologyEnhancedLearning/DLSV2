@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -13,7 +14,13 @@
         public void GroupDelegateViewModel_populates_expected_values_with_both_names()
         {
             // Given
-            var groupDelegate = GroupTestHelper.GetDefaultGroupDelegate(firstName: "Test", lastName: "Name");
+            var groupDelegate = Builder<GroupDelegate>.CreateNew()
+                .With(gd => gd.GroupDelegateId = 62)
+                .With(gd => gd.FirstName = "Test")
+                .With(gd => gd.LastName = "Name")
+                .With(gd => gd.EmailAddress = "gslectik.m@vao")
+                .With(gd => gd.CandidateNumber = "KT553")
+                .Build();
 
             // When
             var result = new GroupDelegateViewModel(groupDelegate);
@@ -32,7 +39,13 @@
         public void GroupDelegateViewModel_populates_expected_values_with_only_last_name()
         {
             // Given
-            var groupDelegate = GroupTestHelper.GetDefaultGroupDelegate(firstName: null, lastName: "Name");
+            var groupDelegate = Builder<GroupDelegate>.CreateNew()
+                .With(gd => gd.GroupDelegateId = 62)
+                .With(gd => gd.FirstName = null)
+                .With(gd => gd.LastName = "Name")
+                .With(gd => gd.EmailAddress = "gslectik.m@vao")
+                .With(gd => gd.CandidateNumber = "KT553")
+                .Build();
 
             // When
             var result = new GroupDelegateViewModel(groupDelegate);

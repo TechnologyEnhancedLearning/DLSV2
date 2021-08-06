@@ -4,14 +4,14 @@
 
     public class DelegateGroupsSideNavViewModel
     {
-        public DelegateGroupsSideNavViewModel(string groupName, DelegateGroupPage page)
+        public DelegateGroupsSideNavViewModel(string groupName, DelegateGroupPage currentPage)
         {
             GroupName = groupName;
-            Page = page;
+            CurrentPage = currentPage;
         }
 
         public string GroupName { get; set; }
 
-        public DelegateGroupPage Page { get; set; }
+        public DelegateGroupPage CurrentPage { get; set; }
     }
 }

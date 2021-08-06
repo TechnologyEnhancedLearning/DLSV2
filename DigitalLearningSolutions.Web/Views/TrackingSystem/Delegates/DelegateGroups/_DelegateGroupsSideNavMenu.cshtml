@@ -8,11 +8,11 @@
   <vc:side-menu-link asp-action="Delegates"
                      asp-controller="DelegateGroups"
                      link-text="Delegates"
-                     is-current-page="@(Model.Page == DelegateGroupPage.Delegates)" />
+                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Delegates)" />
 
   <vc:side-menu-link asp-action=""
                      asp-controller=""
                      link-text="Courses"
-                     is-current-page="@(Model.Page == DelegateGroupPage.Courses)" />
+                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Courses)" />
 
 </ul>

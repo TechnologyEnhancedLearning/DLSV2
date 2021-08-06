@@ -37,7 +37,7 @@
                 ShouldAddNewRegistrantsToGroup = true,
                 ChangesToRegistrationDetailsShouldChangeGroupMembership = true
             };
-            
+
             // When
             var result = groupsDataService.GetGroupsForCentre(101).ToList();
 
@@ -62,7 +62,8 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(24);
-                result.First(x => x.GroupDelegateId == 62).Should().BeEquivalentTo(expectedFirstGroupDelegate);
+                result.First(x => x.GroupDelegateId == expectedFirstGroupDelegate.GroupDelegateId).Should()
+                    .BeEquivalentTo(expectedFirstGroupDelegate);
             }
         }
 

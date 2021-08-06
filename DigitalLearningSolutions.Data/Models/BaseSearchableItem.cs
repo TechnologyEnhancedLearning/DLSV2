@@ -10,7 +10,7 @@
         /// the type for the query for the FuzzySharp search parameters.
         /// See GenericSearchHelper.cs in the DigitalLearningSolutions.Web project
         /// </summary>
-        public string? SearchableNameOverrideForFuzzySharp;
+        protected string? SearchableNameOverrideForFuzzySharp;
 
         public abstract string SearchableName { get; set; }
     }
