@@ -76,7 +76,7 @@
                         cp.CustomPrompt
                     FROM Customisations c
                     LEFT JOIN CustomPrompts cp
-                        ON c.CustomField{promptNumber}PromptID = cp.CustomPromptID
+                        ON c.CourseField{promptNumber}PromptID = cp.CustomPromptID
                     WHERE CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
