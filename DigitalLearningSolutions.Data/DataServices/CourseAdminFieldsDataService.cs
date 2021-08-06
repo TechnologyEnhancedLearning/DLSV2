@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+﻿namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
 {
     using System.Data;
     using System.Linq;
@@ -102,10 +102,10 @@
         {
             return connection.Query<string>(
                 @$"SELECT
-                        cp.CoursePrompt
+                        cp.CustomPrompt
                     FROM Customisations c
-                    LEFT JOIN CoursePrompts cp
-                        ON c.CourseField{promptNumber}PromptID = cp.CoursePromptID
+                    LEFT JOIN CustomPrompts cp
+                        ON c.CourseField{promptNumber}PromptID = cp.CustomPromptID
                     WHERE CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
