@@ -76,9 +76,7 @@
 
             var data = TempData.Get<EditAdminFieldData>();
 
-            var model = data != null
-                ? data.EditModel!
-                : new EditAdminFieldViewModel(courseCustomPrompt, customisationId);
+            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseCustomPrompt, customisationId);
 
             return View(model);
         }
