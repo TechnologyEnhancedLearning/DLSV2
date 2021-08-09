@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -7,47 +7,10 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
-
-    public class BulkUploadResult
-    {
-        public enum ErrorReasons
-        {
-            InvalidJobGroupId,
-            InvalidLastName,
-            InvalidFirstName,
-            InvalidActive,
-            NoRecordForDelegateId,
-            UnexpectedErrorForUpdate,
-            UnexpectedErrorForCreate,
-            ParameterError,
-            AliasIdInUse,
-            EmailAddressInUse
-        }
-
-        public BulkUploadResult(
-            int processed,
-            int registered,
-            int updated,
-            int skipped,
-            IEnumerable<(int RowNumber, ErrorReasons Reason)> errors
-        )
-        {
-            Processed = processed;
-            Registered = registered;
-            Updated = updated;
-            Skipped = skipped;
-            Errors = errors;
-        }
-
-        public IEnumerable<(int RowNumber, ErrorReasons Reason)> Errors { get; set; }
-        public int Processed { get; set; }
-        public int Registered { get; set; }
-        public int Updated { get; set; }
-        public int Skipped { get; set; }
-    }
 
     public interface IDelegateUploadFileService
     {
@@ -265,73 +228,6 @@
             return !string.IsNullOrWhiteSpace(aliasId)
                 ? userDataService.GetApprovedStatusFromAliasId(aliasId, centreId)
                 : null;
-        }
-
-        public class DelegateTableRow
-        {
-            public DelegateTableRow(IXLTable table, IXLRangeRow row)
-            {
-                string? FindFieldValue(string name)
-                {
-                    var col = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
-                    return row.Cell(col).GetValue<string?>();
-                }
-
-                RowNumber = row.RowNumber();
-                DelegateId = FindFieldValue("DelegateID");
-                LastName = FindFieldValue("LastName");
-                FirstName = FindFieldValue("FirstName");
-                JobGroupId = FindFieldValue("JobGroupID");
-                Active = FindFieldValue("Active");
-                Answer1 = FindFieldValue("Answer1");
-                Answer2 = FindFieldValue("Answer2");
-                Answer3 = FindFieldValue("Answer3");
-                Answer4 = FindFieldValue("Answer4");
-                Answer5 = FindFieldValue("Answer5");
-                Answer6 = FindFieldValue("Answer6");
-                AliasId = FindFieldValue("AliasID");
-                Email = FindFieldValue("EmailAddress");
-            }
-
-            public int RowNumber { get; set; }
-            public string? DelegateId { get; set; }
-            public string? FirstName { get; set; }
-            public string? LastName { get; set; }
-            public string? JobGroupId { get; set; }
-            public string? Active { get; set; }
-            public string? Answer1 { get; set; }
-            public string? Answer2 { get; set; }
-            public string? Answer3 { get; set; }
-            public string? Answer4 { get; set; }
-            public string? Answer5 { get; set; }
-            public string? Answer6 { get; set; }
-            public string? AliasId { get; set; }
-            public string? Email { get; set; }
-
-            public BulkUploadResult.ErrorReasons? ValidateFields(IEnumerable<int> allowedJobGroupIds)
-            {
-                if (!int.TryParse(JobGroupId, out var jobGroupId) || !allowedJobGroupIds.Contains(jobGroupId))
-                {
-                    return BulkUploadResult.ErrorReasons.InvalidJobGroupId;
-                }
-
-                if (string.IsNullOrEmpty(LastName))
-                {
-                    return BulkUploadResult.ErrorReasons.InvalidLastName;
-                }
-
-                if (string.IsNullOrEmpty(FirstName))
-                {
-                    return BulkUploadResult.ErrorReasons.InvalidFirstName;
-                }
-
-                if (!bool.TryParse(Active, out _))
-                {
-                    return BulkUploadResult.ErrorReasons.InvalidActive;
-                }
-
-                return null;
-            }
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
