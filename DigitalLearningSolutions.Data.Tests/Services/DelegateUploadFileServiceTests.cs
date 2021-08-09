@@ -147,14 +147,20 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_throws_exception_if_headers_dont_match()
+        public void OpenDelegatesTable_throws_exception_if_headers_dont_match()
         {
             // Given
-            var table = CreateTableFromData(new[] { SampleDelegateDataRow() });
+            var workbook = new XLWorkbook();
+            var worksheet = workbook.AddWorksheet();
+            worksheet.Name = "DelegatesBulkUpload";
+            var table = worksheet.Cell(1, 1).InsertTable(new[] { SampleDelegateDataRow() });
             table.Cell(1, 4).Value = "blah";
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var file = new FormFile(stream, 0, stream.Length, string.Empty, string.Empty);
 
             // Then
-            Assert.Throws<InvalidHeadersException>(() => delegateUploadFileService.ProcessDelegatesFile(table, 101));
+            Assert.Throws<InvalidHeadersException>(() => delegateUploadFileService.OpenDelegatesTable(file));
         }
 
         [Test]
@@ -165,7 +171,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldNotCreateOrUpdateDelegate();
@@ -182,7 +188,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldNotCreateOrUpdateDelegate();
@@ -199,7 +205,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldNotCreateOrUpdateDelegate();
@@ -216,7 +222,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldNotCreateOrUpdateDelegate();
@@ -234,7 +240,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId))
@@ -252,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(true);
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
@@ -272,7 +278,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(null);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Errors.Should().HaveCount(1);
@@ -290,7 +296,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
@@ -310,7 +316,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(true);
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
@@ -330,7 +336,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(null);
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
@@ -347,7 +353,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
@@ -378,7 +384,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(returnValue);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldJustHaveOneError(result);
@@ -402,7 +408,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(returnValue);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             ShouldJustHaveOneError(result);
@@ -421,7 +427,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(approved);
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(
@@ -458,7 +464,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(
@@ -491,7 +497,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId, welcomeEmailDate);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId, welcomeEmailDate);
 
             // Then
             A.CallTo(
@@ -510,7 +516,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var table = CreateTableFromData(new[] { row });
 
             // When
-            delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             A.CallTo(
@@ -533,7 +539,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(0);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Processed.Should().Be(5);
@@ -552,7 +558,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(1);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Processed.Should().Be(5);
@@ -571,7 +577,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(2);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Processed.Should().Be(5);
@@ -588,7 +594,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns("ANY");
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Processed.Should().Be(5);
@@ -628,7 +634,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(1);
 
             // When
-            var result = delegateUploadFileService.ProcessDelegatesFile(table, centreId);
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
             result.Processed.Should().Be(10);

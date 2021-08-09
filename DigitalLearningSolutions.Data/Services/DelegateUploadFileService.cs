@@ -14,7 +14,8 @@
 
     public interface IDelegateUploadFileService
     {
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime? welcomeEmailDate = null);
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate = null);
+        public BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate = null);
         public IXLTable OpenDelegatesTable(IFormFile file);
     }
 
@@ -35,13 +36,14 @@
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
-        public BulkUploadResult ProcessDelegatesFile(IXLTable table, int centreId, DateTime? welcomeEmailDate)
+        public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate)
         {
-            if (!ValidateHeaders(table))
-            {
-                throw new InvalidHeadersException();
-            }
+            var table = OpenDelegatesTable(file);
+            return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
+        }
 
+        public BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate)
+        {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var (registered, updated, skipped) = (0, 0, 0);
             var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
@@ -136,10 +138,16 @@
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
             var table = worksheet.Tables.Table(0);
+
+            if (!ValidateHeaders(table))
+            {
+                throw new InvalidHeadersException();
+            }
+
             return table;
         }
 
-        private bool ValidateHeaders(IXLTable table)
+        private static bool ValidateHeaders(IXLTable table)
         {
             var expectedHeaders = new List<string>
             {

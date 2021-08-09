@@ -67,11 +67,9 @@
 
             try
             {
-                var centreId = User.GetCentreId();
-                var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile);
                 var results = delegateUploadFileService.ProcessDelegatesFile(
-                    table,
-                    centreId,
+                    model.DelegatesFile,
+                    User.GetCentreId(),
                     model.GetWelcomeEmailDate()
                 );
                 TempData.Set(results);
