@@ -1,6 +1,7 @@
-namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -68,11 +69,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             {
                 var centreId = User.GetCentreId();
                 var table = delegateUploadFileService.OpenDelegatesTable(model.DelegatesFile);
-                var results = delegateUploadFileService.ProcessDelegatesFile(table, centreId, model.GetWelcomeEmailDate());
+                var results = delegateUploadFileService.ProcessDelegatesFile(
+                    table,
+                    centreId,
+                    model.GetWelcomeEmailDate()
+                );
                 TempData.Set(results);
                 return RedirectToAction("UploadCompleted");
             }
-            catch
+            catch (InvalidHeadersException)
             {
                 return RedirectToAction("UploadFailed");
             }

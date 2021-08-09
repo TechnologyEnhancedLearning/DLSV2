@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -20,9 +20,7 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class DelegateUploadFileService : IDelegateUploadFileService
     {
-        private const string DelegatesSheetName = "DelegatesBulkUpload";
         private readonly IJobGroupsDataService jobGroupsDataService;
-
         private readonly IRegistrationDataService registrationDataService;
         private readonly IUserDataService userDataService;
 
@@ -136,7 +134,7 @@ namespace DigitalLearningSolutions.Data.Services
         public IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
-            var worksheet = workbook.Worksheet(DelegatesSheetName);
+            var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
             var table = worksheet.Tables.Table(0);
             return table;
         }

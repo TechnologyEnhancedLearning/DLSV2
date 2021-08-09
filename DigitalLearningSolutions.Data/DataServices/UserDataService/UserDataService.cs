@@ -32,11 +32,10 @@
         public int GetNumberOfApprovedDelegatesAtCentre(int centreId);
         public bool? GetApprovedStatusFromCandidateNumber(string candidateNumber, int centreId);
         public bool? GetApprovedStatusFromAliasId(string aliasId, int centreId);
+        public int UpdateDelegateRecord(DelegateRecord record);
 
         public DelegateUserCard? GetDelegateUserCardById(int id);
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
-
-        public int UpdateDelegateRecord(DelegateRecord record);
 
         public void UpdateDelegateUserCentrePrompts(
             int id,
