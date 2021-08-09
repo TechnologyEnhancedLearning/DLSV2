@@ -1,6 +1,6 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
-    using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using Xunit;
 
     public class BasicAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>

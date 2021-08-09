@@ -1,10 +1,11 @@
-namespace DigitalLearningSolutions.Web.AutomatedUiTests
+namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
 {
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
 
-    public class AuthenticatedAccessibilityTestsFixture<TStartup> : AccessibilityTestsFixture<TStartup> where TStartup : class
+    public class AuthenticatedAccessibilityTestsFixture<TStartup> : AccessibilityTestsFixture<TStartup>
+        where TStartup : class
     {
-        public AuthenticatedAccessibilityTestsFixture() : base()
+        public AuthenticatedAccessibilityTestsFixture()
         {
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
         }

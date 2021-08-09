@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using FluentAssertions;
     using OpenQA.Selenium;
     using Selenium.Axe;
@@ -16,7 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             BaseUrl = fixture.BaseUrl;
             Driver = fixture.Driver;
         }
-        
+
         public void AnalyzePageHeadingAndAccessibility(string pageTitle)
         {
             ValidatePageHeading(pageTitle);

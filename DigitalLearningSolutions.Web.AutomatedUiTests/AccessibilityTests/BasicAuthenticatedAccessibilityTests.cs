@@ -1,12 +1,13 @@
 namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
-    using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using Xunit;
 
-    public class BasicAuthenticatedAccessibilityTests : AccessibilityTestsBase, IClassFixture<AuthenticatedAccessibilityTestsFixture<Startup>>
+    public class BasicAuthenticatedAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AuthenticatedAccessibilityTestsFixture<Startup>>
     {
         public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
-        
+
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]

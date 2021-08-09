@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
 
-    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
+    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public RegistrationJourneyAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 

@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
 
-    public class EditCourseAdminFieldsAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
+    public class EditCourseAdminFieldsAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public EditCourseAdminFieldsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
