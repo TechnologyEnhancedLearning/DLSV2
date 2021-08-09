@@ -30,7 +30,7 @@
 
             DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
 
-            var admins = groups.Select(g => (AddedByAdminID: g.AddedByAdminId, g.AddedByName)).Distinct();
+            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
 
             Filters = new[]
             {
