@@ -59,7 +59,7 @@
                 bool? approved;
                 try
                 {
-                    approved = TryGetExistingApprovedStatus(delegateRow.DelegateId, delegateRow.AliasId, centreId);
+                    approved = TryGetExistingApprovedStatus(delegateRow.CandidateNumber, delegateRow.AliasId, centreId);
                 }
                 catch (UserAccountNotFoundException)
                 {
@@ -161,11 +161,11 @@
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
-        private bool? TryGetExistingApprovedStatus(string? delegateId, string? aliasId, int centreId)
+        private bool? TryGetExistingApprovedStatus(string? candidateNumber, string? aliasId, int centreId)
         {
-            if (!string.IsNullOrWhiteSpace(delegateId))
+            if (!string.IsNullOrWhiteSpace(candidateNumber))
             {
-                var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId);
+                var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(candidateNumber, centreId);
                 if (!approvedStatus.HasValue)
                 {
                     throw new UserAccountNotFoundException(string.Empty);

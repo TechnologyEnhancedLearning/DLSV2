@@ -10,12 +10,12 @@
         {
             string? FindFieldValue(string name)
             {
-                var col = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
-                return row.Cell(col).GetValue<string?>();
+                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
+                return row.Cell(colNumber).GetValue<string?>();
             }
 
             RowNumber = row.RowNumber();
-            DelegateId = FindFieldValue("DelegateID");
+            CandidateNumber = FindFieldValue("DelegateID");
             LastName = FindFieldValue("LastName");
             FirstName = FindFieldValue("FirstName");
             JobGroupId = FindFieldValue("JobGroupID");
@@ -31,7 +31,7 @@
         }
 
         public int RowNumber { get; set; }
-        public string? DelegateId { get; set; }
+        public string? CandidateNumber { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? JobGroupId { get; set; }

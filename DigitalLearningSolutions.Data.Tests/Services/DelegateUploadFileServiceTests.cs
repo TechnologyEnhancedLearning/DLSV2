@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             string firstName = "A",
             string lastName = "Test",
             string emailAddress = "",
-            string delegateId = "TT95",
+            string candidateNumber = "TT95",
             string answer1 = "xxxx",
             string answer2 = "xxxxxxxxx",
             string answer3 = "",
@@ -66,7 +66,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         )
         {
             return new DelegateDataRow(
-                delegateId,
+                candidateNumber,
                 firstName,
                 lastName,
                 jobGroupId,
@@ -230,7 +230,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = SampleDelegateDataRow(delegateId: delegateId);
+            var row = SampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -246,7 +246,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = SampleDelegateDataRow(delegateId: delegateId);
+            var row = SampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId))
                 .Returns(true);
@@ -266,7 +266,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string fakeDelegateId = "FAKE";
-            var row = SampleDelegateDataRow(delegateId: fakeDelegateId);
+            var row = SampleDelegateDataRow(candidateNumber: fakeDelegateId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(fakeDelegateId, centreId))
                 .Returns(null);
@@ -286,7 +286,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: aliasId);
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -304,7 +304,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: aliasId);
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromAliasId(aliasId, centreId))
                 .Returns(true);
@@ -324,7 +324,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string? aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: aliasId);
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromAliasId(aliasId, centreId))
                 .Returns(null);
@@ -343,7 +343,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_calls_create_if_delegateId_and_aliasId_not_specified()
         {
             // Given
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -396,7 +396,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         )
         {
             // Given
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
                 .Returns(returnValue);
@@ -428,7 +428,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     () => userDataService.UpdateDelegateRecord(
                         A<DelegateRecord>.That.Matches(
                             record =>
-                                record.DelegateId == row.DelegateID &&
+                                record.CandidateNumber == row.DelegateID &&
                                 record.CentreId == centreId &&
                                 record.FirstName == row.FirstName &&
                                 record.LastName == row.LastName &&
@@ -454,7 +454,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string? aliasId = "NEW ALIAS";
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: aliasId);
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -487,7 +487,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var welcomeEmailDate = new DateTime(3000, 01, 01);
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -506,7 +506,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_calls_create_without_notifyDate_if_welcomeEmailDate_not_set()
         {
             // Given
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -582,7 +582,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_counts_registered_from_create_correctly()
         {
             // Given
-            var row = SampleDelegateDataRow(delegateId: "", aliasId: "");
+            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
                 .Returns("ANY");
@@ -600,9 +600,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var errorRow = SampleDelegateDataRow(jobGroupId: "");
-            var registerRow = SampleDelegateDataRow(delegateId: "", aliasId: "");
-            var updateRow = SampleDelegateDataRow(delegateId: "UPDATE ME");
-            var skipRow = SampleDelegateDataRow(delegateId: "SKIP ME");
+            var registerRow = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var updateRow = SampleDelegateDataRow(candidateNumber: "UPDATE ME");
+            var skipRow = SampleDelegateDataRow(candidateNumber: "SKIP ME");
             var data = new List<DelegateDataRow>
             {
                 updateRow, skipRow, registerRow, errorRow, registerRow, skipRow, updateRow, skipRow, updateRow,
@@ -616,13 +616,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(true);
             A.CallTo(
                     () => userDataService.UpdateDelegateRecord(
-                        A<DelegateRecord>.That.Matches(record => record.DelegateId == "UPDATE ME")
+                        A<DelegateRecord>.That.Matches(record => record.CandidateNumber == "UPDATE ME")
                     )
                 )
                 .Returns(0);
             A.CallTo(
                     () => userDataService.UpdateDelegateRecord(
-                        A<DelegateRecord>.That.Matches(record => record.DelegateId == "SKIP ME")
+                        A<DelegateRecord>.That.Matches(record => record.CandidateNumber == "SKIP ME")
                     )
                 )
                 .Returns(1);
@@ -641,7 +641,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private class DelegateDataRow
         {
             public DelegateDataRow(
-                string delegateId,
+                string candidateNumber,
                 string firstName,
                 string lastName,
                 string jobGroupId,
@@ -656,7 +656,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 string emailAddress
             )
             {
-                DelegateID = delegateId;
+                DelegateID = candidateNumber;
                 FirstName = firstName;
                 LastName = lastName;
                 JobGroupID = jobGroupId;

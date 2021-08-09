@@ -7,7 +7,7 @@
         public DelegateRecord(DelegateTableRow row, int centreId, bool approved)
         {
             CentreId = centreId;
-            DelegateId = row.DelegateId;
+            CandidateNumber = row.CandidateNumber;
             FirstName = row.FirstName;
             LastName = row.LastName!;
             JobGroupId = int.Parse(row.JobGroupId!);
@@ -24,7 +24,7 @@
         }
 
         public int CentreId { get; set; }
-        public string DelegateId { get; set; }
+        public string? CandidateNumber { get; set; }
         public string? FirstName { get; set; }
         public string LastName { get; set; }
         public int JobGroupId { get; set; }

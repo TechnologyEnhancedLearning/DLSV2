@@ -217,7 +217,24 @@
         {
             return connection.QuerySingle<int>(
                 "uspUpdateCandidate_V7",
-                record,
+                new
+                {
+                    record.CentreId,
+                    DelegateID = record.CandidateNumber,
+                    record.FirstName,
+                    record.LastName,
+                    record.JobGroupId,
+                    record.Active,
+                    record.Answer1,
+                    record.Answer2,
+                    record.Answer3,
+                    record.Answer4,
+                    record.Answer5,
+                    record.Answer6,
+                    record.AliasId,
+                    record.Approved,
+                    record.Email
+                },
                 commandType: CommandType.StoredProcedure
             );
         }
