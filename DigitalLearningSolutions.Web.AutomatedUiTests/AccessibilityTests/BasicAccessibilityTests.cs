@@ -27,6 +27,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
+        [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
