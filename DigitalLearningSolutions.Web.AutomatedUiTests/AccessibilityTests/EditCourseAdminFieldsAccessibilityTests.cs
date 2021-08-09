@@ -5,7 +5,7 @@
     using Selenium.Axe;
     using Xunit;
 
-    public class EditCourseAdminFieldsAccessibilityTests : AccessibilityTestsBase
+    public class EditCourseAdminFieldsAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public EditCourseAdminFieldsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 

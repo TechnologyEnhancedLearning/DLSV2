@@ -3,7 +3,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using Xunit;
 
-    public class BasicAccessibilityTests : AccessibilityTestsBase
+    public class BasicAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public BasicAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 

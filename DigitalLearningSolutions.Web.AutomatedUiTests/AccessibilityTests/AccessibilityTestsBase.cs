@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     using Xunit;
 
     [Collection("Selenium test collection")]
-    public class AccessibilityTestsBase : IClassFixture<AccessibilityTestsFixture<Startup>>
+    public class AccessibilityTestsBase
     {
         internal readonly string BaseUrl;
         internal readonly IWebDriver Driver;

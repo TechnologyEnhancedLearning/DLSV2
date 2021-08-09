@@ -5,7 +5,7 @@
     using Selenium.Axe;
     using Xunit;
 
-    public class EditCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase
+    public class EditCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public EditCentreCustomPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 

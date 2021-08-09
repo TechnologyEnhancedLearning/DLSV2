@@ -5,7 +5,7 @@
     using Selenium.Axe;
     using Xunit;
 
-    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase
+    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase, IClassFixture<AccessibilityTestsFixture<Startup>>
     {
         public RegistrationJourneyAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
