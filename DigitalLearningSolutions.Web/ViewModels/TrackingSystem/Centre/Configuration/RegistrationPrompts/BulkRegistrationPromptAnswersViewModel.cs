@@ -4,7 +4,11 @@
     {
         public BulkRegistrationPromptAnswersViewModel() { }
 
-        public BulkRegistrationPromptAnswersViewModel(string? optionsString, bool isAddPromptJourney, int? promptNumber)
+        public BulkRegistrationPromptAnswersViewModel(
+            string? optionsString,
+            bool isAddPromptJourney,
+            int? promptNumber
+        )
         {
             OptionsString = optionsString;
             IsAddPromptJourney = isAddPromptJourney;

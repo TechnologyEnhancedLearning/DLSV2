@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -313,11 +313,11 @@
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Access Permissions");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedCoursePrompts = CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts);
-            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101))
+            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101, 0))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult());
 
             // When
-            var result = customPromptsService.GetCustomPromptsForCourse(27920, 101);
+            var result = customPromptsService.GetCustomPromptsForCourse(27920, 101, 0);
 
             // Then
             result.Should().BeEquivalentTo(expectedCoursePrompts);
@@ -341,7 +341,7 @@
                 answer: answer2
             );
             var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
-            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101))
+            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101, 0))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
@@ -350,6 +350,19 @@
 
             // Then
             result.Should().BeEquivalentTo(expected);
+        }
+
+        [Test]
+        public void UpdateCustomPromptForCourse_call_data_service()
+        {
+            // Given
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).DoesNothing();
+
+            // When
+            customPromptsService.UpdateCustomPromptForCourse(1, 1, true, null);
+
+            // Then
+            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).MustHaveHappened();
         }
     }
 }

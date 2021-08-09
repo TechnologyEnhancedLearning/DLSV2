@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
+    using System;
     using System.Collections.Generic;
 
     public class CustomPrompt
@@ -12,21 +13,25 @@
             Mandatory = mandatory;
         }
 
+        public int CustomPromptNumber { get; set; }
+        public string CustomPromptText { get; set; }
+        public List<string> Options { get; set; }
+        public bool Mandatory { get; set; }
+
         private List<string> SplitOptionsString(string? options)
         {
             var optionsList = new List<string>();
             if (options != null)
             {
-                optionsList.AddRange(options.Split(new [] { '\r', '\n' },
-                    System.StringSplitOptions.RemoveEmptyEntries));
+                optionsList.AddRange(
+                    options.Split(
+                        new[] { '\r', '\n' },
+                        StringSplitOptions.RemoveEmptyEntries
+                    )
+                );
             }
 
             return optionsList;
         }
-
-        public int CustomPromptNumber { get; set; } 
-        public string CustomPromptText { get; set; }
-        public List<string> Options { get; set; }
-        public bool Mandatory { get; set; }
     }
 }
