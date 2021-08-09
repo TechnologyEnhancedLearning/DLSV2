@@ -34,6 +34,8 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
 
+      <h2 class="nhsuk-heading-l">User roles</h2>
+
       <vc:checkboxes label="Please select all the roles this user has:"
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"
@@ -44,6 +46,8 @@
                  populate-with-current-values="true"
                  radios="@Model.Radios"
                  hint-text="" />
+
+      <h2 class="nhsuk-heading-l">Learning category</h2>
 
       <vc:select-list asp-for="LearningCategory"
                       label="Learning category"
