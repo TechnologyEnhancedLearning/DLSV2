@@ -69,7 +69,7 @@
 
                 if (approved.HasValue)
                 {
-                    var record = MapRowToDelegateRecord(delegateRow, centreId, approved.Value);
+                    var record = new DelegateRecord(delegateRow, centreId, approved.Value);
                     var status = userDataService.UpdateDelegateRecord(record);
                     switch (status)
                     {
@@ -137,31 +137,6 @@
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
             var table = worksheet.Tables.Table(0);
             return table;
-        }
-
-        private static DelegateRecord MapRowToDelegateRecord(
-            DelegateTableRow row,
-            int centreId,
-            bool approved
-        )
-        {
-            return new DelegateRecord(
-                centreId,
-                row.DelegateId,
-                row.FirstName,
-                row.LastName!,
-                int.Parse(row.JobGroupId!),
-                bool.Parse(row.Active!),
-                row.Answer1,
-                row.Answer2,
-                row.Answer3,
-                row.Answer4,
-                row.Answer5,
-                row.Answer6,
-                row.AliasId,
-                approved,
-                row.Email
-            );
         }
 
         private static DelegateRegistrationModel MapRowToDelegateRegistrationModel(

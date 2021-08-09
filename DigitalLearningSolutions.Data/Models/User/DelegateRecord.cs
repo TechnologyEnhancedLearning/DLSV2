@@ -1,40 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
+
     public class DelegateRecord
     {
-        public DelegateRecord(
-            int centreId,
-            string? delegateId,
-            string? firstName,
-            string lastName,
-            int jobGroupId,
-            bool active,
-            string? answer1,
-            string? answer2,
-            string? answer3,
-            string? answer4,
-            string? answer5,
-            string? answer6,
-            string? aliasId,
-            bool approved,
-            string? email
-        )
+        public DelegateRecord(DelegateTableRow row, int centreId, bool approved)
         {
             CentreId = centreId;
-            DelegateId = delegateId;
-            FirstName = firstName;
-            LastName = lastName;
-            JobGroupId = jobGroupId;
-            Active = active;
-            Answer1 = answer1;
-            Answer2 = answer2;
-            Answer3 = answer3;
-            Answer4 = answer4;
-            Answer5 = answer5;
-            Answer6 = answer6;
-            AliasId = aliasId;
+            DelegateId = row.DelegateId;
+            FirstName = row.FirstName;
+            LastName = row.LastName!;
+            JobGroupId = int.Parse(row.JobGroupId!);
+            Active = bool.Parse(row.Active!);
+            Answer1 = row.Answer1;
+            Answer2 = row.Answer2;
+            Answer3 = row.Answer3;
+            Answer4 = row.Answer4;
+            Answer5 = row.Answer5;
+            Answer6 = row.Answer6;
+            AliasId = row.AliasId;
             Approved = approved;
-            Email = email;
+            Email = row.Email;
         }
 
         public int CentreId { get; set; }
