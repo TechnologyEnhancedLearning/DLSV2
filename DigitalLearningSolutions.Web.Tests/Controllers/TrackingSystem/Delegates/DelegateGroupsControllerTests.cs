@@ -2,7 +2,10 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -10,22 +13,61 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class DelegateGroupsControllerTests
     {
+        private static readonly CustomPrompt ExpectedPrompt1 =
+            CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: null, mandatory: true);
+
+        private static readonly List<CustomPrompt> CustomPrompts = new List<CustomPrompt> { ExpectedPrompt1 };
+
+        private readonly CentreCustomPrompts prompts =
+            CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
+
+        private IRequestCookieCollection cookieCollection = null!;
+        private ICustomPromptsService customPromptsService = null!;
+
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
+        private HttpContext httpContext = null!;
+        private HttpRequest httpRequest = null!;
+        private HttpResponse httpResponse = null!;
 
         [SetUp]
         public void Setup()
         {
+            customPromptsService = A.Fake<ICustomPromptsService>();
             groupsDataService = A.Fake<IGroupsDataService>();
 
-            delegateGroupsController = new DelegateGroupsController(groupsDataService)
-                .WithDefaultContext()
-                .WithMockUser(true);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
+            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
+                .Returns(prompts);
+
+            httpContext = A.Fake<HttpContext>();
+            httpRequest = A.Fake<HttpRequest>();
+            httpResponse = A.Fake<HttpResponse>();
+            cookieCollection = A.Fake<IRequestCookieCollection>();
+
+            const string cookieName = "DelegateGroupsFilter";
+            const string cookieValue = "LinkedToField|LinkedToField|0";
+            var cookieList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(cookieName, cookieValue)
+            };
+            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
+            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
+            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
+            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
+            A.CallTo(() => httpContext.Request).Returns(httpRequest);
+            A.CallTo(() => httpContext.Response).Returns(httpResponse);
+
+            delegateGroupsController = new DelegateGroupsController(groupsDataService, customPromptsService)
+                .WithMockHttpContext(httpContext)
+                .WithMockUser(true)
+                .WithMockTempData(); ;
         }
 
         [Test]
@@ -86,6 +128,66 @@
             result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.GroupName.Should().Be("Group");
             result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
                 .Be(DelegateGroupPage.Courses);
+        }
+
+        [Test]
+        public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        {
+            // When
+            var result = delegateGroupsController.Index();
+
+            // Then
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+                .Be("LinkedToField|LinkedToField|0");
+        }
+
+        [Test]
+        public void Index_with_query_parameters_uses_query_parameter_value_for_filterBy()
+        {
+            // Given
+            const string filterBy = "LinkedToField|LinkedToField|4";
+            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = delegateGroupsController.Index(filterBy: filterBy);
+
+            // Then
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+                .Be(filterBy);
+        }
+
+        [Test]
+        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        {
+            // Given
+            const string? filterBy = null;
+            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = delegateGroupsController.Index(filterBy: filterBy);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Delete("DelegateGroupsFilter")).MustHaveHappened();
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+                .Be(filterBy);
+        }
+
+        [Test]
+        public void Index_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = null;
+            const string? newFilterValue = "LinkedToField|LinkedToField|4";
+            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = delegateGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
         }
     }
 }
