@@ -105,7 +105,7 @@
                 }
                 else
                 {
-                    var model = MapRowToDelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
+                    var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
                     var status = registrationDataService.RegisterDelegateByCentre(model);
                     switch (status)
                     {
@@ -137,30 +137,6 @@
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
             var table = worksheet.Tables.Table(0);
             return table;
-        }
-
-        private static DelegateRegistrationModel MapRowToDelegateRegistrationModel(
-            DelegateTableRow row,
-            int centreId,
-            DateTime? welcomeEmailDate
-        )
-        {
-            return new DelegateRegistrationModel(
-                row.FirstName!,
-                row.LastName!,
-                row.Email,
-                centreId,
-                int.Parse(row.JobGroupId!),
-                null,
-                row.Answer1,
-                row.Answer2,
-                row.Answer3,
-                row.Answer4,
-                row.Answer5,
-                row.Answer6,
-                row.AliasId,
-                welcomeEmailDate
-            );
         }
 
         private bool ValidateHeaders(IXLTable table)
