@@ -13,12 +13,17 @@
             }
 
             var remainder = index % 26;
-            var place = Convert.ToInt32(Math.Floor(index / 26.0));
+            var place = index / 26;
 
             var s = new string('Z', place);
-            s += (char)(remainder + 65);
+            s += GetNthLetterOfAlphabet(remainder);
 
             return s;
+        }
+
+        private static char GetNthLetterOfAlphabet(int n)
+        {
+            return (char)(n + 65);
         }
     }
 

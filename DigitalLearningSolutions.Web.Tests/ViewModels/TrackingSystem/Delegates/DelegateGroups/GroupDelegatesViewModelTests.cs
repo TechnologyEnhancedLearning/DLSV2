@@ -30,7 +30,7 @@
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_default_to_returning_the_first_ten_delegates()
+        public void GroupDelegatesViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
         {
             var model = new GroupDelegatesViewModel(
                 1,
@@ -58,13 +58,15 @@
                 groupDelegates,
                 2
             );
+            var expectedFirstGroupDelegate =
+                groupDelegates.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupDelegates.Count().Should().Be(5);
-                model.GroupDelegates.First().Name.Should().BeEquivalentTo("K Surname");
+                model.GroupDelegates.First().Name.Should().BeEquivalentTo($"{expectedFirstGroupDelegate.FirstName} {expectedFirstGroupDelegate.LastName}");
             }
         }
     }
