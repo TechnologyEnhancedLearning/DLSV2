@@ -5,7 +5,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 
     public class BasicAccessibilityTests : AccessibilityTestsBase
     {
-        public BasicAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public BasicAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Theory]
         [InlineData("/Home/Welcome", "Welcome - Digital Learning Solutions")]
@@ -66,6 +66,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 
             // then
             AnalyzePageHeadingAndAccessibility(pageTitle);
+            Driver.LogoutUser(BaseUrl);
         }
     }
 }

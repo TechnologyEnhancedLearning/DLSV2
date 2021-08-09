@@ -7,7 +7,7 @@
 
     public class AddCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase
     {
-        public AddCentreCustomPromptsAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public AddCentreCustomPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void AddRegistrationPrompt_journey_has_no_accessibility_errors()

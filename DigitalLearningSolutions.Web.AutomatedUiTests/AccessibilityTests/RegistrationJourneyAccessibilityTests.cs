@@ -7,7 +7,7 @@
 
     public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase
     {
-        public RegistrationJourneyAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public RegistrationJourneyAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void Registration_journey_has_no_accessibility_errors()
@@ -74,6 +74,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogoutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();
@@ -113,6 +114,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogoutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();

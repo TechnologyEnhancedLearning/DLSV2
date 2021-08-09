@@ -7,7 +7,7 @@
 
     public class EditCourseAdminFieldsAccessibilityTests : AccessibilityTestsBase
     {
-        public EditCourseAdminFieldsAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public EditCourseAdminFieldsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void EditAdminField_journey_has_no_accessibility_errors()

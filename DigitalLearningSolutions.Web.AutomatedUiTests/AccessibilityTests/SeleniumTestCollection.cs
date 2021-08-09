@@ -3,7 +3,7 @@
     using Xunit;
 
     [CollectionDefinition("Selenium test collection")]
-    public class SeleniumTestCollection : ICollectionFixture<SeleniumServerFactory<Startup>>
+    public class SeleniumTestCollection
     {
     }
 }

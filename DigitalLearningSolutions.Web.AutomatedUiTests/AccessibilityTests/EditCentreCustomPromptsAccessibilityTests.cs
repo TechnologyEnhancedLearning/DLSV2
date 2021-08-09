@@ -7,7 +7,7 @@
 
     public class EditCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase
     {
-        public EditCentreCustomPromptsAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public EditCentreCustomPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void EditRegistrationPrompt_journey_has_no_accessibility_errors()
