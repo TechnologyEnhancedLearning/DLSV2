@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -22,20 +22,37 @@
             this.customPromptHelper = customPromptHelper;
         }
 
-        public IActionResult Index()
+        [Route("{page=1:int}")]
+        public IActionResult Index(
+            int page = 1,
+            string? searchString = null,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending
+        )
+        {
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+
+            var centreId = User.GetCentreId();
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var model = new AllDelegatesViewModel(
+                centreId,
+                delegateUsers,
+                customPromptHelper,
+                page,
+                searchString,
+                sortBy,
+                sortDirection
+            );
+
+            return View(model);
+        }
+
+        [Route("AllDelegateItems")]
+        public IActionResult AllDelegateItems()
         {
             var centreId = User.GetCentreId();
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId).Take(10);
-            var searchableDelegateViewModels = delegateUsers.Select(
-                delegateUser =>
-                {
-                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
-                    return new SearchableDelegateViewModel(delegateInfoViewModel);
-                }
-            );
-            var model = new AllDelegatesViewModel(centreId, searchableDelegateViewModels);
-
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, customPromptHelper);
             return View(model);
         }
     }

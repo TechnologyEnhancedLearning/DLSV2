@@ -1,8 +1,39 @@
-﻿@import "~nhsuk-frontend/packages/core/all";
+@import "~nhsuk-frontend/packages/core/all";
 @import "common";
 
 .sort-dropdown {
   border-radius: 4px;
+}
+
+.sort-by-dropdown {
+  @extend .left-dropdown;
+}
+
+.sort-direction-dropdown {
+  @extend .input-with-no-js-submit-button;
+
+  width: 63%;
+
+  @include mq($until: desktop) {
+    .js-enabled & {
+      width: 70%;
+    }
+  }
+
+  @include mq($from: $xl-desktop) {
+    width: 74%;
+  }
+}
+
+.sort-direction-dropdown-container {
+  @include mq($from: desktop) {
+    width: calc(59% - 12px);
+    float: left;
+  }
+}
+
+.sort-submit {
+  @extend .right-submit-button;
 }
 
 .sort-row {

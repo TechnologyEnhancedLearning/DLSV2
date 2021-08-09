@@ -1,0 +1,30 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+@import "../../shared/breakpoints";
+
+.all-delegates-button-group {
+  text-align: right;
+
+  @media (max-width: $xl-desktop) {
+    width: 100%;
+    text-align: unset;
+    margin-bottom: nhsuk-spacing(4);
+  }
+}
+
+.all-delegates-button {
+  padding-top: nhsuk-spacing(2);
+  padding-bottom: nhsuk-spacing(2);
+
+  @media (max-width: $xl-desktop) {
+    margin-top: nhsuk-spacing(1);
+    margin-bottom: nhsuk-spacing(1);
+  }
+
+  @media (max-width: 425px) {
+    width: calc(50% - 4px);
+  }
+
+  @media (max-width: 375px) {
+    width: 100%;
+  }
+}

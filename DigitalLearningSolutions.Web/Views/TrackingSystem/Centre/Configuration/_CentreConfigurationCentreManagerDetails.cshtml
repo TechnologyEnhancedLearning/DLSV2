@@ -1,0 +1,46 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model CentreConfigurationViewModel
+
+<details class="nhsuk-details nhsuk-expander">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre manager details
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          First name
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ContactForename" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Last name
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ContactSurname" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ContactEmail" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Telephone
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ContactTelephone" />
+      </div>
+    </dl>
+
+    <a class="nhsuk-button" role="button" asp-action="EditCentreManagerDetails">
+      Edit
+    </a>
+
+  </div>
+</details>

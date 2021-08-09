@@ -4,8 +4,8 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
@@ -35,11 +35,7 @@
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
 
-        public CourseCustomPrompts? GetCustomPromptsForCourse(
-            int customisationId,
-            int centreId,
-            int categoryId = 0
-        );
+        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
@@ -47,6 +43,8 @@
             int centreId,
             int categoryId = 0
         );
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
     }
 
     public class CustomPromptsService : ICustomPromptsService
@@ -177,12 +175,7 @@
             int categoryId = 0
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
-            if (result == null)
-            {
-                return null;
-            }
-
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
             return new CourseCustomPrompts(
                 customisationId,
                 centreId,
@@ -202,13 +195,18 @@
             return PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(result, delegateCourseInfo);
         }
 
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
+        }
+
         private CourseCustomPromptsResult? GetCourseCustomPromptsResultForCourse(
             int customisationId,
             int centreId,
             int categoryId
         )
         {
-            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId);
+            var result = customPromptsDataService.GetCourseCustomPrompts(customisationId, centreId, categoryId);
             if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
             {
                 return null;

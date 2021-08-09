@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -1341,6 +1342,22 @@
 
             // Then
             result.Tutorials.Select(tutorial => tutorial.PossibleScore).Should().Equal(expectedPossibleScores);
+        }
+
+        [Test]
+        public void GetSectionsByApplication_should_have_correct_results()
+        {
+            // When
+            var result = sectionContentDataService.GetSectionsByApplicationId(1).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(10);
+                result.First().SectionId.Should().Be(1);
+                result.First().SectionName.Should().Be("Mouse skills");
+                result.First().Tutorials.Should().BeEmpty();
+            }
         }
     }
 }

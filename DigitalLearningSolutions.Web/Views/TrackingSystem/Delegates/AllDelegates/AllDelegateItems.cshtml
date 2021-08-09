@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@model AllDelegateItemsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var delegateUser in Model.Delegates) {
+  <partial name="_SearchableDelegateCard" model="delegateUser" />
+}
+</body>
+</html>

@@ -15,6 +15,8 @@
 
                 fluentMapperConfig.AddMap(new AdminUserMap());
                 fluentMapperConfig.AddMap(new DelegateUserMap());
+
+                fluentMapperConfig.AddMap(new GroupMap());
             });
         }
     }

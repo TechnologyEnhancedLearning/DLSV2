@@ -1,0 +1,7 @@
+﻿@import "~nhsuk-frontend/packages/core/all";
+
+dd.nhsuk-summary-list__value {
+  @include mq($from: tablet) {
+    text-align: right;
+  }
+}

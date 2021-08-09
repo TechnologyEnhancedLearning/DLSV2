@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
-    /* TODO: Search and sort functionality is part of HEEDLS-491.
-       Filename includes 'Searchable' to avoid having to change name later */
-
     public class SearchableDelegateViewModel
     {
         public SearchableDelegateViewModel(DelegateInfoViewModel delegateInfoViewModel)

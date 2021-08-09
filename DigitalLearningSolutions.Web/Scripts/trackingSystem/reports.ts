@@ -33,9 +33,36 @@ const options = {
 };
 
 request.onload = () => {
-  const data = constructChartistData(request.response);
-  // eslint-disable-next-line no-new
-  new Chartist.Line('.ct-chart', data, options);
+  let { response } = request;
+  // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
+  // so we need to manually parse the JSON string if not already parsed
+  if (typeof request.response === 'string') {
+    response = JSON.parse(response);
+  }
+  const data = constructChartistData(response);
+  const chart = new Chartist.Line('.ct-chart', data, options);
+
+  chart.on('draw',
+    // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (drawnElement: any) => {
+      const { element } = drawnElement;
+      // IE renders text in SVGs with 'text' tags that do not work with most CSS properties
+      // so we set the relevant attributes manually
+      if (element.getNode().tagName === 'text'
+        && element.classes().indexOf('ct-horizontal') >= 0
+        && element.classes().indexOf('ct-label') >= 0) {
+        const xOrigin = Number(element.getNode().getAttribute('x'));
+        const yOrigin = element.getNode().getAttribute('y');
+        const width = Number(element.getNode().getAttribute('width'));
+        // this should match the NHS tablet breakpoint
+        const mediaQuery = window.matchMedia('(min-width: 641px)');
+        const rotation = mediaQuery.matches ? -45 : -60;
+        element.attr({
+          transform: `translate(-${width}) rotate(${rotation} ${xOrigin + width} ${yOrigin})`,
+        });
+      }
+    });
 };
 
 request.open('GET', path, true);
