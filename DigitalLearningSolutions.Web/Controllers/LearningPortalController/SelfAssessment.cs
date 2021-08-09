@@ -23,8 +23,8 @@
             }
             selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, User.GetCandidateIdKnownNotNull());
             selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, User.GetCandidateIdKnownNotNull());
-
-            var model = new SelfAssessmentDescriptionViewModel(selfAssessment);
+            var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(selfAssessment.Id, User.GetCandidateIdKnownNotNull()).ToList();
+            var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 

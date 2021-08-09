@@ -21,6 +21,7 @@
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
         Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
+        IEnumerable<Supervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -196,7 +197,7 @@ SA.UseFilteredApi,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation
+CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -205,7 +206,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -543,6 +544,18 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation
                 },
                 param: new { resultId, candidateAssessmentId, adminId }
             ).FirstOrDefault();
+        }
+
+        public IEnumerable<Supervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
+        {return connection.Query<Supervisor>(
+               @"SELECT sd.ID, sd.SupervisorAdminID, sd.SupervisorEmail, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview
+FROM   SupervisorDelegates AS sd INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+             SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)", new { selfAssessmentId, candidateId }
+               );
         }
     }
 }
