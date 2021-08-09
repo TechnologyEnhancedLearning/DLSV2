@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
+        public void DelegateGroupsViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
         {
             var model = new DelegateGroupsViewModel(
                 groups,
@@ -55,7 +55,7 @@
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_correctly_return_the_second_page_of_delegates()
+        public void DelegateGroupsViewModel_should_correctly_return_the_second_page_of_delegates()
         {
             var model = new DelegateGroupsViewModel(
                 groups,
@@ -77,7 +77,7 @@
         }
 
         [Test]
-        public void Centre_Administrators_filters_should_be_set()
+        public void DelegateGroupsViewModel_filters_should_be_set()
         {
             // Given
             var admins = new[]
