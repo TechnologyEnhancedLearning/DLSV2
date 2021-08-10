@@ -53,6 +53,7 @@
         private ICentresDataService centresDataService = null!;
         private IEmailService emailService = null!;
         private IPasswordDataService passwordDataService = null!;
+        private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
         private IConfiguration config = null!;
@@ -62,6 +63,7 @@
         {
             registrationDataService = A.Fake<IRegistrationDataService>();
             passwordDataService = A.Fake<IPasswordDataService>();
+            passwordResetService = A.Fake<IPasswordResetService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
@@ -82,6 +84,7 @@
             registrationService = new RegistrationService(
                 registrationDataService,
                 passwordDataService,
+                passwordResetService,
                 emailService,
                 centresDataService,
                 config

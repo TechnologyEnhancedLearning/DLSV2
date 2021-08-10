@@ -31,11 +31,13 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
+        private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
+            IPasswordResetService passwordResetService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             IConfiguration config
@@ -43,6 +45,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
+            this.passwordResetService = passwordResetService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.config = config;
@@ -122,14 +125,18 @@ namespace DigitalLearningSolutions.Data.Services
         {
             using var transaction = new TransactionScope();
 
+            string setPasswordHash = passwordResetService.GenerateResetPasswordHash(delegateUser);
             var resetPasswordEmail = GenerateWelcomeEmail(
-                delegateUser.EmailAddress!,
+                delegateUser.EmailAddress!.Trim(),
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.CentreName,
-                delegateUser.CandidateNumber
+                delegateUser.CandidateNumber,
+                setPasswordHash
             );
             emailService.SendEmail(resetPasswordEmail);
+
+            transaction.Complete();
         }
 
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
@@ -192,12 +199,13 @@ namespace DigitalLearningSolutions.Data.Services
             string firstName,
             string lastName,
             string centreName,
-            string candidateNumber
+            string candidateNumber,
+            string setPasswordHash
         )
         {
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
-            var setPasswordUrl = $"{config["AppRootPath"]}"; // TODO
-
+            var setPasswordUrl = $"{config["AppRootPath"]}/SetPassword?code={setPasswordHash}&email={emailAddress}";
+            
             BodyBuilder body = new BodyBuilder
             {
                 TextBody = $@"Dear {firstName} {lastName},

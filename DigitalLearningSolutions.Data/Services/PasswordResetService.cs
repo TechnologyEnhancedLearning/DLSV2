@@ -19,6 +19,7 @@
         Task<bool> EmailAndResetPasswordHashAreValidAsync(string emailAddress, string resetHash);
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
+        public string GenerateResetPasswordHash(User user);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -82,7 +83,7 @@
             }
         }
 
-        private string GenerateResetPasswordHash(User user)
+        public string GenerateResetPasswordHash(User user)
         {
             string hash = Guid.NewGuid().ToString();
 
