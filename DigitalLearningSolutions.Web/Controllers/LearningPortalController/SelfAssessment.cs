@@ -21,9 +21,9 @@
                 logger.LogWarning($"Attempt to display self assessment description for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            selfAssessmentService.IncrementLaunchCount(selfAssessment.Id, User.GetCandidateIdKnownNotNull());
-            selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, User.GetCandidateIdKnownNotNull());
-            var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(selfAssessment.Id, User.GetCandidateIdKnownNotNull()).ToList();
+            selfAssessmentService.IncrementLaunchCount(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            var supervisors = selfAssessmentService.GetSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
@@ -175,6 +175,25 @@
             }
 
             return View("Current/SetCompleteByDate", model);
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
+        public IActionResult ManageSupervisors(int selfAssessmentId)
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            if (assessment == null)
+            {
+                logger.LogWarning($"Attempt to manage supervisors for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
+            var suggestedSupervisors = selfAssessmentService.GetOtherSupervisorsForCandidate(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
+            var model = new ManageSupervisorsViewModel()
+            {
+                SelfAssessment = assessment,
+                Supervisors = supervisors,
+                SuggestedSupervisors = suggestedSupervisors
+            };
+            return View("SelfAssessments/ManageSupervisors", model);
         }
     }
 }
