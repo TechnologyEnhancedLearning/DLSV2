@@ -146,7 +146,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCentre_call_data_service()
+        public void UpdateCustomPromptForCentre_calls_data_service()
         {
             // Given
             A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCentre(1, 1, true, null)).DoesNothing();

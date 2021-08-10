@@ -41,7 +41,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCourse_call_data_service()
+        public void UpdateCustomPromptForCourse_calls_data_service()
         {
             // Given
             A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).DoesNothing();
