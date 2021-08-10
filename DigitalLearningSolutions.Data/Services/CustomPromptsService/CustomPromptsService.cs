@@ -33,7 +33,7 @@
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
 
-        public CourseCustomPrompts? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+        public CourseAdminFields? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
@@ -46,7 +46,7 @@
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
-        public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber);
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
     }
 
     public partial class CustomPromptsService : ICustomPromptsService

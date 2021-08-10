@@ -6,9 +6,9 @@
 
     public partial class CustomPromptsDataService
     {
-        public CourseCustomPromptsResult GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
+        public CourseAdminFieldsResult GetCourseAdminFields(int customisationId, int centreId, int categoryId)
         {
-            var result = connection.Query<CourseCustomPromptsResult>(
+            var result = connection.Query<CourseAdminFieldsResult>(
                 @"SELECT
                         cp1.CoursePrompt AS CustomField1Prompt,
                         cu.Q1Options AS CustomField1Options,

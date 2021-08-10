@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class CourseCustomPromptManagementViewModel : CustomPromptManagementViewModel
+    public class CourseAdminFieldManagementViewModel : CustomPromptManagementViewModel
     {
-        public CourseCustomPromptManagementViewModel(
+        public CourseAdminFieldManagementViewModel(
             int customisationId,
             int fieldId,
             string promptName,

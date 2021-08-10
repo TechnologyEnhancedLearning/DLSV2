@@ -43,18 +43,18 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+            var courseAdminFields = customPromptsService.GetCustomPromptsForCourse(
                 customisationId,
                 centreId,
                 categoryId.Value
             );
 
-            if (courseCustomPrompts == null)
+            if (courseAdminFields == null)
             {
                 return NotFound();
             }
 
-            var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
+            var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
         }
 
@@ -73,16 +73,16 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompt = customPromptsService.GetCustomPromptsForCourse(
+            var courseAdminField = customPromptsService.GetCustomPromptsForCourse(
                     customisationId,
                     centreId,
                     categoryId.Value
-                ).CourseAdminFields
+                ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
 
-            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseCustomPrompt, customisationId);
+            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseAdminField, customisationId);
 
             return View(model);
         }
@@ -151,7 +151,7 @@
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
             var adminWithAnswerCount =
-                userDataService.GetAdminCountWithAnswerForPrompt(customisationId, promptNumber);
+                userDataService.GetDelegateCountWithAnswerForCourseAdminField(customisationId, promptNumber);
 
             if (adminWithAnswerCount == 0)
             {
@@ -159,7 +159,7 @@
             }
 
             var promptName =
-                customPromptsService.GetPromptNameForCustomisationAndPromptNumber(customisationId, promptNumber);
+                customPromptsService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
 
             var model = new RemoveAdminFieldViewModel(customisationId, promptName, adminWithAnswerCount);
 

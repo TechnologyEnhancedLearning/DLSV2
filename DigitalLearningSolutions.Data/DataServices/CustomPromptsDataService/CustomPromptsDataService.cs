@@ -20,7 +20,7 @@
         );
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
+        public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
 

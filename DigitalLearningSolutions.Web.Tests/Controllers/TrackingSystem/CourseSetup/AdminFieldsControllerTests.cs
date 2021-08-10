@@ -53,7 +53,7 @@
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
             A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts));
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
             var result = controller.AdminFields(1);

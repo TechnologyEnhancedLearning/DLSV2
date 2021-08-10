@@ -7,6 +7,37 @@
 
     public partial class CustomPromptsService
     {
+        public CourseAdminFields? GetCustomPromptsForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        )
+        {
+            var result = customPromptsDataService.GetCourseAdminFields(customisationId, centreId, categoryId);
+            return new CourseAdminFields(
+                customisationId,
+                centreId,
+                PopulateCustomPromptListFromCourseCustomPromptsResult(result)
+            );
+        }
+
+        public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
+            DelegateCourseInfo delegateCourseInfo,
+            int customisationId,
+            int centreId,
+            int categoryId = 0
+        )
+        {
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
+
+            return PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
+        }
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            customPromptsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
+        }
+
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)
         {
             using var transaction = new TransactionScope();
@@ -28,13 +59,28 @@
             }
         }
 
-        public string GetPromptNameForCustomisationAndPromptNumber(int customisationId, int promptNumber)
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber)
         {
             return customPromptsDataService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
         }
 
+        private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
+            int customisationId,
+            int centreId,
+            int categoryId
+        )
+        {
+            var result = customPromptsDataService.GetCourseAdminFields(customisationId, centreId, categoryId);
+            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
         private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
-            CourseCustomPromptsResult? result
+            CourseAdminFieldsResult? result
         )
         {
             var list = new List<CustomPrompt>();
@@ -80,8 +126,8 @@
             return list;
         }
 
-        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCourseCustomPromptsResult(
-            CourseCustomPromptsResult? result,
+        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(
+            CourseAdminFieldsResult? result,
             DelegateCourseInfo delegateCourseInfo
         )
         {

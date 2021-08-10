@@ -9,11 +9,11 @@
     public partial class CustomPromptsDataServiceTests
     {
         [Test]
-        public void GetCourseCustomPrompts_returns_populated_CourseCustomPromptsResult()
+        public void GetCourseAdminFields_returns_populated_CourseAdminFieldsResult()
         {
             // Given
-            var expectedCourseCustomPromptsResult =
-                CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult(
+            var expectedCourseAdminFieldsResult =
+                CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                     null,
                     "Yes\nNo\nNot sure",
                     true,
@@ -23,10 +23,10 @@
                 );
 
             // When
-            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
+            var returnedCourseAdminFieldsResult = customPromptsDataService.GetCourseAdminFields(1379, 101, 0);
 
             // Then
-            returnedCourseCustomPromptsResult.Should().BeEquivalentTo(expectedCourseCustomPromptsResult);
+            returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
         }
 
         [Test]
@@ -40,13 +40,13 @@
 
                 // When
                 customPromptsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
-                var courseCustomPrompts = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
+                var courseAdminFields = customPromptsDataService.GetCourseAdminFields(1379, 101, 0);
 
                 // Then
                 using (new AssertionScope())
                 {
-                    courseCustomPrompts.CustomField1Mandatory.Should().BeFalse();
-                    courseCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                    courseAdminFields.CustomField1Mandatory.Should().BeFalse();
+                    courseAdminFields.CustomField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally

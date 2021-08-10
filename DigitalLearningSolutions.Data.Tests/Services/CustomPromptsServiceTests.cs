@@ -306,22 +306,22 @@
         }
 
         [Test]
-        public void GetCustomPromptsForCourse_Returns_Populated_CourseCustomPrompts()
+        public void GetCustomPromptsForCourse_Returns_Populated_CourseAdminFields()
         {
             // Given
             var expectedPrompt1 =
                 CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Access Permissions");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
-            var expectedCoursePrompts = CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts);
-            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101, 0))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult());
+            var expectedCourseAdminFields = CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts);
+            A.CallTo(() => customPromptsDataService.GetCourseAdminFields(27920, 101, 0))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
             var result = customPromptsService.GetCustomPromptsForCourse(27920, 101, 0);
 
             // Then
-            result.Should().BeEquivalentTo(expectedCoursePrompts);
+            result.Should().BeEquivalentTo(expectedCourseAdminFields);
         }
 
         [Test]
@@ -342,8 +342,8 @@
                 answer: answer2
             );
             var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
-            A.CallTo(() => customPromptsDataService.GetCourseCustomPrompts(27920, 101, 0))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult());
+            A.CallTo(() => customPromptsDataService.GetCourseAdminFields(27920, 101, 0))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
             // When
@@ -373,7 +373,8 @@
             try
             {
                 // Given
-                A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)).DoesNothing();
+                A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null))
+                    .DoesNothing();
                 A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).DoesNothing();
 
                 // When
