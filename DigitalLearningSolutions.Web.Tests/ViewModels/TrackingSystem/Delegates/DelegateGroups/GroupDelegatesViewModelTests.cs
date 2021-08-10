@@ -30,7 +30,7 @@
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
+        public void GroupDelegatesViewModel_should_return_the_first_page_worth_of_delegates()
         {
             var model = new GroupDelegatesViewModel(
                 1,

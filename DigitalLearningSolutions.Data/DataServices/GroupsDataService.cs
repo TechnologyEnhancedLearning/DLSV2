@@ -61,8 +61,8 @@
             return connection.Query<GroupDelegate>(
                 @"SELECT
                         GroupDelegateID,
-	                    GroupID,
-	                    DelegateID,
+                        GroupID,
+                        DelegateID,
                         FirstName,
                         LastName,
                         EmailAddress,
@@ -78,7 +78,7 @@
         {
             return connection.Query<string>(
                 @"SELECT 
-	                    GroupLabel
+                        GroupLabel
                     FROM Groups
                     WHERE GroupID = @groupId",
                 new { groupId }
