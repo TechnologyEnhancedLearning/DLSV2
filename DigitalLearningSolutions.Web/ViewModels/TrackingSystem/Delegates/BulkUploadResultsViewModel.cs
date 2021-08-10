@@ -28,7 +28,7 @@
             return reason switch
             {
                 BulkUploadResult.ErrorReasons.InvalidJobGroupId =>
-                    "Job group ID was not valid. Please ensure a valid Job Group ID number is provided (use the 'Download Job Groups references' option for a list of valid IDs).",
+                    "Job group ID was not valid. Please ensure a valid Job Group ID number is provided (use the 'Job Groups' worksheet in the downloaded template for a list of valid IDs).",
                 BulkUploadResult.ErrorReasons.InvalidLastName =>
                     "Last name was not provided. Last name is a required field and cannot be left blank.",
                 BulkUploadResult.ErrorReasons.InvalidFirstName =>
