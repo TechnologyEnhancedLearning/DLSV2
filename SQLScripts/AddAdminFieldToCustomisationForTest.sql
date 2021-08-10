@@ -1,8 +1,7 @@
 UPDATE [mbdbx101_test].[dbo].[Customisations]
     SET
         [CourseField1PromptID] = 1,
-		[Q1Options] = 'Test',
-		[CourseField2PromptID] = 2
+		[Q1Options] = 'Test'
     WHERE
         [CustomisationID] = 100;
 
