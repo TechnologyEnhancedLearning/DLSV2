@@ -27,19 +27,20 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
+        [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
-        [InlineData("/TrackingSystem/CentreConfiguration", "Centre configuration")]
-        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreDetails", "Edit centre details")]
-        [InlineData("/TrackingSystem/CentreConfiguration/EditCentreManagerDetails", "Edit centre manager details")]
+        [InlineData("/TrackingSystem/Centre/Configuration", "Centre configuration")]
+        [InlineData("/TrackingSystem/Centre/Configuration/EditCentreDetails", "Edit centre details")]
+        [InlineData("/TrackingSystem/Centre/Configuration/EditCentreManagerDetails", "Edit centre manager details")]
         [InlineData(
-            "/TrackingSystem/CentreConfiguration/EditCentreWebsiteDetails",
+            "/TrackingSystem/Centre/Configuration/EditCentreWebsiteDetails",
             "Edit centre content on DLS website"
         )]
-        [InlineData("/TrackingSystem/CentreConfiguration/RegistrationPrompts", "Manage delegate registration prompts")]
+        [InlineData("/TrackingSystem/Centre/Configuration/RegistrationPrompts", "Manage delegate registration prompts")]
         [InlineData(
-            "/TrackingSystem/CentreConfiguration/RegistrationPrompts/1/Remove",
+            "/TrackingSystem/Centre/Configuration/RegistrationPrompts/1/Remove",
             "Remove delegate registration prompt"
         )]
         [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]

@@ -1,0 +1,90 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
+@model CentreConfigurationViewModel
+
+@{ var showCentreOnMap = Model.ShowCentreOnMap ? "Yes" : "No"; }
+
+<details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-8">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Centre content on DLS website
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <p>The details below are published on the Digital Learning Solutions website.</p>
+
+    <dl class="nhsuk-summary-list details-list-with-button">
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre telephone
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.CentreTelephone" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre email
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.CentreEmail" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre postcode
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.CentrePostcode" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Show centre on map
+        </dt>
+        <partial name="_SummaryFieldValue" model="@showCentreOnMap" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Opening hours
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.OpeningHours" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre web address
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.CentreWebAddress" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Organisations covered
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.OrganisationsCovered" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Training venues
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.TrainingVenues" />
+      </div>
+
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Other information
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.OtherInformation" />
+      </div>
+    </dl>
+
+    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" asp-action="EditCentreWebsiteDetails">
+      Edit
+    </a>
+    @if (Model.ShowCentreOnMap) {
+      <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-controller="FindYourCentre" asp-action="Index" asp-route-centreId="@Model.CentreId">
+        Preview on website
+      </a>
+    }
+
+  </div>
+</details>

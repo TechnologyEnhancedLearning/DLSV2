@@ -6,8 +6,8 @@
   {
     <input type="hidden" id="filter-by" name="filterBy" value="@Model.SearchablePageViewModel.FilterBy" />
   }
-  <input type="hidden" id="select-sort-by" name="sortBy" value="@Model.SearchablePageViewModel.SortBy" />
-  <input type="hidden" id="select-sort-direction" name="sortDirection" value="@Model.SearchablePageViewModel.SortDirection" />
+  <input type="hidden" name="sortBy" value="@Model.SearchablePageViewModel.SortBy" />
+  <input type="hidden" name="sortDirection" value="@Model.SearchablePageViewModel.SortDirection" />
   <div class="@Model.Class" id="search">
     <label class="nhsuk-u-visually-hidden" for="search-field">@Model.Label</label>
     <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchablePageViewModel.SearchString">

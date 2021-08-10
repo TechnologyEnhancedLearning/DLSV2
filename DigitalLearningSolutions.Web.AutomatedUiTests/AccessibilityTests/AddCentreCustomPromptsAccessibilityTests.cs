@@ -14,7 +14,7 @@
         {
             // given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
-            const string startUrl = "/TrackingSystem/CentreConfiguration/RegistrationPrompts/Add/New";
+            const string startUrl = "/TrackingSystem/Centre/Configuration/RegistrationPrompts/Add/New";
 
             // when
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);

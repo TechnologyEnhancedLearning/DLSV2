@@ -22,7 +22,17 @@
         );
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId);
+        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId, int categoryId);
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+
+        public void UpdateCustomPromptForCourse(
+            int customisationId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        );
     }
 
     public class CustomPromptsDataService : ICustomPromptsDataService
@@ -134,7 +144,7 @@
             ).Single();
         }
 
-        public CourseCustomPromptsResult? GetCourseCustomPrompts(int customisationId, int centreId)
+        public CourseCustomPromptsResult GetCourseCustomPrompts(int customisationId, int centreId, int categoryId)
         {
             var result = connection.Query<CourseCustomPromptsResult>(
                 @"SELECT
@@ -160,10 +170,41 @@
                     WHERE cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
-                new { customisationId, centreId }
-            ).SingleOrDefault();
+                new { customisationId, centreId, categoryId }
+            ).Single();
 
             return result;
+        }
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        {
+            connection.Execute(
+                @$"UPDATE Customisations
+                    SET
+                        Q{promptNumber}Mandatory = @mandatory,
+                        Q{promptNumber}Options = @options
+                    WHERE CustomisationID = @customisationId",
+                new { mandatory, options, customisationId }
+            );
+        }
+
+        public void UpdateCustomPromptForCourse(
+            int customisationId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        )
+        {
+            connection.Execute(
+                @$"UPDATE Customisations
+                    SET
+                        CourseField{promptNumber}PromptID = @promptId,
+                        Q{promptNumber}Mandatory = @mandatory,
+                        Q{promptNumber}Options = @options
+                    WHERE CustomisationID = @customisationId",
+                new { promptId, mandatory, options, customisationId }
+            );
         }
     }
 }

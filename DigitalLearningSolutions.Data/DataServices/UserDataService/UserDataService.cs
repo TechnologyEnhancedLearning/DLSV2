@@ -11,14 +11,25 @@
         public AdminUser? GetAdminUserByUsername(string username);
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         public int GetNumberOfActiveAdminsAtCentre(int centreId);
+        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
+
+        public void UpdateAdminUserPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int categoryId
+        );
 
         public DelegateUser? GetDelegateUserById(int id);
         public List<DelegateUser> GetDelegateUsersByUsername(string username);
         public List<DelegateUser> GetAllDelegateUsersByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
-        public void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
-
+        
         public void UpdateDelegateUsers(
             string firstName,
             string surname,
