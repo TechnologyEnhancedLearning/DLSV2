@@ -1,10 +1,11 @@
-namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,18 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             registrationService.GenerateAndSendDelegateWelcomeEmail(delegateUser!);
 
+            TempData.Set(new WelcomeEmailSentViewModel(delegateUser));
+
+            return RedirectToAction("WelcomeEmailSent", new { delegateId = delegateUser.Id });
+        }
+
+        [HttpGet]
+        [Route("WelcomeEmailSent")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<WelcomeEmailSentViewModel>))]
+        public IActionResult WelcomeEmailSent()
+        {
+            var model = TempData.Get<WelcomeEmailSentViewModel>()!;
+            return View("WelcomeEmailSent", model);
         }
     }
 }
