@@ -48,7 +48,7 @@
         ) : this(
             row.FirstName!,
             row.LastName!,
-            row.Email,
+            row.Email!,
             centreId,
             int.Parse(row.JobGroupId!),
             null,

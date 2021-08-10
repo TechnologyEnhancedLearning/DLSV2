@@ -62,6 +62,11 @@
                 return BulkUploadResult.ErrorReasons.InvalidFirstName;
             }
 
+            if (string.IsNullOrEmpty(Email))
+            {
+                return BulkUploadResult.ErrorReasons.InvalidEmail;
+            }
+
             if (!bool.TryParse(Active, out _))
             {
                 return BulkUploadResult.ErrorReasons.InvalidActive;

@@ -20,7 +20,7 @@
             Answer6 = row.Answer6;
             AliasId = row.AliasId;
             Approved = approved;
-            Email = row.Email;
+            Email = row.Email!;
         }
 
         public int CentreId { get; set; }
@@ -37,6 +37,6 @@
         public string? Answer6 { get; set; }
         public string? AliasId { get; set; }
         public bool Approved { get; set; }
-        public string? Email { get; set; }
+        public string Email { get; set; }
     }
 }

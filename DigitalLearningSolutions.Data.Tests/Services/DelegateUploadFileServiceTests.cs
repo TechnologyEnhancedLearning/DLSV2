@@ -52,7 +52,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private DelegateDataRow SampleDelegateDataRow(
             string firstName = "A",
             string lastName = "Test",
-            string emailAddress = "",
+            string emailAddress = "test@email",
             string candidateNumber = "TT95",
             string answer1 = "xxxx",
             string answer2 = "xxxxxxxxx",
@@ -212,6 +212,23 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidFirstName);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_email_error_for_missing_email()
+        {
+            // Given
+            var row = SampleDelegateDataRow(emailAddress: "");
+            var table = CreateTableFromData(new[] { row });
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
+
+            // Then
+            ShouldNotCreateOrUpdateDelegate();
+            ShouldJustHaveOneError(result);
+            result.Errors.First().RowNumber.Should().Be(2);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidEmail);
         }
 
         [Test]

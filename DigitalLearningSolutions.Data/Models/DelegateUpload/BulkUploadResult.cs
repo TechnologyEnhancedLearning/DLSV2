@@ -9,6 +9,7 @@
             InvalidJobGroupId,
             InvalidLastName,
             InvalidFirstName,
+            InvalidEmail,
             InvalidActive,
             NoRecordForDelegateId,
             UnexpectedErrorForUpdate,
