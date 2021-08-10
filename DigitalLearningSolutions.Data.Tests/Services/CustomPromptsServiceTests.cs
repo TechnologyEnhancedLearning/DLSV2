@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -368,18 +369,26 @@
         [Test]
         public void RemoveCustomPromptFromCourse_calls_data_service_with_correct_values()
         {
-            // Given
-            A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)).DoesNothing();
-            A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).DoesNothing();
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                A.CallTo(() => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)).DoesNothing();
+                A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).DoesNothing();
 
-            // When
-            customPromptsService.RemoveCustomPromptFromCourse(1, 1);
+                // When
+                customPromptsService.RemoveCustomPromptFromCourse(1, 1);
 
-            // Then
-            A.CallTo(
-                () => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
-            ).MustHaveHappened();
-            A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).MustHaveHappened();
+                // Then
+                A.CallTo(
+                    () => customPromptsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
+                ).MustHaveHappened();
+                A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).MustHaveHappened();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }
