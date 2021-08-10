@@ -9,7 +9,7 @@
         public void GetDelegateCountWithAnswerForCourseAdminField_returns_expected_count()
         {
             // When
-            var count = userDataService.GetDelegateCountWithAnswerForCourseAdminField(357, 1);
+            var count = userDataService.GetDelegateCountWithAnswerForCourseAdminField(100, 1);
 
             // Then
             count.Should().Be(1);
