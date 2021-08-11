@@ -16,6 +16,7 @@
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
+        private readonly DateTime referenceDate = new DateTime(1905, 1, 1);
 
         public ActivityService(IActivityDataService activityDataService)
         {
@@ -48,26 +49,23 @@
         {
             IEnumerable<IGrouping<long, ActivityLog>> groupedData;
 
-            if (Equals(interval, ReportInterval.Days))
+            switch (interval)
             {
-                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day).Ticks);
-            }
-            else if (Equals(interval, ReportInterval.Weeks))
-            {
-                var referenceDate = new DateTime(1905, 1, 1);
-                groupedData = activityData.GroupBy(x => referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7).Ticks);
-            }
-            else if (Equals(interval, ReportInterval.Months))
-            {
-                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, 1).Ticks);
-            }
-            else if (Equals(interval, ReportInterval.Quarters))
-            {
-                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogQuarter * 3 - 2, 1).Ticks);
-            }
-            else
-            {
-                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks);
+                case ReportInterval.Days:
+                    groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day).Ticks);
+                    break;
+                case ReportInterval.Weeks:
+                    groupedData = activityData.GroupBy(x => referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7).Ticks);
+                    break;
+                case ReportInterval.Months:
+                    groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, 1).Ticks);
+                    break;
+                case ReportInterval.Quarters:
+                    groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogQuarter * 3 - 2, 1).Ticks);
+                    break;
+                default:
+                    groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks);
+                    break;
             }
 
             return groupedData.Select(
@@ -92,29 +90,27 @@
 
         public string GetDateLabel(bool shortForm)
         {
-            var formatString = "";
+            string formatString;
 
             var quarter = Date?.Month / 3 + 1;
 
-            if (Equals(Interval, ReportInterval.Days))
+            switch (Interval)
             {
-                formatString = shortForm ? "y/M/d" : "yyyy/MM/d";
-            }
-            else if (Equals(Interval, ReportInterval.Weeks))
-            {
-                formatString = shortForm ? "wc y/M/d" : "Week commencing yyyy/MM/d";
-            }
-            else if (Equals(Interval, ReportInterval.Months))
-            {
-                formatString = shortForm ? "MMM yyyy" : "MMMM, yyyy";
-            }
-            else if (Equals(Interval, ReportInterval.Quarters))
-            {
-                formatString = shortForm ? $"yyyy Q{quarter}" : $"Quarter {quarter}, yyyy";
-            }
-            else if (Equals(Interval, ReportInterval.Years))
-            {
-                formatString = "yyyy";
+                case ReportInterval.Days:
+                    formatString = shortForm ? "y/M/d" : "yyyy/MM/d";
+                    break;
+                case ReportInterval.Weeks:
+                    formatString = shortForm ? "wc y/M/d" : "Week commencing yyyy/MM/d";
+                    break;
+                case ReportInterval.Months:
+                    formatString = shortForm ? "MMM yyyy" : "MMMM, yyyy";
+                    break;
+                case ReportInterval.Quarters:
+                    formatString = shortForm ? $"yyyy Q{quarter}" : $"Quarter {quarter}, yyyy";
+                    break;
+                default:
+                    formatString = "yyyy";
+                    break;
             }
 
             return Date?.ToString(formatString) ?? "";
@@ -123,17 +119,17 @@
 
     public class PeriodOfActivity
     {
-        public PeriodOfActivity(DateInformation slot, int registrations, int completions, int evaluations)
+        public PeriodOfActivity(DateInformation date, int registrations, int completions, int evaluations)
         {
-            DateInformation = slot;
+            DateInformation = date;
             Registrations = registrations;
             Completions = completions;
             Evaluations = evaluations;
         }
 
-        public PeriodOfActivity(DateInformation slot, PeriodOfActivity? data)
+        public PeriodOfActivity(DateInformation date, PeriodOfActivity? data)
         {
-            DateInformation = slot;
+            DateInformation = date;
             Completions = data?.Completions ?? 0;
             Evaluations = data?.Evaluations ?? 0;
             Registrations = data?.Registrations ?? 0;
