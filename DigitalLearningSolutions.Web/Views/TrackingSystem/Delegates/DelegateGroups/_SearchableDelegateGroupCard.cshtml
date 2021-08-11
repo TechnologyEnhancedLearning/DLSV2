@@ -15,7 +15,7 @@
           <dt class="nhsuk-summary-list__key">
             Name
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.Name"/>
+          <partial name="_SummaryFieldValue" model="Model.Name" />
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
@@ -99,7 +99,12 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button expander-card__button" role="button">
+      <a class="nhsuk-button expander-card__button"
+         role="button"
+         asp-controller="DelegateGroups"
+         asp-action="GroupDelegates"
+         asp-route-groupId="@Model.Id"
+         asp-route-page="1">
         View delegates
       </a>
 
