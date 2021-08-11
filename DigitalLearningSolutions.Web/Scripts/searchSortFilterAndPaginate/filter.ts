@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import Cookies from 'js-cookie';
 import { ISearchableElement } from './searchSortFilterAndPaginate';
-import {SendBrowserAgnosticEvent} from "../common";
+import { SendBrowserAgnosticEvent } from '../common';
 
 export interface IAppliedFilter {
   group: string;
