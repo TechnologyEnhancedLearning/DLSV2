@@ -1,17 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class GroupDelegateViewModelTests
+    public class GroupDelegateExpandableViewModelTests
     {
         [Test]
-        public void GroupDelegateViewModel_populates_expected_values_with_both_names()
+        public void GroupDelegateExpandableViewModel_populates_expected_values_with_both_names()
         {
             // Given
             var groupDelegate = Builder<GroupDelegate>.CreateNew()
@@ -23,7 +22,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateViewModel(groupDelegate);
+            var result = new GroupDelegateExpandableViewModel(groupDelegate);
 
             // Then
             using (new AssertionScope())
@@ -36,7 +35,7 @@
         }
 
         [Test]
-        public void GroupDelegateViewModel_populates_expected_values_with_only_last_name()
+        public void GroupDelegateExpandableViewModel_populates_expected_values_with_only_last_name()
         {
             // Given
             var groupDelegate = Builder<GroupDelegate>.CreateNew()
@@ -48,7 +47,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateViewModel(groupDelegate);
+            var result = new GroupDelegateExpandableViewModel(groupDelegate);
 
             // Then
             using (new AssertionScope())

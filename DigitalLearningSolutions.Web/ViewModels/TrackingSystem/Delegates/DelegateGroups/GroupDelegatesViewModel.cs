@@ -28,14 +28,14 @@
             MatchingSearchResults = sortedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(sortedItems);
-            GroupDelegates = paginatedItems.Select(groupDelegate => new GroupDelegateViewModel(groupDelegate));
+            GroupDelegates = paginatedItems.Select(groupDelegate => new GroupDelegateExpandableViewModel(groupDelegate));
         }
 
         public int GroupId { get; set; }
 
         public DelegateGroupsSideNavViewModel NavViewModel { get; set; }
 
-        public IEnumerable<GroupDelegateViewModel> GroupDelegates { get; }
+        public IEnumerable<GroupDelegateExpandableViewModel> GroupDelegates { get; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

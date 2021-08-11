@@ -28,14 +28,14 @@
             MatchingSearchResults = sortedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(sortedItems);
-            GroupCourses = paginatedItems.Select(groupCourse => new GroupCourseViewModel(groupCourse));
+            GroupCourses = paginatedItems.Select(groupCourse => new GroupCourseExpandableViewModel(groupCourse));
         }
 
         public int GroupId { get; set; }
 
         public DelegateGroupsSideNavViewModel NavViewModel { get; set; }
 
-        public IEnumerable<GroupCourseViewModel> GroupCourses { get; }
+        public IEnumerable<GroupCourseExpandableViewModel> GroupCourses { get; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

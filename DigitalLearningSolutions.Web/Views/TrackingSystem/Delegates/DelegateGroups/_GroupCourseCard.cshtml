@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
-@model GroupCourseViewModel
+@model GroupCourseExpandableViewModel
 
 <div class="nhsuk-panel" id="@Model.GroupCustomisationId-card">
   <details class="nhsuk-details nhsuk-expander">
@@ -23,7 +23,7 @@
             Added to group
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.AddedToGroup.ToString("dd/MM/yyyy")
+            @Model.AddedToGroup
           </dd>
         </div>
         <div class="nhsuk-summary-list__row">
