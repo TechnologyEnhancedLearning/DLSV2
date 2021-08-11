@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -31,7 +32,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
-                new[] { (2, "Doctor"), (3, "Health Professional"), (1, "Nursing") }
+                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
             userDataService = A.Fake<IUserDataService>();
             registrationDataService = A.Fake<IRegistrationDataService>();

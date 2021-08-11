@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -88,7 +89,7 @@
             );
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
-                new[] { (2, "Doctor"), (3, "Health Professional"), (1, "Nursing") }
+                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
 
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(2)).Returns(delegateUserCards);
