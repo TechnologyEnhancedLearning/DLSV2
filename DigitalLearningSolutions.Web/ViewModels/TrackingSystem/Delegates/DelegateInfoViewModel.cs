@@ -16,7 +16,7 @@
             IsExternalReg = delegateUser.ExternalReg;
             IsActive = delegateUser.Active;
             IsAdmin = delegateUser.AdminId.HasValue;
-            IsPasswordSet = delegateUser.Password != null;
+            IsPasswordSet = delegateUser.IsPasswordSet;
 
             Email = delegateUser.EmailAddress;
             JobGroup = delegateUser.JobGroupName;
@@ -24,6 +24,7 @@
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd/MM/yyyy");
             }
+
             AliasId = delegateUser.AliasId;
 
             CustomFields = customFields;

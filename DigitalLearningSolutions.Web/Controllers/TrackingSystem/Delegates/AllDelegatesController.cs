@@ -27,10 +27,13 @@
             int page = 1,
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string? filterBy = null,
+            string? filterValue = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
@@ -41,7 +44,8 @@
                 page,
                 searchString,
                 sortBy,
-                sortDirection
+                sortDirection,
+                filterBy
             );
 
             return View(model);

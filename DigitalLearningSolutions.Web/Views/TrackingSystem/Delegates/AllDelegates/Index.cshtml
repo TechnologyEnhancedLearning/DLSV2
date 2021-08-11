@@ -57,6 +57,18 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
+        <partial name="SearchablePage/_Filters" model="Model" />
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:current-filters searchable-page-view-model="Model" />
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
         @if (!Model.Delegates.Any()) {
           <p class="nhsuk-u-margin-top-4" role="alert">
             <b>No delegates found.</b>

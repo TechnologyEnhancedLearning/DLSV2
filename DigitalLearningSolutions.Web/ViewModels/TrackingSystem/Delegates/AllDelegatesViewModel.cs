@@ -15,8 +15,9 @@
             int page,
             string? searchString,
             string sortBy,
-            string sortDirection
-        ) : base(searchString, page, false, sortBy, sortDirection)
+            string sortDirection,
+            string? filterBy
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
         {
             CentreId = centreId;
 
@@ -26,9 +27,10 @@
                 sortDirection
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
-            MatchingSearchResults = searchedItems.Count;
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
+            MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             Delegates = paginatedItems.Select(
                 delegateUser =>
@@ -38,6 +40,15 @@
                     return new SearchableDelegateViewModel(delegateInfoViewModel);
                 }
             );
+
+            Filters = new[]
+            {
+                new FilterViewModel(
+                    "PasswordStatus",
+                    "Password Status",
+                    AllDelegatesViewModelFilterOptions.PasswordStatusOptions
+                )
+            };
         }
 
         public int CentreId { get; set; }

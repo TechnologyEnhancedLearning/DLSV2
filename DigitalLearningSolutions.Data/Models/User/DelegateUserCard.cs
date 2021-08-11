@@ -8,5 +8,6 @@
         public int? AdminId { get; set; }
         public string? AliasId { get; set; }
         public int JobGroupId { get; set; }
+        public bool IsPasswordSet => Password != null;
     }
 }
