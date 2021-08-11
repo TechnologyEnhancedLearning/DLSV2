@@ -71,62 +71,19 @@
 
                 if (approved.HasValue)
                 {
-                    var record = new DelegateRecord(delegateRow, centreId, approved.Value);
-                    var status = userDataService.UpdateDelegateRecord(record);
-                    switch (status)
-                    {
-                        case 0:
-                            updated += 1;
-                            break;
-                        case 1:
-                            skipped += 1;
-                            break;
-                        case 2:
-                            registered += 1;
-                            break;
-                        case -1:
-                        case -4:
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
-                            break;
-                        case -2:
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
-                            break;
-                        case -3:
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
-                            break;
-                        case -5:
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(
-                                nameof(status),
-                                status,
-                                "Unknown return value when updating delegate record."
-                            );
-                    }
+                    UpdateDelegate(
+                        delegateRow,
+                        approved.Value,
+                        centreId,
+                        ref updated,
+                        ref skipped,
+                        ref registered,
+                        errors
+                    );
                 }
                 else
                 {
-                    var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-                    var status = registrationDataService.RegisterDelegateByCentre(model);
-                    switch (status)
-                    {
-                        case "-1":
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
-                            break;
-                        case "-2":
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
-                            break;
-                        case "-3":
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
-                            break;
-                        case "-4":
-                            errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
-                            break;
-                        default:
-                            registered += 1;
-                            break;
-                    }
+                    RegisterDelegate(delegateRow, welcomeEmailDate, centreId, ref registered, errors);
                 }
             }
 
@@ -145,6 +102,81 @@
             }
 
             return table;
+        }
+
+        private void RegisterDelegate(
+            DelegateTableRow delegateRow,
+            DateTime? welcomeEmailDate,
+            int centreId,
+            ref int registered,
+            List<(int, BulkUploadResult.ErrorReasons)> errors
+        )
+        {
+            var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
+            var status = registrationDataService.RegisterDelegateByCentre(model);
+            switch (status)
+            {
+                case "-1":
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
+                    break;
+                case "-2":
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
+                    break;
+                case "-3":
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
+                    break;
+                case "-4":
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                    break;
+                default:
+                    registered += 1;
+                    break;
+            }
+        }
+
+        private void UpdateDelegate(
+            DelegateTableRow delegateRow,
+            bool approved,
+            int centreId,
+            ref int updated,
+            ref int skipped,
+            ref int registered,
+            List<(int, BulkUploadResult.ErrorReasons)> errors
+        )
+        {
+            var record = new DelegateRecord(delegateRow, centreId, approved);
+            var status = userDataService.UpdateDelegateRecord(record);
+            switch (status)
+            {
+                case 0:
+                    updated += 1;
+                    break;
+                case 1:
+                    skipped += 1;
+                    break;
+                case 2:
+                    registered += 1;
+                    break;
+                case -1:
+                case -4:
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
+                    break;
+                case -2:
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
+                    break;
+                case -3:
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
+                    break;
+                case -5:
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        nameof(status),
+                        status,
+                        "Unknown return value when updating delegate record."
+                    );
+            }
         }
 
         private static bool ValidateHeaders(IXLTable table)
