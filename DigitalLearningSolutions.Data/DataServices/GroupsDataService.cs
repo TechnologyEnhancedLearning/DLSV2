@@ -83,17 +83,17 @@
             return connection.Query<GroupCourse>(
                 @"SELECT
                         GroupCustomisationID,
-	                    GroupID,
-	                    gc.CustomisationID,
-	                    ap.ApplicationName,
+                        GroupID,
+                        gc.CustomisationID,
+                        ap.ApplicationName,
                         CustomisationName,
                         Mandatory AS IsMandatory,
                         IsAssessed,
                         AddedDate AS AddedToGroup,
                         au.Forename AS SupervisorFirstName,
-	                    au.Surname AS SupervisorLastName,
-	                    gc.CompleteWithinMonths,
-	                    ValidityMonths
+                        au.Surname AS SupervisorLastName,
+                        gc.CompleteWithinMonths,
+                        ValidityMonths
                     FROM GroupCustomisations AS gc
                     JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
