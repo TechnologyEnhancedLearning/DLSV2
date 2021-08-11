@@ -1,7 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class AllDelegatesViewModelFilterOptions
@@ -23,5 +27,20 @@
             DelegateActiveStatusFilterOptions.IsActive,
             DelegateActiveStatusFilterOptions.IsNotActive
         };
+
+        public static IEnumerable<FilterOptionViewModel> GetJobGroupOptions(
+            IEnumerable<(int id, string name)> jobGroups
+        )
+        {
+            return jobGroups.Select(
+                j => new FilterOptionViewModel(
+                    j.name,
+                    nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
+                    nameof(DelegateUserCard.JobGroupId) +
+                    FilteringHelper.Separator + j.id,
+                    FilterStatus.Default
+                )
+            );
+        }
     }
 }

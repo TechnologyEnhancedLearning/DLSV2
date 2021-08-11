@@ -11,6 +11,7 @@
         public AllDelegatesViewModel(
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
+            IEnumerable<(int id, string name)> jobGroups,
             CustomPromptHelper customPromptHelper,
             int page,
             string? searchString,
@@ -57,6 +58,11 @@
                     "ActiveStatus",
                     "Active Status",
                     AllDelegatesViewModelFilterOptions.ActiveStatusOptions
+                ),
+                new FilterViewModel(
+                    "JobGroupId",
+                    "Job Group",
+                    AllDelegatesViewModelFilterOptions.GetJobGroupOptions(jobGroups)
                 )
             };
         }

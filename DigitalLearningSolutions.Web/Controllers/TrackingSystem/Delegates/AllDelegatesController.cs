@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -15,11 +16,13 @@
     {
         private readonly CustomPromptHelper customPromptHelper;
         private readonly IUserDataService userDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
-        public AllDelegatesController(IUserDataService userDataService, CustomPromptHelper customPromptHelper)
+        public AllDelegatesController(IUserDataService userDataService, CustomPromptHelper customPromptHelper, IJobGroupsDataService jobGroupsDataService)
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
+            this.jobGroupsDataService = jobGroupsDataService;
         }
 
         [Route("{page=1:int}")]
@@ -37,9 +40,11 @@
 
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var model = new AllDelegatesViewModel(
                 centreId,
                 delegateUsers,
+                jobGroups,
                 customPromptHelper,
                 page,
                 searchString,
