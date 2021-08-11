@@ -25,8 +25,6 @@
         public void GetActivityForMonthsInYear_gets_activity_by_month_for_date_range()
         {
             // when
-            // var start = DateTime.Parse("2014-01-01 00:00:00.000");
-            // var end = DateTime.Parse("2014-04-30 23:59:59.999");
             var filterData = new ActivityFilterData
             {
                 StartDate = DateTime.Parse("2014-01-01 00:00:00.000"),
@@ -41,22 +39,22 @@
                 result.Count.Should().Be(13);
 
                 var first = result.First();
-                first.LogDate.Should().Be(DateTime.Now);
-                first.LogYear.Should().Be(1);
+                first.LogDate.Should().Be(DateTime.Parse("2014-01-08 11:04:35.753"));
+                first.LogYear.Should().Be(2014);
                 first.LogQuarter.Should().Be(1);
                 first.LogMonth.Should().Be(1);
-                first.Completed.Should().Be(1);
+                first.Completed.Should().Be(0);
                 first.Evaluated.Should().Be(0);
-                first.Registered.Should().Be(12);
+                first.Registered.Should().Be(1);
 
                 var last = result.Last();
-                last.LogDate.Should().Be(DateTime.Now);
-                last.LogYear.Should().Be(1);
+                last.LogDate.Should().Be(DateTime.Parse("2014-01-31 09:43:28.840"));
+                last.LogYear.Should().Be(2014);
                 last.LogQuarter.Should().Be(1);
                 last.LogMonth.Should().Be(1);
-                last.Completed.Should().Be(1);
+                last.Completed.Should().Be(0);
                 last.Evaluated.Should().Be(0);
-                last.Registered.Should().Be(12);
+                last.Registered.Should().Be(1);
             }
         }
     }
