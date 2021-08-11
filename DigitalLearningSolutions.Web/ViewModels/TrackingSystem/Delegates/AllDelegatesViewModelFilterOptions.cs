@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -38,6 +40,30 @@
                     nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
                     nameof(DelegateUserCard.JobGroupId) +
                     FilteringHelper.Separator + j.id,
+                    FilterStatus.Default
+                )
+            );
+        }
+
+        public static IEnumerable<FilterOptionViewModel> GetCustomPromptOptions(
+            CustomPrompt customPrompt
+        )
+        {
+            string filterValueName = customPrompt.CustomPromptNumber switch
+            {
+                1 => nameof(DelegateUserCard.Answer1),
+                2 => nameof(DelegateUserCard.Answer2),
+                3 => nameof(DelegateUserCard.Answer3),
+                4 => nameof(DelegateUserCard.Answer4),
+                5 => nameof(DelegateUserCard.Answer5),
+                6 => nameof(DelegateUserCard.Answer6),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            return customPrompt.Options.Select(
+                x => new FilterOptionViewModel(
+                    x,
+                    filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator + x,
                     FilterStatus.Default
                 )
             );

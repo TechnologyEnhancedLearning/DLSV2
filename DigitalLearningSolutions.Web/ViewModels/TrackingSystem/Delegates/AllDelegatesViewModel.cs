@@ -42,7 +42,8 @@
                 }
             );
 
-            Filters = new[]
+            var customPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId).ToList();
+            var filters = new List<FilterViewModel>
             {
                 new FilterViewModel(
                     "PasswordStatus",
@@ -65,6 +66,16 @@
                     AllDelegatesViewModelFilterOptions.GetJobGroupOptions(jobGroups)
                 )
             };
+            filters.AddRange(
+                customPrompts.Select(
+                    customPrompt => new FilterViewModel(
+                        customPrompt.CustomPromptText,
+                        customPrompt.CustomPromptText,
+                        AllDelegatesViewModelFilterOptions.GetCustomPromptOptions(customPrompt)
+                    )
+                )
+            );
+            Filters = filters;
         }
 
         public int CentreId { get; set; }

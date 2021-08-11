@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -112,6 +113,11 @@
                     modelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
             }
+        }
+
+        public IEnumerable<CustomPrompt> GetClosedCustomPromptsForCentre(int centreId)
+        {
+            return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Where((customPrompt) => customPrompt.Options.Count > 0);
         }
     }
 }
