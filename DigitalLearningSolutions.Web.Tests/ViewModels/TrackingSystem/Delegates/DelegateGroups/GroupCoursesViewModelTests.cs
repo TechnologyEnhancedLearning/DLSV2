@@ -2,9 +2,11 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -14,24 +16,20 @@
         private readonly DelegateGroupsSideNavViewModel expectedNavViewModel =
             new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Courses);
 
-        private readonly GroupCourse[] groupCourses =
+        private GroupCourse[] groupCourses = null!;
+
+        [SetUp]
+        public void SetUp()
         {
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "a", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "b", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "c", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "d", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "e", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "f", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "g", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "h", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "i", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "j", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "k", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "l", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "m", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "n", customisationName: "v1"),
-            GroupTestHelper.GetDefaultGroupCourse(applicationName: "o", customisationName: "v1")
-        };
+            BuilderSetup.DisablePropertyNamingFor<GroupCourse, string>(g => g.SearchableName);
+            groupCourses = Builder<GroupCourse>.CreateListOfSize(15)
+                .All()
+                .With(g => g.CustomisationName = "v1")
+                .With(
+                    (g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i)
+                )
+                .Build().ToArray();
+        }
 
         [Test]
         public void GroupCoursesViewModel_should_default_to_returning_the_first_ten_Course()
@@ -47,9 +45,9 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupCourses.Count().Should().Be(10);
-                model.GroupCourses.FirstOrDefault(groupCourse => groupCourse.Name == "k - v1").Should()
-                    .BeNull();
+                model.GroupCourses.Count().Should().Be(BaseSearchablePageViewModel.DefaultItemsPerPage);
+                model.GroupCourses.Any(groupCourse => groupCourse.Name == "K - v1").Should()
+                    .BeFalse();
             }
         }
 
@@ -62,13 +60,15 @@
                 groupCourses,
                 2
             );
+            var expectedFirstGroupCourse =
+                groupCourses.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupCourses.Count().Should().Be(5);
-                model.GroupCourses.First().Name.Should().BeEquivalentTo("k - v1");
+                model.GroupCourses.First().Name.Should().BeEquivalentTo(expectedFirstGroupCourse.CourseName);
             }
         }
     }

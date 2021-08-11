@@ -37,7 +37,10 @@
         public void GroupCourseViewModel_populates_expected_values_with_supervisor_name()
         {
             // Given
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorFirstName: "Test", supervisorLastName: "Name");
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                supervisorFirstName: "Test",
+                supervisorLastName: "Name"
+            );
 
             // When
             var result = new GroupCourseViewModel(groupCourse);
