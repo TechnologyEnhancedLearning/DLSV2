@@ -6,10 +6,10 @@ export default function getPathForEndpoint(endpoint: string): string {
 }
 
 /** This allows us to dispatch browser events in old IE and newer browsers */
-export const SendBrowserAgnosticEvent = <T extends HTMLElement | Window>(
+export function SendBrowserAgnosticEvent <T extends HTMLElement | Window>(
   elem: T,
   eventName: string,
-): Event => {
+): Event {
   // Needed for IE Support: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent#Browser_Compatibility
   // https://stackoverflow.com/a/49071358/79677
   let event;
@@ -22,4 +22,4 @@ export const SendBrowserAgnosticEvent = <T extends HTMLElement | Window>(
   elem.dispatchEvent(event);
 
   return event;
-};
+}
