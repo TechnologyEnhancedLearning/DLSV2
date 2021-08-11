@@ -11,6 +11,7 @@
         public const string DefaultSortOption = "SearchableName";
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
+        public const int DefaultItemsPerPage = 10;
 
         public readonly string? FilterBy;
 
@@ -19,7 +20,7 @@
         public readonly string? SearchString;
 
         public int MatchingSearchResults;
-        
+
         public readonly bool FilterEnabled;
 
         protected BaseSearchablePageViewModel(
@@ -29,7 +30,7 @@
             string sortBy = DefaultSortOption,
             string sortDirection = Ascending,
             string? filterBy = null,
-            int itemsPerPage = 10
+            int itemsPerPage = DefaultItemsPerPage
         )
         {
             SortBy = sortBy;

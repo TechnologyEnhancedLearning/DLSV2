@@ -28,5 +28,16 @@
 
             return View(model);
         }
+
+        [Route("{groupId:int}/Delegates/{page:int=1}")]
+        public IActionResult GroupDelegates(int groupId, int page = 1)
+        {
+            var groupName = groupsDataService.GetGroupNameForGroupId(groupId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
+
+            var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
+
+            return View(model);
+        }
     }
 }

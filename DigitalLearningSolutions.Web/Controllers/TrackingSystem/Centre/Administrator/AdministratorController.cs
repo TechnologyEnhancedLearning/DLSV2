@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
@@ -90,6 +91,42 @@
             var categories = GetCourseCategories(centreId);
             var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
             return View("AllAdmins", model);
+        }
+
+        [Route("{adminId:int}/EditAdminRoles")]
+        [HttpGet]
+        public IActionResult EditAdminRoles(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (adminUser == null)
+            {
+                return NotFound();
+            }
+
+            var centreId = User.GetCentreId();
+            var categories = commonService.GetCategoryListForCentre(centreId);
+            categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+
+            var model = new EditRolesViewModel(adminUser, centreId, categories);
+            return View(model);
+        }
+
+        [Route("{adminId:int}/EditAdminRoles")]
+        [HttpPost]
+        public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
+        {
+            userDataService.UpdateAdminUserPermissions(
+                adminId,
+                model.IsCentreAdmin,
+                model.IsSupervisor,
+                model.IsTrainer,
+                model.IsContentCreator,
+                model.ContentManagementRole.IsContentManager,
+                model.ContentManagementRole.ImportOnly,
+                model.LearningCategory
+            );
+
+            return RedirectToAction("Index");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)

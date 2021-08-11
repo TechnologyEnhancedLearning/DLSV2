@@ -5,7 +5,6 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public partial class UserDataServiceTests
@@ -149,6 +148,31 @@
 
             // Then
             count.Should().Be(3);
+        }
+
+        [Test]
+        public void UpdateAdminUserPermissions_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, 1);
+                var updatedUser = userDataService.GetAdminUserById(7)!;
+
+                // Then
+                updatedUser.IsCentreAdmin.Should().BeTrue();
+                updatedUser.IsSupervisor.Should().BeTrue();
+                updatedUser.IsTrainer.Should().BeTrue();
+                updatedUser.IsContentCreator.Should().BeTrue();
+                updatedUser.IsContentManager.Should().BeTrue();
+                updatedUser.ImportOnly.Should().BeTrue();
+                updatedUser.CategoryId.Should().Be(1);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @model SearchableDelegateGroupViewModel
 
-<div class="searchable-element nhsuk-panel" id="@Model.Id-card">
+<div class="searchable-element nhsuk-panel word-break" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
@@ -15,7 +15,7 @@
           <dt class="nhsuk-summary-list__key">
             Name
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.Name"/>
+          <partial name="_SummaryFieldValue" model="Model.Name" />
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
@@ -99,7 +99,12 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button expander-card__button" role="button">
+      <a class="nhsuk-button expander-card__button"
+         role="button"
+         asp-controller="DelegateGroups"
+         asp-action="GroupDelegates"
+         asp-route-groupId="@Model.Id"
+         asp-route-page="1">
         View delegates
       </a>
 

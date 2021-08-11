@@ -40,7 +40,11 @@
           Unlock account
         </a>
       } else {
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button">
+        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+           role="button"
+           asp-controller="Administrator"
+           asp-action="EditAdminRoles"
+           asp-route-adminId="@Model.Id">
           Manage roles
         </a>
       }

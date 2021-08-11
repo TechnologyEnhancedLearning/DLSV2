@@ -202,5 +202,41 @@
                 new { centreId }
             );
         }
+
+        public void UpdateAdminUserPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int categoryId
+        )
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers
+                        SET
+                            CentreAdmin = @isCentreAdmin,
+                            Supervisor = @isSupervisor,
+                            Trainer = @isTrainer,
+                            ContentCreator = @isContentCreator,
+                            ContentManager = @isContentManager,
+                            ImportOnly = @importOnly,
+                            CategoryID = @categoryId
+                        WHERE AdminID = @adminId",
+                new
+                {
+                    isCentreAdmin,
+                    isSupervisor,
+                    isTrainer,
+                    isContentCreator,
+                    isContentManager,
+                    importOnly,
+                    categoryId,
+                    adminId
+                }
+            );
+        }
     }
 }
