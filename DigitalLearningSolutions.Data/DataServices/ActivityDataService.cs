@@ -27,9 +27,9 @@
                         LogYear,
                         LogQuarter,
                         LogMonth,
-                        Completion,
-                        Evaluation,
-                        Registration
+                        Completed,
+                        Evaluated,
+                        Registered
                     FROM tActivityLog
                         WHERE (LogDate > @startDate
                                AND LogDate < @endDate

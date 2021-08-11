@@ -8,7 +8,7 @@
 
     public static class DateHelper
     {
-        public static IEnumerable<(int Month, int Year)> GetMonthsAndYearsBetweenDates2(DateTime startDate, DateTime endDate)
+        public static IEnumerable<(int Month, int Year)> GetMonthsAndYearsBetweenDates(DateTime startDate, DateTime endDate)
         {
             var diffInMonths = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);
             var monthEnumerable = Enumerable.Range(startDate.Month, diffInMonths + 1);
@@ -45,7 +45,6 @@
             {
                 return GetQuartersBetweenDates(startDate, endDate);
             }
-
             return GetYearsBetweenDates(startDate, endDate);
         }
 
@@ -64,9 +63,7 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Days,
-                        Day = day.Day,
-                        Month = day.Month,
-                        Year = day.Year
+                        Date = new DateTime(day.Year, day.Month, day.Day)
                     };
                 }
             );
@@ -88,12 +85,12 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Weeks,
-                        WeekBeginning = referenceDate.AddDays(w * 7),
+                        Date = referenceDate.AddDays(w * 7),
                     };
                 }
             );
 
-            return rawWeekSlots.Where(w => w.WeekBeginning?.AddDays(7) > startDate);
+            return rawWeekSlots.Where(w => w.Date?.AddDays(7) > startDate);
         }
 
         private static IEnumerable<DateInformation> GetMonthsBetweenDates(
@@ -112,8 +109,7 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Months,
-                        Month = month,
-                        Year = startDate.Year + yearsToAdd
+                        Date = new DateTime(startDate.AddYears(yearsToAdd).Year, month, 1)
                     };
                 }
             );
@@ -135,8 +131,7 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Quarters,
-                        Quarter = quarter,
-                        Year = startDate.Year + yearsToAdd
+                        Date = new DateTime(startDate.AddYears(yearsToAdd).Year, quarter * 3 - 2, 1)
                     };
                 }
             );
@@ -155,7 +150,7 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Years,
-                        Year = y
+                        Date = new DateTime(y, 1, 1)
                     };
                 }
             );

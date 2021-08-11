@@ -10,7 +10,7 @@
 
     public interface IActivityService
     {
-        public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId);
+        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
     }
 
     public class ActivityService : IActivityService
@@ -22,25 +22,6 @@
         {
             this.activityDataService = activityDataService;
             this.clockService = clockService;
-        }
-
-        public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId)
-        {
-            var endTime = clockService.UtcNow;
-            var startTime = endTime.AddYears(-1);
-
-            var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
-
-            var monthSlots = DateHelper.GetMonthsAndYearsBetweenDates(startTime, endTime).ToList();
-
-            return monthSlots.Select(
-                slot =>
-                {
-                    var monthData =
-                        activityData.SingleOrDefault(data => data.Year == slot.Year && data.Month == slot.Month);
-                    return new MonthOfActivity(slot, monthData);
-                }
-            );
         }
 
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
@@ -58,7 +39,9 @@
             return dateSlots.Select(
                 slot =>
                 {
-                    var periodData = dataByPeriod.SingleOrDefault();
+                    var periodData = dataByPeriod.SingleOrDefault(
+                        data => data.DateInformation.Date == slot.Date
+                    );
                     return new PeriodOfActivity(slot, periodData);
                 });
         }
@@ -72,9 +55,7 @@
                 groupedData = activityData.GroupBy(x => new DateInformation
                 {
                     Interval = interval,
-                    Day = x.LogDate.Day,
-                    Month = x.LogMonth,
-                    Year = x.LogYear
+                    Date = new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day)
                 });
             }
             else if (Equals(interval, ReportInterval.Weeks))
@@ -83,7 +64,7 @@
                 groupedData = activityData.GroupBy(x => new DateInformation
                 {
                     Interval = interval,
-                    WeekBeginning = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
+                    Date = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
                 });
             }
             else if (Equals(interval, ReportInterval.Months))
@@ -91,8 +72,7 @@
                 groupedData = activityData.GroupBy(x => new DateInformation
                 {
                     Interval = interval,
-                    Month = x.LogMonth,
-                    Year = x.LogYear
+                    Date = new DateTime(x.LogYear, x.LogMonth, 1)
                 });
             }
             else if (Equals(interval, ReportInterval.Quarters))
@@ -100,8 +80,7 @@
                 groupedData = activityData.GroupBy(x => new DateInformation
                 {
                     Interval = interval,
-                    Quarter = x.LogQuarter,
-                    Year = x.LogYear
+                    Date = new DateTime(x.LogYear, x.LogQuarter * 3 - 2, 1)
                 });
             }
             else
@@ -109,16 +88,16 @@
                 groupedData = activityData.GroupBy(x => new DateInformation
                 {
                     Interval = interval,
-                    Year = x.LogYear
+                    Date = new DateTime(x.LogYear, 1, 1)
                 });
             }
 
             return groupedData.Select(
                 x => new PeriodOfActivity(
                     x.Key,
-                    x.Sum(y => y.Registration),
-                    x.Sum(y => y.Completion),
-                    x.Sum(y => y.Evaluation)
+                    x.Sum(y => y.Registered),
+                    x.Sum(y => y.Completed),
+                    x.Sum(y => y.Evaluated)
                     )
                 );
         }
@@ -127,11 +106,37 @@
     public class DateInformation
     {
         public ReportInterval Interval { get; set; }
-        public int Day { get; set; }
-        public DateTime? WeekBeginning { get; set; }
-        public int Month { get; set; }
-        public int Quarter { get; set; }
-        public int Year { get; set; }
+        public DateTime? Date { get; set; }
+
+        public string GetDateLabel(bool shortForm)
+        {
+            var formatString = "";
+
+            var quarter = Date?.Month / 3 + 1;
+
+            if (Equals(Interval, ReportInterval.Days))
+            {
+                formatString = shortForm ? "y/M/d" : "yyyy/MM/d";
+            }
+            else if (Equals(Interval, ReportInterval.Weeks))
+            {
+                formatString = shortForm ? "wc y/M/d" : "Week commencing yyyy/MM/d";
+            }
+            else if (Equals(Interval, ReportInterval.Months))
+            {
+                formatString = shortForm ? "MMM yyyy" : "MMMM, yyyy";
+            }
+            else if (Equals(Interval, ReportInterval.Quarters))
+            {
+                formatString = shortForm ? $"yyyy Q{quarter}" : $"Quarter {quarter}, yyyy";
+            }
+            else if (Equals(Interval, ReportInterval.Years))
+            {
+                formatString = "yyyy";
+            }
+
+            return Date?.ToString(formatString) ?? "";
+        }
     }
 
     public class PeriodOfActivity
