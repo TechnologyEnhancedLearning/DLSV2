@@ -101,7 +101,7 @@
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-            return View("RemoveConfirm", supervisorDelegateId);
+            return View("RemoveConfirm", superviseDelegate);
         }
         public IActionResult RemoveSupervisorDelegate(int supervisorDelegateId)
         {
