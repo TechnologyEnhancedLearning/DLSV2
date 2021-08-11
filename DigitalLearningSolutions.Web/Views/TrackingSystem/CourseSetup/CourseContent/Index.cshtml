@@ -34,9 +34,12 @@
       </div>
     </div>
 
-    @foreach (var section in Model.Sections)
-    {
-      <partial name="_CourseSectionExpandable" model="section" />
+    @if (Model.Sections.Any(s => s.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled) || s.PostLearningAssessment)) {
+      @foreach (var section in Model.Sections) {
+        <partial name="_CourseSectionExpandable" model="section" />
+      }
+    } else {
+      <p>No course content enabled.</p>
     }
 
     <a class="nhsuk-button nhsuk-u-margin-top-4" role="button" href="">Edit course content</a>
