@@ -11,5 +11,17 @@
             DelegatePasswordStatusFilterOptions.PasswordSet,
             DelegatePasswordStatusFilterOptions.PasswordNotSet
         };
+
+        public static readonly IEnumerable<FilterOptionViewModel> AdminStatusOptions = new[]
+        {
+            DelegateAdminStatusFilterOptions.IsAdmin,
+            DelegateAdminStatusFilterOptions.IsNotAdmin
+        };
+
+        public static readonly IEnumerable<FilterOptionViewModel> ActiveStatusOptions = new[]
+        {
+            DelegateActiveStatusFilterOptions.IsActive,
+            DelegateActiveStatusFilterOptions.IsNotActive
+        };
     }
 }

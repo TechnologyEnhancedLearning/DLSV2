@@ -15,7 +15,7 @@
             IsSelfReg = delegateUser.SelfReg;
             IsExternalReg = delegateUser.ExternalReg;
             IsActive = delegateUser.Active;
-            IsAdmin = delegateUser.AdminId.HasValue;
+            IsAdmin = delegateUser.IsAdmin;
             IsPasswordSet = delegateUser.IsPasswordSet;
 
             Email = delegateUser.EmailAddress;

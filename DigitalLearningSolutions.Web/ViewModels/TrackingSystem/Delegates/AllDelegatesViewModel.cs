@@ -47,6 +47,16 @@
                     "PasswordStatus",
                     "Password Status",
                     AllDelegatesViewModelFilterOptions.PasswordStatusOptions
+                ),
+                new FilterViewModel(
+                    "AdminStatus",
+                    "Admin Status",
+                    AllDelegatesViewModelFilterOptions.AdminStatusOptions
+                ),
+                new FilterViewModel(
+                    "ActiveStatus",
+                    "Active Status",
+                    AllDelegatesViewModelFilterOptions.ActiveStatusOptions
                 )
             };
         }
