@@ -3,36 +3,32 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class DelegateGroupsViewModelTests
     {
-        private Group[] groups = null!;
-
-        [SetUp]
-        public void SetUp()
+        private readonly Group[] groups =
         {
-            BuilderSetup.DisablePropertyNamingFor<Group, string>(g => g.SearchableName);
-            groups = Builder<Group>.CreateListOfSize(15)
-                .All()
-                .With((g, i) => g.GroupLabel = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
-                .TheFirst(5)
-                .With(g => g.AddedByAdminId = 1)
-                .With(g => g.AddedByFirstName = "Test")
-                .With(g => g.AddedByLastName = "Admin")
-                .TheRest()
-                .With(g => g.AddedByAdminId = 2)
-                .With(g => g.AddedByFirstName = "Test")
-                .With(g => g.AddedByLastName = "Person")
-                .Build().ToArray();
-        }
+            new Group { GroupLabel = "A", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
+            new Group { GroupLabel = "B", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
+            new Group { GroupLabel = "C", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
+            new Group { GroupLabel = "D", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
+            new Group { GroupLabel = "E", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
+            new Group { GroupLabel = "F", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "G", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "H", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "I", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "J", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "K", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "L", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "M", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "N", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "O", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" }
+        };
 
         [Test]
         public void DelegateGroupsViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
@@ -112,6 +108,7 @@
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
+            model.DelegateGroups.First().Name.Should().BeEquivalentTo("K");
         }
     }
 }
