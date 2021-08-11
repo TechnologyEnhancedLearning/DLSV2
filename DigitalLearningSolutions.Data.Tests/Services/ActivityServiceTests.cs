@@ -22,7 +22,7 @@
         {
             activityDataService = A.Fake<IActivityDataService>();
             clockService = A.Fake<IClockService>();
-            activityService = new ActivityService(activityDataService, clockService);
+            activityService = new ActivityService(activityDataService);
         }
 
         [Test]
