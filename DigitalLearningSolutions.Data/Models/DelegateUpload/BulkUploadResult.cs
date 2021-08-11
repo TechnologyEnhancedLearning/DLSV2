@@ -4,7 +4,7 @@
 
     public class BulkUploadResult
     {
-        public enum ErrorReasons
+        public enum ErrorReason
         {
             InvalidJobGroupId,
             InvalidLastName,
@@ -24,7 +24,7 @@
             int registered,
             int updated,
             int skipped,
-            IEnumerable<(int RowNumber, ErrorReasons Reason)> errors
+            IEnumerable<(int RowNumber, ErrorReason Reason)> errors
         )
         {
             Processed = processed;
@@ -34,7 +34,7 @@
             Errors = errors;
         }
 
-        public IEnumerable<(int RowNumber, ErrorReasons Reason)> Errors { get; set; }
+        public IEnumerable<(int RowNumber, ErrorReason Reason)> Errors { get; set; }
         public int Processed { get; set; }
         public int Registered { get; set; }
         public int Updated { get; set; }

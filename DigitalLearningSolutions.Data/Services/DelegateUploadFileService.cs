@@ -46,7 +46,7 @@
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var (registered, updated, skipped) = (0, 0, 0);
-            var errors = new List<(int, BulkUploadResult.ErrorReasons)>();
+            var errors = new List<(int, BulkUploadResult.ErrorReason)>();
             var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row));
 
             foreach (var delegateRow in delegateRows)
@@ -65,7 +65,7 @@
                 }
                 catch (UserAccountNotFoundException)
                 {
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.NoRecordForDelegateId));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.NoRecordForDelegateId));
                     continue;
                 }
 
@@ -109,7 +109,7 @@
             DateTime? welcomeEmailDate,
             int centreId,
             ref int registered,
-            List<(int, BulkUploadResult.ErrorReasons)> errors
+            List<(int, BulkUploadResult.ErrorReason)> errors
         )
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
@@ -117,16 +117,16 @@
             switch (status)
             {
                 case "-1":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.UnexpectedErrorForCreate));
                     break;
                 case "-2":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.ParameterError));
                     break;
                 case "-3":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.AliasIdInUse));
                     break;
                 case "-4":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.EmailAddressInUse));
                     break;
                 default:
                     registered += 1;
@@ -141,7 +141,7 @@
             ref int updated,
             ref int skipped,
             ref int registered,
-            List<(int, BulkUploadResult.ErrorReasons)> errors
+            List<(int, BulkUploadResult.ErrorReason)> errors
         )
         {
             var record = new DelegateRecord(delegateRow, centreId, approved);
@@ -159,16 +159,16 @@
                     break;
                 case -1:
                 case -4:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate));
                     break;
                 case -2:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.ParameterError));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.ParameterError));
                     break;
                 case -3:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.AliasIdInUse));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.AliasIdInUse));
                     break;
                 case -5:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReasons.EmailAddressInUse));
+                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.EmailAddressInUse));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(

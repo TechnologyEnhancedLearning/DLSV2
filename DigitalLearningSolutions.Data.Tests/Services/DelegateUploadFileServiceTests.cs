@@ -178,7 +178,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldNotCreateOrUpdateDelegate();
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidJobGroupId);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidJobGroupId);
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldNotCreateOrUpdateDelegate();
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidLastName);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidLastName);
         }
 
         [Test]
@@ -212,7 +212,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldNotCreateOrUpdateDelegate();
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidFirstName);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidFirstName);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldNotCreateOrUpdateDelegate();
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidEmail);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidEmail);
         }
 
         [Test]
@@ -246,7 +246,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             ShouldNotCreateOrUpdateDelegate();
             ShouldJustHaveOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.InvalidActive);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidActive);
         }
 
         [Test]
@@ -301,7 +301,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             result.Errors.Should().HaveCount(1);
             result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReasons.NoRecordForDelegateId);
+            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.NoRecordForDelegateId);
             ShouldNotCreateOrUpdateDelegate();
         }
 
@@ -384,14 +384,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened();
         }
 
-        [TestCase(-1, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate)]
-        [TestCase(-2, BulkUploadResult.ErrorReasons.ParameterError)]
-        [TestCase(-3, BulkUploadResult.ErrorReasons.AliasIdInUse)]
-        [TestCase(-4, BulkUploadResult.ErrorReasons.UnexpectedErrorForUpdate)]
-        [TestCase(-5, BulkUploadResult.ErrorReasons.EmailAddressInUse)]
+        [TestCase(-1, BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate)]
+        [TestCase(-2, BulkUploadResult.ErrorReason.ParameterError)]
+        [TestCase(-3, BulkUploadResult.ErrorReason.AliasIdInUse)]
+        [TestCase(-4, BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate)]
+        [TestCase(-5, BulkUploadResult.ErrorReason.EmailAddressInUse)]
         public void ProcessDelegateTable_has_correct_error_reason_based_on_update_return_value(
             int returnValue,
-            BulkUploadResult.ErrorReasons expectedErrorReason
+            BulkUploadResult.ErrorReason expectedErrorReason
         )
         {
             // Given
@@ -410,13 +410,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.Errors.First().Reason.Should().Be(expectedErrorReason);
         }
 
-        [TestCase("-1", BulkUploadResult.ErrorReasons.UnexpectedErrorForCreate)]
-        [TestCase("-2", BulkUploadResult.ErrorReasons.ParameterError)]
-        [TestCase("-3", BulkUploadResult.ErrorReasons.AliasIdInUse)]
-        [TestCase("-4", BulkUploadResult.ErrorReasons.EmailAddressInUse)]
+        [TestCase("-1", BulkUploadResult.ErrorReason.UnexpectedErrorForCreate)]
+        [TestCase("-2", BulkUploadResult.ErrorReason.ParameterError)]
+        [TestCase("-3", BulkUploadResult.ErrorReason.AliasIdInUse)]
+        [TestCase("-4", BulkUploadResult.ErrorReason.EmailAddressInUse)]
         public void ProcessDelegateTable_has_correct_error_reason_based_on_create_return_value(
             string returnValue,
-            BulkUploadResult.ErrorReasons expectedErrorReason
+            BulkUploadResult.ErrorReason expectedErrorReason
         )
         {
             // Given

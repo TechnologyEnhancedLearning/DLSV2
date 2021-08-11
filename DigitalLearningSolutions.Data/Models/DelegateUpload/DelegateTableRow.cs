@@ -45,31 +45,31 @@
         public string? AliasId { get; set; }
         public string? Email { get; set; }
 
-        public BulkUploadResult.ErrorReasons? ValidateFields(IEnumerable<int> allowedJobGroupIds)
+        public BulkUploadResult.ErrorReason? ValidateFields(IEnumerable<int> allowedJobGroupIds)
         {
             if (!int.TryParse(JobGroupId, out var jobGroupId) || !allowedJobGroupIds.Contains(jobGroupId))
             {
-                return BulkUploadResult.ErrorReasons.InvalidJobGroupId;
+                return BulkUploadResult.ErrorReason.InvalidJobGroupId;
             }
 
             if (string.IsNullOrEmpty(LastName))
             {
-                return BulkUploadResult.ErrorReasons.InvalidLastName;
+                return BulkUploadResult.ErrorReason.InvalidLastName;
             }
 
             if (string.IsNullOrEmpty(FirstName))
             {
-                return BulkUploadResult.ErrorReasons.InvalidFirstName;
+                return BulkUploadResult.ErrorReason.InvalidFirstName;
             }
 
             if (string.IsNullOrEmpty(Email))
             {
-                return BulkUploadResult.ErrorReasons.InvalidEmail;
+                return BulkUploadResult.ErrorReason.InvalidEmail;
             }
 
             if (!bool.TryParse(Active, out _))
             {
-                return BulkUploadResult.ErrorReasons.InvalidActive;
+                return BulkUploadResult.ErrorReason.InvalidActive;
             }
 
             return null;
