@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import Cookies from 'js-cookie';
 import { ISearchableElement } from './searchSortFilterAndPaginate';
-import { SendBrowserAgnosticEvent } from '../common';
+import { sendBrowserAgnosticEvent } from '../common';
 
 export interface IAppliedFilter {
   group: string;
@@ -193,7 +193,7 @@ export function getFilterByValue(): string {
 function updateFilterBy(newFilter: string): void {
   const element = getFilterByElement();
   element.value = newFilter;
-  SendBrowserAgnosticEvent(element, 'change');
+  sendBrowserAgnosticEvent(element, 'change');
 }
 
 function updateFilterCookieValue(newFilter: string): void {
