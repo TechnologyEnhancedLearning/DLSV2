@@ -328,8 +328,8 @@ describe('sortSearchableElements delegates groups', () => {
   ${'CoursesCount'}   | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-c'} | ${'delegate-a'}
   ${'CoursesCount'}   | ${'Descending'} | ${'delegate-a'} | ${'delegate-c'} | ${'delegate-b'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      sortBy, sortDirection, firstId, secondId, thirdId,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }) => {
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
     // When
     setSortBy(sortBy);
     setSortDirection(sortDirection);
