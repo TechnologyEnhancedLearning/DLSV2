@@ -16,12 +16,10 @@
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
-        private readonly IClockService clockService;
 
-        public ActivityService(IActivityDataService activityDataService, IClockService clockService)
+        public ActivityService(IActivityDataService activityDataService)
         {
             this.activityDataService = activityDataService;
-            this.clockService = clockService;
         }
 
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
@@ -48,53 +46,37 @@
 
         private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval)
         {
-            IEnumerable<IGrouping<DateInformation, ActivityLog>> groupedData;
+            IEnumerable<IGrouping<long, ActivityLog>> groupedData;
 
             if (Equals(interval, ReportInterval.Days))
             {
-                groupedData = activityData.GroupBy(x => new DateInformation
-                {
-                    Interval = interval,
-                    Date = new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day)
-                });
+                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day).Ticks);
             }
             else if (Equals(interval, ReportInterval.Weeks))
             {
                 var referenceDate = new DateTime(1905, 1, 1);
-                groupedData = activityData.GroupBy(x => new DateInformation
-                {
-                    Interval = interval,
-                    Date = referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7)
-                });
+                groupedData = activityData.GroupBy(x => referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7).Ticks);
             }
             else if (Equals(interval, ReportInterval.Months))
             {
-                groupedData = activityData.GroupBy(x => new DateInformation
-                {
-                    Interval = interval,
-                    Date = new DateTime(x.LogYear, x.LogMonth, 1)
-                });
+                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, 1).Ticks);
             }
             else if (Equals(interval, ReportInterval.Quarters))
             {
-                groupedData = activityData.GroupBy(x => new DateInformation
-                {
-                    Interval = interval,
-                    Date = new DateTime(x.LogYear, x.LogQuarter * 3 - 2, 1)
-                });
+                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogQuarter * 3 - 2, 1).Ticks);
             }
             else
             {
-                groupedData = activityData.GroupBy(x => new DateInformation
-                {
-                    Interval = interval,
-                    Date = new DateTime(x.LogYear, 1, 1)
-                });
+                groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks);
             }
 
             return groupedData.Select(
                 x => new PeriodOfActivity(
-                    x.Key,
+                    new DateInformation
+                    {
+                        Interval = interval,
+                        Date = new DateTime(x.Key)
+                    }, 
                     x.Sum(y => y.Registered),
                     x.Sum(y => y.Completed),
                     x.Sum(y => y.Evaluated)
