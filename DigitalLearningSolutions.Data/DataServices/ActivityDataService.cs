@@ -32,12 +32,21 @@
                         Registered
                     FROM tActivityLog
                         WHERE (LogDate > @startDate
-                               AND LogDate < @endDate
-                               AND CentreID = @centreId
-                               AND JobGroupID = @jobGroupId
-                               AND CustomisationID = @customisationId
-                               AND CourseCategoryId = @courseCategoryId)",
-                new { centreId, filterData.StartDate, filterData.EndDate, filterData.JobGroupId, filterData.CustomisationId, filterData.CourseCategoryId }
+                            AND LogDate < @endDate
+                            AND CentreID = @centreId
+                            AND (@jobGroupId = 0 OR JobGroupID = @jobGroupId)
+                            AND (@customisationId = 0 OR CustomisationID = @customisationId)
+                            AND (@courseCategoryId = 0 OR CourseCategoryId = @courseCategoryId))
+                        ORDER BY LogDate",
+                new
+                {
+                    centreId,
+                    filterData.StartDate,
+                    filterData.EndDate,
+                    filterData.JobGroupId,
+                    filterData.CustomisationId,
+                    filterData.CourseCategoryId
+                }
             );
         }
     }

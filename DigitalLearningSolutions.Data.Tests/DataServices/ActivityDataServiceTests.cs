@@ -3,8 +3,11 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class ActivityDataServiceTests
@@ -22,26 +25,39 @@
         public void GetActivityForMonthsInYear_gets_activity_by_month_for_date_range()
         {
             // when
-            var start = DateTime.Parse("2014-01-01 00:00:00.000");
-            var end = DateTime.Parse("2014-04-30 23:59:59.999");
-            var result = service.GetActivityInRangeByMonth(101, start, end).ToList();
+            // var start = DateTime.Parse("2014-01-01 00:00:00.000");
+            // var end = DateTime.Parse("2014-04-30 23:59:59.999");
+            var filterData = new ActivityFilterData
+            {
+                StartDate = DateTime.Parse("2014-01-01 00:00:00.000"),
+                EndDate = DateTime.Parse("2014-01-31 23:59:59.999"),
+                ReportInterval = ReportInterval.Months
+            };
+            var result = service.GetRawActivity(101, filterData).ToList();
 
             // then
-            result.Count().Should().Be(4);
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(13);
 
-            var first = result.First();
-            first.Year.Should().Be(2014);
-            first.Month.Should().Be(1);
-            first.Completions.Should().Be(1);
-            first.Evaluations.Should().Be(0);
-            first.Registrations.Should().Be(12);
+                var first = result.First();
+                first.LogDate.Should().Be(DateTime.Now);
+                first.LogYear.Should().Be(1);
+                first.LogQuarter.Should().Be(1);
+                first.LogMonth.Should().Be(1);
+                first.Completed.Should().Be(1);
+                first.Evaluated.Should().Be(0);
+                first.Registered.Should().Be(12);
 
-            var last = result.Last();
-            last.Year.Should().Be(2014);
-            last.Month.Should().Be(4);
-            last.Completions.Should().Be(0);
-            last.Evaluations.Should().Be(1);
-            last.Registrations.Should().Be(7);
+                var last = result.Last();
+                last.LogDate.Should().Be(DateTime.Now);
+                last.LogYear.Should().Be(1);
+                last.LogQuarter.Should().Be(1);
+                last.LogMonth.Should().Be(1);
+                last.Completed.Should().Be(1);
+                last.Evaluated.Should().Be(0);
+                last.Registered.Should().Be(12);
+            }
         }
     }
 }
