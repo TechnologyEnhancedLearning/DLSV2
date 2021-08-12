@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    @if (Model.Sections.Any(s => s.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled) || s.PostLearningAssessment)) {
+    @if (Model.CourseHasContent) {
       @foreach (var section in Model.Sections) {
         <partial name="_CourseSectionExpandable" model="section" />
       }
