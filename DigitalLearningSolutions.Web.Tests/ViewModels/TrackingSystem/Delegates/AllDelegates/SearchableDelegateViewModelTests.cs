@@ -9,40 +9,6 @@
 
     public class SearchableDelegateViewModelTests
     {
-        private readonly List<CustomFieldViewModel> customFields = new List<CustomFieldViewModel>();
-
-        [Test]
-        public void SearchableDelegateViewModel_sets_active_tag_name_correctly()
-        {
-            // Given
-            var activeUser = new DelegateUserCard { Active = true };
-            var inactiveUser = new DelegateUserCard { Active = false };
-
-            // When
-            var activeModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(activeUser, customFields));
-            var inactiveModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(inactiveUser, customFields));
-
-            // Then
-            activeModel.ActiveTagName.Should().Be("Active");
-            inactiveModel.ActiveTagName.Should().Be("Inactive");
-        }
-
-        [Test]
-        public void SearchableDelegateViewModel_sets_password_tag_name_correctly()
-        {
-            // Given
-            var pwSetUser = new DelegateUserCard { Password = "pw" };
-            var pwNotSetUser = new DelegateUserCard { Password = null };
-
-            // When
-            var pwSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwSetUser, customFields));
-            var pwNotSetModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(pwNotSetUser, customFields));
-
-            // Then
-            pwSetModel.PasswordTagName.Should().Be("Password set");
-            pwNotSetModel.PasswordTagName.Should().Be("Password not set");
-        }
-
         [Test]
         public void SearchableDelegateViewModel_sets_regstatus_tag_name_correctly()
         {
@@ -52,11 +18,11 @@
             var centreRegUser = new DelegateUserCard { SelfReg = false };
 
             // When
-            var selfRegModel = new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegUser, customFields));
+            var selfRegModel = new SearchableDelegateViewModel(selfRegUser, new List<CustomFieldViewModel>());
             var selfRegExternalModel =
-                new SearchableDelegateViewModel(new DelegateInfoViewModel(selfRegExternalUser, customFields));
+                new SearchableDelegateViewModel(selfRegExternalUser, new List<CustomFieldViewModel>());
             var centreRegModel =
-                new SearchableDelegateViewModel(new DelegateInfoViewModel(centreRegUser, customFields));
+                new SearchableDelegateViewModel(centreRegUser, new List<CustomFieldViewModel>());
 
             // Then
             selfRegModel.RegStatusTagName.Should().Be("Self registered");

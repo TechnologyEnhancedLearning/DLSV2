@@ -28,14 +28,14 @@
         private const string Group = "AdminStatus";
 
         public static readonly FilterOptionViewModel IsAdmin = new FilterOptionViewModel(
-            "Is administrator",
+            "Admin",
             Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsAdmin) + FilteringHelper.Separator +
             "true",
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel IsNotAdmin = new FilterOptionViewModel(
-            "Is not administrator",
+            "Not admin",
             Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsAdmin) + FilteringHelper.Separator +
             "false",
             FilterStatus.Default
