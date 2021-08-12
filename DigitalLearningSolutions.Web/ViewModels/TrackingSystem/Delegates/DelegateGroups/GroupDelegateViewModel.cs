@@ -7,12 +7,18 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
         public GroupDelegateViewModel(GroupDelegate groupDelegate)
         {
             GroupDelegateId = groupDelegate.GroupDelegateId;
+            GroupId = groupDelegate.GroupId;
+            DelegateId = groupDelegate.DelegateId;
             Name = (string.IsNullOrEmpty(groupDelegate.FirstName) ? "" : $"{groupDelegate.FirstName} ") + groupDelegate.LastName;
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
         }
 
         public int GroupDelegateId { get; set; }
+
+        public int GroupId { get; set; }
+
+        public int DelegateId { get; set; }
 
         public string Name { get; set; }
         
