@@ -15,10 +15,14 @@
     public class AllDelegatesController : Controller
     {
         private readonly CustomPromptHelper customPromptHelper;
-        private readonly IUserDataService userDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IUserDataService userDataService;
 
-        public AllDelegatesController(IUserDataService userDataService, CustomPromptHelper customPromptHelper, IJobGroupsDataService jobGroupsDataService)
+        public AllDelegatesController(
+            IUserDataService userDataService,
+            CustomPromptHelper customPromptHelper,
+            IJobGroupsDataService jobGroupsDataService
+        )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
@@ -61,7 +65,8 @@
         {
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, customPromptHelper);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, jobGroups, customPromptHelper);
             return View(model);
         }
     }

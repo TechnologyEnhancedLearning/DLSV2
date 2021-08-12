@@ -15,5 +15,8 @@
 @foreach (var delegateUser in Model.Delegates) {
   <partial name="_SearchableDelegateCard" model="delegateUser" />
 }
+@foreach (var filter in Model.Filters) {
+  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+}
 </body>
 </html>
