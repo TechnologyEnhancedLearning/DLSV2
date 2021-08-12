@@ -104,7 +104,7 @@
             var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]

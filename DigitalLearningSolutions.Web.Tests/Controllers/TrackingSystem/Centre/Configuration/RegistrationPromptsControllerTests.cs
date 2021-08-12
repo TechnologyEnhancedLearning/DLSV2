@@ -162,7 +162,7 @@
             var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
@@ -295,7 +295,7 @@
             var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
@@ -367,8 +367,7 @@
                         "Test\r\nAnswer"
                     )
                 ).MustHaveHappened();
-                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                    .WithActionName("Error");
+                result.Should().BeStatusCodeResult().WithStatusCode(500);
             }
         }
 
