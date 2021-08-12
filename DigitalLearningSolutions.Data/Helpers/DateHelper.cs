@@ -4,25 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public static class DateHelper
     {
-        public static IEnumerable<(int Month, int Year)> GetMonthsAndYearsBetweenDates(DateTime startDate, DateTime endDate)
-        {
-            var diffInMonths = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);
-            var monthEnumerable = Enumerable.Range(startDate.Month, diffInMonths + 1);
-
-            return monthEnumerable.Select(
-                m =>
-                {
-                    var month = (m - 1) % 12 + 1;
-                    var yearsToAdd = (m - 1) / 12;
-                    return (month, startDate.Year + yearsToAdd);
-                }
-            );
-        }
-
         public static IEnumerable<DateInformation> GetPeriodsBetweenDates(
             DateTime startDate,
             DateTime endDate,
@@ -120,7 +105,7 @@
             DateTime endDate
         )
         {
-            var diffInQuarters = (endDate.Year - startDate.Year) * 4 + (endDate.Month / 3 - startDate.Month / 3);
+            var diffInQuarters = (endDate.Year - startDate.Year) * 4 + ((endDate.Month - 1) / 3 - (startDate.Month - 1) / 3);
             var quarterEnumerable = Enumerable.Range(startDate.Month, diffInQuarters + 1);
 
             return quarterEnumerable.Select(
