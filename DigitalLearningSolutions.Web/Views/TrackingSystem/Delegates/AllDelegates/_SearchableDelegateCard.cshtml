@@ -54,6 +54,7 @@
             Job group
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
+          <div hidden data-filter-value="@Model.JobGroupFilter"></div>
         </div>
 
         @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {

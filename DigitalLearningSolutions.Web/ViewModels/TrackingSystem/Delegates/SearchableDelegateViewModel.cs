@@ -24,5 +24,9 @@
             DelegateInfo.IsSelfReg
                 ? "Self registered" + (DelegateInfo.IsExternalReg ? " (External)" : "")
                 : "Registered by centre";
+
+        public string JobGroupFilter => nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
+                                        nameof(DelegateUserCard.JobGroupId) +
+                                        FilteringHelper.Separator + DelegateInfo.JobGroupId;
     }
 }

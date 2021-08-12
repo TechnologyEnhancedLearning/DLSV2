@@ -19,6 +19,7 @@
             IsPasswordSet = delegateUser.IsPasswordSet;
 
             Email = delegateUser.EmailAddress;
+            JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
             if (delegateUser.DateRegistered.HasValue)
             {
@@ -41,6 +42,7 @@
         public bool IsPasswordSet { get; set; }
 
         public string? Email { get; set; }
+        public int JobGroupId { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
         public string? AliasId { get; set; }
