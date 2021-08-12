@@ -14,23 +14,19 @@
             ReportInterval interval
         )
         {
-            if (Equals(interval, ReportInterval.Days))
+            switch (interval)
             {
-                return GetDaysBetweenDates(startDate, endDate);
+                case ReportInterval.Days:
+                    return GetDaysBetweenDates(startDate, endDate);
+                case ReportInterval.Weeks:
+                    return GetWeeksBetweenDates(startDate, endDate);
+                case ReportInterval.Months:
+                    return GetMonthsBetweenDates(startDate, endDate);
+                case ReportInterval.Quarters:
+                    return GetQuartersBetweenDates(startDate, endDate);
+                default:
+                    return GetYearsBetweenDates(startDate, endDate);
             }
-            if (Equals(interval, ReportInterval.Weeks))
-            {
-                return GetWeeksBetweenDates(startDate, endDate);
-            }
-            if (Equals(interval, ReportInterval.Months))
-            {
-                return GetMonthsBetweenDates(startDate, endDate);
-            }
-            if (Equals(interval, ReportInterval.Quarters))
-            {
-                return GetQuartersBetweenDates(startDate, endDate);
-            }
-            return GetYearsBetweenDates(startDate, endDate);
         }
 
         private static IEnumerable<DateInformation> GetDaysBetweenDates(
@@ -70,7 +66,7 @@
                     return new DateInformation
                     {
                         Interval = ReportInterval.Weeks,
-                        Date = referenceDate.AddDays(w * 7),
+                        Date = referenceDate.AddDays(w * 7)
                     };
                 }
             );
@@ -105,7 +101,8 @@
             DateTime endDate
         )
         {
-            var diffInQuarters = (endDate.Year - startDate.Year) * 4 + ((endDate.Month - 1) / 3 - (startDate.Month - 1) / 3);
+            var diffInQuarters = (endDate.Year - startDate.Year) * 4 +
+                                 ((endDate.Month - 1) / 3 - (startDate.Month - 1) / 3);
             var quarterEnumerable = Enumerable.Range(startDate.Month, diffInQuarters + 1);
 
             return quarterEnumerable.Select(
