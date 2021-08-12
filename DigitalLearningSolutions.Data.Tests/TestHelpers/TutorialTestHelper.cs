@@ -7,8 +7,8 @@
         public static Tutorial GetDefaultTutorial(
             int tutorialId = 1,
             string tutorialName = "tutorial",
-            bool status = false,
-            bool diagStatus = false
+            bool status = true,
+            bool diagStatus = true
         )
         {
             return new Tutorial

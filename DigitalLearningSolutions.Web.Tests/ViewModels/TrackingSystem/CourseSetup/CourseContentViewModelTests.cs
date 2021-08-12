@@ -7,9 +7,9 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    internal class CourseContentViewModelTests
+    public class CourseContentViewModelTests
     {
-        private static readonly Tutorial DisabledTutorial = TutorialTestHelper.GetDefaultTutorial();
+        private static readonly Tutorial DisabledTutorial = TutorialTestHelper.GetDefaultTutorial(status:false, diagStatus:false);
 
         private static readonly Section DisabledSection =
             new Section(1, "disabled", new List<Tutorial> { DisabledTutorial, DisabledTutorial });
@@ -18,7 +18,7 @@
         public void CourseHasContent_is_true_when_at_least_one_section_has_learning_assessment_tutorial()
         {
             // Given
-            var enabledTutorial = TutorialTestHelper.GetDefaultTutorial(status: true);
+            var enabledTutorial = TutorialTestHelper.GetDefaultTutorial(diagStatus: false);
             var enabledSection = new Section(1, "test", new List<Tutorial> { enabledTutorial, DisabledTutorial });
 
             // When
@@ -37,7 +37,7 @@
         public void CourseHasContent_is_true_when_at_least_one_section_has_diagnostic_assessment_tutorial()
         {
             // Given
-            var enabledTutorial = TutorialTestHelper.GetDefaultTutorial(diagStatus: true);
+            var enabledTutorial = TutorialTestHelper.GetDefaultTutorial(status: false);
             var enabledSection = new Section(1, "test", new List<Tutorial> { enabledTutorial, DisabledTutorial });
 
             // When
