@@ -19,7 +19,7 @@
             Filters = new[]
             {
                 new FilterViewModel(
-                    "AddedByAdminId",
+                    nameof(Group.AddedByAdminId),
                     "Added by",
                     DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
                 ),

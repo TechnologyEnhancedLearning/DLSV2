@@ -27,12 +27,10 @@
         private readonly CentreCustomPrompts prompts =
             CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
 
-        private IRequestCookieCollection cookieCollection = null!;
         private ICustomPromptsService customPromptsService = null!;
 
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
-        private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
 
@@ -46,26 +44,13 @@
             A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
                 .Returns(prompts);
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
             const string cookieName = "DelegateGroupsFilter";
             const string cookieValue = "LinkedToField|LinkedToField|0";
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
-            A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
             delegateGroupsController = new DelegateGroupsController(groupsDataService, customPromptsService)
-                .WithMockHttpContext(httpContext)
+                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockTempData(); ;
         }

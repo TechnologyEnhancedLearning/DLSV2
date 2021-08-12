@@ -44,9 +44,8 @@
         };
 
         private AdministratorController administratorController = null!;
-        private IRequestCookieCollection cookieCollection = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private HttpContext httpContext = null!;
+
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
@@ -61,26 +60,13 @@
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                 .Returns(categories);
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
             const string cookieName = "AdminFilter";
             const string cookieValue = "Role|IsCentreAdmin|true";
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
-            A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
             administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
-                .WithMockHttpContext(httpContext)
+                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
