@@ -16,8 +16,14 @@
             // given
             var monthlyData = new[]
             {
-                new PeriodOfActivity(new DateInformation{Date = DateTime.Parse("2001-01-01"), Interval = ReportInterval.Months}, null),
-                new PeriodOfActivity(new DateInformation{Date = DateTime.Parse("2002-02-02"), Interval = ReportInterval.Months}, null)
+                new PeriodOfActivity(
+                    new DateInformation { Date = DateTime.Parse("2001-01-01"), Interval = ReportInterval.Months },
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation { Date = DateTime.Parse("2002-02-02"), Interval = ReportInterval.Months },
+                    null
+                )
             };
 
             // when

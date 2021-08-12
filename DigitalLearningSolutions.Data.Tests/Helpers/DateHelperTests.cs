@@ -37,7 +37,8 @@
             ReportInterval interval,
             string endpointString,
             string expectedStartString,
-            string expectedEndString)
+            string expectedEndString
+        )
         {
             // when
             var startDate = DateTime.Parse("2014-01-01 00:00:00.000");

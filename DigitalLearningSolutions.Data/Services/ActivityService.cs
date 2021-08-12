@@ -42,10 +42,14 @@
                         data => data.DateInformation.Date == slot.Date
                     );
                     return new PeriodOfActivity(slot, periodData);
-                });
+                }
+            );
         }
 
-        private IEnumerable<PeriodOfActivity> GroupActivityData(IEnumerable<ActivityLog> activityData, ReportInterval interval)
+        private IEnumerable<PeriodOfActivity> GroupActivityData(
+            IEnumerable<ActivityLog> activityData,
+            ReportInterval interval
+        )
         {
             IEnumerable<IGrouping<long, ActivityLog>> groupedData;
 
@@ -55,7 +59,9 @@
                     groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day).Ticks);
                     break;
                 case ReportInterval.Weeks:
-                    groupedData = activityData.GroupBy(x => referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7).Ticks);
+                    groupedData = activityData.GroupBy(
+                        x => referenceDate.AddDays((x.LogDate - referenceDate).Days / 7 * 7).Ticks
+                    );
                     break;
                 case ReportInterval.Months:
                     groupedData = activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, 1).Ticks);
@@ -74,12 +80,12 @@
                     {
                         Interval = interval,
                         Date = new DateTime(x.Key)
-                    }, 
+                    },
                     x.Sum(y => y.Registered),
                     x.Sum(y => y.Completed),
                     x.Sum(y => y.Evaluated)
-                    )
-                );
+                )
+            );
         }
     }
 }
