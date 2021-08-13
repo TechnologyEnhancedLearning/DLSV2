@@ -76,7 +76,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
-            Driver.LogoutUser(BaseUrl);
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();
@@ -116,7 +116,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
-            Driver.LogoutUser(BaseUrl);
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();

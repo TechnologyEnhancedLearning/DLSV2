@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
 
         public new void Dispose()
         {
-            Driver.LogoutUser(BaseUrl);
+            Driver.LogOutUser(BaseUrl);
             base.Dispose();
         }
     }

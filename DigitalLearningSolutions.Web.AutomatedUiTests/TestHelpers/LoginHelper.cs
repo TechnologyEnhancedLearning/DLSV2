@@ -17,7 +17,7 @@
             submitButton.Submit();
         }
 
-        public static void LogoutUser(this IWebDriver driver, string baseUrl)
+        public static void LogOutUser(this IWebDriver driver, string baseUrl)
         {
             driver.Navigate().GoToUrl(baseUrl + "/Logout");
         }
