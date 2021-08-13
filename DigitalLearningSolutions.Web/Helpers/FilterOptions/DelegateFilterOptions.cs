@@ -60,4 +60,30 @@
             FilterStatus.Warning
         );
     }
+
+    public static class DelegateRegistrationTypeFilterOptions
+    {
+        private const string Group = "RegistrationType";
+
+        public static readonly FilterOptionViewModel SelfRegistered = new FilterOptionViewModel(
+            "Self registered",
+            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
+            "SelfRegistered",
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionViewModel SelfRegisteredExternal = new FilterOptionViewModel(
+            "Self registered (External)",
+            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
+            "SelfRegisteredExternal",
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionViewModel RegisteredByCentre = new FilterOptionViewModel(
+            "Registered by centre",
+            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
+            "RegisteredByCentre",
+            FilterStatus.Default
+        );
+    }
 }

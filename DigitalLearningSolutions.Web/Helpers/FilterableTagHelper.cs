@@ -85,7 +85,7 @@
             DelegateUserCard delegateUser
         )
         {
-            var tags = new List<SearchableTagViewModel>
+            return new List<SearchableTagViewModel>
             {
                 delegateUser.Active
                     ? new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive)
@@ -95,10 +95,13 @@
                     : new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
                 delegateUser.IsAdmin
                     ? new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin)
-                    : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true)
+                    : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
+                delegateUser.SelfReg
+                    ? delegateUser.ExternalReg
+                        ? new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal)
+                        : new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegistered)
+                    : new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.RegisteredByCentre)
             };
-
-            return tags;
         }
     }
 }
