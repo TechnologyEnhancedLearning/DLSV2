@@ -61,6 +61,9 @@
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
             <partial name="_SummaryFieldValue" model="@customField.Answer" />
+            @if (Model.CustomPromptFilters.ContainsKey(customField.CustomFieldId)) {
+              <div hidden data-filter-value="@Model.CustomPromptFilters[customField.CustomFieldId]"></div>
+            }
           </div>
         }
       </dl>

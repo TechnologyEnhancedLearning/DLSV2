@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -117,7 +118,22 @@
 
         public IEnumerable<CustomPrompt> GetClosedCustomPromptsForCentre(int centreId)
         {
-            return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Where((customPrompt) => customPrompt.Options.Count > 0);
+            return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+                .Where(customPrompt => customPrompt.Options.Count > 0);
+        }
+
+        public static string GetDelegateCustomPromptAnswerName(int customPromptNumber)
+        {
+            return customPromptNumber switch
+            {
+                1 => nameof(DelegateUserCard.Answer1),
+                2 => nameof(DelegateUserCard.Answer2),
+                3 => nameof(DelegateUserCard.Answer3),
+                4 => nameof(DelegateUserCard.Answer4),
+                5 => nameof(DelegateUserCard.Answer5),
+                6 => nameof(DelegateUserCard.Answer6),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

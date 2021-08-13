@@ -21,7 +21,8 @@
                 delegateUser =>
                 {
                     var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    return new SearchableDelegateViewModel(delegateUser, customFields);
+                    var closedCustomPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );
 

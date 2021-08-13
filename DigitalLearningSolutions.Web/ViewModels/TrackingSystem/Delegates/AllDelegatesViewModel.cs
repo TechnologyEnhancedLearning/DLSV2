@@ -33,15 +33,15 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
+            var closedCustomPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId);
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
                     var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    return new SearchableDelegateViewModel(delegateUser, customFields);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );
 
-            var customPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId).ToList();
             var filters = new List<FilterViewModel>
             {
                 new FilterViewModel(
@@ -66,7 +66,7 @@
                 )
             };
             filters.AddRange(
-                customPrompts.Select(
+                closedCustomPrompts.Select(
                     customPrompt => new FilterViewModel(
                         customPrompt.CustomPromptText,
                         customPrompt.CustomPromptText,

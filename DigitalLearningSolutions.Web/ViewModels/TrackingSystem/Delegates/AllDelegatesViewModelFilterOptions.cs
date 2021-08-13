@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -49,16 +48,8 @@
             CustomPrompt customPrompt
         )
         {
-            string filterValueName = customPrompt.CustomPromptNumber switch
-            {
-                1 => nameof(DelegateUserCard.Answer1),
-                2 => nameof(DelegateUserCard.Answer2),
-                3 => nameof(DelegateUserCard.Answer3),
-                4 => nameof(DelegateUserCard.Answer4),
-                5 => nameof(DelegateUserCard.Answer5),
-                6 => nameof(DelegateUserCard.Answer6),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            string filterValueName =
+                CustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
 
             return customPrompt.Options.Select(
                 x => new FilterOptionViewModel(
