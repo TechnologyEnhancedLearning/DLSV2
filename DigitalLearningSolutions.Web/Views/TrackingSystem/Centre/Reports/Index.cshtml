@@ -30,6 +30,8 @@
 
     <h2 class="nhsuk-heading-m">Usage stats</h2>
 
+    <partial name="_FilterDisplayCard.cshtml" model="@Model.ActivityFilterModel" />
+
     <div class="js-only-block">
       <partial name="_ActivityGraph.cshtml"/>
     </div>
