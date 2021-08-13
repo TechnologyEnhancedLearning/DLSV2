@@ -27,6 +27,13 @@ pipeline {
                 }
             }
         }
+        stage('TS Lint') {
+            steps {
+                dir ("DigitalLearningSolutions.Web/") {
+                    bat "npm run lint"
+                }
+            }
+        }
         stage('Web Tests') {
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.Tests"
@@ -57,13 +64,6 @@ pipeline {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
                     bat "npm test"
-                }
-            }
-        }
-        stage('TS Lint') {
-            steps {
-                dir ("DigitalLearningSolutions.Web/") {
-                    bat "npm run lint"
                 }
             }
         }

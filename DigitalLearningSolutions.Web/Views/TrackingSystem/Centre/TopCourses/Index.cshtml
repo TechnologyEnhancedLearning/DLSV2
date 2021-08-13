@@ -26,16 +26,16 @@
       <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
         <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Name
+          Course
+        </th>
+        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
+          Delegates
         </th>
         <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
           In progress
         </th>
         <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
           Completed
-        </th>
-        <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
-          Delegates
         </th>
         <th role="columnheader" class="nhsuk-u-padding-left-2" scope="col">
           Pass rate
@@ -49,16 +49,16 @@
       @foreach (var course in Model.TopCourses) {
         <tr role="row" class="nhsuk-table__row">
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Name </span>@course.CourseName
+            <span class="nhsuk-table-responsive__heading">Course </span>@course.CourseName
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+            <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
             <span class="nhsuk-table-responsive__heading">In progress </span>@course.InProgressCount
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
             <span class="nhsuk-table-responsive__heading">Completed </span>@course.CompletedCount
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
-            <span class="nhsuk-table-responsive__heading">Delegates </span>@course.DelegateCount
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
             <span class="nhsuk-table-responsive__heading">Pass rate </span>@course.PassRate%
