@@ -36,12 +36,22 @@
             };
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
+            var filterModel = new ActivityFilterModel
+            {
+                CourseCategoryName = "All categories",
+                CustomisationName = "Customisation",
+                JobGroupName = "Job group",
+                ReportIntervalName = nameof(ReportInterval.Months), //TODO HEEDLS-541 is it inconsistent to convert dates in the view but the interval here?
+                StartDate = DateTime.Now.AddYears(-1),
+                EndDate = DateTime.Now,
+                ShowCourseCategory = true
+            };
 
-            var model = new ReportsViewModel(activity);
+            var model = new ReportsViewModel(activity, filterModel);
             return View(model);
         }
 
-        [Route("/TrackingSystem/Centre/Reports/Data")]
+        [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetRecentData()
         {
             var centreId = User.GetCentreId();
@@ -54,6 +64,13 @@
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
             return activity.Select(m => new ActivityDataRowModel(m, true));
+        }
+
+        [HttpGet]
+        [Route("EditFilters")]
+        public IActionResult EditFilters()
+        {
+            return View();
         }
     }
 }

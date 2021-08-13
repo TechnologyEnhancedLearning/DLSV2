@@ -1,0 +1,57 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@model ActivityFilterModel
+
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
+    <h2 class="nhsuk-card__heading">
+      My Details
+    </h2>
+    <div class="nhsuk-card__description">
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Job group
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
+        </div>
+
+        @if (Model.ShowCourseCategory)
+        {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Course category
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CourseCategoryName" />
+          </div>
+        }
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Course
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Date range
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.StartDate.ToString("d") - @Model.EndDate.ToString("d")
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Reporting frequency
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ReportIntervalName" />
+        </div>
+      </dl>
+
+      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="Reports" asp-action="EditFilters" role="button">
+        Edit filters
+      </a>
+    </div>
+  </div>
+</div>
