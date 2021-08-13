@@ -1,28 +1,21 @@
-﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
+namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
-    using System;
-    using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using FluentAssertions;
     using OpenQA.Selenium;
     using Selenium.Axe;
     using Xunit;
 
     [Collection("Selenium test collection")]
-    public class AccessibilityTestsBase : IDisposable
+    public class AccessibilityTestsBase
     {
         internal readonly string BaseUrl;
         internal readonly IWebDriver Driver;
 
-        public AccessibilityTestsBase(SeleniumServerFactory<Startup> factory)
+        public AccessibilityTestsBase(AccessibilityTestsFixture<Startup> fixture)
         {
-            BaseUrl = factory.RootUri;
-            Driver = DriverHelper.CreateHeadlessChromeDriver();
-        }
-
-        public void Dispose()
-        {
-            Driver.Quit();
-            Driver.Dispose();
+            BaseUrl = fixture.BaseUrl;
+            Driver = fixture.Driver;
         }
 
         public void AnalyzePageHeadingAndAccessibility(string pageTitle)
