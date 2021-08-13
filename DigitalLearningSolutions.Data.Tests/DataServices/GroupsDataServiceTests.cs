@@ -87,33 +87,23 @@
         }
 
         [Test]
-        public void GetGroupNameForGroupId_returns_expected_name()
+        public void GetGroupNameForGroupIdAndCentreId_returns_expected_name_with_correct_centre()
         {
             // When
-            var result = groupsDataService.GetGroupNameForGroupId(5);
+            var result = groupsDataService.GetGroupNameForGroupIdAndCentreId(5, 101);
 
             // Then
             result.Should().BeEquivalentTo("Activities worker or coordinator");
         }
 
         [Test]
-        public void IsGroupAtUserCentre_returns_true_for_correct_centre()
+        public void GetGroupNameForGroupIdAndCentreId_returns_null_with_incorrect_centre()
         {
             // When
-            var result = groupsDataService.IsGroupAtUserCentre(5, 101);
+            var result = groupsDataService.GetGroupNameForGroupIdAndCentreId(5, 1);
 
             // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void IsGroupAtUserCentre_returns_false_for_incorrect_centre()
-        {
-            // When
-            var result = groupsDataService.IsGroupAtUserCentre(5, 121);
-
-            // Then
-            result.Should().BeFalse();
+            result.Should().BeNull();
         }
     }
 }

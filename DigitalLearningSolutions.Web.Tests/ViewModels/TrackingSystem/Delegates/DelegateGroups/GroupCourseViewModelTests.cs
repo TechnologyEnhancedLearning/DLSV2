@@ -7,17 +7,17 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class GroupCourseExpandableViewModelTests
+    public class GroupCourseViewModelTests
     {
         [Test]
-        public void GroupCourseExpandableViewModel_populates_expected_values()
+        public void GroupCourseViewModel_populates_expected_values()
         {
             // Given
             var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
 
             // When
-            var result = new GroupCourseExpandableViewModel(groupCourse);
+            var result = new GroupCourseViewModel(groupCourse);
 
             // Then
             using (new AssertionScope())
@@ -34,7 +34,7 @@
         }
 
         [Test]
-        public void GroupCourseExpandableViewModel_populates_expected_values_with_supervisor_name()
+        public void GroupCourseViewModel_populates_expected_values_with_supervisor_name()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
@@ -43,20 +43,20 @@
             );
 
             // When
-            var result = new GroupCourseExpandableViewModel(groupCourse);
+            var result = new GroupCourseViewModel(groupCourse);
 
             // Then
             result.Supervisor.Should().Be("Test Name");
         }
 
         [Test]
-        public void GroupCourseExpandableViewModel_populates_expected_values_for_mandatory_assessed_course()
+        public void GroupCourseViewModel_populates_expected_values_for_mandatory_assessed_course()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(isMandatory: true, isAssessed: true);
 
             // When
-            var result = new GroupCourseExpandableViewModel(groupCourse);
+            var result = new GroupCourseViewModel(groupCourse);
 
             // Then
             using (new AssertionScope())
@@ -67,7 +67,7 @@
         }
 
         [Test]
-        public void GroupCourseExpandableViewModel_populates_expected_complete_within_value_for_one_month()
+        public void GroupCourseViewModel_populates_expected_complete_within_value_for_one_month()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
@@ -75,7 +75,7 @@
             );
 
             // When
-            var result = new GroupCourseExpandableViewModel(groupCourse);
+            var result = new GroupCourseViewModel(groupCourse);
 
             // Then
             result.CompleteWithin.Should().Be("1 month");

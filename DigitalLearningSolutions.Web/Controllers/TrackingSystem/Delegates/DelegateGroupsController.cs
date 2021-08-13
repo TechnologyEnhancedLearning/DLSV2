@@ -33,12 +33,13 @@
         public IActionResult GroupDelegates(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            if (!groupsDataService.IsGroupAtUserCentre(groupId, centreId))
+            var groupName = groupsDataService.GetGroupNameForGroupIdAndCentreId(groupId, centreId);
+
+            if (groupName == null)
             {
                 return NotFound();
             }
-            
-            var groupName = groupsDataService.GetGroupNameForGroupId(groupId);
+
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
 
             var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
@@ -50,12 +51,12 @@
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            if (!groupsDataService.IsGroupAtUserCentre(groupId, centreId))
+            var groupName = groupsDataService.GetGroupNameForGroupIdAndCentreId(groupId, centreId);
+
+            if (groupName == null)
             {
                 return NotFound();
             }
-
-            var groupName = groupsDataService.GetGroupNameForGroupId(groupId);
             var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);

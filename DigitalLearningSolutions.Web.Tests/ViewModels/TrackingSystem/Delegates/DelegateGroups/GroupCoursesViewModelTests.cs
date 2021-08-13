@@ -21,7 +21,6 @@
         [SetUp]
         public void SetUp()
         {
-            BuilderSetup.DisablePropertyNamingFor<GroupCourse, string>(g => g.SearchableName);
             groupCourses = Builder<GroupCourse>.CreateListOfSize(15)
                 .All()
                 .With(g => g.CustomisationName = "v1")
@@ -32,7 +31,7 @@
         }
 
         [Test]
-        public void GroupCoursesViewModel_should_default_to_returning_the_first_ten_Course()
+        public void GroupCoursesViewModel_should_default_to_returning_the_first_ten_courses()
         {
             var model = new GroupCoursesViewModel(
                 1,
@@ -45,14 +44,14 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupCourses.Count().Should().Be(BaseSearchablePageViewModel.DefaultItemsPerPage);
+                model.GroupCourses.Count().Should().Be(10);
                 model.GroupCourses.Any(groupCourse => groupCourse.Name == "K - v1").Should()
                     .BeFalse();
             }
         }
 
         [Test]
-        public void GroupCoursesViewModel_should_correctly_return_the_second_page_of_Course()
+        public void GroupCoursesViewModel_should_correctly_return_the_second_page_of_courses()
         {
             var model = new GroupCoursesViewModel(
                 1,
@@ -61,7 +60,7 @@
                 2
             );
             var expectedFirstGroupCourse =
-                groupCourses.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
+                groupCourses.Skip(10).First();
 
             using (new AssertionScope())
             {

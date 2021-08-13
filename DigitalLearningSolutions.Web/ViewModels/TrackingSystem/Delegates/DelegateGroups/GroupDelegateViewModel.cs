@@ -2,9 +2,9 @@
 
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
-    public class GroupDelegateExpandableViewModel
+    public class GroupDelegateViewModel
     {
-        public GroupDelegateExpandableViewModel(GroupDelegate groupDelegate)
+        public GroupDelegateViewModel(GroupDelegate groupDelegate)
         {
             GroupDelegateId = groupDelegate.GroupDelegateId;
             Name = (string.IsNullOrEmpty(groupDelegate.FirstName) ? "" : $"{groupDelegate.FirstName} ") + groupDelegate.LastName;

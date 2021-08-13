@@ -21,7 +21,6 @@
         [SetUp]
         public void SetUp()
         {
-            BuilderSetup.DisablePropertyNamingFor<GroupDelegate, string>(g => g.SearchableName);
             groupDelegates = Builder<GroupDelegate>.CreateListOfSize(15)
                 .All()
                 .With(g => g.LastName = "Surname")
@@ -43,7 +42,7 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupDelegates.Count().Should().Be(BaseSearchablePageViewModel.DefaultItemsPerPage);
+                model.GroupDelegates.Count().Should().Be(10);
                 model.GroupDelegates.Any(groupDelegate => groupDelegate.Name == "K Surname").Should()
                     .BeFalse();
             }
@@ -59,14 +58,16 @@
                 2
             );
             var expectedFirstGroupDelegate =
-                groupDelegates.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
+                groupDelegates.Skip(10).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupDelegates.Count().Should().Be(5);
-                model.GroupDelegates.First().Name.Should().BeEquivalentTo($"{expectedFirstGroupDelegate.FirstName} {expectedFirstGroupDelegate.LastName}");
+                model.GroupDelegates.First().Name.Should().BeEquivalentTo(
+                    $"{expectedFirstGroupDelegate.FirstName} {expectedFirstGroupDelegate.LastName}"
+                );
             }
         }
     }

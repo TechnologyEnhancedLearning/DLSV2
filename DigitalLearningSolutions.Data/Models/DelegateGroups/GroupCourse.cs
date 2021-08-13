@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class GroupCourse : BaseSearchableItem
+    public class GroupCourse
     {
         public int GroupCustomisationId { get; set; }
         public int GroupId { get; set; }
@@ -20,11 +20,5 @@
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName
             : ApplicationName + " - " + CustomisationName;
-
-        public override string SearchableName
-        {
-            get => SearchableNameOverrideForFuzzySharp ?? CourseName;
-            set => SearchableNameOverrideForFuzzySharp = value;
-        }
     }
 }

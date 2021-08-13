@@ -14,9 +14,7 @@
 
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
-        string GetGroupNameForGroupId(int groupId);
-
-        bool IsGroupAtUserCentre(int groupId, int centreId);
+        string? GetGroupNameForGroupIdAndCentreId(int groupId, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -106,26 +104,15 @@
             );
         }
 
-        public string GetGroupNameForGroupId(int groupId)
+        public string? GetGroupNameForGroupIdAndCentreId(int groupId, int centreId)
         {
             return connection.Query<string>(
                 @"SELECT 
                         GroupLabel
                     FROM Groups
-                    WHERE GroupID = @groupId",
-                new { groupId }
-            ).Single();
-        }
-
-        public bool IsGroupAtUserCentre(int groupId, int centreId)
-        {
-            return connection.Query<int>(
-                @"SELECT
-                        GroupID
-                    FROM Groups
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupId, centreId }
-            ).Any();
+            ).SingleOrDefault();
         }
     }
 }

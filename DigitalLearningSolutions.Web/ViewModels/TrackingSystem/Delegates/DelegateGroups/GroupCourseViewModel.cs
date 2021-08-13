@@ -1,10 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
 
-    public class GroupCourseExpandableViewModel
+    public class GroupCourseViewModel
     {
-        public GroupCourseExpandableViewModel(GroupCourse groupCourse)
+        public GroupCourseViewModel(GroupCourse groupCourse)
         {
             GroupCustomisationId = groupCourse.GroupCustomisationId;
             Name = groupCourse.CourseName;
@@ -14,8 +15,8 @@
             IsMandatory = groupCourse.IsMandatory ? "Mandatory" : "Not mandatory";
             IsAssessed = groupCourse.IsAssessed ? "Assessed" : "Not assessed";
             AddedToGroup = groupCourse.AddedToGroup.ToString("dd/MM/yyyy");
-            CompleteWithin = ConvertNumberToMonthsString(groupCourse.CompleteWithinMonths);
-            ValidFor = ConvertNumberToMonthsString(groupCourse.ValidityMonths);
+            CompleteWithin = DisplayStringHelper.ConvertNumberToMonthsString(groupCourse.CompleteWithinMonths);
+            ValidFor = DisplayStringHelper.ConvertNumberToMonthsString(groupCourse.ValidityMonths);
         }
 
         public int GroupCustomisationId { get; set; }
@@ -26,10 +27,5 @@
         public string? Supervisor { get; set; }
         public string? CompleteWithin { get; set; }
         public string? ValidFor { get; set; }
-
-        private static string? ConvertNumberToMonthsString(int numberOfMonths)
-        {
-            return numberOfMonths == 0 ? null : $"{numberOfMonths} month{(numberOfMonths == 1 ? string.Empty : "s")}";
-        }
     }
 }

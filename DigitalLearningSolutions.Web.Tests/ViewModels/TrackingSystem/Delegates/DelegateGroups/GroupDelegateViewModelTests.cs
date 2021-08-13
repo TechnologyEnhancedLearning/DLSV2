@@ -7,10 +7,10 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class GroupDelegateExpandableViewModelTests
+    public class GroupDelegateViewModelTests
     {
         [Test]
-        public void GroupDelegateExpandableViewModel_populates_expected_values_with_both_names()
+        public void GroupDelegateViewModel_populates_expected_values_with_both_names()
         {
             // Given
             var groupDelegate = Builder<GroupDelegate>.CreateNew()
@@ -22,7 +22,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateExpandableViewModel(groupDelegate);
+            var result = new GroupDelegateViewModel(groupDelegate);
 
             // Then
             using (new AssertionScope())
@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public void GroupDelegateExpandableViewModel_populates_expected_values_with_only_last_name()
+        public void GroupDelegateViewModel_populates_expected_values_with_only_last_name()
         {
             // Given
             var groupDelegate = Builder<GroupDelegate>.CreateNew()
@@ -47,7 +47,7 @@
                 .Build();
 
             // When
-            var result = new GroupDelegateExpandableViewModel(groupDelegate);
+            var result = new GroupDelegateViewModel(groupDelegate);
 
             // Then
             using (new AssertionScope())
