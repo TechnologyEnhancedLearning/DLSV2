@@ -113,7 +113,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
                     $"Failed Maps API call when trying to get postcode {model.CentrePostcode} " +
                     $"- status of {mapsResponse.Status} - error message: {mapsResponse.ErrorMessage}"
                 );
-                return RedirectToAction("Error", "LearningSolutions");
+                return new StatusCodeResult(500);
             }
 
             var latitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Latitude);

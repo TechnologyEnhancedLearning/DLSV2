@@ -95,7 +95,7 @@
                 SaveAction => EditAdminFieldPostSave(model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
                 BulkAction => EditAdminFieldBulk(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 

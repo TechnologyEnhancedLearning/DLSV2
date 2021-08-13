@@ -96,7 +96,7 @@
             var result = controller.EditCentreWebsiteDetails(model);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("Error").WithControllerName("LearningSolutions");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]

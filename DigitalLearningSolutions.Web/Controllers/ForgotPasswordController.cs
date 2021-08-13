@@ -52,7 +52,7 @@
             }
             catch (ResetPasswordInsertException)
             {
-                return RedirectToAction("Error", "LearningSolutions");
+                return new StatusCodeResult(500);
             }
 
             return RedirectToAction("Confirm");

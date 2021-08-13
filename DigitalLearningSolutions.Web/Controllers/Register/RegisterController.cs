@@ -222,7 +222,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             if (candidateNumber == "-1")
             {
-                return RedirectToAction("Error", "LearningSolutions");
+                return new StatusCodeResult(500);
             }
 
             if (candidateNumber == "-4")

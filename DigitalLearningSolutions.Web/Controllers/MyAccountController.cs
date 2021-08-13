@@ -84,7 +84,7 @@
                 "save" => EditDetailsPostSave(model),
                 "previewImage" => EditDetailsPostPreviewImage(model),
                 "removeImage" => EditDetailsPostRemoveImage(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
