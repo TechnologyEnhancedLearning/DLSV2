@@ -2,8 +2,9 @@ namespace DigitalLearningSolutions.Web.Controllers
 {
     using DigitalLearningSolutions.Data.Services;
 
-    public class SetPasswordController : ResetPasswordController
+    public class SetPasswordController : SetPasswordControllerBase
     {
-        public SetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService) : base(passwordResetService, passwordService) { }
+        public SetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService) :
+            base(passwordResetService, passwordService) { }
     }
 }

@@ -126,7 +126,7 @@ namespace DigitalLearningSolutions.Data.Services
             using var transaction = new TransactionScope();
 
             string setPasswordHash = passwordResetService.GenerateResetPasswordHash(delegateUser);
-            var resetPasswordEmail = GenerateWelcomeEmail(
+            var welcomeEmail = GenerateWelcomeEmail(
                 delegateUser.EmailAddress!.Trim(),
                 delegateUser.FirstName!,
                 delegateUser.LastName,
@@ -134,7 +134,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.CandidateNumber,
                 setPasswordHash
             );
-            emailService.SendEmail(resetPasswordEmail);
+            emailService.SendEmail(welcomeEmail);
 
             transaction.Complete();
         }
