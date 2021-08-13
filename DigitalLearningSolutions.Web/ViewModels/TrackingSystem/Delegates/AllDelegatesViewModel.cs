@@ -68,7 +68,7 @@
             filters.AddRange(
                 closedCustomPrompts.Select(
                     customPrompt => new FilterViewModel(
-                        customPrompt.CustomPromptText,
+                        $"CustomPrompt{customPrompt.CustomPromptNumber}",
                         customPrompt.CustomPromptText,
                         AllDelegatesViewModelFilterOptions.GetCustomPromptOptions(customPrompt)
                     )
