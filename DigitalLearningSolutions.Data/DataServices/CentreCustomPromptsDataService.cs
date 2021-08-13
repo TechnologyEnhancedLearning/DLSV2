@@ -1,12 +1,38 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public partial class CustomPromptsDataService
+    public interface ICentreCustomPromptsDataService
     {
+        public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId);
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+
+        public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
+
+        public void UpdateCustomPromptForCentre(
+            int centreId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        );
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+    }
+
+    public class CentreCustomPromptsDataService : ICentreCustomPromptsDataService
+    {
+        private readonly IDbConnection connection;
+
+        public CentreCustomPromptsDataService(IDbConnection connection)
+        {
+            this.connection = connection;
+        }
+
         public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId)
         {
             var result = connection.Query<CentreCustomPromptsResult>(

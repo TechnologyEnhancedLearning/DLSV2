@@ -1,13 +1,23 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.CustomPromptsDataServiceTests
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public partial class CustomPromptsDataServiceTests
+    public class CourseAdminFieldsDataServiceTests
     {
+        private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            var connection = ServiceTestHelper.GetDatabaseConnection();
+            courseAdminFieldsDataService = new CourseAdminFieldsDataService(connection);
+        }
+
         [Test]
         public void GetCourseAdminFields_returns_populated_CourseAdminFieldsResult()
         {
@@ -23,7 +33,7 @@
                 );
 
             // When
-            var returnedCourseAdminFieldsResult = customPromptsDataService.GetCourseAdminFields(1379, 101, 0);
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
 
             // Then
             returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
@@ -39,8 +49,8 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
-                var courseAdminFields = customPromptsDataService.GetCourseAdminFields(1379, 101, 0);
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
+                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
 
                 // Then
                 using (new AssertionScope())
@@ -59,7 +69,7 @@
         public void GetPromptNameForCourseAndPromptNumber_returns_expected_prompt_name()
         {
             // When
-            var result = customPromptsDataService.GetPromptNameForCourseAndPromptNumber(100, 1);
+            var result = courseAdminFieldsDataService.GetPromptNameForCourseAndPromptNumber(100, 1);
 
             // Then
             result.Should().BeEquivalentTo("System Access Granted");

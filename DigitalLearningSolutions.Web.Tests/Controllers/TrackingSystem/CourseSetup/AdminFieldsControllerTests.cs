@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Extensions;
@@ -19,14 +19,14 @@
 
     public class AdminFieldsControllerTests
     {
-        private readonly ICustomPromptsService customPromptsService = A.Fake<ICustomPromptsService>();
+        private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
         private readonly IUserDataService userDataService = null!;
         private AdminFieldsController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(customPromptsService, userDataService)
+            controller = new AdminFieldsController(courseAdminFieldsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -36,7 +36,7 @@
         public void AdminFields_returns_NotFound_when_no_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(null);
 
             // When
@@ -52,7 +52,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
@@ -70,7 +70,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,
@@ -83,7 +83,7 @@
 
             // Then
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,
@@ -101,7 +101,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,

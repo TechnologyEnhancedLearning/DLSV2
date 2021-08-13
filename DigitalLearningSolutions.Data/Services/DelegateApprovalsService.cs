@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using MimeKit;
@@ -27,14 +26,14 @@
     {
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
 
         public DelegateApprovalsService(
             IUserDataService userDataService,
-            ICustomPromptsService customPromptsService,
+            ICentreCustomPromptsService centreCustomPromptsService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             ILogger<DelegateApprovalsService> logger,
@@ -42,7 +41,7 @@
         )
         {
             this.userDataService = userDataService;
-            this.customPromptsService = customPromptsService;
+            this.centreCustomPromptsService = centreCustomPromptsService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.logger = logger;
@@ -57,7 +56,7 @@
         {
             var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
             var usersWithPrompts =
-                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
+                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
 
             return usersWithPrompts;
         }

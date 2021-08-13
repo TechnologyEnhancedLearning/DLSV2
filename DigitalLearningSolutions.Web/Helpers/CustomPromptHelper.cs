@@ -3,17 +3,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class CustomPromptHelper
     {
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
 
-        public CustomPromptHelper(ICustomPromptsService customPromptsService)
+        public CustomPromptHelper(ICentreCustomPromptsService customPromptsService)
         {
-            this.customPromptsService = customPromptsService;
+            centreCustomPromptsService = customPromptsService;
         }
 
         public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
@@ -27,7 +27,7 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
             return customPrompts.CustomPrompts.Select(
                 cp => new EditCustomFieldViewModel(
@@ -51,7 +51,7 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
             return customPrompts.CustomPrompts.Select(
                 cp => new CustomFieldViewModel(

@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
@@ -22,8 +21,8 @@
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private CustomPromptHelper customPromptHelper = null!;
-        private ICustomPromptsService customPromptsService = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserService userService = null!;
@@ -31,11 +30,11 @@
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             userService = A.Fake<IUserService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            customPromptHelper = new CustomPromptHelper(customPromptsService);
+            customPromptHelper = new CustomPromptHelper(centreCustomPromptsService);
         }
 
         [Test]
@@ -43,7 +42,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
@@ -66,7 +65,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
@@ -75,7 +74,7 @@
             var customPromptLists = new List<CustomPrompt>
                 { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
             A.CallTo
-                (() => customPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
+                (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
             var model = new EditDetailsViewModel();
@@ -98,7 +97,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
@@ -129,7 +128,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
@@ -138,7 +137,7 @@
             var customPromptLists = new List<CustomPrompt>
                 { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
             A.CallTo
-                (() => customPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
+                (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
             var model = new EditDetailsViewModel
@@ -162,7 +161,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
@@ -196,7 +195,7 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                customPromptsService,
+                centreCustomPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,

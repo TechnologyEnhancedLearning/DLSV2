@@ -7,13 +7,11 @@ namespace DigitalLearningSolutions.Web
     using System.Threading.Tasks;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ModelBinders;
@@ -173,8 +171,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
-            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
-            services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
+            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
+            services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
+            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
+            services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();

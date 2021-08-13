@@ -1,17 +1,59 @@
-﻿namespace DigitalLearningSolutions.Data.Services.CustomPromptsService
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
 
-    public partial class CustomPromptsService
+    public interface ICentreCustomPromptsService
     {
+        public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId);
+
+        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+            int centreId,
+            DelegateUser? delegateUser
+        );
+
+        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
+            GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+                int centreId,
+                IEnumerable<DelegateUser> delegateUsers
+            );
+
+        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+
+        List<(int id, string value)> GetCustomPromptsAlphabeticalList();
+
+        public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
+
+        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
+
+        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+    }
+
+    public class CentreCustomPromptsService : ICentreCustomPromptsService
+    {
+        private readonly ICentreCustomPromptsDataService centreCustomPromptsDataService;
+        private readonly ILogger<CentreCustomPromptsService> logger;
+        private readonly IUserDataService userDataService;
+
+        public CentreCustomPromptsService(
+            ICentreCustomPromptsDataService centreCustomPromptsDataService,
+            ILogger<CentreCustomPromptsService> logger,
+            IUserDataService userDataService
+        )
+        {
+            this.centreCustomPromptsDataService = centreCustomPromptsDataService;
+            this.logger = logger;
+            this.userDataService = userDataService;
+        }
         public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId)
         {
-            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var result = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPrompts(
                 result.CentreId,
@@ -29,7 +71,7 @@
                 return null;
             }
 
-            var result = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var result = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return new CentreCustomPromptsWithAnswers(
                 result.CentreId,
@@ -43,7 +85,7 @@
                 IEnumerable<DelegateUser> delegateUsers
             )
         {
-            var customPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var customPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
 
             return delegateUsers.Select(
                     user =>
@@ -54,12 +96,12 @@
 
         public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
         {
-            customPromptsDataService.UpdateCustomPromptForCentre(centreId, promptNumber, mandatory, options);
+            centreCustomPromptsDataService.UpdateCustomPromptForCentre(centreId, promptNumber, mandatory, options);
         }
 
         public List<(int id, string value)> GetCustomPromptsAlphabeticalList()
         {
-            return customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+            return centreCustomPromptsDataService.GetCustomPromptsAlphabetical().ToList();
         }
 
         public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options)
@@ -74,7 +116,7 @@
 
             if (promptNumber != null)
             {
-                customPromptsDataService.UpdateCustomPromptForCentre(
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(
                     centreId,
                     promptNumber.Value,
                     promptId,
@@ -94,7 +136,7 @@
             try
             {
                 userDataService.DeleteAllAnswersForPrompt(centreId, promptNumber);
-                customPromptsDataService.UpdateCustomPromptForCentre(
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(
                     centreId,
                     promptNumber,
                     0,
@@ -111,7 +153,7 @@
 
         public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
         {
-            return customPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
+            return centreCustomPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
         }
 
         private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(
@@ -279,6 +321,27 @@
             }
 
             return list;
+        }
+
+        public static CustomPrompt? PopulateCustomPrompt(
+            int promptNumber,
+            string? prompt,
+            string? options,
+            bool mandatory
+        )
+        {
+            return prompt != null ? new CustomPrompt(promptNumber, prompt, options, mandatory) : null;
+        }
+
+        public static CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(
+            int promptNumber,
+            string? prompt,
+            string? options,
+            bool mandatory,
+            string? answer
+        )
+        {
+            return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
     }
 }

@@ -1,11 +1,35 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Data;
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public partial class CustomPromptsDataService
+    public interface ICourseAdminFieldsDataService
     {
+        public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
+
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+
+        public void UpdateCustomPromptForCourse(
+            int customisationId,
+            int promptNumber,
+            int promptId,
+            bool mandatory,
+            string? options
+        );
+
+        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
+    }
+    public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
+    {
+        private readonly IDbConnection connection;
+
+        public CourseAdminFieldsDataService(IDbConnection connection)
+        {
+            this.connection = connection;
+        }
+
         public CourseAdminFieldsResult GetCourseAdminFields(int customisationId, int centreId, int categoryId)
         {
             var result = connection.Query<CourseAdminFieldsResult>(

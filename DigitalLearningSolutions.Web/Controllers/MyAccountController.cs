@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -17,21 +16,21 @@
     [Authorize]
     public class MyAccountController : Controller
     {
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly CustomPromptHelper customPromptHelper;
-        private readonly ICustomPromptsService customPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
         public MyAccountController(
-            ICustomPromptsService customPromptsService,
+            ICentreCustomPromptsService centreCustomPromptsService,
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
             CustomPromptHelper customPromptHelper
         )
         {
-            this.customPromptsService = customPromptsService;
+            this.centreCustomPromptsService = centreCustomPromptsService;
             this.userService = userService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
@@ -45,7 +44,7 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts =
-                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
                     User.GetCentreId(),
                     delegateUser
                 );

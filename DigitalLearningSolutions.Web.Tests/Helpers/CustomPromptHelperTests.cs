@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Services.CustomPromptsService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
     using FakeItEasy;
@@ -17,14 +17,14 @@
         private const string Answer1 = "Answer1";
         private const string Answer2 = "Answer2";
         private const string Answer3 = "Answer3";
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private CustomPromptHelper customPromptHelper = null!;
-        private ICustomPromptsService customPromptsService = null!;
 
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
-            customPromptHelper = new CustomPromptHelper(customPromptsService);
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            customPromptHelper = new CustomPromptHelper(centreCustomPromptsService);
         }
 
         [Test]
@@ -37,7 +37,8 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt2 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
@@ -67,7 +68,8 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt2 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
@@ -93,7 +95,8 @@
                 1
             );
             var modelState = new ModelStateDictionary();
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             customPromptHelper.ValidateCustomPrompts(1, null, Answer2, null, null, null, null, modelState);
@@ -116,7 +119,8 @@
                 1
             );
             var modelState = new ModelStateDictionary();
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             customPromptHelper.ValidateCustomPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
@@ -136,7 +140,8 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt3 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
@@ -176,7 +181,8 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt3 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =

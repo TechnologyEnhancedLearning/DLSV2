@@ -1,14 +1,24 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.CustomPromptsDataServiceTests
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public partial class CustomPromptsDataServiceTests
+    public class CentreCustomPromptsDataServiceTests
     {
+        private ICentreCustomPromptsDataService centreCustomPromptsDataService = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            var connection = ServiceTestHelper.GetDatabaseConnection();
+            centreCustomPromptsDataService = new CentreCustomPromptsDataService(connection);
+        }
+
         [Test]
         public void GetCentreCustomPromptsByCentreId_Returns_populated_CentreCustomPromptsResult()
         {
@@ -16,7 +26,7 @@
             var expectedCentreCustomPromptsResult = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult();
 
             // When
-            var returnedCentreCustomPromptsResult = customPromptsDataService.GetCentreCustomPromptsByCentreId(29);
+            var returnedCentreCustomPromptsResult = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29);
 
             // Then
             returnedCentreCustomPromptsResult.Should().BeEquivalentTo(expectedCentreCustomPromptsResult);
@@ -32,8 +42,8 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
-                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
+                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
 
                 // Then
                 using (new AssertionScope())
@@ -52,7 +62,7 @@
         public void Get_custom_prompts_should_contain_a_custom_prompt()
         {
             // When
-            var result = customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+            var result = centreCustomPromptsDataService.GetCustomPromptsAlphabetical().ToList();
 
             // Then
             result.Contains((1, "Department / team")).Should().BeTrue();
@@ -68,9 +78,10 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
-                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
-                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1)
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
+                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                var customPrompt = centreCustomPromptsDataService.GetCustomPromptsAlphabetical()
+                    .Single(c => c.Item1 == 1)
                     .Item2;
 
                 // Then
@@ -91,7 +102,7 @@
         public void GetPromptNameForCentreAndPromptNumber_returns_expected_prompt_name()
         {
             // When
-            var result = customPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
+            var result = centreCustomPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
 
             // Then
             result.Should().BeEquivalentTo("Role type");
