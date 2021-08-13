@@ -248,7 +248,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void SetCentreDelegateRegistrationData(int centreId)
         {
-            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId);
+            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId)
+            {
+                WelcomeEmailDate = DateTime.Today
+            };
             var id = centreDelegateRegistrationData.Id;
 
             Response.Cookies.Append(
