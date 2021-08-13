@@ -57,17 +57,13 @@
                 groupDelegates,
                 2
             );
-            var expectedFirstGroupDelegate =
-                groupDelegates.Skip(10).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupDelegates.Count().Should().Be(5);
-                model.GroupDelegates.First().Name.Should().BeEquivalentTo(
-                    $"{expectedFirstGroupDelegate.FirstName} {expectedFirstGroupDelegate.LastName}"
-                );
+                model.GroupDelegates.First().Name.Should().BeEquivalentTo("K Surname");
             }
         }
     }

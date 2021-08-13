@@ -59,15 +59,13 @@
                 groupCourses,
                 2
             );
-            var expectedFirstGroupCourse =
-                groupCourses.Skip(10).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupCourses.Count().Should().Be(5);
-                model.GroupCourses.First().Name.Should().BeEquivalentTo(expectedFirstGroupCourse.CourseName);
+                model.GroupCourses.First().Name.Should().BeEquivalentTo("K - v1");
             }
         }
     }
