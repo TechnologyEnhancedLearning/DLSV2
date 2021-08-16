@@ -14,7 +14,7 @@
 
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
-        string? GetGroupNameForGroupIdAndCentreId(int groupId, int centreId);
+        string? GetGroupName(int groupId, int centreId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -29,7 +29,7 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return connection.Query<Group>(
-                @"SELECT 
+                @"SELECT
 	                    GroupID,
 	                    GroupLabel,
 	                    GroupDescription,
@@ -68,7 +68,7 @@
                         FirstName,
                         LastName,
                         EmailAddress,
-                        CandidateNumber	                   
+                        CandidateNumber
                     FROM GroupDelegates AS gd
                     JOIN Candidates AS c ON c.CandidateID = gd.DelegateID
                     WHERE gd.GroupID = @groupId",
@@ -99,15 +99,17 @@
                     LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
                     WHERE gc.GroupID = @groupId
                         AND ca.CentreId = @centreId
-                        AND InactivatedDate IS NULL",
+                        AND gc.InactivatedDate IS NULL
+                        AND ap.ArchivedDate IS NULL
+                        AND c.Active = 1",
                 new { groupId, centreId }
             );
         }
 
-        public string? GetGroupNameForGroupIdAndCentreId(int groupId, int centreId)
+        public string? GetGroupName(int groupId, int centreId)
         {
             return connection.Query<string>(
-                @"SELECT 
+                @"SELECT
                         GroupLabel
                     FROM Groups
                     WHERE GroupID = @groupId AND CentreId = @centreId",

@@ -33,7 +33,7 @@
         public IActionResult GroupDelegates(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupNameForGroupIdAndCentreId(groupId, centreId);
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
 
             if (groupName == null)
             {
@@ -51,7 +51,7 @@
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupNameForGroupIdAndCentreId(groupId, centreId);
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
 
             if (groupName == null)
             {

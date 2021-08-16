@@ -25,15 +25,14 @@
 
             delegateGroupsController = new DelegateGroupsController(groupsDataService)
                 .WithDefaultContext()
-                .WithMockUser(true)
-                .WithMockTempData();
+                .WithMockUser(true);
         }
 
         [Test]
         public void GroupDelegates_returns_not_found_with_incorrect_group_id_for_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupNameForGroupIdAndCentreId(1, 2)).Returns(null);
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
 
             // When
             var result = delegateGroupsController.GroupDelegates(1);
@@ -46,7 +45,7 @@
         public void GroupDelegates_returns_view_result_with_correct_group_id_for_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupNameForGroupIdAndCentreId(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
 
             // When
@@ -63,7 +62,7 @@
         public void GroupCourses_returns_not_found_with_incorrect_group_id_for_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupNameForGroupIdAndCentreId(1, 2)).Returns(null);
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
 
             // When
             var result = delegateGroupsController.GroupCourses(1);
@@ -76,7 +75,7 @@
         public void GroupCourses_returns_view_result_with_correct_group_id_for_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupNameForGroupIdAndCentreId(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupCourses(1, 2)).Returns(new List<GroupCourse>());
 
             // When

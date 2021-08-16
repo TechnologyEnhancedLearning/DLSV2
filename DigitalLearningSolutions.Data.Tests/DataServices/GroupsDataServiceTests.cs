@@ -73,7 +73,7 @@
         {
             // Given
             var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
-            var expectedFirstGroupDelegate = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
+            var expectedFirstGroupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
 
             // When
             var result = groupsDataService.GetGroupCourses(8, 101).ToList();
@@ -82,25 +82,25 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(2);
-                result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupDelegate);
+                result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupCourse);
             }
         }
 
         [Test]
-        public void GetGroupNameForGroupIdAndCentreId_returns_expected_name_with_correct_centre()
+        public void GetGroupName_returns_expected_name_with_correct_centre()
         {
             // When
-            var result = groupsDataService.GetGroupNameForGroupIdAndCentreId(5, 101);
+            var result = groupsDataService.GetGroupName(5, 101);
 
             // Then
             result.Should().BeEquivalentTo("Activities worker or coordinator");
         }
 
         [Test]
-        public void GetGroupNameForGroupIdAndCentreId_returns_null_with_incorrect_centre()
+        public void GetGroupName_returns_null_with_incorrect_centre()
         {
             // When
-            var result = groupsDataService.GetGroupNameForGroupIdAndCentreId(5, 1);
+            var result = groupsDataService.GetGroupName(5, 1);
 
             // Then
             result.Should().BeNull();
