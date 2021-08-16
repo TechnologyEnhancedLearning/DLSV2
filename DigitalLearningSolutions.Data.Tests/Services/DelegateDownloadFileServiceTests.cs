@@ -85,7 +85,7 @@
         {
             // Given
             using var expectedWorkbook = new XLWorkbook(
-                TestContext.CurrentContext.TestDirectory + "\\TestData\\DelegateUploadTest.xlsx"
+                TestContext.CurrentContext.TestDirectory + DelegateUploadFileServiceTests.TestDelegateUploadRelativeFilePath
             );
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(

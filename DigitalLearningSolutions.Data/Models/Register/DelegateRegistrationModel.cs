@@ -50,7 +50,7 @@
             row.LastName!,
             row.Email!,
             centreId,
-            int.Parse(row.JobGroupId!),
+            row.JobGroupId!.Value,
             null,
             row.Answer1,
             row.Answer2,

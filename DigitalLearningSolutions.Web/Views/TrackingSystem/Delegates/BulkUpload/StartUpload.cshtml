@@ -32,14 +32,12 @@
       <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
         <div class="nhsuk-checkboxes__item">
           <input class="nhsuk-checkboxes__input"
-                 id="ShouldSendEmail"
-                 name="ShouldSendEmail"
                  asp-for="ShouldSendEmail"
                  type="checkbox"
                  value="true"
                  aria-controls="@dateInputId"
                  aria-expanded="@Model.ShouldSendEmail">
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
+          <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ShouldSendEmail">
             Send welcome email to registered delegate
           </label>
         </div>

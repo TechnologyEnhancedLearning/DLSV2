@@ -14,12 +14,7 @@
 
         public DateTime? GetWelcomeEmailDate()
         {
-            if (ShouldSendEmail)
-            {
-                return new DateTime(Year!.Value, Month!.Value, Day!.Value);
-            }
-
-            return null;
+            return ShouldSendEmail ? (DateTime?)new DateTime(Year!.Value, Month!.Value, Day!.Value) : null;
         }
     }
 }

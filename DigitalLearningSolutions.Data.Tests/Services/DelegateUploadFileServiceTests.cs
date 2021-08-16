@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     public class DelegateUploadFileServiceTests
     {
         private const int centreId = 101;
+        public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
         private IDelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationDataService registrationDataService = null!;
@@ -43,69 +44,12 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             );
         }
 
-        private IXLTable CreateTableFromData(IEnumerable<DelegateDataRow> data)
-        {
-            var workbook = new XLWorkbook();
-            var worksheet = workbook.AddWorksheet();
-            return worksheet.Cell(1, 1).InsertTable(data);
-        }
-
-        private DelegateDataRow SampleDelegateDataRow(
-            string firstName = "A",
-            string lastName = "Test",
-            string emailAddress = "test@email",
-            string candidateNumber = "TT95",
-            string answer1 = "xxxx",
-            string answer2 = "xxxxxxxxx",
-            string answer3 = "",
-            string answer4 = "",
-            string answer5 = "",
-            string answer6 = "",
-            string active = "True",
-            string aliasId = "",
-            string jobGroupId = "1"
-        )
-        {
-            return new DelegateDataRow(
-                candidateNumber,
-                firstName,
-                lastName,
-                jobGroupId,
-                active,
-                answer1,
-                answer2,
-                answer3,
-                answer4,
-                answer5,
-                answer6,
-                aliasId,
-                emailAddress
-            );
-        }
-
-        private void ShouldNotCreateOrUpdateDelegate()
-        {
-            A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
-                .MustNotHaveHappened();
-        }
-
-        private void ShouldJustHaveOneError(BulkUploadResult result)
-        {
-            result.Processed.Should().Be(1);
-            result.Updated.Should().Be(0);
-            result.Registered.Should().Be(0);
-            result.Skipped.Should().Be(0);
-            result.Errors.Should().HaveCount(1);
-        }
-
         [Test]
         public void OpenDelegatesTable_returns_table_correctly()
         {
             // Given
             var stream = File.OpenRead(
-                TestContext.CurrentContext.TestDirectory + "\\TestData\\DelegateUploadTest.xlsx"
+                TestContext.CurrentContext.TestDirectory + TestDelegateUploadRelativeFilePath
             );
             var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
 
@@ -151,15 +95,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void OpenDelegatesTable_throws_exception_if_headers_dont_match()
         {
             // Given
-            var workbook = new XLWorkbook();
-            var worksheet = workbook.AddWorksheet();
-            worksheet.Name = "DelegatesBulkUpload";
-            var table = worksheet.Cell(1, 1).InsertTable(new[] { SampleDelegateDataRow() });
-            table.Cell(1, 4).Value = "blah";
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
+            using var stream = CreateWorkbookStreamWithInvalidHeaders();
             var file = new FormFile(stream, 0, stream.Length, string.Empty, string.Empty);
-
+            
             // Then
             Assert.Throws<InvalidHeadersException>(() => delegateUploadFileService.OpenDelegatesTable(file));
         }
@@ -168,15 +106,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_has_jobgroup_error_for_invalid_jobgroup()
         {
             // Given
-            var row = SampleDelegateDataRow(jobGroupId: "999");
+            var row = GetSampleDelegateDataRow(jobGroupId: "999");
             var table = CreateTableFromData(new[] { row });
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldNotCreateOrUpdateDelegate();
-            ShouldJustHaveOneError(result);
+            AssertCreateOrUpdateDelegateWereNotCalled();
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidJobGroupId);
         }
@@ -185,15 +123,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_has_lastname_error_for_missing_lastname()
         {
             // Given
-            var row = SampleDelegateDataRow(lastName: "");
+            var row = GetSampleDelegateDataRow(lastName: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldNotCreateOrUpdateDelegate();
-            ShouldJustHaveOneError(result);
+            AssertCreateOrUpdateDelegateWereNotCalled();
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidLastName);
         }
@@ -202,15 +140,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_has_firstname_error_for_missing_firstname()
         {
             // Given
-            var row = SampleDelegateDataRow("");
+            var row = GetSampleDelegateDataRow("");
             var table = CreateTableFromData(new[] { row });
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldNotCreateOrUpdateDelegate();
-            ShouldJustHaveOneError(result);
+            AssertCreateOrUpdateDelegateWereNotCalled();
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidFirstName);
         }
@@ -219,15 +157,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_has_email_error_for_missing_email()
         {
             // Given
-            var row = SampleDelegateDataRow(emailAddress: "");
+            var row = GetSampleDelegateDataRow(emailAddress: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldNotCreateOrUpdateDelegate();
-            ShouldJustHaveOneError(result);
+            AssertCreateOrUpdateDelegateWereNotCalled();
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidEmail);
         }
@@ -236,15 +174,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_has_active_error_for_invalid_active_status()
         {
             // Given
-            var row = SampleDelegateDataRow(active: "hello");
+            var row = GetSampleDelegateDataRow(active: "hello");
             var table = CreateTableFromData(new[] { row });
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldNotCreateOrUpdateDelegate();
-            ShouldJustHaveOneError(result);
+            AssertCreateOrUpdateDelegateWereNotCalled();
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidActive);
         }
@@ -254,7 +192,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = SampleDelegateDataRow(candidateNumber: delegateId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -270,7 +208,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string delegateId = "DELEGATE";
-            var row = SampleDelegateDataRow(candidateNumber: delegateId);
+            var row = GetSampleDelegateDataRow(candidateNumber: delegateId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(delegateId, centreId))
                 .Returns(true);
@@ -290,7 +228,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string fakeDelegateId = "FAKE";
-            var row = SampleDelegateDataRow(candidateNumber: fakeDelegateId);
+            var row = GetSampleDelegateDataRow(candidateNumber: fakeDelegateId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(fakeDelegateId, centreId))
                 .Returns(null);
@@ -302,7 +240,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.Errors.Should().HaveCount(1);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.NoRecordForDelegateId);
-            ShouldNotCreateOrUpdateDelegate();
+            AssertCreateOrUpdateDelegateWereNotCalled();
         }
 
         [Test]
@@ -310,7 +248,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -328,7 +266,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromAliasId(aliasId, centreId))
                 .Returns(true);
@@ -348,7 +286,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string? aliasId = "ALIAS";
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromAliasId(aliasId, centreId))
                 .Returns(null);
@@ -367,7 +305,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_calls_create_if_delegateId_and_aliasId_not_specified()
         {
             // Given
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -395,7 +333,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         )
         {
             // Given
-            var table = CreateTableFromData(new[] { SampleDelegateDataRow() });
+            var table = CreateTableFromData(new[] { GetSampleDelegateDataRow() });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
                 .Returns(true);
             A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
@@ -405,7 +343,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldJustHaveOneError(result);
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(expectedErrorReason);
         }
@@ -420,7 +358,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         )
         {
             // Given
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
                 .Returns(returnValue);
@@ -429,7 +367,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            ShouldJustHaveOneError(result);
+            AssertBulkUploadResultHasOnlyOneError(result);
             result.Errors.First().RowNumber.Should().Be(2);
             result.Errors.First().Reason.Should().Be(expectedErrorReason);
         }
@@ -439,7 +377,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const bool approved = true;
-            var row = SampleDelegateDataRow();
+            var row = GetSampleDelegateDataRow();
             var table = CreateTableFromData(new[] { row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
                 .Returns(approved);
@@ -478,7 +416,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string? aliasId = "NEW ALIAS";
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: aliasId);
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -511,7 +449,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var welcomeEmailDate = new DateTime(3000, 01, 01);
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -530,7 +468,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_calls_create_without_notifyDate_if_welcomeEmailDate_not_set()
         {
             // Given
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row });
 
             // When
@@ -549,7 +487,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void ProcessDelegateTable_counts_updated_correctly()
         {
             // Given
-            var row = SampleDelegateDataRow();
+            var row = GetSampleDelegateDataRow();
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
                 .Returns(true);
@@ -560,15 +498,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            result.Processed.Should().Be(5);
-            result.Updated.Should().Be(5);
+            result.ProcessedCount.Should().Be(5);
+            result.UpdatedCount.Should().Be(5);
         }
 
         [Test]
         public void ProcessDelegateTable_counts_skipped_correctly()
         {
             // Given
-            var row = SampleDelegateDataRow();
+            var row = GetSampleDelegateDataRow();
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
                 .Returns(true);
@@ -579,15 +517,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            result.Processed.Should().Be(5);
-            result.Skipped.Should().Be(5);
+            result.ProcessedCount.Should().Be(5);
+            result.SkippedCount.Should().Be(5);
         }
 
         [Test]
         public void ProcessDelegateTable_counts_registered_from_update_correctly()
         {
             // Given
-            var row = SampleDelegateDataRow();
+            var row = GetSampleDelegateDataRow();
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             A.CallTo(() => userDataService.GetApprovedStatusFromCandidateNumber(A<string>._, A<int>._))
                 .Returns(true);
@@ -598,15 +536,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            result.Processed.Should().Be(5);
-            result.Registered.Should().Be(5);
+            result.ProcessedCount.Should().Be(5);
+            result.RegisteredCount.Should().Be(5);
         }
 
         [Test]
         public void ProcessDelegateTable_counts_registered_from_create_correctly()
         {
             // Given
-            var row = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var row = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
             var table = CreateTableFromData(new[] { row, row, row, row, row });
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
                 .Returns("ANY");
@@ -615,18 +553,18 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            result.Processed.Should().Be(5);
-            result.Registered.Should().Be(5);
+            result.ProcessedCount.Should().Be(5);
+            result.RegisteredCount.Should().Be(5);
         }
 
         [Test]
         public void ProcessDelegateTable_counts_mixed_outcomes_correctly()
         {
             // Given
-            var errorRow = SampleDelegateDataRow(jobGroupId: "");
-            var registerRow = SampleDelegateDataRow(candidateNumber: "", aliasId: "");
-            var updateRow = SampleDelegateDataRow(candidateNumber: "UPDATE ME");
-            var skipRow = SampleDelegateDataRow(candidateNumber: "SKIP ME");
+            var errorRow = GetSampleDelegateDataRow(jobGroupId: "");
+            var registerRow = GetSampleDelegateDataRow(candidateNumber: "", aliasId: "");
+            var updateRow = GetSampleDelegateDataRow(candidateNumber: "UPDATE ME");
+            var skipRow = GetSampleDelegateDataRow(candidateNumber: "SKIP ME");
             var data = new List<DelegateDataRow>
             {
                 updateRow, skipRow, registerRow, errorRow, registerRow, skipRow, updateRow, skipRow, updateRow,
@@ -655,10 +593,83 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var result = delegateUploadFileService.ProcessDelegatesTable(table, centreId);
 
             // Then
-            result.Processed.Should().Be(10);
-            result.Updated.Should().Be(4);
-            result.Skipped.Should().Be(3);
-            result.Registered.Should().Be(2);
+            using (new AssertionScope())
+            {
+                result.ProcessedCount.Should().Be(10);
+                result.UpdatedCount.Should().Be(4);
+                result.SkippedCount.Should().Be(3);
+                result.RegisteredCount.Should().Be(2);
+                result.Errors.Should().HaveCount(1);
+            }
+        }
+
+
+        private IXLTable CreateTableFromData(IEnumerable<DelegateDataRow> data)
+        {
+            var workbook = new XLWorkbook();
+            var worksheet = workbook.AddWorksheet();
+            return worksheet.Cell(1, 1).InsertTable(data);
+        }
+
+        private MemoryStream CreateWorkbookStreamWithInvalidHeaders()
+        {
+            var workbook = new XLWorkbook();
+            var worksheet = workbook.AddWorksheet();
+            worksheet.Name = "DelegatesBulkUpload";
+            var table = worksheet.Cell(1, 1).InsertTable(new[] { GetSampleDelegateDataRow() });
+            table.Cell(1, 4).Value = "blah";
+            var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream;
+        }
+
+        private DelegateDataRow GetSampleDelegateDataRow(
+            string firstName = "A",
+            string lastName = "Test",
+            string emailAddress = "test@email",
+            string candidateNumber = "TT95",
+            string answer1 = "xxxx",
+            string answer2 = "xxxxxxxxx",
+            string answer3 = "",
+            string answer4 = "",
+            string answer5 = "",
+            string answer6 = "",
+            string active = "True",
+            string aliasId = "",
+            string jobGroupId = "1"
+        )
+        {
+            return new DelegateDataRow(
+                candidateNumber,
+                firstName,
+                lastName,
+                jobGroupId,
+                active,
+                answer1,
+                answer2,
+                answer3,
+                answer4,
+                answer5,
+                answer6,
+                aliasId,
+                emailAddress
+            );
+        }
+
+        private void AssertCreateOrUpdateDelegateWereNotCalled()
+        {
+            A.CallTo(() => userDataService.UpdateDelegateRecord(A<DelegateRecord>._))
+                .MustNotHaveHappened();
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+                .MustNotHaveHappened();
+        }
+
+        private void AssertBulkUploadResultHasOnlyOneError(BulkUploadResult result)
+        {
+            result.ProcessedCount.Should().Be(1);
+            result.UpdatedCount.Should().Be(0);
+            result.RegisteredCount.Should().Be(0);
+            result.SkippedCount.Should().Be(0);
             result.Errors.Should().HaveCount(1);
         }
 

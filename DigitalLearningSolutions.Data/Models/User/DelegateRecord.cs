@@ -10,8 +10,8 @@
             CandidateNumber = row.CandidateNumber;
             FirstName = row.FirstName;
             LastName = row.LastName!;
-            JobGroupId = int.Parse(row.JobGroupId!);
-            Active = bool.Parse(row.Active!);
+            JobGroupId = row.JobGroupId!.Value;
+            Active = row.Active!.Value;
             Answer1 = row.Answer1;
             Answer2 = row.Answer2;
             Answer3 = row.Answer3;

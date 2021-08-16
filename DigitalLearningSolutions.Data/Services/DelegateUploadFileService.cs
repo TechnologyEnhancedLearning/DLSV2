@@ -45,49 +45,26 @@
         public BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
-            var (registered, updated, skipped) = (0, 0, 0);
-            var errors = new List<(int, BulkUploadResult.ErrorReason)>();
-            var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row));
+            var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();
 
             foreach (var delegateRow in delegateRows)
             {
-                var errorReason = delegateRow.ValidateFields(jobGroupIds);
-                if (errorReason.HasValue)
+                if (IsDelegateRowInvalid(centreId, delegateRow, jobGroupIds, out var approved))
                 {
-                    errors.Add((delegateRow.RowNumber, errorReason.Value));
-                    continue;
-                }
-
-                bool? approved;
-                try
-                {
-                    approved = TryGetExistingApprovedStatus(delegateRow.CandidateNumber, delegateRow.AliasId, centreId);
-                }
-                catch (UserAccountNotFoundException)
-                {
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.NoRecordForDelegateId));
                     continue;
                 }
 
                 if (approved.HasValue)
                 {
-                    UpdateDelegate(
-                        delegateRow,
-                        approved.Value,
-                        centreId,
-                        ref updated,
-                        ref skipped,
-                        ref registered,
-                        errors
-                    );
+                    UpdateDelegate(delegateRow, approved.Value, centreId);
                 }
                 else
                 {
-                    RegisterDelegate(delegateRow, welcomeEmailDate, centreId, ref registered, errors);
+                    RegisterDelegate(delegateRow, welcomeEmailDate, centreId);
                 }
             }
 
-            return new BulkUploadResult(table.RowCount() - 1, registered, updated, skipped, errors);
+            return new BulkUploadResult(delegateRows);
         }
 
         public IXLTable OpenDelegatesTable(IFormFile file)
@@ -104,71 +81,39 @@
             return table;
         }
 
-        private void RegisterDelegate(
-            DelegateTableRow delegateRow,
-            DateTime? welcomeEmailDate,
-            int centreId,
-            ref int registered,
-            List<(int, BulkUploadResult.ErrorReason)> errors
-        )
+        private bool IsDelegateRowInvalid(int centreId, DelegateTableRow delegateRow, IEnumerable<int> jobGroupIds, out bool? approved)
         {
-            var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var status = registrationDataService.RegisterDelegateByCentre(model);
-            switch (status)
-            {
-                case "-1":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.UnexpectedErrorForCreate));
-                    break;
-                case "-2":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.ParameterError));
-                    break;
-                case "-3":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.AliasIdInUse));
-                    break;
-                case "-4":
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.EmailAddressInUse));
-                    break;
-                default:
-                    registered += 1;
-                    break;
-            }
+            approved = null;
+            return !delegateRow.IsValid(jobGroupIds) || !TryGetExistingApprovedStatus(delegateRow, centreId, out approved);
         }
 
-        private void UpdateDelegate(
-            DelegateTableRow delegateRow,
-            bool approved,
-            int centreId,
-            ref int updated,
-            ref int skipped,
-            ref int registered,
-            List<(int, BulkUploadResult.ErrorReason)> errors
-        )
+        private void UpdateDelegate(DelegateTableRow delegateRow, bool approved, int centreId)
         {
             var record = new DelegateRecord(delegateRow, centreId, approved);
             var status = userDataService.UpdateDelegateRecord(record);
             switch (status)
             {
                 case 0:
-                    updated += 1;
+                    delegateRow.RowStatus = RowStatus.Updated;
                     break;
                 case 1:
-                    skipped += 1;
+                    delegateRow.RowStatus = RowStatus.Skipped;
                     break;
                 case 2:
-                    registered += 1;
+                    delegateRow.RowStatus = RowStatus.Registered;
                     break;
                 case -1:
                 case -4:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate));
+                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate;
                     break;
                 case -2:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.ParameterError));
+                    delegateRow.Error = BulkUploadResult.ErrorReason.ParameterError;
                     break;
                 case -3:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.AliasIdInUse));
+                    delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
                     break;
                 case -5:
-                    errors.Add((delegateRow.RowNumber, BulkUploadResult.ErrorReason.EmailAddressInUse));
+                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(
@@ -176,6 +121,30 @@
                         status,
                         "Unknown return value when updating delegate record."
                     );
+            }
+        }
+
+        private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
+        {
+            var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
+            var status = registrationDataService.RegisterDelegateByCentre(model);
+            switch (status)
+            {
+                case "-1":
+                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
+                    break;
+                case "-2":
+                    delegateRow.Error = BulkUploadResult.ErrorReason.ParameterError;
+                    break;
+                case "-3":
+                    delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
+                    break;
+                case "-4":
+                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                    break;
+                default:
+                    delegateRow.RowStatus = RowStatus.Registered;
+                    break;
             }
         }
 
@@ -201,22 +170,24 @@
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
 
-        private bool? TryGetExistingApprovedStatus(string? candidateNumber, string? aliasId, int centreId)
+        private bool TryGetExistingApprovedStatus(DelegateTableRow delegateRow, int centreId, out bool? approved)
         {
-            if (!string.IsNullOrWhiteSpace(candidateNumber))
+            if (!string.IsNullOrWhiteSpace(delegateRow.CandidateNumber))
             {
-                var approvedStatus = userDataService.GetApprovedStatusFromCandidateNumber(candidateNumber, centreId);
-                if (!approvedStatus.HasValue)
+                approved = userDataService.GetApprovedStatusFromCandidateNumber(delegateRow.CandidateNumber, centreId);
+                if (approved.HasValue)
                 {
-                    throw new UserAccountNotFoundException(string.Empty);
+                    return true;
                 }
 
-                return approvedStatus.Value;
+                delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
+                return false;
             }
 
-            return !string.IsNullOrWhiteSpace(aliasId)
-                ? userDataService.GetApprovedStatusFromAliasId(aliasId, centreId)
+            approved = !string.IsNullOrWhiteSpace(delegateRow.AliasId)
+                ? userDataService.GetApprovedStatusFromAliasId(delegateRow.AliasId, centreId)
                 : null;
+            return true;
         }
     }
 }

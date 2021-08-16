@@ -4,6 +4,14 @@
     using System.Linq;
     using ClosedXML.Excel;
 
+    public enum RowStatus
+    {
+        NotYetProcessed,
+        Skipped,
+        Registered,
+        Updated
+    }
+
     public class DelegateTableRow
     {
         public DelegateTableRow(IXLTable table, IXLRangeRow row)
@@ -18,8 +26,8 @@
             CandidateNumber = FindFieldValue("DelegateID");
             LastName = FindFieldValue("LastName");
             FirstName = FindFieldValue("FirstName");
-            JobGroupId = FindFieldValue("JobGroupID");
-            Active = FindFieldValue("Active");
+            JobGroupId = int.TryParse(FindFieldValue("JobGroupID"), out var jobGroupId) ? jobGroupId : (int?)null;
+            Active = bool.TryParse(FindFieldValue("Active"), out var active) ? active : (bool?)null;
             Answer1 = FindFieldValue("Answer1");
             Answer2 = FindFieldValue("Answer2");
             Answer3 = FindFieldValue("Answer3");
@@ -28,14 +36,15 @@
             Answer6 = FindFieldValue("Answer6");
             AliasId = FindFieldValue("AliasID");
             Email = FindFieldValue("EmailAddress");
+            RowStatus = RowStatus.NotYetProcessed;
         }
 
         public int RowNumber { get; set; }
         public string? CandidateNumber { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? JobGroupId { get; set; }
-        public string? Active { get; set; }
+        public int? JobGroupId { get; set; }
+        public bool? Active { get; set; }
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }
         public string? Answer3 { get; set; }
@@ -45,34 +54,37 @@
         public string? AliasId { get; set; }
         public string? Email { get; set; }
 
-        public BulkUploadResult.ErrorReason? ValidateFields(IEnumerable<int> allowedJobGroupIds)
+        public BulkUploadResult.ErrorReason? Error { get; set; }
+        public RowStatus RowStatus { get; set; }
+
+        public bool IsValid(IEnumerable<int> allowedJobGroupIds)
         {
-            if (!int.TryParse(JobGroupId, out var jobGroupId) || !allowedJobGroupIds.Contains(jobGroupId))
+            if (!JobGroupId.HasValue || !allowedJobGroupIds.Contains(JobGroupId.Value))
             {
-                return BulkUploadResult.ErrorReason.InvalidJobGroupId;
+                Error = BulkUploadResult.ErrorReason.InvalidJobGroupId;
             }
 
             if (string.IsNullOrEmpty(LastName))
             {
-                return BulkUploadResult.ErrorReason.InvalidLastName;
+                Error = BulkUploadResult.ErrorReason.InvalidLastName;
             }
 
             if (string.IsNullOrEmpty(FirstName))
             {
-                return BulkUploadResult.ErrorReason.InvalidFirstName;
+                Error = BulkUploadResult.ErrorReason.InvalidFirstName;
             }
 
             if (string.IsNullOrEmpty(Email))
             {
-                return BulkUploadResult.ErrorReason.InvalidEmail;
+                Error = BulkUploadResult.ErrorReason.InvalidEmail;
             }
 
-            if (!bool.TryParse(Active, out _))
+            if (!Active.HasValue)
             {
-                return BulkUploadResult.ErrorReason.InvalidActive;
+                Error = BulkUploadResult.ErrorReason.InvalidActive;
             }
 
-            return null;
+            return !Error.HasValue;
         }
     }
 }

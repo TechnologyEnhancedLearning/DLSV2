@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateUpload
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public class BulkUploadResult
     {
@@ -20,24 +21,21 @@
         }
 
         public BulkUploadResult(
-            int processed,
-            int registered,
-            int updated,
-            int skipped,
-            IEnumerable<(int RowNumber, ErrorReason Reason)> errors
+            IEnumerable<DelegateTableRow> delegateRows
         )
         {
-            Processed = processed;
-            Registered = registered;
-            Updated = updated;
-            Skipped = skipped;
-            Errors = errors;
+            delegateRows = delegateRows.ToList();
+            ProcessedCount = delegateRows.Count();
+            RegisteredCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Registered);
+            UpdatedCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Updated);
+            SkippedCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Skipped);
+            Errors = delegateRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
         }
 
         public IEnumerable<(int RowNumber, ErrorReason Reason)> Errors { get; set; }
-        public int Processed { get; set; }
-        public int Registered { get; set; }
-        public int Updated { get; set; }
-        public int Skipped { get; set; }
+        public int ProcessedCount { get; set; }
+        public int RegisteredCount { get; set; }
+        public int UpdatedCount { get; set; }
+        public int SkippedCount { get; set; }
     }
 }
