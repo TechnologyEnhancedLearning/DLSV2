@@ -4,6 +4,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using Microsoft.Extensions.Logging;
@@ -126,7 +127,7 @@
                 return list;
             }
 
-            var prompt1 = CustomPromptsService.PopulateCustomPrompt(
+            var prompt1 = CustomPromptHelper.PopulateCustomPrompt(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -137,7 +138,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptsService.PopulateCustomPrompt(
+            var prompt2 = CustomPromptHelper.PopulateCustomPrompt(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -148,7 +149,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptsService.PopulateCustomPrompt(
+            var prompt3 = CustomPromptHelper.PopulateCustomPrompt(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -174,7 +175,7 @@
                 return list;
             }
 
-            var prompt1 = CustomPromptsService.PopulateCustomPromptWithAnswer(
+            var prompt1 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -186,7 +187,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptsService.PopulateCustomPromptWithAnswer(
+            var prompt2 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -198,7 +199,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptsService.PopulateCustomPromptWithAnswer(
+            var prompt3 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,

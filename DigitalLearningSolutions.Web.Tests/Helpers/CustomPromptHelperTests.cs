@@ -17,14 +17,14 @@
         private const string Answer1 = "Answer1";
         private const string Answer2 = "Answer2";
         private const string Answer3 = "Answer3";
+        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private CustomPromptHelper customPromptHelper = null!;
 
         [SetUp]
         public void Setup()
         {
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
-            customPromptHelper = new CustomPromptHelper(centreCustomPromptsService);
+            centreCustomPromptHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
         }
 
         [Test]
@@ -42,7 +42,15 @@
 
             // When
             var result =
-                customPromptHelper.GetEditCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                    1,
+                    Answer1,
+                    Answer2,
+                    null,
+                    null,
+                    null,
+                    null
+                );
 
             // Then
             using (new AssertionScope())
@@ -73,7 +81,7 @@
 
             // When
             var result =
-                customPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
+                centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
 
             // Then
             using (new AssertionScope())
@@ -99,7 +107,7 @@
                 .Returns(centreCustomPrompts);
 
             // When
-            customPromptHelper.ValidateCustomPrompts(1, null, Answer2, null, null, null, null, modelState);
+            centreCustomPromptHelper.ValidateCustomPrompts(1, null, Answer2, null, null, null, null, modelState);
 
             // Then
             modelState["Answer1"].Errors.Count.Should().Be(1);
@@ -123,7 +131,7 @@
                 .Returns(centreCustomPrompts);
 
             // When
-            customPromptHelper.ValidateCustomPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
+            centreCustomPromptHelper.ValidateCustomPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
 
             // Then
             modelState[Answer1].Should().BeNull();
@@ -145,7 +153,7 @@
 
             // When
             var result =
-                customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                     1,
                     Answer1,
                     Answer2,
@@ -186,7 +194,15 @@
 
             // When
             var result =
-                customPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, Answer3, null, null, null);
+                centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
+                    1,
+                    Answer1,
+                    Answer2,
+                    Answer3,
+                    null,
+                    null,
+                    null
+                );
 
             // Then
             using (new AssertionScope())

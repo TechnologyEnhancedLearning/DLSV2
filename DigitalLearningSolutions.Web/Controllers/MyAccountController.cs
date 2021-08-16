@@ -16,8 +16,8 @@
     [Authorize]
     public class MyAccountController : Controller
     {
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
-        private readonly CustomPromptHelper customPromptHelper;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
@@ -27,14 +27,14 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            CustomPromptHelper customPromptHelper
+            CentreCustomPromptHelper customPromptHelper
         )
         {
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.userService = userService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
-            this.customPromptHelper = customPromptHelper;
+            centreCustomPromptHelper = customPromptHelper;
         }
 
         public IActionResult Index()
@@ -175,7 +175,7 @@
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 User.GetCentreId(),
                 model.Answer1,
                 model.Answer2,
@@ -188,7 +188,7 @@
 
         private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 User.GetCentreId(),
                 delegateUser?.Answer1,
                 delegateUser?.Answer2,
@@ -209,7 +209,7 @@
 
         private void ValidateCustomPrompts(EditDetailsViewModel model)
         {
-            customPromptHelper.ValidateCustomPrompts(
+            centreCustomPromptHelper.ValidateCustomPrompts(
                 User.GetCentreId(),
                 model.Answer1,
                 model.Answer2,

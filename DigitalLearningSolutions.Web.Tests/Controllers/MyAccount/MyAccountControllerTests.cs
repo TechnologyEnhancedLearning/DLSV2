@@ -21,8 +21,8 @@
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
+        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private CustomPromptHelper customPromptHelper = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserService userService = null!;
@@ -34,7 +34,7 @@
             userService = A.Fake<IUserService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            customPromptHelper = new CustomPromptHelper(centreCustomPromptsService);
+            centreCustomPromptHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
         }
 
         [Test]
@@ -46,7 +46,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true);
             var model = new EditDetailsViewModel();
             myAccountController.ModelState.AddModelError(nameof(EditDetailsViewModel.Email), "Required");
@@ -69,7 +69,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CustomPrompt>
                 { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
@@ -101,7 +101,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -132,7 +132,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CustomPrompt>
                 { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
@@ -165,7 +165,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -199,7 +199,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                customPromptHelper
+                centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             const string action = "unexpectedString";
             var model = new EditDetailsViewModel();
