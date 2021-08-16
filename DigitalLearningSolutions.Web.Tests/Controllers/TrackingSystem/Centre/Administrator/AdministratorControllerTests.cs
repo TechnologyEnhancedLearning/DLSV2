@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Administrator
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
@@ -43,7 +44,7 @@
         };
 
         private AdministratorController administratorController = null!;
-        private ICommonService commonService = null!;
+        private ICategoriesDataService categoriesDataService = null!;
         private IRequestCookieCollection cookieCollection = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
@@ -53,11 +54,11 @@
         [SetUp]
         public void Setup()
         {
-            commonService = A.Fake<ICommonService>();
+            categoriesDataService = A.Fake<ICategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
-            A.CallTo(() => commonService.GetCategoryListForCentre(A<int>._)).Returns(categories);
+            A.CallTo(() => categoriesDataService.GetCategoryListForCentre(A<int>._)).Returns(categories);
 
             httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
@@ -77,7 +78,7 @@
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
             A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
-            administratorController = new AdministratorController(userDataService, commonService)
+            administratorController = new AdministratorController(userDataService, categoriesDataService)
                 .WithMockHttpContext(httpContext)
                 .WithMockUser(true)
                 .WithMockTempData();
