@@ -51,6 +51,7 @@
             this.logger = logger;
             this.userDataService = userDataService;
         }
+
         public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId)
         {
             var result = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
@@ -167,7 +168,7 @@
                 return list;
             }
 
-            var prompt1 = PopulateCustomPrompt(
+            var prompt1 = CustomPromptsService.PopulateCustomPrompt(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -178,7 +179,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = PopulateCustomPrompt(
+            var prompt2 = CustomPromptsService.PopulateCustomPrompt(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -189,7 +190,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = PopulateCustomPrompt(
+            var prompt3 = CustomPromptsService.PopulateCustomPrompt(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -200,7 +201,7 @@
                 list.Add(prompt3);
             }
 
-            var prompt4 = PopulateCustomPrompt(
+            var prompt4 = CustomPromptsService.PopulateCustomPrompt(
                 4,
                 result.CustomField4Prompt,
                 result.CustomField4Options,
@@ -211,7 +212,7 @@
                 list.Add(prompt4);
             }
 
-            var prompt5 = PopulateCustomPrompt(
+            var prompt5 = CustomPromptsService.PopulateCustomPrompt(
                 5,
                 result.CustomField5Prompt,
                 result.CustomField5Options,
@@ -222,7 +223,7 @@
                 list.Add(prompt5);
             }
 
-            var prompt6 = PopulateCustomPrompt(
+            var prompt6 = CustomPromptsService.PopulateCustomPrompt(
                 6,
                 result.CustomField6Prompt,
                 result.CustomField6Options,
@@ -248,7 +249,7 @@
                 return list;
             }
 
-            var prompt1 = PopulateCustomPromptWithAnswer(
+            var prompt1 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -260,7 +261,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = PopulateCustomPromptWithAnswer(
+            var prompt2 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -272,7 +273,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = PopulateCustomPromptWithAnswer(
+            var prompt3 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -284,7 +285,7 @@
                 list.Add(prompt3);
             }
 
-            var prompt4 = PopulateCustomPromptWithAnswer(
+            var prompt4 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 4,
                 result.CustomField4Prompt,
                 result.CustomField4Options,
@@ -296,7 +297,7 @@
                 list.Add(prompt4);
             }
 
-            var prompt5 = PopulateCustomPromptWithAnswer(
+            var prompt5 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 5,
                 result.CustomField5Prompt,
                 result.CustomField5Options,
@@ -308,7 +309,7 @@
                 list.Add(prompt5);
             }
 
-            var prompt6 = PopulateCustomPromptWithAnswer(
+            var prompt6 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 6,
                 result.CustomField6Prompt,
                 result.CustomField6Options,
@@ -321,27 +322,6 @@
             }
 
             return list;
-        }
-
-        public static CustomPrompt? PopulateCustomPrompt(
-            int promptNumber,
-            string? prompt,
-            string? options,
-            bool mandatory
-        )
-        {
-            return prompt != null ? new CustomPrompt(promptNumber, prompt, options, mandatory) : null;
-        }
-
-        public static CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(
-            int promptNumber,
-            string? prompt,
-            string? options,
-            bool mandatory,
-            string? answer
-        )
-        {
-            return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
     }
 }

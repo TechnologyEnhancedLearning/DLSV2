@@ -4,7 +4,7 @@
 
     public interface ICustomPromptsService { }
 
-    public class CustomPromptsService
+    public class CustomPromptsService : ICustomPromptsService
     {
         public static CustomPrompt? PopulateCustomPrompt(
             int promptNumber,

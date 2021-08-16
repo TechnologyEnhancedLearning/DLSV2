@@ -171,6 +171,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
             services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();

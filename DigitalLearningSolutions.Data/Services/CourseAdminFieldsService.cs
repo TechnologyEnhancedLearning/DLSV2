@@ -115,7 +115,7 @@
             return result;
         }
 
-        private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
+        private List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
             CourseAdminFieldsResult? result
         )
         {
@@ -126,7 +126,7 @@
                 return list;
             }
 
-            var prompt1 = PopulateCustomPrompt(
+            var prompt1 = CustomPromptsService.PopulateCustomPrompt(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -137,7 +137,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = PopulateCustomPrompt(
+            var prompt2 = CustomPromptsService.PopulateCustomPrompt(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -148,7 +148,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = PopulateCustomPrompt(
+            var prompt3 = CustomPromptsService.PopulateCustomPrompt(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -162,7 +162,7 @@
             return list;
         }
 
-        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(
+        private List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(
             CourseAdminFieldsResult? result,
             DelegateCourseInfo delegateCourseInfo
         )
@@ -174,7 +174,7 @@
                 return list;
             }
 
-            var prompt1 = PopulateCustomPromptWithAnswer(
+            var prompt1 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -186,7 +186,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = PopulateCustomPromptWithAnswer(
+            var prompt2 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -198,7 +198,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = PopulateCustomPromptWithAnswer(
+            var prompt3 = CustomPromptsService.PopulateCustomPromptWithAnswer(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -211,27 +211,6 @@
             }
 
             return list;
-        }
-
-        private static CustomPrompt? PopulateCustomPrompt(
-            int promptNumber,
-            string? prompt,
-            string? options,
-            bool mandatory
-        )
-        {
-            return prompt != null ? new CustomPrompt(promptNumber, prompt, options, mandatory) : null;
-        }
-
-        private static CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(
-            int promptNumber,
-            string? prompt,
-            string? options,
-            bool mandatory,
-            string? answer
-        )
-        {
-            return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
     }
 }
