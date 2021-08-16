@@ -41,10 +41,10 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.AdminCount == 1) {
-      <p class="nhsuk-body-m">@Model.AdminCount admin has responded to this field. Deleting the field will permanently delete their response.</p>
+    @if (Model.AnswerCount == 1) {
+      <p class="nhsuk-body-m">@Model.AnswerCount admin has responded to this field. Deleting the field will permanently delete their response.</p>
     } else {
-      <p class="nhsuk-body-m">@Model.AdminCount admins have responded to this field. Deleting the field will permanently delete all of their responses.</p>
+      <p class="nhsuk-body-m">@Model.AnswerCount admins have responded to this field. Deleting the field will permanently delete all of their responses.</p>
     }
 
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveAdminField">
@@ -59,10 +59,10 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
               <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
-                @if (Model.AdminCount == 1) {
-                  @:I am sure that I wish to delete this field and @Model.AdminCount admin response
+                @if (Model.AnswerCount == 1) {
+                  @:I am sure that I wish to delete this field and @Model.AnswerCount admin response
                 } else {
-                  @:I am sure that I wish to delete this field and all @Model.AdminCount admin responses
+                  @:I am sure that I wish to delete this field and all @Model.AnswerCount admin responses
                 }
               </label>
             </div>
@@ -70,7 +70,7 @@
         </fieldset>
       </div>
       <input type="hidden" asp-for="PromptName" />
-      <input type="hidden" asp-for="AdminCount" />
+      <input type="hidden" asp-for="AnswerCount" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete field</button>
     </form>
 

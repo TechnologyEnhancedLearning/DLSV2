@@ -150,10 +150,10 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
-            var adminWithAnswerCount =
-                userDataService.GetDelegateCountWithAnswerForCourseAdminField(customisationId, promptNumber);
+            var answerCount =
+                userDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
 
-            if (adminWithAnswerCount == 0)
+            if (answerCount == 0)
             {
                 return RemoveAdminFieldAndRedirect(customisationId, promptNumber);
             }
@@ -161,7 +161,7 @@
             var promptName =
                 courseAdminFieldsService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
 
-            var model = new RemoveAdminFieldViewModel(customisationId, promptName, adminWithAnswerCount);
+            var model = new RemoveAdminFieldViewModel(customisationId, promptName, answerCount);
 
             return View(model);
         }

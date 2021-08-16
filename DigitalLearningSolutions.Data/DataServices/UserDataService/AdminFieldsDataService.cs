@@ -5,7 +5,7 @@
 
     public partial class UserDataService
     {
-        public int GetDelegateCountWithAnswerForCourseAdminField(int customisationId, int promptNumber)
+        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber)
         {
             return connection.Query<string>(
                 $@"SELECT Answer{promptNumber}

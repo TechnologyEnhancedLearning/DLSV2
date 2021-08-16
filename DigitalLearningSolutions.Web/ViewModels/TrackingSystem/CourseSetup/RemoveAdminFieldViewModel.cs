@@ -4,11 +4,11 @@
     {
         public RemoveAdminFieldViewModel() { }
 
-        public RemoveAdminFieldViewModel(int customisationId, string promptName, int adminCount)
+        public RemoveAdminFieldViewModel(int customisationId, string promptName, int answerCount)
         {
             CustomisationId = customisationId;
             PromptName = promptName;
-            AdminCount = adminCount;
+            AnswerCount = answerCount;
         }
 
         public int CustomisationId { get; set; }
@@ -17,6 +17,6 @@
 
         public bool Confirm { get; set; }
 
-        public int AdminCount { get; set; }
+        public int AnswerCount { get; set; }
     }
 }
