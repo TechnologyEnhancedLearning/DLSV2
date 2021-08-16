@@ -32,10 +32,34 @@
         [Route("{groupId:int}/Delegates/{page:int=1}")]
         public IActionResult GroupDelegates(int groupId, int page = 1)
         {
-            var groupName = groupsDataService.GetGroupNameForGroupId(groupId);
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+
+            if (groupName == null)
+            {
+                return NotFound();
+            }
+
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
 
             var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
+
+            return View(model);
+        }
+
+        [Route("{groupId:int}/Courses/{page:int=1}")]
+        public IActionResult GroupCourses(int groupId, int page = 1)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+
+            if (groupName == null)
+            {
+                return NotFound();
+            }
+            var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
+
+            var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 
             return View(model);
         }

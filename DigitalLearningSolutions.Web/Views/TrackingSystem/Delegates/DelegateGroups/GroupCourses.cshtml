@@ -1,10 +1,10 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
-@model GroupDelegatesViewModel
+@model GroupCoursesViewModel
 
 @{
-  ViewData["Title"] = "Group delegates";
+  ViewData["Title"] = "Group courses";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
@@ -31,7 +31,7 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-two-thirds">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Group delegates</h1>
+        <h1 id="page-heading" class="nhsuk-heading-xl">Group courses</h1>
       </div>
       <div class="nhsuk-grid-column-one-third heading-button-group">
         <a class="nhsuk-button heading-button" role="button">
@@ -43,13 +43,13 @@
     <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          @if (!Model.GroupDelegates.Any()) {
+          @if (!Model.GroupCourses.Any()) {
             <p class="nhsuk-u-margin-top-4" role="alert">
-              <b>No delegates found.</b>
+              <b>No courses found.</b>
             </p>
           } else {
-            @foreach (var groupDelegate in Model.GroupDelegates) {
-              <partial name="_GroupDelegateCard" model="groupDelegate" />
+            @foreach (var groupCourse in Model.GroupCourses) {
+              <partial name="_GroupCourseCard" model="groupCourse" />
             }
           }
           @if (Model.TotalPages > 1) {

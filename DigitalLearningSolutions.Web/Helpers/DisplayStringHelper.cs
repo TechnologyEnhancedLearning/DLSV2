@@ -35,5 +35,10 @@
             var number = Math.Round(byteCount / Math.Pow(1024, place), decimalPlaces);
             return (Math.Sign(byteCount) * number) + Units[place];
         }
+
+        public static string? ConvertNumberToMonthsString(int numberOfMonths)
+        {
+            return numberOfMonths == 0 ? null : $"{numberOfMonths} month{(numberOfMonths == 1 ? string.Empty : "s")}";
+        }
     }
 }

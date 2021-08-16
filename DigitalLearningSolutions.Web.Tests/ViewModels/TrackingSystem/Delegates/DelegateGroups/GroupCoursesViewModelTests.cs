@@ -10,30 +10,32 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class GroupDelegatesViewModelTests
+    public class GroupCoursesViewModelTests
     {
         private readonly DelegateGroupsSideNavViewModel expectedNavViewModel =
-            new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Delegates);
+            new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Courses);
 
-        private GroupDelegate[] groupDelegates = null!;
+        private GroupCourse[] groupCourses = null!;
 
         [SetUp]
         public void SetUp()
         {
-            groupDelegates = Builder<GroupDelegate>.CreateListOfSize(15)
+            groupCourses = Builder<GroupCourse>.CreateListOfSize(15)
                 .All()
-                .With(g => g.LastName = "Surname")
-                .With((g, i) => g.FirstName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
+                .With(g => g.CustomisationName = "v1")
+                .With(
+                    (g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i)
+                )
                 .Build().ToArray();
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_return_the_first_page_worth_of_delegates()
+        public void GroupCoursesViewModel_should_default_to_returning_the_first_ten_courses()
         {
-            var model = new GroupDelegatesViewModel(
+            var model = new GroupCoursesViewModel(
                 1,
                 "Group name",
-                groupDelegates,
+                groupCourses,
                 1
             );
 
@@ -41,19 +43,19 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupDelegates.Count().Should().Be(10);
-                model.GroupDelegates.Any(groupDelegate => groupDelegate.Name == "K Surname").Should()
+                model.GroupCourses.Count().Should().Be(10);
+                model.GroupCourses.Any(groupCourse => groupCourse.Name == "K - v1").Should()
                     .BeFalse();
             }
         }
 
         [Test]
-        public void GroupDelegatesViewModel_should_correctly_return_the_second_page_of_delegates()
+        public void GroupCoursesViewModel_should_correctly_return_the_second_page_of_courses()
         {
-            var model = new GroupDelegatesViewModel(
+            var model = new GroupCoursesViewModel(
                 1,
                 "Group name",
-                groupDelegates,
+                groupCourses,
                 2
             );
 
@@ -61,8 +63,8 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupDelegates.Count().Should().Be(5);
-                model.GroupDelegates.First().Name.Should().BeEquivalentTo("K Surname");
+                model.GroupCourses.Count().Should().Be(5);
+                model.GroupCourses.First().Name.Should().BeEquivalentTo("K - v1");
             }
         }
     }
