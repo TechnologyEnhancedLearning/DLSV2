@@ -1,10 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Helpers
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public interface ICustomPromptsService { }
-
-    public class CustomPromptsService : ICustomPromptsService
+    public static class CustomPromptHelper
     {
         public static CustomPrompt? PopulateCustomPrompt(
             int promptNumber,
