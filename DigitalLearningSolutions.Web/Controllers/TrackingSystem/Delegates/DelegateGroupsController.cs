@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
@@ -13,13 +14,19 @@
     [Route("TrackingSystem/Delegates/Groups")]
     public class DelegateGroupsController : Controller
     {
+        private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IUserDataService userDataService;
 
-        public DelegateGroupsController(IGroupsDataService groupsDataService, IUserDataService userDataService)
+        public DelegateGroupsController(
+            IGroupsDataService groupsDataService,
+            IUserDataService userDataService,
+            IClockService clockService
+        )
         {
             this.groupsDataService = groupsDataService;
             this.userDataService = userDataService;
+            this.clockService = clockService;
         }
 
         public IActionResult Index()
@@ -74,6 +81,14 @@
                 );
                 return View(model);
             }
+
+            if (model.RemoveProgress)
+            {
+                var currentDate = clockService.UtcNow;
+                groupsDataService.RemoveRelateProgressRecordsForDelegate(groupId, delegateId, currentDate);
+            }
+
+            groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
 
             return RedirectToAction("GroupDelegates", new { groupId });
         }

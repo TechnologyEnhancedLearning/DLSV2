@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
@@ -15,6 +16,10 @@
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
+
+        void RemoveRelateProgressRecordsForDelegate(int groupId, int delegateId, DateTime removedDate);
+
+        void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -115,6 +120,35 @@
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupId, centreId }
             ).SingleOrDefault();
+        }
+
+        public void RemoveRelateProgressRecordsForDelegate(int groupId, int delegateId, DateTime removedDate)
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                    SET
+                        RemovedDate = @removedDate,
+                        RemovalMethodID = 3
+                    WHERE ProgressID IN
+                          (SELECT ProgressID
+                            FROM Progress AS P
+                            INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                            WHERE (p.Completed IS NULL) AND (p.EnrollmentMethodID  = 3)
+                              AND (GC.GroupID = @groupId)
+                              AND (p.CandidateID = @delegateId)
+                              AND (P.RemovedDate IS NULL))",
+                new {groupId, delegateId, removedDate}
+            );
+        }
+
+        public void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId)
+        {
+            connection.Execute(
+                @"DELETE FROM GroupDelegates
+                    WHERE GroupID = @groupId
+                      AND DelegateID = @delegateId",
+                new {groupId, delegateId}
+            );
         }
     }
 }
