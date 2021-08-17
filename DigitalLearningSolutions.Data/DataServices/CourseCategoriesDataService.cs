@@ -5,21 +5,21 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common;
 
-    public interface ICategoriesDataService
+    public interface ICourseCategoriesDataService
     {
-        IEnumerable<Category> GetCategoryListForCentre(int centreId);
+        IEnumerable<Category> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId);
     }
 
-    public class CategoriesDataService : ICategoriesDataService
+    public class CourseCategoriesDataService : ICourseCategoriesDataService
     {
         private readonly IDbConnection connection;
 
-        public CategoriesDataService(IDbConnection connection)
+        public CourseCategoriesDataService(IDbConnection connection)
         {
             this.connection = connection;
         }
 
-        public IEnumerable<Category> GetCategoryListForCentre(int centreId)
+        public IEnumerable<Category> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId)
         {
             return connection.Query<Category>(
                 @"SELECT CourseCategoryID, CategoryName

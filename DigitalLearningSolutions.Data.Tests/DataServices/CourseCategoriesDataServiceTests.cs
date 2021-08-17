@@ -8,19 +8,19 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class CategoriesDataServiceTests
+    public class CourseCategoriesDataServiceTests
     {
-        private CategoriesDataService categoriesDataService = null!;
+        private CourseCategoriesDataService courseCategoriesDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            categoriesDataService = new CategoriesDataService(connection);
+            courseCategoriesDataService = new CourseCategoriesDataService(connection);
         }
 
         [Test]
-        public void GetCategoryListForCentre_should_return_expected_items()
+        public void GetCategoriesForCentreAndCentrallyManagedCourses_should_return_expected_items()
         {
             // Given
             var expectedCategories = new List<Category>
@@ -34,7 +34,7 @@
             };
 
             // When
-            var result = categoriesDataService.GetCategoryListForCentre(101).ToList();
+            var result = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(101).ToList();
 
             // Then
             result.Should().BeEquivalentTo(expectedCategories);

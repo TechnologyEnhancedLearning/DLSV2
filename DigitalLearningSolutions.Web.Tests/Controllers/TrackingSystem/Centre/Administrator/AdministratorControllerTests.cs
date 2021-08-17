@@ -44,7 +44,7 @@
         };
 
         private AdministratorController administratorController = null!;
-        private ICategoriesDataService categoriesDataService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private IRequestCookieCollection cookieCollection = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
@@ -54,11 +54,11 @@
         [SetUp]
         public void Setup()
         {
-            categoriesDataService = A.Fake<ICategoriesDataService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
-            A.CallTo(() => categoriesDataService.GetCategoryListForCentre(A<int>._)).Returns(categories);
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._)).Returns(categories);
 
             httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
@@ -78,7 +78,7 @@
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
             A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
-            administratorController = new AdministratorController(userDataService, categoriesDataService)
+            administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
                 .WithMockHttpContext(httpContext)
                 .WithMockUser(true)
                 .WithMockTempData();
