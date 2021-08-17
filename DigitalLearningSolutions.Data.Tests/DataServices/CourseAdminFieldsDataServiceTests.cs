@@ -49,7 +49,7 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(1379, 1, 1, options);
                 var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
 
                 // Then

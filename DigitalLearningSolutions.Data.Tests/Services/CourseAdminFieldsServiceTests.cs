@@ -1,13 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
+    using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CourseAdminFieldsServiceTests
@@ -74,21 +77,20 @@
         public void UpdateCustomPromptForCourse_calls_data_service()
         {
             // Given
-            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).DoesNothing();
+            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, null)).DoesNothing();
 
             // When
-            courseAdminFieldsService.UpdateCustomPromptForCourse(1, 1, true, null);
+            courseAdminFieldsService.UpdateCustomPromptForCourse(1, 1, null);
 
             // Then
-            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, true, null))
-                .MustHaveHappened();
+            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, null)).MustHaveHappened();
         }
 
         [Test]
         public void RemoveCustomPromptFromCourse_calls_data_service_with_correct_values()
         {
             // Given
-            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null))
+            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, null))
                 .DoesNothing();
             A.CallTo(() => courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(1, 1)).DoesNothing();
 
@@ -97,7 +99,7 @@
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, null)
             ).MustHaveHappened();
             A.CallTo(() => courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(1, 1))
                 .MustHaveHappened();

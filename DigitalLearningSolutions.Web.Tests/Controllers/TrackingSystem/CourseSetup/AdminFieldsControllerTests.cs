@@ -68,14 +68,13 @@
         public void PostEditAdminField_save_calls_correct_methods()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
             const string action = "save";
 
             A.CallTo(
                 () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
-                    false,
                     "Options"
                 )
             ).DoesNothing();
@@ -88,7 +87,6 @@
                 () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
-                    false,
                     "Options"
                 )
             ).MustHaveHappened();
@@ -99,14 +97,13 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
             const string action = "addPrompt";
 
             A.CallTo(
                 () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
-                    false,
                     "Test"
                 )
             ).DoesNothing();
@@ -126,7 +123,7 @@
         public void PostEditRegistrationPrompt_delete_removes_configured_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer", false);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer");
             const string action = "delete0";
 
             // When
@@ -144,7 +141,7 @@
         public void PostAdminField_bulk_sets_up_temp_data_and_redirects()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
             const string action = "bulk";
 
             // When
@@ -162,7 +159,7 @@
         public void PostEditAdminField_returns_error_with_unexpected_action()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options", false);
+            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
             const string action = "deletetest";
 
             // When
@@ -177,8 +174,8 @@
         {
             // Given
             var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1, 1);
-            var initialEditViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test", false);
-            var expectedViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer", false);
+            var initialEditViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test");
+            var expectedViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer");
             var initialTempData = new EditAdminFieldData(initialEditViewModel);
 
             controller.TempData.Set(initialTempData);

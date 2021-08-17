@@ -1,10 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -20,7 +18,7 @@
             int categoryId = 0
         );
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
@@ -64,9 +62,9 @@
             return PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
         {
-            courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
+            courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, options);
         }
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)
@@ -79,7 +77,6 @@
                     customisationId,
                     promptNumber,
                     0,
-                    false,
                     null
                 );
                 transaction.Complete();
@@ -125,7 +122,7 @@
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
-                result.CustomField1Mandatory
+                false
             );
             if (prompt1 != null)
             {
@@ -136,7 +133,7 @@
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
-                result.CustomField2Mandatory
+                false
             );
             if (prompt2 != null)
             {
@@ -147,7 +144,7 @@
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
-                result.CustomField3Mandatory
+                false
             );
             if (prompt3 != null)
             {
@@ -173,7 +170,7 @@
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
-                result.CustomField1Mandatory,
+                false,
                 delegateCourseInfo.Answer1
             );
             if (prompt1 != null)
@@ -185,7 +182,7 @@
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
-                result.CustomField2Mandatory,
+                false,
                 delegateCourseInfo.Answer2
             );
             if (prompt2 != null)
@@ -197,7 +194,7 @@
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
-                result.CustomField3Mandatory,
+                false,
                 delegateCourseInfo.Answer3
             );
             if (prompt3 != null)

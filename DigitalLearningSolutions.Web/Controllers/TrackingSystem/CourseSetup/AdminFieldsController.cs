@@ -189,7 +189,6 @@
             courseAdminFieldsService.UpdateCustomPromptForCourse(
                 model.CustomisationId,
                 model.PromptNumber,
-                model.Mandatory,
                 model.OptionsString
             );
 

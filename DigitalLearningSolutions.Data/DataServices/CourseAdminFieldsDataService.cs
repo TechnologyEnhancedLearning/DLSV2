@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
+namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
 {
     using System.Data;
     using System.Linq;
@@ -9,13 +9,12 @@
     {
         public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
         public void UpdateCustomPromptForCourse(
             int customisationId,
             int promptNumber,
             int promptId,
-            bool mandatory,
             string? options
         );
 
@@ -67,15 +66,14 @@
             return result;
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
         {
             connection.Execute(
                 @$"UPDATE Customisations
                     SET
-                        Q{promptNumber}Mandatory = @mandatory,
                         Q{promptNumber}Options = @options
                     WHERE CustomisationID = @customisationId",
-                new { mandatory, options, customisationId }
+                new { options, customisationId }
             );
         }
 
@@ -83,7 +81,6 @@
             int customisationId,
             int promptNumber,
             int promptId,
-            bool mandatory,
             string? options
         )
         {
@@ -91,10 +88,9 @@
                 @$"UPDATE Customisations
                     SET
                         CourseField{promptNumber}PromptID = @promptId,
-                        Q{promptNumber}Mandatory = @mandatory,
                         Q{promptNumber}Options = @options
                     WHERE CustomisationID = @customisationId",
-                new { promptId, mandatory, options, customisationId }
+                new { promptId, options, customisationId }
             );
         }
 
