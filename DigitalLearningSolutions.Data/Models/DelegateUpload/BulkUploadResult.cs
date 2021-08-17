@@ -20,6 +20,8 @@
             EmailAddressInUse
         }
 
+        public BulkUploadResult() { }
+
         public BulkUploadResult(
             IEnumerable<DelegateTableRow> delegateRows
         )

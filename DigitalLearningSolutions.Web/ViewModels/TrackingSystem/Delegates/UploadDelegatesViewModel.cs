@@ -10,11 +10,11 @@
     {
         [Required(ErrorMessage = "Delegates update file is required.")]
         [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format.")]
-        public IFormFile DelegatesFile { get; set; }
+        public IFormFile? DelegatesFile { get; set; }
 
         public DateTime? GetWelcomeEmailDate()
         {
-            return ShouldSendEmail ? (DateTime?)new DateTime(Year!.Value, Month!.Value, Day!.Value) : null;
+            return ShouldSendEmail ? new DateTime(Year!.Value, Month!.Value, Day!.Value) : (DateTime?)null;
         }
     }
 }

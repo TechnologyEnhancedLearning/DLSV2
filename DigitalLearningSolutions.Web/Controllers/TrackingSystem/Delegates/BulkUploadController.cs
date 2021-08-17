@@ -68,7 +68,7 @@
             try
             {
                 var results = delegateUploadFileService.ProcessDelegatesFile(
-                    model.DelegatesFile,
+                    model.DelegatesFile!,
                     User.GetCentreId(),
                     model.GetWelcomeEmailDate()
                 );
