@@ -3,9 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -65,7 +63,7 @@
                 return new NotFoundResult();
             }
 
-            string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, baseUrl);
 

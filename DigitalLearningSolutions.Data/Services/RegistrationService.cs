@@ -28,13 +28,11 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
-        private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
-            IPasswordResetService passwordResetService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             IConfiguration config
@@ -42,7 +40,6 @@ namespace DigitalLearningSolutions.Data.Services
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
-            this.passwordResetService = passwordResetService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.config = config;

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
+    using System.Drawing;
     using System.IO;
     using Microsoft.Extensions.Configuration;
     using static System.String;
@@ -62,6 +63,11 @@
         public static string GetMapsApiKey(this IConfiguration config)
         {
             return config[MapsApiKey];
+        }
+
+        public static string GetAppRootPath(this IConfiguration config)
+        {
+            return config[AppRootPathName];
         }
     }
 }

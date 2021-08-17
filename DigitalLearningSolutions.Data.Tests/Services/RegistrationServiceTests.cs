@@ -84,7 +84,6 @@
             registrationService = new RegistrationService(
                 registrationDataService,
                 passwordDataService,
-                passwordResetService,
                 emailService,
                 centresDataService,
                 config

@@ -1,6 +1,7 @@
-namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -8,10 +9,19 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc;
 
-    public class SetPasswordController : SetPasswordControllerBase
+    public class ResetPasswordController : Controller
     {
-        public SetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService) :
-            base(passwordResetService, passwordService) { }
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IPasswordService passwordService;
+
+        public ResetPasswordController(
+            IPasswordResetService passwordResetService,
+            IPasswordService passwordService
+        )
+        {
+            this.passwordResetService = passwordResetService;
+            this.passwordService = passwordService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index(string email, string code)
@@ -26,7 +36,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var hashIsValid = await IsSetPasswordLinkValid(email, code, true);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                email,
+                code,
+                ResetPasswordHelpers.ResetPasswordHashExpiryTime
+            );
 
             TempData.Set(new ResetPasswordData(email, code));
 
@@ -44,7 +58,11 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             var resetPasswordData = TempData.Peek<ResetPasswordData>()!;
 
-            var hashIsValid = await IsSetPasswordLinkValid(resetPasswordData, true);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                resetPasswordData.Email,
+                resetPasswordData.ResetPasswordHash,
+                ResetPasswordHelpers.ResetPasswordHashExpiryTime
+            );
 
             if (!hashIsValid)
             {
@@ -57,12 +75,13 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return View(viewModel);
             }
 
-            await ChangePassword(viewModel, resetPasswordData);
+            await passwordResetService.InvalidateResetPasswordForEmailAsync(resetPasswordData.Email);
+            await passwordService.ChangePasswordAsync(resetPasswordData.Email, viewModel.Password!);
+
+            TempData.Clear();
 
             return View("Success");
         }
-
-        
 
         [HttpGet]
         public IActionResult Error()

@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
@@ -116,7 +117,7 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash, false);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
 
             // Then
             hashIsValid.Should().BeFalse();
@@ -150,7 +151,7 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash, false);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
 
             // Then
             hashIsValid.Should().BeTrue();

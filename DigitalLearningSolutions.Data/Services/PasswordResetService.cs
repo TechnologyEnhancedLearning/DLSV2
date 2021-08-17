@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
@@ -19,7 +18,7 @@
         Task<bool> EmailAndResetPasswordHashAreValidAsync(
             string emailAddress,
             string resetHash,
-            bool isSetPassword
+            TimeSpan expiryTime
         );
 
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
@@ -46,28 +45,6 @@
             this.passwordResetDataService = passwordResetDataService;
             this.emailService = emailService;
             this.clockService = clockService;
-        }
-
-        public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
-            string emailAddress,
-            string resetHash,
-            bool isSetPassword
-        )
-        {
-            var matchingResetPasswordEntities =
-                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
-                    emailAddress,
-                    resetHash
-                );
-
-            return matchingResetPasswordEntities.Any(
-                resetPassword => resetPassword.IsStillValidAt(
-                    clockService.UtcNow,
-                    isSetPassword
-                        ? ResetPasswordHelpers.SetPasswordHasExpiryTime
-                        : ResetPasswordHelpers.ResetPasswordHashExpiryTime
-                )
-            );
         }
 
         public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
@@ -101,21 +78,38 @@
         {
             (_, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             var delegateUser = delegateUsers.FirstOrDefault() ??
-                     throw new UserAccountNotFoundException(
-                         "No user account could be found with the specified email address"
-                     );
+                               throw new UserAccountNotFoundException(
+                                   "No user account could be found with the specified email address"
+                               );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
             var welcomeEmail = GenerateWelcomeEmail(
                 emailAddress,
                 setPasswordHash,
                 baseUrl,
-                delegateUser.FirstName,
-                delegateUser.LastName,
-                delegateUser.CentreName,
-                delegateUser.CandidateNumber
+                delegateUser
             );
             emailService.SendEmail(welcomeEmail);
+        }
+
+        public async Task<bool> EmailAndResetPasswordHashAreValidAsync(
+            string emailAddress,
+            string resetHash,
+            TimeSpan expiryTime
+        )
+        {
+            var matchingResetPasswordEntities =
+                await passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
+                    emailAddress,
+                    resetHash
+                );
+
+            return matchingResetPasswordEntities.Any(
+                resetPassword => resetPassword.IsStillValidAt(
+                    clockService.UtcNow,
+                    expiryTime
+                )
+            );
         }
 
         private string GenerateResetPasswordHash(User user)
@@ -177,10 +171,7 @@
             string emailAddress,
             string setPasswordHash,
             string baseUrl,
-            string? firstName,
-            string lastName,
-            string centreName,
-            string candidateNumber
+            DelegateUser delegateUser
         )
         {
             UriBuilder setPasswordUrl = new UriBuilder(baseUrl);
@@ -194,20 +185,20 @@
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 
-            var nameToUse = firstName != null ? $"{firstName} {lastName}" : lastName;
+            var nameToUse = delegateUser.FirstName != null ? $"{delegateUser.FirstName} {delegateUser.LastName}" : delegateUser.LastName;
 
             BodyBuilder body = new BodyBuilder
             {
                 TextBody = $@"Dear {nameToUse},
-                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {centreName}.
-                            You have been assigned the unique DLS delegate number {candidateNumber}.
+                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.
+                            You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.
                             To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in three days.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {nameToUse},</p>
-                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {centreName}.</p>
-                                <p>You have been assigned the unique DLS delegate number {candidateNumber}.</p>
+                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
+                                <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
                                 <p>To complete your registration and access your Digital Learning Solutions content, please click <a href=""{setPasswordUrl.Uri}"">this link</a>.</p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
