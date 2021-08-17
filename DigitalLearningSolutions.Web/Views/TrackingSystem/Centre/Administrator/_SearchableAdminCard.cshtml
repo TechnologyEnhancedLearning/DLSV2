@@ -36,7 +36,11 @@
       }
 
       @if (Model.IsLocked) {
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button">
+        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+           role="button"
+           asp-controller="Administrator"
+           asp-action="UnlockAccount"
+           asp-route-adminId="@Model.Id">
           Unlock account
         </a>
       } else {
