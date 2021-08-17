@@ -18,20 +18,20 @@
     {
         private readonly ICourseService courseService;
         private readonly CustomPromptHelper customPromptHelper;
-        private readonly IRegistrationService registrationService;
+        private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             CustomPromptHelper customPromptHelper,
             ICourseService courseService,
-            IRegistrationService registrationService
+            IPasswordResetService passwordResetService
         )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
             this.courseService = courseService;
-            this.registrationService = registrationService;
+            this.passwordResetService = passwordResetService;
         }
 
         public IActionResult Index(int delegateId)
@@ -65,19 +65,12 @@
                 return new NotFoundResult();
             }
 
-            registrationService.GenerateAndSendDelegateWelcomeEmail(delegateUser!);
+            string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
 
-            TempData.Set(new WelcomeEmailSentViewModel(delegateUser));
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, baseUrl);
 
-            return RedirectToAction("WelcomeEmailSent", new { delegateId = delegateUser.Id });
-        }
+            var model = new WelcomeEmailSentViewModel(delegateUser);
 
-        [HttpGet]
-        [Route("WelcomeEmailSent")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<WelcomeEmailSentViewModel>))]
-        public IActionResult WelcomeEmailSent()
-        {
-            var model = TempData.Get<WelcomeEmailSentViewModel>()!;
             return View("WelcomeEmailSent", model);
         }
     }

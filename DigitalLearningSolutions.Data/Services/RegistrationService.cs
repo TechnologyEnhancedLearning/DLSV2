@@ -6,7 +6,6 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
     using MimeKit;
 
@@ -21,8 +20,6 @@ namespace DigitalLearningSolutions.Data.Services
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
 
         void RegisterCentreManager(RegistrationModel registrationModel);
-
-        void GenerateAndSendDelegateWelcomeEmail(DelegateUserCard delegateUser);
     }
 
     public class RegistrationService : IRegistrationService
@@ -121,24 +118,6 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(DelegateUserCard delegateUser)
-        {
-            using var transaction = new TransactionScope();
-
-            string setPasswordHash = passwordResetService.GenerateResetPasswordHash(delegateUser);
-            var welcomeEmail = GenerateWelcomeEmail(
-                delegateUser.EmailAddress!.Trim(),
-                delegateUser.FirstName!,
-                delegateUser.LastName,
-                delegateUser.CentreName,
-                delegateUser.CandidateNumber,
-                setPasswordHash
-            );
-            emailService.SendEmail(welcomeEmail);
-
-            transaction.Complete();
-        }
-
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
@@ -183,43 +162,10 @@ namespace DigitalLearningSolutions.Data.Services
                             A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.
                             To approve or reject their registration please follow this link: {approvalUrl}
                             Please don't reply to this email as it has been automatically generated.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {firstName},</p>
                                 <p>A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.</p>
                                 <p>To approve or reject their registration please follow this link: <a href=""{approvalUrl}"">{approvalUrl}</a></p>
-                                <p>Please don't reply to this email as it has been automatically generated.</p>
-                            </body>"
-            };
-
-            return new Email(emailSubject, body, emailAddress);
-        }
-
-        private Email GenerateWelcomeEmail(
-            string emailAddress,
-            string firstName,
-            string lastName,
-            string centreName,
-            string candidateNumber,
-            string setPasswordHash
-        )
-        {
-            const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
-            var setPasswordUrl = $"{config["AppRootPath"]}/SetPassword?code={setPasswordHash}&email={emailAddress}";
-            
-            BodyBuilder body = new BodyBuilder
-            {
-                TextBody = $@"Dear {firstName} {lastName},
-                            An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {centreName}.
-                            You have been assigned the unique DLS delegate number {candidateNumber}.
-                            To complete your registration and access your Digital Learning Solutions content, please follow this link:{setPasswordUrl}
-                            Note that this link can only be used once.
-                            Please don't reply to this email as it has been automatically generated.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
-                                <p>Dear {firstName},</p>
-                                <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {centreName}.</p>
-                                <p>You have been assigned the unique DLS delegate number {candidateNumber}.</p>
-                                <p>To complete your registration and access your Digital Learning Solutions content, please follow this link: <a href=""{setPasswordUrl}"">{setPasswordUrl}</a></p>
-                                <p>Note that this link can only be used once.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>"
             };

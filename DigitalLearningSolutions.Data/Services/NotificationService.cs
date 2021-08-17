@@ -48,7 +48,7 @@
 Digital Learning Solutions Delegate, {unlockData?.DelegateName}, has requested that you unlock their progress for the course {unlockData?.CourseName}.
 They have reached the maximum number of assessment attempt allowed without passing.
 To review and unlock their progress, visit the this url: ${unlockUrl.Uri}.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                     <p>Dear {unlockData?.ContactForename}</p>
                                     <p>Digital Learning Solutions Delegate, {unlockData?.DelegateName}, has requested that you unlock their progress for the course {unlockData?.CourseName}</p>
                                     <p>They have reached the maximum number of assessment attempt allowed without passing.</p><p>To review and unlock their progress, <a href='{unlockUrl.Uri}'>click here</a>.</p>

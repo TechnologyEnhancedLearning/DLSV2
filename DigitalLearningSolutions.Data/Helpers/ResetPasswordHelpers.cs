@@ -8,11 +8,12 @@ namespace DigitalLearningSolutions.Data.Helpers
 
     public static class ResetPasswordHelpers
     {
-        private static readonly TimeSpan ResetPasswordHashExpiryTime = TimeSpan.FromHours(2);
+        public static readonly TimeSpan ResetPasswordHashExpiryTime = TimeSpan.FromHours(2);
+        public static readonly TimeSpan SetPasswordHasExpiryTime = TimeSpan.FromDays(3);
 
-        public static bool IsStillValidAt(this ResetPassword passwordReset, DateTime dateTime)
+        public static bool IsStillValidAt(this ResetPassword passwordReset, DateTime dateTime, TimeSpan expiryTime)
         {
-            return passwordReset.PasswordResetDateTime + ResetPasswordHashExpiryTime > dateTime;
+            return passwordReset.PasswordResetDateTime + expiryTime > dateTime;
         }
 
         public static IEnumerable<int> GetDistinctResetPasswordIds(this (AdminUser?, List<DelegateUser>) userAccounts)

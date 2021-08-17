@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
@@ -12,10 +12,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
-    public class ResetPasswordControllerTests
+    public class SetPasswordControllerTests
     {
-        private ResetPasswordController authenticatedController = null!;
-        private ResetPasswordController unauthenticatedController = null!;
+        private SetPasswordController authenticatedController = null!;
+        private SetPasswordController unauthenticatedController = null!;
         private IPasswordResetService passwordResetService = null!;
         private IPasswordService passwordService = null!;
 
@@ -25,11 +25,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             passwordResetService = A.Fake<IPasswordResetService>();
             passwordService = A.Fake<IPasswordService>();
 
-            unauthenticatedController = new ResetPasswordController(passwordResetService, passwordService)
+            unauthenticatedController = new SetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(false);
-            authenticatedController = new ResetPasswordController(passwordResetService, passwordService)
+            authenticatedController = new SetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(true);
@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_render_if_user_is_unauthenticated_and_query_params_are_valid()
         {
             // Given
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "code", false))
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "code", true))
                 .Returns(Task.FromResult(true));
 
             // When
@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_redirect_to_error_page_if_user_is_unauthenticated_and_query_params_are_invalid()
         {
             // Given
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "code", false))
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "code", true))
                 .Returns(Task.FromResult(false));
 
             // When
@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Index_should_set_email_and_hash_in_temp_data_if_valid()
         {
             // Given
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false))
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true))
                 .Returns(true);
 
             // When
@@ -112,7 +112,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Post_to_index_should_invalidate_reset_hash_if_model_and_hash_valid()
         {
             // Given
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
 
             // When
@@ -129,7 +129,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
 
             // When
             await unauthenticatedController.Index(
@@ -145,7 +145,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
 
             // When
             var result = await unauthenticatedController.Index(
@@ -161,7 +161,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
             unauthenticatedController.TempData.Set("some string");
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
 
             // When
             await unauthenticatedController.Index(
@@ -178,7 +178,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
             unauthenticatedController.TempData.Set("some string");
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(false);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(false);
 
             // When
             await unauthenticatedController.Index(
@@ -194,7 +194,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         {
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
             unauthenticatedController.ModelState.AddModelError("model", "Invalid for testing");
 
             // When
@@ -212,7 +212,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             // Given
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
             unauthenticatedController.ModelState.AddModelError("Testings", "errors for testing");
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(true);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(true);
 
             // When
             var result = await unauthenticatedController.Index(
@@ -226,7 +226,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
         public async Task Post_to_index_should_redirect_to_Error_if_reset_password_invalid()
         {
             // Given
-            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", false)).Returns(false);
+            A.CallTo(() => passwordResetService.EmailAndResetPasswordHashAreValidAsync("email", "hash", true)).Returns(false);
             unauthenticatedController.TempData.Set(new ResetPasswordData("email", "hash"));
 
             // When
