@@ -73,6 +73,9 @@
         public static readonly (string DisplayText, string PropertyName) Brand = ("Brand", nameof(AvailableCourse.Brand));
         public static readonly (string DisplayText, string PropertyName) Category = ("Category", nameof(AvailableCourse.Category));
         public static readonly (string DisplayText, string PropertyName) Topic = ("Topic", nameof(AvailableCourse.Topic));
+        public static readonly (string DisplayText, string PropertyName) CourseName = ("Course Name", nameof(CourseStatistics.CourseName));
+        public static readonly (string DisplayText, string PropertyName) TotalDelegates = ("Total Delegates", nameof(CourseStatistics.DelegateCount));
+        public static readonly (string DisplayText, string PropertyName) InProgress = ("In Progress", nameof(CourseStatistics.InProgressCount));
     }
 
     public static class DefaultSortByOptions

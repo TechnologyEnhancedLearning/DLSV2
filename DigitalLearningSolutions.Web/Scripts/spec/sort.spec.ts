@@ -286,6 +286,62 @@ describe('sortSearchableElements delegates', () => {
   });
 });
 
+describe('sortSearchableElements delegates groups', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-a">
+            <span name="course-name" class="searchable-element-title">A: Course</span>
+            <p name="delegate-count">5</p>
+            <p name="in-progress-count">7</p>
+          </div>
+          <div class="searchable-element" id="course-b">
+            <span name="course-name" class="searchable-element-title">B: Course</span>
+            <p name="delegate-count">1</p>
+            <p name="in-progress-count">2</p>
+          </div>
+          <div class="searchable-element" id="course-c">
+            <span name="course-name" class="searchable-element-title">C: Course</span>
+            <p name="delegate-count">7</p>
+            <p name="in-progress-count">5</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy                | sortDirection   | firstId       | secondId      | thirdId
+  ${'CourseName'}       | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+  ${'CourseName'}       | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+  ${'DelegateCount'}    | ${'Ascending'}  | ${'course-b'} | ${'course-a'} | ${'course-c'}
+  ${'DelegateCount'}    | ${'Descending'} | ${'course-c'} | ${'course-a'} | ${'course-b'}
+  ${'InProgressCount'}  | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
+  ${'InProgressCount'}  | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
 function setSortBy(sortBy: string) {
   (<HTMLInputElement>document.getElementById('select-sort-by')).value = sortBy;
 }

@@ -194,6 +194,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
+            services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             RegisterWebServiceFilters(services);
         }
 
