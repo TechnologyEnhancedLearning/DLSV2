@@ -42,9 +42,9 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (Model.AnswerCount == 1) {
-      <p class="nhsuk-body-m">@Model.AnswerCount admin has responded to this field. Deleting the field will permanently delete their response.</p>
+      <p class="nhsuk-body-m">An admin has responded to this field for @Model.AnswerCount delegate. Deleting the field will permanently delete their response.</p>
     } else {
-      <p class="nhsuk-body-m">@Model.AnswerCount admins have responded to this field. Deleting the field will permanently delete all of their responses.</p>
+      <p class="nhsuk-body-m">Admins have responded to this field for @Model.AnswerCount delegates. Deleting the field will permanently delete all of their responses.</p>
     }
 
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveAdminField">
