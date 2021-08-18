@@ -15,10 +15,7 @@
         public void GetDelegateUserById_Returns_delegate_users()
         {
             // Given
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser(
-                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
-                jobGroupName: "Nursing / midwifery"
-            );
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
 
             // When
             var returnedDelegateUser = userDataService.GetDelegateUserById(2);
@@ -233,6 +230,32 @@
 
             // Then
             count.Should().Be(3420);
+        }
+
+        [Test]
+        public void GetDelegateUserByAliasId_Returns_delegate_users()
+        {
+            // Given
+            var expectedDelegateUser = userDataService.GetDelegateUserById(1);
+
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateUserByAliasId("ohi@lt.vgmwekac", 101);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
+        public void GetDelegateUserByCandidateNumber_Returns_delegate_user()
+        {
+            // Given
+            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
+
+            // When
+            var returnedDelegateUser = userDataService.GetDelegateUserByCandidateNumber("SV1234", 2);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
         }
     }
 }

@@ -23,6 +23,7 @@
                         cd.FirstName,
                         cd.LastName,
                         cd.Password,
+                        cd.Active,
                         cd.Approved,
                         cd.ProfileImage,
                         cd.Answer1,
@@ -31,6 +32,7 @@
                         cd.Answer4,
                         cd.Answer5,
                         cd.Answer6,
+                        cd.JobGroupID,
                         jg.JobGroupName
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
@@ -48,16 +50,28 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
-                        cd.CentreID,
                         ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
                         cd.Password,
-                        cd.Approved
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.Active = 1 AND
                          (cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username)",
                 new { username }
@@ -72,16 +86,28 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
-                        cd.CentreID,
                         ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
                         cd.Password,
-                        cd.Approved
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.CandidateNumber = @username OR cd.EmailAddress = @username OR cd.AliasID = @username",
                 new { username }
             ).ToList();
@@ -95,17 +121,28 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
-                        cd.CentreID,
                         ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
                         ct.Active AS CentreActive,
                         cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
                         cd.Password,
+                        cd.Active,
                         cd.Approved,
-                        cd.ResetPasswordID
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.EmailAddress = @emailAddress",
                 new { emailAddress }
             ).ToList();
@@ -117,20 +154,29 @@
         {
             List<DelegateUser> users = connection.Query<DelegateUser>(
                 @"SELECT
-                        cd.CandidateID,
+                        cd.CandidateID AS Id,
                         cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
                         cd.FirstName,
                         cd.LastName,
-                        cd.EmailAddress,
-                        cd.DateRegistered,
+                        cd.Password,
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
                         cd.Answer1,
                         cd.Answer2,
                         cd.Answer3,
                         cd.Answer4,
                         cd.Answer5,
                         cd.Answer6,
+                        cd.JobGroupID,
                         jg.JobGroupName
                     FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE (cd.Approved = 0)
                     AND (cd.Active = 1)
@@ -191,28 +237,6 @@
             );
         }
 
-        public bool? GetApprovedStatusFromCandidateNumber(string candidateNumber, int centreId)
-        {
-            return connection.Query<bool?>(
-                @"SELECT Approved
-                    FROM Candidates
-                    WHERE CandidateNumber = @candidateNumber
-                    AND CentreID = @centreId",
-                new { candidateNumber, centreId }
-            ).SingleOrDefault();
-        }
-
-        public bool? GetApprovedStatusFromAliasId(string aliasId, int centreId)
-        {
-            return connection.Query<bool?>(
-                @"SELECT Approved
-                    FROM Candidates
-                    WHERE AliasID = @aliasId
-                    AND CentreID = @centreId",
-                new { aliasId, centreId }
-            ).SingleOrDefault();
-        }
-
         public int UpdateDelegateRecord(DelegateRecord record)
         {
             return connection.QuerySingle<int>(
@@ -236,6 +260,127 @@
                     record.Email
                 },
                 commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId)
+        {
+            var user = connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.AliasID = @aliasId AND cd.CentreId = @centreId",
+                new { aliasId, centreId }
+            ).SingleOrDefault();
+
+            return user;
+        }
+
+        public DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId)
+        {
+            var user = connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.CandidateNumber = @candidateNumber AND cd.CentreId = @centreId",
+                new { candidateNumber, centreId }
+            ).SingleOrDefault();
+
+            return user;
+        }
+
+        public void UpdateDelegate(
+            int delegateId,
+            string firstName,
+            string lastName,
+            int jobGroupId,
+            bool active,
+            string? answer1,
+            string? answer2,
+            string? answer3,
+            string? answer4,
+            string? answer5,
+            string? answer6,
+            string? aliasId,
+            string emailAddress
+        )
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET
+				        FirstName = @firstName,
+				        LastName = @lastName,
+				        JobGroupID = @jobGroupId,
+				        Active = @active,
+				        Answer1 = @answer1,
+				        Answer2 = @answer2,
+				        Answer3 = @answer3,
+				        Answer4 = @answer4,
+				        Answer5 = @answer5,
+				        Answer6 = @answer6,
+				        AliasID = @aliasId,
+				        EmailAddress = @emailAddress
+		            WHERE CandidateID = @delegateId",
+                new
+                {
+                    delegateId,
+                    firstName,
+                    lastName,
+                    jobGroupId,
+                    active,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6,
+                    aliasId,
+                    emailAddress
+                }
             );
         }
     }

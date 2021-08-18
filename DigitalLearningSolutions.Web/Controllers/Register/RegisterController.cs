@@ -286,10 +286,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
-                .Where(u => u.CentreId == model.Centre);
-
-            if (duplicateUsers.Count() != 0)
+            if (!userService.IsEmailValidForCentre(model.Email, model.Centre!.Value))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),

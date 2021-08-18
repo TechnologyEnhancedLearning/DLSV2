@@ -24,16 +24,19 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
-            IRegistrationDataService registrationDataService
+            IRegistrationDataService registrationDataService,
+            IUserService userService
         )
         {
             this.userDataService = userDataService;
             this.registrationDataService = registrationDataService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.userService = userService;
         }
 
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate)
@@ -49,17 +52,108 @@
 
             foreach (var delegateRow in delegateRows)
             {
-                if (IsDelegateRowInvalid(centreId, delegateRow, jobGroupIds, out var approved))
+                if (!delegateRow.IsValid(jobGroupIds))
                 {
                     continue;
                 }
 
-                if (approved.HasValue)
+                var delegateUserByCandidateNumber = !string.IsNullOrEmpty(delegateRow.CandidateNumber)
+                    ? userDataService.GetDelegateUserByCandidateNumber(delegateRow.CandidateNumber, centreId)
+                    : null;
+
+                if (!string.IsNullOrEmpty(delegateRow.CandidateNumber) && delegateUserByCandidateNumber == null)
                 {
-                    UpdateDelegate(delegateRow, approved.Value, centreId);
+                    delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
+                    continue;
                 }
-                else
+
+                var delegateUserByAliasId = !string.IsNullOrEmpty(delegateRow.AliasId)
+                    ? userDataService.GetDelegateUserByAliasId(delegateRow.AliasId, centreId)
+                    : null;
+
+                if (delegateUserByAliasId != null && delegateUserByCandidateNumber != null &&
+                    delegateUserByAliasId.CandidateNumber != delegateUserByCandidateNumber.CandidateNumber)
                 {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
+                    continue;
+                }
+
+                if (delegateUserByCandidateNumber != null)
+                {
+                    if (delegateRow.Email != delegateUserByCandidateNumber.EmailAddress &&
+                        !userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                    {
+                        delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                        continue;
+                    }
+
+                    if (!RecordNeedsUpdating(delegateUserByCandidateNumber, delegateRow))
+                    {
+                        delegateRow.RowStatus = RowStatus.Skipped;
+                        continue;
+                    }
+
+                    userDataService.UpdateDelegate(
+                        delegateUserByCandidateNumber.Id,
+                        delegateRow.FirstName!,
+                        delegateRow.LastName!,
+                        delegateRow.JobGroupId!.Value,
+                        delegateRow.Active!.Value,
+                        delegateRow.Answer1,
+                        delegateRow.Answer2,
+                        delegateRow.Answer3,
+                        delegateRow.Answer4,
+                        delegateRow.Answer5,
+                        delegateRow.Answer6,
+                        delegateRow.AliasId,
+                        delegateRow.Email!
+                    );
+                    delegateRow.RowStatus = RowStatus.Updated;
+                    continue;
+                }
+
+                if (delegateUserByAliasId != null)
+                {
+                    if (delegateRow.Email != delegateUserByAliasId.EmailAddress &&
+                        !userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                    {
+                        delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                        continue;
+                    }
+
+                    if (!RecordNeedsUpdating(delegateUserByAliasId, delegateRow))
+                    {
+                        delegateRow.RowStatus = RowStatus.Skipped;
+                        continue;
+                    }
+
+                    userDataService.UpdateDelegate(
+                        delegateUserByAliasId.Id,
+                        delegateRow.FirstName!,
+                        delegateRow.LastName!,
+                        delegateRow.JobGroupId!.Value,
+                        delegateRow.Active!.Value,
+                        delegateRow.Answer1,
+                        delegateRow.Answer2,
+                        delegateRow.Answer3,
+                        delegateRow.Answer4,
+                        delegateRow.Answer5,
+                        delegateRow.Answer6,
+                        delegateRow.AliasId,
+                        delegateRow.Email!
+                    );
+                    delegateRow.RowStatus = RowStatus.Updated;
+                    continue;
+                }
+
+                if (delegateUserByAliasId == null && delegateUserByCandidateNumber == null)
+                {
+                    if (!userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                    {
+                        delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                        continue;
+                    }
+
                     RegisterDelegate(delegateRow, welcomeEmailDate, centreId);
                 }
             }
@@ -81,47 +175,69 @@
             return table;
         }
 
-        private bool IsDelegateRowInvalid(int centreId, DelegateTableRow delegateRow, IEnumerable<int> jobGroupIds, out bool? approved)
+        private bool RecordNeedsUpdating(DelegateUser delegateUser, DelegateTableRow delegateRow)
         {
-            approved = null;
-            return !delegateRow.IsValid(jobGroupIds) || !TryGetExistingApprovedStatus(delegateRow, centreId, out approved);
-        }
-
-        private void UpdateDelegate(DelegateTableRow delegateRow, bool approved, int centreId)
-        {
-            var record = new DelegateRecord(delegateRow, centreId, approved);
-            var status = userDataService.UpdateDelegateRecord(record);
-            switch (status)
+            if (delegateRow.CandidateNumber != null && (delegateUser.AliasId ?? string.Empty) != delegateRow.AliasId)
             {
-                case 0:
-                    delegateRow.RowStatus = RowStatus.Updated;
-                    break;
-                case 1:
-                    delegateRow.RowStatus = RowStatus.Skipped;
-                    break;
-                case 2:
-                    delegateRow.RowStatus = RowStatus.Registered;
-                    break;
-                case -1:
-                case -4:
-                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate;
-                    break;
-                case -2:
-                    delegateRow.Error = BulkUploadResult.ErrorReason.ParameterError;
-                    break;
-                case -3:
-                    delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
-                    break;
-                case -5:
-                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(status),
-                        status,
-                        "Unknown return value when updating delegate record."
-                    );
+                return true;
             }
+
+            if ((delegateUser.FirstName ?? string.Empty) != delegateRow.FirstName)
+            {
+                return true;
+            }
+
+            if (delegateUser.LastName != delegateRow.LastName)
+            {
+                return true;
+            }
+
+            if (delegateUser.JobGroupId != delegateRow.JobGroupId!.Value)
+            {
+                return true;
+            }
+
+            if (delegateUser.Active != delegateRow.Active!.Value)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer1 ?? string.Empty) != delegateRow.Answer1)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer2 ?? string.Empty) != delegateRow.Answer2)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer3 ?? string.Empty) != delegateRow.Answer3)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer4 ?? string.Empty) != delegateRow.Answer4)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer5 ?? string.Empty) != delegateRow.Answer5)
+            {
+                return true;
+            }
+
+            if ((delegateUser.Answer6 ?? string.Empty) != delegateRow.Answer6)
+            {
+                return true;
+            }
+
+            if ((delegateUser.EmailAddress ?? string.Empty) != delegateRow.Email)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
@@ -131,17 +247,14 @@
             switch (status)
             {
                 case "-1":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
-                    break;
                 case "-2":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.ParameterError;
-                    break;
                 case "-3":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.AliasIdInUse;
-                    break;
                 case "-4":
-                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                    break;
+                    throw new ArgumentOutOfRangeException(
+                        nameof(status),
+                        status,
+                        "Unknown return value when creating delegate record."
+                    );
                 default:
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
@@ -168,26 +281,6 @@
             }.OrderBy(x => x);
             var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
-        }
-
-        private bool TryGetExistingApprovedStatus(DelegateTableRow delegateRow, int centreId, out bool? approved)
-        {
-            if (!string.IsNullOrWhiteSpace(delegateRow.CandidateNumber))
-            {
-                approved = userDataService.GetApprovedStatusFromCandidateNumber(delegateRow.CandidateNumber, centreId);
-                if (approved.HasValue)
-                {
-                    return true;
-                }
-
-                delegateRow.Error = BulkUploadResult.ErrorReason.NoRecordForDelegateId;
-                return false;
-            }
-
-            approved = !string.IsNullOrWhiteSpace(delegateRow.AliasId)
-                ? userDataService.GetApprovedStatusFromAliasId(delegateRow.AliasId, centreId)
-                : null;
-            return true;
         }
     }
 }

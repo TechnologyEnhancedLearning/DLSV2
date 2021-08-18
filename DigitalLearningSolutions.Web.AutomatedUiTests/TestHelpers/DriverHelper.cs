@@ -9,7 +9,7 @@
         public static ChromeDriver CreateHeadlessChromeDriver()
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArgument("--headless");
+            //chromeOptions.AddArgument("--headless");
             return new ChromeDriver(chromeOptions);
         }
 
