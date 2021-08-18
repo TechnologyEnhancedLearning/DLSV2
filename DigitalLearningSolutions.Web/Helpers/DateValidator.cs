@@ -44,9 +44,9 @@
             try
             {
                 var date = new DateTime(year, month, day);
-                if (date <= DateTime.Today)
+                if (date < DateTime.Today)
                 {
-                    return new DateValidationResult(name + " must be in the future");
+                    return new DateValidationResult(name + " must not be in the past");
                 }
             }
             catch (ArgumentOutOfRangeException)

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
@@ -12,6 +13,20 @@
         {
             // When
             var result = DateValidator.ValidateDate(1, 1, 3000);
+
+            // Then
+            result.HasDayError.Should().BeFalse();
+            result.HasMonthError.Should().BeFalse();
+            result.HasYearError.Should().BeFalse();
+            result.ErrorMessage.Should().BeNull();
+        }
+
+        [Test]
+        public void ValidateDate_returns_valid_for_todays_date()
+        {
+            // When
+            var today = DateTime.Today;
+            var result = DateValidator.ValidateDate(today.Day, today.Month, today.Year);
 
             // Then
             result.HasDayError.Should().BeFalse();
@@ -125,7 +140,7 @@
         }
 
         [Test]
-        public void ValidateDate_returns_appropriate_error_if_date_not_in_future()
+        public void ValidateDate_returns_appropriate_error_if_date_in_past()
         {
             // When
             var result = DateValidator.ValidateDate(1, 1, 2000);
@@ -134,7 +149,7 @@
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("Date must be in the future");
+            result.ErrorMessage.Should().Be("Date must not be in the past");
         }
 
         [Test]
