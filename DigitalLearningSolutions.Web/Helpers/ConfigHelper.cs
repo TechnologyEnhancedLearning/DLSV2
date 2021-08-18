@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
-    using System.Drawing;
     using System.IO;
     using Microsoft.Extensions.Configuration;
     using static System.String;

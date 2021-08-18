@@ -54,7 +54,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "code",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(Task.FromResult(true));
@@ -74,7 +74,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "code",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(Task.FromResult(false));
@@ -114,7 +114,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -136,7 +136,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -161,7 +161,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -185,7 +185,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -209,7 +209,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -234,7 +234,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(false);
@@ -258,7 +258,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -284,7 +284,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -306,7 +306,7 @@
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.SetPasswordHasExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(false);

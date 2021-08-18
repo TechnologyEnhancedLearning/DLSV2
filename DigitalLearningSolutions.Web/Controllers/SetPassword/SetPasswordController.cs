@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
             var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                 email,
                 code,
-                ResetPasswordHelpers.SetPasswordHasExpiryTime
+                ResetPasswordHelpers.SetPasswordHashExpiryTime
             );
 
             TempData.Set(new ResetPasswordData(email, code));
@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SetPassword
             var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                 resetPasswordData.Email,
                 resetPasswordData.ResetPasswordHash,
-                ResetPasswordHelpers.SetPasswordHasExpiryTime
+                ResetPasswordHelpers.SetPasswordHashExpiryTime
             );
 
             if (!hashIsValid)

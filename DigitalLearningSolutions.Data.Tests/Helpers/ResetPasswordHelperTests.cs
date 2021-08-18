@@ -51,7 +51,7 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
                 .With(rp => rp.PasswordResetDateTime = createTime).Build();
 
             // When
-            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4319), ResetPasswordHelpers.SetPasswordHasExpiryTime);
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4319), ResetPasswordHelpers.SetPasswordHashExpiryTime);
 
             // Then
             resetIsValid.Should().BeTrue();
@@ -66,7 +66,7 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
                 .With(rp => rp.PasswordResetDateTime = createTime).Build();
 
             // When
-            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4321), ResetPasswordHelpers.SetPasswordHasExpiryTime);
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4321), ResetPasswordHelpers.SetPasswordHashExpiryTime);
 
             // Then
             resetIsValid.Should().BeFalse();

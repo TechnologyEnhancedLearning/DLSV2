@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Data.Helpers
     public static class ResetPasswordHelpers
     {
         public static readonly TimeSpan ResetPasswordHashExpiryTime = TimeSpan.FromHours(2);
-        public static readonly TimeSpan SetPasswordHasExpiryTime = TimeSpan.FromDays(3);
+        public static readonly TimeSpan SetPasswordHashExpiryTime = TimeSpan.FromDays(3);
 
         public static bool IsStillValidAt(this ResetPassword passwordReset, DateTime dateTime, TimeSpan expiryTime)
         {
