@@ -130,7 +130,7 @@
         }
 
         [Route("{adminId:int}/UnlockAccount")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult UnlockAccount(int adminId)
         {
             var centreId = User.GetCentreId();

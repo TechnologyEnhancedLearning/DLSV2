@@ -5,13 +5,13 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -44,8 +44,8 @@
         };
 
         private AdministratorController administratorController = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private IRequestCookieCollection cookieCollection = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -58,7 +58,8 @@
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
-            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._)).Returns(categories);
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                .Returns(categories);
 
             httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
@@ -81,6 +82,7 @@
             administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
                 .WithMockHttpContext(httpContext)
                 .WithMockUser(true)
+                .WithMockServices()
                 .WithMockTempData();
         }
 
@@ -142,6 +144,48 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
+        }
+
+        [Test]
+        public void UnlockAccount_returns_not_found_if_admin_to_unlock_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(null);
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void UnlockAccount_returns_not_found_if_admin_to_unlock_is_at_different_centre()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
+                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 3));
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void UnlockAccount_unlocks_account_and_returns_to_page()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

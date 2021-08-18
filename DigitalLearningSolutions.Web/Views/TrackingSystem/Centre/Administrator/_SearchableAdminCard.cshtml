@@ -36,13 +36,14 @@
       }
 
       @if (Model.IsLocked) {
-        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
-           role="button"
-           asp-controller="Administrator"
-           asp-action="UnlockAccount"
-           asp-route-adminId="@Model.Id">
-          Unlock account
-        </a>
+        var unlockAccountAspAllRouteData = new Dictionary<string, string> { { "adminId", Model.Id.ToString() } };
+        <form asp-action="UnlockAccount" asp-all-route-data="unlockAccountAspAllRouteData" class="unlock-account-form">
+          <button class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+                  role="button"
+                  type="submit">
+            Unlock account
+          </button>
+        </form>
       } else {
         <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
            role="button"
