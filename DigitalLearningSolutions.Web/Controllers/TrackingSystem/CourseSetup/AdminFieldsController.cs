@@ -147,6 +147,127 @@
         }
 
         [HttpGet]
+        [Route("{customisationId}/AdminFields/Add/New")]
+        public IActionResult AddAdminFieldNew()
+        {
+            TempData.Clear();
+
+            var addAdminFieldData = new AddAdminFieldData();
+            var id = addAdminFieldData.Id;
+
+            return RedirectToAction("AddAdminField");
+        }
+
+        [HttpGet]
+        [Route("{customisationId}/AdminFields/Add")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSelectPrompt()
+        {
+            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>()!;
+
+            SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
+            return View(addRegistrationPromptData.SelectPromptViewModel);
+        }
+
+        [HttpPost]
+        [Route("{customisationId}/AdminFields/Add")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSelectPrompt(AddAdminFieldViewModel model, string action)
+        {
+            if (!ModelState.IsValid)
+            {
+                SetViewBagCoursePromptNameOptions();
+                return View(model);
+            }
+
+            UpdateTempDataWithCoursePromptModelValues(model);
+
+            if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
+            {
+                return AdminFieldAnswersPostRemovePrompt(model, index);
+            }
+
+            return action switch
+            {
+                SaveAction => EditAdminFieldPostSave(model),
+                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
+                BulkAction => EditAdminFieldBulk(model),
+                _ => new StatusCodeResult(500)
+            };
+        }
+
+        [HttpGet]
+        [Route("{customisationId}/AdminFields/Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
+        public IActionResult AddAdminFieldAnswersBulk()
+        {
+            var data = TempData.Peek<AddAdminFieldData>()!;
+            var model = new BulkAdminFieldAnswersViewModel(
+                "",
+                true,
+                customisationId
+            );
+
+            return View("BulkAdminFieldAnswers", model);
+        }
+
+        [HttpPost]
+        [Route(
+            "{customisationId}/AdminFields/" +
+            "Add/Bulk"
+        )]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        {
+            ValidateBulkOptionsString(model.OptionsString);
+            if (!ModelState.IsValid)
+            {
+                return View("BulkRegistrationPromptAnswers", model);
+            }
+
+            var addData = TempData.Peek<AddRegistrationPromptData>()!;
+            addData.ConfigureAnswersViewModel!.OptionsString =
+                NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
+            TempData.Set(addData);
+
+            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
+        }
+
+        [HttpGet]
+        [Route("Add/Summary")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSummary()
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+            var promptName = centreCustomPromptsService.GetCustomPromptsAlphabeticalList()
+                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
+            var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("Add/Summary")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
+        public IActionResult AddRegistrationPromptSummaryPost()
+        {
+            var data = TempData.Peek<AddRegistrationPromptData>()!;
+
+            if (centreCustomPromptsService.AddCustomPromptToCentre(
+                User.GetCentreId(),
+                data.SelectPromptViewModel.CustomPromptId!.Value,
+                data.SelectPromptViewModel.Mandatory,
+                data.ConfigureAnswersViewModel.OptionsString
+            ))
+            {
+                TempData.Clear();
+                return RedirectToAction("Index");
+            }
+
+            return new StatusCodeResult(500);
+        }
+
+        [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
@@ -295,6 +416,20 @@
         private static bool TryGetAnswerIndexFromDeleteAction(string action, out int index)
         {
             return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
+        }
+
+        private void SetViewBagCoursePromptNameOptions(int? selectedId = null)
+        {
+            var coursePrompts = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
+            ViewBag.CoursePromptNameOptions =
+                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
+        }
+
+        private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)
+        {
+            var data = TempData.Peek<AddAdminFieldData>()!;
+            data.AddAdminFieldViewModel = model;
+            TempData.Set(data);
         }
 
         private void ValidateBulkOptionsString(string? optionsString)

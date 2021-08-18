@@ -1,8 +1,9 @@
 namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -19,6 +20,8 @@ namespace DigitalLearningSolutions.Data.Services
         );
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
+
+        public List<(int id, string value)> GetCoursePromptsAlphabeticalList();
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
@@ -65,6 +68,11 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
         {
             courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, options);
+        }
+
+        public List<(int id, string value)> GetCoursePromptsAlphabeticalList()
+        {
+            return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
         }
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)

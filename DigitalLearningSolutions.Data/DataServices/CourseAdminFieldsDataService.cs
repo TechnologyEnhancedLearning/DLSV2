@@ -1,5 +1,6 @@
-namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
+namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -10,6 +11,8 @@ namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
         public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
+
+        public IEnumerable<(int, string)> GetCoursePromptsAlphabetical();
 
         public void UpdateCustomPromptForCourse(
             int customisationId,
@@ -75,6 +78,18 @@ namespace DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService
                     WHERE CustomisationID = @customisationId",
                 new { options, customisationId }
             );
+        }
+
+        public IEnumerable<(int, string)> GetCoursePromptsAlphabetical()
+        {
+            var coursePrompts = connection.Query<(int, string)>
+            (
+                @"SELECT CoursePromptID, CoursePrompt
+                        FROM CoursePrompts
+                        WHERE Active = 1
+                        ORDER BY CoursePrompt"
+            );
+            return coursePrompts;
         }
 
         public void UpdateCustomPromptForCourse(
