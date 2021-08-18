@@ -31,7 +31,7 @@
         public List<DelegateUser> GetAllDelegateUsersByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
-        
+
         public void UpdateDelegateUsers(
             string firstName,
             string surname,
@@ -60,10 +60,6 @@
 
         public int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         public void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
-
-        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
-
-        public void DeleteAllAnswersForAdminField(int centreId, int promptNumber);
     }
 
     public partial class UserDataService : IUserDataService

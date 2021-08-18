@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -26,15 +27,15 @@
         private const string EditPromptCookieName = "EditRegistrationPromptData";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
-        private readonly IUserDataService userDataService;
+        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            IUserDataService userDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
-            this.userDataService = userDataService;
+            this.courseAdminFieldsDataService = courseAdminFieldsDataService;
         }
 
         [HttpGet]
@@ -151,7 +152,7 @@
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
             var answerCount =
-                userDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
+                courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
 
             if (answerCount == 0)
             {
@@ -159,7 +160,7 @@
             }
 
             var promptName =
-                courseAdminFieldsService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
+                courseAdminFieldsService.GetPromptName(customisationId, promptNumber);
 
             var model = new RemoveAdminFieldViewModel(customisationId, promptName, answerCount);
 

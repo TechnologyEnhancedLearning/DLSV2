@@ -3,11 +3,9 @@
     using System.Collections.Generic;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using Microsoft.Extensions.Logging;
 
     public interface ICourseAdminFieldsService
     {
@@ -24,24 +22,18 @@
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
+        public string GetPromptName(int customisationId, int promptNumber);
     }
 
     public class CourseAdminFieldsService : ICourseAdminFieldsService
     {
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
-        private readonly ILogger<CourseAdminFieldsService> logger;
-        private readonly IUserDataService userDataService;
 
         public CourseAdminFieldsService(
-            ICourseAdminFieldsDataService courseAdminFieldsDataService,
-            ILogger<CourseAdminFieldsService> logger,
-            IUserDataService userDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService
         )
         {
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
-            this.logger = logger;
-            this.userDataService = userDataService;
         }
 
         public CourseAdminFields? GetCustomPromptsForCourse(
@@ -80,7 +72,7 @@
             using var transaction = new TransactionScope();
             try
             {
-                userDataService.DeleteAllAnswersForAdminField(customisationId, promptNumber);
+                courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(customisationId, promptNumber);
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(
                     customisationId,
                     promptNumber,
@@ -96,9 +88,9 @@
             }
         }
 
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber)
+        public string GetPromptName(int customisationId, int promptNumber)
         {
-            return courseAdminFieldsDataService.GetPromptNameForCourseAndPromptNumber(customisationId, promptNumber);
+            return courseAdminFieldsDataService.GetPromptName(customisationId, promptNumber);
         }
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(

@@ -1,32 +1,25 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
-    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CourseAdminFieldsServiceTests
     {
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
-        private ILogger<CourseAdminFieldsService> logger = null!;
-        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
-            logger = A.Fake<ILogger<CourseAdminFieldsService>>();
-            userDataService = A.Fake<IUserDataService>();
-            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService, logger, userDataService);
+            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService);
         }
 
         [Test]
@@ -87,33 +80,27 @@
             courseAdminFieldsService.UpdateCustomPromptForCourse(1, 1, true, null);
 
             // Then
-            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, true, null)).MustHaveHappened();
+            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, true, null))
+                .MustHaveHappened();
         }
 
         [Test]
         public void RemoveCustomPromptFromCourse_calls_data_service_with_correct_values()
         {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null))
-                    .DoesNothing();
-                A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).DoesNothing();
+            // Given
+            A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null))
+                .DoesNothing();
+            A.CallTo(() => courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(1, 1)).DoesNothing();
 
-                // When
-                courseAdminFieldsService.RemoveCustomPromptFromCourse(1, 1);
+            // When
+            courseAdminFieldsService.RemoveCustomPromptFromCourse(1, 1);
 
-                // Then
-                A.CallTo(
-                    () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
-                ).MustHaveHappened();
-                A.CallTo(() => userDataService.DeleteAllAnswersForAdminField(1, 1)).MustHaveHappened();
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            A.CallTo(
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, 0, false, null)
+            ).MustHaveHappened();
+            A.CallTo(() => courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(1, 1))
+                .MustHaveHappened();
         }
     }
 }

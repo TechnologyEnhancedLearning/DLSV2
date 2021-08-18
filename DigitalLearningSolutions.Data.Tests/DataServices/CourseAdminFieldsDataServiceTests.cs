@@ -69,10 +69,20 @@
         public void GetPromptNameForCourseAndPromptNumber_returns_expected_prompt_name()
         {
             // When
-            var result = courseAdminFieldsDataService.GetPromptNameForCourseAndPromptNumber(100, 1);
+            var result = courseAdminFieldsDataService.GetPromptName(100, 1);
 
             // Then
             result.Should().BeEquivalentTo("System Access Granted");
+        }
+
+        [Test]
+        public void GetAnswerCountForCourseAdminField_returns_expected_count()
+        {
+            // When
+            var count = courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(100, 1);
+
+            // Then
+            count.Should().Be(1);
         }
     }
 }

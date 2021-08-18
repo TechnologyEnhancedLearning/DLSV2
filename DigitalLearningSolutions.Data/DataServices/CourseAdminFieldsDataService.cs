@@ -19,8 +19,13 @@
             string? options
         );
 
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber);
+        public string GetPromptName(int customisationId, int promptNumber);
+
+        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
+
+        public void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
     }
+
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
     {
         private readonly IDbConnection connection;
@@ -93,7 +98,7 @@
             );
         }
 
-        public string GetPromptNameForCourseAndPromptNumber(int customisationId, int promptNumber)
+        public string GetPromptName(int customisationId, int promptNumber)
         {
             return connection.Query<string>(
                 @$"SELECT
@@ -104,6 +109,26 @@
                     WHERE CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
+        }
+
+        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber)
+        {
+            return connection.Query<string>(
+                $@"SELECT Answer{promptNumber}
+                        FROM Progress
+                        WHERE CustomisationID = @customisationId AND Answer{promptNumber} IS NOT NULL",
+                new { customisationId }
+            ).Count(x => !string.IsNullOrWhiteSpace(x));
+        }
+
+        public void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber)
+        {
+            connection.Execute(
+                $@"UPDATE Progress
+                        SET Answer{promptNumber} = NULL
+                        WHERE CustomisationID = @customisationId",
+                new { customisationId }
+            );
         }
     }
 }
