@@ -23,7 +23,7 @@
           Name / role
         </th>
         <th role="columnheader" class="" scope="col">
-          Actions
+          Action
         </th>
       </tr>
     </thead>
@@ -43,7 +43,7 @@
             }
             else
             {
-              <a asp-action="RequestRemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Request removal</a>
+              <a asp-action="RequestRemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Request removal <span class="nhsuk-u-visually-hidden">of supervisor</span></a>
             }
             @if (supervisor.SupervisorAdminID == null)
             {
@@ -61,3 +61,33 @@ else
 {
   <p class="nhsuk-lede-text">You have no supervisors for this activity.</p>
 }
+@if (Model.SuggestedSupervisors.Any())
+{
+  <h2>Quick add</h2>
+  <table class="nhsuk-table">
+    <caption class="nhsuk-table__caption">Supervisors for your other activities</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Name
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var supervisor in Model.SuggestedSupervisors)
+      {
+        <tr role="row" class="nhsuk-table__row">
+          <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
+          <td class="nhsuk-table__cell ">
+              <a asp-action="Supervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorAdminId="@supervisor.ID">Add</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+    </table>
+      }
+      <h2>Add new supervisor</h2>
+
