@@ -238,5 +238,16 @@
                 }
             );
         }
+
+        public void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount)
+        {
+            connection.Execute(
+                    @"UPDATE AdminUsers
+                        SET
+                            FailedLoginCount = @updatedCount
+                        WHERE AdminID = @adminId",
+                    new { adminId, updatedCount}
+                );
+        }
     }
 }

@@ -129,6 +129,23 @@
             return RedirectToAction("Index");
         }
 
+        [Route("{adminId:int}/UnlockAccount")]
+        [HttpPost]
+        public IActionResult UnlockAccount(int adminId)
+        {
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
+            userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
+
+            return RedirectToAction("Index");
+        }
+
         private IEnumerable<string> GetCourseCategories(int centreId)
         {
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
