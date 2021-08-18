@@ -63,5 +63,10 @@
         {
             return config[MapsApiKey];
         }
+
+        public static string GetAppRootPath(this IConfiguration config)
+        {
+            return config[AppRootPathName];
+        }
     }
 }

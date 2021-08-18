@@ -16,17 +16,20 @@
     {
         private readonly ICourseService courseService;
         private readonly CustomPromptHelper customPromptHelper;
+        private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
             CustomPromptHelper customPromptHelper,
-            ICourseService courseService
+            ICourseService courseService,
+            IPasswordResetService passwordResetService
         )
         {
             this.userDataService = userDataService;
             this.customPromptHelper = customPromptHelper;
             this.courseService = courseService;
+            this.passwordResetService = passwordResetService;
         }
 
         public IActionResult Index(int delegateId)
@@ -47,6 +50,26 @@
 
             var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
             return View(model);
+        }
+
+        [Route("SendWelcomeEmail")]
+        public IActionResult SendWelcomeEmail(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, baseUrl);
+
+            var model = new WelcomeEmailSentViewModel(delegateUser);
+
+            return View("WelcomeEmailSent", model);
         }
     }
 }

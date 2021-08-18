@@ -29,7 +29,7 @@
   </div>
   @if (Model.DelegateInfo.IsActive) {
     <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
-      <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+      <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" asp-action="SendWelcomeEmail" asp-route-delegateId="@Model.DelegateInfo.Id" role="button">
         Send welcome email
       </a>
     </div>
@@ -48,7 +48,7 @@
       </div>
       @if (Model.DelegateInfo.IsAdmin) {
         <div class="card-filter-tag">
-          <strong class="nhsuk-tag nhsuk-tag--grey">@(Model.PasswordTagName)</strong>
+          <strong class="nhsuk-tag nhsuk-tag--grey">Admin</strong>
         </div>
       }
     </div>

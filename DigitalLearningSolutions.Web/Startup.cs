@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -207,6 +208,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
+            services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
