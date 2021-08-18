@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -26,8 +25,8 @@
         public const string BulkAction = "bulk";
         private const string EditPromptCookieName = "EditRegistrationPromptData";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
-        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,

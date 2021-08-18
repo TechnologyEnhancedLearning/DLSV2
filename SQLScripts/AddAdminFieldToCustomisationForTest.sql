@@ -1,11 +1,12 @@
-UPDATE [mbdbx101_test].[dbo].[Customisations]
+UPDATE [dbo].[Customisations]
     SET
         [CourseField1PromptID] = 1,
-		[Q1Options] = 'Test'
+		[Q1Options] = 'Test',
+        [CourseField2PromptID] = 2
     WHERE
         [CustomisationID] = 100;
 
-UPDATE [mbdbx101_test].[dbo].[Progress]
+UPDATE [dbo].[Progress]
     SET
         [Answer1] = 'Test'
     WHERE

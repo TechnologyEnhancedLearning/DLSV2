@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using System.Transactions;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -19,14 +20,16 @@
 
     public class AdminFieldsControllerTests
     {
+        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService =
+            A.Fake<ICourseAdminFieldsDataService>();
+
         private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-        private readonly IUserDataService userDataService = null!;
         private AdminFieldsController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(courseAdminFieldsService, userDataService)
+            controller = new AdminFieldsController(courseAdminFieldsService, courseAdminFieldsDataService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -189,6 +192,76 @@
             {
                 AssertEditTempDataIsExpected(expectedViewModel);
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
+            }
+        }
+
+        [Test]
+        public void RemoveAdminField_removes_admin_field_with_no_user_answers()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var result = controller.RemoveAdminField(100, 2);
+
+                // Then
+                result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void RemoveAdminField_returns_remove_view_if_admin_field_has_user_answers()
+        {
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
+        }
+
+        [Test]
+        public void RemoveAdminField_does_not_remove_admin_field_without_confirmation()
+        {
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            removeViewModel.Confirm = false;
+            var expectedErrorMessage = "You must confirm before deleting this field";
+
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
+            controller.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo(expectedErrorMessage);
+        }
+
+        [Test]
+        public void RemoveAdminField_removes_admin_field_with_confirmation_and_redirects()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+                removeViewModel.Confirm = true;
+
+                // When
+                var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+                // Then
+                result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
 

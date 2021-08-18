@@ -84,5 +84,24 @@
             // Then
             count.Should().Be(1);
         }
+
+        [Test]
+        public void DeleteAllAnswersForCourseAdminField_deletes_all_answers()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(100, 1);
+                var updatedCount = courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(100, 1);
+
+                // Then
+                updatedCount.Should().Be(0);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }
