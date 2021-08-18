@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -14,14 +13,13 @@
     public class GroupDelegatesViewModelTests
     {
         private readonly DelegateGroupsSideNavViewModel expectedNavViewModel =
-            new DelegateGroupsSideNavViewModel("Group name", DelegateGroupPage.Delegates);
+            new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Delegates);
 
         private GroupDelegate[] groupDelegates = null!;
 
         [SetUp]
         public void SetUp()
         {
-            BuilderSetup.DisablePropertyNamingFor<GroupDelegate, string>(g => g.SearchableName);
             groupDelegates = Builder<GroupDelegate>.CreateListOfSize(15)
                 .All()
                 .With(g => g.LastName = "Surname")
@@ -43,7 +41,7 @@
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
-                model.GroupDelegates.Count().Should().Be(BaseSearchablePageViewModel.DefaultItemsPerPage);
+                model.GroupDelegates.Count().Should().Be(10);
                 model.GroupDelegates.Any(groupDelegate => groupDelegate.Name == "K Surname").Should()
                     .BeFalse();
             }
@@ -58,15 +56,13 @@
                 groupDelegates,
                 2
             );
-            var expectedFirstGroupDelegate =
-                groupDelegates.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
 
             using (new AssertionScope())
             {
                 model.GroupId.Should().Be(1);
                 model.NavViewModel.Should().BeEquivalentTo(expectedNavViewModel);
                 model.GroupDelegates.Count().Should().Be(5);
-                model.GroupDelegates.First().Name.Should().BeEquivalentTo($"{expectedFirstGroupDelegate.FirstName} {expectedFirstGroupDelegate.LastName}");
+                model.GroupDelegates.First().Name.Should().BeEquivalentTo("K Surname");
             }
         }
     }

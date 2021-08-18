@@ -208,7 +208,7 @@
             var result = myAccountController.EditDetails(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
     }
 }

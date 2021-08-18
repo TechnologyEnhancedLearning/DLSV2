@@ -16,5 +16,10 @@
             var submitButton = driver.FindElement(By.TagName("form"));
             submitButton.Submit();
         }
+
+        public static void LogOutUser(this IWebDriver driver, string baseUrl)
+        {
+            driver.Navigate().GoToUrl(baseUrl + "/Logout");
+        }
     }
 }

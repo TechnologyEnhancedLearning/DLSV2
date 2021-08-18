@@ -2,17 +2,25 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @model DelegateGroupsSideNavViewModel
 
+@{
+  var routeData = new Dictionary<string, string> {
+    { "groupId", Model.GroupId.ToString() }
+  };
+}
+
 <h2 class="side-nav__heading">@Model.GroupName</h2>
 <ul class="nhsuk-list side-nav__list">
 
-  <vc:side-menu-link asp-action="Delegates"
+  <vc:side-menu-link asp-action="GroupDelegates"
                      asp-controller="DelegateGroups"
                      link-text="Delegates"
-                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Delegates)" />
+                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Delegates)"
+                     asp-all-route-data="@routeData" />
 
-  <vc:side-menu-link asp-action=""
-                     asp-controller=""
+  <vc:side-menu-link asp-action="GroupCourses"
+                     asp-controller="DelegateGroups"
                      link-text="Courses"
-                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Courses)" />
+                     is-current-page="@(Model.CurrentPage == DelegateGroupPage.Courses)"
+                     asp-all-route-data="@routeData" />
 
 </ul>

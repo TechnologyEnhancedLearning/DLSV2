@@ -1,13 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
 
-    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase
+    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AccessibilityTestsFixture<Startup>>
     {
-        public RegistrationJourneyAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public RegistrationJourneyAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void Registration_journey_has_no_accessibility_errors()
@@ -74,6 +76,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();
@@ -113,6 +116,7 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();

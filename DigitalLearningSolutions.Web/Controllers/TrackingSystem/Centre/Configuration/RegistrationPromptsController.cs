@@ -92,7 +92,7 @@
                 SaveAction => EditRegistrationPromptPostSave(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 BulkAction => EditRegistrationPromptBulk(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
@@ -209,7 +209,7 @@
                 NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
                 BulkAction => AddRegistrationPromptBulk(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
@@ -278,7 +278,7 @@
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Error", "LearningSolutions");
+            return new StatusCodeResult(500);
         }
 
         [HttpGet]
