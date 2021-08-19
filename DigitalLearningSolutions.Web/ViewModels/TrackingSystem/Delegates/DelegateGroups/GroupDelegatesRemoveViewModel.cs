@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class GroupDelegatesRemoveViewModel
     {
@@ -10,7 +11,7 @@
         {
             GroupId = groupId;
             GroupName = groupName;
-            DelegateName = (string.IsNullOrEmpty(delegateUser.FirstName) ? "" : $"{delegateUser.FirstName} ") + delegateUser.LastName;
+            DelegateName = DisplayStringHelper.GetDelegateNameString(delegateUser.FirstName, delegateUser.LastName);
         }
 
         public int GroupId { get; set; }

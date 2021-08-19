@@ -2,6 +2,8 @@
 
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
+    using DigitalLearningSolutions.Web.Helpers;
+
     public class GroupDelegateViewModel
     {
         public GroupDelegateViewModel(GroupDelegate groupDelegate)
@@ -9,7 +11,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             GroupDelegateId = groupDelegate.GroupDelegateId;
             GroupId = groupDelegate.GroupId;
             DelegateId = groupDelegate.DelegateId;
-            Name = (string.IsNullOrEmpty(groupDelegate.FirstName) ? "" : $"{groupDelegate.FirstName} ") + groupDelegate.LastName;
+            Name = DisplayStringHelper.GetDelegateNameString(groupDelegate.FirstName, groupDelegate.LastName);
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
         }
