@@ -124,7 +124,8 @@
             DateTime endDate
         )
         {
-            var yearEnumerable = Enumerable.Range(startDate.Year, endDate.Year - startDate.Year + 1);
+            var diffInYears = endDate.Year - startDate.Year;
+            var yearEnumerable = Enumerable.Range(startDate.Year, diffInYears + 1);
 
             return yearEnumerable.Select(
                 y =>

@@ -31,8 +31,8 @@
                         Completed,
                         Evaluated
                     FROM tActivityLog
-                        WHERE (LogDate > @startDate
-                            AND LogDate < @endDate
+                        WHERE (LogDate >= @startDate
+                            AND LogDate <= @endDate
                             AND CentreID = @centreId
                             AND (@jobGroupId = 0 OR JobGroupID = @jobGroupId)
                             AND (@customisationId = 0 OR CustomisationID = @customisationId)

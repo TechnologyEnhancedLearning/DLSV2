@@ -32,9 +32,9 @@
             // given
             var expectedActivityResult = new List<ActivityLog> {new ActivityLog
             {
-                Completed = 1,
-                Evaluated = 0,
-                Registered = 0,
+                Completed = true,
+                Evaluated = false,
+                Registered = false,
                 LogDate = DateTime.Parse("2015-12-22"),
                 LogYear = 2015,
                 LogQuarter = 4,

@@ -81,9 +81,9 @@
                         Interval = interval,
                         Date = new DateTime(x.Key)
                     },
-                    x.Sum(y => y.Registered),
-                    x.Sum(y => y.Completed),
-                    x.Sum(y => y.Evaluated)
+                    x.Count(y => y.Registered),
+                    x.Count(y => y.Completed),
+                    x.Count(y => y.Evaluated)
                 )
             );
         }

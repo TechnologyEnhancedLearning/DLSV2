@@ -43,18 +43,18 @@
                 first.LogYear.Should().Be(2014);
                 first.LogQuarter.Should().Be(1);
                 first.LogMonth.Should().Be(1);
-                first.Completed.Should().Be(0);
-                first.Evaluated.Should().Be(0);
-                first.Registered.Should().Be(1);
+                first.Completed.Should().Be(false);
+                first.Evaluated.Should().Be(false);
+                first.Registered.Should().Be(true);
 
                 var last = result.Last();
                 last.LogDate.Should().Be(DateTime.Parse("2014-01-31 09:43:28.840"));
                 last.LogYear.Should().Be(2014);
                 last.LogQuarter.Should().Be(1);
                 last.LogMonth.Should().Be(1);
-                last.Completed.Should().Be(0);
-                last.Evaluated.Should().Be(0);
-                last.Registered.Should().Be(1);
+                last.Completed.Should().Be(false);
+                last.Evaluated.Should().Be(false);
+                last.Registered.Should().Be(true);
             }
         }
     }
