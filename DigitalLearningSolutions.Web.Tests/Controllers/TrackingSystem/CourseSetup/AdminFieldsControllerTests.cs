@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -198,19 +197,11 @@
         [Test]
         public void RemoveAdminField_removes_admin_field_with_no_user_answers()
         {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // When
-                var result = controller.RemoveAdminField(100, 2);
+            // When
+            var result = controller.RemoveAdminField(100, 2);
 
-                // Then
-                result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
         }
 
         [Test]
@@ -246,23 +237,15 @@
         [Test]
         public void RemoveAdminField_removes_admin_field_with_confirmation_and_redirects()
         {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
-                removeViewModel.Confirm = true;
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            removeViewModel.Confirm = true;
 
-                // When
-                var result = controller.RemoveAdminField(100, 1, removeViewModel);
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
 
-                // Then
-                result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
