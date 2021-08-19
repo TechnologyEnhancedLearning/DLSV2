@@ -30,27 +30,27 @@
         {
             return connection.Query<Group>(
                 @"SELECT
-	                    GroupID,
-	                    GroupLabel,
-	                    GroupDescription,
-	                    (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
-	                    (SELECT COUNT(*) FROM GroupCustomisations AS gc WHERE gc.GroupID = g.GroupID AND InactivatedDate IS NULL) AS CoursesCount,
+                        GroupID,
+                        GroupLabel,
+                        GroupDescription,
+                        (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
+                        (SELECT COUNT(*) FROM GroupCustomisations AS gc WHERE gc.GroupID = g.GroupID AND InactivatedDate IS NULL) AS CoursesCount,
                         g.CreatedByAdminUserID As AddedByAdminId,
                         au.Forename AS AddedByFirstName,
-	                    au.Surname AS AddedByLastName,
-	                    LinkedToField,
-	                    CASE
-		                    WHEN LinkedToField = 0 THEN 'None'
-		                    WHEN LinkedToField = 1 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField1PromptID)
-		                    WHEN LinkedToField = 2 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField2PromptID)
-		                    WHEN LinkedToField = 3 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField3PromptID)
-		                    WHEN LinkedToField = 4 THEN 'Job group'
-		                    WHEN LinkedToField = 5 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField4PromptID)
-		                    WHEN LinkedToField = 6 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField5PromptID)
-		                    WHEN LinkedToField = 7 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField6PromptID)
-	                    END AS LinkedToFieldName,
-	                    AddNewRegistrants,
-	                    SyncFieldChanges
+                        au.Surname AS AddedByLastName,
+                        LinkedToField,
+                        CASE
+                            WHEN LinkedToField = 0 THEN 'None'
+                            WHEN LinkedToField = 1 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField1PromptID)
+                            WHEN LinkedToField = 2 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField2PromptID)
+                            WHEN LinkedToField = 3 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField3PromptID)
+                            WHEN LinkedToField = 4 THEN 'Job group'
+                            WHEN LinkedToField = 5 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField4PromptID)
+                            WHEN LinkedToField = 6 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField5PromptID)
+                            WHEN LinkedToField = 7 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField6PromptID)
+                        END AS LinkedToFieldName,
+                        AddNewRegistrants,
+                        SyncFieldChanges
                     FROM Groups AS g
                     JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
                     JOIN Centres AS c ON c.CentreID = g.CentreID
