@@ -21,10 +21,14 @@
         private const string CourseFilterCookieName = "CourseFilter";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly ICourseService courseService;
+        private readonly ICourseTopicsDataService courseTopicsDataService;
 
-        public CourseSetupController(ICourseService courseService, ICourseCategoriesDataService courseCategoriesDataService, ICourseTopicsDataService courseTopicsDataService)
+        public CourseSetupController(
+            ICourseService courseService,
+            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseTopicsDataService courseTopicsDataService
+        )
         {
             this.courseService = courseService;
             this.courseCategoriesDataService = courseCategoriesDataService;
@@ -62,7 +66,8 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
             var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             var model = new CourseSetupViewModel(
@@ -76,7 +81,14 @@
                 page
             );
 
-            UpdateFilterCookie(filterBy);
+            if (filterBy != null)
+            {
+                SetFilterCookie(filterBy);
+            }
+            else
+            {
+                Response.Cookies.Delete(CourseFilterCookieName);
+            }
 
             return View(model);
         }
@@ -87,30 +99,24 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
             var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId).Select(c => c.CategoryName);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
             return View(model);
         }
 
-        private void UpdateFilterCookie(string? filterBy)
+        private void SetFilterCookie(string filterBy)
         {
-            if (filterBy != null)
-            {
-                Response.Cookies.Append(
-                    CourseFilterCookieName,
-                    filterBy,
-                    new CookieOptions
-                    {
-                        Expires = CookieExpiry
-                    }
-                );
-            }
-            else
-            {
-                Response.Cookies.Delete(CourseFilterCookieName);
-            }
+            Response.Cookies.Append(
+                CourseFilterCookieName,
+                filterBy,
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
         }
     }
 }

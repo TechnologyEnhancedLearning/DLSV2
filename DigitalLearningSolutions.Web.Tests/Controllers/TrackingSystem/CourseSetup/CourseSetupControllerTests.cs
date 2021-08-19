@@ -26,8 +26,14 @@
         {
             new CourseStatistics
             {
-                ApplicationName = "Course", CustomisationName = "Customisation", Active = true, CourseTopic = "Topic 1",
-                CategoryName = "Category 1", HideInLearnerPortal = true, DelegateCount = 1, CompletedCount = 1
+                ApplicationName = "Course",
+                CustomisationName = "Customisation",
+                Active = true,
+                CourseTopic = "Topic 1",
+                CategoryName = "Category 1",
+                HideInLearnerPortal = true,
+                DelegateCount = 1,
+                CompletedCount = 1
             }
         };
 
@@ -37,11 +43,12 @@
             new Topic { CourseTopic = "Topic 2" }
         };
 
-        private ICourseCategoriesDataService courseCategoryDataService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
         private CourseSetupController controller = null!;
         private IRequestCookieCollection cookieCollection = null!;
+
+        private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -54,7 +61,8 @@
             courseService = A.Fake<ICourseService>();
 
             A.CallTo(() => courseService.GetCentreSpecificCourseStatistics(A<int>._, A<int>._)).Returns(courses);
-            A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._)).Returns(categories);
+            A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                .Returns(categories);
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
 
             // TODO: when 507 is merged, replace this with the new .WithMockHttpContextWithCookie controller extension method
