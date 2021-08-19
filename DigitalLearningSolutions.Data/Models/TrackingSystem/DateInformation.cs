@@ -17,10 +17,10 @@
             switch (Interval)
             {
                 case ReportInterval.Days:
-                    formatString = shortForm ? "y/M/d" : "yyyy/MM/d";
+                    formatString = shortForm ? "d/M/y" : "d/MM/yyyy";
                     break;
                 case ReportInterval.Weeks:
-                    formatString = shortForm ? "wc y/M/d" : "Week commencing yyyy/MM/d";
+                    formatString = shortForm ? "wc d/M/y" : "Week commencing d/MM/yyyy";
                     break;
                 case ReportInterval.Months:
                     formatString = shortForm ? "MMM yyyy" : "MMMM, yyyy";
