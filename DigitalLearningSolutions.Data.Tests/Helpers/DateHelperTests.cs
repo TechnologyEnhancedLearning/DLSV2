@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;

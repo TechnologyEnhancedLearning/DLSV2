@@ -5,8 +5,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public interface IActivityService
     {
