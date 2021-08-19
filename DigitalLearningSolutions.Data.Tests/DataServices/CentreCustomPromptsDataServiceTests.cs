@@ -8,15 +8,15 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class CustomPromptsDataServiceTests
+    public class CentreCustomPromptsDataServiceTests
     {
-        private ICustomPromptsDataService customPromptsDataService = null!;
+        private ICentreCustomPromptsDataService centreCustomPromptsDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            customPromptsDataService = new CustomPromptsDataService(connection);
+            centreCustomPromptsDataService = new CentreCustomPromptsDataService(connection);
         }
 
         [Test]
@@ -26,7 +26,7 @@
             var expectedCentreCustomPromptsResult = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult();
 
             // When
-            var returnedCentreCustomPromptsResult = customPromptsDataService.GetCentreCustomPromptsByCentreId(29);
+            var returnedCentreCustomPromptsResult = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29);
 
             // Then
             returnedCentreCustomPromptsResult.Should().BeEquivalentTo(expectedCentreCustomPromptsResult);
@@ -42,8 +42,8 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
-                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
+                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
 
                 // Then
                 using (new AssertionScope())
@@ -62,7 +62,7 @@
         public void Get_custom_prompts_should_contain_a_custom_prompt()
         {
             // When
-            var result = customPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+            var result = centreCustomPromptsDataService.GetCustomPromptsAlphabetical().ToList();
 
             // Then
             result.Contains((1, "Department / team")).Should().BeTrue();
@@ -78,9 +78,10 @@
                 const string? options = "options";
 
                 // When
-                customPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
-                var centreCustomPrompts = customPromptsDataService.GetCentreCustomPromptsByCentreId(2);
-                var customPrompt = customPromptsDataService.GetCustomPromptsAlphabetical().Single(c => c.Item1 == 1)
+                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
+                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                var customPrompt = centreCustomPromptsDataService.GetCustomPromptsAlphabetical()
+                    .Single(c => c.Item1 == 1)
                     .Item2;
 
                 // Then
@@ -101,57 +102,10 @@
         public void GetPromptNameForCentreAndPromptNumber_returns_expected_prompt_name()
         {
             // When
-            var result = customPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
+            var result = centreCustomPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
 
             // Then
             result.Should().BeEquivalentTo("Role type");
-        }
-
-        [Test]
-        public void GetCourseCustomPrompts_returns_populated_CourseCustomPromptsResult()
-        {
-            // Given
-            var expectedCourseCustomPromptsResult =
-                CustomPromptsTestHelper.GetDefaultCourseCustomPromptsResult(
-                    null,
-                    "Yes\nNo\nNot sure",
-                    true,
-                    null,
-                    "Yes\nNo\nNot sure",
-                    courseCategoryId: 2
-                );
-
-            // When
-            var returnedCourseCustomPromptsResult = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
-
-            // Then
-            returnedCourseCustomPromptsResult.Should().BeEquivalentTo(expectedCourseCustomPromptsResult);
-        }
-
-        [Test]
-        public void UpdateCustomPromptForCourse_correctly_updates_custom_prompt()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                const string? options = "options";
-
-                // When
-                customPromptsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
-                var courseCustomPrompts = customPromptsDataService.GetCourseCustomPrompts(1379, 101, 0);
-
-                // Then
-                using (new AssertionScope())
-                {
-                    courseCustomPrompts.CustomField1Mandatory.Should().BeFalse();
-                    courseCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
-                }
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
         }
     }
 }

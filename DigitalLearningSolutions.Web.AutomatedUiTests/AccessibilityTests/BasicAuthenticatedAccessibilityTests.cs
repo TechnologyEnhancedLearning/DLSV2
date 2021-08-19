@@ -6,7 +6,9 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
     public class BasicAuthenticatedAccessibilityTests : AccessibilityTestsBase,
         IClassFixture<AuthenticatedAccessibilityTestsFixture<Startup>>
     {
-        public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
+        public BasicAuthenticatedAccessibilityTests(AuthenticatedAccessibilityTestsFixture<Startup> fixture) : base(
+            fixture
+        ) { }
 
         [Theory]
         [InlineData("/MyAccount", "My account")]
@@ -32,6 +34,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
         [InlineData("/TrackingSystem/CourseSetup/10716/AdminFields", "Manage course admin fields")]
+        [InlineData(
+            "/TrackingSystem/CourseSetup/100/AdminFields/1/Remove",
+            "Delete course admin field"
+        )]
         [InlineData("/TrackingSystem/CourseSetup/10716/Content", "Course content")]
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage", "Level 1 - Microsoft Excel 2010 - Inductions")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]

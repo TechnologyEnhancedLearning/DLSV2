@@ -31,7 +31,7 @@
         public List<DelegateUser> GetAllDelegateUsersByUsername(string username);
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
         public List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
-        
+
         public void UpdateDelegateUsers(
             string firstName,
             string surname,

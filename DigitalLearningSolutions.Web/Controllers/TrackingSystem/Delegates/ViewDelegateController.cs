@@ -14,20 +14,20 @@
     [Route("TrackingSystem/Delegates/View/{delegateId:int}")]
     public class ViewDelegateController : Controller
     {
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICourseService courseService;
-        private readonly CustomPromptHelper customPromptHelper;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             ICourseService courseService,
             IPasswordResetService passwordResetService
         )
         {
             this.userDataService = userDataService;
-            this.customPromptHelper = customPromptHelper;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
         }
@@ -42,7 +42,7 @@
                 return new NotFoundResult();
             }
 
-            var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+            var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
             var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
 
             var courseInfoViewModels = courseService.GetAllCoursesForDelegate(delegateId, centreId)

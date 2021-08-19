@@ -12,7 +12,7 @@
         public AllDelegateItemsViewModel(
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
-            CustomPromptHelper customPromptHelper
+            CentreCustomPromptHelper customPromptHelper
         )
         {
             Delegates = delegateUserCards.Select(
