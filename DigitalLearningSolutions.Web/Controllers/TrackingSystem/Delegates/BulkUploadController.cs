@@ -72,30 +72,13 @@
                     User.GetCentreId(),
                     model.GetWelcomeEmailDate()
                 );
-                TempData.Set(results);
-                return RedirectToAction("UploadCompleted");
+                var resultsModel = new BulkUploadResultsViewModel(results);
+                return View("UploadCompleted", resultsModel);
             }
             catch (InvalidHeadersException)
             {
-                return RedirectToAction("UploadFailed");
+                return View("UploadFailed");
             }
-        }
-
-        [Route("UploadFailed")]
-        [HttpGet]
-        public IActionResult UploadFailed()
-        {
-            return View("UploadFailed");
-        }
-
-        [Route("UploadCompleted")]
-        [HttpGet]
-        [ServiceFilter(typeof(RedirectEmptySessionData<BulkUploadResult>))]
-        public IActionResult UploadCompleted()
-        {
-            var results = TempData.Get<BulkUploadResult>()!;
-            var model = new BulkUploadResultsViewModel(results);
-            return View("UploadCompleted", model);
         }
     }
 }

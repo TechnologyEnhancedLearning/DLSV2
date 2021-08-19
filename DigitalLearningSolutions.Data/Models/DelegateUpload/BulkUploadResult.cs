@@ -23,11 +23,10 @@
         public BulkUploadResult() { }
 
         public BulkUploadResult(
-            IEnumerable<DelegateTableRow> delegateRows
+            IReadOnlyCollection<DelegateTableRow> delegateRows
         )
         {
-            delegateRows = delegateRows.ToList();
-            ProcessedCount = delegateRows.Count();
+            ProcessedCount = delegateRows.Count;
             RegisteredCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Registered);
             UpdatedCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Updated);
             SkippedCount = delegateRows.Count(dr => dr.RowStatus == RowStatus.Skipped);

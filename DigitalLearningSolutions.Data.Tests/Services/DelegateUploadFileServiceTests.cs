@@ -575,31 +575,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             result.RegisteredCount.Should().Be(1);
         }
 
-        [TestCase("-1", BulkUploadResult.ErrorReason.UnexpectedErrorForCreate)]
-        [TestCase("-2", BulkUploadResult.ErrorReason.UnexpectedErrorForCreate)]
-        [TestCase("-3", BulkUploadResult.ErrorReason.UnexpectedErrorForCreate)]
-        [TestCase("-4", BulkUploadResult.ErrorReason.UnexpectedErrorForCreate)]
-        public void ProcessDelegateTable_has_unexpected_error_for_all_stored_procedure_invalid_returns(
-            string returnValue,
-            BulkUploadResult.ErrorReason expectedErrorReason
-        )
-        {
-            // Given
-            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-            A.CallTo(() => userService.IsEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
-                .Returns(returnValue);
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(expectedErrorReason);
-        }
-
         [Test]
         public void ProcessDelegateTable_counts_updated_correctly()
         {

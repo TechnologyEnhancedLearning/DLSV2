@@ -57,7 +57,7 @@
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
 
-        public bool IsValid(IEnumerable<int> allowedJobGroupIds)
+        public bool Validate(IEnumerable<int> allowedJobGroupIds)
         {
             if (!JobGroupId.HasValue || !allowedJobGroupIds.Contains(JobGroupId.Value))
             {

@@ -52,7 +52,7 @@
 
             foreach (var delegateRow in delegateRows)
             {
-                if (!delegateRow.IsValid(jobGroupIds))
+                if (!delegateRow.Validate(jobGroupIds))
                 {
                     continue;
                 }
