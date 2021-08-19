@@ -65,11 +65,14 @@
             return activity.Select(m => new ActivityDataRowModel(m, true));
         }
 
-        // [HttpGet]
-        // [Route("EditFilters")]
-        // public IActionResult EditFilters()
-        // {
-        //     return View();
-        // }
+        [HttpGet]
+        [Route("EditFilters")]
+        public IActionResult EditFilters()
+        {
+            var model = new EditFiltersViewModel{ReportInterval = ReportInterval.Months};
+            var reportIntervals = ((int[])Enum.GetValues(typeof(ReportInterval))).Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
+            ViewBag.ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals);
+            return View(model);
+        }
     }
 }

@@ -25,7 +25,7 @@
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
-            var textBoxViewModel = new SelectListViewModel(
+            var selectListViewModel = new SelectListViewModel(
                 aspFor,
                 aspFor,
                 label,
@@ -37,7 +37,7 @@
                 errorMessage,
                 hasError,
                 deselectable ?? false);
-            return View(textBoxViewModel);
+            return View(selectListViewModel);
         }
     }
 }
