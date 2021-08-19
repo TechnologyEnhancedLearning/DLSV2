@@ -22,8 +22,8 @@ describe('getSortValue', () => {
   ${''}                 | ${''}             | ${'Category'}                        | ${''}
   ${'topic'}            | ${'Topic 1'}      | ${'Topic'}                           | ${'topic 1'}
   ${''}                 | ${''}             | ${'Topic'}                           | ${''}
-  ${'delegate-count'}   | ${'5'}             | ${'DelegateCount'}                  | ${5}
-  ${'courses-count'}    | ${'7'}             | ${'CoursesCount'}                   | ${7}
+  ${'delegate-count'}   | ${'5'}            | ${'DelegateCount'}                   | ${5}
+  ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
   `('should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,

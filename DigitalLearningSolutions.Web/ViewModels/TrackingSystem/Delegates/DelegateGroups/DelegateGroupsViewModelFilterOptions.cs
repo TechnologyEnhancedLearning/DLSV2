@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -17,14 +18,14 @@
         };
 
         public static IEnumerable<FilterOptionViewModel> GetLinkedFieldOptions(
-            IEnumerable<(int promptNumber, string promptText)> registrationPrompts
+            IEnumerable<CustomPrompt> registrationPrompts
         )
         {
             var promptOptions = registrationPrompts.Select(
-                a => new FilterOptionViewModel(
-                    a.promptText,
+                prompt => new FilterOptionViewModel(
+                    prompt.CustomPromptText,
                     nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
-                    FilteringHelper.Separator + a.promptNumber,
+                    FilteringHelper.Separator + GetLinkedFieldIdFromRegistrationPromptNumber(prompt.CustomPromptNumber),
                     FilterStatus.Default
                 )
             );
@@ -37,13 +38,21 @@
         )
         {
             return admins.Select(
-                a => new FilterOptionViewModel(
-                    a.adminName,
+                admin => new FilterOptionViewModel(
+                    admin.adminName,
                     nameof(Group.AddedByAdminId) + FilteringHelper.Separator + nameof(Group.AddedByAdminId) +
-                    FilteringHelper.Separator + a.adminId,
+                    FilteringHelper.Separator + admin.adminId,
                     FilterStatus.Default
                 )
             );
+        }
+
+        // Centre registration prompts correspond to Groups.LinkedToField as follows:
+        // 1, 2 and 3 correspond to 1, 2 and 3 respectively
+        // 4, 5 and 6 correspond to 5, 6 and 7 respectively
+        private static int GetLinkedFieldIdFromRegistrationPromptNumber(int promptNumber)
+        {
+            return promptNumber > 3 ? promptNumber + 1 : promptNumber;
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -9,12 +10,12 @@
     {
         public readonly IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups;
 
-        public AllDelegateGroupsViewModel(IEnumerable<Group> groups, IEnumerable<(int, string)> registrationPrompts)
+        public AllDelegateGroupsViewModel(IEnumerable<Group> groups, IEnumerable<CustomPrompt> registrationPrompts)
         {
             groups = groups.ToList();
             DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g));
 
-            var admins = groups.Select(g => (AddedByAdminID: g.AddedByAdminId, g.AddedByName)).Distinct();
+            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
 
             Filters = new[]
             {

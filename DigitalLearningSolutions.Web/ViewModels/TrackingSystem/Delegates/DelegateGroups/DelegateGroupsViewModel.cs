@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -10,7 +11,7 @@
     {
         public DelegateGroupsViewModel(
             IEnumerable<Group> groups,
-            IEnumerable<(int, string)> registrationPrompts,
+            IEnumerable<CustomPrompt> registrationPrompts,
             string sortBy,
             string sortDirection,
             string? filterBy,

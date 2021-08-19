@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
@@ -35,7 +36,7 @@
         {
             var model = new DelegateGroupsViewModel(
                 groups,
-                new List<(int, string)>(),
+                new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -55,7 +56,7 @@
         {
             var model = new DelegateGroupsViewModel(
                 groups,
-                new List<(int, string)>(),
+                new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -92,14 +93,14 @@
                 new FilterViewModel(
                     nameof(Group.LinkedToField),
                     "Linked field",
-                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<(int, string)>())
+                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<CustomPrompt>())
                 )
             }.AsEnumerable();
 
             // When
             var model = new DelegateGroupsViewModel(
                 groups,
-                new List<(int, string)>(),
+                new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,

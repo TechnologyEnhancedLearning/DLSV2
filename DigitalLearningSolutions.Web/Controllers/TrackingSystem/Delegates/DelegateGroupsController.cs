@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -67,14 +68,7 @@
 
             if (filterBy != null)
             {
-                Response.Cookies.Append(
-                    DelegateGroupsFilterCookieName,
-                    filterBy,
-                    new CookieOptions
-                    {
-                        Expires = CookieExpiry
-                    }
-                );
+                SetFilterCookie(filterBy);
             }
             else
             {
@@ -130,14 +124,22 @@
             return View(model);
         }
 
-        private IEnumerable<(int, string)> GetRegistrationPrompts(int centreId)
+        private IEnumerable<CustomPrompt> GetRegistrationPrompts(int centreId)
         {
             return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Where(cp => cp.Options.Any())
-                .Select(
-                    cp => (cp.CustomPromptNumber > 3 ? cp.CustomPromptNumber + 1 : cp.CustomPromptNumber,
-                        cp.CustomPromptText)
-                );
+                .Where(cp => cp.Options.Any());
+        }
+
+        private void SetFilterCookie(string? filterBy)
+        {
+            Response.Cookies.Append(
+                DelegateGroupsFilterCookieName,
+                filterBy,
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
         }
     }
 }
