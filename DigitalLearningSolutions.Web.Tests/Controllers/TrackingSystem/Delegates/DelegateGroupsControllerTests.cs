@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -15,15 +17,19 @@
 
     public class DelegateGroupsControllerTests
     {
+        private IClockService clockService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             groupsDataService = A.Fake<IGroupsDataService>();
+            userDataService = A.Fake<IUserDataService>();
+            clockService = A.Fake<IClockService>();
 
-            delegateGroupsController = new DelegateGroupsController(groupsDataService)
+            delegateGroupsController = new DelegateGroupsController(groupsDataService, userDataService, clockService)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }

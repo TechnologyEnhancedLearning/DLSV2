@@ -61,7 +61,8 @@
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
         public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
         {
-            var groupName = groupsDataService.GetGroupNameForGroupId(groupId);
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId)!;
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
