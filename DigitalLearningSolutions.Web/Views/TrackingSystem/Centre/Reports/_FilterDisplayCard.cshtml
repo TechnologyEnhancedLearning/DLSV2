@@ -1,6 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @model ActivityFilterModel
 
+@{
+  var dateFormat = "dd/MM/yyyy";
+}
+
 <div class="nhsuk-card">
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
     <h2 class="nhsuk-card__heading">
@@ -15,7 +19,7 @@
           <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
         </div>
 
-        @if (Model.ShowCourseCategory)
+        @if (!string.IsNullOrEmpty(Model.CourseCategoryName))
         {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
@@ -25,19 +29,21 @@
           </div>
         }
 
-        <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">
-            Course
-          </dt>
-          <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
-        </div>
+        @if (!string.IsNullOrEmpty(Model.CustomisationName)) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Course
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
+          </div>
+        }
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
             Date range
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.StartDate.ToString("d") - @Model.EndDate.ToString("d")
+            @Model.StartDate.ToString(dateFormat) - @Model.EndDate.ToString(dateFormat)
           </dd>
         </div>
 
@@ -49,7 +55,7 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="Reports" asp-action="EditFilters" role="button">
+      <a class="nhsuk-button nhsuk-button--secondary" role="button">
         Edit filters
       </a>
     </div>
