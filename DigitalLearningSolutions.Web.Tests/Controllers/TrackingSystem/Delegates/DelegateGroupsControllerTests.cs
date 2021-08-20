@@ -27,7 +27,7 @@
         private readonly CentreCustomPrompts prompts =
             CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
 
-        private ICustomPromptsService customPromptsService = null!;
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
 
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
@@ -37,11 +37,11 @@
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             groupsDataService = A.Fake<IGroupsDataService>();
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
                 .Returns(prompts);
 
             httpRequest = A.Fake<HttpRequest>();
@@ -49,7 +49,7 @@
             const string cookieName = "DelegateGroupsFilter";
             const string cookieValue = "LinkedToField|LinkedToField|0";
 
-            delegateGroupsController = new DelegateGroupsController(groupsDataService, customPromptsService)
+            delegateGroupsController = new DelegateGroupsController(groupsDataService, centreCustomPromptsService)
                 .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockTempData(); ;

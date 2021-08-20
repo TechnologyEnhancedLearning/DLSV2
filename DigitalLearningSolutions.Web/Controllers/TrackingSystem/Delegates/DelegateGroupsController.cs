@@ -19,16 +19,16 @@
     public class DelegateGroupsController : Controller
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IGroupsDataService groupsDataService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
-            ICustomPromptsService customPromptsService
+            ICentreCustomPromptsService centreCustomPromptsService
         )
         {
             this.groupsDataService = groupsDataService;
-            this.customPromptsService = customPromptsService;
+            this.centreCustomPromptsService = centreCustomPromptsService;
         }
 
         [Route("{page=1:int}")]
@@ -117,7 +117,7 @@
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
-            return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
         }
     }
