@@ -13,13 +13,16 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
-        private readonly CustomPromptHelper customPromptHelper;
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly IUserDataService userDataService;
 
-        public AllDelegatesController(IUserDataService userDataService, CustomPromptHelper customPromptHelper)
+        public AllDelegatesController(
+            IUserDataService userDataService,
+            CentreCustomPromptHelper centreCustomPromptHelper
+        )
         {
             this.userDataService = userDataService;
-            this.customPromptHelper = customPromptHelper;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
         }
 
         [Route("{page=1:int}")]
@@ -37,7 +40,7 @@
             var model = new AllDelegatesViewModel(
                 centreId,
                 delegateUsers,
-                customPromptHelper,
+                centreCustomPromptHelper,
                 page,
                 searchString,
                 sortBy,
@@ -52,7 +55,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, customPromptHelper);
+            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, centreCustomPromptHelper);
             return View(model);
         }
     }
