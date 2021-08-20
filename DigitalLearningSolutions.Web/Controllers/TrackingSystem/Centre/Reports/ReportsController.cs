@@ -41,10 +41,9 @@
                 CourseCategoryName = "All categories",
                 CustomisationName = "Customisation",
                 JobGroupName = "Job group",
-                ReportIntervalName = nameof(ReportInterval.Months), //TODO HEEDLS-541 is it inconsistent to convert dates in the view but the interval here?
+                ReportIntervalName = nameof(ReportInterval.Months),
                 StartDate = DateTime.Now.AddYears(-1),
                 EndDate = DateTime.Now,
-                ShowCourseCategory = true
             };
 
             var model = new ReportsViewModel(activity, filterModel);
@@ -66,11 +65,11 @@
             return activity.Select(m => new ActivityDataRowModel(m, true));
         }
 
-        [HttpGet]
-        [Route("EditFilters")]
-        public IActionResult EditFilters()
-        {
-            return View();
-        }
+        // [HttpGet]
+        // [Route("EditFilters")]
+        // public IActionResult EditFilters()
+        // {
+        //     return View();
+        // }
     }
 }
