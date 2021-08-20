@@ -106,5 +106,27 @@
             // Then
             result.Should().BeNull();
         }
+
+        [Test]
+        public void DeleteGroupDelegatesRecordForDelegate_deletes_record()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int delegateId = 245969;
+
+                // When
+                groupsDataService.DeleteGroupDelegatesRecordForDelegate(5, delegateId);
+                var delegates = groupsDataService.GetGroupDelegates(1);
+
+                // Then
+                delegates.Any(d => d.DelegateId == delegateId).Should().BeFalse();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }
