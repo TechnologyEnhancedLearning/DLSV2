@@ -11,7 +11,7 @@
         public AllDelegatesViewModel(
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             int page,
             string? searchString,
             string sortBy,
@@ -33,7 +33,8 @@
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+                    var customFields =
+                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
                     var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
                     return new SearchableDelegateViewModel(delegateInfoViewModel);
                 }

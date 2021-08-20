@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Tests.Controllers
+﻿namespace DigitalLearningSolutions.Web.Tests.Controllers
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
@@ -13,12 +13,12 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
-    public class ResetPasswordControllerTests
+    public class SetPasswordControllerTests
     {
-        private ResetPasswordController authenticatedController = null!;
+        private SetPasswordController authenticatedController = null!;
         private IPasswordResetService passwordResetService = null!;
         private IPasswordService passwordService = null!;
-        private ResetPasswordController unauthenticatedController = null!;
+        private SetPasswordController unauthenticatedController = null!;
 
         [SetUp]
         public void SetUp()
@@ -26,11 +26,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
             passwordResetService = A.Fake<IPasswordResetService>();
             passwordService = A.Fake<IPasswordService>();
 
-            unauthenticatedController = new ResetPasswordController(passwordResetService, passwordService)
+            unauthenticatedController = new SetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(false);
-            authenticatedController = new ResetPasswordController(passwordResetService, passwordService)
+            authenticatedController = new SetPasswordController(passwordResetService, passwordService)
                 .WithDefaultContext()
                 .WithMockTempData()
                 .WithMockUser(true);
@@ -54,7 +54,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "code",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(Task.FromResult(true));
@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "code",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(Task.FromResult(false));
@@ -114,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -136,7 +136,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -161,7 +161,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -185,7 +185,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -209,7 +209,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -234,7 +234,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(false);
@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -284,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(true);
@@ -306,7 +306,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers
                     () => passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                         "email",
                         "hash",
-                        ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                        ResetPasswordHelpers.SetPasswordHashExpiryTime
                     )
                 )
                 .Returns(false);

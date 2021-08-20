@@ -19,9 +19,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     public class RegisterController : Controller
     {
         private const string CookieName = "RegistrationData";
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
-        private readonly CustomPromptHelper customPromptHelper;
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserService userService,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             IFeatureManager featureManager
         )
         {
@@ -42,7 +42,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userService = userService;
-            this.customPromptHelper = customPromptHelper;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.featureManager = featureManager;
         }
 
@@ -133,7 +133,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre.Value;
 
-            customPromptHelper.ValidateCustomPrompts(
+            centreCustomPromptHelper.ValidateCustomPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -303,7 +303,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             int centreId
         )
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -316,7 +316,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,

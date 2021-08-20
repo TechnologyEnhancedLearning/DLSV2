@@ -5,7 +5,7 @@
 
     public static class EmailTestHelper
     {
-        public const string DefaultHtmlBody = "<body style= 'font - family: Calibri; font - size: small;'\r\n>" +
+        public const string DefaultHtmlBody = "<body style= 'font-family: Calibri; font-size: small;'\r\n>" +
                                               "   <p>Test Body</p>\r\n" +
                                               "</body>";
 

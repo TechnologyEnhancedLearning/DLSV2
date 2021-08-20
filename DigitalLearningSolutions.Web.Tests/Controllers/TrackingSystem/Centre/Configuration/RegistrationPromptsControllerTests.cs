@@ -19,7 +19,7 @@
     public class RegistrationPromptsControllerTests
     {
         private IRequestCookieCollection cookieCollection = null!;
-        private ICustomPromptsService customPromptsService = null!;
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
@@ -29,10 +29,10 @@
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             userDataService = A.Fake<IUserDataService>();
 
-            registrationPromptsController = new RegistrationPromptsController(customPromptsService, userDataService)
+            registrationPromptsController = new RegistrationPromptsController(centreCustomPromptsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockTempData();
@@ -51,7 +51,7 @@
             A.CallTo(() => httpContext.Request).Returns(httpRequest);
 
             registrationPromptsControllerWithMockHttpContext =
-                new RegistrationPromptsController(customPromptsService, userDataService)
+                new RegistrationPromptsController(centreCustomPromptsService, userDataService)
                     .WithMockHttpContext(httpContext)
                     .WithMockUser(true)
                     .WithMockTempData();
@@ -65,7 +65,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -78,7 +78,7 @@
 
             // Then
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -96,7 +96,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -308,7 +308,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => customPromptsService.AddCustomPromptToCentre(
+                () => centreCustomPromptsService.AddCustomPromptToCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -323,7 +323,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => customPromptsService.AddCustomPromptToCentre(
+                    () => centreCustomPromptsService.AddCustomPromptToCentre(
                         ControllerContextHelper.CentreId,
                         1,
                         true,
@@ -345,7 +345,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => customPromptsService.AddCustomPromptToCentre(
+                () => centreCustomPromptsService.AddCustomPromptToCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -360,7 +360,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => customPromptsService.AddCustomPromptToCentre(
+                    () => centreCustomPromptsService.AddCustomPromptToCentre(
                         ControllerContextHelper.CentreId,
                         1,
                         true,

@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
                 .With(rp => rp.PasswordResetDateTime = createTime).Build();
 
             // When
-            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(119));
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(119), ResetPasswordHelpers.ResetPasswordHashExpiryTime);
 
             // Then
             resetIsValid.Should().BeTrue();
@@ -36,7 +36,37 @@ namespace DigitalLearningSolutions.Data.Tests.Helpers
                 .With(rp => rp.PasswordResetDateTime = createTime).Build();
 
             // When
-            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(121));
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(121), ResetPasswordHelpers.ResetPasswordHashExpiryTime);
+
+            // Then
+            resetIsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void Set_Password_Is_Valid_4319_Minutes_After_Creation()
+        {
+            // Given
+            var createTime = DateTime.UtcNow;
+            var resetPassword = Builder<ResetPassword>.CreateNew()
+                .With(rp => rp.PasswordResetDateTime = createTime).Build();
+
+            // When
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4319), ResetPasswordHelpers.SetPasswordHashExpiryTime);
+
+            // Then
+            resetIsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public void Set_Password_Is_Invalid_121_Minutes_After_Creation()
+        {
+            // Given
+            var createTime = DateTime.UtcNow;
+            var resetPassword = Builder<ResetPassword>.CreateNew()
+                .With(rp => rp.PasswordResetDateTime = createTime).Build();
+
+            // When
+            var resetIsValid = resetPassword.IsStillValidAt(createTime + TimeSpan.FromMinutes(4321), ResetPasswordHelpers.SetPasswordHashExpiryTime);
 
             // Then
             resetIsValid.Should().BeFalse();

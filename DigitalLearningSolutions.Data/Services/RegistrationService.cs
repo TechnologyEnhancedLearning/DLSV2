@@ -25,10 +25,10 @@ namespace DigitalLearningSolutions.Data.Services
     public class RegistrationService : IRegistrationService
     {
         private readonly ICentresDataService centresDataService;
+        private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IRegistrationDataService registrationDataService;
-        private readonly IConfiguration config;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -159,7 +159,7 @@ namespace DigitalLearningSolutions.Data.Services
                             A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.
                             To approve or reject their registration please follow this link: {approvalUrl}
                             Please don't reply to this email as it has been automatically generated.",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {firstName},</p>
                                 <p>A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.</p>
                                 <p>To approve or reject their registration please follow this link: <a href=""{approvalUrl}"">{approvalUrl}</a></p>

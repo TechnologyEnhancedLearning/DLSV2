@@ -2,17 +2,19 @@
 {
     using System.Collections.Generic;
 
-    public class CourseCustomPrompts
+    public class CourseAdminFields
     {
-        public CourseCustomPrompts(int customisationId, int centreId, List<CustomPrompt> courseAdminFields)
+        public CourseAdminFields(int customisationId, int centreId, List<CustomPrompt> adminFields)
         {
             CustomisationId = customisationId;
             CentreId = centreId;
-            CourseAdminFields = courseAdminFields;
+            AdminFields = adminFields;
         }
 
         public int CustomisationId { get; set; }
+
         public int CentreId { get; set; }
-        public List<CustomPrompt> CourseAdminFields { get; set; }
+
+        public List<CustomPrompt> AdminFields { get; set; }
     }
 }
