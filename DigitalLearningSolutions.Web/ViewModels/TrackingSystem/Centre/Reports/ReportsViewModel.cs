@@ -1,21 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public class ReportsViewModel
     {
-        public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
-        public ActivityFilterModel ActivityFilterModel { get; set; }
-
         public ReportsViewModel(IEnumerable<PeriodOfActivity> activity, ActivityFilterModel filterModel)
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
             ActivityFilterModel = filterModel;
         }
+
+        public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
+        public ActivityFilterModel ActivityFilterModel { get; set; }
     }
 
     public class UsageStatsTableViewModel

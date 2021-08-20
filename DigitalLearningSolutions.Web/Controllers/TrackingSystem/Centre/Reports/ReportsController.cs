@@ -46,7 +46,7 @@
                 JobGroupName = "Job group",
                 ReportIntervalName = nameof(ReportInterval.Months),
                 StartDate = DateTime.Now.AddYears(-1),
-                EndDate = DateTime.Now,
+                EndDate = DateTime.Now
             };
 
             var model = new ReportsViewModel(activity, filterModel);
