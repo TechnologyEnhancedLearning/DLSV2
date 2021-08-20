@@ -26,8 +26,8 @@
         private ILogger<LoginController> logger = null!;
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
-        private IUserService userService = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -64,7 +64,13 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService, userDataService, logger)
+            var controllerWithAuthenticatedUser = new LoginController(
+                    loginService,
+                    userService,
+                    sessionService,
+                    userDataService,
+                    logger
+                )
                 .WithDefaultContext()
                 .WithMockUser(true);
 
