@@ -2,22 +2,25 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class GroupsDataServiceTests
     {
+        private SqlConnection connection = null!;
         private GroupsDataService groupsDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             groupsDataService = new GroupsDataService(connection);
         }
 
@@ -122,6 +125,30 @@
 
                 // Then
                 delegates.Any(d => d.DelegateId == delegateId).Should().BeFalse();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task RemoveRelateProgressRecordsForDelegate_updates_progress_record()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.Now;
+                const int delegateId = 245969;
+
+                // When
+                groupsDataService.RemoveRelateProgressRecordsForDelegate(5, delegateId, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(285146);
+
+                // Then
+                progressFields.Item1.Should().Be(3);
+                progressFields.Item2.Should().BeCloseTo(removedDate);
             }
             finally
             {
