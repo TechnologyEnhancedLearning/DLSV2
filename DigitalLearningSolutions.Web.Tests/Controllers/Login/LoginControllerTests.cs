@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -26,16 +27,18 @@
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
         private IUserService userService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             loginService = A.Fake<ILoginService>();
             userService = A.Fake<IUserService>();
+            userDataService = A.Fake<IUserDataService>();
             sessionService = A.Fake<ISessionService>();
             logger = A.Fake<ILogger<LoginController>>();
 
-            controller = new LoginController(loginService, userService, sessionService, logger)
+            controller = new LoginController(loginService, userService, sessionService, userDataService, logger)
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -61,7 +64,7 @@
         public void Index_should_redirect_if_user_is_authenticated()
         {
             // Given
-            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService, logger)
+            var controllerWithAuthenticatedUser = new LoginController(loginService, userService, sessionService, userDataService, logger)
                 .WithDefaultContext()
                 .WithMockUser(true);
 
@@ -495,6 +498,104 @@
 
             // Then
             A.CallTo(() => userService.GetUsersByUsername("test@example.com")).MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public async Task Admin_with_incorrect_password_increases_FailedLoginCount()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet());
+
+            // When
+            await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 1)).MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Admin_with_incorrect_password_increases_FailedLoginCount_and_returns_locked_view()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet());
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 5)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("AccountLocked");
+        }
+
+        [Test]
+        public async Task Admin_already_locked_increases_FailedLoginCount_and_returns_locked_view()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet());
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 7)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("AccountLocked");
+        }
+
+        [Test]
+        public async Task Admin_with_correct_password_and_some_failed_logins_resets_FailedLoginCount_and_logs_in()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(adminUser, null));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) }
+                );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 0)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Admin_with_correct_password_and_no_failed_logins_logs_in_without_resetting_FailedLoginCount()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(adminUser, null));
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) }
+                );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 0)).MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
         }
 
         private void GivenSignInIsSuccessful()

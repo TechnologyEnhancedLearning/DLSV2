@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -21,18 +22,21 @@
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
+        private readonly IUserDataService userDataService;
         private readonly ILogger<LoginController> logger;
 
         public LoginController(
             ILoginService loginService,
             IUserService userService,
             ISessionService sessionService,
+            IUserDataService userDataService,
             ILogger<LoginController> logger
         )
         {
             this.loginService = loginService;
             this.userService = userService;
             this.sessionService = sessionService;
+            this.userDataService = userDataService;
             this.logger = logger;
         }
 
@@ -56,18 +60,38 @@
             }
 
             var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
+
             if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
                 return View("Index", model);
             }
 
+            if (adminUser != null && adminUser.IsLocked)
+            {
+                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+                return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
+            }
+
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(model.Password, adminUser, delegateUsers);
+                loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
+                if (adminUser != null && verifiedAdminUser == null)
+                {
+                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+                    if (adminUser.FailedLoginCount == 4)
+                    {
+                        return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
+                    }
+                }
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
+            }
+
+            if (verifiedAdminUser != null && verifiedAdminUser.FailedLoginCount > 0 && verifiedAdminUser.FailedLoginCount <= 4)
+            {
+                userDataService.UpdateAdminUserFailedLoginCount(verifiedAdminUser.Id, 0);
             }
 
             var approvedDelegateUsers = verifiedDelegateUsers.Where(du => du.Approved).ToList();
@@ -79,7 +103,7 @@
             verifiedAdminUser ??=
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                     verifiedDelegateUsers.First(),
-                    model.Password
+                    model.Password!
                 );
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
@@ -150,6 +174,12 @@
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
             return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+        }
+
+        [HttpGet]
+        public IActionResult AccountLocked(int failedCount)
+        {
+            return View(failedCount);
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
