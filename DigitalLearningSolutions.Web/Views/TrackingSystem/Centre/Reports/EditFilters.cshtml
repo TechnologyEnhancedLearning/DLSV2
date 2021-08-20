@@ -25,8 +25,12 @@
                                                    nameof(Model.JobGroupId),
                                                    nameof(Model.CourseCategoryId),
                                                    nameof(Model.CustomisationId),
-                                                   nameof(Model.StartDate),
-                                                   nameof(Model.EndDate),
+                                                   nameof(Model.StartDay),
+                                                   nameof(Model.StartMonth),
+                                                   nameof(Model.StartYear),
+                                                   nameof(Model.EndDay),
+                                                   nameof(Model.EndMonth),
+                                                   nameof(Model.EndYear),
                                                    nameof(Model.ReportInterval)
                                                  })" />
     }
@@ -59,6 +63,17 @@
                       css-class="nhsuk-u-width-one-half"
                       default-option="All"
                       select-list-options="@ViewBag.CustomisationOptions" />
+
+      <vc:date-range-input id="date-range"
+                     label="Reporting date range"
+                     start-day-id="StartDay"
+                     start-month-id="StartMonth"
+                     start-year-id="StartYear"
+                     end-day-id="EndDay"
+                     end-month-id="EndMonth"
+                     end-year-id="EndYear"
+                     css-class="date-range-css"
+                     hint-text="The reporting in your centre starts on @Model.DataStart.ToString("dd/MM/yyyy"). Please select any date range between that date and now." />
 
       <vc:select-list asp-for="ReportInterval"
                       label="Report by"

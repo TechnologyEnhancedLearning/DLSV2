@@ -8,8 +8,13 @@
         public int JobGroupId { get; set; }
         public int CourseCategoryId { get; set; }
         public int CustomisationId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public int? StartDay { get; set; }
+        public int? StartMonth { get; set; }
+        public int? StartYear { get; set; }
+        public int? EndDay { get; set; }
+        public int? EndMonth { get; set; }
+        public int? EndYear { get; set; }
         public ReportInterval ReportInterval { get; set; }
+        public DateTime DataStart { get; set; }
     }
 }
