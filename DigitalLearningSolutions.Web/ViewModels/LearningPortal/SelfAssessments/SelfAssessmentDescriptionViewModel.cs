@@ -13,8 +13,8 @@
         public readonly bool UnprocessedUpdates;
         public readonly bool LinearNavigation;
         public readonly bool IsSupervised;
-        public List<Supervisor> Supervisors { get; set; }
-        public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment, List<Supervisor> supervisors)
+        public List<SelfAssessmentSupervisor> Supervisors { get; set; }
+        public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment, List<SelfAssessmentSupervisor> supervisors)
         {
             Id = selfAssessment.Id;
             Name = selfAssessment.Name;

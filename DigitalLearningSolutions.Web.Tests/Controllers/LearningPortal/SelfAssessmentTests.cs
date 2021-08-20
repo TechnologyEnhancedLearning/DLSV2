@@ -21,7 +21,7 @@
         {
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
-            var supervisors = new List<Supervisor>();
+            var supervisors = new List<SelfAssessmentSupervisor>();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             var expectedModel = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
 

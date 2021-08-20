@@ -33,6 +33,7 @@
         //INSERT DATA
         int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
+        int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         //DELETE DATA
 
 
@@ -394,23 +395,27 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                     );
                     return -1;
                 }
-                existingId = (int)connection.ExecuteScalar(
+                existingId = InsertCandidateAssessmentSupervisor(delegateId, supervisorDelegateId, selfAssessmentId, selfAssessmentSupervisorRoleId);
+                return existingId;
+            }
+        }
+        public int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
+        {
+            int candidateAssessmentId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
                new { selfAssessmentId, delegateId });
-                if (existingId > 0)
-                {
-                    numberOfAffectedRows = connection.Execute(
-                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                            VALUES (@existingId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { existingId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
-                        );
-                }
-                return existingId;
+            if (candidateAssessmentId > 0)
+            {
+                int numberOfAffectedRows = connection.Execute(
+                    @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
+                            VALUES (@existingId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                    );
             }
+            return candidateAssessmentId;
         }
-
         public bool RemoveCandidateAssessment(int candidateAssessmentId)
         {
             var numberOfAffectedRows = connection.Execute(

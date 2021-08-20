@@ -4,9 +4,10 @@ using System.Text;
 
 namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 {
-    public class Supervisor
+    public class SelfAssessmentSupervisor
     {
         public int ID { get; set; }
+        public int SupervisorDelegateID { get; set; }
         public int? SupervisorAdminID { get; set; }
         public string SupervisorName { get; set; }
         public string SupervisorEmail { get; set; }

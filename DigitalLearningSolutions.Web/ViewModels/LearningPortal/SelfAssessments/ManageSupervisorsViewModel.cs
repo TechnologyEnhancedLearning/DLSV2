@@ -5,7 +5,7 @@
     public class ManageSupervisorsViewModel
     {
         public CurrentSelfAssessment SelfAssessment { get; set; }
-        public List<Supervisor> Supervisors { get; set; }
-        public List<Supervisor> SuggestedSupervisors { get; set; }
+        public List<SelfAssessmentSupervisor> Supervisors { get; set; }
+        public List<SelfAssessmentSupervisor> SuggestedSupervisors { get; set; }
     }
 }
