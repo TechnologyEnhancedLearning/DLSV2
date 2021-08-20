@@ -51,13 +51,22 @@
             string filterValueName =
                 CustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
 
-            return customPrompt.Options.Select(
+            var options = customPrompt.Options.Select(
                 x => new FilterOptionViewModel(
                     x,
                     filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator + x,
                     FilterStatus.Default
                 )
+            ).ToList();
+            options.Add(
+                new FilterOptionViewModel(
+                    "No option selected",
+                    filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator +
+                    FilteringHelper.EmptyValue,
+                    FilterStatus.Default
+                )
             );
+            return options;
         }
     }
 }

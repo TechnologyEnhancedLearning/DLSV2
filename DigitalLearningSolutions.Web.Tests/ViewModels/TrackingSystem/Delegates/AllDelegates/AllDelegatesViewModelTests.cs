@@ -24,29 +24,29 @@
         private readonly DelegateUserCard[] delegateUsers =
         {
             new DelegateUserCard
-                { FirstName = "a", LastName = "Surname" },
+                { FirstName = "a", LastName = "Surname", Answer4 = string.Empty },
             new DelegateUserCard
-                { FirstName = "b purple", LastName = "Surname" },
+                { FirstName = "b purple", LastName = "Surname", Answer4 = string.Empty },
             new DelegateUserCard
                 { FirstName = "c", LastName = "Surname" },
             new DelegateUserCard
                 { FirstName = "d purple", LastName = "Surname" },
             new DelegateUserCard
-                { FirstName = "e", LastName = "Surname" },
+                { FirstName = "e", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { FirstName = "f", LastName = "Surname" },
+                { FirstName = "f", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { FirstName = "g", LastName = "Surname" },
+                { FirstName = "g", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { FirstName = "h", LastName = "Surname" },
+                { FirstName = "h", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { FirstName = "i", LastName = "Surname" },
+                { FirstName = "i", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { FirstName = "j", LastName = "Surname" },
+                { FirstName = "j", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
                 { FirstName = "k", LastName = "Surname", DateRegistered = DateTime.Today },
             new DelegateUserCard
-                { FirstName = "l", LastName = "Surname" },
+                { FirstName = "l", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
                 { FirstName = "m", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard
@@ -165,6 +165,12 @@
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + "Non-Clinical",
                     FilterStatus.Default
+                ),
+                new FilterOptionViewModel(
+                    "No option selected",
+                    "Answer1" + FilteringHelper.Separator +
+                    "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
+                    FilterStatus.Default
                 )
             };
             var customPrompt4Options = new[]
@@ -185,6 +191,12 @@
                     "C 3",
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + "C 3",
+                    FilterStatus.Default
+                ),
+                new FilterOptionViewModel(
+                    "No option selected",
+                    "Answer4" + FilteringHelper.Separator +
+                    "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 )
             };
@@ -267,13 +279,38 @@
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
-                BaseSearchablePageViewModel.Descending,
+                BaseSearchablePageViewModel.Ascending,
                 "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2"
             );
 
             model.Delegates.Count().Should().Be(2);
             model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("m Surname");
             model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("n Surname");
+        }
+
+        [Test]
+        public void All_delegates_should_filter_delegates_correctly_by_empty_values()
+        {
+            var model = new AllDelegatesViewModel(
+                1,
+                delegateUsers,
+                new List<(int, string)>(),
+                customPromptHelper,
+                1,
+                null,
+                DelegateSortByOptions.RegistrationDate.PropertyName,
+                BaseSearchablePageViewModel.Ascending,
+                "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
+                FilteringHelper.EmptyValue
+            );
+
+            model.Delegates.Count().Should().Be(6);
+            model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("a Surname");
+            model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("b purple Surname");
+            model.Delegates.ToList()[2].DelegateInfo.Name.Should().Be("c Surname");
+            model.Delegates.ToList()[3].DelegateInfo.Name.Should().Be("d purple Surname");
+            model.Delegates.ToList()[4].DelegateInfo.Name.Should().Be("k Surname");
+            model.Delegates.ToList()[5].DelegateInfo.Name.Should().Be("o Surname");
         }
     }
 }

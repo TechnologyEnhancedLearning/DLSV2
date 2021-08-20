@@ -31,7 +31,9 @@
                         return new KeyValuePair<int, string>(
                             customField.CustomFieldId,
                             filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator +
-                            customField.Answer
+                            (string.IsNullOrEmpty(customField.Answer)
+                                ? FilteringHelper.EmptyValue.ToString()
+                                : customField.Answer)
                         );
                     }
                 ).ToDictionary(x => x.Key, x => x.Value);
