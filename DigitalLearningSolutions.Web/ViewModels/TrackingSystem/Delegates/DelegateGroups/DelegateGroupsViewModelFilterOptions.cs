@@ -47,9 +47,8 @@
             );
         }
 
-        // Centre registration prompts correspond to Groups.LinkedToField as follows:
-        // 1, 2 and 3 correspond to 1, 2 and 3 respectively
-        // 4, 5 and 6 correspond to 5, 6 and 7 respectively
+        // Centre registration prompts correspond to Groups.LinkedToField
+        // 4 is reserved for Job Group so we must skip it
         private static int GetLinkedFieldIdFromRegistrationPromptNumber(int promptNumber)
         {
             return promptNumber > 3 ? promptNumber + 1 : promptNumber;

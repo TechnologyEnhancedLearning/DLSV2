@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -40,13 +39,13 @@
             int page = 1
         )
         {
-            // Query parameter should take priority over cookie value
-            // We use this method to check for the query parameter rather 
-            // than filterBy != null as filterBy is set to null to clear 
-            // the filter string when javascript is off.
-            if (!Request.Query.ContainsKey(nameof(filterBy)))
+            if (filterBy == null && filterValue == null)
             {
                 filterBy = Request.Cookies[AdminFilterCookieName];
+            }
+            else if (filterBy != null && filterBy.ToUpper() == FilteringHelper.ClearString)
+            {
+                filterBy = null;
             }
 
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
@@ -64,21 +63,7 @@
                 page
             );
 
-            if (filterBy != null)
-            {
-                Response.Cookies.Append(
-                    AdminFilterCookieName,
-                    filterBy,
-                    new CookieOptions
-                    {
-                        Expires = CookieExpiry
-                    }
-                );
-            }
-            else
-            {
-                Response.Cookies.Delete(AdminFilterCookieName);
-            }
+            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
 
             return View(model);
         }

@@ -99,11 +99,10 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = null;
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string? filterBy = "CLEAR";
 
             // When
             var result = administratorController.Index(filterBy: filterBy);
@@ -111,7 +110,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+                .BeNull();
         }
 
         [Test]
@@ -120,7 +119,6 @@
             // Given
             const string? filterBy = null;
             const string? newFilterValue = "Role|IsCmsManager|true";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
             var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);

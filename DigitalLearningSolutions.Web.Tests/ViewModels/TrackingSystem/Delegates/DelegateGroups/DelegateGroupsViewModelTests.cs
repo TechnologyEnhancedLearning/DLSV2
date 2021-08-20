@@ -35,7 +35,7 @@
         public void DelegateGroupsViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
         {
             var model = new DelegateGroupsViewModel(
-                groups,
+                groups.ToList(),
                 new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
@@ -55,7 +55,7 @@
         public void DelegateGroupsViewModel_should_correctly_return_the_second_page_of_delegates()
         {
             var model = new DelegateGroupsViewModel(
-                groups,
+                groups.ToList(),
                 new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
@@ -99,7 +99,7 @@
 
             // When
             var model = new DelegateGroupsViewModel(
-                groups,
+                groups.ToList(),
                 new List<CustomPrompt>(),
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,

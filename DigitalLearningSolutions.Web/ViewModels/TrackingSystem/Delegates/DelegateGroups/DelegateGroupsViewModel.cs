@@ -10,7 +10,7 @@
     public class DelegateGroupsViewModel : BaseSearchablePageViewModel
     {
         public DelegateGroupsViewModel(
-            IEnumerable<Group> groups,
+            List<Group> groups,
             IEnumerable<CustomPrompt> registrationPrompts,
             string sortBy,
             string sortDirection,
@@ -18,7 +18,6 @@
             int page
         ) : base(null, page, true, sortBy, sortDirection, filterBy)
         {
-            groups = groups.ToList();
             var sortedItems = GenericSortingHelper.SortAllItems(
                 groups.AsQueryable(),
                 sortBy,
@@ -28,7 +27,6 @@
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-
             DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
 
             var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();

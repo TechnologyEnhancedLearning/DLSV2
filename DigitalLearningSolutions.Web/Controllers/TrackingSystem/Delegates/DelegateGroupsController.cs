@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -20,7 +19,6 @@
     public class DelegateGroupsController : Controller
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
         private readonly ICustomPromptsService customPromptsService;
         private readonly IGroupsDataService groupsDataService;
 
@@ -42,38 +40,31 @@
             int page = 1
         )
         {
-            // Query parameter should take priority over cookie value
-            // We use this method to check for the query parameter rather 
-            // than filterBy != null as filterBy is set to null to clear 
-            // the filter string when javascript is off.
-            if (!Request.Query.ContainsKey(nameof(filterBy)))
+            if (filterBy == null && filterValue == null)
             {
                 filterBy = Request.Cookies[DelegateGroupsFilterCookieName];
+            }
+            else if (filterBy != null && filterBy.ToUpper() == FilteringHelper.ClearString)
+            {
+                filterBy = null;
             }
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
             var centreId = User.GetCentreId();
-            var groups = groupsDataService.GetGroupsForCentre(centreId);
+            var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
 
             var model = new DelegateGroupsViewModel(
                 groups,
-                GetRegistrationPrompts(centreId),
+                GetRegistrationPromptsWithSetOptions(centreId),
                 sortBy,
                 sortDirection,
                 filterBy,
                 page
             );
 
-            if (filterBy != null)
-            {
-                SetFilterCookie(filterBy);
-            }
-            else
-            {
-                Response.Cookies.Delete(DelegateGroupsFilterCookieName);
-            }
+            Response.UpdateOrDeleteFilterCookie(DelegateGroupsFilterCookieName, filterBy);
 
             return View(model);
         }
@@ -84,7 +75,7 @@
             var centreId = User.GetCentreId();
             var groups = groupsDataService.GetGroupsForCentre(centreId);
 
-            var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPrompts(centreId));
+            var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 
             return View(model);
         }
@@ -124,22 +115,10 @@
             return View(model);
         }
 
-        private IEnumerable<CustomPrompt> GetRegistrationPrompts(int centreId)
+        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
             return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
-        }
-
-        private void SetFilterCookie(string? filterBy)
-        {
-            Response.Cookies.Append(
-                DelegateGroupsFilterCookieName,
-                filterBy,
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
         }
     }
 }

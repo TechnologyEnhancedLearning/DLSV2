@@ -142,11 +142,10 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = null;
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string? filterBy = "CLEAR";
 
             // When
             var result = delegateGroupsController.Index(filterBy: filterBy);
@@ -154,7 +153,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("DelegateGroupsFilter")).MustHaveHappened();
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+                .BeNull();
         }
 
         [Test]
@@ -163,7 +162,6 @@
             // Given
             const string? filterBy = null;
             const string? newFilterValue = "LinkedToField|LinkedToField|4";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
             var result = delegateGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
