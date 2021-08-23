@@ -10,9 +10,8 @@
     {
         public readonly IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups;
 
-        public AllDelegateGroupsViewModel(IEnumerable<Group> groups, IEnumerable<CustomPrompt> registrationPrompts)
+        public AllDelegateGroupsViewModel(List<Group> groups, IEnumerable<CustomPrompt> registrationPrompts)
         {
-            groups = groups.ToList();
             DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g));
 
             var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();

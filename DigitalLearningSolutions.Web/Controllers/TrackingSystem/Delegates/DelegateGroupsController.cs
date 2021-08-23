@@ -44,7 +44,7 @@
             {
                 filterBy = Request.Cookies[DelegateGroupsFilterCookieName];
             }
-            else if (filterBy != null && filterBy.ToUpper() == FilteringHelper.ClearString)
+            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {
                 filterBy = null;
             }
@@ -73,7 +73,7 @@
         public IActionResult AllDelegateGroups()
         {
             var centreId = User.GetCentreId();
-            var groups = groupsDataService.GetGroupsForCentre(centreId);
+            var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 

@@ -131,6 +131,23 @@
         }
 
         [Test]
+        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = null;
+            const string? newFilterValue = "Role|IsCmsManager|true";
+
+            // When
+            var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
+
+        [Test]
         public void UnlockAccount_returns_not_found_if_admin_to_unlock_does_not_exist()
         {
             // Given

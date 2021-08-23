@@ -43,7 +43,7 @@
             {
                 filterBy = Request.Cookies[AdminFilterCookieName];
             }
-            else if (filterBy != null && filterBy.ToUpper() == FilteringHelper.ClearString)
+            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {
                 filterBy = null;
             }

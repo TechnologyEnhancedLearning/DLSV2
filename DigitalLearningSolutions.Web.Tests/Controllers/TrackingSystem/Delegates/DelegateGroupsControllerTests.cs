@@ -172,5 +172,22 @@
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
         }
+
+        [Test]
+        public void Index_with_CLEAR_filterBy_and_new_filter_value_query_parameter_sets_cookie()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+            const string? newFilterValue = "LinkedToField|LinkedToField|4";
+
+            // When
+            var result = delegateGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("DelegateGroupsFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
     }
 }
