@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -9,7 +8,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -19,7 +17,6 @@
     public class CourseSetupController : Controller
     {
         private const string CourseFilterCookieName = "CourseFilter";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
@@ -45,19 +42,18 @@
             int page = 1
         )
         {
-            // Query parameter should take priority over cookie value
-            // We use this method to check for the query parameter rather 
-            // than filterBy != null as filterBy is set to null to clear 
-            // the filter string when javascript is off.
-            if (!Request.Query.ContainsKey(nameof(filterBy)))
+            if (filterBy == null && filterValue == null)
             {
                 filterBy = Request.Cookies[CourseFilterCookieName];
-
-                if (filterBy == null && filterValue == null)
+                if (filterBy == null)
                 {
                     // Only show Active courses by default
                     filterValue = CourseStatusFilterOptions.IsActive.FilterValue;
                 }
+            }
+            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
+            {
+                filterBy = null;
             }
 
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -81,14 +77,7 @@
                 page
             );
 
-            if (filterBy != null)
-            {
-                SetFilterCookie(filterBy);
-            }
-            else
-            {
-                Response.Cookies.Delete(CourseFilterCookieName);
-            }
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, filterBy);
 
             return View(model);
         }
@@ -105,18 +94,6 @@
 
             var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
             return View(model);
-        }
-
-        private void SetFilterCookie(string filterBy)
-        {
-            Response.Cookies.Append(
-                CourseFilterCookieName,
-                filterBy,
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
         }
     }
 }

@@ -19,7 +19,6 @@
             int page
         ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
         {
-            courses = courses.ToList();
             var sortedItems = GenericSortingHelper.SortAllItems(
                 courses.AsQueryable(),
                 sortBy,

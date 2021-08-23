@@ -44,12 +44,9 @@
         };
 
         private CourseSetupController controller = null!;
-        private IRequestCookieCollection cookieCollection = null!;
-
         private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
         private ICourseTopicsDataService courseTopicsDataService = null!;
-        private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
 
@@ -65,27 +62,13 @@
                 .Returns(categories);
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
 
-            // TODO: when 507 is merged, replace this with the new .WithMockHttpContextWithCookie controller extension method
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
             const string cookieName = "CourseFilter";
             const string cookieValue = "Status|Active|true";
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
-            A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
             controller = new CourseSetupController(courseService, courseCategoryDataService, courseTopicsDataService)
-                .WithMockHttpContext(httpContext)
+                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockTempData();
         }
@@ -117,11 +100,10 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = null;
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string? filterBy = "CLEAR";
 
             // When
             var result = controller.Index(filterBy: filterBy);
@@ -129,7 +111,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("CourseFilter")).MustHaveHappened();
             result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .Be(filterBy);
+                .BeNull();
         }
 
         [Test]
@@ -139,6 +121,23 @@
             const string? filterBy = null;
             const string? newFilterValue = "Status|HideInLearnerPortal|true";
             A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = controller.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
+
+        [Test]
+        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+            const string? newFilterValue = "Status|HideInLearnerPortal|true";
 
             // When
             var result = controller.Index(filterBy: filterBy, filterValue: newFilterValue);
