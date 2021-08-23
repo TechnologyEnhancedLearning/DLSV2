@@ -5,7 +5,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Remove admin field" : "Remove admin field";
+  ViewData["Title"] = errorHasOccurred ? "Error: Delete admin field" : "Delete admin field";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
@@ -44,7 +44,7 @@
     @if (Model.AnswerCount == 1) {
       <p class="nhsuk-body-m">An admin has responded to this field for @Model.AnswerCount delegate. Deleting the field will permanently delete their response.</p>
     } else {
-      <p class="nhsuk-body-m">Admins have responded to this field for @Model.AnswerCount delegates. Deleting the field will permanently delete all of their responses.</p>
+      <p class="nhsuk-body-m">Admins have responded to this field for @Model.AnswerCount delegates. Deleting the field will permanently delete their responses.</p>
     }
 
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveAdminField">
@@ -62,7 +62,7 @@
                 @if (Model.AnswerCount == 1) {
                   @:I am sure that I wish to delete this field and @Model.AnswerCount admin response
                 } else {
-                  @:I am sure that I wish to delete this field and all @Model.AnswerCount admin responses
+                  @:I am sure that I wish to delete this field and @Model.AnswerCount admin responses
                 }
               </label>
             </div>
