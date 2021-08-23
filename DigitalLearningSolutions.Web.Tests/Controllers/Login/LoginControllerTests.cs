@@ -523,7 +523,7 @@
         }
 
         [Test]
-        public async Task Admin_with_incorrect_password_increases_FailedLoginCount_and_returns_locked_view()
+        public async Task Admin_with_incorrect_password_increases_FailedLoginCount_and_returns_locked_view_when_new_count_results_in_locked_account()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
@@ -545,8 +545,6 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet());
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
