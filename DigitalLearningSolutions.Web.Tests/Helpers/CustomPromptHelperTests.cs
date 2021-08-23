@@ -228,10 +228,10 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
 
             // When
-            var result = customPromptHelper.GetClosedCustomPromptsForCentre(1);
+            var result = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(1);
 
             // Then
             result.Should().BeEquivalentTo(new List<CustomPrompt> { customPrompt1, customPrompt4 });

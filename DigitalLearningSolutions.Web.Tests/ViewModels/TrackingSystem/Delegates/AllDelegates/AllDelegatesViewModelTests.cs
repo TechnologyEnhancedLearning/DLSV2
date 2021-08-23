@@ -18,8 +18,8 @@
 
     public class AllDelegatesViewModelTests
     {
-        private readonly CustomPromptHelper customPromptHelper;
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly CentreCustomPromptHelper customPromptHelper;
+        private readonly ICentreCustomPromptsService customPromptsService;
 
         private readonly DelegateUserCard[] delegateUsers =
         {
@@ -57,8 +57,8 @@
 
         public AllDelegatesViewModelTests()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
-            customPromptHelper = new CustomPromptHelper(customPromptsService);
+            customPromptsService = A.Fake<ICentreCustomPromptsService>();
+            customPromptHelper = new CentreCustomPromptHelper(customPromptsService);
         }
 
         [Test]

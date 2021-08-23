@@ -56,7 +56,7 @@
         )
         {
             string filterValueName =
-                CustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
+                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
 
             var options = customPrompt.Options.Select(
                 x => new FilterOptionViewModel(

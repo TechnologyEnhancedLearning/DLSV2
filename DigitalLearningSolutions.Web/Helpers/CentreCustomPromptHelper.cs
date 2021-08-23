@@ -118,7 +118,7 @@
 
         public IEnumerable<CustomPrompt> GetClosedCustomPromptsForCentre(int centreId)
         {
-            return customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(customPrompt => customPrompt.Options.Count > 0);
         }
 

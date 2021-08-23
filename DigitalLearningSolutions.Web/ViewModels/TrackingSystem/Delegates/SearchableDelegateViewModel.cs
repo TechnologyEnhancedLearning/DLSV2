@@ -26,7 +26,7 @@
                     customField =>
                     {
                         string filterValueName =
-                            CustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
+                            CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
 
                         return new KeyValuePair<int, string>(
                             customField.CustomFieldId,
