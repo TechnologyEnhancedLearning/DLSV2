@@ -13,18 +13,14 @@
         <dt class="nhsuk-summary-list__key">
           Complete within
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CompleteWithinMonths
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CompleteWithinMonths" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
         <dt class="nhsuk-summary-list__key">
           Completion valid for
         </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CompletionValidFor
-        </dd>
+        <partial name="_SummaryFieldValue" model="@Model.CompletionValidFor" />
       </div>
 
       <div class="nhsuk-summary-list__row details-list-with-button__row">
@@ -50,7 +46,7 @@
           <dt class="nhsuk-summary-list__key">
             Course to refresh to
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.RefreshToCourseName"/>
+          <partial name="_SummaryFieldValue" model="Model.RefreshToCourseName" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">

@@ -13,9 +13,9 @@
     {
         private const int CentreId = 2;
         private const int AdminCategoryId = 0;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
-        private ICustomPromptsService customPromptsService = null!;
 
         [SetUp]
         public void Setup()
@@ -23,8 +23,8 @@
             courseDataService = A.Fake<ICourseDataService>();
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForCategoryId(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
-            customPromptsService = A.Fake<ICustomPromptsService>();
-            courseService = new CourseService(courseDataService, customPromptsService);
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+            courseService = new CourseService(courseDataService, courseAdminFieldsService);
         }
 
         [Test]
@@ -106,7 +106,7 @@
             // Then
             A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
-                () => customPromptsService.GetCustomPromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,
@@ -137,7 +137,7 @@
             // Then
             A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
-                () => customPromptsService.GetCustomPromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,

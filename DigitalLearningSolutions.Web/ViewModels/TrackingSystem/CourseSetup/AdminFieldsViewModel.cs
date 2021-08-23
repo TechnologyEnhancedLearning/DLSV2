@@ -10,7 +10,7 @@
         {
             CustomFields = customPrompts.Select(
                     cp =>
-                        new CourseCustomPromptManagementViewModel(
+                        new CourseAdminFieldManagementViewModel(
                             customisationId,
                             cp.CustomPromptNumber,
                             cp.CustomPromptText,
@@ -25,6 +25,6 @@
 
         public int CustomisationId { get; set; }
 
-        public List<CourseCustomPromptManagementViewModel> CustomFields { get; set; }
+        public List<CourseAdminFieldManagementViewModel> CustomFields { get; set; }
     }
 }

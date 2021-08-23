@@ -14,7 +14,7 @@
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            CustomPromptHelper customPromptHelper
+            CentreCustomPromptHelper customPromptHelper
         )
         {
             Delegates = delegateUserCards.Select(

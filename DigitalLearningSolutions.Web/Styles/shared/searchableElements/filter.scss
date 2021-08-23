@@ -1,4 +1,5 @@
 ﻿@import "common";
+@import "tags";
 
 .filter-dropdown {
   @extend .input-with-submit-button;
@@ -76,5 +77,5 @@
 }
 
 .card-filter-tag {
-  margin: 0 4px 4px 0;
+  @extend .card-tag;
 }

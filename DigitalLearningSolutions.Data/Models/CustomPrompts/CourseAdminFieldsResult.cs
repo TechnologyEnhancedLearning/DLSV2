@@ -1,11 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
-    using System;
-
-    public class CourseCustomPromptsResult
+    public class CourseAdminFieldsResult
     {
-        public int CustomisationId { get; set; }
-
         public string? CustomField1Prompt { get; set; }
         public string? CustomField1Options { get; set; }
         public bool CustomField1Mandatory { get; set; }

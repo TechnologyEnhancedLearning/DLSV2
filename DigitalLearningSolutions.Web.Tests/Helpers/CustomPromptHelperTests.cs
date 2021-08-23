@@ -17,14 +17,14 @@
         private const string Answer1 = "Answer1";
         private const string Answer2 = "Answer2";
         private const string Answer3 = "Answer3";
-        private CustomPromptHelper customPromptHelper = null!;
-        private ICustomPromptsService customPromptsService = null!;
+        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
 
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
-            customPromptHelper = new CustomPromptHelper(customPromptsService);
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreCustomPromptHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
         }
 
         [Test]
@@ -37,11 +37,20 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt2 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
-                customPromptHelper.GetEditCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                    1,
+                    Answer1,
+                    Answer2,
+                    null,
+                    null,
+                    null,
+                    null
+                );
 
             // Then
             using (new AssertionScope())
@@ -67,11 +76,12 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt2 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
-                customPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
+                centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, null, null, null, null);
 
             // Then
             using (new AssertionScope())
@@ -93,10 +103,11 @@
                 1
             );
             var modelState = new ModelStateDictionary();
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
-            customPromptHelper.ValidateCustomPrompts(1, null, Answer2, null, null, null, null, modelState);
+            centreCustomPromptHelper.ValidateCustomPrompts(1, null, Answer2, null, null, null, null, modelState);
 
             // Then
             modelState["Answer1"].Errors.Count.Should().Be(1);
@@ -116,10 +127,11 @@
                 1
             );
             var modelState = new ModelStateDictionary();
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
-            customPromptHelper.ValidateCustomPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
+            centreCustomPromptHelper.ValidateCustomPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
 
             // Then
             modelState[Answer1].Should().BeNull();
@@ -136,11 +148,12 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt3 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
-                customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                     1,
                     Answer1,
                     Answer2,
@@ -176,11 +189,20 @@
                 new List<CustomPrompt> { customPrompt1, customPrompt3 },
                 1
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1))
+                .Returns(centreCustomPrompts);
 
             // When
             var result =
-                customPromptHelper.GetCustomFieldViewModelsForCentre(1, Answer1, Answer2, Answer3, null, null, null);
+                centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
+                    1,
+                    Answer1,
+                    Answer2,
+                    Answer3,
+                    null,
+                    null,
+                    null
+                );
 
             // Then
             using (new AssertionScope())

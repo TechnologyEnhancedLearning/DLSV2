@@ -12,7 +12,7 @@
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             int page,
             string? searchString,
             string sortBy,
@@ -33,11 +33,12 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
-            var closedCustomPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+                    var customFields =
+                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
                     return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );

@@ -34,7 +34,7 @@
                 return View(model);
             }
 
-            string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
             try
             {

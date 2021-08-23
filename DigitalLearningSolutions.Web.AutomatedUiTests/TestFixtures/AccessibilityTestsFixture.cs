@@ -8,10 +8,11 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
     {
         internal readonly string BaseUrl;
         internal readonly IWebDriver Driver;
+        private readonly SeleniumServerFactory<TStartup> factory;
 
         public AccessibilityTestsFixture()
         {
-            var factory = new SeleniumServerFactory<TStartup>();
+            factory = new SeleniumServerFactory<TStartup>();
             BaseUrl = factory.RootUri;
             Driver = DriverHelper.CreateHeadlessChromeDriver();
         }
@@ -20,6 +21,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures
         {
             Driver.Quit();
             Driver.Dispose();
+            factory.Dispose();
         }
     }
 }

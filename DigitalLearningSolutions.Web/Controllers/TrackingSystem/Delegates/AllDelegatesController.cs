@@ -14,18 +14,18 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
-        private readonly CustomPromptHelper customPromptHelper;
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             IJobGroupsDataService jobGroupsDataService
         )
         {
             this.userDataService = userDataService;
-            this.customPromptHelper = customPromptHelper;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
@@ -49,7 +49,7 @@
                 centreId,
                 delegateUsers,
                 jobGroups,
-                customPromptHelper,
+                centreCustomPromptHelper,
                 page,
                 searchString,
                 sortBy,
@@ -66,7 +66,7 @@
             var centreId = User.GetCentreId();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, jobGroups, customPromptHelper);
+            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, jobGroups, centreCustomPromptHelper);
             return View(model);
         }
     }

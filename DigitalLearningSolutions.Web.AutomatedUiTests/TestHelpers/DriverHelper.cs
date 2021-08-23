@@ -16,6 +16,7 @@
         public static void FillTextInput(this IWebDriver driver, string inputId, string inputText)
         {
             var answer = driver.FindElement(By.Id(inputId));
+            answer.Clear();
             answer.SendKeys(inputText);
         }
 
