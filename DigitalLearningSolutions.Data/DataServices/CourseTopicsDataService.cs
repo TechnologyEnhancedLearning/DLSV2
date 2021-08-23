@@ -24,7 +24,7 @@
             return connection.Query<Topic>(
                 @"SELECT CourseTopicID, CourseTopic, Active
                     FROM CourseTopics
-                    WHERE ((CentreID = @CentreID) OR (CentreID = 0)) AND (Active = 1)
+                    WHERE (CentreID = @CentreID OR CentreID = 0) AND (Active = 1)
                     ORDER BY CourseTopic",
                 new { centreId }
             );

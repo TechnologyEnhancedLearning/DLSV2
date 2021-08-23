@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class AllDelegateGroupsViewModel : BaseJavaScriptFilterableViewModel
@@ -28,11 +29,7 @@
                     "Linked field",
                     DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
                 )
-            }.Select(
-                f => f.FilterOptions.Select(
-                    fo => new AppliedFilterViewModel(fo.DisplayText, f.FilterName, fo.FilterValue)
-                )
-            ).SelectMany(af => af).Distinct();
+            }.SelectAppliedFilterViewModels();
         }
     }
 }

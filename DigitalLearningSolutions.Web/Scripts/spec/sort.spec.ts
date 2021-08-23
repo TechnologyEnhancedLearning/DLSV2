@@ -344,7 +344,7 @@ describe('sortSearchableElements delegates groups', () => {
   });
 });
 
-describe('sortSearchableElements delegates groups', () => {
+describe('sortSearchableElements course setup', () => {
   beforeEach(() => {
     // Given
     global.document = new JSDOM(`
