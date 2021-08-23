@@ -67,14 +67,15 @@
                 return View("Index", model);
             }
 
-            if (adminUser != null && adminUser.IsLocked)
+            var (verifiedAdminUser, verifiedDelegateUsers) =
+                loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
+
+            if (adminUser != null && adminUser.IsLocked && verifiedDelegateUsers.Count == 0)
             {
                 userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
                 return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
             }
 
-            var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
             {
                 if (adminUser != null && verifiedAdminUser == null)
