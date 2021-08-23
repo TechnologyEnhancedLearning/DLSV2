@@ -45,7 +45,9 @@
             var courseInfoViewModels = courseService.GetAllCoursesForDelegate(delegateId, centreId)
                 .Select(x => new DelegateCourseInfoViewModel(x));
 
-            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
+            var tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
+            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels, tags);
+
             return View(model);
         }
     }
