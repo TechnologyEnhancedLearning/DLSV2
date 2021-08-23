@@ -51,6 +51,10 @@ export function getSortValue(
       return getElementText(searchableElement, 'category').toLocaleLowerCase();
     case 'Topic':
       return getElementText(searchableElement, 'topic').toLocaleLowerCase();
+    case 'DelegateCount':
+      return parseInt(getElementText(searchableElement, 'delegate-count'), 10);
+    case 'CoursesCount':
+      return parseInt(getElementText(searchableElement, 'courses-count'), 10);
     default:
       return '';
   }

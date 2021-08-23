@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
@@ -18,9 +19,7 @@
 
     public class RegistrationPromptsControllerTests
     {
-        private IRequestCookieCollection cookieCollection = null!;
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private HttpContext httpContext = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
@@ -37,22 +36,13 @@
                 .WithMockUser(true)
                 .WithMockTempData();
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("AddRegistrationPromptData", "AddRegistrationPromptData")
-            };
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey("AddRegistrationPromptData")).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
+            const string cookieName = "AddRegistrationPromptData";
+            const string cookieValue = "AddRegistrationPromptData";
 
             registrationPromptsControllerWithMockHttpContext =
                 new RegistrationPromptsController(centreCustomPromptsService, userDataService)
-                    .WithMockHttpContext(httpContext)
+                    .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
         }
