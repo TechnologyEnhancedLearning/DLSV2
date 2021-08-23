@@ -29,6 +29,13 @@
             DelegateActiveStatusFilterOptions.IsNotActive
         };
 
+        public static readonly IEnumerable<FilterOptionViewModel> RegistrationTypeOptions = new[]
+        {
+            DelegateRegistrationTypeFilterOptions.SelfRegistered,
+            DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal,
+            DelegateRegistrationTypeFilterOptions.RegisteredByCentre
+        };
+
         public static IEnumerable<FilterOptionViewModel> GetJobGroupOptions(
             IEnumerable<(int id, string name)> jobGroups
         )

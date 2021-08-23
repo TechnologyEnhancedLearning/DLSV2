@@ -63,6 +63,11 @@
                     "JobGroupId",
                     "Job Group",
                     AllDelegatesViewModelFilterOptions.GetJobGroupOptions(jobGroups)
+                ),
+                new FilterViewModel(
+                    "RegistrationType",
+                    "Registration Type",
+                    AllDelegatesViewModelFilterOptions.RegistrationTypeOptions
                 )
             };
             filters.AddRange(

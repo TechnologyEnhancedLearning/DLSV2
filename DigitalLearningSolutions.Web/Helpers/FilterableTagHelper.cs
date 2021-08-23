@@ -96,11 +96,9 @@
                 delegateUser.IsAdmin
                     ? new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin)
                     : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
-                delegateUser.SelfReg
-                    ? delegateUser.ExternalReg
-                        ? new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal)
-                        : new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.SelfRegistered)
-                    : new SearchableTagViewModel(DelegateRegistrationTypeFilterOptions.RegisteredByCentre)
+                new SearchableTagViewModel(
+                    DelegateRegistrationTypeFilterOptions.FromRegistrationType(delegateUser.RegistrationType)
+                )
             };
         }
     }

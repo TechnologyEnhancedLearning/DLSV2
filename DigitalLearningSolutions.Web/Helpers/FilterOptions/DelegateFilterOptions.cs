@@ -66,24 +66,33 @@
         private const string Group = "RegistrationType";
 
         public static readonly FilterOptionViewModel SelfRegistered = new FilterOptionViewModel(
-            "Self registered",
+            RegistrationType.SelfRegistered.DisplayText,
             Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            "SelfRegistered",
+            nameof(RegistrationType.SelfRegistered),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel SelfRegisteredExternal = new FilterOptionViewModel(
-            "Self registered (External)",
+            RegistrationType.SelfRegisteredExternal.DisplayText,
             Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            "SelfRegisteredExternal",
+            nameof(RegistrationType.SelfRegisteredExternal),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel RegisteredByCentre = new FilterOptionViewModel(
-            "Registered by centre",
+            RegistrationType.RegisteredByCentre.DisplayText,
             Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            "RegisteredByCentre",
+            nameof(RegistrationType.RegisteredByCentre),
             FilterStatus.Default
         );
+
+        public static FilterOptionViewModel FromRegistrationType(RegistrationType registrationType)
+        {
+            return Equals(registrationType, RegistrationType.SelfRegisteredExternal)
+                ? SelfRegisteredExternal
+                : Equals(registrationType, RegistrationType.SelfRegistered)
+                    ? SelfRegistered
+                    : RegisteredByCentre;
+        }
     }
 }
