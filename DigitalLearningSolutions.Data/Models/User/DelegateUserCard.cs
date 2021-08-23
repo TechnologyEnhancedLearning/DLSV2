@@ -10,5 +10,9 @@
         public int JobGroupId { get; set; }
         public bool IsPasswordSet => Password != null;
         public bool IsAdmin => AdminId.HasValue;
+
+        public RegistrationType RegistrationType => SelfReg
+            ? ExternalReg ? RegistrationType.SelfRegisteredExternal : RegistrationType.SelfRegistered
+            : RegistrationType.RegisteredByCentre;
     }
 }

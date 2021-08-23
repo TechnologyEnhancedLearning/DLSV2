@@ -18,11 +18,7 @@
 
         public List<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
 
-        public string RegStatusTagName =>
-            DelegateInfo.IsSelfReg
-                ? "Self registered" + (DelegateInfo.IsExternalReg ? " (External)" : "")
-                : "Registered by centre";
-
+        public string RegStatusTagName => DelegateInfo.RegistrationType;
         public string ActiveTagName => DelegateInfo.IsActive ? "Active" : "Inactive";
         public string PasswordTagName => DelegateInfo.IsPasswordSet ? "Password set" : "Password not set";
     }
