@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;

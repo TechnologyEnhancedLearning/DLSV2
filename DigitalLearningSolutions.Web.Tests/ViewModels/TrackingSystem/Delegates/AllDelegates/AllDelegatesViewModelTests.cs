@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;

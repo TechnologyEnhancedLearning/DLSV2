@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;

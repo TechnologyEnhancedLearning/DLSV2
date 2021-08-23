@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;

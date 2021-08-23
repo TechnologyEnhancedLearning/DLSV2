@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
     using System.Collections.Generic;
     using System.Linq;
