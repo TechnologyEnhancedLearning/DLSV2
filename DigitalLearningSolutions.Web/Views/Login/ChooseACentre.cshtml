@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@using DigitalLearningSolutions.Web.ViewModels.Login
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
@@ -44,17 +44,18 @@
               <span class="nhsuk-table-responsive__heading">Roles: </span>
               @if (centreRow.IsAdmin)
               {
-                <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+                <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag" aria-hidden="true">Admin</strong>
               }
               @if (centreRow.IsDelegate)
               {
-                <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+                <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag" aria-hidden="true">Delegate</strong>
               }
+              <span class="nhsuk-u-visually-hidden">@centreRow.TagString</span>
             </td>
             <td role="cell" class="nhsuk-table__cell choose-centre-td">
               <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
                  asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
-                Choose
+                Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
               </a>
             </td>
           </tr>
