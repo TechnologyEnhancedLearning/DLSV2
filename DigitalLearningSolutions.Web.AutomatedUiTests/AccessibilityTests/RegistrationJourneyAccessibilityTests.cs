@@ -81,7 +81,7 @@
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            welcomeEmailResult.Violations.Should().BeEmpty();
+            CheckWelcomeEmailViolations(welcomeEmailResult);
             summaryResult.Violations.Should().BeEmpty();
         }
 
@@ -121,9 +121,22 @@
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            welcomeEmailResult.Violations.Should().BeEmpty();
+            CheckWelcomeEmailViolations(welcomeEmailResult);
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
+        }
+
+        private static void CheckWelcomeEmailViolations(AxeResult welcomeEmailResult)
+        {
+            // Expect an axe violation caused by having an aria-expanded attribute on an input
+            // The target #ShouldSendEmail is an nhs-tested component so ignore this violation
+            welcomeEmailResult.Violations.Should().HaveCount(1);
+            var violation = welcomeEmailResult.Violations[0];
+
+            violation.Id.Should().Be("aria-allowed-attr");
+            violation.Nodes.Should().HaveCount(1);
+            violation.Nodes[0].Target.Should().HaveCount(1);
+            violation.Nodes[0].Target[0].Selector.Should().Be("#ShouldSendEmail");
         }
     }
 }

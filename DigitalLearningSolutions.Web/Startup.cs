@@ -171,8 +171,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
-            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
-            services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
+            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
+            services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
+            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
+            services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
@@ -181,7 +183,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
-            services.AddScoped<CustomPromptHelper>();
+            services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();

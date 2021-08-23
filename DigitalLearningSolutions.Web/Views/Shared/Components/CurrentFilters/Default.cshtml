@@ -1,10 +1,11 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model CurrentFiltersViewModel
 
 <div id="applied-filters" @(Model.AppliedFilters.Any() ? "" : "hidden")>
   <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Applied filters</label>
   <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-    <input type="hidden" name="filterBy" value="" />
+    <input type="hidden" name="filterBy" value="@FilteringHelper.ClearString" />
     <input type="hidden" name="searchString" value="@Model.SearchString" />
     <div class="applied-filter-container" id="applied-filter-container">
       @foreach (var filter in Model.AppliedFilters) {

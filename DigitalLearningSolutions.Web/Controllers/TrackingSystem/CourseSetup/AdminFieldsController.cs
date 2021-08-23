@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
@@ -24,11 +25,16 @@
         public const string BulkAction = "bulk";
         private const string EditPromptCookieName = "EditRegistrationPromptData";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
 
-        public AdminFieldsController(ICustomPromptsService customPromptsService)
+        public AdminFieldsController(
+            ICourseAdminFieldsService courseAdminFieldsService,
+            ICourseAdminFieldsDataService courseAdminFieldsDataService
+        )
         {
-            this.customPromptsService = customPromptsService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
+            this.courseAdminFieldsDataService = courseAdminFieldsDataService;
         }
 
         [HttpGet]
@@ -37,18 +43,18 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompts = customPromptsService.GetCustomPromptsForCourse(
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
                 customisationId,
                 centreId,
                 categoryId.Value
             );
 
-            if (courseCustomPrompts == null)
+            if (courseAdminFields == null)
             {
                 return NotFound();
             }
 
-            var model = new AdminFieldsViewModel(courseCustomPrompts.CourseAdminFields, customisationId);
+            var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
         }
 
@@ -67,16 +73,16 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseCustomPrompt = customPromptsService.GetCustomPromptsForCourse(
+            var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId,
                     centreId,
                     categoryId.Value
-                ).CourseAdminFields
+                ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
 
-            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseCustomPrompt, customisationId);
+            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseAdminField, customisationId);
 
             return View(model);
         }
@@ -140,11 +146,47 @@
             );
         }
 
+        [HttpGet]
+        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
+        public IActionResult RemoveAdminField(int customisationId, int promptNumber)
+        {
+            var answerCount =
+                courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
+
+            if (answerCount == 0)
+            {
+                return RemoveAdminFieldAndRedirect(customisationId, promptNumber);
+            }
+
+            var promptName =
+                courseAdminFieldsService.GetPromptName(customisationId, promptNumber);
+
+            var model = new RemoveAdminFieldViewModel(customisationId, promptName, answerCount);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
+        public IActionResult RemoveAdminField(int customisationId, int promptNumber, RemoveAdminFieldViewModel model)
+        {
+            if (!model.Confirm)
+            {
+                ModelState.AddModelError(
+                    nameof(RemoveAdminFieldViewModel.Confirm),
+                    "You must confirm before deleting this field"
+                );
+                return View(model);
+            }
+
+            return RemoveAdminFieldAndRedirect(customisationId, promptNumber);
+        }
+
         private IActionResult EditAdminFieldPostSave(EditAdminFieldViewModel model)
         {
             ModelState.ClearAllErrors();
 
-            customPromptsService.UpdateCustomPromptForCourse(
+            courseAdminFieldsService.UpdateCustomPromptForCourse(
                 model.CustomisationId,
                 model.PromptNumber,
                 model.Mandatory,
@@ -178,6 +220,12 @@
                 }
             );
             TempData.Set(data);
+        }
+
+        private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
+        {
+            courseAdminFieldsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
+            return RedirectToAction("AdminFields", new { customisationId });
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(

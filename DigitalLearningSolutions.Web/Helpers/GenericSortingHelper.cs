@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
@@ -87,5 +88,12 @@
     {
         public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(DelegateUserCard.SearchableName));
         public static readonly (string DisplayText, string PropertyName) RegistrationDate = ("Registration Date", nameof(DelegateUserCard.DateRegistered));
+    }
+
+    public static class DelegateGroupsSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(Group.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) NumberOfDelegates = ("Number of delegates", nameof(Group.DelegateCount));
+        public static readonly (string DisplayText, string PropertyName) NumberOfCourses = ("Number of courses", nameof(Group.CoursesCount));
     }
 }

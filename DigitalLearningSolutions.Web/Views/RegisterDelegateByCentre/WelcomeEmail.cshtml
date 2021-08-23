@@ -33,7 +33,7 @@
                  type="checkbox"
                  value="true"
                  aria-controls="@dateInputId"
-                 aria-expanded="@Model.ShouldSendEmail">
+                 aria-expanded="@(Model.ShouldSendEmail ? "true" : "false")">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="ShouldSendEmail">
             Send welcome email to registered delegate
           </label>
