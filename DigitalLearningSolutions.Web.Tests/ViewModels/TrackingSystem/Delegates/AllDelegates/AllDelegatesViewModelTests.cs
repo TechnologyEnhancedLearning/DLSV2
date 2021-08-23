@@ -140,6 +140,13 @@
                 )
             };
 
+            var registrationTypeOptions = new[]
+            {
+                DelegateRegistrationTypeFilterOptions.SelfRegistered,
+                DelegateRegistrationTypeFilterOptions.SelfRegisteredExternal,
+                DelegateRegistrationTypeFilterOptions.RegisteredByCentre,
+            };
+
             var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
                 1,
                 "First prompt",
@@ -207,6 +214,7 @@
                 new FilterViewModel("AdminStatus", "Admin Status", adminStatusOptions),
                 new FilterViewModel("ActiveStatus", "Active Status", activeStatusOptions),
                 new FilterViewModel("JobGroupId", "Job Group", jobGroupOptions),
+                new FilterViewModel("RegistrationType", "Registration Type", registrationTypeOptions),
                 new FilterViewModel("CustomPrompt1", "First prompt", customPrompt1Options),
                 new FilterViewModel("CustomPrompt4", "Fourth prompt", customPrompt4Options)
             }.AsEnumerable();
