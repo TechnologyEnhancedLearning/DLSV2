@@ -14,6 +14,7 @@
     [Route("TrackingSystem/Delegates/All")]
     public class AllDelegatesController : Controller
     {
+        private const string DelegateFilterCookieName = "DelegateFilter";
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
@@ -39,6 +40,15 @@
             string? filterValue = null
         )
         {
+            if (filterBy == null && filterValue == null)
+            {
+                filterBy = Request.Cookies[DelegateFilterCookieName];
+            }
+            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
+            {
+                filterBy = null;
+            }
+
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
@@ -56,6 +66,8 @@
                 sortDirection,
                 filterBy
             );
+
+            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, filterBy);
 
             return View(model);
         }
