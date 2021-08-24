@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -29,6 +30,7 @@
 
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
 
+        private IClockService clockService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
         private HttpRequest httpRequest = null!;
@@ -39,6 +41,7 @@
         {
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             groupsDataService = A.Fake<IGroupsDataService>();
+            clockService = A.Fake<IClockService>();
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
@@ -49,10 +52,15 @@
             const string cookieName = "DelegateGroupsFilter";
             const string cookieValue = "LinkedToField|LinkedToField|0";
 
-            delegateGroupsController = new DelegateGroupsController(groupsDataService, centreCustomPromptsService)
+            delegateGroupsController = new DelegateGroupsController(
+                    groupsDataService,
+                    centreCustomPromptsService,
+                    clockService
+                )
                 .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
-                .WithMockTempData(); ;
+                .WithMockServices()
+                .WithMockTempData();
         }
 
         [Test]
@@ -188,6 +196,122 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
+        }
+
+        [Test]
+        public void GroupDelegatesRemove_should_return_not_found_with_invalid_group_for_centre()
+        {
+            // Given
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void GroupDelegatesRemove_should_return_not_found_with_delegate_not_in_group()
+        {
+            // Given
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void GroupDelegatesRemovePost_should_return_not_found_with_invalid_group_for_centre()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void GroupDelegatesRemovePost_should_return_not_found_with_delegate_not_in_group()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void GroupDelegatesRemove_should_return_view_if_unconfirmed()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = false };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Then
+            result.Should().BeViewResult();
+            delegateGroupsController.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void GroupDelegatesRemove_should_not_call_remove_progress_if_unchecked()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = false };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+            ).MustNotHaveHappened();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
+        }
+
+        [Test]
+        public void GroupDelegatesRemove_should_call_remove_progress_if_checked()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+                .DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Then
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+                .MustHaveHappened();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }
     }
 }

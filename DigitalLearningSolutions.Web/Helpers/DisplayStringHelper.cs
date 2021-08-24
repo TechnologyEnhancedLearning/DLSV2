@@ -40,5 +40,10 @@
         {
             return numberOfMonths == 0 ? null : $"{numberOfMonths} month{(numberOfMonths == 1 ? string.Empty : "s")}";
         }
+
+        public static string GetDelegateNameString(string? firstName, string lastName)
+        {
+            return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
+        }
     }
 }
