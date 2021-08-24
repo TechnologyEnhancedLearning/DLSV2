@@ -1,13 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class GroupDelegatesRemoveViewModel
     {
         public GroupDelegatesRemoveViewModel() { }
 
-        public GroupDelegatesRemoveViewModel(DelegateUser delegateUser, string groupName, int groupId)
+        public GroupDelegatesRemoveViewModel(GroupDelegate delegateUser, string groupName, int groupId)
         {
             GroupId = groupId;
             GroupName = groupName;

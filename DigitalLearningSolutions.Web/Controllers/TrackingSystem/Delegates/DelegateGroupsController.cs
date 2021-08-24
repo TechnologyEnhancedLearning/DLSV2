@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
@@ -18,16 +17,13 @@
     {
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
-        private readonly IUserDataService userDataService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
-            IUserDataService userDataService,
             IClockService clockService
         )
         {
             this.groupsDataService = groupsDataService;
-            this.userDataService = userDataService;
             this.clockService = clockService;
         }
 
@@ -65,13 +61,14 @@
         {
             var centreId = User.GetCentreId();
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-            var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
-            if (delegateUser == null || groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
+            if (groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
             {
                 return NotFound();
             }
+
+            var delegateUser = groupDelegates.Single(gd => gd.DelegateId == delegateId);
 
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
 
@@ -82,6 +79,15 @@
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
         public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
         {
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+            if (groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
+            {
+                return NotFound();
+            }
+
             if (!model.ConfirmRemovalFromGroup)
             {
                 ModelState.AddModelError(

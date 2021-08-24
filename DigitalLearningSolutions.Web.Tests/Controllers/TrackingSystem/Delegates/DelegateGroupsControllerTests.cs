@@ -22,16 +22,14 @@
         private IClockService clockService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
-        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             groupsDataService = A.Fake<IGroupsDataService>();
-            userDataService = A.Fake<IUserDataService>();
             clockService = A.Fake<IClockService>();
 
-            delegateGroupsController = new DelegateGroupsController(groupsDataService, userDataService, clockService)
+            delegateGroupsController = new DelegateGroupsController(groupsDataService, clockService)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }
@@ -101,21 +99,6 @@
         {
             // Given
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(UserTestHelper.GetDefaultDelegateUser());
-
-            // When
-            var result = delegateGroupsController.GroupDelegatesRemove(1, 2);
-
-            // Them
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void GroupDelegatesRemove_should_return_not_found_with_invalid_delegate_id()
-        {
-            // Given
-            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(null);
 
             // When
             var result = delegateGroupsController.GroupDelegatesRemove(1, 2);
@@ -129,7 +112,6 @@
         {
             // Given
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => userDataService.GetDelegateUserById(2)).Returns(UserTestHelper.GetDefaultDelegateUser());
             A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
 
             // When
@@ -140,10 +122,41 @@
         }
 
         [Test]
+        public void GroupDelegatesRemovePost_should_return_not_found_with_invalid_group_for_centre()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void GroupDelegatesRemovePost_should_return_not_found_with_delegate_not_in_group()
+        {
+            // Given
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
+
+            // When
+            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+
+            // Them
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
         public void GroupDelegatesRemove_should_return_view_if_unconfirmed()
         {
             // Given
             var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = false };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>{new GroupDelegate{DelegateId = 2}});
 
             // When
             var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
@@ -158,6 +171,8 @@
         {
             // Given
             var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = false};
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
 
             // When
@@ -174,6 +189,8 @@
         {
             // Given
             var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
             A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._)).DoesNothing();
 
