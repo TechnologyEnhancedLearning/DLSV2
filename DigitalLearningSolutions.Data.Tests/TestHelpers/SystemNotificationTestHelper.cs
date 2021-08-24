@@ -25,9 +25,7 @@
             );
         }
 
-        public void CreateNewSystemNotification(
-            SystemNotification notification
-        )
+        public void CreateNewSystemNotification(SystemNotification notification)
         {
             connection.Execute(
                 @"SET IDENTITY_INSERT dbo.SANotifications ON
@@ -36,8 +34,12 @@
                     SET IDENTITY_INSERT dbo.SANotifications OFF",
                 new
                 {
-                    notification.SystemNotificationId, notification.SubjectLine, notification.BodyHtml,
-                    notification.ExpiryDate, notification.DateAdded, notification.TargetUserRoleId
+                    notification.SystemNotificationId,
+                    notification.SubjectLine,
+                    notification.BodyHtml,
+                    notification.ExpiryDate,
+                    notification.DateAdded,
+                    notification.TargetUserRoleId
                 }
             );
         }
