@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-panel card-with-buttons" id="@Model.CustomisationId-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CustomisationId-name" name="name">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CustomisationId-name" name="course-name">
         @Model.CourseName
       </span>
     </summary>
@@ -17,8 +17,17 @@
           <dt class="nhsuk-summary-list__key">
             Category
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
             @Model.CategoryName
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Topic
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.TopicFilter">
+            @Model.CourseTopic
           </dd>
         </div>
 
@@ -35,7 +44,7 @@
           <dt class="nhsuk-summary-list__key">
             Total delegates
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" name="delegate-count">
             @Model.DelegateCount
           </dd>
         </div>
@@ -44,7 +53,7 @@
           <dt class="nhsuk-summary-list__key">
             In progress
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" name="in-progress-count">
             @Model.InProgressCount
           </dd>
         </div>

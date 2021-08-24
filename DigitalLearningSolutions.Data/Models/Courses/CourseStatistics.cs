@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class CourseStatistics
+    public class CourseStatistics : BaseSearchableItem
     {
         public int CustomisationId { get; set; }
         public int CentreId { get; set; }
@@ -17,11 +17,19 @@
         public int AttemptsPassed { get; set; }
         public bool HideInLearnerPortal { get; set; }
         public string CategoryName { get; set; }
+        public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
 
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName
             : ApplicationName + " - " + CustomisationName;
+
         public double PassRate => AllAttempts == 0 ? 0 : Math.Round(100 * AttemptsPassed / (double)AllAttempts);
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? CourseName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

@@ -35,6 +35,7 @@
                 GroupDescription = null,
                 DelegateCount = 1,
                 CoursesCount = 0,
+                AddedByAdminId = 1,
                 AddedByFirstName = "Kevin",
                 AddedByLastName = "Whittaker (Developer)",
                 LinkedToField = 4,

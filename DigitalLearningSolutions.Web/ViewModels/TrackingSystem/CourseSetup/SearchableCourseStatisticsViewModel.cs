@@ -14,6 +14,7 @@
             InProgressCount = courseStatistics.InProgressCount;
             CourseName = courseStatistics.CourseName;
             CategoryName = courseStatistics.CategoryName;
+            CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseStatistics(courseStatistics);
         }
@@ -23,7 +24,16 @@
         public int InProgressCount { get; set; }
         public string CourseName { get; set; }
         public string CategoryName { get; set; }
+        public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
+
+        public string CategoryFilter => nameof(CourseStatistics.CategoryName) + FilteringHelper.Separator +
+                                        nameof(CourseStatistics.CategoryName) +
+                                        FilteringHelper.Separator + CategoryName;
+
+        public string TopicFilter => nameof(CourseStatistics.CourseTopic) + FilteringHelper.Separator +
+                                     nameof(CourseStatistics.CourseTopic) +
+                                     FilteringHelper.Separator + CourseTopic;
 
         public string EmailHref => GenerateEmailHref();
 
