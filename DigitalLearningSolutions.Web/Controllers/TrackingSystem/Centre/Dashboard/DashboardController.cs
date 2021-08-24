@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
@@ -17,6 +18,7 @@
         private readonly ICentresDataService centresDataService;
         private readonly ICentresService centresService;
         private readonly ICourseDataService courseDataService;
+        private readonly ISystemNotificationsDataService systemNotificationsDataService;
         private readonly ISupportTicketDataService ticketDataService;
         private readonly IUserDataService userDataService;
 
@@ -25,7 +27,8 @@
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
             ISupportTicketDataService ticketDataService,
-            ICentresService centresService
+            ICentresService centresService,
+            ISystemNotificationsDataService systemNotificationsDataService
         )
         {
             this.userDataService = userDataService;
@@ -33,11 +36,21 @@
             this.courseDataService = courseDataService;
             this.ticketDataService = ticketDataService;
             this.centresService = centresService;
+            this.systemNotificationsDataService = systemNotificationsDataService;
         }
 
         public IActionResult Index()
         {
-            var adminUser = userDataService.GetAdminUserById(User.GetAdminId()!.Value)!;
+            var adminId = User.GetAdminId()!.Value;
+            var unacknowledgedNotifications =
+                systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
+
+            if (!HasSkippedNotificationsCookie(adminId) && unacknowledgedNotifications.Any())
+            {
+                return RedirectToAction("Index", "SystemNotifications");
+            }
+
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
             var centreId = User.GetCentreId();
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
@@ -56,10 +69,21 @@
                 courseCount,
                 adminCount,
                 supportTicketCount,
-                centreRank
+                centreRank,
+                unacknowledgedNotifications.Count
             );
 
             return View(model);
+        }
+
+        private bool HasSkippedNotificationsCookie(int adminId)
+        {
+            if (Request.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName))
+            {
+                return Request.Cookies[SystemNotificationCookieHelper.CookieName] == adminId.ToString();
+            }
+
+            return false;
         }
     }
 }

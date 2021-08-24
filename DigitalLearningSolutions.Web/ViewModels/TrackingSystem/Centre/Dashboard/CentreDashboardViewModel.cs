@@ -4,8 +4,7 @@
 
     public class CentreDashboardViewModel
     {
-        public CentreDashboardViewModel
-        (
+        public CentreDashboardViewModel(
             Centre centre,
             string? firstName,
             string? categoryName,
@@ -14,7 +13,8 @@
             int courses,
             int admins,
             int supportTickets,
-            int? centreRank
+            int? centreRank,
+            int unacknowledgedNotifications
         )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress, centreRank);
@@ -24,6 +24,8 @@
             NumberOfCourses = courses;
             NumberOfAdmins = admins;
             NumberOfSupportTickets = supportTickets;
+            ViewNotificationsButtonText = "View " + unacknowledgedNotifications + " notification" +
+                                          (unacknowledgedNotifications == 1 ? "" : "s");
         }
 
         public string FirstName { get; set; }
@@ -39,5 +41,7 @@
         public int NumberOfSupportTickets { get; set; }
 
         public DashboardCentreDetailsViewModel CentreDetails { get; set; }
+
+        public string ViewNotificationsButtonText { get; set; }
     }
 }

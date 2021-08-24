@@ -1,0 +1,68 @@
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre
+{
+    using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
+
+    [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
+    [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [Route("/TrackingSystem/Centre/SystemNotifications")]
+    public class SystemNotificationsController : Controller
+    {
+        private readonly IClockService clockService;
+        private readonly ISystemNotificationsDataService systemNotificationsDataService;
+
+        public SystemNotificationsController(
+            ISystemNotificationsDataService systemNotificationsDataService,
+            IClockService clockService
+        )
+        {
+            this.systemNotificationsDataService = systemNotificationsDataService;
+            this.clockService = clockService;
+        }
+
+        [HttpGet]
+        [Route("{page:int=1}")]
+        public IActionResult Index(int page = 1)
+        {
+            var adminId = User.GetAdminId()!.Value;
+            var unacknowledgedNotifications =
+                systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
+            var model = new SystemNotificationsViewModel(unacknowledgedNotifications, page);
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("SkipNotifications")]
+        public IActionResult SkipNotifications()
+        {
+            var adminId = User.GetAdminId()!.Value;
+            SetSkipSystemNotificationCookie(adminId);
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        [HttpPost]
+        [Route("{page:int=1}")]
+        public IActionResult AcknowledgeNotification(int systemNotificationId, int page)
+        {
+            var adminId = User.GetAdminId()!;
+            systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId.Value);
+            return RedirectToAction("Index", "SystemNotifications", new { page });
+        }
+
+        private void SetSkipSystemNotificationCookie(int adminId)
+        {
+            var expiry = clockService.UtcNow.AddHours(SystemNotificationCookieHelper.CookieExpiryHours);
+            Response.Cookies.Append(SystemNotificationCookieHelper.CookieName, adminId.ToString(), new CookieOptions
+            {
+                Expires = expiry
+            });
+        }
+    }
+}
