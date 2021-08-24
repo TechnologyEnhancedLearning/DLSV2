@@ -1,0 +1,11 @@
+﻿@import '../../shared/searchableElements/searchableElements';
+@import '../../shared/headingButtons';
+
+.course-dropdown {
+  @extend .input-with-submit-button;
+  width: 63%;
+
+  @include mq($from: $xl-desktop) {
+    width: 80%;
+  }
+}

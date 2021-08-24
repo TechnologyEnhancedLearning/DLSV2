@@ -1,0 +1,23 @@
+﻿namespace DigitalLearningSolutions.Data.Models.CourseDelegates
+{
+    using System;
+
+    public class CourseDelegate
+    {
+        public int DelegateId { get; set; }
+        public string CandidateNumber { get; set; }
+        public string? FirstName { get; set; }
+        public string LastName { get; set; }
+        public string? EmailAddress { get; set; }
+        public bool Active { get; set; }
+        public int ProgressId { get; set; }
+        public bool Locked { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public DateTime Enrolled { get; set; }
+        public DateTime? CompleteBy { get; set; }
+
+        public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
+
+        public string TitleName => FullName + (string.IsNullOrEmpty(EmailAddress) ? "" : $" ({EmailAddress})");
+    }
+}

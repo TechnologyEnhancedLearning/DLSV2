@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
+        IEnumerable<Course> GetCoursesAtCentreForCategoryId(int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -297,6 +298,23 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
+        }
+
+        public IEnumerable<Course> GetCoursesAtCentreForCategoryId(int centreId, int categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        a.ApplicationName,
+                        c.CustomisationName
+                    FROM Customisations AS c
+                    JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                    WHERE (CentreID = @centreId OR CentreID = 0)
+	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
+                new { centreId, categoryId }
+            );
         }
     }
 }

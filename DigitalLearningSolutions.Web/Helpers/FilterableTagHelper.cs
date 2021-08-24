@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using FluentMigrator.Runner.Extensions;
 
     public static class FilterableTagHelper
     {
@@ -76,6 +78,31 @@
             else
             {
                 tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal));
+            }
+
+            return tags;
+        }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseDelegate(CourseDelegate courseDelegate)
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            if (courseDelegate.Active)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Active));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Inactive));
+            }
+
+            if (courseDelegate.Locked)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.Locked));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.NotLocked, true));
             }
 
             return tags;
