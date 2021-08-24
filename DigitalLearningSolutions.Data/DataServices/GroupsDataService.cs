@@ -17,7 +17,7 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        void RemoveRelateProgressRecordsForDelegate(int groupId, int delegateId, DateTime removedDate);
+        void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
     }
@@ -122,7 +122,7 @@
             ).SingleOrDefault();
         }
 
-        public void RemoveRelateProgressRecordsForDelegate(int groupId, int delegateId, DateTime removedDate)
+        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
             connection.Execute(
                 @"UPDATE Progress
@@ -133,10 +133,11 @@
                           (SELECT ProgressID
                             FROM Progress AS P
                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                            WHERE (p.Completed IS NULL) AND (p.EnrollmentMethodID  = 3)
-                              AND (GC.GroupID = @groupId)
-                              AND (p.CandidateID = @delegateId)
-                              AND (P.RemovedDate IS NULL))",
+                            WHERE p.Completed IS NULL
+                                AND p.EnrollmentMethodID  = 3
+                                AND GC.GroupID = @groupId
+                                AND p.CandidateID = @delegateId
+                                AND P.RemovedDate IS NULL)",
                 new {groupId, delegateId, removedDate}
             );
         }

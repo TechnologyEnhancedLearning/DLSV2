@@ -20,7 +20,7 @@
 
         public string DelegateName { get; set; }
 
-        public bool Confirm { get; set; }
+        public bool ConfirmRemovalFromGroup { get; set; }
 
         public bool RemoveProgress { get; set; }
     }

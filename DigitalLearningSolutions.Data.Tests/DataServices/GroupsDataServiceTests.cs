@@ -133,7 +133,7 @@
         }
 
         [Test]
-        public async Task RemoveRelateProgressRecordsForDelegate_updates_progress_record()
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_updates_progress_record()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -143,7 +143,7 @@
                 const int delegateId = 245969;
 
                 // When
-                groupsDataService.RemoveRelateProgressRecordsForDelegate(5, delegateId, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate);
                 var progressFields = await connection.GetProgressRemovedFields(285146);
 
                 // Then

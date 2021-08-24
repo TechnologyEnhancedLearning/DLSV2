@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
@@ -62,8 +64,14 @@
         public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId)!;
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
+
+            if (delegateUser == null || groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
+            {
+                return NotFound();
+            }
 
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
 
@@ -74,22 +82,24 @@
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
         public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
         {
-            if (!model.Confirm)
+            if (!model.ConfirmRemovalFromGroup)
             {
                 ModelState.AddModelError(
-                    nameof(GroupDelegatesRemoveViewModel.Confirm),
+                    nameof(GroupDelegatesRemoveViewModel.ConfirmRemovalFromGroup),
                     "You must confirm before removing this user from the group"
                 );
                 return View(model);
             }
 
+            using var transaction = new TransactionScope();
             if (model.RemoveProgress)
             {
                 var currentDate = clockService.UtcNow;
-                groupsDataService.RemoveRelateProgressRecordsForDelegate(groupId, delegateId, currentDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, currentDate);
             }
 
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
+            transaction.Complete();
 
             return RedirectToAction("GroupDelegates", new { groupId });
         }
@@ -104,6 +114,7 @@
             {
                 return NotFound();
             }
+
             var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
