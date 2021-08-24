@@ -1,4 +1,7 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("DigitalLearningSolutions.Data.Tests")]
+namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
@@ -15,8 +18,6 @@
     public interface IDelegateUploadFileService
     {
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate = null);
-        public BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate = null);
-        public IXLTable OpenDelegatesTable(IFormFile file);
     }
 
     public class DelegateUploadFileService : IDelegateUploadFileService
@@ -45,7 +46,7 @@
             return ProcessDelegatesTable(table, centreId, welcomeEmailDate);
         }
 
-        public IXLTable OpenDelegatesTable(IFormFile file)
+        internal IXLTable OpenDelegatesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
             var worksheet = workbook.Worksheet(DelegateDownloadFileService.DelegatesSheetName);
@@ -59,7 +60,7 @@
             return table;
         }
 
-        public BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate)
+        internal BulkUploadResult ProcessDelegatesTable(IXLTable table, int centreId, DateTime? welcomeEmailDate = null)
         {
             var jobGroupIds = jobGroupsDataService.GetJobGroupsAlphabetical().Select(item => item.id).ToList();
             var delegateRows = table.Rows().Skip(1).Select(row => new DelegateTableRow(table, row)).ToList();

@@ -18,12 +18,16 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
+    // Note that all tests in this file test the internal methods of DelegateUploadFileService
+    // so that we don't have to have several Excel files to test each case via the public interface.
+    // This is achieved via the InternalsVisibleTo attribute in DelegateUploadFileService.cs
+    // https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.internalsvisibletoattribute?view=netcore-3.1
     public class DelegateUploadFileServiceTests
     {
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
         
-        private IDelegateUploadFileService delegateUploadFileService = null!;
+        private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IUserDataService userDataService = null!;
