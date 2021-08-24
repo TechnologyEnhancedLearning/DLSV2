@@ -134,7 +134,7 @@
         public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
         {
             // Given
-            const string? filterBy = null;
+            const string? filterBy = "CLEAR";
             const string? newFilterValue = "Role|IsCmsManager|true";
 
             // When

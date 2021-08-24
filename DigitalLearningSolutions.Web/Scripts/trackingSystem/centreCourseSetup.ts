@@ -1,3 +1,8 @@
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+
+// eslint-disable-next-line no-new
+new SearchSortFilterAndPaginate('TrackingSystem/CourseSetup/AllCourseStatistics', true, 'CourseFilter');
+
 const copyCourseLinkClass = 'copy-course-button';
 const copyLinkIdPrefix = 'copy-course-';
 const launchCourseButtonIdPrefix = 'launch-course-';
