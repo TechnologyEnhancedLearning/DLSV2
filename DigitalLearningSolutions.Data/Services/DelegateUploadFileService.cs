@@ -102,29 +102,21 @@
                 return;
             }
 
-            // At this point if both delegateUserByCandidateNumber and delegateUserByAliasId are not null
-            // then they refer to the same delegate record. Only need to update once.
-            if (delegateUserByCandidateNumber != null)
+            var userToUpdate = delegateUserByCandidateNumber ?? delegateUserByAliasId;
+            if (userToUpdate == null)
             {
-                ProcessPotentialUpdate(centreId, delegateRow, delegateUserByCandidateNumber);
-                return;
-            }
+                if (!userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                {
+                    delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
+                    return;
+                }
 
-            if (delegateUserByAliasId != null)
+                RegisterDelegate(delegateRow, welcomeEmailDate, centreId);
+            }
+            else
             {
-                ProcessPotentialUpdate(centreId, delegateRow, delegateUserByAliasId);
-                return;
+                ProcessPotentialUpdate(centreId, delegateRow, userToUpdate);
             }
-
-            // At this point both delegateUserByCandidateNumber and delegateUserByAliasId must be null
-            // as we would have hit one of the 2 previous conditions, so attempt to register.
-            if (!userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
-            {
-                delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
-                return;
-            }
-
-            RegisterDelegate(delegateRow, welcomeEmailDate, centreId);
         }
 
         private DelegateUser? GetDelegateUserByCandidateNumberOrDefault(int centreId, string? candidateNumber)
@@ -179,7 +171,7 @@
             delegateRow.RowStatus = RowStatus.Updated;
         }
 
-        private bool RecordNeedsUpdating(DelegateUser delegateUser, DelegateTableRow delegateRow)
+        private static bool RecordNeedsUpdating(DelegateUser delegateUser, DelegateTableRow delegateRow)
         {
             if (delegateRow.CandidateNumber != null && (delegateUser.AliasId ?? string.Empty) != delegateRow.AliasId)
             {
@@ -236,12 +228,7 @@
                 return true;
             }
 
-            if ((delegateUser.EmailAddress ?? string.Empty) != delegateRow.Email)
-            {
-                return true;
-            }
-
-            return false;
+            return (delegateUser.EmailAddress ?? string.Empty) != delegateRow.Email;
         }
 
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)

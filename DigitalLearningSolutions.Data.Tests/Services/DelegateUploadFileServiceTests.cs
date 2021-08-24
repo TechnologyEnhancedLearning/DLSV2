@@ -207,7 +207,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
         [Test]
         public void
-            ProcessDelegateTable_has_alias_in_use_error_if_delegateId_and_aliasId_provided_but_alias_id_matches_different_user()
+            ProcessDelegateTable_has_alias_in_use_error_if_alias_id_matches_different_user()
         {
             // Given
             const string delegateId = "DELEGATE";

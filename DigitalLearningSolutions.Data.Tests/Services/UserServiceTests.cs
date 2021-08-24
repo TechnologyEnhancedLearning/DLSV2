@@ -458,5 +458,53 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
         }
+
+        [Test]
+        public void IsEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
+
+            // When
+            var result = userService.IsEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsEmailValidForCentre_should_return_true_if_user__not_at_centre_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 4) });
+
+            // When
+            var result = userService.IsEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsEmailValidForCentre_should_return_true_if_no_user_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser>());
+
+            // When
+            var result = userService.IsEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeTrue();
+        }
     }
 }
