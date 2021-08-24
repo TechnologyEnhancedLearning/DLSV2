@@ -108,14 +108,13 @@
             var centreId = User.GetCentreId();
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
-            if (groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
+            if (groupName == null || delegateUser == null)
             {
                 return NotFound();
             }
-
-            var delegateUser = groupDelegates.Single(gd => gd.DelegateId == delegateId);
-
+            
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
 
             return View(model);
@@ -128,8 +127,9 @@
             var centreId = User.GetCentreId();
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
-            if (groupName == null || groupDelegates.All(gd => gd.DelegateId != delegateId))
+            if (groupName == null || delegateUser == null)
             {
                 return NotFound();
             }
