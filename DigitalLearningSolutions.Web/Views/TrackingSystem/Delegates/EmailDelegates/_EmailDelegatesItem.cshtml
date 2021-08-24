@@ -1,0 +1,12 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
+@model EmailDelegatesItemViewModel
+
+<div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
+  <input class="nhsuk-checkboxes__input" id="@Model.Id-checkbox" type="checkbox" name="SendWelcomeEmail">
+  <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id-checkbox">
+    @Model.Name (@Model.Email)
+  </label>
+  <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-hint">
+    Registered on @Model.RegistrationDate
+  </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
+@using Microsoft.Extensions.Configuration
+@model EmailDelegatesViewModel
+
+@{
+  ViewData["Title"] = "Send welcome messages";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
+
+    <span class="nhsuk-body-l">Select delegates to send email to</span>
+
+    @if (!Model.Delegates.Any()) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No delegates found.</b>
+      </p>
+    } else {
+      <form method="post" asp-action="Index">
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <div class="nhsuk-checkboxes">
+              @foreach (var delegateModel in Model.Delegates) {
+                <partial name="_EmailDelegatesItem" model="delegateModel" />
+              }
+            </div>
+          </fieldset>
+        </div>
+        <button class="nhsuk-button" type="submit">Send welcome emails</button>
+      </form>
+    }
+
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+  </div>
+</div>
