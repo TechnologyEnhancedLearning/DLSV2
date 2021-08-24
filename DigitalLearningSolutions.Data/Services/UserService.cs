@@ -28,6 +28,8 @@ namespace DigitalLearningSolutions.Data.Services
         UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password);
+
+        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
     }
 
     public class UserService : IUserService
@@ -197,6 +199,14 @@ namespace DigitalLearningSolutions.Data.Services
             var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             return verifiedLinkedUsersAccounts.Any();
+        }
+
+        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
+        {
+            return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
+                user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
+                        !string.IsNullOrEmpty(user.EmailAddress)
+            );
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)
