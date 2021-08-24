@@ -65,7 +65,7 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "CourseFilter";
-            const string cookieValue = "Status|Active|true";
+            const string cookieValue = "Status|Active|false";
 
             controller = new CourseSetupController(courseService, courseCategoryDataService, courseTopicsDataService)
                 .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
@@ -81,7 +81,7 @@
 
             // Then
             result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .Be("Status|Active|true");
+                .Be("Status|Active|false");
         }
 
         [Test]
@@ -103,7 +103,7 @@
         public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string filterBy = "CLEAR";
 
             // When
             var result = controller.Index(filterBy: filterBy);
@@ -115,11 +115,11 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        public void Index_with_null_filterBy_and_new_filter_query_parameter_adds_new_cookie_value()
         {
             // Given
             const string? filterBy = null;
-            const string? newFilterValue = "Status|HideInLearnerPortal|true";
+            const string newFilterValue = "Status|HideInLearnerPortal|true";
             A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
@@ -136,8 +136,8 @@
         public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
         {
             // Given
-            const string? filterBy = "CLEAR";
-            const string? newFilterValue = "Status|HideInLearnerPortal|true";
+            const string filterBy = "CLEAR";
+            const string newFilterValue = "Status|HideInLearnerPortal|true";
 
             // When
             var result = controller.Index(filterBy: filterBy, filterValue: newFilterValue);
@@ -147,6 +147,26 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
+        }
+
+        [Test]
+        public void Index_with_no_filtering_should_default_to_Active_courses()
+        {
+            // Given
+            var controllerWithNoCookies = new CourseSetupController(
+                    courseService,
+                    courseCategoryDataService,
+                    courseTopicsDataService
+                )
+                .WithDefaultContext()
+                .WithMockUser(true);
+
+            // When
+            var result = controllerWithNoCookies.Index();
+
+            // Then
+            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                .Be("Status|Active|true");
         }
     }
 }

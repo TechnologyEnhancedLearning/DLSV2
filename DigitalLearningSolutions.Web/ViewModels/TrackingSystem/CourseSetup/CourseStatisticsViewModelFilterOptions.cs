@@ -13,14 +13,36 @@
         private static readonly IEnumerable<FilterOptionViewModel> CourseStatusOptions = new[]
         {
             CourseStatusFilterOptions.IsActive,
-            CourseStatusFilterOptions.IsInactive,
+            CourseStatusFilterOptions.IsInactive
         };
 
         private static readonly IEnumerable<FilterOptionViewModel> CourseVisibilityOptions = new[]
         {
             CourseVisibilityFilterOptions.IsHiddenInLearningPortal,
-            CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal,
+            CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal
         };
+
+        public static IEnumerable<FilterViewModel> GetFilterOptions(
+            IEnumerable<string> categories,
+            IEnumerable<string> topics
+        )
+        {
+            return new[]
+            {
+                new FilterViewModel(
+                    nameof(CourseStatistics.CategoryName),
+                    "Category",
+                    GetCategoryOptions(categories)
+                ),
+                new FilterViewModel(
+                    nameof(CourseStatistics.CourseTopic),
+                    "Topic",
+                    GetTopicOptions(topics)
+                ),
+                new FilterViewModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions),
+                new FilterViewModel(nameof(CourseStatistics.HideInLearnerPortal), "Visibility", CourseVisibilityOptions)
+            };
+        }
 
         private static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
         {
@@ -46,28 +68,6 @@
                     FilterStatus.Default
                 )
             );
-        }
-
-        public static IEnumerable<FilterViewModel> GetFilterOptions(
-            IEnumerable<string> categories,
-            IEnumerable<string> topics
-        )
-        {
-            return new[]
-            {
-                new FilterViewModel(
-                    nameof(CourseStatistics.CategoryName),
-                    "Category",
-                    GetCategoryOptions(categories)
-                ),
-                new FilterViewModel(
-                    nameof(CourseStatistics.CourseTopic),
-                    "Topic",
-                    GetTopicOptions(topics)
-                ),
-                new FilterViewModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions),
-                new FilterViewModel(nameof(CourseStatistics.HideInLearnerPortal), "Visibility", CourseVisibilityOptions)
-            };
         }
     }
 }

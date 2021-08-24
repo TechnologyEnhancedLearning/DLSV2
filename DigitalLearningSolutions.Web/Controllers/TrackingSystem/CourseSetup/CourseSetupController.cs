@@ -44,12 +44,7 @@
         {
             if (filterBy == null && filterValue == null)
             {
-                filterBy = Request.Cookies[CourseFilterCookieName];
-                if (filterBy == null)
-                {
-                    // Only show Active courses by default
-                    filterValue = CourseStatusFilterOptions.IsActive.FilterValue;
-                }
+                filterBy = Request.Cookies[CourseFilterCookieName] ?? CourseStatusFilterOptions.IsActive.FilterValue;
             }
             else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {
