@@ -111,8 +111,8 @@
             }
 
             verifiedAdminUser ??=
-                loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
-                    verifiedDelegateUsers.First(),
+                loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                    verifiedDelegateUsers,
                     model.Password!
                 );
 
