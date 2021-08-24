@@ -2,21 +2,25 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class GroupsDataServiceTests
     {
+        private SqlConnection connection = null!;
         private GroupsDataService groupsDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             groupsDataService = new GroupsDataService(connection);
         }
 
@@ -31,6 +35,7 @@
                 GroupDescription = null,
                 DelegateCount = 1,
                 CoursesCount = 0,
+                AddedByAdminId = 1,
                 AddedByFirstName = "Kevin",
                 AddedByLastName = "Whittaker (Developer)",
                 LinkedToField = 4,
@@ -104,6 +109,52 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void DeleteGroupDelegatesRecordForDelegate_deletes_record()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int delegateId = 245969;
+
+                // When
+                groupsDataService.DeleteGroupDelegatesRecordForDelegate(5, delegateId);
+                var delegates = groupsDataService.GetGroupDelegates(1);
+
+                // Then
+                delegates.Any(d => d.DelegateId == delegateId).Should().BeFalse();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_updates_progress_record()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.Now;
+                const int delegateId = 245969;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(285146);
+
+                // Then
+                progressFields.Item1.Should().Be(3);
+                progressFields.Item2.Should().BeCloseTo(removedDate);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

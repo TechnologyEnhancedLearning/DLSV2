@@ -71,11 +71,11 @@
 
             if (courseStatistics.HideInLearnerPortal)
             {
-                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsHiddenInLearningPortal));
+                tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsHiddenInLearningPortal));
             }
             else
             {
-                tags.Add(new SearchableTagViewModel(CourseStatusFilterOptions.IsNotHiddenInLearningPortal));
+                tags.Add(new SearchableTagViewModel(CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal));
             }
 
             return tags;

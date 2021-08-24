@@ -10,6 +10,7 @@
     {
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
+        public const string ClearString = "CLEAR";
 
         public static string? AddNewFilterToFilterBy(string? filterBy, string? newFilterValue)
         {

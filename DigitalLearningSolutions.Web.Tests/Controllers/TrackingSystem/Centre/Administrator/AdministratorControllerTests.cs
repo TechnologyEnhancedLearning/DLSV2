@@ -44,9 +44,8 @@
         };
 
         private AdministratorController administratorController = null!;
-        private IRequestCookieCollection cookieCollection = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private HttpContext httpContext = null!;
+
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
@@ -61,26 +60,13 @@
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                 .Returns(categories);
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
             const string cookieName = "AdminFilter";
             const string cookieValue = "Role|IsCentreAdmin|true";
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
-            A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
             administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
-                .WithMockHttpContext(httpContext)
+                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -113,11 +99,10 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = null;
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string? filterBy = "CLEAR";
 
             // When
             var result = administratorController.Index(filterBy: filterBy);
@@ -125,7 +110,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+                .BeNull();
         }
 
         [Test]
@@ -134,7 +119,23 @@
             // Given
             const string? filterBy = null;
             const string? newFilterValue = "Role|IsCmsManager|true";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
+
+        [Test]
+        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+            const string? newFilterValue = "Role|IsCmsManager|true";
 
             // When
             var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
