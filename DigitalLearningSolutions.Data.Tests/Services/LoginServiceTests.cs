@@ -219,6 +219,25 @@
 
         [Test]
         public void
+            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_associated_admin_account_is_locked()
+        {
+            // Given
+            var associatedAdminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 10);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(associatedAdminUser);
+            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
+
+            // When
+            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                UserTestHelper.GetDefaultDelegateUser(centreId: 2),
+                "password"
+            );
+
+            // Then
+            Assert.IsNull(returnedAdminUser);
+        }
+
+        [Test]
+        public void
             GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_verified_admin_account_associated_with_delegate()
         {
             // Given

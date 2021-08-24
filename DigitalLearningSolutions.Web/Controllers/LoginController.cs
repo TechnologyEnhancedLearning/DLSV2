@@ -19,11 +19,11 @@
 
     public class LoginController : Controller
     {
+        private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
-        private readonly IUserService userService;
         private readonly IUserDataService userDataService;
-        private readonly ILogger<LoginController> logger;
+        private readonly IUserService userService;
 
         public LoginController(
             ILoginService loginService,
@@ -70,10 +70,17 @@
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
-            if (adminUser != null && adminUser.IsLocked && verifiedDelegateUsers.Count == 0)
+            if (adminUser != null && adminUser.IsLocked)
             {
-                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
-                return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
+                if (verifiedDelegateUsers.Count != 0)
+                {
+                    verifiedAdminUser = null;
+                }
+                else
+                {
+                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+                    return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
+                }
             }
 
             if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
@@ -86,11 +93,13 @@
                         return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
                     }
                 }
+
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
             }
 
-            if (verifiedAdminUser != null && verifiedAdminUser.FailedLoginCount > 0 && verifiedAdminUser.FailedLoginCount <= 4)
+            if (verifiedAdminUser != null && verifiedAdminUser.FailedLoginCount > 0 &&
+                verifiedAdminUser.FailedLoginCount <= 4)
             {
                 userDataService.UpdateAdminUserFailedLoginCount(verifiedAdminUser.Id, 0);
             }

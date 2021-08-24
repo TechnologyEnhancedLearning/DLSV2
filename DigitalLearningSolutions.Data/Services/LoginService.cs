@@ -55,7 +55,10 @@
             }
 
             var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
-            return adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
+            
+            return adminUserAssociatedWithDelegate != null &&
+                   !adminUserAssociatedWithDelegate.IsLocked &&
+                   adminUserAssociatedWithDelegate.CentreId == delegateUser.CentreId &&
                    cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate.Password, password)
                 ? adminUserAssociatedWithDelegate
                 : null;

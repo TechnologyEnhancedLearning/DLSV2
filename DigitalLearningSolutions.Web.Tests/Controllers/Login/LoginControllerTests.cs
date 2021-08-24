@@ -555,7 +555,7 @@
         }
 
         [Test]
-        public async Task Admin_already_locked_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
+        public async Task Unverified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
@@ -564,6 +564,37 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+                .Returns(null);
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails>
+                        { new CentreUserDetails(expectedDelegate.CentreId, expectedDelegate.CentreName, true) }
+                );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => sessionService.StartAdminSession(A<int>._))
+                .MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Verified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            var expectedDelegate = UserTestHelper.GetDefaultDelegateUser(approved: true);
+            var expectedDelegates = new List<DelegateUser> { expectedDelegate };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(adminUser, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
                 .Returns(null);
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
