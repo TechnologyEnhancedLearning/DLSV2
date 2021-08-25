@@ -14,19 +14,19 @@
             int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            CentreCustomPromptHelper customPromptHelper
+            CentreCustomPromptHelper centreCustomPromptHelper
         )
         {
+            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
-                    var customFields = customPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    var closedCustomPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+                    var customFields =
+                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
                     return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );
 
-            var customPrompts = customPromptHelper.GetClosedCustomPromptsForCentre(centreId).ToList();
             var filters = new List<FilterViewModel>
             {
                 new FilterViewModel(
@@ -56,7 +56,7 @@
                 )
             };
             filters.AddRange(
-                customPrompts.Select(
+                closedCustomPrompts.Select(
                     customPrompt => new FilterViewModel(
                         customPrompt.CustomPromptText,
                         customPrompt.CustomPromptText,

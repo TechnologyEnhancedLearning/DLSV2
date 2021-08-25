@@ -27,7 +27,7 @@
                 sortBy,
                 sortDirection
             );
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
+            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();

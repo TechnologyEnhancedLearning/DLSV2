@@ -20,7 +20,7 @@
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
 
             var closedCustomPromptIds =
-                closedCustomPrompts.Select(customPrompt => customPrompt.CustomPromptNumber).ToList();
+                closedCustomPrompts.Select(customPrompt => customPrompt.CustomPromptNumber);
             CustomPromptFilters = DelegateInfo.CustomFields
                 .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId)).Select(
                     customField =>
