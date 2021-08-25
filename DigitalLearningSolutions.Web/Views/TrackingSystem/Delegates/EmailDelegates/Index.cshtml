@@ -1,4 +1,5 @@
-﻿@inject IConfiguration Configuration
+@inject IConfiguration Configuration
+@using Dapper
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 @using Microsoft.Extensions.Configuration
 @model EmailDelegatesViewModel
@@ -8,6 +9,8 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var selected = Model.SelectedDelegateIds.AsList();
 }
 
 @section NavMenuItems {
@@ -17,21 +20,24 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds) })" />
+    }
 
     <span class="nhsuk-body-l">Select delegates to send email to</span>
 
-    @if (!Model.Delegates.Any()) {
+    @if (Model.Delegates == null || !Model.Delegates.Any()) {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No delegates found.</b>
       </p>
     } else {
-      <form method="post" asp-action="SendWelcomeEmails">
+      <form method="post">
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset">
             <div class="nhsuk-checkboxes">
               @foreach (var delegateModel in Model.Delegates) {
                 <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
-                  <input class="nhsuk-checkboxes__input" id="@delegateModel.Id-checkbox" type="checkbox" name="SelectedDelegateIds" value="@delegateModel.Id">
+                  <input class="nhsuk-checkboxes__input" id="@delegateModel.Id-checkbox" type="checkbox" name="SelectedDelegateIds" value="@delegateModel.Id" @(selected != null && selected.Contains(delegateModel.Id) ? "checked" : string.Empty)>
                   <label class="nhsuk-label nhsuk-checkboxes__label" for="@delegateModel.Id-checkbox">
                     @delegateModel.Name (@delegateModel.Email)
                   </label>

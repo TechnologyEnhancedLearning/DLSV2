@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
@@ -20,25 +22,36 @@
             this.userService = userService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            var centreId = User.GetCentreId();
-            var delegateUsers = userService.GetDelegateUserCardsForWelcomeEmail(centreId)
-                .OrderByDescending(card => card.DateRegistered);
+            var delegateUsers = GetDelegateUserCards();
             var model = new EmailDelegatesViewModel(delegateUsers);
 
             return View(model);
         }
 
         [HttpPost]
-        [Route("Send")]
-        public IActionResult SendWelcomeEmails(EmailDelegatesViewModel model)
+        public IActionResult Index(EmailDelegatesViewModel model)
         {
-            var centreId = User.GetCentreId();
-            var selectedUsers = userService.GetDelegateUserCardsForWelcomeEmail(centreId)
-                .Where(user => model.SelectedDelegateIds.Contains(user.Id));
+            var delegateUsers = GetDelegateUserCards();
+
+            if (!ModelState.IsValid)
+            {
+                model.SetDelegates(delegateUsers);
+                return View(model);
+            }
+
+            var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id));
             var emails = selectedUsers.Select(delegateUser => delegateUser.EmailAddress);
             return new ObjectResult(string.Join("\n", emails.ToList()));
+        }
+
+        private IEnumerable<DelegateUserCard> GetDelegateUserCards()
+        {
+            var centreId = User.GetCentreId();
+            return userService.GetDelegateUserCardsForWelcomeEmail(centreId)
+                .OrderByDescending(card => card.DateRegistered).Take(5);
         }
     }
 }

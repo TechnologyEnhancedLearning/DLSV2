@@ -1,20 +1,27 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
 
     public class EmailDelegatesViewModel
     {
-        public EmailDelegatesViewModel() : this(new List<DelegateUserCard>()) { }
+        public EmailDelegatesViewModel() { }
 
-        public EmailDelegatesViewModel(IEnumerable<DelegateUserCard> delegateUserCards)
+        public EmailDelegatesViewModel(IEnumerable<DelegateUserCard> delegateUsers)
         {
-            Delegates = delegateUserCards.Select(delegateUser => new EmailDelegatesItemViewModel(delegateUser));
-            SelectedDelegateIds = new List<int>();
+            SetDelegates(delegateUsers);
         }
 
-        public IEnumerable<EmailDelegatesItemViewModel> Delegates { get; set; }
-        public IEnumerable<int> SelectedDelegateIds { get; set; }
+        public void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers)
+        {
+            Delegates = delegateUsers.Select(delegateUser => new EmailDelegatesItemViewModel(delegateUser));
+        }
+
+        public IEnumerable<EmailDelegatesItemViewModel>? Delegates { get; set; }
+
+        [Required(ErrorMessage = "You must select at least one delegate")]
+        public IEnumerable<int>? SelectedDelegateIds { get; set; }
     }
 }
