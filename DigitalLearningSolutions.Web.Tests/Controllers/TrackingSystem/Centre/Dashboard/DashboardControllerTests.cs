@@ -87,7 +87,7 @@
                     ).WithMockHttpContextWithCookie(
                         httpRequest,
                         SystemNotificationCookieHelper.CookieName,
-                        7.ToString(),
+                        "7",
                         httpResponse
                     )
                     .WithMockUser(true)

@@ -45,7 +45,7 @@
             var unacknowledgedNotifications =
                 systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
 
-            if (!HasSkippedNotificationsCookie(adminId) && unacknowledgedNotifications.Any())
+            if (!Request.Cookies.HasSkippedNotificationsCookie(adminId) && unacknowledgedNotifications.Any())
             {
                 return RedirectToAction("Index", "SystemNotifications");
             }
@@ -74,16 +74,6 @@
             );
 
             return View(model);
-        }
-
-        private bool HasSkippedNotificationsCookie(int adminId)
-        {
-            if (Request.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName))
-            {
-                return Request.Cookies[SystemNotificationCookieHelper.CookieName] == adminId.ToString();
-            }
-
-            return false;
         }
     }
 }

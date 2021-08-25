@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -43,7 +42,7 @@
         public IActionResult SkipNotifications()
         {
             var adminId = User.GetAdminId()!.Value;
-            SetSkipSystemNotificationCookie(adminId);
+            Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockService.UtcNow);
             return RedirectToAction("Index", "Dashboard");
         }
 
@@ -54,15 +53,6 @@
             var adminId = User.GetAdminId()!;
             systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId.Value);
             return RedirectToAction("Index", "SystemNotifications", new { page });
-        }
-
-        private void SetSkipSystemNotificationCookie(int adminId)
-        {
-            var expiry = clockService.UtcNow.AddHours(SystemNotificationCookieHelper.CookieExpiryHours);
-            Response.Cookies.Append(SystemNotificationCookieHelper.CookieName, adminId.ToString(), new CookieOptions
-            {
-                Expires = expiry
-            });
         }
     }
 }

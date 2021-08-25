@@ -50,44 +50,45 @@
         [Test]
         public void GetUnacknowledgedSystemNotifications_returns_correct_notifications()
         {
+            // Given
+            const int adminId = 5;
+            var currentTime = DateTime.UtcNow.Date;
+            var neverExpiresNotification = new SystemNotification(
+                100,
+                "Never expires test",
+                "body",
+                null,
+                currentTime,
+                1
+            );
+            var expiredYesterdayNotification = new SystemNotification(
+                102,
+                "Expired yesterday test",
+                "body",
+                currentTime.AddDays(-1),
+                currentTime,
+                1
+            );
+            var expiresTomorrowNotification = new SystemNotification(
+                103,
+                "Expires tomorrow test",
+                "body",
+                currentTime.AddDays(1),
+                currentTime,
+                1
+            );
+            var alreadyAcknowledgedNotification = new SystemNotification(
+                104,
+                "Already acknowledged test",
+                "body",
+                null,
+                currentTime,
+                1
+            );
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int adminId = 5;
-                var currentTime = DateTime.UtcNow.Date;
-                var neverExpiresNotification = new SystemNotification(
-                    100,
-                    "Never expires test",
-                    "body",
-                    null,
-                    currentTime,
-                    1
-                );
-                var expiredYesterdayNotification = new SystemNotification(
-                    102,
-                    "Expired yesterday test",
-                    "body",
-                    currentTime.AddDays(-1),
-                    currentTime,
-                    1
-                );
-                var expiresTomorrowNotification = new SystemNotification(
-                    103,
-                    "Expires tomorrow test",
-                    "body",
-                    currentTime.AddDays(1),
-                    currentTime,
-                    1
-                );
-                var alreadyAcknowledgedNotification = new SystemNotification(
-                    104,
-                    "Already acknowledged test",
-                    "body",
-                    null,
-                    currentTime,
-                    1
-                );
                 systemNotificationTestHelper.CreateNewSystemNotification(neverExpiresNotification);
                 systemNotificationTestHelper.CreateNewSystemNotification(expiredYesterdayNotification);
                 systemNotificationTestHelper.CreateNewSystemNotification(expiresTomorrowNotification);

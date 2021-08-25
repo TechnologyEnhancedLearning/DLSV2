@@ -41,15 +41,7 @@
         ) where T : Controller
         {
             var httpContext = A.Fake<HttpContext>();
-            var cookieCollection = A.Fake<IRequestCookieCollection>();
-
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
+            var cookieCollection = SetUpFakeRequestCookieCollection(cookieName, cookieValue);
             A.CallTo(() => request.Cookies).Returns(cookieCollection);
             A.CallTo(() => httpContext.Request).Returns(request);
 
@@ -65,6 +57,20 @@
 
             return controller;
         }
+
+        public static IRequestCookieCollection SetUpFakeRequestCookieCollection(string cookieName, string cookieValue)
+        {
+            var cookieCollection = A.Fake<IRequestCookieCollection>();
+            var cookieList = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(cookieName, cookieValue)
+            };
+            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
+            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
+            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
+
+            return cookieCollection;
+        } 
 
         public static T WithMockUser<T>(
             this T controller,

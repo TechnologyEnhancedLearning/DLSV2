@@ -51,7 +51,7 @@
                 A.CallTo(
                     () => httpResponse.Cookies.Append(
                         SystemNotificationCookieHelper.CookieName,
-                        7.ToString(),
+                        "7",
                         A<CookieOptions>.That.Matches(co => co.Expires == expectedExpiry)
                     )
                 ).MustHaveHappened();
