@@ -77,7 +77,7 @@
         public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string filterBy = "CLEAR";
 
             // When
             var result = allDelegatesController.Index(filterBy: filterBy);
@@ -93,7 +93,7 @@
         {
             // Given
             const string? filterBy = null;
-            const string? newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
 
             // When
             var result = allDelegatesController.Index(filterBy: filterBy, filterValue: newFilterValue);
@@ -109,8 +109,8 @@
         public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
         {
             // Given
-            const string? filterBy = null;
-            const string? newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            const string filterBy = "CLEAR";
+            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
 
             // When
             var result = allDelegatesController.Index(filterBy: filterBy, filterValue: newFilterValue);
