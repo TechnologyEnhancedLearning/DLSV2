@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FakeItEasy;
     using FluentAssertions;
@@ -35,7 +34,7 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "DelegateFilter";
-            const string cookieValue = "ActiveStatus|Active|true";
+            const string cookieValue = "ActiveStatus|Active|false";
 
             allDelegatesController = new AllDelegatesController(
                     userDataService,
@@ -56,7 +55,7 @@
 
             // Then
             result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
-                .Be("ActiveStatus|Active|true");
+                .Be("ActiveStatus|Active|false");
         }
 
         [Test]
@@ -121,6 +120,26 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
+        }
+
+        [Test]
+        public void Index_with_no_filtering_should_default_to_Active_delegates()
+        {
+            // Given
+            var controllerWithNoCookies = new AllDelegatesController(
+                    userDataService,
+                    centreCustomPromptsHelper,
+                    jobGroupsDataService
+                )
+                .WithDefaultContext()
+                .WithMockUser(true);
+
+            // When
+            var result = controllerWithNoCookies.Index();
+
+            // Then
+            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+                .Be("ActiveStatus|Active|true");
         }
     }
 }

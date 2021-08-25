@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -42,7 +43,7 @@
         {
             if (filterBy == null && filterValue == null)
             {
-                filterBy = Request.Cookies[DelegateFilterCookieName];
+                filterBy = Request.Cookies[DelegateFilterCookieName] ?? DelegateActiveStatusFilterOptions.IsActive.FilterValue;
             }
             else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {
