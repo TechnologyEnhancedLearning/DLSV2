@@ -15,6 +15,7 @@
         public DateTime LastUpdated { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime? CompleteBy { get; set; }
+        public DateTime? RemovedDate { get; set; }
 
         public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
 

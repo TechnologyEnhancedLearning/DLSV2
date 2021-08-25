@@ -33,7 +33,8 @@
                         p.PLLocked AS Locked,
                         p.SubmittedTime AS LastUpdated,
                         c.DateRegistered AS Enrolled,
-                        p.CompleteByDate AS CompleteBy
+                        p.CompleteByDate AS CompleteBy,
+                        p.RemovedDate
                     FROM Candidates AS c
                     INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
                     WHERE c.CentreID = @centreId

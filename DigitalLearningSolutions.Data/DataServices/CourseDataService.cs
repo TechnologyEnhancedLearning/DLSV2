@@ -308,7 +308,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         c.CentreID,
                         c.ApplicationID,
                         a.ApplicationName,
-                        c.CustomisationName
+                        c.CustomisationName,
+                        c.Active
                     FROM Customisations AS c
                     JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                     WHERE (CentreID = @centreId OR CentreID = 0)

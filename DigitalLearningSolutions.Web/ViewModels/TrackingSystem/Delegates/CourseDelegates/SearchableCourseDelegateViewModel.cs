@@ -19,6 +19,7 @@
             LastUpdated = courseDelegate.LastUpdated.ToString(DateFormat);
             Enrolled = courseDelegate.Enrolled.ToString(DateFormat);
             CompleteBy = courseDelegate.CompleteBy?.ToString(DateFormat);
+            RemovedDate = courseDelegate.RemovedDate?.ToString(DateFormat);
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
         }
 
@@ -31,5 +32,6 @@
         public string LastUpdated { get; set; }
         public string Enrolled { get; set; }
         public string? CompleteBy { get; set; }
+        public string? RemovedDate { get; set; }
     }
 }

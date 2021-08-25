@@ -12,18 +12,21 @@
         public CourseDelegatesViewModel(
             List<Course> courses,
             List<CourseDelegate> courseDelegates,
-            int currentCustomisationId
+            int? currentCustomisationId
         )
         {
             CustomisationId = currentCustomisationId;
             var courseOptions = courses.Select(c => (c.CustomisationId, c.CourseName));
             Courses = SelectListHelper.MapOptionsToSelectListItems(courseOptions, currentCustomisationId);
 
+            Active = courses.SingleOrDefault(c => c.CustomisationId == currentCustomisationId)?.Active;
+
             Delegates = courseDelegates.Select(cd => new SearchableCourseDelegateViewModel(cd));
         }
 
-        public int CustomisationId { get; set; }
+        public int? CustomisationId { get; set; }
         public IEnumerable<SelectListItem> Courses { get; set; }
+        public bool? Active { get; set; }
 
         public IEnumerable<SearchableCourseDelegateViewModel> Delegates { get; set; }
     }
