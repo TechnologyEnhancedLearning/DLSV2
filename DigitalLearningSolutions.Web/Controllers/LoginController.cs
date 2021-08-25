@@ -70,30 +70,37 @@
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
-            if (adminUser != null && adminUser.IsLocked)
+            #region new locking fn
+
+
+
+            var adminAccountVerificationFailed = verifiedAdminUser == null && adminUser != null;
+            var adminAccountIsLocked = (verifiedAdminUser == null && adminUser is { FailedLoginCount: 4 })
+                                  || adminUser is { IsLocked: true };
+            var shouldLogIntoDelegateAccount = verifiedDelegateUsers.Any();
+            var shouldIncreaseFailedLoginCount = adminAccountVerificationFailed && !verifiedDelegateUsers.Any();
+
+            if (shouldIncreaseFailedLoginCount)
             {
-                if (verifiedDelegateUsers.Count != 0)
+                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+            }
+
+            if (adminAccountIsLocked)
+            {
+                if (shouldLogIntoDelegateAccount)
                 {
                     verifiedAdminUser = null;
                 }
                 else
                 {
-                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
                     return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
                 }
             }
 
-            if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
-            {
-                if (adminUser != null && verifiedAdminUser == null)
-                {
-                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
-                    if (adminUser.FailedLoginCount == 4)
-                    {
-                        return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
-                    }
-                }
+            #endregion
 
+            if (verifiedAdminUser == null && !verifiedDelegateUsers.Any())
+            {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
             }
