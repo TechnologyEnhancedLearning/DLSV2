@@ -145,12 +145,7 @@
                 return false;
             }
 
-            if ((delegateUser.EmailAddress ?? string.Empty) != Email)
-            {
-                return false;
-            }
-
-            return true;
+            return (delegateUser.EmailAddress ?? string.Empty) == Email;
         }
     }
 }

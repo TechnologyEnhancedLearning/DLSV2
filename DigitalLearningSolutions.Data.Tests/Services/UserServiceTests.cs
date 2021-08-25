@@ -460,7 +460,7 @@
         }
 
         [Test]
-        public void IsEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
+        public void IsDelegateEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
         {
             // Given
             const string email = "email@test.com";
@@ -475,7 +475,7 @@
         }
 
         [Test]
-        public void IsEmailValidForCentre_should_return_true_if_user_not_at_centre_has_email()
+        public void IsDelegateEmailValidForCentre_should_return_true_if_user_not_at_centre_has_email()
         {
             // Given
             const string email = "email@test.com";
@@ -490,7 +490,7 @@
         }
 
         [Test]
-        public void IsEmailValidForCentre_should_return_true_if_no_user_has_email()
+        public void IsDelegateEmailValidForCentre_should_return_true_if_no_user_has_email()
         {
             // Given
             const string email = "email@test.com";
