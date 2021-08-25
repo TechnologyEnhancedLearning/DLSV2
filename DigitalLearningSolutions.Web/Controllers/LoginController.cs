@@ -22,21 +22,18 @@
         private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public LoginController(
             ILoginService loginService,
             IUserService userService,
             ISessionService sessionService,
-            IUserDataService userDataService,
             ILogger<LoginController> logger
         )
         {
             this.loginService = loginService;
             this.userService = userService;
             this.sessionService = sessionService;
-            this.userDataService = userDataService;
             this.logger = logger;
         }
 
@@ -70,38 +67,38 @@
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
-            if (adminUser != null && adminUser.IsLocked)
+            var adminAccountFailedVerification = adminUser != null && verifiedAdminUser == null;
+            var adminAccountIsLocked = adminUser != null && adminUser.IsLocked ||
+                                       adminAccountFailedVerification && adminUser!.FailedLoginCount == 4;
+            var shouldLogIntoDelegateAccount = verifiedDelegateUsers.Any();
+            var shouldIncreaseFailedLoginCount = adminAccountFailedVerification && !shouldLogIntoDelegateAccount;
+
+            if (shouldIncreaseFailedLoginCount)
             {
-                if (verifiedDelegateUsers.Count != 0)
+                userService.IncrementFailedLoginCount(adminUser!);
+            }
+
+            if (adminAccountIsLocked)
+            {
+                if (shouldLogIntoDelegateAccount)
                 {
                     verifiedAdminUser = null;
                 }
                 else
                 {
-                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
-                    return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
+                    return RedirectToAction("AccountLocked", new { failedCount = adminUser!.FailedLoginCount + 1 });
                 }
             }
 
-            if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
+            if (verifiedAdminUser == null && !shouldLogIntoDelegateAccount)
             {
-                if (adminUser != null && verifiedAdminUser == null)
-                {
-                    userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
-                    if (adminUser.FailedLoginCount == 4)
-                    {
-                        return RedirectToAction("AccountLocked", new { failedCount = adminUser.FailedLoginCount + 1 });
-                    }
-                }
-
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
             }
 
-            if (verifiedAdminUser != null && verifiedAdminUser.FailedLoginCount > 0 &&
-                verifiedAdminUser.FailedLoginCount <= 4)
+            if (verifiedAdminUser != null)
             {
-                userDataService.UpdateAdminUserFailedLoginCount(verifiedAdminUser.Id, 0);
+                userService.ResetFailedLoginCount(verifiedAdminUser);
             }
 
             var approvedDelegateUsers = verifiedDelegateUsers.Where(du => du.Approved).ToList();
@@ -115,6 +112,11 @@
                     verifiedDelegateUsers.First(),
                     model.Password!
                 );
+
+            if (verifiedAdminUser?.IsLocked == true)
+            {
+                verifiedAdminUser = null;
+            }
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
                 userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);

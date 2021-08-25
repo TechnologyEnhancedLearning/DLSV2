@@ -7,27 +7,31 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IUserService
     {
-        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
-        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
-        public (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
+        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
+        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
+        (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
-        public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
+        (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
         );
 
-        public List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
+        List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
-        public void UpdateUserAccountDetails(
+        void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
 
-        public bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
+        bool NewEmailAddressIsValid(string emailAddress, int? adminUserId, int? delegateUserId, int centreId);
 
         UserAccountSet GetVerifiedLinkedUsersAccounts(int? adminId, int? delegateId, string password);
 
-        public bool IsPasswordValid(int? adminId, int? delegateId, string password);
+        bool IsPasswordValid(int? adminId, int? delegateId, string password);
+
+        void ResetFailedLoginCount(AdminUser adminUser);
+
+        void IncrementFailedLoginCount(AdminUser adminUser);
     }
 
     public class UserService : IUserService
@@ -197,6 +201,19 @@ namespace DigitalLearningSolutions.Data.Services
             var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             return verifiedLinkedUsersAccounts.Any();
+        }
+
+        public void ResetFailedLoginCount(AdminUser adminUser)
+        {
+            if (adminUser.FailedLoginCount != 0)
+            {
+                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0);
+            }
+        }
+
+        public void IncrementFailedLoginCount(AdminUser adminUser)
+        {
+            userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

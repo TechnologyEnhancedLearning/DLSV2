@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -26,7 +25,6 @@
         private ILogger<LoginController> logger = null!;
         private ILoginService loginService = null!;
         private ISessionService sessionService = null!;
-        private IUserDataService userDataService = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -34,11 +32,10 @@
         {
             loginService = A.Fake<ILoginService>();
             userService = A.Fake<IUserService>();
-            userDataService = A.Fake<IUserDataService>();
             sessionService = A.Fake<ISessionService>();
             logger = A.Fake<ILogger<LoginController>>();
 
-            controller = new LoginController(loginService, userService, sessionService, userDataService, logger)
+            controller = new LoginController(loginService, userService, sessionService, logger)
                 .WithDefaultContext()
                 .WithMockUser(false)
                 .WithMockTempData()
@@ -68,7 +65,6 @@
                     loginService,
                     userService,
                     sessionService,
-                    userDataService,
                     logger
                 )
                 .WithDefaultContext()
@@ -80,6 +76,20 @@
             // Then
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Invalid_model_should_render_basic_form_with_error()
+        {
+            // Given
+            controller.ModelState.AddModelError(nameof(LoginViewModel.Username), "Required");
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Index").ModelAs<LoginViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [Test]
@@ -514,28 +524,31 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 1)).MustHaveHappened();
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
         }
 
         [Test]
-        public async Task Admin_with_incorrect_password_increases_FailedLoginCount_and_returns_locked_view_when_new_count_results_in_locked_account()
+        public async Task
+            Admin_with_incorrect_password_increases_FailedLoginCount_and_returns_locked_view_when_new_count_results_in_locked_account()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 5)).MustHaveHappened();
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("AccountLocked");
         }
 
@@ -545,17 +558,19 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 7)).MustHaveHappened();
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("AccountLocked");
         }
 
         [Test]
-        public async Task Unverified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
+        public async Task
+            Unverified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
@@ -578,7 +593,7 @@
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
             A.CallTo(() => sessionService.StartAdminSession(A<int>._))
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult()
@@ -586,7 +601,8 @@
         }
 
         [Test]
-        public async Task Verified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
+        public async Task
+            Verified_locked_admin_with_verified_delegate_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
@@ -609,7 +625,7 @@
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
             A.CallTo(() => sessionService.StartAdminSession(A<int>._))
                 .MustNotHaveHappened();
             result.Should().BeRedirectToActionResult()
@@ -617,7 +633,39 @@
         }
 
         [Test]
-        public async Task Admin_with_correct_password_and_some_failed_logins_resets_FailedLoginCount_and_logs_in()
+        public async Task
+            Verified_delegate_with_locked_linked_admin_logs_into_delegate_only_and_doesnt_increment_FailedLoginCount()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            var expectedDelegate = UserTestHelper.GetDefaultDelegateUser(approved: true);
+            var expectedDelegates = new List<DelegateUser> { expectedDelegate };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((null, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(null, expectedDelegates));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+                .Returns(adminUser);
+            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((null, expectedDelegates));
+            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new List<CentreUserDetails>
+                        { new CentreUserDetails(expectedDelegate.CentreId, expectedDelegate.CentreName, true) }
+                );
+
+            // When
+            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
+
+            // Then
+            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
+            A.CallTo(() => sessionService.StartAdminSession(A<int>._))
+                .MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult()
+                .WithControllerName("Home").WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Admin_with_correct_password_resets_FailedLoginCount_and_logs_in()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
@@ -630,36 +678,13 @@
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) }
                 );
+            A.CallTo(() => userService.ResetFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 0)).MustHaveHappened();
-            result.Should().BeRedirectToActionResult()
-                .WithControllerName("Home").WithActionName("Index");
-        }
-
-        [Test]
-        public async Task Admin_with_correct_password_and_no_failed_logins_logs_in_without_resetting_FailedLoginCount()
-        {
-            // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(adminUser, null));
-            A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(
-                    new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) }
-                );
-
-            // When
-            var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
-
-            // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(7, 0)).MustNotHaveHappened();
+            A.CallTo(() => userService.ResetFailedLoginCount(adminUser)).MustHaveHappened();
             result.Should().BeRedirectToActionResult()
                 .WithControllerName("Home").WithActionName("Index");
         }
