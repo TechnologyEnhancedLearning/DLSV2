@@ -23,10 +23,19 @@
             int? resetPasswordId = null,
             bool approved = true,
             string candidateNumber = "SV1234",
-            string? jobGroupName = null,
-            string? answer1 = null
+            int jobGroupId = 1,
+            string? jobGroupName = "Nursing / midwifery",
+            string? answer1 = null,
+            string? answer2 = null,
+            string? answer3 = null,
+            string? answer4 = null,
+            string? answer5 = null,
+            string? answer6 = null,
+            string? aliasId = null,
+            bool active = true
         )
         {
+            dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
             return new DelegateUser
             {
                 Id = id,
@@ -41,8 +50,16 @@
                 ResetPasswordId = resetPasswordId,
                 Approved = approved,
                 CandidateNumber = candidateNumber,
+                JobGroupId = jobGroupId,
                 JobGroupName = jobGroupName,
-                Answer1 = answer1
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+                AliasId = aliasId,
+                Active = active
             };
         }
 

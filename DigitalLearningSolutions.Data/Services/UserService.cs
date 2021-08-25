@@ -29,6 +29,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
+        bool IsDelegateEmailValidForCentre(string email, int centreId);
+
         void ResetFailedLoginCount(AdminUser adminUser);
 
         void IncrementFailedLoginCount(AdminUser adminUser);
@@ -55,7 +57,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUsers);
         }
 
-        public (AdminUser?, List<DelegateUser>) GetUsersByEmailAddress(string emailAddress)
+        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress)
         {
             var adminUser = userDataService.GetAdminUserByEmailAddress(emailAddress);
             var delegateUsers = userDataService.GetDelegateUsersByEmailAddress(emailAddress);
@@ -201,6 +203,14 @@ namespace DigitalLearningSolutions.Data.Services
             var verifiedLinkedUsersAccounts = GetVerifiedLinkedUsersAccounts(adminId, delegateId, password);
 
             return verifiedLinkedUsersAccounts.Any();
+        }
+
+        public bool IsDelegateEmailValidForCentre(string email, int centreId)
+        {
+            var duplicateUsers = userDataService.GetDelegateUsersByEmailAddress(email)
+                .Where(u => u.CentreId == centreId);
+
+            return !duplicateUsers.Any();
         }
 
         public void ResetFailedLoginCount(AdminUser adminUser)

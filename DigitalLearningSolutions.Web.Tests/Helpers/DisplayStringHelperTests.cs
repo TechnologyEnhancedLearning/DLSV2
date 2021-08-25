@@ -132,5 +132,25 @@
             // Then
             result.Should().Be("2 months");
         }
+
+        [Test]
+        public void GetDelegateNameString_returns_expected_name_with_no_first_name()
+        {
+            // When
+            var result = DisplayStringHelper.GetDelegateNameString(null, "LastName");
+
+            // Then
+            result.Should().Be("LastName");
+        }
+
+        [Test]
+        public void GetDelegateNameString_returns_expected_name_with_first_name()
+        {
+            // When
+            var result = DisplayStringHelper.GetDelegateNameString("FirstName", "LastName");
+
+            // Then
+            result.Should().Be("FirstName LastName");
+        }
     }
 }
