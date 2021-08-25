@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
@@ -44,7 +45,8 @@
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id));
             var emails = selectedUsers.Select(delegateUser => delegateUser.EmailAddress);
-            return new ObjectResult(string.Join("\n", emails.ToList()));
+            var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+            return new ObjectResult(emailDate.ToString("dd/MM/yyyy") + "\n" + string.Join("\n", emails.ToList()));
         }
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()

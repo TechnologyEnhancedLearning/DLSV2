@@ -1,4 +1,4 @@
-@inject IConfiguration Configuration
+﻿@inject IConfiguration Configuration
 @using Dapper
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 @using Microsoft.Extensions.Configuration
@@ -10,6 +10,7 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var exampleDate = DateTime.Today;
   var selected = Model.SelectedDelegateIds.AsList();
 }
 
@@ -21,7 +22,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds), nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
     <span class="nhsuk-body-l">Select delegates to send email to</span>
@@ -49,6 +50,13 @@
             </div>
           </fieldset>
         </div>
+        <vc:date-input id="welcome-email-date"
+                       label="Deliver email on or after:"
+                       day-id="Day"
+                       month-id="Month"
+                       year-id="Year"
+                       css-class="nhsuk-form-group"
+                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
         <button class="nhsuk-button" type="submit">Send welcome emails</button>
       </form>
     }
