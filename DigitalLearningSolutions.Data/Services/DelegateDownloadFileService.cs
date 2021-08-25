@@ -14,7 +14,7 @@
 
     public class DelegateDownloadFileService : IDelegateDownloadFileService
     {
-        private const string DelegatesSheetName = "DelegatesBulkUpload";
+        public const string DelegatesSheetName = "DelegatesBulkUpload";
         private const string JobGroupsSheetName = "JobGroups";
         private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IJobGroupsDataService jobGroupsDataService;
