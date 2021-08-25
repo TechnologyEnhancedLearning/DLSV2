@@ -39,7 +39,7 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var model = new MyStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, searchString, sortBy, sortDirection, page);
@@ -101,7 +101,7 @@
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
-            return View("RemoveConfirm", supervisorDelegateId);
+            return View("RemoveConfirm", superviseDelegate);
         }
         public IActionResult RemoveSupervisorDelegate(int supervisorDelegateId)
         {
@@ -125,7 +125,7 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);

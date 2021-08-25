@@ -1,13 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
 
-    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase
+    public class RegistrationJourneyAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AccessibilityTestsFixture<Startup>>
     {
-        public RegistrationJourneyAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public RegistrationJourneyAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void Registration_journey_has_no_accessibility_errors()
@@ -74,11 +76,12 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            welcomeEmailResult.Violations.Should().BeEmpty();
+            CheckWelcomeEmailViolations(welcomeEmailResult);
             summaryResult.Violations.Should().BeEmpty();
         }
 
@@ -113,13 +116,27 @@
             Driver.SubmitForm();
 
             var summaryResult = new AxeBuilder(Driver).Analyze();
+            Driver.LogOutUser(BaseUrl);
 
             // then
             registerResult.Violations.Should().BeEmpty();
             learnerInformationResult.Violations.Should().BeEmpty();
-            welcomeEmailResult.Violations.Should().BeEmpty();
+            CheckWelcomeEmailViolations(welcomeEmailResult);
             passwordResult.Violations.Should().BeEmpty();
             summaryResult.Violations.Should().BeEmpty();
+        }
+
+        private static void CheckWelcomeEmailViolations(AxeResult welcomeEmailResult)
+        {
+            // Expect an axe violation caused by having an aria-expanded attribute on an input
+            // The target #ShouldSendEmail is an nhs-tested component so ignore this violation
+            welcomeEmailResult.Violations.Should().HaveCount(1);
+            var violation = welcomeEmailResult.Violations[0];
+
+            violation.Id.Should().Be("aria-allowed-attr");
+            violation.Nodes.Should().HaveCount(1);
+            violation.Nodes[0].Target.Should().HaveCount(1);
+            violation.Nodes[0].Target[0].Selector.Should().Be("#ShouldSendEmail");
         }
     }
 }

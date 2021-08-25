@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
@@ -73,6 +74,9 @@
         public static readonly (string DisplayText, string PropertyName) Brand = ("Brand", nameof(AvailableCourse.Brand));
         public static readonly (string DisplayText, string PropertyName) Category = ("Category", nameof(AvailableCourse.Category));
         public static readonly (string DisplayText, string PropertyName) Topic = ("Topic", nameof(AvailableCourse.Topic));
+        public static readonly (string DisplayText, string PropertyName) CourseName = ("Course Name", nameof(CourseStatistics.CourseName));
+        public static readonly (string DisplayText, string PropertyName) TotalDelegates = ("Total Delegates", nameof(CourseStatistics.DelegateCount));
+        public static readonly (string DisplayText, string PropertyName) InProgress = ("In Progress", nameof(CourseStatistics.InProgressCount));
     }
 
     public static class DefaultSortByOptions
@@ -84,5 +88,12 @@
     {
         public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(DelegateUserCard.SearchableName));
         public static readonly (string DisplayText, string PropertyName) RegistrationDate = ("Registration Date", nameof(DelegateUserCard.DateRegistered));
+    }
+
+    public static class DelegateGroupsSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(Group.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) NumberOfDelegates = ("Number of delegates", nameof(Group.DelegateCount));
+        public static readonly (string DisplayText, string PropertyName) NumberOfCourses = ("Number of courses", nameof(Group.CoursesCount));
     }
 }

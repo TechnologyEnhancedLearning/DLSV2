@@ -5,23 +5,25 @@ import getSearchableElements from './getSearchableElements';
 
 describe('getSortValue', () => {
   it.each`
-  fieldName             | fieldValue        | sortBy                  | expectedSortValue
-  ${'name'}             | ${'Example name'} | ${'SearchableName'}        | ${'example name'}
-  ${'name'}             | ${'Example name'} | ${'Name'}        | ${'example name'}
-  ${'registration-date'}| ${'01/01/2020'}   | ${'DateRegistered'}      | ${new Date('01/01/2020')}
-  ${'started-date'}     | ${'01/01/2020'}   | ${'StartedDate'}      | ${new Date('01/01/2020')}
-  ${'accessed-date'}    | ${'02/02/2020'}   | ${'LastAccessed'} | ${new Date('02/02/2020')}
-  ${'complete-by-date'} | ${'03/03/2020'}   | ${'CompleteByDate'}   | ${new Date('03/03/2020')}
-  ${'complete-by-date'} | ${'-'}            | ${'CompleteByDate'}   | ${new Date(0)}
+  fieldName             | fieldValue        | sortBy                               | expectedSortValue
+  ${'name'}             | ${'Example name'} | ${'SearchableName'}                  | ${'example name'}
+  ${'name'}             | ${'Example name'} | ${'Name'}                            | ${'example name'}
+  ${'registration-date'}| ${'01/01/2020'}   | ${'DateRegistered'}                  | ${new Date('01/01/2020')}
+  ${'started-date'}     | ${'01/01/2020'}   | ${'StartedDate'}                     | ${new Date('01/01/2020')}
+  ${'accessed-date'}    | ${'02/02/2020'}   | ${'LastAccessed'}                    | ${new Date('02/02/2020')}
+  ${'complete-by-date'} | ${'03/03/2020'}   | ${'CompleteByDate'}                  | ${new Date('03/03/2020')}
+  ${'complete-by-date'} | ${'-'}            | ${'CompleteByDate'}                  | ${new Date(0)}
   ${'diagnostic-score'} | ${'6/10'}         | ${'HasDiagnostic,DiagnosticScore'}   | ${6}
   ${''}                 | ${''}             | ${'HasDiagnostic,DiagnosticScore'}   | ${-1}
-  ${'passed-sections'}  | ${'8/10'}         | ${'IsAssessed,Passes'}    | ${8}
-  ${''}                 | ${''}             | ${'IsAssessed,Passes'}    | ${-1}
-  ${'brand'}            | ${'Brand 1'}      | ${'Brand'}              | ${'brand 1'}
-  ${'category'}         | ${'Category 1'}   | ${'Category'}           | ${'category 1'}
-  ${''}                 | ${''}             | ${'Category'}           | ${''}
-  ${'topic'}            | ${'Topic 1'}      | ${'Topic'}              | ${'topic 1'}
-  ${''}                 | ${''}             | ${'Topic'}              | ${''}
+  ${'passed-sections'}  | ${'8/10'}         | ${'IsAssessed,Passes'}               | ${8}
+  ${''}                 | ${''}             | ${'IsAssessed,Passes'}               | ${-1}
+  ${'brand'}            | ${'Brand 1'}      | ${'Brand'}                           | ${'brand 1'}
+  ${'category'}         | ${'Category 1'}   | ${'Category'}                        | ${'category 1'}
+  ${''}                 | ${''}             | ${'Category'}                        | ${''}
+  ${'topic'}            | ${'Topic 1'}      | ${'Topic'}                           | ${'topic 1'}
+  ${''}                 | ${''}             | ${'Topic'}                           | ${''}
+  ${'delegate-count'}   | ${'5'}            | ${'DelegateCount'}                   | ${5}
+  ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
   `('should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,
@@ -88,19 +90,19 @@ describe('sortSearchableElements current', () => {
   });
 
   it.each`
-    sortBy                  | sortDirection   | firstId       | secondId      | thirdId
-    ${'Name'}        | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'Name'}        | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    sortBy                               | sortDirection   | firstId       | secondId      | thirdId
+    ${'Name'}                            | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'Name'}                            | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
     ${'HasDiagnostic,DiagnosticScore'}   | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
     ${'HasDiagnostic,DiagnosticScore'}   | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
-    ${'IsAssessed,Passes'}    | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}
-    ${'IsAssessed,Passes'}    | ${'Descending'} | ${'course-b'} | ${'course-a'} | ${'course-c'}
-    ${'StartedDate'}      | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'StartedDate'}      | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
-    ${'LastAccessed'} | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
-    ${'LastAccessed'} | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
-    ${'CompleteByDate'}   | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
-    ${'CompleteByDate'}   | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'IsAssessed,Passes'}               | ${'Ascending'}  | ${'course-c'} | ${'course-a'} | ${'course-b'}
+    ${'IsAssessed,Passes'}               | ${'Descending'} | ${'course-b'} | ${'course-a'} | ${'course-c'}
+    ${'StartedDate'}                     | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'StartedDate'}                     | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+    ${'LastAccessed'}                    | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
+    ${'LastAccessed'}                    | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
+    ${'CompleteByDate'}                  | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+    ${'CompleteByDate'}                  | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
     `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {
@@ -158,7 +160,7 @@ describe('sortSearchableElements completed', () => {
   });
 
   it.each`
-  sortBy              | sortDirection   | firstId       | secondId      | thirdId
+  sortBy         | sortDirection   | firstId       | secondId      | thirdId
   ${'Completed'} | ${'Ascending'}  | ${'course-a'} | ${'course-c'} | ${'course-b'}
   ${'Completed'} | ${'Descending'} | ${'course-b'} | ${'course-c'} | ${'course-a'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
@@ -264,11 +266,123 @@ describe('sortSearchableElements delegates', () => {
   });
 
   it.each`
-  sortBy                | sortDirection   | firstId       | secondId      | thirdId
-  ${'SearchableName'}   | ${'Ascending'}  | ${'delegate-a'} | ${'delegate-b'} | ${'delegate-c'}
-  ${'SearchableName'}   | ${'Descending'} | ${'delegate-c'} | ${'delegate-b'} | ${'delegate-a'}
+  sortBy              | sortDirection   | firstId         | secondId        | thirdId
+  ${'SearchableName'} | ${'Ascending'}  | ${'delegate-a'} | ${'delegate-b'} | ${'delegate-c'}
+  ${'SearchableName'} | ${'Descending'} | ${'delegate-c'} | ${'delegate-b'} | ${'delegate-a'}
   ${'DateRegistered'} | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-a'} | ${'delegate-c'}
   ${'DateRegistered'} | ${'Descending'} | ${'delegate-c'} | ${'delegate-a'} | ${'delegate-b'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
+describe('sortSearchableElements delegates groups', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="delegate-a">
+            <span name="name" class="searchable-element-title">A: Delegate</span>
+            <p name="delegate-count">5</p>
+            <p name="courses-count">7</p>
+          </div>
+          <div class="searchable-element" id="delegate-b">
+            <span name="name" class="searchable-element-title">B: Delegate</span>
+            <p name="delegate-count">1</p>
+            <p name="courses-count">2</p>
+          </div>
+          <div class="searchable-element" id="delegate-c">
+            <span name="name" class="searchable-element-title">C: Delegate</span>
+            <p name="delegate-count">7</p>
+            <p name="courses-count">5</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy              | sortDirection   | firstId         | secondId        | thirdId
+  ${'SearchableName'} | ${'Ascending'}  | ${'delegate-a'} | ${'delegate-b'} | ${'delegate-c'}
+  ${'SearchableName'} | ${'Descending'} | ${'delegate-c'} | ${'delegate-b'} | ${'delegate-a'}
+  ${'DelegateCount'}  | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-a'} | ${'delegate-c'}
+  ${'DelegateCount'}  | ${'Descending'} | ${'delegate-c'} | ${'delegate-a'} | ${'delegate-b'}
+  ${'CoursesCount'}   | ${'Ascending'}  | ${'delegate-b'} | ${'delegate-c'} | ${'delegate-a'}
+  ${'CoursesCount'}   | ${'Descending'} | ${'delegate-a'} | ${'delegate-c'} | ${'delegate-b'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
+describe('sortSearchableElements course setup', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="course-a">
+            <span name="course-name" class="searchable-element-title">A: Course</span>
+            <p name="delegate-count">5</p>
+            <p name="in-progress-count">7</p>
+          </div>
+          <div class="searchable-element" id="course-b">
+            <span name="course-name" class="searchable-element-title">B: Course</span>
+            <p name="delegate-count">1</p>
+            <p name="in-progress-count">2</p>
+          </div>
+          <div class="searchable-element" id="course-c">
+            <span name="course-name" class="searchable-element-title">C: Course</span>
+            <p name="delegate-count">7</p>
+            <p name="in-progress-count">5</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy                | sortDirection   | firstId       | secondId      | thirdId
+  ${'CourseName'}       | ${'Ascending'}  | ${'course-a'} | ${'course-b'} | ${'course-c'}
+  ${'CourseName'}       | ${'Descending'} | ${'course-c'} | ${'course-b'} | ${'course-a'}
+  ${'DelegateCount'}    | ${'Ascending'}  | ${'course-b'} | ${'course-a'} | ${'course-c'}
+  ${'DelegateCount'}    | ${'Descending'} | ${'course-c'} | ${'course-a'} | ${'course-b'}
+  ${'InProgressCount'}  | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
+  ${'InProgressCount'}  | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {

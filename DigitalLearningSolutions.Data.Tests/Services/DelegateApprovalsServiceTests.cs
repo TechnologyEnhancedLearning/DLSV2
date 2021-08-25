@@ -18,9 +18,9 @@
 
     public class DelegateApprovalsServiceTests
     {
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private ICentresDataService centresDataService = null!;
         private IConfiguration config = null!;
-        private ICustomPromptsService customPromptsService = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
         private IEmailService emailService = null!;
         private ILogger<DelegateApprovalsService> logger = null!;
@@ -30,14 +30,14 @@
         public void SetUp()
         {
             userDataService = A.Fake<IUserDataService>();
-            customPromptsService = A.Fake<ICustomPromptsService>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
             config = A.Fake<IConfiguration>();
             delegateApprovalsService = new DelegateApprovalsService(
                 userDataService,
-                customPromptsService,
+                centreCustomPromptsService,
                 emailService,
                 centresDataService,
                 logger,
@@ -65,7 +65,7 @@
             A.CallTo(() => userDataService.GetUnapprovedDelegateUsersByCentreId(2))
                 .Returns(expectedUserList);
             A.CallTo(
-                    () => customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+                    () => centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
                         2,
                         expectedUserList
                     )

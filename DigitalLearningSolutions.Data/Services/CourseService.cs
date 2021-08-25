@@ -15,12 +15,12 @@
     public class CourseService : ICourseService
     {
         private readonly ICourseDataService courseDataService;
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
 
-        public CourseService(ICourseDataService courseDataService, ICustomPromptsService customPromptsService)
+        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService)
         {
             this.courseDataService = courseDataService;
-            this.customPromptsService = customPromptsService;
+            this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
@@ -40,7 +40,7 @@
             return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
                 info =>
                 {
-                    var customPrompts = customPromptsService.GetCustomPromptsWithAnswersForCourse(
+                    var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                         info,
                         info.CustomisationId,
                         centreId

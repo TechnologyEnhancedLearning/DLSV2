@@ -34,7 +34,7 @@
                 return View(model);
             }
 
-            string baseUrl = ConfigHelper.GetAppConfig()["AppRootPath"];
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
             try
             {
@@ -52,7 +52,7 @@
             }
             catch (ResetPasswordInsertException)
             {
-                return RedirectToAction("Error", "LearningSolutions");
+                return new StatusCodeResult(500);
             }
 
             return RedirectToAction("Confirm");

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableDelegateGroupViewModel
     {
@@ -16,9 +17,11 @@
             CourseCount = group.CoursesCount;
             LinkedToField = group.LinkedToField;
             LinkedField = group.LinkedToFieldName;
-            AddedBy = $"{group.AddedByFirstName} {group.AddedByLastName}";
+            AddedByAdminId = group.AddedByAdminId;
+            AddedBy = group.AddedByName;
             ShouldAddNewRegistrantsToGroup = group.ShouldAddNewRegistrantsToGroup ? Yes : No;
-            ChangesToRegistrationDetailsShouldChangeGroupMembership = group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
+            ChangesToRegistrationDetailsShouldChangeGroupMembership =
+                group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
         }
 
         public int Id { get; set; }
@@ -35,7 +38,16 @@
 
         public string LinkedField { get; set; }
 
+        public int AddedByAdminId { get; set; }
+
         public string AddedBy { get; set; }
+
+        public string AddedByFilter => nameof(Group.AddedByAdminId) + FilteringHelper.Separator +
+                                       nameof(Group.AddedByAdminId) +
+                                       FilteringHelper.Separator + AddedByAdminId;
+        public string LinkedFieldFilter => nameof(Group.LinkedToField) + FilteringHelper.Separator +
+                                       nameof(Group.LinkedToField) +
+                                       FilteringHelper.Separator + LinkedToField;
 
         public string ShouldAddNewRegistrantsToGroup { get; set; }
 

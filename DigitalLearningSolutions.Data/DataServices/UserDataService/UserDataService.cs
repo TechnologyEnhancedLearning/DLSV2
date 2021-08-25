@@ -24,6 +24,8 @@
             int categoryId
         );
 
+        void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount);
+
         DelegateUser? GetDelegateUserById(int id);
         List<DelegateUser> GetDelegateUsersByUsername(string username);
         List<DelegateUser> GetAllDelegateUsersByUsername(string username);

@@ -28,15 +28,15 @@
         private const string AddPromptCookieName = "AddRegistrationPromptData";
         private const string EditPromptCookieName = "EditRegistrationPromptData";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
-        private readonly ICustomPromptsService customPromptsService;
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IUserDataService userDataService;
 
         public RegistrationPromptsController(
-            ICustomPromptsService customPromptsService,
+            ICentreCustomPromptsService centreCustomPromptsService,
             IUserDataService userDataService
         )
         {
-            this.customPromptsService = customPromptsService;
+            this.centreCustomPromptsService = centreCustomPromptsService;
             this.userDataService = userDataService;
         }
 
@@ -44,7 +44,7 @@
         {
             var centreId = User.GetCentreId();
 
-            var customPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
             var model = new DisplayPromptsViewModel(customPrompts.CustomPrompts);
 
@@ -66,7 +66,7 @@
         {
             var centreId = User.GetCentreId();
 
-            var customPrompt = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+            var customPrompt = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             var data = TempData.Get<EditRegistrationPromptData>();
@@ -92,7 +92,7 @@
                 SaveAction => EditRegistrationPromptPostSave(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 BulkAction => EditRegistrationPromptBulk(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
@@ -209,7 +209,7 @@
                 NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
                 BulkAction => AddRegistrationPromptBulk(model),
-                _ => RedirectToAction("Error", "LearningSolutions")
+                _ => new StatusCodeResult(500)
             };
         }
 
@@ -253,7 +253,7 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = customPromptsService.GetCustomPromptsAlphabeticalList()
+            var promptName = centreCustomPromptsService.GetCustomPromptsAlphabeticalList()
                 .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
@@ -267,7 +267,7 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
-            if (customPromptsService.AddCustomPromptToCentre(
+            if (centreCustomPromptsService.AddCustomPromptToCentre(
                 User.GetCentreId(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
@@ -278,7 +278,7 @@
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Error", "LearningSolutions");
+            return new StatusCodeResult(500);
         }
 
         [HttpGet]
@@ -294,7 +294,7 @@
             }
 
             var promptName =
-                customPromptsService.GetPromptNameForCentreAndPromptNumber(User.GetCentreId(), promptNumber);
+                centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(User.GetCentreId(), promptNumber);
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
@@ -321,7 +321,7 @@
         {
             ModelState.ClearAllErrors();
 
-            customPromptsService.UpdateCustomPromptForCentre(
+            centreCustomPromptsService.UpdateCustomPromptForCentre(
                 User.GetCentreId(),
                 model.PromptNumber,
                 model.Mandatory,
@@ -421,7 +421,7 @@
 
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
         {
-            customPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+            centreCustomPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
             return RedirectToAction("Index");
         }
 
@@ -458,7 +458,7 @@
 
         private void SetViewBagCustomPromptNameOptions(int? selectedId = null)
         {
-            var customPrompts = customPromptsService.GetCustomPromptsAlphabeticalList();
+            var customPrompts = centreCustomPromptsService.GetCustomPromptsAlphabeticalList();
             ViewBag.CustomPromptNameOptions =
                 SelectListHelper.MapOptionsToSelectListItems(customPrompts, selectedId);
         }

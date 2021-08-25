@@ -9,11 +9,11 @@
           @Model.SectionName
         </span>
       </summary>
-      <div class="nhsuk-details__text nhsuk-u-padding-bottom-0">
+      <div class="nhsuk-details__text nhsuk-u-margin-bottom-0">
         <dl class="nhsuk-summary-list">
           @foreach (var tutorial in Model.Tutorials) {
             @if (tutorial.DiagnosticEnabled || tutorial.LearningEnabled) {
-              <div class="nhsuk-summary-list__row">
+              <div class="nhsuk-summary-list__row basic-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
                   @tutorial.TutorialName
                 </dt>

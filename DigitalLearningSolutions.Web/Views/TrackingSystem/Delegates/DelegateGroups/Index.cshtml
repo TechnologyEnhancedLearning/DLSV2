@@ -29,13 +29,32 @@
       <div class="nhsuk-grid-column-one-third">
         <h1 id="page-heading" class="nhsuk-heading-xl">Groups</h1>
       </div>
-      <div class="nhsuk-grid-column-two-thirds all-delegates-button-group">
-        <a class="nhsuk-button nhsuk-button--secondary all-delegates-button" role="button">
+      <div class="nhsuk-grid-column-two-thirds heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
           Add
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary all-delegates-button" role="button">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
           Generate
         </a>
+      </div>
+    </div>
+
+    <input type="hidden" class="search-box" id="search-field" name="searchString" value="" />
+    <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
+
+    <div class="nhsuk-grid-row">
+      <partial name="SearchablePage/_Sort" model="@Model" />
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <partial name="SearchablePage/_Filters" model="Model" />
+      </div>
+    </div>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <vc:current-filters searchable-page-view-model="Model" />
       </div>
     </div>
 
@@ -46,11 +65,16 @@
             <b>No delegate groups found.</b>
           </p>
         } else {
+          <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
           <div id="searchable-elements">
             @foreach (var groupModel in Model.DelegateGroups) {
               <partial name="_SearchableDelegateGroupCard" model="groupModel" />
             }
           </div>
+        }
+        @if (Model.TotalPages > 1) {
+          <partial name="SearchablePage/_Pagination" model="Model" />
         }
       </div>
     </div>
@@ -60,3 +84,7 @@
     </nav>
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/delegateGroups.js")" asp-append-version="true"></script>
+}
