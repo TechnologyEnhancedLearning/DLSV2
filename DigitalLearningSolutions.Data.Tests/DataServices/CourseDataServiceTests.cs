@@ -242,6 +242,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CompletedCount = 5,
                 HideInLearnerPortal = false,
                 CategoryName = "Office 2007",
+                CourseTopic = "Microsoft Office",
                 LearningMinutes = "N/A"
             };
 

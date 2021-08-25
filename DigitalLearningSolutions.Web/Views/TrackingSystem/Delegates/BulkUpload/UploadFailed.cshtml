@@ -1,0 +1,29 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
+  ViewData["Title"] = "Failed - Bulk upload/update delegates";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Bulk upload failed</h1>
+
+    <p class="nhsuk-body-m">
+      The file that you uploaded does not have the correct column headers on the first row.
+    </p>
+
+    <p class="nhsuk-body-m">Ensure that you have downloaded the template using "Download delegates" button before adding/amending delegates and uploading.</p>
+
+    <vc:action-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Manage all delegates" />
+
+    <vc:back-link asp-controller="BulkUpload" asp-action="Index" asp-all-route-data="@null" link-text="Try again" />
+  </div>
+</div>

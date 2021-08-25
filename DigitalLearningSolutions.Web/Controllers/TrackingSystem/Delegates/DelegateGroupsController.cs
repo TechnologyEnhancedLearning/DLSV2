@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -20,15 +20,18 @@
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
-            ICentreCustomPromptsService centreCustomPromptsService
+            ICentreCustomPromptsService centreCustomPromptsService,
+            IClockService clockService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
+            this.clockService = clockService;
         }
 
         [Route("{page=1:int}")]
@@ -98,6 +101,61 @@
             return View(model);
         }
 
+        [HttpGet]
+        [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
+        public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
+
+            if (groupName == null || delegateUser == null)
+            {
+                return NotFound();
+            }
+            
+            var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
+        public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
+
+            if (groupName == null || delegateUser == null)
+            {
+                return NotFound();
+            }
+
+            if (!model.ConfirmRemovalFromGroup)
+            {
+                ModelState.AddModelError(
+                    nameof(GroupDelegatesRemoveViewModel.ConfirmRemovalFromGroup),
+                    "You must confirm before removing this user from the group"
+                );
+                return View(model);
+            }
+
+            using var transaction = new TransactionScope();
+            if (model.RemoveProgress)
+            {
+                var currentDate = clockService.UtcNow;
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, currentDate);
+            }
+
+            groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
+            transaction.Complete();
+
+            return RedirectToAction("GroupDelegates", new { groupId });
+        }
+
         [Route("{groupId:int}/Courses/{page:int=1}")]
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
@@ -108,6 +166,7 @@
             {
                 return NotFound();
             }
+
             var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);

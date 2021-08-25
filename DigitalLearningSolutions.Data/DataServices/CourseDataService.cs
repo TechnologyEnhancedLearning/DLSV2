@@ -187,11 +187,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                         {AttemptsPassedQuery},
                         cu.HideInLearnerPortal,
                         cc.CategoryName,
+                        ct.CourseTopic,
                         cu.LearningTimeMins AS LearningMinutes
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
+                    INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
