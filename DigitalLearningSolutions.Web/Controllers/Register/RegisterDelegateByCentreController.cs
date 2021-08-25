@@ -270,7 +270,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            if (!userService.IsEmailValidForCentre(model.Email, model.Centre!.Value))
+            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),

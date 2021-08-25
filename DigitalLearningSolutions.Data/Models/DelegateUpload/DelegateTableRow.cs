@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using ClosedXML.Excel;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public enum RowStatus
     {
@@ -85,6 +86,71 @@
             }
 
             return !Error.HasValue;
+        }
+
+        public bool MatchesDelegateUser(DelegateUser delegateUser)
+        {
+            if (CandidateNumber != null && (delegateUser.AliasId ?? string.Empty) != AliasId)
+            {
+                return false;
+            }
+
+            if ((delegateUser.FirstName ?? string.Empty) != FirstName)
+            {
+                return false;
+            }
+
+            if (delegateUser.LastName != LastName)
+            {
+                return false;
+            }
+
+            if (delegateUser.JobGroupId != JobGroupId!.Value)
+            {
+                return false;
+            }
+
+            if (delegateUser.Active != Active!.Value)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer1 ?? string.Empty) != Answer1)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer2 ?? string.Empty) != Answer2)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer3 ?? string.Empty) != Answer3)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer4 ?? string.Empty) != Answer4)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer5 ?? string.Empty) != Answer5)
+            {
+                return false;
+            }
+
+            if ((delegateUser.Answer6 ?? string.Empty) != Answer6)
+            {
+                return false;
+            }
+
+            if ((delegateUser.EmailAddress ?? string.Empty) != Email)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

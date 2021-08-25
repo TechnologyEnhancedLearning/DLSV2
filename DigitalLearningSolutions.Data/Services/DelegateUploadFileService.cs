@@ -106,7 +106,7 @@ namespace DigitalLearningSolutions.Data.Services
             var userToUpdate = delegateUserByCandidateNumber ?? delegateUserByAliasId;
             if (userToUpdate == null)
             {
-                if (!userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                if (!userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
                 {
                     delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                     return;
@@ -137,13 +137,13 @@ namespace DigitalLearningSolutions.Data.Services
         private void ProcessPotentialUpdate(int centreId, DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
             if (delegateRow.Email != delegateUser.EmailAddress &&
-                !userService.IsEmailValidForCentre(delegateRow.Email!, centreId))
+                !userService.IsDelegateEmailValidForCentre(delegateRow.Email!, centreId))
             {
                 delegateRow.Error = BulkUploadResult.ErrorReason.EmailAddressInUse;
                 return;
             }
 
-            if (!RecordNeedsUpdating(delegateUser, delegateRow))
+            if (delegateRow.MatchesDelegateUser(delegateUser))
             {
                 delegateRow.RowStatus = RowStatus.Skipped;
                 return;
@@ -170,66 +170,6 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRow.Email!
             );
             delegateRow.RowStatus = RowStatus.Updated;
-        }
-
-        private static bool RecordNeedsUpdating(DelegateUser delegateUser, DelegateTableRow delegateRow)
-        {
-            if (delegateRow.CandidateNumber != null && (delegateUser.AliasId ?? string.Empty) != delegateRow.AliasId)
-            {
-                return true;
-            }
-
-            if ((delegateUser.FirstName ?? string.Empty) != delegateRow.FirstName)
-            {
-                return true;
-            }
-
-            if (delegateUser.LastName != delegateRow.LastName)
-            {
-                return true;
-            }
-
-            if (delegateUser.JobGroupId != delegateRow.JobGroupId!.Value)
-            {
-                return true;
-            }
-
-            if (delegateUser.Active != delegateRow.Active!.Value)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer1 ?? string.Empty) != delegateRow.Answer1)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer2 ?? string.Empty) != delegateRow.Answer2)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer3 ?? string.Empty) != delegateRow.Answer3)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer4 ?? string.Empty) != delegateRow.Answer4)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer5 ?? string.Empty) != delegateRow.Answer5)
-            {
-                return true;
-            }
-
-            if ((delegateUser.Answer6 ?? string.Empty) != delegateRow.Answer6)
-            {
-                return true;
-            }
-
-            return (delegateUser.EmailAddress ?? string.Empty) != delegateRow.Email;
         }
 
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)

@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
-        bool IsEmailValidForCentre(string email, int centreId);
+        bool IsDelegateEmailValidForCentre(string email, int centreId);
     }
 
     public class UserService : IUserService
@@ -201,9 +201,9 @@ namespace DigitalLearningSolutions.Data.Services
             return verifiedLinkedUsersAccounts.Any();
         }
 
-        public bool IsEmailValidForCentre(string email, int centreId)
+        public bool IsDelegateEmailValidForCentre(string email, int centreId)
         {
-            var duplicateUsers = GetUsersByEmailAddress(email).delegateUsers
+            var duplicateUsers = userDataService.GetDelegateUsersByEmailAddress(email)
                 .Where(u => u.CentreId == centreId);
 
             return !duplicateUsers.Any();

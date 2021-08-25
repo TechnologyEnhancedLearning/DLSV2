@@ -66,14 +66,14 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = "testUser"
             };
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -91,14 +91,14 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = "testUser"
             };
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -142,7 +142,7 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = duplicateAlias
             };
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
             A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
                 .Returns(new List<DelegateUser> { duplicateUser });
@@ -173,7 +173,7 @@
                 Alias = alias,
                 Centre = 1
             };
-            A.CallTo(() => userService.IsEmailValidForCentre(model.Email!, model.Centre.Value))
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
 
             // When
