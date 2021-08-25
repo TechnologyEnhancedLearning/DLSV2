@@ -67,11 +67,11 @@
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
-            var adminAccountFailedVerification = adminUser != null && verifiedAdminUser == null;
+            var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
             var adminAccountIsLocked = adminUser != null && adminUser.IsLocked ||
-                                       adminAccountFailedVerification && adminUser!.FailedLoginCount == 4;
-            var shouldLogIntoDelegateAccount = verifiedDelegateUsers.Any();
-            var shouldIncreaseFailedLoginCount = adminAccountFailedVerification && !shouldLogIntoDelegateAccount;
+                                       adminAccountVerificationAttemptedAndFailed && adminUser!.FailedLoginCount == 4;
+            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
+            var shouldIncreaseFailedLoginCount = adminAccountVerificationAttemptedAndFailed && !delegateAccountVerificationSuccessful;
 
             if (shouldIncreaseFailedLoginCount)
             {
@@ -80,7 +80,7 @@
 
             if (adminAccountIsLocked)
             {
-                if (shouldLogIntoDelegateAccount)
+                if (delegateAccountVerificationSuccessful)
                 {
                     verifiedAdminUser = null;
                 }
@@ -90,7 +90,7 @@
                 }
             }
 
-            if (verifiedAdminUser == null && !shouldLogIntoDelegateAccount)
+            if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);

@@ -464,7 +464,6 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).DoesNothing();
 
             // When
             userService.ResetFailedLoginCount(adminUser);
@@ -478,7 +477,6 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 0);
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).DoesNothing();
 
             // When
             userService.ResetFailedLoginCount(adminUser);
@@ -493,7 +491,6 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
             const int expectedCount = 5;
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount)).DoesNothing();
 
             // When
             userService.IncrementFailedLoginCount(adminUser);

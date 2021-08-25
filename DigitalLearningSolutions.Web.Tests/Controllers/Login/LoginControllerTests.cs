@@ -524,7 +524,6 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
-            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -542,7 +541,6 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
-            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -558,7 +556,6 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -678,7 +675,6 @@
                 .Returns(
                     new List<CentreUserDetails> { new CentreUserDetails(1, "Centre 1", true, true) }
                 );
-            A.CallTo(() => userService.ResetFailedLoginCount(adminUser)).DoesNothing();
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
