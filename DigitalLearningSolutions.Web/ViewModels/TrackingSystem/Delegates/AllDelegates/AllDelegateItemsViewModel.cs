@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -65,11 +66,7 @@
                 )
             );
 
-            Filters = filters.Select(
-                f => f.FilterOptions.Select(
-                    fo => new AppliedFilterViewModel(fo.DisplayText, f.FilterName, fo.FilterValue)
-                )
-            ).SelectMany(af => af).Distinct();
+            Filters = filters.SelectAppliedFilterViewModels();
         }
     }
 }
