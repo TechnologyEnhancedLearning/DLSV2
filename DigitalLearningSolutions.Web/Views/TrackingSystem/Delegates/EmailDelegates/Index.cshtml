@@ -25,12 +25,20 @@
         <b>No delegates found.</b>
       </p>
     } else {
-      <form method="post" asp-action="Index">
+      <form method="post" asp-action="SendWelcomeEmails">
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset">
             <div class="nhsuk-checkboxes">
               @foreach (var delegateModel in Model.Delegates) {
-                <partial name="_EmailDelegatesItem" model="delegateModel" />
+                <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
+                  <input class="nhsuk-checkboxes__input" id="@delegateModel.Id-checkbox" type="checkbox" name="SelectedDelegateIds" value="@delegateModel.Id">
+                  <label class="nhsuk-label nhsuk-checkboxes__label" for="@delegateModel.Id-checkbox">
+                    @delegateModel.Name (@delegateModel.Email)
+                  </label>
+                  <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@delegateModel.Id-hint">
+                    Registered on @delegateModel.RegistrationDate
+                  </div>
+                </div>
               }
             </div>
           </fieldset>
