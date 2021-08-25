@@ -6,8 +6,6 @@
 
     public class ViewDelegateViewModel
     {
-        public IEnumerable<SearchableTagViewModel> Tags;
-
         public ViewDelegateViewModel(
             DelegateInfoViewModel delegateInfoViewModel,
             IEnumerable<DelegateCourseInfoViewModel> courseInfoViewModels,
@@ -20,7 +18,7 @@
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
-
         public List<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
+        public IEnumerable<SearchableTagViewModel> Tags { get; set; }
     }
 }
