@@ -68,8 +68,8 @@
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
             var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
-            var adminAccountIsLocked = adminUser != null && adminUser.IsLocked ||
-                                       adminAccountVerificationAttemptedAndFailed && adminUser!.FailedLoginCount == 4;
+            var adminAccountIsLocked = (adminUser != null && adminUser.IsLocked) ||
+                                       (adminAccountVerificationAttemptedAndFailed && adminUser!.FailedLoginCount == 4);
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
             var shouldIncreaseFailedLoginCount = adminAccountVerificationAttemptedAndFailed && !delegateAccountVerificationSuccessful;
 
