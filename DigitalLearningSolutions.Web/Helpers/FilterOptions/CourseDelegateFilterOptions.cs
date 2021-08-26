@@ -28,7 +28,7 @@
         public static readonly FilterOptionViewModel Locked = new FilterOptionViewModel(
             "Locked",
             Group + FilteringHelper.Separator + nameof(CourseDelegate.Locked) + FilteringHelper.Separator + "true",
-            FilterStatus.Success
+            FilterStatus.Warning
         );
 
         public static readonly FilterOptionViewModel NotLocked = new FilterOptionViewModel(
