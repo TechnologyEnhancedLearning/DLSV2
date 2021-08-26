@@ -42,7 +42,7 @@
                     emailTo = email.To,
                     emailFrom = senderAddress,
                     emailSubject = email.Subject,
-                    emailBody = email.Body,
+                    emailBody = email.Body.HtmlBody,
                     addedByProcess,
                     urgent,
                     deliverAfter

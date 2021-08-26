@@ -16,11 +16,13 @@
     [Route("TrackingSystem/Delegates/Email")]
     public class EmailDelegatesController : Controller
     {
+        private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
 
-        public EmailDelegatesController(IUserService userService)
+        public EmailDelegatesController(IUserService userService, IPasswordResetService passwordResetService)
         {
             this.userService = userService;
+            this.passwordResetService = passwordResetService;
         }
 
         [HttpGet]
@@ -44,9 +46,16 @@
             }
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id));
-            var emails = selectedUsers.Select(delegateUser => delegateUser.EmailAddress);
+            var emails = selectedUsers.Select(delegateUser => delegateUser.EmailAddress!).ToList();
             var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
-            return new ObjectResult(emailDate.ToString("dd/MM/yyyy") + "\n" + string.Join("\n", emails.ToList()));
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+
+            foreach (var email in emails)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(email, baseUrl, emailDate);
+            }
+
+            return View("Confirmation", emails.Count);
         }
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()
