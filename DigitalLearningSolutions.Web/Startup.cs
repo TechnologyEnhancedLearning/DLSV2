@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -163,6 +164,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
+            services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
@@ -222,6 +224,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
+            services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
         }

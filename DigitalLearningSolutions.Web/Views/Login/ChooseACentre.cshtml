@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+@using DigitalLearningSolutions.Web.ViewModels.Login
 @model ChooseACentreViewModel
 @{
   ViewData["Title"] = "Choose A Centre";
@@ -20,45 +20,48 @@
 
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" scope="col">
-            Centre
-          </th>
-          <th role="columnheader" scope="col">
-            Roles
-          </th>
-          <th role="columnheader" scope="col">
-            Action
-          </th>
-        </tr>
+      <tr role="row">
+        <th role="columnheader" scope="col">
+          Centre
+        </th>
+        <th role="columnheader" scope="col">
+          Roles
+        </th>
+        <th role="columnheader" scope="col">
+          Action
+        </th>
+      </tr>
       </thead>
       <tbody class="nhsuk-table__body">
-        @foreach (var centreRow in Model.CentreUserDetails)
-        {
-          <tr role="row" class="nhsuk-table__row">
-            <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              <span class="nhsuk-table-responsive__heading">Centre: </span>
-              @centreRow.CentreName
-            </td>
-            <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              <span class="nhsuk-table-responsive__heading">Roles: </span>
-              @if (centreRow.IsAdmin)
-              {
-                <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+      @foreach (var centreRow in Model.CentreUserDetails) {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <span class="nhsuk-table-responsive__heading">Centre: </span>
+            @centreRow.CentreName
+          </td>
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <span class="nhsuk-table-responsive__heading">Roles: </span>
+            <div class="centre-role-tags">
+              @if (centreRow.IsAdmin) {
+                <div>
+                  <strong class="nhsuk-tag nhsuk-tag--blue centre-role-tag">Admin</strong>
+                </div>
               }
-              @if (centreRow.IsDelegate)
-              {
-                <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+              @if (centreRow.IsDelegate) {
+                <div>
+                  <strong class="nhsuk-tag nhsuk-tag--grey centre-role-tag">Delegate</strong>
+                </div>
               }
-            </td>
-            <td role="cell" class="nhsuk-table__cell choose-centre-td">
-              <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
-                 asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
-                Choose
-              </a>
-            </td>
-          </tr>
-        }
+            </div>
+          </td>
+          <td role="cell" class="nhsuk-table__cell choose-centre-td">
+            <a role="button" class="nhsuk-button nhsuk-u-margin-bottom-3 nhsuk-u-padding-bottom-0 nhsuk-u-padding-top-0 nhsuk-u-margin-top-0"
+               asp-action="ChooseCentre" asp-route-centreId="@centreRow.CentreId">
+              Choose <span class="nhsuk-u-visually-hidden">@centreRow.CentreName</span>
+            </a>
+          </td>
+        </tr>
+      }
       </tbody>
     </table>
 

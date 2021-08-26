@@ -64,14 +64,14 @@
                 Centre = duplicateUser.CentreId,
                 Email = duplicateUser.EmailAddress
             };
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
-                .Returns((null, new List<DelegateUser> { duplicateUser }));
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -88,14 +88,14 @@
                 Centre = duplicateUser.CentreId + 1,
                 Email = duplicateUser.EmailAddress
             };
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
-                .Returns((null, new List<DelegateUser> { duplicateUser }));
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
