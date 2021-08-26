@@ -397,7 +397,12 @@
 
             // Then
             A.CallTo(
-                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(emailAddress, baseUrl, notifyDate)
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    emailAddress,
+                    baseUrl,
+                    notifyDate,
+                    "RegisterDelegateByCentre_Refactor"
+                )
             ).MustHaveHappened(1, Times.Exactly);
         }
 
@@ -417,7 +422,8 @@
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     A<string>._,
                     A<string>._,
-                    A<DateTime>._
+                    A<DateTime>._,
+                    A<string>._
                 )
             ).MustNotHaveHappened();
         }

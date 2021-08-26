@@ -24,8 +24,12 @@
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl);
-        void GenerateAndScheduleDelegateWelcomeEmail(string emailAddress, string baseUrl, DateTime deliveryDate);
-
+        void GenerateAndScheduleDelegateWelcomeEmail(
+            string emailAddress,
+            string baseUrl,
+            DateTime deliveryDate,
+            string addedByProcess
+        );
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -94,7 +98,12 @@
             emailService.SendEmail(welcomeEmail);
         }
 
-        public void GenerateAndScheduleDelegateWelcomeEmail(string emailAddress, string baseUrl, DateTime deliveryDate)
+        public void GenerateAndScheduleDelegateWelcomeEmail(
+            string emailAddress,
+            string baseUrl,
+            DateTime deliveryDate,
+            string addedByProcess
+        )
         {
             (_, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             var delegateUser = delegateUsers.FirstOrDefault() ??
@@ -110,7 +119,7 @@
                 delegateUser
             );
 
-            emailService.ScheduleEmail(welcomeEmail, "SendWelcomeEmail_Refactor", deliveryDate);
+            emailService.ScheduleEmail(welcomeEmail, addedByProcess, deliveryDate);
         }
 
         public async Task<bool> EmailAndResetPasswordHashAreValidAsync(

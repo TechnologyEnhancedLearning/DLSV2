@@ -52,7 +52,12 @@
 
             foreach (var email in emails)
             {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(email, baseUrl, emailDate);
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    email,
+                    baseUrl,
+                    emailDate,
+                    "SendWelcomeEmail_Refactor"
+                );
             }
 
             return View("Confirmation", emails.Count);

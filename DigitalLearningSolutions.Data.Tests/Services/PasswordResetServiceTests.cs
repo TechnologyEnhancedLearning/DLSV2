@@ -117,7 +117,11 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                    emailAddress,
+                    hash,
+                    ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                );
 
             // Then
             hashIsValid.Should().BeFalse();
@@ -151,7 +155,11 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                    emailAddress,
+                    resetHash,
+                    ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                );
 
             // Then
             hashIsValid.Should().BeTrue();
@@ -200,7 +208,7 @@
                 .Build();
 
             A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((null, new List<DelegateUser>{ delegateUser }));
+                .Returns((null, new List<DelegateUser> { delegateUser }));
 
             // When
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
@@ -227,6 +235,7 @@
             // Given
             var deliveryDate = new DateTime(2200, 1, 1);
             var emailAddress = "recipient@example.com";
+            var addedByProcess = "some process";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
                 .Build();
@@ -235,7 +244,12 @@
                 .Returns((null, new List<DelegateUser> { delegateUser }));
 
             // When
-            passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(emailAddress, "example.com", deliveryDate);
+            passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                emailAddress,
+                "example.com",
+                deliveryDate,
+                addedByProcess
+            );
 
             // Then
             A.CallTo(
@@ -248,7 +262,7 @@
                                     e.Bcc.IsNullOrEmpty() &&
                                     e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
                             ),
-                            "SendWelcomeEmail_Refactor",
+                            addedByProcess,
                             deliveryDate
                         )
                 )

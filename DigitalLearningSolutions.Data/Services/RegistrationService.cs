@@ -119,7 +119,8 @@ namespace DigitalLearningSolutions.Data.Services
                 passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     delegateRegistrationModel.Email,
                     baseUrl,
-                    delegateRegistrationModel.NotifyDate.Value
+                    delegateRegistrationModel.NotifyDate.Value,
+                    "RegisterDelegateByCentre_Refactor"
                 );
             }
 
