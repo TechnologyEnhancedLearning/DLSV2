@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -68,13 +67,14 @@
                 loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
 
             var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
-            var adminAccountIsAlreadyLocked = adminUser != null && adminUser.IsLocked;
+            var adminAccountIsAlreadyLocked = adminUser?.IsLocked == true;
             var adminAccountHasJustBecomeLocked =
-                adminUser != null && adminUser!.FailedLoginCount == 4 && adminAccountVerificationAttemptedAndFailed;
+                adminUser?.FailedLoginCount == 4 && adminAccountVerificationAttemptedAndFailed;
 
             var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
-            var shouldIncreaseFailedLoginCount = adminAccountVerificationAttemptedAndFailed && !delegateAccountVerificationSuccessful;
+            var shouldIncreaseFailedLoginCount =
+                adminAccountVerificationAttemptedAndFailed && !delegateAccountVerificationSuccessful;
 
             if (shouldIncreaseFailedLoginCount)
             {
