@@ -3,25 +3,21 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CourseDelegatesViewModel
     {
-        public CourseDelegatesViewModel(
-            List<Course> courses,
-            List<CourseDelegate> courseDelegates,
-            int? currentCustomisationId
-        )
+        public CourseDelegatesViewModel(CourseDelegatesData courseDelegatesData)
         {
-            CustomisationId = currentCustomisationId;
-            var courseOptions = courses.Select(c => (c.CustomisationId, c.CourseName));
-            Courses = SelectListHelper.MapOptionsToSelectListItems(courseOptions, currentCustomisationId);
+            CustomisationId = courseDelegatesData.CustomisationId;
+            var courseOptions = courseDelegatesData.Courses.Select(c => (c.CustomisationId, c.CourseName));
+            Courses = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
 
-            Active = courses.SingleOrDefault(c => c.CustomisationId == currentCustomisationId)?.Active;
+            Active = courseDelegatesData.Courses.SingleOrDefault(c => c.CustomisationId == CustomisationId)?.Active;
 
-            Delegates = courseDelegates.Select(cd => new SearchableCourseDelegateViewModel(cd));
+            // TODO: HEEDLS-564 - paginate properly instead of taking 10.
+            Delegates = courseDelegatesData.Delegates.Take(10).Select(cd => new SearchableCourseDelegateViewModel(cd));
         }
 
         public int? CustomisationId { get; set; }

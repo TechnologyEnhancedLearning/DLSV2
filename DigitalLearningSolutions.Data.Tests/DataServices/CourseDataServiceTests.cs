@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -315,6 +316,31 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             totalAttempts.Should().Be(23);
             attemptsPassed.Should().Be(11);
+        }
+
+        [Test]
+        public void GetCoursesAtCentreForCategoryId()
+        {
+            // Given
+            var expectedFirstCourse = new Course
+            {
+                CustomisationId = 1,
+                CentreId = 2,
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard",
+                Active = false
+            };
+
+            // When
+            var result = courseDataService.GetCoursesAtCentreForCategoryId(2, 0).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(69);
+                result.First().Should().BeEquivalentTo(expectedFirstCourse);
+            }
         }
     }
 }
