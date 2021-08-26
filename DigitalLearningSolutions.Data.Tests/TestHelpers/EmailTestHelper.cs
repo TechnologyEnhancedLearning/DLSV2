@@ -9,8 +9,7 @@
                                               "   <p>Test Body</p>\r\n" +
                                               "</body>";
 
-        public static Email GetDefaultEmail
-        (
+        public static Email GetDefaultEmail(
             string[]? to = null,
             string[]? cc = null,
             string[]? bcc = null,
@@ -18,8 +17,7 @@
             BodyBuilder? body = null
         )
         {
-            return new Email
-            (
+            return new Email(
                 to: to ?? new string[1] { "recipient@example.com" },
                 cc: cc ?? new string[1] { "cc@example.com" },
                 bcc: bcc ?? new string[1] { "bcc@example.com" },
@@ -30,6 +28,20 @@
                     HtmlBody = DefaultHtmlBody
                 }
             );
+        }
+
+        public static Email GetDefaultEmailToSingleRecipient(
+            string to = "recipient@example.com",
+            string subject = "Test Subject Line",
+            BodyBuilder? body = null
+        )
+        {
+            body ??= new BodyBuilder
+            {
+                TextBody = "Test body",
+                HtmlBody = DefaultHtmlBody
+            };
+            return new Email(subject, body, to);
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using MailKit.Net.Smtp;
@@ -13,6 +14,7 @@
 
     public class EmailServiceTests
     {
+        private IEmailDataService emailDataService;
         private IConfigService configService;
         private EmailService emailService;
         private ISmtpClient smtpClient;
@@ -20,6 +22,7 @@
         [SetUp]
         public void Setup()
         {
+            emailDataService = A.Fake<IEmailDataService>();
             configService = A.Fake<IConfigService>();
             var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
@@ -32,7 +35,7 @@
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
-            emailService = new EmailService(configService, smtpClientFactory, logger);
+            emailService = new EmailService(emailDataService, configService, smtpClientFactory, logger);
         }
 
         [TestCase(ConfigService.MailPort)]
@@ -265,6 +268,37 @@
                         default,
                         null
                     )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ScheduleEmail_schedules_email_correctly()
+        {
+            // When
+            var email = EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com");
+            var deliveryDate = new DateTime(2200, 1, 1);
+            emailService.ScheduleEmail(email, "some process", deliveryDate);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailDataService.ScheduleEmail(email, A<string>._, "some process", false, deliveryDate)
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ScheduleEmail_sets_urgent_true_if_same_day()
+        {
+            // When
+            var email = EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com");
+            emailService.ScheduleEmail(email, "some process", DateTime.Today);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailDataService.ScheduleEmail(email, A<string>._, "some process", true, DateTime.Today)
                 )
                 .MustHaveHappened();
         }

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.Email;
     using MailKit.Net.Smtp;
@@ -14,21 +15,24 @@
     {
         void SendEmail(Email email);
         void SendEmails(IEnumerable<Email> emails);
+        void ScheduleEmail(Email email, string addedByProcess, DateTime deliveryDate);
     }
 
     public class EmailService : IEmailService
     {
         private readonly IConfigService configService;
+        private readonly IEmailDataService emailDataService;
         private readonly ILogger<EmailService> logger;
         private readonly ISmtpClientFactory smtpClientFactory;
 
-        public EmailService
-        (
+        public EmailService(
+            IEmailDataService emailDataService,
             IConfigService configService,
             ISmtpClientFactory smtpClientFactory,
             ILogger<EmailService> logger
         )
         {
+            this.emailDataService = emailDataService;
             this.configService = configService;
             this.smtpClientFactory = smtpClientFactory;
             this.logger = logger;
@@ -36,7 +40,7 @@
 
         public void SendEmail(Email email)
         {
-            SendEmails(new [] {email});
+            SendEmails(new[] { email });
         }
 
         public void SendEmails(IEnumerable<Email> emails)
@@ -63,8 +67,14 @@
             }
         }
 
-        private void SendSingleEmailFromClient
-        (
+        public void ScheduleEmail(Email email, string addedByProcess, DateTime deliveryDate)
+        {
+            var senderAddress = GetMailConfig().MailSenderAddress;
+            var urgent = deliveryDate.Date.Equals(DateTime.Today);
+            emailDataService.ScheduleEmail(email, senderAddress, addedByProcess, urgent, deliveryDate);
+        }
+
+        private void SendSingleEmailFromClient(
             Email email,
             string mailSenderAddress,
             ISmtpClient client
