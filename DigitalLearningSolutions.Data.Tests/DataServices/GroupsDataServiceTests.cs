@@ -156,5 +156,31 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetRelatedProgressIdForGroupDelegate_returns_expected_value()
+        {
+            // Given
+            const int delegateId = 245969;
+
+            // When
+            var result = groupsDataService.GetRelatedProgressIdForGroupDelegate(5, delegateId);
+
+            // Then
+            result.Should().Be(285146);
+        }
+
+        [Test]
+        public void GetRelatedProgressIdForGroupDelegate_returns_null_with_no_record()
+        {
+            // Given
+            const int delegateId = 2;
+
+            // When
+            var result = groupsDataService.GetRelatedProgressIdForGroupDelegate(1, delegateId);
+
+            // Then
+            result.Should().BeNull();
+        }
     }
 }
