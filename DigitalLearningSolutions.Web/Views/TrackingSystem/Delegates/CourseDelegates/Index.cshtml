@@ -41,7 +41,10 @@
         <form method="get" role="search">
           <div class="nhsuk-grid-column-full nhsuk-form-group">
             <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
-            <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown" asp-for="CustomisationId" asp-items="Model.Courses" aria-label="Choose course"></select>
+            <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                    asp-for="CustomisationId"
+                    asp-items="Model.Courses"
+                    aria-label="Choose course"></select>
             <button class="nhsuk-search__submit sort-submit" type="submit">
               Select
             </button>

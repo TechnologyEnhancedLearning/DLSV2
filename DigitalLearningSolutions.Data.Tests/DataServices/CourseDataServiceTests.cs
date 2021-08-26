@@ -319,7 +319,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCoursesAtCentreForCategoryId()
+        public void GetCoursesAtCentreForCategoryId_returns_expected_values()
         {
             // Given
             var expectedFirstCourse = new Course
@@ -339,7 +339,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using (new AssertionScope())
             {
                 result.Should().HaveCount(69);
-                result.First().Should().BeEquivalentTo(expectedFirstCourse);
+                result.First(c => c.CustomisationId == 1).Should().BeEquivalentTo(expectedFirstCourse);
             }
         }
     }
