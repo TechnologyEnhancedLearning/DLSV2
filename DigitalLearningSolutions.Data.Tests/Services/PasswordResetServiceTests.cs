@@ -221,6 +221,40 @@
                 .MustHaveHappened();
         }
 
+        [Test]
+        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            var emailAddress = "recipient@example.com";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .Build();
+
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
+                .Returns((null, new List<DelegateUser> { delegateUser }));
+
+            // When
+            passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(emailAddress, "example.com", deliveryDate);
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.ScheduleEmail(
+                            A<Email>.That.Matches(
+                                e =>
+                                    e.To[0] == emailAddress &&
+                                    e.Cc.IsNullOrEmpty() &&
+                                    e.Bcc.IsNullOrEmpty() &&
+                                    e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
+                            ),
+                            "SendWelcomeEmail_Refactor",
+                            deliveryDate
+                        )
+                )
+                .MustHaveHappened();
+        }
+
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
             A.CallTo(() => clockService.UtcNow).Returns(validationTime);
