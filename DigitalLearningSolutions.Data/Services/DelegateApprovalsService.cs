@@ -24,9 +24,9 @@
 
     public class DelegateApprovalsService : IDelegateApprovalsService
     {
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
@@ -153,7 +153,7 @@
             else
             {
                 var delegateRejectionEmail = GenerateDelegateRejectionEmail(
-                    delegateUser.FirstName,
+                    delegateUser.FullName,
                     delegateUser.CentreName,
                     delegateUser.EmailAddress,
                     FindCentreUrl
