@@ -70,7 +70,7 @@
             var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
             var adminAccountIsAlreadyLocked = adminUser != null && adminUser.IsLocked;
             var adminAccountHasJustBecomeLocked =
-                adminUser!.FailedLoginCount == 4 && adminAccountVerificationAttemptedAndFailed;
+                adminUser != null && adminUser!.FailedLoginCount == 4 && adminAccountVerificationAttemptedAndFailed;
 
             var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
