@@ -303,7 +303,7 @@
             };
             controller.TempData.Set(data);
             var model = new SummaryViewModel();
-            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
                 .Returns(sampleDelegateNumber);
 
             // When

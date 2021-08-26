@@ -51,12 +51,12 @@
         );
 
         private ICentresDataService centresDataService = null!;
+        private IConfiguration config = null!;
         private IEmailService emailService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
-        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -84,6 +84,7 @@
             registrationService = new RegistrationService(
                 registrationDataService,
                 passwordDataService,
+                passwordResetService,
                 emailService,
                 centresDataService,
                 config
@@ -239,7 +240,7 @@
         public void Error_when_registering_delegate_fails_fast()
         {
             // When
-            registrationService.RegisterDelegate(failingRegistrationModel,  string.Empty, false);
+            registrationService.RegisterDelegate(failingRegistrationModel, string.Empty, false);
 
             // Then
             A.CallTo(
@@ -357,11 +358,12 @@
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
 
             // When
-            registrationService.RegisterDelegateByCentre(model);
+            registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash))
+                .MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -372,11 +374,52 @@
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
 
             // When
-            registrationService.RegisterDelegateByCentre(model);
+            registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)).MustNotHaveHappened();
+            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_schedules_welcome_email_if_notify_date_set()
+        {
+            // Given
+            var notifyDate = new DateTime(2200, 1, 1);
+            const string emailAddress = "email@test.com";
+            const string baseUrl = "base.com";
+            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null)
+                { NotifyDate = notifyDate };
+
+            // When
+            registrationService.RegisterDelegateByCentre(model, baseUrl);
+
+            // Then
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(emailAddress, baseUrl, notifyDate)
+            ).MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_does_not_schedule_welcome_email_if_notify_date_not_set()
+        {
+            // Given
+            const string emailAddress = "email@test.com";
+            const string baseUrl = "base.com";
+            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null);
+
+            // When
+            registrationService.RegisterDelegateByCentre(model, baseUrl);
+
+            // Then
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<string>._,
+                    A<string>._,
+                    A<DateTime>._
+                )
+            ).MustNotHaveHappened();
         }
     }
 }
