@@ -271,10 +271,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
-                .Where(u => u.CentreId == model.Centre);
-
-            if (duplicateUsers.Count() != 0)
+            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
@@ -287,7 +284,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
+            var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
                 .Where(u => u.CentreId == model.Centre);
 
             if (duplicateUsers.Count() != 0)

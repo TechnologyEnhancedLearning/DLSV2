@@ -460,6 +460,91 @@
         }
 
         [Test]
+        public void IsDelegateEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
+
+            // When
+            var result = userService.IsDelegateEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsDelegateEmailValidForCentre_should_return_true_if_user_not_at_centre_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 4) });
+
+            // When
+            var result = userService.IsDelegateEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsDelegateEmailValidForCentre_should_return_true_if_no_user_has_email()
+        {
+            // Given
+            const string email = "email@test.com";
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns
+                (new List<DelegateUser>());
+
+            // When
+            var result = userService.IsDelegateEmailValidForCentre(email, 3);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ResetFailedLoginCount_resets_count()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+
+            // When
+            userService.ResetFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
+        }
+
+        [Test]
+        public void ResetFailedLoginCount_doesnt_call_data_service_with_FailedLoginCount_of_zero()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 0);
+
+            // When
+            userService.ResetFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void IncrementFailedLoginCount_updates_count_to_expected_value()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            const int expectedCount = 5;
+
+            // When
+            userService.IncrementFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount)).MustHaveHappened();
+        }
+
+        [Test]
         public void GetDelegateUserCardsForWelcomeEmail_returns_correctly_filtered_list_of_delegates()
         {
             // Given
