@@ -30,6 +30,10 @@ namespace DigitalLearningSolutions.Data.Services
         bool IsPasswordValid(int? adminId, int? delegateId, string password);
 
         bool IsDelegateEmailValidForCentre(string email, int centreId);
+
+        void ResetFailedLoginCount(AdminUser adminUser);
+
+        void IncrementFailedLoginCount(AdminUser adminUser);
     }
 
     public class UserService : IUserService
@@ -207,6 +211,19 @@ namespace DigitalLearningSolutions.Data.Services
                 .Where(u => u.CentreId == centreId);
 
             return !duplicateUsers.Any();
+        }
+
+        public void ResetFailedLoginCount(AdminUser adminUser)
+        {
+            if (adminUser.FailedLoginCount != 0)
+            {
+                userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0);
+            }
+        }
+
+        public void IncrementFailedLoginCount(AdminUser adminUser)
+        {
+            userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

@@ -18,10 +18,10 @@
 
     public class LoginController : Controller
     {
+        private readonly ILogger<LoginController> logger;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IUserService userService;
-        private readonly ILogger<LoginController> logger;
 
         public LoginController(
             ILoginService loginService,
@@ -56,6 +56,7 @@
             }
 
             var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
+
             if (adminUser == null && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
@@ -63,11 +64,44 @@
             }
 
             var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(model.Password, adminUser, delegateUsers);
-            if (verifiedAdminUser == null && verifiedDelegateUsers.Count == 0)
+                loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
+
+            var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
+            var adminAccountIsAlreadyLocked = adminUser?.IsLocked == true;
+            var adminAccountHasJustBecomeLocked =
+                adminUser?.FailedLoginCount == 4 && adminAccountVerificationAttemptedAndFailed;
+
+            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
+            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
+            var shouldIncreaseFailedLoginCount =
+                adminAccountVerificationAttemptedAndFailed && !delegateAccountVerificationSuccessful;
+
+            if (shouldIncreaseFailedLoginCount)
+            {
+                userService.IncrementFailedLoginCount(adminUser!);
+            }
+
+            if (adminAccountIsLocked)
+            {
+                if (delegateAccountVerificationSuccessful)
+                {
+                    verifiedAdminUser = null;
+                }
+                else
+                {
+                    return RedirectToAction("AccountLocked", new { failedCount = adminUser!.FailedLoginCount + 1 });
+                }
+            }
+
+            if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
             {
                 ModelState.AddModelError("Password", "The password you have entered is incorrect");
                 return View("Index", model);
+            }
+
+            if (verifiedAdminUser != null)
+            {
+                userService.ResetFailedLoginCount(verifiedAdminUser);
             }
 
             var approvedDelegateUsers = verifiedDelegateUsers.Where(du => du.Approved).ToList();
@@ -79,8 +113,13 @@
             verifiedAdminUser ??=
                 loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(
                     verifiedDelegateUsers.First(),
-                    model.Password
+                    model.Password!
                 );
+
+            if (verifiedAdminUser?.IsLocked == true)
+            {
+                verifiedAdminUser = null;
+            }
 
             var (verifiedAdminUserWithActiveCentre, approvedDelegateUsersWithActiveCentre) =
                 userService.GetUsersWithActiveCentres(verifiedAdminUser, approvedDelegateUsers);
@@ -150,6 +189,12 @@
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
             return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+        }
+
+        [HttpGet]
+        public IActionResult AccountLocked(int failedCount)
+        {
+            return View(failedCount);
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(

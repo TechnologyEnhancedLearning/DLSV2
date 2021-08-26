@@ -503,5 +503,45 @@
             // Then
             result.Should().BeTrue();
         }
+
+        [Test]
+        public void ResetFailedLoginCount_resets_count()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+
+            // When
+            userService.ResetFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustHaveHappened();
+        }
+
+        [Test]
+        public void ResetFailedLoginCount_doesnt_call_data_service_with_FailedLoginCount_of_zero()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 0);
+
+            // When
+            userService.ResetFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, 0)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void IncrementFailedLoginCount_updates_count_to_expected_value()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
+            const int expectedCount = 5;
+
+            // When
+            userService.IncrementFailedLoginCount(adminUser);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount)).MustHaveHappened();
+        }
     }
 }
