@@ -254,16 +254,20 @@
         {
             // Given
             var testDelegate = UserTestHelper.GetDefaultDelegateUser(emailAddress: "TestAccountAssociation@email.com");
+            var delegateUsers = new List<DelegateUser> { testDelegate };
+            var associatedAdmin = UserTestHelper.GetDefaultAdminUser(emailAddress: "TestAccountAssociation@email.com");
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns((null, new List<DelegateUser> { testDelegate }));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { testDelegate }));
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
+                .Returns(associatedAdmin);
 
             // When
             await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
 
             // Then
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(testDelegate, A<string>._))
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .MustHaveHappened();
         }
 
@@ -354,7 +358,7 @@
                 .Returns((null, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
 
             // When
@@ -576,7 +580,7 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, expectedDelegates));
@@ -608,7 +612,7 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(adminUser, expectedDelegates));
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, expectedDelegates));
@@ -640,7 +644,7 @@
             A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((null, expectedDelegates));
             A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
-            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUser(A<DelegateUser>._, A<string>._))
+            A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(adminUser);
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, expectedDelegates));
