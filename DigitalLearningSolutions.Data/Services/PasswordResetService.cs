@@ -199,7 +199,7 @@
                                 <p>Dear {nameToUse},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
                                 <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
-                                <p>To complete your registration and access your Digital Learning Solutions content, please click <a href=""{setPasswordUrl.Uri}"">this link</a>.</p>
+                                <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>"
