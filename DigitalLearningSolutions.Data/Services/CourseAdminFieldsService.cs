@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using Microsoft.Extensions.Logging;
 
     public interface ICourseAdminFieldsService
     {
@@ -21,7 +22,14 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
-        public List<(int id, string value)> GetCoursePromptsAlphabeticalList();
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList();
+
+        public bool AddCustomPromptToCourse(
+            int customisationId,
+            CourseAdminFields? courseAdminFields,
+            int promptId,
+            string? options
+        );
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
@@ -31,12 +39,15 @@ namespace DigitalLearningSolutions.Data.Services
     public class CourseAdminFieldsService : ICourseAdminFieldsService
     {
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
+        private readonly ILogger<CentreCustomPromptsService> logger;
 
         public CourseAdminFieldsService(
-            ICourseAdminFieldsDataService courseAdminFieldsDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService,
+            ILogger<CentreCustomPromptsService> logger
         )
         {
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
+            this.logger = logger;
         }
 
         public CourseAdminFields? GetCustomPromptsForCourse(
@@ -70,9 +81,33 @@ namespace DigitalLearningSolutions.Data.Services
             courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, options);
         }
 
-        public List<(int id, string value)> GetCoursePromptsAlphabeticalList()
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList()
         {
             return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
+        }
+
+        public bool AddCustomPromptToCourse(int customisationId, CourseAdminFields? courseAdminFields, int promptId, string? options)
+        {
+            var existingPromptNumbers = courseAdminFields.AdminFields
+                .Select(c => c.CustomPromptNumber);
+
+            var promptNumbers = new List<int> { 1, 2, 3 };
+            var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
+            var promptNumber = unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
+
+            if (promptNumber != null)
+            {
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(
+                    customisationId,
+                    promptNumber.Value,
+                    promptId,
+                    options
+                );
+                return true;
+            }
+
+            logger.LogWarning($"Admin field not added to customisation {customisationId}. The course already had 3 admin fields");
+            return false;
         }
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)

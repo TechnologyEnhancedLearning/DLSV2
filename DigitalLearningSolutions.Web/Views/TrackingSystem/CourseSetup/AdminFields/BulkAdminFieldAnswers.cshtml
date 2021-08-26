@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.Extensions.Configuration
 @model BulkAdminFieldAnswersViewModel
@@ -7,7 +7,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Configure answers in bulk" : "Configure answers in bulk";
   ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var cancelLinkData = new Dictionary<string, string> {
     { "customisationId", Model.CustomisationId.ToString() },
@@ -26,8 +26,7 @@
     }
 
     <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
-
-    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminFieldBulkPost">
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddAdminFieldAnswersBulk" : "EditAdminFieldBulkPost")">
 
       <input type="hidden" asp-for="PromptNumber" />
 

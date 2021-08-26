@@ -23,7 +23,8 @@
         public const string AddPromptAction = "addPrompt";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private const string EditPromptCookieName = "EditRegistrationPromptData";
+        private const string EditPromptCookieName = "EditAdminFieldData";
+        private const string AddPromptCookieName = "AddAdminFieldData";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
@@ -106,7 +107,7 @@
         }
 
         [HttpGet]
-        [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulk(int customisationId, int promptNumber)
         {
@@ -147,39 +148,45 @@
         }
 
         [HttpGet]
-        [Route("{customisationId}/AdminFields/Add/New")]
-        public IActionResult AddAdminFieldNew()
+        [Route("{customisationId:int}/AdminFields/Add/New")]
+        public IActionResult AddAdminFieldNew(int customisationId)
         {
             TempData.Clear();
 
-            var addAdminFieldData = new AddAdminFieldData();
+            var model = new AddAdminFieldViewModel(customisationId);
+            var addAdminFieldData = new AddAdminFieldData(model);
             var id = addAdminFieldData.Id;
 
-            return RedirectToAction("AddAdminField");
+            Response.Cookies.Append(
+                AddPromptCookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
+            TempData.Set(addAdminFieldData);
+
+            return RedirectToAction("AddAdminField", new { customisationId = model.CustomisationId });
         }
 
         [HttpGet]
-        [Route("{customisationId}/AdminFields/Add")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptSelectPrompt()
+        [Route("{customisationId:int}/AdminFields/Add")]
+        public IActionResult AddAdminField(int customisationId)
         {
-            var addRegistrationPromptData = TempData.Peek<AddRegistrationPromptData>()!;
+            var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
-            SetViewBagCustomPromptNameOptions(addRegistrationPromptData.SelectPromptViewModel.CustomPromptId);
-            return View(addRegistrationPromptData.SelectPromptViewModel);
+            SetViewBagCoursePromptNameOptions();
+
+            var model = addAdminFieldData?.AddModel ?? new AddAdminFieldViewModel(customisationId);
+
+            return View(model);
         }
 
         [HttpPost]
         [Route("{customisationId}/AdminFields/Add")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptSelectPrompt(AddAdminFieldViewModel model, string action)
+        public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
-            if (!ModelState.IsValid)
-            {
-                SetViewBagCoursePromptNameOptions();
-                return View(model);
-            }
-
             UpdateTempDataWithCoursePromptModelValues(model);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
@@ -189,21 +196,20 @@
 
             return action switch
             {
-                SaveAction => EditAdminFieldPostSave(model),
-                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
-                BulkAction => EditAdminFieldBulk(model),
+                SaveAction => AddAdminFieldPostSave(model),
+                AddPromptAction => AddAdminFieldAnswersPostAddPrompt(model, true),
+                BulkAction => AddAdminFieldBulk(model),
                 _ => new StatusCodeResult(500)
             };
         }
 
         [HttpGet]
         [Route("{customisationId}/AdminFields/Add/Bulk")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
-        public IActionResult AddAdminFieldAnswersBulk()
+        public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
             var data = TempData.Peek<AddAdminFieldData>()!;
             var model = new BulkAdminFieldAnswersViewModel(
-                "",
+                data.AddModel.OptionsString,
                 true,
                 customisationId
             );
@@ -212,59 +218,26 @@
         }
 
         [HttpPost]
-        [Route(
-            "{customisationId}/AdminFields/" +
-            "Add/Bulk"
-        )]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptBulkPost(BulkRegistrationPromptAnswersViewModel model)
+        [Route("{customisationId}/AdminFields/Add/Bulk")]
+        public IActionResult AddAdminFieldAnswersBulk(
+            BulkAdminFieldAnswersViewModel model
+        )
         {
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
             {
-                return View("BulkRegistrationPromptAnswers", model);
+                return View("BulkAdminFieldAnswers", model);
             }
 
-            var addData = TempData.Peek<AddRegistrationPromptData>()!;
-            addData.ConfigureAnswersViewModel!.OptionsString =
+            var addData = TempData.Peek<AddAdminFieldData>()!;
+            addData.AddModel!.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             TempData.Set(addData);
 
-            return RedirectToAction("AddRegistrationPromptConfigureAnswers");
-        }
-
-        [HttpGet]
-        [Route("Add/Summary")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptSummary()
-        {
-            var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = centreCustomPromptsService.GetCustomPromptsAlphabeticalList()
-                .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
-            var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("Add/Summary")]
-        [ServiceFilter(typeof(RedirectEmptySessionData<AddRegistrationPromptData>))]
-        public IActionResult AddRegistrationPromptSummaryPost()
-        {
-            var data = TempData.Peek<AddRegistrationPromptData>()!;
-
-            if (centreCustomPromptsService.AddCustomPromptToCentre(
-                User.GetCentreId(),
-                data.SelectPromptViewModel.CustomPromptId!.Value,
-                data.SelectPromptViewModel.Mandatory,
-                data.ConfigureAnswersViewModel.OptionsString
-            ))
-            {
-                TempData.Clear();
-                return RedirectToAction("Index");
-            }
-
-            return new StatusCodeResult(500);
+            return RedirectToAction(
+                "AddAdminField",
+                new { customisationId = model.CustomisationId }
+            );
         }
 
         [HttpGet]
@@ -342,6 +315,58 @@
             TempData.Set(data);
         }
 
+        private IActionResult AddAdminFieldPostSave(AddAdminFieldViewModel model)
+        {
+            ModelState.ClearAllErrors();
+
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
+                model.CustomisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            if (courseAdminFieldsService.AddCustomPromptToCourse(
+                model.CustomisationId,
+                courseAdminFields,
+                model.CustomPromptId,
+                model.OptionsString
+            ))
+            {
+                TempData.Clear();
+                return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
+            }
+
+            return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
+        }
+
+        private IActionResult AddAdminFieldBulk(AddAdminFieldViewModel model)
+        {
+            SetAddAdminFieldTempData(model);
+
+            return RedirectToAction(
+                "AddAdminFieldAnswersBulk",
+                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+            );
+        }
+
+        private void SetAddAdminFieldTempData(AddAdminFieldViewModel model)
+        {
+            var data = new AddAdminFieldData(model);
+            var id = data.Id;
+
+            Response.Cookies.Append(
+                AddPromptCookieName,
+                id.ToString(),
+                new CookieOptions
+                {
+                    Expires = CookieExpiry
+                }
+            );
+            TempData.Set(data);
+        }
+
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
         {
             courseAdminFieldsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
@@ -368,6 +393,40 @@
             }
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
+
+            if (saveToTempData)
+            {
+                UpdateTempDataWithCoursePromptModelValues(model);
+            }
+
+            return View(model);
+        }
+
+        private IActionResult AddAdminFieldAnswersPostAddPrompt(
+            AddAdminFieldViewModel model,
+            bool saveToTempData = false
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var optionsString =
+                NewlineSeparatedStringListHelper.AddStringToNewlineSeparatedList(model.OptionsString, model.Answer!);
+
+            if (optionsString.Length > 1000)
+            {
+                SetTotalAnswersLengthTooLongError(model);
+                return View(model);
+            }
+
+            SetAdminFieldAnswersViewModelOptions(model, optionsString);
+
+            if (saveToTempData)
+            {
+                UpdateTempDataWithCoursePromptModelValues(model);
+            }
 
             return View(model);
         }
@@ -425,10 +484,16 @@
                 SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
         }
 
+        private void UpdateTempDataWithCoursePromptModelValues(AdminFieldAnswersViewModel model)
+        {
+            var data = TempData.Peek<AdminFieldAnswersViewModel>()!;
+            TempData.Set(data);
+        }
+
         private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)
         {
             var data = TempData.Peek<AddAdminFieldData>()!;
-            data.AddAdminFieldViewModel = model;
+            data.AddModel = model;
             TempData.Set(data);
         }
 
