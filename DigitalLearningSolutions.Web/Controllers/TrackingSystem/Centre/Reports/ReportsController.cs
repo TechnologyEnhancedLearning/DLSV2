@@ -69,7 +69,7 @@
         [Route("EditFilters")]
         public IActionResult EditFilters()
         {
-            var model = new EditFiltersViewModel{ReportInterval = ReportInterval.Months};
+            var model = new EditFiltersViewModel{ReportInterval = ReportInterval.Months, CanFilterCourseCategories = true};
             var reportIntervals = ((int[])Enum.GetValues(typeof(ReportInterval))).Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
             ViewBag.ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals);
             return View(model);

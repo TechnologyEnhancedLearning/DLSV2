@@ -16,5 +16,6 @@
         public int? EndYear { get; set; }
         public ReportInterval ReportInterval { get; set; }
         public DateTime DataStart { get; set; }
+        public bool CanFilterCourseCategories { get; set; }
     }
 }

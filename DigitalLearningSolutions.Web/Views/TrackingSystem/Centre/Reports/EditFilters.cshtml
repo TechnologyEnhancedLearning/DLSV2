@@ -46,34 +46,74 @@
                       default-option="All"
                       select-list-options="@ViewBag.JobGroupOptions" />
 
-      <vc:select-list asp-for="CourseCategoryId"
-                      label="Choose a course filter"
-                      value="@Model.CourseCategoryId.ToString()"
-                      hint-text=""
-                      deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="All"
-                      select-list-options="@ViewBag.CourseCategoryOptions" />
+      @if (Model.CanFilterCourseCategories)
+      {
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+            <div class="nhsuk-hint" id="contact-hint">
+              Choose whether to filter based on course or course category
+            </div>
 
-      <vc:select-list asp-for="CustomisationId"
-                      label="Choose a course"
-                      value="@Model.CustomisationId.ToString()"
-                      hint-text=""
-                      deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="All"
-                      select-list-options="@ViewBag.CustomisationOptions" />
+            <div class="nhsuk-radios nhsuk-radios--conditional">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="contact-2" name="contact" type="radio" value="course" aria-controls="conditional-contact-2" aria-expanded="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="contact-2">
+                  Course
+                </label>
+              </div>
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-2">
+
+                <vc:select-list asp-for="CustomisationId"
+                                label="Choose a course"
+                                value="@Model.CustomisationId.ToString()"
+                                hint-text=""
+                                deselectable="false"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option="All"
+                                select-list-options="@ViewBag.CustomisationOptions" />
+
+              </div>
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="contact-1" name="contact" type="radio" value="course category" aria-controls="conditional-contact-1" aria-expanded="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="contact-1">
+                  Course category
+                </label>
+              </div>
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-1">
+                <vc:select-list asp-for="CourseCategoryId"
+                                label="Choose course category from the list below"
+                                value="@Model.CourseCategoryId.ToString()"
+                                hint-text=""
+                                deselectable="false"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option="All"
+                                select-list-options="@ViewBag.CourseCategoryOptions" />
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      } else {
+        <vc:select-list asp-for="CustomisationId"
+                        label="Choose a course filter"
+                        value="@Model.CustomisationId.ToString()"
+                        hint-text=""
+                        deselectable="false"
+                        css-class="nhsuk-u-width-one-half"
+                        default-option="All"
+                        select-list-options="@ViewBag.CustomisationOptions" />
+      }
 
       <vc:date-range-input id="date-range"
-                     label="Reporting date range"
-                     start-day-id="StartDay"
-                     start-month-id="StartMonth"
-                     start-year-id="StartYear"
-                     end-day-id="EndDay"
-                     end-month-id="EndMonth"
-                     end-year-id="EndYear"
-                     css-class="date-range-css"
-                     hint-text="The reporting in your centre starts on @Model.DataStart.ToString("dd/MM/yyyy"). Please select any date range between that date and now." />
+                           label="Reporting date range"
+                           start-day-id="StartDay"
+                           start-month-id="StartMonth"
+                           start-year-id="StartYear"
+                           end-day-id="EndDay"
+                           end-month-id="EndMonth"
+                           end-year-id="EndYear"
+                           css-class="date-range-css"
+                           hint-text="The reporting in your centre starts on @Model.DataStart.ToString("dd/MM/yyyy"). Please select any date range between that date and now." />
 
       <vc:select-list asp-for="ReportInterval"
                       label="Report by"
