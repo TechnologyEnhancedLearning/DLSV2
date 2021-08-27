@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
@@ -43,7 +44,8 @@
         {
             if (filterBy == null && filterValue == null)
             {
-                filterBy = Request.Cookies[DelegateFilterCookieName] ?? DelegateActiveStatusFilterOptions.IsActive.FilterValue;
+                filterBy = Request.Cookies[DelegateFilterCookieName] ??
+                           DelegateActiveStatusFilterOptions.IsActive.FilterValue;
             }
             else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {
@@ -77,9 +79,19 @@
         public IActionResult AllDelegateItems()
         {
             var centreId = User.GetCentreId();
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var model = new AllDelegateItemsViewModel(centreId, delegateUsers, jobGroups, centreCustomPromptHelper);
+            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+            var delegateViewModels = userDataService.GetDelegateUserCardsByCentreId(centreId).Select(
+                delegateUser =>
+                {
+                    var customFields =
+                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
+                }
+            );
+
+            var model = new AllDelegateItemsViewModel(delegateViewModels, jobGroups, closedCustomPrompts);
+
             return View(model);
         }
     }

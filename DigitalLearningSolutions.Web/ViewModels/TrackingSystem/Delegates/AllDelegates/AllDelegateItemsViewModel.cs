@@ -2,9 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class AllDelegateItemsViewModel : BaseJavaScriptFilterableViewModel
@@ -12,21 +11,12 @@
         public readonly IEnumerable<SearchableDelegateViewModel> Delegates;
 
         public AllDelegateItemsViewModel(
-            int centreId,
-            IEnumerable<DelegateUserCard> delegateUserCards,
+            IEnumerable<SearchableDelegateViewModel> delegates,
             IEnumerable<(int id, string name)> jobGroups,
-            CentreCustomPromptHelper centreCustomPromptHelper
+            IEnumerable<CustomPrompt> closedCustomPrompts
         )
         {
-            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
-            Delegates = delegateUserCards.Select(
-                delegateUser =>
-                {
-                    var customFields =
-                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
-                }
-            );
+            Delegates = delegates;
 
             var filters = new List<FilterViewModel>
             {
