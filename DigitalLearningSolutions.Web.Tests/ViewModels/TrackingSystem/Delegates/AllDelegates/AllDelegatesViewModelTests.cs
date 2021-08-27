@@ -11,7 +11,6 @@
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FakeItEasy;
     using FluentAssertions;
@@ -66,10 +65,9 @@
         public void All_delegates_should_default_to_returning_the_first_ten_delegates()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -86,10 +84,9 @@
         public void All_delegates_should_correctly_return_the_second_page_of_delegates()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 2,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -159,7 +156,7 @@
                 1,
                 new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 }
             );
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
+
             var customPrompt1Options = new[]
             {
                 new FilterOptionViewModel(
@@ -222,10 +219,9 @@
 
             // When
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 jobGroups,
-                customPromptHelper,
+                centreCustomPrompts.CustomPrompts,
                 2,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -241,10 +237,9 @@
         public void All_delegates_should_search_delegates_correctly()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 1,
                 "purple",
                 DelegateSortByOptions.Name.PropertyName,
@@ -261,10 +256,9 @@
         public void All_delegates_should_sort_delegates_correctly()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
@@ -281,10 +275,9 @@
         public void All_delegates_should_filter_delegates_correctly()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
@@ -301,10 +294,9 @@
         public void All_delegates_should_filter_delegates_correctly_by_empty_values()
         {
             var model = new AllDelegatesViewModel(
-                1,
                 delegateUsers,
                 new List<(int, string)>(),
-                customPromptHelper,
+                new List<CustomPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
