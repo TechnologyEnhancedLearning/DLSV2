@@ -29,8 +29,10 @@
     }
 
     <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
+
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddAdminFieldAnswersBulk" : "EditAdminFieldBulkPost")">
 
+      <input type="hidden" asp-for="IsAddPromptJourney" />
       <input type="hidden" asp-for="PromptNumber" />
 
       <vc:text-area asp-for="OptionsString"

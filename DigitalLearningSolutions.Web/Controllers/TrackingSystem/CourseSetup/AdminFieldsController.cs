@@ -353,7 +353,7 @@
 
             return RedirectToAction(
                 "AddAdminFieldAnswersBulk",
-                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+                new { customisationId = model.CustomisationId }
             );
         }
 
