@@ -28,6 +28,8 @@
             set => SearchableNameOverrideForFuzzySharp = value;
         }
 
+        public string FullName => FirstName == null ? LastName : $"{FirstName} {LastName}";
+
         public abstract UserReference ToUserReference();
     }
 }
