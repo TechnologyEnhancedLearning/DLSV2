@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
-    using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices.CustomPromptsDataService;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -17,12 +15,14 @@
     {
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ILogger<CourseAdminFieldsService> logger = null!;
 
         [SetUp]
         public void Setup()
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
-            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService);
+            logger = A.Fake<ILogger<CourseAdminFieldsService>>();
+            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService, logger);
         }
 
         [Test]

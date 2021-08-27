@@ -9,9 +9,12 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var cancelLinkData = new Dictionary<string, string> {
+  var editCancelLinkData = new Dictionary<string, string> {
     { "customisationId", Model.CustomisationId.ToString() },
     { "promptNumber", Model.PromptNumber.ToString() }
+  };
+  var addCancelLinkData = new Dictionary<string, string> {
+    { "customisationId", Model.CustomisationId.ToString() }
   };
 }
 
@@ -42,7 +45,11 @@
       <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 
-    <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@cancelLinkData" />
+    @if (Model.IsAddPromptJourney) {
+      <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@addCancelLinkData" />
+    } else {
+      <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@editCancelLinkData" />
+    }
 
   </div>
 </div>

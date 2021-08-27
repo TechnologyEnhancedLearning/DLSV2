@@ -39,11 +39,11 @@ namespace DigitalLearningSolutions.Data.Services
     public class CourseAdminFieldsService : ICourseAdminFieldsService
     {
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
-        private readonly ILogger<CentreCustomPromptsService> logger;
+        private readonly ILogger<CourseAdminFieldsService> logger;
 
         public CourseAdminFieldsService(
             ICourseAdminFieldsDataService courseAdminFieldsDataService,
-            ILogger<CentreCustomPromptsService> logger
+            ILogger<CourseAdminFieldsService> logger
         )
         {
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
@@ -86,7 +86,12 @@ namespace DigitalLearningSolutions.Data.Services
             return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
         }
 
-        public bool AddCustomPromptToCourse(int customisationId, CourseAdminFields? courseAdminFields, int promptId, string? options)
+        public bool AddCustomPromptToCourse(
+            int customisationId,
+            CourseAdminFields? courseAdminFields,
+            int promptId,
+            string? options
+        )
         {
             var existingPromptNumbers = courseAdminFields.AdminFields
                 .Select(c => c.CustomPromptNumber);
@@ -106,7 +111,9 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            logger.LogWarning($"Admin field not added to customisation {customisationId}. The course already had 3 admin fields");
+            logger.LogWarning(
+                $"Admin field not added to customisation {customisationId}. The course already had 3 admin fields"
+            );
             return false;
         }
 

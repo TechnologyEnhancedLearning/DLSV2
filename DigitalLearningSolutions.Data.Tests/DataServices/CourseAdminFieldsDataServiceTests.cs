@@ -26,9 +26,10 @@
                 CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                     null,
                     "Yes\nNo\nNot sure",
-                    true,
+                    false,
                     null,
                     "Yes\nNo\nNot sure",
+                    false,
                     courseCategoryId: 2
                 );
 

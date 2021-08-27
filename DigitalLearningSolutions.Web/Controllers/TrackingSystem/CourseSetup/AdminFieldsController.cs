@@ -176,7 +176,7 @@
         {
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
-            SetViewBagCoursePromptNameOptions();
+            SetViewBagCoursePromptNameOptions(addAdminFieldData.AddModel.CustomPromptId);
 
             var model = addAdminFieldData?.AddModel ?? new AddAdminFieldViewModel(customisationId);
 
@@ -187,6 +187,12 @@
         [Route("{customisationId}/AdminFields/Add")]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
+            if (!ModelState.IsValid)
+            {
+                SetViewBagCoursePromptNameOptions();
+                return View(model);
+            }
+
             UpdateTempDataWithCoursePromptModelValues(model);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
@@ -197,7 +203,7 @@
             return action switch
             {
                 SaveAction => AddAdminFieldPostSave(model),
-                AddPromptAction => AddAdminFieldAnswersPostAddPrompt(model, true),
+                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
                 BulkAction => AddAdminFieldBulk(model),
                 _ => new StatusCodeResult(500)
             };
@@ -402,13 +408,14 @@
             return View(model);
         }
 
-        private IActionResult AddAdminFieldAnswersPostAddPrompt(
+        private IActionResult AdminFieldAnswersPostAddPrompt(
             AddAdminFieldViewModel model,
             bool saveToTempData = false
         )
         {
             if (!ModelState.IsValid)
             {
+                SetViewBagCoursePromptNameOptions();
                 return View(model);
             }
 
@@ -428,6 +435,8 @@
                 UpdateTempDataWithCoursePromptModelValues(model);
             }
 
+            SetViewBagCoursePromptNameOptions(model.CustomPromptId);
+
             return View(model);
         }
 
@@ -442,6 +451,23 @@
                 NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
+
+            return View(model);
+        }
+
+        private IActionResult AdminFieldAnswersPostRemovePrompt(
+            AddAdminFieldViewModel model,
+            int index
+        )
+        {
+            ModelState.ClearAllErrors();
+
+            var optionsString =
+                NewlineSeparatedStringListHelper.RemoveStringFromNewlineSeparatedList(model.OptionsString!, index);
+
+            SetAdminFieldAnswersViewModelOptions(model, optionsString);
+
+            SetViewBagCoursePromptNameOptions(model.CustomPromptId);
 
             return View(model);
         }

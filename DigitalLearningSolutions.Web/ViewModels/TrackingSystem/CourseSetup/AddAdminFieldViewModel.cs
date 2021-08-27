@@ -4,11 +4,15 @@
 
     public class AddAdminFieldViewModel : AdminFieldAnswersViewModel
     {
-        public AddAdminFieldViewModel() { }
+        public AddAdminFieldViewModel()
+        {
+            IncludeAnswersTableCaption = true;
+        }
 
         public AddAdminFieldViewModel(int customisationId)
         {
             CustomisationId = customisationId;
+            IncludeAnswersTableCaption = true;
         }
 
         public AddAdminFieldViewModel(
@@ -20,6 +24,7 @@
             CustomisationId = customisationId;
             CustomPromptId = customPromptId;
             PromptNumber = customPromptNumber;
+            IncludeAnswersTableCaption = true;
         }
 
         public int PromptNumber { get; set; }

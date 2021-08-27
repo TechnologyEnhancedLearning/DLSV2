@@ -113,10 +113,10 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             return connection.Query<string>(
                 @$"SELECT
-                        cp.CustomPrompt
+                        cp.CoursePrompt
                     FROM Customisations c
-                    LEFT JOIN CustomPrompts cp
-                        ON c.CourseField{promptNumber}PromptID = cp.CustomPromptID
+                    LEFT JOIN CoursePrompts cp
+                        ON c.CourseField{promptNumber}PromptID = cp.CoursePromptID
                     WHERE CustomisationID = @customisationId",
                 new { customisationId }
             ).Single();
