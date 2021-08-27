@@ -10,15 +10,13 @@
 
         public static readonly FilterOptionViewModel PasswordSet = new FilterOptionViewModel(
             "Password set",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsPasswordSet) + FilteringHelper.Separator +
-            "true",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "true"),
             FilterStatus.Success
         );
 
         public static readonly FilterOptionViewModel PasswordNotSet = new FilterOptionViewModel(
             "Password not set",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsPasswordSet) + FilteringHelper.Separator +
-            "false",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsPasswordSet), "false"),
             FilterStatus.Warning
         );
     }
@@ -29,15 +27,13 @@
 
         public static readonly FilterOptionViewModel IsAdmin = new FilterOptionViewModel(
             "Admin",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsAdmin) + FilteringHelper.Separator +
-            "true",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsAdmin), "true"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel IsNotAdmin = new FilterOptionViewModel(
             "Not admin",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.IsAdmin) + FilteringHelper.Separator +
-            "false",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.IsAdmin), "false"),
             FilterStatus.Default
         );
     }
@@ -48,15 +44,13 @@
 
         public static readonly FilterOptionViewModel IsActive = new FilterOptionViewModel(
             "Active",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.Active) + FilteringHelper.Separator +
-            "true",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.Active), "true"),
             FilterStatus.Success
         );
 
         public static readonly FilterOptionViewModel IsNotActive = new FilterOptionViewModel(
             "Inactive",
-            Group + FilteringHelper.Separator + nameof(DelegateUserCard.Active) + FilteringHelper.Separator +
-            "false",
+            FilteringHelper.BuildFilterValueString(Group, nameof(DelegateUserCard.Active), "false"),
             FilterStatus.Warning
         );
     }
@@ -67,22 +61,19 @@
 
         public static readonly FilterOptionViewModel SelfRegistered = new FilterOptionViewModel(
             RegistrationType.SelfRegistered.DisplayText,
-            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            nameof(RegistrationType.SelfRegistered),
+            FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.SelfRegistered)),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel SelfRegisteredExternal = new FilterOptionViewModel(
             RegistrationType.SelfRegisteredExternal.DisplayText,
-            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            nameof(RegistrationType.SelfRegisteredExternal),
+            FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.SelfRegisteredExternal)),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel RegisteredByCentre = new FilterOptionViewModel(
             RegistrationType.RegisteredByCentre.DisplayText,
-            Group + FilteringHelper.Separator + Group + FilteringHelper.Separator +
-            nameof(RegistrationType.RegisteredByCentre),
+            FilteringHelper.BuildFilterValueString(Group, Group, nameof(RegistrationType.RegisteredByCentre)),
             FilterStatus.Default
         );
 

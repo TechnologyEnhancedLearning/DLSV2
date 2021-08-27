@@ -13,6 +13,11 @@
         public const char EmptyValue = '╳';
         public const string ClearString = "CLEAR";
 
+        public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
+        {
+            return group + Separator + propertyName + Separator + propertyValue;
+        }
+
         public static string? AddNewFilterToFilterBy(string? filterBy, string? newFilterValue)
         {
             if (filterBy == null)

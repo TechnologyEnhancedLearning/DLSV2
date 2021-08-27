@@ -41,11 +41,13 @@
         )
         {
             return jobGroups.Select(
-                j => new FilterOptionViewModel(
-                    j.name,
-                    nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
-                    nameof(DelegateUserCard.JobGroupId) +
-                    FilteringHelper.Separator + j.id,
+                jobGroup => new FilterOptionViewModel(
+                    jobGroup.name,
+                    FilteringHelper.BuildFilterValueString(
+                        nameof(DelegateUserCard.JobGroupId),
+                        nameof(DelegateUserCard.JobGroupId),
+                        jobGroup.id.ToString()
+                    ),
                     FilterStatus.Default
                 )
             );
@@ -59,17 +61,20 @@
                 CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
 
             var options = customPrompt.Options.Select(
-                x => new FilterOptionViewModel(
-                    x,
-                    filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator + x,
+                option => new FilterOptionViewModel(
+                    option,
+                    FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
                     FilterStatus.Default
                 )
             ).ToList();
             options.Add(
                 new FilterOptionViewModel(
                     "No option selected",
-                    filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator +
-                    FilteringHelper.EmptyValue,
+                    FilteringHelper.BuildFilterValueString(
+                        filterValueName,
+                        filterValueName,
+                        FilteringHelper.EmptyValue.ToString()
+                    ),
                     FilterStatus.Default
                 )
             );
