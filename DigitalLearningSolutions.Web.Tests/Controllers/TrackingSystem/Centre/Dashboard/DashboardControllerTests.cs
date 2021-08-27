@@ -49,7 +49,7 @@
                     ticketDataService,
                     centresService,
                     systemNotificationsDataService
-                ).WithMockHttpContextWithCookie(httpRequest, "testCookie", "testValue", httpResponse)
+                ).WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -76,26 +76,13 @@
             // Given
             A.CallTo(() => systemNotificationsDataService.GetUnacknowledgedSystemNotifications(A<int>._))
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });
-            var controllerWithCorrectCookie =
-                dashboardController = new DashboardController(
-                        userDataService,
-                        centresDataService,
-                        courseDataService,
-                        ticketDataService,
-                        centresService,
-                        systemNotificationsDataService
-                    ).WithMockHttpContextWithCookie(
-                        httpRequest,
-                        SystemNotificationCookieHelper.CookieName,
-                        "7",
-                        httpResponse
-                    )
-                    .WithMockUser(true)
-                    .WithMockServices()
-                    .WithMockTempData();
+            A.CallTo(() => httpRequest.Cookies).Returns(
+                ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "7")
+            );
+            A.CallTo(() => httpRequest.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName)).Returns(true);
 
             // When
-            var result = controllerWithCorrectCookie.Index();
+            var result = dashboardController.Index();
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();

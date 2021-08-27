@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
-    using System.Collections.Generic;
-    using System.Configuration;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
@@ -42,7 +40,7 @@
 
             registrationPromptsControllerWithMockHttpContext =
                 new RegistrationPromptsController(centreCustomPromptsService, userDataService)
-                    .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue)
+                    .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
         }

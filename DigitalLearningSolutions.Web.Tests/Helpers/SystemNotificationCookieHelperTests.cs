@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using FakeItEasy;
+    using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
@@ -45,7 +46,7 @@
             var result = cookies.HasSkippedNotificationsCookie(adminId);
 
             // Then
-            Assert.IsTrue(result);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -62,7 +63,7 @@
             var result = cookies.HasSkippedNotificationsCookie(adminId);
 
             // Then
-            Assert.IsFalse(result);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -76,7 +77,7 @@
             var result = cookies.HasSkippedNotificationsCookie(adminId);
 
             // Then
-            Assert.IsFalse(result);
+            result.Should().BeFalse();
         }
     }
 }

@@ -47,11 +47,17 @@
         }
 
         [HttpPost]
-        [Route("{page:int=1}")]
+        [Route("{page:int}")]
         public IActionResult AcknowledgeNotification(int systemNotificationId, int page)
         {
-            var adminId = User.GetAdminId()!;
-            systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId.Value);
+            var adminId = User.GetAdminId()!.Value;
+            systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId);
+
+            if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
+            {
+                Response.Cookies.DeleteSkipSystemNotificationCookie();
+            }
+
             return RedirectToAction("Index", "SystemNotifications", new { page });
         }
     }

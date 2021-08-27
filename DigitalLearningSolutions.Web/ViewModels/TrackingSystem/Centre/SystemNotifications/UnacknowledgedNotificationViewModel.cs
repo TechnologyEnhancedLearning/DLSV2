@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
 
     public class UnacknowledgedNotificationViewModel
@@ -9,7 +10,7 @@
             SystemNotificationId = notification.SystemNotificationId;
             Subject = notification.SubjectLine;
             Body = notification.BodyHtml;
-            ExpiryDate = notification.ExpiryDate?.ToString("dd/MM/yyyy") ?? "This notification never expires";
+            ExpiryDate = notification.ExpiryDate?.ToString(DateHelper.StandardDateFormat) ?? "This notification never expires.";
         }
 
         public int SystemNotificationId { get; set; }

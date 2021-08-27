@@ -32,11 +32,11 @@
             return controller;
         }
 
-        public static T WithMockHttpContextWithCookie<T>(
+        public static T WithMockHttpContext<T>(
             this T controller,
             HttpRequest request,
-            string cookieName,
-            string cookieValue,
+            string? cookieName,
+            string? cookieValue,
             HttpResponse? response = null
         ) where T : Controller
         {
@@ -58,16 +58,20 @@
             return controller;
         }
 
-        public static IRequestCookieCollection SetUpFakeRequestCookieCollection(string cookieName, string cookieValue)
+        public static IRequestCookieCollection SetUpFakeRequestCookieCollection(string? cookieName = null, string? cookieValue = null)
         {
             var cookieCollection = A.Fake<IRequestCookieCollection>();
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
+
+            var cookieList = cookieName == null || cookieValue == null
+                ? new List<KeyValuePair<string, string>>()
+                : new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>(cookieName, cookieValue)
+                };
+
+            A.CallTo(() => cookieCollection[A<string>._]).Returns(cookieValue ?? string.Empty);
             A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
+            A.CallTo(() => cookieCollection.ContainsKey(A<string>._)).Returns(cookieName != null);
 
             return cookieCollection;
         } 

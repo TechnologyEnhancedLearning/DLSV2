@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 {
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class CentreDashboardViewModel
     {
@@ -14,7 +15,7 @@
             int admins,
             int supportTickets,
             int? centreRank,
-            int unacknowledgedNotifications
+            int unacknowledgedNotificationsCount
         )
         {
             CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress, centreRank);
@@ -24,8 +25,8 @@
             NumberOfCourses = courses;
             NumberOfAdmins = admins;
             NumberOfSupportTickets = supportTickets;
-            ViewNotificationsButtonText = "View " + unacknowledgedNotifications + " notification" +
-                                          (unacknowledgedNotifications == 1 ? "" : "s");
+            ViewNotificationsButtonText = "View " + unacknowledgedNotificationsCount + " notification" +
+                                          DisplayStringHelper.GetPluralitySuffix(unacknowledgedNotificationsCount);
         }
 
         public string FirstName { get; set; }

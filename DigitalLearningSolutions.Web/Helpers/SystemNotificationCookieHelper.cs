@@ -25,6 +25,11 @@
             );
         }
 
+        public static void DeleteSkipSystemNotificationCookie(this IResponseCookies cookies)
+        {
+            cookies.Delete(CookieName);
+        }
+
         public static bool HasSkippedNotificationsCookie(this IRequestCookieCollection cookies, int adminId)
         {
             if (cookies.ContainsKey(CookieName))
