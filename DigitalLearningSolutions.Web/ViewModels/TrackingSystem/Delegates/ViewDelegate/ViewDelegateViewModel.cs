@@ -2,19 +2,23 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class ViewDelegateViewModel
     {
         public ViewDelegateViewModel(
-            DelegateInfoViewModel delegateInfoViewModel,
-            IEnumerable<DelegateCourseInfoViewModel> courseInfoViewModels,
-            IEnumerable<SearchableTagViewModel> tags
+            DelegateUserCard delegateUser,
+            List<CustomFieldViewModel> customFields,
+            IEnumerable<DelegateCourseDetails> delegateCourses
         )
         {
-            DelegateInfo = delegateInfoViewModel;
-            DelegateCourses = courseInfoViewModels.ToList();
-            Tags = tags;
+            DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
+            DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
+            Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
