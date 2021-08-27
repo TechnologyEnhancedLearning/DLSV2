@@ -29,11 +29,14 @@
             var centreId = User.GetCentreId();
 
             var filterData = new ActivityFilterData
-            {
-                StartDate = DateTime.Today.AddYears(-1),
-                EndDate = DateTime.Now,
-                ReportInterval = ReportInterval.Months
-            };
+            (
+                DateTime.Today.AddYears(-1),
+                DateTime.UtcNow,
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
@@ -46,14 +49,17 @@
         {
             var centreId = User.GetCentreId();
             var filterData = new ActivityFilterData
-            {
-                StartDate = DateTime.Today.AddYears(-1),
-                EndDate = DateTime.Now,
-                ReportInterval = ReportInterval.Months
-            };
+            (
+                DateTime.Today.AddYears(-1),
+                DateTime.UtcNow,
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
-            return activity.Select(m => new ActivityDataRowModel(m, true));
+            return activity.Select(p => new ActivityDataRowModel(p, p.DateInformation.GetFormatStringForUsageStatsGraph()));
         }
     }
 }

@@ -4,32 +4,28 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public static class DateHelper
     {
-        public static IEnumerable<DateInformation> GetPeriodsBetweenDates(
+        public static DateTime ReferenceDate => new DateTime(1905, 1, 1);
+
+        public static IEnumerable<DateTime> GetPeriodsBetweenDates(
             DateTime startDate,
             DateTime endDate,
             ReportInterval interval
         )
         {
-            switch (interval)
+            return interval switch
             {
-                case ReportInterval.Days:
-                    return GetDaysBetweenDates(startDate, endDate);
-                case ReportInterval.Weeks:
-                    return GetWeeksBetweenDates(startDate, endDate);
-                case ReportInterval.Months:
-                    return GetMonthsBetweenDates(startDate, endDate);
-                case ReportInterval.Quarters:
-                    return GetQuartersBetweenDates(startDate, endDate);
-                default:
-                    return GetYearsBetweenDates(startDate, endDate);
-            }
+                ReportInterval.Days => GetDaysBetweenDates(startDate, endDate),
+                ReportInterval.Weeks => GetWeeksBetweenDates(startDate, endDate),
+                ReportInterval.Months => GetMonthsBetweenDates(startDate, endDate),
+                ReportInterval.Quarters => GetQuartersBetweenDates(startDate, endDate),
+                _ => GetYearsBetweenDates(startDate, endDate)
+            };
         }
 
-        private static IEnumerable<DateInformation> GetDaysBetweenDates(
+        private static IEnumerable<DateTime> GetDaysBetweenDates(
             DateTime startDate,
             DateTime endDate
         )
@@ -41,40 +37,29 @@
                 d =>
                 {
                     var day = startDate.AddDays(d);
-                    return new DateInformation
-                    {
-                        Interval = ReportInterval.Days,
-                        Date = new DateTime(day.Year, day.Month, day.Day)
-                    };
+                    return new DateTime(day.Year, day.Month, day.Day);
                 }
             );
         }
 
-        private static IEnumerable<DateInformation> GetWeeksBetweenDates(
+        private static IEnumerable<DateTime> GetWeeksBetweenDates(
             DateTime startDate,
             DateTime endDate
         )
         {
-            var referenceDate = new DateTime(1905, 1, 1);
+            var referenceDate = ReferenceDate;
 
             var diffInWeeks = (endDate - referenceDate).Days / 7;
             var weeksDifferenceEnumerable = Enumerable.Range(0, diffInWeeks + 1);
 
             var rawWeekSlots = weeksDifferenceEnumerable.Select(
-                w =>
-                {
-                    return new DateInformation
-                    {
-                        Interval = ReportInterval.Weeks,
-                        Date = referenceDate.AddDays(w * 7)
-                    };
-                }
+                w =>  referenceDate.AddDays(w * 7)
             );
 
-            return rawWeekSlots.Where(w => w.Date?.AddDays(7) > startDate);
+            return rawWeekSlots.Where(w => w.AddDays(7) > startDate);
         }
 
-        private static IEnumerable<DateInformation> GetMonthsBetweenDates(
+        private static IEnumerable<DateTime> GetMonthsBetweenDates(
             DateTime startDate,
             DateTime endDate
         )
@@ -87,39 +72,32 @@
                 {
                     var month = (m - 1) % 12 + 1;
                     var yearsToAdd = (m - 1) / 12;
-                    return new DateInformation
-                    {
-                        Interval = ReportInterval.Months,
-                        Date = new DateTime(startDate.AddYears(yearsToAdd).Year, month, 1)
-                    };
+                    return new DateTime(startDate.AddYears(yearsToAdd).Year, month, 1);
                 }
             );
         }
 
-        private static IEnumerable<DateInformation> GetQuartersBetweenDates(
+        private static IEnumerable<DateTime> GetQuartersBetweenDates(
             DateTime startDate,
             DateTime endDate
         )
         {
-            var diffInQuarters = (endDate.Year - startDate.Year) * 4 +
-                                 ((endDate.Month - 1) / 3 - (startDate.Month - 1) / 3);
-            var quarterEnumerable = Enumerable.Range(startDate.Month, diffInQuarters + 1);
+            var diffInQuartersFromYears = (endDate.Year - startDate.Year) * 4;
+            var diffInQuarters = diffInQuartersFromYears +
+                                 (ConvertMonthToQuarter(endDate.Month) - ConvertMonthToQuarter(startDate.Month));
+            var quarterEnumerable = Enumerable.Range(ConvertMonthToQuarter(startDate.Month), diffInQuarters + 1);
 
             return quarterEnumerable.Select(
                 q =>
                 {
                     var quarter = (q - 1) % 4 + 1;
                     var yearsToAdd = (q - 1) / 4;
-                    return new DateInformation
-                    {
-                        Interval = ReportInterval.Quarters,
-                        Date = new DateTime(startDate.AddYears(yearsToAdd).Year, quarter * 3 - 2, 1)
-                    };
+                    return new DateTime(startDate.AddYears(yearsToAdd).Year, quarter * 3 - 2, 1);
                 }
             );
         }
 
-        private static IEnumerable<DateInformation> GetYearsBetweenDates(
+        private static IEnumerable<DateTime> GetYearsBetweenDates(
             DateTime startDate,
             DateTime endDate
         )
@@ -128,15 +106,13 @@
             var yearEnumerable = Enumerable.Range(startDate.Year, diffInYears + 1);
 
             return yearEnumerable.Select(
-                y =>
-                {
-                    return new DateInformation
-                    {
-                        Interval = ReportInterval.Years,
-                        Date = new DateTime(y, 1, 1)
-                    };
-                }
+                y => new DateTime(y, 1, 1)
             );
+        }
+
+        private static int ConvertMonthToQuarter(int month)
+        {
+            return (month - 1) / 3 + 1;
         }
     }
 }

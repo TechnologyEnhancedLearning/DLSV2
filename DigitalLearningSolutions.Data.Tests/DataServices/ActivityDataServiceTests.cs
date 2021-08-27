@@ -22,21 +22,24 @@
         }
 
         [Test]
-        public void GetActivityForMonthsInYear_gets_activity_by_month_for_date_range()
+        public void GetFilteredActivity_gets_activity_for_date_range()
         {
             // when
-            var filterData = new ActivityFilterData
-            {
-                StartDate = DateTime.Parse("2014-01-01 00:00:00.000"),
-                EndDate = DateTime.Parse("2014-01-31 23:59:59.999"),
-                ReportInterval = ReportInterval.Months
-            };
-            var result = service.GetRawActivity(101, filterData).ToList();
+            var result = service.GetFilteredActivity(
+                101,
+                DateTime.Parse("2014-01-01 00:00:00.000"),
+                DateTime.Parse("2014-01-31 23:59:59.999"),
+                null,
+                null,
+                null
+                )
+                .OrderBy(log => log.LogDate)
+                .ToList();
 
             // then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(13);
+                result.Count().Should().Be(13);
 
                 var first = result.First();
                 first.LogDate.Should().Be(DateTime.Parse("2014-01-08 11:04:35.753"));
@@ -56,6 +59,34 @@
                 last.Evaluated.Should().Be(false);
                 last.Registered.Should().Be(true);
             }
+        }
+
+        [Test]
+        [TestCase(67, null, null, null)]
+        [TestCase(2, 10, null, null)]
+        [TestCase(42, null, 3, null)]
+        [TestCase(3, null, null, 7832)]
+        public void GetFilteredActivity_filters_data_correctly(
+            int expectedCount,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId
+        )
+        {
+            // when
+            var result = service.GetFilteredActivity(
+                    101,
+                    DateTime.Parse("2014-01-01 00:00:00.000"),
+                    DateTime.Parse("2014-03-31 23:59:59.999"),
+                    jobGroupId,
+                    courseCategoryId,
+                    customisationId
+                )
+                .OrderBy(log => log.LogDate)
+                .ToList();
+
+            // then
+            result.Count().Should().Be(expectedCount);
         }
     }
 }

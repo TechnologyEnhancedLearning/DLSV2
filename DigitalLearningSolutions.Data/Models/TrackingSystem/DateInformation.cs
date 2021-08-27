@@ -5,35 +5,46 @@
 
     public class DateInformation
     {
-        public ReportInterval Interval { get; set; }
-        public DateTime? Date { get; set; }
-
-        public string GetDateLabel(bool shortForm)
+        public DateInformation(DateTime date, ReportInterval interval)
         {
-            string formatString;
+            Date = date;
+            Interval = interval;
+        }
 
-            var quarter = Date?.Month / 3 + 1;
+        public ReportInterval Interval { get; set; }
+        public DateTime Date { get; set; }
 
-            switch (Interval)
+        public string GetDateLabel(string format)
+        {
+            var quarter = Date.Month / 3 + 1;
+
+            format = format.Replace("Q", $"Quarter {quarter}").Replace("q", $"Q{quarter}");
+
+            return Date.ToString(format);
+        }
+
+        public string GetFormatStringForUsageStatsGraph()
+        {
+            return Interval switch
             {
-                case ReportInterval.Days:
-                    formatString = shortForm ? "d/M/y" : "d/MM/yyyy";
-                    break;
-                case ReportInterval.Weeks:
-                    formatString = shortForm ? "wc d/M/y" : "Week commencing d/MM/yyyy";
-                    break;
-                case ReportInterval.Months:
-                    formatString = shortForm ? "MMM yyyy" : "MMMM, yyyy";
-                    break;
-                case ReportInterval.Quarters:
-                    formatString = shortForm ? $"yyyy Q{quarter}" : $"Quarter {quarter}, yyyy";
-                    break;
-                default:
-                    formatString = "yyyy";
-                    break;
-            }
+                ReportInterval.Days => "d/M/y",
+                ReportInterval.Weeks => "wc d/M/y",
+                ReportInterval.Months => "MMM yyyy",
+                ReportInterval.Quarters => "yyyy q",
+                _ => "yyyy"
+            };
+        }
 
-            return Date?.ToString(formatString) ?? "";
+        public string GetFormatStringForUsageStatsTable()
+        {
+            return Interval switch
+            {
+                ReportInterval.Days => "d/MM/yyyy",
+                ReportInterval.Weeks => "Week commencing d/MM/yyyy",
+                ReportInterval.Months => "MMMM, yyyy",
+                ReportInterval.Quarters => "Q, yyyy",
+                _ => "yyyy"
+            };
         }
     }
 }

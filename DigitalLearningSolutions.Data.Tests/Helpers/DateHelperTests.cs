@@ -35,22 +35,22 @@
         [TestCase(ReportInterval.Years, "2016-12-31 23:59:59.999", "2014-01-01", "2016-01-01")]
         public void GetPeriodsBetweenDates_returns_list_inclusive_of_endpoints(
             ReportInterval interval,
-            string endpointString,
+            string endDateFilter,
             string expectedStartString,
             string expectedEndString
         )
         {
             // when
             var startDate = DateTime.Parse("2014-01-01 00:00:00.000");
-            var endDate = DateTime.Parse(endpointString);
+            var endDate = DateTime.Parse(endDateFilter);
             var result = DateHelper.GetPeriodsBetweenDates(startDate, endDate, interval).ToList();
 
             // then
             using (new AssertionScope())
             {
                 result.Count.Should().Be(3);
-                result.First().Date.Should().Be(DateTime.Parse(expectedStartString));
-                result.Last().Date.Should().Be(DateTime.Parse(expectedEndString));
+                result.First().Should().Be(DateTime.Parse(expectedStartString));
+                result.Last().Should().Be(DateTime.Parse(expectedEndString));
             }
         }
     }

@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Services;
 
     public class ReportsViewModel
     {
@@ -20,9 +18,9 @@
     {
         public UsageStatsTableViewModel(IEnumerable<PeriodOfActivity> activity)
         {
-            var periodicData = activity.ToList();
-            periodicData.Reverse();
-            Rows = periodicData.Select(m => new ActivityDataRowModel(m, false));
+            var periodicData = activity;
+            periodicData = periodicData.Reverse();
+            Rows = periodicData.Select(p => new ActivityDataRowModel(p, p.DateInformation.GetFormatStringForUsageStatsTable()));
         }
 
         public IEnumerable<ActivityDataRowModel> Rows { get; set; }
@@ -30,9 +28,9 @@
 
     public class ActivityDataRowModel
     {
-        public ActivityDataRowModel(PeriodOfActivity periodOfActivity, bool shortForm)
+        public ActivityDataRowModel(PeriodOfActivity periodOfActivity, string format)
         {
-            Period = periodOfActivity.DateInformation.GetDateLabel(shortForm);
+            Period = periodOfActivity.DateInformation.GetDateLabel(format);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
             Registrations = periodOfActivity.Registrations;
