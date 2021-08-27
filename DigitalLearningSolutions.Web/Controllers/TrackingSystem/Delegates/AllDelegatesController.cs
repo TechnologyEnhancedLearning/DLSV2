@@ -1,13 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -60,14 +56,13 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var customFieldsMap = GetCustomFieldsMap(delegateUsers);
+
             var model = new AllDelegatesViewModel(
                 delegateUsers,
-                customFieldsMap,
                 jobGroups,
-                closedCustomPrompts,
+                customPrompts,
                 page,
                 searchString,
                 sortBy,
@@ -85,28 +80,12 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
-            var customFieldsMap = GetCustomFieldsMap(delegateUsers);
 
-            var model = new AllDelegateItemsViewModel(delegateUsers, customFieldsMap, jobGroups, closedCustomPrompts);
+            var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);
 
             return View(model);
-        }
-
-        private Dictionary<int, IEnumerable<CustomFieldViewModel>> GetCustomFieldsMap(
-            List<DelegateUserCard> delegateUsers
-        )
-        {
-            var centreId = User.GetCentreId();
-            return delegateUsers.Select(
-                delegateUser =>
-                {
-                    var customFields =
-                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-                    return new KeyValuePair<int, IEnumerable<CustomFieldViewModel>>(delegateUser.Id, customFields);
-                }
-            ).ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

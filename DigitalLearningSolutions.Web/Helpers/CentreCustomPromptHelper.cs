@@ -65,6 +65,27 @@
             ).ToList();
         }
 
+        public static List<CustomFieldViewModel> GetCustomFieldViewModels(
+            DelegateUser delegateUser,
+            IEnumerable<CustomPrompt> customPrompts
+        )
+        {
+            var answers = new List<string?>
+            {
+                delegateUser.Answer1, delegateUser.Answer2, delegateUser.Answer3, delegateUser.Answer4,
+                delegateUser.Answer5, delegateUser.Answer6
+            };
+
+            return customPrompts.Select(
+                cp => new CustomFieldViewModel(
+                    cp.CustomPromptNumber,
+                    cp.CustomPromptText,
+                    cp.Mandatory,
+                    answers[cp.CustomPromptNumber - 1]
+                )
+            ).ToList();
+        }
+
         public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(int centreId, DelegateUser delegateUser)
         {
             return GetCustomFieldViewModelsForCentre(
@@ -116,10 +137,9 @@
             }
         }
 
-        public IEnumerable<CustomPrompt> GetClosedCustomPromptsForCentre(int centreId)
+        public IEnumerable<CustomPrompt> GetCustomPromptsForCentre(int centreId)
         {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Where(customPrompt => customPrompt.Options.Count > 0);
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts;
         }
 
         public static string GetDelegateCustomPromptAnswerName(int customPromptNumber)

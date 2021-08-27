@@ -216,25 +216,5 @@
                 result[1].Answer.Should().BeEquivalentTo(Answer3);
             }
         }
-
-        [Test]
-        public void GetClosedCustomPromptsForCentre_returns_closed_custom_prompts()
-        {
-            // Given
-            var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: "Clinical\r\nNon-Clinical");
-            var customPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3);
-            var customPrompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(4, options: "C 1\r\nC 2\r\nC 3");
-            var centreCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(
-                new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 },
-                1
-            );
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(1)).Returns(centreCustomPrompts);
-
-            // When
-            var result = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(1);
-
-            // Then
-            result.Should().BeEquivalentTo(new List<CustomPrompt> { customPrompt1, customPrompt4 });
-        }
     }
 }

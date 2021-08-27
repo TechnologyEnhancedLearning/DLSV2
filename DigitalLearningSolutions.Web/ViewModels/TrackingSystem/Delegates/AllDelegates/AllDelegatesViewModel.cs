@@ -5,16 +5,14 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class AllDelegatesViewModel : BaseSearchablePageViewModel
     {
         public AllDelegatesViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
-            IReadOnlyDictionary<int, IEnumerable<CustomFieldViewModel>> customFieldsMap,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> closedCustomPrompts,
+            IEnumerable<CustomPrompt> customPrompts,
             int page,
             string? searchString,
             string sortBy,
@@ -33,10 +31,11 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
+            var closedCustomPrompts = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = customFieldsMap[delegateUser.Id];
+                    var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
                     return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );
