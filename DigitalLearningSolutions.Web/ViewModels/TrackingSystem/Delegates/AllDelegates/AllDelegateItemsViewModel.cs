@@ -27,45 +27,8 @@
                 }
             );
 
-            var filters = new List<FilterViewModel>
-            {
-                new FilterViewModel(
-                    "PasswordStatus",
-                    "Password Status",
-                    AllDelegatesViewModelFilterOptions.PasswordStatusOptions
-                ),
-                new FilterViewModel(
-                    "AdminStatus",
-                    "Admin Status",
-                    AllDelegatesViewModelFilterOptions.AdminStatusOptions
-                ),
-                new FilterViewModel(
-                    "ActiveStatus",
-                    "Active Status",
-                    AllDelegatesViewModelFilterOptions.ActiveStatusOptions
-                ),
-                new FilterViewModel(
-                    "JobGroupId",
-                    "Job Group",
-                    AllDelegatesViewModelFilterOptions.GetJobGroupOptions(jobGroups)
-                ),
-                new FilterViewModel(
-                    "RegistrationType",
-                    "Registration Type",
-                    AllDelegatesViewModelFilterOptions.RegistrationTypeOptions
-                )
-            };
-            filters.AddRange(
-                closedCustomPrompts.Select(
-                    customPrompt => new FilterViewModel(
-                        customPrompt.CustomPromptText,
-                        customPrompt.CustomPromptText,
-                        AllDelegatesViewModelFilterOptions.GetCustomPromptOptions(customPrompt)
-                    )
-                )
-            );
-
-            Filters = filters.SelectAppliedFilterViewModels();
+            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, closedCustomPrompts)
+                .SelectAppliedFilterViewModels();
         }
     }
 }

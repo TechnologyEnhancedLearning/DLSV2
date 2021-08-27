@@ -80,5 +80,50 @@
             );
             return options;
         }
+
+        public static List<FilterViewModel> GetAllDelegatesFilterViewModels(
+            IEnumerable<(int id, string name)> jobGroups,
+            IEnumerable<CustomPrompt> closedCustomPrompts
+        )
+        {
+            var filters = new List<FilterViewModel>
+            {
+                new FilterViewModel(
+                    "PasswordStatus",
+                    "Password Status",
+                    PasswordStatusOptions
+                ),
+                new FilterViewModel(
+                    "AdminStatus",
+                    "Admin Status",
+                    AdminStatusOptions
+                ),
+                new FilterViewModel(
+                    "ActiveStatus",
+                    "Active Status",
+                    ActiveStatusOptions
+                ),
+                new FilterViewModel(
+                    "JobGroupId",
+                    "Job Group",
+                    GetJobGroupOptions(jobGroups)
+                ),
+                new FilterViewModel(
+                    "RegistrationType",
+                    "Registration Type",
+                    RegistrationTypeOptions
+                )
+            };
+            filters.AddRange(
+                closedCustomPrompts.Select(
+                    customPrompt => new FilterViewModel(
+                        $"CustomPrompt{customPrompt.CustomPromptNumber}",
+                        customPrompt.CustomPromptText,
+                        GetCustomPromptOptions(customPrompt)
+                    )
+                )
+            );
+            return filters;
+        }
     }
 }
