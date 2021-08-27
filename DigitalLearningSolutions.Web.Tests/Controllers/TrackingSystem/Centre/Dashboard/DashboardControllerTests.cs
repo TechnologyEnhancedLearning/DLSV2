@@ -49,7 +49,7 @@
                     ticketDataService,
                     centresService,
                     systemNotificationsDataService
-                ).WithMockHttpContext(httpRequest, null, null, httpResponse)
+                ).WithMockHttpContext(httpRequest, response: httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -79,7 +79,6 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "7")
             );
-            A.CallTo(() => httpRequest.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName)).Returns(true);
 
             // When
             var result = dashboardController.Index();

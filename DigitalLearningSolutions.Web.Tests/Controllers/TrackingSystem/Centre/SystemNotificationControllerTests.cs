@@ -28,7 +28,7 @@
             systemNotificationsDataService = A.Fake<ISystemNotificationsDataService>();
             controller =
                 new SystemNotificationsController(systemNotificationsDataService, clockService)
-                    .WithMockHttpContext(httpRequest, null, null, httpResponse)
+                    .WithMockHttpContext(httpRequest, response: httpResponse)
                     .WithMockUser(true)
                     .WithMockServices();
         }
@@ -93,7 +93,6 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "7")
             );
-            A.CallTo(() => httpRequest.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName)).Returns(true);
 
             // When
             controller.AcknowledgeNotification(1, 1);
@@ -109,7 +108,6 @@
             A.CallTo(() => httpRequest.Cookies).Returns(
                 ControllerContextHelper.SetUpFakeRequestCookieCollection(SystemNotificationCookieHelper.CookieName, "8")
             );
-            A.CallTo(() => httpRequest.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName)).Returns(true);
 
             // When
             controller.AcknowledgeNotification(1, 1);
@@ -123,9 +121,8 @@
         {
             // Given
             A.CallTo(() => httpRequest.Cookies).Returns(
-                ControllerContextHelper.SetUpFakeRequestCookieCollection()
+                A.Fake<IRequestCookieCollection>()
             );
-            A.CallTo(() => httpRequest.Cookies.ContainsKey(SystemNotificationCookieHelper.CookieName)).Returns(false);
 
             // When
             controller.AcknowledgeNotification(1, 1);
