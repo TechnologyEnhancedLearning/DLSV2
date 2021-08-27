@@ -211,6 +211,7 @@
 
         [HttpGet]
         [Route("{customisationId}/AdminFields/Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
             var data = TempData.Peek<AddAdminFieldData>()!;
@@ -225,6 +226,7 @@
 
         [HttpPost]
         [Route("{customisationId}/AdminFields/Add/Bulk")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(
             BulkAdminFieldAnswersViewModel model
         )
