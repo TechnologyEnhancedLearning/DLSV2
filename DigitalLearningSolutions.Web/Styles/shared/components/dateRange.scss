@@ -1,7 +1,9 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
 .flex-container {
+  @include mq($from: tablet) {
     display: flex;
+  }
 }
 
 .conjunction {

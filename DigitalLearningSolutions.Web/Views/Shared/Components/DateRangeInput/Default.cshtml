@@ -2,13 +2,13 @@
 @model DateRangeInputViewModel
 
 @{
-    var errorCss = Model.HasError ? "nhsuk-form-group--error" : "";
-    var startDayErrorCss = Model.HasStartDayError ? "nhsuk-input--error" : "";
-    var startMonthErrorCss = Model.HasStartMonthError ? "nhsuk-input--error" : "";
-    var startYearErrorCss = Model.HasStartYearError ? "nhsuk-input--error" : "";
-    var endDayErrorCss = Model.HasEndDayError ? "nhsuk-input--error" : "";
-    var endMonthErrorCss = Model.HasEndMonthError ? "nhsuk-input--error" : "";
-    var endYearErrorCss = Model.HasEndYearError ? "nhsuk-input--error" : "";
+  var errorCss = Model.HasError ? "nhsuk-form-group--error" : "";
+  var startDayErrorCss = Model.HasStartDayError ? "nhsuk-input--error" : "";
+  var startMonthErrorCss = Model.HasStartMonthError ? "nhsuk-input--error" : "";
+  var startYearErrorCss = Model.HasStartYearError ? "nhsuk-input--error" : "";
+  var endDayErrorCss = Model.HasEndDayError ? "nhsuk-input--error" : "";
+  var endMonthErrorCss = Model.HasEndMonthError ? "nhsuk-input--error" : "";
+  var endYearErrorCss = Model.HasEndYearError ? "nhsuk-input--error" : "";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/components/dateRange.css")">
@@ -18,100 +18,100 @@
     <legend class="nhsuk-fieldset__legend nhsuk-label">
       @Model.Label
     </legend>
-    @if (Model.HintText != null)
-    {
+    @if (Model.HintText != null) {
       <div class="nhsuk-hint" id="@Model.Id-hint">
         @Model.HintText
       </div>
     }
 
-    @if (Model.HasError)
-    {
+    @if (Model.HasError) {
       <span class="error-message--margin-bottom-1 nhsuk-error-message">
         <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
       </span>
     }
 
-  <div class="flex-container">
-    <div class="nhsuk-date-input">
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.StartDayId">Day</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @startDayErrorCss"
-                 id="@Model.StartDayId"
-                 name="@Model.StartDayId"
-                 value="@Model.StartDayValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
+    <div class="flex-container">
+      <div class="nhsuk-date-input">
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.StartDayId">Day</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @startDayErrorCss"
+                   id="@Model.StartDayId"
+                   name="@Model.StartDayId"
+                   value="@Model.StartDayValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
+        </div>
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.StartMonthId">Month</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @startMonthErrorCss"
+                   id="@Model.StartMonthId"
+                   name="@Model.StartMonthId"
+                   value="@Model.StartMonthValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
+        </div>
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.StartYearId">Year</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @startYearErrorCss"
+                   id="@Model.StartYearId"
+                   name="@Model.StartYearId"
+                   value="@Model.StartYearValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
         </div>
       </div>
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.StartMonthId">Month</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @startMonthErrorCss"
-                 id="@Model.StartMonthId"
-                 name="@Model.StartMonthId"
-                 value="@Model.StartMonthValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
-        </div>
+
+      <div class="flex-container">
+        <div class="nhsuk-hint conjunction nhsuk-u-margin-bottom-4 nhsuk-u-margin-right-4">to</div>
       </div>
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.StartYearId">Year</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @startYearErrorCss"
-                 id="@Model.StartYearId"
-                 name="@Model.StartYearId"
-                 value="@Model.StartYearValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
+
+      <div class="nhsuk-date-input">
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.EndDayId">Day</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @endDayErrorCss"
+                   id="@Model.EndDayId"
+                   name="@Model.EndDayId"
+                   value="@Model.EndDayValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
+        </div>
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.EndMonthId">Month</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @endMonthErrorCss"
+                   id="@Model.EndMonthId"
+                   name="@Model.EndMonthId"
+                   value="@Model.EndMonthValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
+        </div>
+        <div class="nhsuk-date-input__item">
+          <div class="nhsuk-form-group">
+            <label class="nhsuk-label" for="@Model.EndYearId">Year</label>
+            <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @endYearErrorCss"
+                   id="@Model.EndYearId"
+                   name="@Model.EndYearId"
+                   value="@Model.EndYearValue"
+                   type="text"
+                   pattern="[0-9]*"
+                   inputmode="numeric" />
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="flex-container"><div class="nhsuk-hint conjunction nhsuk-u-margin-bottom-4 nhsuk-u-margin-right-4">to</div></div>
-
-    <div class="nhsuk-date-input">
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.EndDayId">Day</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @endDayErrorCss"
-                 id="@Model.EndDayId"
-                 name="@Model.EndDayId"
-                 value="@Model.EndDayValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
-        </div>
-      </div>
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.EndMonthId">Month</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @endMonthErrorCss"
-                 id="@Model.EndMonthId"
-                 name="@Model.EndMonthId"
-                 value="@Model.EndMonthValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
-        </div>
-      </div>
-      <div class="nhsuk-date-input__item">
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label" for="@Model.EndYearId">Year</label>
-          <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @endYearErrorCss"
-                 id="@Model.EndYearId"
-                 name="@Model.EndYearId"
-                 value="@Model.EndYearValue"
-                 type="text"
-                 pattern="[0-9]*"
-                 inputmode="numeric" />
-        </div>
-      </div>
-    </div>
-  </div>
   </fieldset>
 </div>

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
     public class DateRangeInputViewModel
     {
-        public readonly bool HasStartDayError;
-        public readonly bool HasStartMonthError;
-        public readonly bool HasStartYearError;
         public readonly bool HasEndDayError;
         public readonly bool HasEndMonthError;
         public readonly bool HasEndYearError;
+        public readonly bool HasStartDayError;
+        public readonly bool HasStartMonthError;
+        public readonly bool HasStartYearError;
 
         public DateRangeInputViewModel(
             string id,
@@ -81,7 +76,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
         public string? EndYearValue { get; set; }
         public string? CssClass { get; set; }
         public string? HintText { get; set; }
-        public bool HasError => HasStartDayError || HasStartMonthError || HasStartYearError || HasEndDayError || HasEndMonthError || HasEndYearError;
+
+        public bool HasError => HasStartDayError || HasStartMonthError || HasStartYearError || HasEndDayError ||
+                                HasEndMonthError || HasEndYearError;
+
         public string? ErrorMessage { get; set; }
     }
 }

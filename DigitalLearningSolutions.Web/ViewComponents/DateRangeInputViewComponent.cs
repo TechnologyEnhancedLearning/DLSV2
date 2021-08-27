@@ -44,7 +44,6 @@
             var startMonthErrors = ViewData.ModelState[startMonthProperty?.Name]?.Errors;
             var startYearErrors = ViewData.ModelState[startYearProperty?.Name]?.Errors;
 
-
             var endDayProperty = model.GetType().GetProperty(endDayId);
             var endMonthProperty = model.GetType().GetProperty(endMonthId);
             var endYearProperty = model.GetType().GetProperty(endYearId);
@@ -56,11 +55,11 @@
             var endYearErrors = ViewData.ModelState[startYearProperty?.Name]?.Errors;
 
             var errorMessage = startDayErrors?.Count > 0 ? startDayErrors[0].ErrorMessage :
-                               startMonthErrors?.Count > 0 ? startMonthErrors[0].ErrorMessage :
-                               startYearErrors?.Count > 0 ? startYearErrors[0].ErrorMessage :
-                               endDayErrors?.Count > 0 ? endDayErrors[0].ErrorMessage :
-                               endMonthErrors?.Count > 0 ? endMonthErrors[0].ErrorMessage :
-                               endYearErrors?.Count > 0 ? endYearErrors[0].ErrorMessage : null;
+                startMonthErrors?.Count > 0 ? startMonthErrors[0].ErrorMessage :
+                startYearErrors?.Count > 0 ? startYearErrors[0].ErrorMessage :
+                endDayErrors?.Count > 0 ? endDayErrors[0].ErrorMessage :
+                endMonthErrors?.Count > 0 ? endMonthErrors[0].ErrorMessage :
+                endYearErrors?.Count > 0 ? endYearErrors[0].ErrorMessage : null;
 
             var viewModel = new DateRangeInputViewModel(
                 id,
