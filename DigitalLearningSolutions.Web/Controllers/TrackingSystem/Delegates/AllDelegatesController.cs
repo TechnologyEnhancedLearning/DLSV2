@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -59,13 +59,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
 
             var centreId = User.GetCentreId();
-            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
+            var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
+            var customFieldsMap = GetCustomFieldsMap(delegateUsers);
             var model = new AllDelegatesViewModel(
-                centreId,
                 delegateUsers,
+                customFieldsMap,
                 jobGroups,
-                centreCustomPromptHelper,
+                closedCustomPrompts,
                 page,
                 searchString,
                 sortBy,
@@ -92,7 +94,9 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             return View(model);
         }
 
-        private Dictionary<int, IEnumerable<CustomFieldViewModel>> GetCustomFieldsMap(List<DelegateUserCard> delegateUsers)
+        private Dictionary<int, IEnumerable<CustomFieldViewModel>> GetCustomFieldsMap(
+            List<DelegateUserCard> delegateUsers
+        )
         {
             var centreId = User.GetCentreId();
             return delegateUsers.Select(
@@ -104,6 +108,5 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 }
             ).ToDictionary(x => x.Key, x => x.Value);
         }
-
     }
 }

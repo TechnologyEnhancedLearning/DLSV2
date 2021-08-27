@@ -2,17 +2,19 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class AllDelegatesViewModel : BaseSearchablePageViewModel
     {
         public AllDelegatesViewModel(
-            int centreId,
             IEnumerable<DelegateUserCard> delegateUserCards,
+            IReadOnlyDictionary<int, IEnumerable<CustomFieldViewModel>> customFieldsMap,
             IEnumerable<(int id, string name)> jobGroups,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            IEnumerable<CustomPrompt> closedCustomPrompts,
             int page,
             string? searchString,
             string sortBy,
@@ -20,8 +22,6 @@
             string? filterBy
         ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
         {
-            CentreId = centreId;
-
             var sortedItems = GenericSortingHelper.SortAllItems(
                 delegateUserCards.AsQueryable(),
                 sortBy,
@@ -33,12 +33,10 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
-            var closedCustomPrompts = centreCustomPromptHelper.GetClosedCustomPromptsForCentre(centreId);
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields =
-                        centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+                    var customFields = customFieldsMap[delegateUser.Id];
                     return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
                 }
             );
@@ -83,7 +81,6 @@
             Filters = filters;
         }
 
-        public int CentreId { get; set; }
         public IEnumerable<SearchableDelegateViewModel> Delegates { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
