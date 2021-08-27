@@ -1,0 +1,64 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.SystemNotifications
+@using Microsoft.Extensions.Configuration
+@model SystemNotificationsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "New system notifications";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl" id="app-page-heading">New system notifications</h1>
+
+    <vc:action-link asp-controller="SystemNotifications"
+                    asp-action="SkipNotifications"
+                    link-text="Show notifications later and take me to dashboard" />
+
+    @if (Model.UnacknowledgedNotification == null) {
+      <p>No new notifications.</p>
+    } else {
+      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2 nhsuk-body-m">
+        Subject
+      </div>
+      <div class="nhsuk-body-m">
+        @Model.UnacknowledgedNotification.Subject
+      </div>
+
+      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2 nhsuk-body-m">
+        Body
+      </div>
+      <div>
+        @Html.Raw(Model.UnacknowledgedNotification.Body)
+      </div>
+
+      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-bottom-2 nhsuk-body-m">
+        Expiry date
+      </div>
+      <div class="nhsuk-body-m">
+        @Model.UnacknowledgedNotification.ExpiryDate
+      </div>
+
+      <form asp-action="AcknowledgeNotification"
+            asp-controller="SystemNotifications"
+            asp-all-route-data="@(new Dictionary<string, string> {{ "page", Model.Page.ToString() }})">
+        <input type="hidden" value="@Model.UnacknowledgedNotification.SystemNotificationId" name="systemNotificationId" />
+        <button class="nhsuk-button" type="submit">Acknowledge</button>
+      </form>
+
+      @if (Model.TotalPages > 1) {
+        <partial name="PaginatedPage/_Pagination" model="Model" />
+      }
+    }
+
+  </div>
+</div>
