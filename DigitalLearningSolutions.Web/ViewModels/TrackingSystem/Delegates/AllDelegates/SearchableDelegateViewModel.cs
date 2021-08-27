@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public class SearchableDelegateViewModel : BaseFilterableViewModel
     {
@@ -16,7 +17,7 @@
             IEnumerable<CustomPrompt> closedCustomPrompts
         )
         {
-            DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields.ToList());
+            DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
 
             var closedCustomPromptIds = closedCustomPrompts.Select(c => c.CustomPromptNumber);

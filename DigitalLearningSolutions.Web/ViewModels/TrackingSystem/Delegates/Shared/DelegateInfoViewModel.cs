@@ -1,12 +1,13 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class DelegateInfoViewModel
     {
-        public DelegateInfoViewModel(DelegateUserCard delegateUser, List<CustomFieldViewModel> customFields)
+        public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<CustomFieldViewModel> customFields)
         {
             Id = delegateUser.Id;
             Name = delegateUser.SearchableName;
@@ -27,7 +28,7 @@
 
             AliasId = delegateUser.AliasId;
 
-            CustomFields = customFields;
+            CustomFields = customFields.ToList();
         }
 
         public int Id { get; set; }
@@ -45,6 +46,6 @@
         public string? RegistrationDate { get; set; }
         public string? AliasId { get; set; }
 
-        public List<CustomFieldViewModel> CustomFields { get; set; }
+        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; }
     }
 }

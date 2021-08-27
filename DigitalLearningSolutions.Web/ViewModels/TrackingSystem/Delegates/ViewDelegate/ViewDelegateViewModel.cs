@@ -7,12 +7,13 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public class ViewDelegateViewModel
     {
         public ViewDelegateViewModel(
             DelegateUserCard delegateUser,
-            List<CustomFieldViewModel> customFields,
+            IEnumerable<CustomFieldViewModel> customFields,
             IEnumerable<DelegateCourseDetails> delegateCourses
         )
         {
@@ -22,7 +23,7 @@
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
-        public List<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
+        public IEnumerable<DelegateCourseInfoViewModel> DelegateCourses { get; set; }
         public IEnumerable<SearchableTagViewModel> Tags { get; set; }
     }
 }
