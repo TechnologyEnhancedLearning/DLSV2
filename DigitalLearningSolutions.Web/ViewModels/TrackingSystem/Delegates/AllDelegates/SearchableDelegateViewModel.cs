@@ -19,23 +19,15 @@
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields.ToList());
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
 
-            var closedCustomPromptIds =
-                closedCustomPrompts.Select(customPrompt => customPrompt.CustomPromptNumber);
-            CustomPromptFilters = DelegateInfo.CustomFields
-                .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId)).Select(
-                    customField =>
-                    {
-                        string filterValueName =
-                            CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-
-                        return new KeyValuePair<int, string>(
-                            customField.CustomFieldId,
-                            filterValueName + FilteringHelper.Separator + filterValueName + FilteringHelper.Separator +
-                            (string.IsNullOrEmpty(customField.Answer)
-                                ? FilteringHelper.EmptyValue.ToString()
-                                : customField.Answer)
-                        );
-                    }
+            var closedCustomPromptIds = closedCustomPrompts.Select(c => c.CustomPromptNumber);
+            var closedCustomFields = DelegateInfo.CustomFields
+                .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId));
+            CustomPromptFilters = closedCustomFields
+                .Select(
+                    customField => new KeyValuePair<int, string>(
+                        customField.CustomFieldId,
+                        GetFilterValueForCustomField(customField)
+                    )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
 
@@ -46,5 +38,19 @@
                                         DelegateInfo.JobGroupId;
 
         public Dictionary<int, string> CustomPromptFilters { get; set; }
+
+        private string GetFilterValueForCustomField(CustomFieldViewModel customField)
+        {
+            string filterValueName =
+                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
+            string propertyValue = string.IsNullOrEmpty(customField.Answer)
+                ? FilteringHelper.EmptyValue.ToString()
+                : customField.Answer;
+            return FilteringHelper.BuildFilterValueString(
+                filterValueName,
+                filterValueName,
+                propertyValue
+            );
+        }
     }
 }
