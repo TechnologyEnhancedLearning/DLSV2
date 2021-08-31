@@ -562,10 +562,10 @@ WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
-             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID LEFT OUTER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)", new { selfAssessmentId, candidateId }

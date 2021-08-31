@@ -316,22 +316,52 @@
                 SupervisorEmail = sessionAddSupervisor.SupervisorEmail,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName
             };
+            if (sessionAddSupervisor.SelfAssessmentSupervisorRoleId != null)
+            {
+                setRoleModel.SelfAssessmentSupervisorRoleId = (int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId;
+            }
             return View("SelfAssessments/SetSupervisorRole", setRoleModel);
+        }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
+        public IActionResult SetSupervisorRole(SetSupervisorRoleViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.SelfAssessmentSupervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
+                return View("SelfAssessments/SetSupervisorRole", model);
+            }
+            SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
+            sessionAddSupervisor.SelfAssessmentSupervisorRoleId = model.SelfAssessmentSupervisorRoleId;
+            TempData.Set(sessionAddSupervisor);
+            return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         public IActionResult AddSupervisorSummary(int selfAssessmentId)
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
+            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
             var summaryModel = new AddSupervisorSummaryViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
                 SupervisorEmail = sessionAddSupervisor.SupervisorEmail,
                 SelfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId,
-                SelfAssessmentRoleName = (sessionAddSupervisor.SelfAssessmentSupervisorRoleId == null ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId).RoleName)
+                SelfAssessmentRoleName = (sessionAddSupervisor.SelfAssessmentSupervisorRoleId == null ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId).RoleName),
+                RoleCount = roles.Count()
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
+        }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
+        public IActionResult SubmitSummary()
+        {
+            SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
+            TempData.Set(sessionAddSupervisor);
+            var supervisorDelegateId = supervisorService.AddSuperviseDelegate(null, User.GetCandidateIdKnownNotNull(), User.GetUserEmail(), sessionAddSupervisor.SupervisorEmail, User.GetCentreId());
+            supervisorService.InsertCandidateAssessmentSupervisor(User.GetCandidateIdKnownNotNull(), supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID, sessionAddSupervisor.SelfAssessmentSupervisorRoleId);
+            return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
     }
 }

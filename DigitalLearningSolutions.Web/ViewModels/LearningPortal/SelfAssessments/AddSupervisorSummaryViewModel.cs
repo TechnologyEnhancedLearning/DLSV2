@@ -3,11 +3,7 @@
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     using DigitalLearningSolutions.Web.Attributes;
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
     public class AddSupervisorSummaryViewModel
     {
         public int SelfAssessmentID { get; set; }
@@ -19,5 +15,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         public string SupervisorEmail { get; set; }
         public int? SelfAssessmentSupervisorRoleId { get; set; }
         public string SelfAssessmentRoleName { get; set; }
+        public int RoleCount { get; set; }
     }
 }

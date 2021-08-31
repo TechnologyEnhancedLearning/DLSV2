@@ -14,7 +14,7 @@
         [EmailAddress(ErrorMessage = "Enter a supervisor email address in the correct format, like name@example.com")]
         [NoWhitespace("Supervisor email address must not contain any whitespace characters")]
         public string SupervisorEmail { get; set; }
-        public int? SelfAssessmentSupervisorRoleId { get; set; }
-        public IEnumerable<SelfAssessmentSupervisorRole> SelfAssessmentSupervisorRoles { get; set; }
+        public int SelfAssessmentSupervisorRoleId { get; set; }
+        public IEnumerable<SelfAssessmentSupervisorRole>? SelfAssessmentSupervisorRoles { get; set; }
     }
 }
