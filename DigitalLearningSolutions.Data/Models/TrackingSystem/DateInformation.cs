@@ -22,29 +22,5 @@
 
             return Date.ToString(format);
         }
-
-        public string GetFormatStringForUsageStatsGraph()
-        {
-            return Interval switch
-            {
-                ReportInterval.Days => "d/M/y",
-                ReportInterval.Weeks => "wc d/M/y",
-                ReportInterval.Months => "MMM yyyy",
-                ReportInterval.Quarters => "yyyy q",
-                _ => "yyyy"
-            };
-        }
-
-        public string GetFormatStringForUsageStatsTable()
-        {
-            return Interval switch
-            {
-                ReportInterval.Days => "d/MM/yyyy",
-                ReportInterval.Weeks => "Week commencing d/MM/yyyy",
-                ReportInterval.Months => "MMMM, yyyy",
-                ReportInterval.Quarters => "Q, yyyy",
-                _ => "yyyy"
-            };
-        }
     }
 }

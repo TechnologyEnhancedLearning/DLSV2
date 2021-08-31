@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -28,8 +29,7 @@
         {
             var centreId = User.GetCentreId();
 
-            var filterData = new ActivityFilterData
-            (
+            var filterData = new ActivityFilterData(
                 DateTime.Today.AddYears(-1),
                 DateTime.UtcNow,
                 null,
@@ -48,9 +48,8 @@
         public IEnumerable<ActivityDataRowModel> GetRecentData()
         {
             var centreId = User.GetCentreId();
-            var filterData = new ActivityFilterData
-            (
-                DateTime.Today.AddYears(-1),
+            var filterData = new ActivityFilterData(
+                DateTime.UtcNow.Date.AddYears(-1),
                 DateTime.UtcNow,
                 null,
                 null,
@@ -59,7 +58,9 @@
             );
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
-            return activity.Select(p => new ActivityDataRowModel(p, p.DateInformation.GetFormatStringForUsageStatsGraph()));
+            return activity.Select(
+                p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
+            );
         }
     }
 }

@@ -53,7 +53,7 @@
             var weeksDifferenceEnumerable = Enumerable.Range(0, diffInWeeks + 1);
 
             var rawWeekSlots = weeksDifferenceEnumerable.Select(
-                w =>  referenceDate.AddDays(w * 7)
+                w => referenceDate.AddDays(w * 7)
             );
 
             return rawWeekSlots.Where(w => w.AddDays(7) > startDate);
@@ -108,6 +108,30 @@
             return yearEnumerable.Select(
                 y => new DateTime(y, 1, 1)
             );
+        }
+
+        public static string GetFormatStringForGraphLabel(ReportInterval interval)
+        {
+            return interval switch
+            {
+                ReportInterval.Days => "d/M/y",
+                ReportInterval.Weeks => "wc d/M/y",
+                ReportInterval.Months => "MMM yyyy",
+                ReportInterval.Quarters => "yyyy q",
+                _ => "yyyy"
+            };
+        }
+
+        public static string GetFormatStringForDateInTable(ReportInterval interval)
+        {
+            return interval switch
+            {
+                ReportInterval.Days => "d/MM/yyyy",
+                ReportInterval.Weeks => "Week commencing d/MM/yyyy",
+                ReportInterval.Months => "MMMM, yyyy",
+                ReportInterval.Quarters => "Q, yyyy",
+                _ => "yyyy"
+            };
         }
 
         private static int ConvertMonthToQuarter(int month)

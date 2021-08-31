@@ -3,8 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -22,16 +20,16 @@
         }
 
         [Test]
-        public void GetFilteredActivity_gets_activity_for_date_range()
+        public void GetFilteredActivity_gets_expected_activity()
         {
             // when
             var result = service.GetFilteredActivity(
-                101,
-                DateTime.Parse("2014-01-01 00:00:00.000"),
-                DateTime.Parse("2014-01-31 23:59:59.999"),
-                null,
-                null,
-                null
+                    101,
+                    DateTime.Parse("2014-01-01 00:00:00.000"),
+                    DateTime.Parse("2014-01-31 23:59:59.999"),
+                    null,
+                    null,
+                    null
                 )
                 .OrderBy(log => log.LogDate)
                 .ToList();
@@ -46,18 +44,18 @@
                 first.LogYear.Should().Be(2014);
                 first.LogQuarter.Should().Be(1);
                 first.LogMonth.Should().Be(1);
-                first.Completed.Should().Be(false);
-                first.Evaluated.Should().Be(false);
-                first.Registered.Should().Be(true);
+                first.Completed.Should().BeFalse();
+                first.Evaluated.Should().BeFalse();
+                first.Registered.Should().BeTrue();
 
                 var last = result.Last();
                 last.LogDate.Should().Be(DateTime.Parse("2014-01-31 09:43:28.840"));
                 last.LogYear.Should().Be(2014);
                 last.LogQuarter.Should().Be(1);
                 last.LogMonth.Should().Be(1);
-                last.Completed.Should().Be(false);
-                last.Evaluated.Should().Be(false);
-                last.Registered.Should().Be(true);
+                last.Completed.Should().BeFalse();
+                last.Evaluated.Should().BeFalse();
+                last.Registered.Should().BeTrue();
             }
         }
 
@@ -82,8 +80,7 @@
                     courseCategoryId,
                     customisationId
                 )
-                .OrderBy(log => log.LogDate)
-                .ToList();
+                .OrderBy(log => log.LogDate);
 
             // then
             result.Count().Should().Be(expectedCount);

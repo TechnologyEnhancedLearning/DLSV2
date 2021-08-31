@@ -17,11 +17,11 @@
             var monthlyData = new[]
             {
                 new PeriodOfActivity(
-                    new DateInformation( DateTime.Parse("2001-01-01"), ReportInterval.Months ),
+                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Months),
                     null
                 ),
                 new PeriodOfActivity(
-                    new DateInformation( DateTime.Parse("2002-02-02"), ReportInterval.Months ),
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Months),
                     null
                 )
             };
