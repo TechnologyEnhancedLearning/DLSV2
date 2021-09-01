@@ -31,7 +31,7 @@
   <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
     Group name:
   </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
     @Model.GroupName
   </div>
 </div>
@@ -57,22 +57,24 @@
         </fieldset>
       </div>
 
-      <div class="nhsuk-form-group">
-        <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveProgress))-error">
-          <div class="nhsuk-checkboxes">
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" asp-for="RemoveProgress" aria-describedby="@(nameof(Model.RemoveProgress))-item-hint" />
-              <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveProgress">
-                Remove delegate from all the related enrolments where course is not yet complete.
-              </label>
-              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
-                Optionally all enrolments on courses that are incomplete and are associated with the delegate's membership of this group can also be removed.
-                This facility should not be used if the delegate may have been enrolled on the same course(s) because of membership of another group.
+      @if (Model.RemoveProgressEnabled) {
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveProgress))-error">
+            <div class="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" asp-for="RemoveProgress" aria-describedby="@(nameof(Model.RemoveProgress))-item-hint" />
+                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveProgress">
+                  Remove delegate from all the related enrolments where course is not yet complete.
+                </label>
+                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
+                  Optionally all enrolments on courses that are incomplete and are associated with the delegate's membership of this group can also be removed.
+                  This facility should not be used if the delegate may have been enrolled on the same course(s) because of membership of another group.
+                </div>
               </div>
             </div>
-          </div>
-        </fieldset>
-      </div>
+          </fieldset>
+        </div>
+      }
 
       <input type="hidden" asp-for="GroupName" />
       <input type="hidden" asp-for="DelegateName" />
