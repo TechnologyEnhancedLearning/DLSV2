@@ -1,0 +1,61 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@using Microsoft.Extensions.Configuration
+@model UploadDelegatesViewModel
+
+@{
+  ViewData["Title"] = "Bulk upload/update delegates";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  const string dateInputId = "welcome-email-date";
+  var exampleDate = DateTime.Today.AddDays(1);
+  var emailDateCss = "nhsuk-checkboxes__conditional"
+                     + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
+                     + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Bulk upload/update delegates</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="StartUpload" enctype="multipart/form-data">
+      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input"
+                 asp-for="ShouldSendEmail"
+                 type="checkbox"
+                 value="true"
+                 aria-controls="@dateInputId"
+                 aria-expanded="@Model.ShouldSendEmail">
+          <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ShouldSendEmail">
+            Send welcome email to registered delegate
+          </label>
+        </div>
+
+        <vc:date-input id="@dateInputId"
+                       label="Deliver email on or after:"
+                       day-id="Day"
+                       month-id="Month"
+                       year-id="Year"
+                       css-class="@emailDateCss"
+                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+      </div>
+
+      <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with update information" hint-text="" css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Upload and process</button>
+    </form>
+
+    <vc:cancel-link asp-controller="BulkUpload" asp-action="Index" />
+  </div>
+</div>

@@ -1,6 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Data.Common;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Dapper;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public static class GroupTestHelper
@@ -57,6 +61,23 @@
                 CompleteWithinMonths = completeWithinMonths,
                 ValidityMonths = validityMonths
             };
+        }
+
+        public static async Task<(int, DateTime)> GetProgressRemovedFields(
+            this DbConnection connection,
+            int progressId
+        )
+        {
+            var progress = await connection.QueryAsync<(int, DateTime)>(
+                @"SELECT
+                        RemovalMethodID,
+                        RemovedDate
+                    FROM Progress
+                    WHERE ProgressID = @progressId",
+                new { progressId }
+            );
+
+            return progress.Single();
         }
     }
 }

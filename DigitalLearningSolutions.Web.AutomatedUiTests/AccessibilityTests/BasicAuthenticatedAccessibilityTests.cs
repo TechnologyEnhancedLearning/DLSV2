@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Remove delegate registration prompt"
         )]
         [InlineData("/TrackingSystem/Centre/Reports", "Centre reports")]
+        [InlineData("/TrackingSystem/Centre/SystemNotifications", "New system notifications")]
         [InlineData("/TrackingSystem/Centre/TopCourses", "Top courses")]
         [InlineData("/TrackingSystem/CourseSetup", "Centre course setup")]
         [InlineData("/TrackingSystem/CourseSetup/10716/AdminFields", "Manage course admin fields")]
@@ -43,6 +44,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969", "Are you sure you would like to remove xxxxx xxxx from this group?")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
         [InlineData("/TrackingSystem/Delegates/View/3", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]

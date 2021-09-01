@@ -12,10 +12,7 @@
         public void GetDelegateUserCardById_populates_DelegateUser_fields_correctly()
         {
             // Given
-            var expected = UserTestHelper.GetDefaultDelegateUser(
-                dateRegistered: DateTime.Parse("2010-09-22 06:52:09.080"),
-                jobGroupName: "Nursing / midwifery"
-            );
+            var expected = UserTestHelper.GetDefaultDelegateUser();
 
             // When
             var userCard = userDataService.GetDelegateUserCardById(2);
