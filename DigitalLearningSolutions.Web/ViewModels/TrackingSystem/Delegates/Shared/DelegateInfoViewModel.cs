@@ -29,7 +29,7 @@
 
             AliasId = delegateUser.AliasId;
 
-            CustomFields = customFields.ToList();
+            CustomFields = customFields;
         }
 
         public int Id { get; set; }

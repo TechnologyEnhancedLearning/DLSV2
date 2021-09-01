@@ -83,7 +83,7 @@
 
         public static List<FilterViewModel> GetAllDelegatesFilterViewModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> closedCustomPrompts
+            IEnumerable<CustomPrompt> promptsWithOptions
         )
         {
             var filters = new List<FilterViewModel>
@@ -115,7 +115,7 @@
                 )
             };
             filters.AddRange(
-                closedCustomPrompts.Select(
+                promptsWithOptions.Select(
                     customPrompt => new FilterViewModel(
                         $"CustomPrompt{customPrompt.CustomPromptNumber}",
                         customPrompt.CustomPromptText,

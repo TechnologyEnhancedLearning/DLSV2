@@ -18,16 +18,16 @@
             IEnumerable<CustomPrompt> customPrompts
         )
         {
-            var closedCustomPrompts = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, closedCustomPrompts);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions);
                 }
             );
 
-            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, closedCustomPrompts)
+            Filters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, promptsWithOptions)
                 .SelectAppliedFilterViewModels();
         }
     }

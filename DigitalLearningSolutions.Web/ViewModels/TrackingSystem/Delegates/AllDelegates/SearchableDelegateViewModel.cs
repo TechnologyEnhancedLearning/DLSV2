@@ -14,13 +14,13 @@
         public SearchableDelegateViewModel(
             DelegateUserCard delegateUser,
             IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> closedCustomPrompts
+            IEnumerable<CustomPrompt> promptsWithOptions
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
 
-            var closedCustomPromptIds = closedCustomPrompts.Select(c => c.CustomPromptNumber);
+            var closedCustomPromptIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
             var closedCustomFields = DelegateInfo.CustomFields
                 .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId));
             CustomPromptFilters = closedCustomFields
