@@ -33,6 +33,19 @@
             var adminId = User.GetAdminId()!.Value;
             var unacknowledgedNotifications =
                 systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
+
+            if (unacknowledgedNotifications.Count == 0)
+            {
+                if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
+                {
+                    Response.Cookies.DeleteSkipSystemNotificationCookie();
+                }
+            }
+            else
+            {
+                Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockService.UtcNow);
+            }
+
             var model = new SystemNotificationsViewModel(unacknowledgedNotifications, page);
             return View(model);
         }
@@ -52,11 +65,6 @@
         {
             var adminId = User.GetAdminId()!.Value;
             systemNotificationsDataService.AcknowledgeNotification(systemNotificationId, adminId);
-
-            if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
-            {
-                Response.Cookies.DeleteSkipSystemNotificationCookie();
-            }
 
             return RedirectToAction("Index", "SystemNotifications", new { page });
         }
