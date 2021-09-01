@@ -207,8 +207,8 @@
                 .With(user => user.EmailAddress = emailAddress)
                 .Build();
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((null, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
 
             // When
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
@@ -240,8 +240,8 @@
                 .With(user => user.EmailAddress = emailAddress)
                 .Build();
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((null, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
 
             // When
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(

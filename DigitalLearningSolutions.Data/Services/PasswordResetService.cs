@@ -24,8 +24,9 @@
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl);
+
         void GenerateAndScheduleDelegateWelcomeEmail(
-            string emailAddress,
+            string recipientEmailAddress,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
@@ -37,7 +38,6 @@
         private readonly IClockService clockService;
         private readonly IEmailService emailService;
         private readonly IPasswordResetDataService passwordResetDataService;
-
         private readonly IUserService userService;
 
         public PasswordResetService(
@@ -99,13 +99,13 @@
         }
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
-            string emailAddress,
+            string recipientEmailAddress,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         )
         {
-            (_, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
+            var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
             var delegateUser = delegateUsers.FirstOrDefault() ??
                                throw new UserAccountNotFoundException(
                                    "No user account could be found with the specified email address"
@@ -113,7 +113,7 @@
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
             var welcomeEmail = GenerateWelcomeEmail(
-                emailAddress,
+                recipientEmailAddress,
                 setPasswordHash,
                 baseUrl,
                 delegateUser

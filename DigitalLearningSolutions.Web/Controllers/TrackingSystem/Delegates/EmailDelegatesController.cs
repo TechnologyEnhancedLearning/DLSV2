@@ -67,7 +67,7 @@
         {
             var centreId = User.GetCentreId();
             return userService.GetDelegateUserCardsForWelcomeEmail(centreId)
-                .OrderByDescending(card => card.DateRegistered).Take(5);
+                .OrderByDescending(card => card.DateRegistered);
         }
     }
 }

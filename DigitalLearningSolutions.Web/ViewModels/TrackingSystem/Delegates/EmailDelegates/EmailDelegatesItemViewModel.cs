@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
 
     public class EmailDelegatesItemViewModel
@@ -11,7 +12,7 @@
             Email = delegateUser.EmailAddress;
             if (delegateUser.DateRegistered.HasValue)
             {
-                RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd/MM/yyyy");
+                RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
         }
 
