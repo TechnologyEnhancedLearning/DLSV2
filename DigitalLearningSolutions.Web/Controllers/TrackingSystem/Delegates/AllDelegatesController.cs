@@ -43,8 +43,9 @@
         {
             if (filterBy == null && filterValue == null)
             {
-                filterBy = Request.Cookies[DelegateFilterCookieName] ??
-                           DelegateActiveStatusFilterOptions.IsActive.FilterValue;
+                filterBy = Request.Cookies.ContainsKey(DelegateFilterCookieName)
+                    ? Request.Cookies[DelegateFilterCookieName]
+                    : DelegateActiveStatusFilterOptions.IsActive.FilterValue;
             }
             else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
             {

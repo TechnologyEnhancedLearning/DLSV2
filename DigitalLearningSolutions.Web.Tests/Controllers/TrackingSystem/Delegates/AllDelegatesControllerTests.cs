@@ -41,7 +41,7 @@
                     centreCustomPromptsHelper,
                     jobGroupsDataService
                 )
-                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -89,7 +89,7 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        public void Index_with_null_filterBy_and_new_filter_query_parameter_adds_new_cookie_value()
         {
             // Given
             const string? filterBy = null;
@@ -126,16 +126,10 @@
         public void Index_with_no_filtering_should_default_to_Active_delegates()
         {
             // Given
-            var controllerWithNoCookies = new AllDelegatesController(
-                    userDataService,
-                    centreCustomPromptsHelper,
-                    jobGroupsDataService
-                )
-                .WithDefaultContext()
-                .WithMockUser(true);
+            A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
 
             // When
-            var result = controllerWithNoCookies.Index();
+            var result = allDelegatesController.Index();
 
             // Then
             result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
