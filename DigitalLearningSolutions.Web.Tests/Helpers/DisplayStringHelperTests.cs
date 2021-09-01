@@ -152,5 +152,36 @@
             // Then
             result.Should().Be("FirstName LastName");
         }
+
+        [Test]
+        public void GetPluralitySuffix_returns_s_when_number_is_zero()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(0);
+
+            // Then
+            result.Should().Be("s");
+        }
+
+        [Test]
+        public void GetPluralitySuffix_returns_s_when_number_is_greater_than_1()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(2);
+
+            // Then
+            result.Should().Be("s");
+        }
+
+        
+        [Test]
+        public void GetPluralitySuffix_returns_empty_string_when_number_is_1()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(1);
+
+            // Then
+            result.Should().Be(string.Empty);
+        }
     }
 }

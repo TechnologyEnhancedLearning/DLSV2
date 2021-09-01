@@ -33,6 +33,10 @@
 
     <partial name="_DashboardBottomCardGroup" />
 
+    <a class="nhsuk-button" role="button" asp-controller="SystemNotifications" asp-action="Index">
+      @Model.ViewNotificationsButtonText
+    </a>
+
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Dashboard" />
     </nav>
