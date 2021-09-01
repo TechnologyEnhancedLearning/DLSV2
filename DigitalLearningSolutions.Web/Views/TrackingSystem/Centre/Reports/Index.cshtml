@@ -31,9 +31,16 @@
     <h2 class="nhsuk-heading-m">Usage stats</h2>
 
     <div class="js-only-block">
-      <partial name="_ActivityGraph.cshtml"/>
+      <partial name="_ActivityGraph.cshtml" />
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
+
+    <hr />
+    <h2 class="nhsuk-heading-m">Evaluation summary</h2>
+
+    @foreach (var m in Model.EvaluationSummaryViewModels) {
+      <partial name="_EvaluationSummaryCard.cshtml" model="m"/>
+    }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />

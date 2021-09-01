@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -10,9 +10,12 @@
         public ReportsViewModel(IEnumerable<PeriodOfActivity> activity)
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
+
+            EvaluationSummaryViewModels = new List<EvaluationSummaryViewModel>();
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
+        public List<EvaluationSummaryViewModel> EvaluationSummaryViewModels { get; set; }
     }
 
     public class UsageStatsTableViewModel

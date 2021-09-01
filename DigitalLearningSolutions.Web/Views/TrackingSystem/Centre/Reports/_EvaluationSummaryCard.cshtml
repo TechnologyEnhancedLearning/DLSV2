@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@model EvaluationSummaryViewModel
+
+<div class="nhsuk-expander-group" id="@Model.Question-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.Question-name" name="name">
+        @Model.Question
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      @if (Model.Data != null) {
+        <dl class="nhsuk-summary-list">
+          @foreach (var (answer, percentage) in Model.Data) {
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
+                @answer
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                @percentage%
+              </dd>
+            </div>
+          }
+        </dl>
+      } else {
+        <span>This question has not been answered yet</span>
+      }
+    </div>
+  </details>
+</div>
