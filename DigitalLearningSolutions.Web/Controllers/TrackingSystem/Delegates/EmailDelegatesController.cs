@@ -45,22 +45,13 @@
                 return View(model);
             }
 
-            var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id));
-            var emails = selectedUsers.Select(delegateUser => delegateUser.EmailAddress!).ToList();
+            var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
             var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
             string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
-            foreach (var email in emails)
-            {
-                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    email,
-                    baseUrl,
-                    emailDate,
-                    "SendWelcomeEmail_Refactor"
-                );
-            }
+            passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
 
-            return View("Confirmation", emails.Count);
+            return View("Confirmation", selectedUsers.Count);
         }
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()

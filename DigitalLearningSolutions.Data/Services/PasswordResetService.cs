@@ -31,6 +31,8 @@
             DateTime deliveryDate,
             string addedByProcess
         );
+
+        public void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl);
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -140,6 +142,21 @@
                     expiryTime
                 )
             );
+        }
+
+        public void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl)
+        {
+            var emails = delegateUsers.Select(delegateUser => delegateUser.EmailAddress!).ToList();
+            
+            foreach (var email in emails)
+            {
+                GenerateAndScheduleDelegateWelcomeEmail(
+                    email,
+                    baseUrl,
+                    emailDate,
+                    "SendWelcomeEmail_Refactor"
+                );
+            }
         }
 
         private string GenerateResetPasswordHash(User user)
