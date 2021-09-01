@@ -167,7 +167,7 @@
         }
 
         [Test]
-        public void GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_delegate_email_and_alias_is_empty()
+        public void GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_delegate_email_and_alias_is_empty()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null, aliasId: null);
@@ -185,7 +185,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_no_admin_account_is_associated_with_delegate()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_no_admin_account_is_associated_with_delegate()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -204,7 +204,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_associated_admin_account_by_email_is_at_different_centre()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_admin_account_associated_only_by_email_is_at_different_centre()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: 2);
@@ -225,7 +225,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_nothing_when_associated_admin_account_by_alias_is_at_different_centre()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_nothing_when_admin_account_associated_only_by_alias_is_at_different_centre()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: 2, emailAddress: null, aliasId: "Test");
@@ -246,7 +246,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_verified_admin_account_associated_with_delegate_by_email()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_email()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -267,7 +267,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_verified_admin_account_associated_with_delegate_by_alias()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_alias()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null, aliasId: "Test");
@@ -288,7 +288,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_Returns_verified_admin_account_associated_with_delegate_by_email_and_alias()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_email_and_alias()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(aliasId: "Test");
@@ -309,7 +309,7 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUser_throws_exception_with_multiple_different_matching_admins()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_throws_exception_with_multiple_different_matching_admins()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(aliasId: "Test");
@@ -319,8 +319,6 @@
             A.CallTo(() => userDataService.GetAdminUserByUsername(delegateUser.EmailAddress!)).Returns(associatedAdminUser);
             A.CallTo(() => userDataService.GetAdminUserByUsername(delegateUser.AliasId!)).Returns(secondAssociatedAdminUser);
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
-            // When
 
             // Then
             Assert.Throws<InvalidOperationException>(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
