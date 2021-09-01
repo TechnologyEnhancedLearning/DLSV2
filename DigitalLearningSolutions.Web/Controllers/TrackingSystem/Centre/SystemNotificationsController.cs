@@ -50,15 +50,6 @@
             return View(model);
         }
 
-        [HttpGet]
-        [Route("SkipNotifications")]
-        public IActionResult SkipNotifications()
-        {
-            var adminId = User.GetAdminId()!.Value;
-            Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockService.UtcNow);
-            return RedirectToAction("Index", "Dashboard");
-        }
-
         [HttpPost]
         [Route("{page:int}")]
         public IActionResult AcknowledgeNotification(int systemNotificationId, int page)

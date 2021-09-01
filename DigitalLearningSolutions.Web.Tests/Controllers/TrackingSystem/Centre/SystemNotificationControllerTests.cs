@@ -48,12 +48,12 @@
                 .Returns(new List<SystemNotification> { SystemNotificationTestHelper.GetDefaultSystemNotification() });
 
             // When
-            var result = controller.SkipNotifications();
+            var result = controller.Index();
 
             // Then
             using (new AssertionScope())
             {
-                result.Should().BeRedirectToActionResult().WithControllerName("Dashboard").WithActionName("Index");
+                result.Should().BeViewResult().WithDefaultViewName();
                 A.CallTo(
                     () => httpResponse.Cookies.Append(
                         SystemNotificationCookieHelper.CookieName,
@@ -62,46 +62,6 @@
                     )
                 ).MustHaveHappened();
             }
-        }
-
-        [Test]
-        public void SkipNotifications_sets_cookie_and_redirects_to_dashboard()
-        {
-            // Given
-            var testDate = new DateTime(2021, 8, 23);
-            A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            var expectedExpiry = testDate.AddHours(24);
-
-            // When
-            var result = controller.SkipNotifications();
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.Should().BeRedirectToActionResult().WithControllerName("Dashboard").WithActionName("Index");
-                A.CallTo(
-                    () => httpResponse.Cookies.Append(
-                        SystemNotificationCookieHelper.CookieName,
-                        "7",
-                        A<CookieOptions>.That.Matches(co => co.Expires == expectedExpiry)
-                    )
-                ).MustHaveHappened();
-            }
-        }
-
-        [Test]
-        public void SkipNotifications_does_not_acknowledge_notifications()
-        {
-            // Given
-            var testDate = new DateTime(2021, 8, 23);
-            A.CallTo(() => clockService.UtcNow).Returns(testDate);
-
-            // When
-            controller.SkipNotifications();
-
-            // Then
-            A.CallTo(() => systemNotificationsDataService.AcknowledgeNotification(A<int>._, A<int>._))
-                .MustNotHaveHappened();
         }
 
         [Test]
