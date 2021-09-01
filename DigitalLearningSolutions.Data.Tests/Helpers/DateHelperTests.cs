@@ -2,7 +2,7 @@
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using FluentAssertions;
     using NUnit.Framework;
 

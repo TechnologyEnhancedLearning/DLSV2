@@ -143,13 +143,12 @@ namespace DigitalLearningSolutions.Web
             // Register services.
             RegisterServices(services);
             RegisterDataServices(services);
+            RegisterHelpers(services);
             RegisterWebServiceFilters(services);
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
-            services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
@@ -183,7 +182,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IUserService, UserService>();
         }
@@ -210,8 +208,16 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
+            services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
+        }
+
+        private static void RegisterHelpers(IServiceCollection services)
+        {
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<CentreCustomPromptHelper>();
+            services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
