@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using FluentMigrator.Runner.Extensions;
 
     public static class FilterableTagHelper
     {

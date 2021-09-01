@@ -180,6 +180,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.CentreID,
                         cu.Active,
                         cu.AllCentres,
+                        ap.ApplicationId,
                         ap.ApplicationName,
                         cu.CustomisationName,
                         {DelegateCountQuery},

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class DelegateInfoViewModel
@@ -22,7 +23,7 @@
             JobGroup = delegateUser.JobGroupName;
             if (delegateUser.DateRegistered.HasValue)
             {
-                RegistrationDate = delegateUser.DateRegistered.Value.ToString("dd/MM/yyyy");
+                RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
             AliasId = delegateUser.AliasId;
 

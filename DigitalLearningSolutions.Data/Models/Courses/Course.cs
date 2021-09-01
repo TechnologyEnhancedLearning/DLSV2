@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
-    public class Course
+    public class Course : BaseSearchableItem
     {
         public int CustomisationId { get; set; }
         public int CentreId { get; set; }
@@ -12,5 +12,11 @@
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName
             : ApplicationName + " - " + CustomisationName;
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? CourseName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

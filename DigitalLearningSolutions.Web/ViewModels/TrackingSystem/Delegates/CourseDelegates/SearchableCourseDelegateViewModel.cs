@@ -6,8 +6,6 @@
 
     public class SearchableCourseDelegateViewModel : BaseFilterableViewModel
     {
-        private const string DateFormat = "dd/MM/yyyy hh:mm";
-
         public SearchableCourseDelegateViewModel(CourseDelegate courseDelegate)
         {
             DelegateId = courseDelegate.DelegateId;
@@ -16,10 +14,10 @@
             Active = courseDelegate.Active;
             ProgressId = courseDelegate.ProgressId;
             Locked = courseDelegate.Locked;
-            LastUpdated = courseDelegate.LastUpdated.ToString(DateFormat);
-            Enrolled = courseDelegate.Enrolled.ToString(DateFormat);
-            CompleteBy = courseDelegate.CompleteBy?.ToString(DateFormat);
-            RemovedDate = courseDelegate.RemovedDate?.ToString(DateFormat);
+            LastUpdated = courseDelegate.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
+            Enrolled = courseDelegate.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
+            CompleteBy = courseDelegate.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
+            RemovedDate = courseDelegate.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
         }
 

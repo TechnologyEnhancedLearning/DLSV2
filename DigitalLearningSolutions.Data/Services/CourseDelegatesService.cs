@@ -3,14 +3,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
 
     public interface ICourseDelegatesService
     {
         CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
-            int adminId,
+            int categoryId,
             int? customisationId
         );
     }
@@ -19,28 +18,23 @@
     {
         private readonly ICourseDataService courseDataService;
         private readonly ICourseDelegatesDataService courseDelegatesDataService;
-        private readonly IUserDataService userDataService;
 
         public CourseDelegatesService(
             ICourseDataService courseDataService,
-            IUserDataService userDataService,
             ICourseDelegatesDataService courseDelegatesDataService
         )
         {
             this.courseDataService = courseDataService;
-            this.userDataService = userDataService;
             this.courseDelegatesDataService = courseDelegatesDataService;
         }
 
         public CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
-            int adminId,
+            int categoryId,
             int? customisationId
         )
         {
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
-
-            var courses = courseDataService.GetCoursesAtCentreForCategoryId(centreId, adminUser.CategoryId).ToList();
+            var courses = courseDataService.GetCoursesAtCentreForCategoryId(centreId, categoryId).ToList();
 
             var currentCustomisationId = customisationId ?? courses.FirstOrDefault()?.CustomisationId;
 

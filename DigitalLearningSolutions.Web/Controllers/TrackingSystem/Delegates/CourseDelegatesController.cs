@@ -23,10 +23,10 @@
 
         public IActionResult Index(int? customisationId = null)
         {
-            var adminId = User.GetAdminId()!.Value;
             var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!.Value;
             var courseDelegatesData =
-                courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, adminId, customisationId);
+                courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
 
             var model = new CourseDelegatesViewModel(courseDelegatesData);
 

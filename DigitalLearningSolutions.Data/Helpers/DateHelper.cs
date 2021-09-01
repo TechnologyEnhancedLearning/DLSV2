@@ -6,8 +6,6 @@
 
     public static class DateHelper
     {
-        public static string StandardDateFormat = "dd/MM/yyyy";
-
         public static IEnumerable<(int Month, int Year)> GetMonthsAndYearsBetweenDates(DateTime startDate, DateTime endDate)
         {
             var diffInMonths = (endDate.Year - startDate.Year) * 12 + (endDate.Month - startDate.Month);

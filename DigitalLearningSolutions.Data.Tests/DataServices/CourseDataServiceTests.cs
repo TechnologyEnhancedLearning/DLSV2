@@ -235,6 +235,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 101,
                 Active = false,
                 AllCentres = false,
+                ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
                 DelegateCount = 25,
