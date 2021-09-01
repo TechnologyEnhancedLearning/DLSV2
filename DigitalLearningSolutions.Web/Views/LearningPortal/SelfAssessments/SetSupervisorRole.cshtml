@@ -20,7 +20,7 @@
     <fieldset class="nhsuk-fieldset">
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
         <span class="nhsuk-fieldset__heading">
-          Choose your supervisor role
+          Choose a role for this supervisor
         </span>
       </legend>
       <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
@@ -29,12 +29,18 @@
       <div class="nhsuk-radios">
         @foreach (var role in Model.SelfAssessmentSupervisorRoles)
         {
-          <div class="nhsuk-radios__item">
-            <input class="nhsuk-radios__input" id="role-@role.ID" checked="@(Model.SelfAssessmentSupervisorRoleId == role.ID)" name="SelfAssessmentSupervisorRoleId" asp-for="SelfAssessmentSupervisorRoleId" type="radio" value="@role.ID">
-            <label class="nhsuk-label nhsuk-radios__label" for="role-@role.ID">
-              @role.RoleName
-            </label>
-          </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="role-@role.ID" checked="@(Model.SelfAssessmentSupervisorRoleId == role.ID)" name="SelfAssessmentSupervisorRoleId" asp-for="SelfAssessmentSupervisorRoleId" type="radio" value="@role.ID">
+          <label class="nhsuk-label nhsuk-radios__label" for="role-@role.ID">
+            @role.RoleName
+          </label>
+          @if (role.RoleDescription != null)
+          {
+            <div class="nhsuk-hint nhsuk-radios__hint" id="role-@role.ID-hint">
+              @role.RoleDescription
+            </div>
+          }
+        </div>
         }
 
       </div>
