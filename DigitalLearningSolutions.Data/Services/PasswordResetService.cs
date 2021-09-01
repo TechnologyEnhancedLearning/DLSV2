@@ -64,7 +64,7 @@
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
                 resetPasswordHash,
-                user.FirstName,
+                user.FullName,
                 baseUrl
             );
             emailService.SendEmail(resetPasswordEmail);
@@ -161,7 +161,7 @@
         private static Email GeneratePasswordResetEmail(
             string emailAddress,
             string resetHash,
-            string? firstName,
+            string fullName,
             string baseUrl
         )
         {
@@ -176,17 +176,15 @@
 
             string emailSubject = "Digital Learning Solutions Tracking System Password Reset";
 
-            var nameToUse = firstName ?? "User";
-
             var body = new BodyBuilder
             {
-                TextBody = $@"Dear {nameToUse},
+                TextBody = $@"Dear {fullName},
                             A request has been made to reset the password for your Digital Learning Solutions account.
                             To reset your password please follow this link: {resetPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in two hours.
                             Please don’t reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
-                                    <p>Dear {nameToUse},</p>
+                                    <p>Dear {fullName},</p>
                                     <p>A request has been made to reset the password for your Digital Learning Solutions account.</p>
                                     <p>To reset your password please follow this link: <a href=""{resetPasswordUrl.Uri}"">{resetPasswordUrl.Uri}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>
@@ -215,21 +213,19 @@
 
             const string emailSubject = "Welcome to Digital Learning Solutions - Verify your Registration";
 
-            var nameToUse = delegateUser.FirstName != null ? $"{delegateUser.FirstName} {delegateUser.LastName}" : delegateUser.LastName;
-
             BodyBuilder body = new BodyBuilder
             {
-                TextBody = $@"Dear {nameToUse},
+                TextBody = $@"Dear {delegateUser.FullName},
                             An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.
                             You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.
                             To complete your registration and access your Digital Learning Solutions content, please click: {setPasswordUrl.Uri}
                             Note that this link can only be used once and it will expire in three days.
                             Please don't reply to this email as it has been automatically generated.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
-                                <p>Dear {nameToUse},</p>
+                                <p>Dear {delegateUser.FullName},</p>
                                 <p>An administrator has registered your details to give you access to the Digital Learning Solutions (DLS) platform under the centre {delegateUser.CentreName}.</p>
                                 <p>You have been assigned the unique DLS delegate number {delegateUser.CandidateNumber}.</p>
-                                <p>To complete your registration and access your Digital Learning Solutions content, please click <a href=""{setPasswordUrl.Uri}"">this link</a>.</p>
+                                <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
                             </body>"

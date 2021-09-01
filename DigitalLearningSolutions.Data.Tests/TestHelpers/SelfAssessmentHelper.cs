@@ -35,6 +35,11 @@
             };
         }
 
+        public static object CreateDefaultSupervisors()
+        {
+            throw new NotImplementedException();
+        }
+
         public static Competency CreateDefaultCompetency(
             int id = 1,
             int rowNo = 1,

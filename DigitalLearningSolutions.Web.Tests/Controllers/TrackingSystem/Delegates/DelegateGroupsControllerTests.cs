@@ -57,7 +57,7 @@
                     centreCustomPromptsService,
                     clockService
                 )
-                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();

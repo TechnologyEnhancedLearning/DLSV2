@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@model IEnumerable<SelfAssessmentSupervisor>
+<div class="nhsuk-card">
+  <div class="nhsuk-card__content">
+    <h2 class="nhsuk-card__heading nhsuk-u-font-size-24">
+      Activity Supervisors
+    </h2>
+    <div class="nhsuk-card__description">
+      @if (Model.Any())
+      {
+        <ul>
+          @foreach (var supervisor in Model)
+          {
+            <li>@supervisor.SupervisorName, @supervisor.RoleName</li>
+          }
+        </ul>
+      }
+      else
+      {
+        <p>You have no confirmed supervisors for this activity.</p>
+      }
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
+        Manage supervisors
+      </a>
+    </div>
+  </div>
+</div>
