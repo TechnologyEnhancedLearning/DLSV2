@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -179,6 +180,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("Summary");
         }
 
+        [NoStore]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -189,6 +191,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
+        [NoStore]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel model)

@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -37,6 +38,7 @@
             centreCustomPromptHelper = customPromptHelper;
         }
 
+        [NoStore]
         public IActionResult Index()
         {
             var userAdminId = User.GetAdminId();
@@ -54,6 +56,7 @@
             return View(model);
         }
 
+        [NoStore]
         [HttpGet]
         public IActionResult EditDetails()
         {
@@ -76,6 +79,7 @@
             return View(model);
         }
 
+        [NoStore]
         [HttpPost]
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
