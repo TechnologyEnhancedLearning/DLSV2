@@ -1,16 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Administrator
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -43,9 +44,8 @@
         };
 
         private AdministratorController administratorController = null!;
-        private ICommonService commonService = null!;
-        private IRequestCookieCollection cookieCollection = null!;
-        private HttpContext httpContext = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
@@ -53,33 +53,22 @@
         [SetUp]
         public void Setup()
         {
-            commonService = A.Fake<ICommonService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
-            A.CallTo(() => commonService.GetCategoryListForCentre(A<int>._)).Returns(categories);
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                .Returns(categories);
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
             const string cookieName = "AdminFilter";
             const string cookieValue = "Role|IsCentreAdmin|true";
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>(cookieName, cookieValue)
-            };
-            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
-            A.CallTo(() => httpContext.Response).Returns(httpResponse);
 
-            administratorController = new AdministratorController(userDataService, commonService)
-                .WithMockHttpContext(httpContext)
+            administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
+                .WithMockServices()
                 .WithMockTempData();
         }
 
@@ -110,11 +99,10 @@
         }
 
         [Test]
-        public void Index_with_null_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = null;
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string? filterBy = "CLEAR";
 
             // When
             var result = administratorController.Index(filterBy: filterBy);
@@ -122,7 +110,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+                .BeNull();
         }
 
         [Test]
@@ -131,7 +119,6 @@
             // Given
             const string? filterBy = null;
             const string? newFilterValue = "Role|IsCmsManager|true";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
             var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
@@ -141,6 +128,65 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
+        }
+
+        [Test]
+        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+            const string? newFilterValue = "Role|IsCmsManager|true";
+
+            // When
+            var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
+
+        [Test]
+        public void UnlockAccount_returns_not_found_if_admin_to_unlock_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(null);
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void UnlockAccount_returns_not_found_if_admin_to_unlock_is_at_different_centre()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
+                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 3));
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void UnlockAccount_unlocks_account_and_returns_to_page()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(A<int>._, A<int>._)).DoesNothing();
+
+            // When
+            var result = administratorController.UnlockAccount(1);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

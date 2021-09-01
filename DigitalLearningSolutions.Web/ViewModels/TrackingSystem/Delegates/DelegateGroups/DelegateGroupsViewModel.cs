@@ -2,15 +2,57 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class DelegateGroupsViewModel
+    public class DelegateGroupsViewModel : BaseSearchablePageViewModel
     {
-        public DelegateGroupsViewModel(IEnumerable<Group> groups)
+        public DelegateGroupsViewModel(
+            List<Group> groups,
+            IEnumerable<CustomPrompt> registrationPrompts,
+            string sortBy,
+            string sortDirection,
+            string? filterBy,
+            int page
+        ) : base(null, page, true, sortBy, sortDirection, filterBy)
         {
-            DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g));
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                groups.AsQueryable(),
+                sortBy,
+                sortDirection
+            );
+            var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
+            MatchingSearchResults = filteredItems.Count;
+            SetTotalPages();
+            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
+            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
+
+            var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
+
+            Filters = new[]
+            {
+                new FilterViewModel(
+                    nameof(Group.AddedByAdminId),
+                    "Added by",
+                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
+                ),
+                new FilterViewModel(
+                    nameof(Group.LinkedToField),
+                    "Linked field",
+                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
+                )
+            };
         }
 
         public IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups { get; set; }
+
+        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
+        {
+            DelegateGroupsSortByOptions.Name,
+            DelegateGroupsSortByOptions.NumberOfDelegates,
+            DelegateGroupsSortByOptions.NumberOfCourses
+        };
     }
 }

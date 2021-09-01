@@ -1,6 +1,7 @@
-namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers.SetPassword
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
@@ -13,7 +14,10 @@ namespace DigitalLearningSolutions.Web.Controllers
         private readonly IPasswordResetService passwordResetService;
         private readonly IPasswordService passwordService;
 
-        public ResetPasswordController(IPasswordResetService passwordResetService, IPasswordService passwordService)
+        public ResetPasswordController(
+            IPasswordResetService passwordResetService,
+            IPasswordService passwordService
+        )
         {
             this.passwordResetService = passwordResetService;
             this.passwordService = passwordService;
@@ -32,7 +36,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(email, code);
+            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                email,
+                code,
+                ResetPasswordHelpers.ResetPasswordHashExpiryTime
+            );
 
             TempData.Set(new ResetPasswordData(email, code));
 
@@ -52,7 +60,9 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
                 resetPasswordData.Email,
-                resetPasswordData.ResetPasswordHash);
+                resetPasswordData.ResetPasswordHash,
+                ResetPasswordHelpers.ResetPasswordHashExpiryTime
+            );
 
             if (!hashIsValid)
             {

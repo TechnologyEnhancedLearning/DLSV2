@@ -102,5 +102,86 @@
             // Then
             action.Should().Throw<ArgumentOutOfRangeException>();
         }
+
+        [Test]
+        public void ConvertNumberToMonthsString_should_return_null_for_zero()
+        {
+            // When
+            var result = DisplayStringHelper.ConvertNumberToMonthsString(0);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void ConvertNumberToMonthsString_should_return_month_for_one()
+        {
+            // When
+            var result = DisplayStringHelper.ConvertNumberToMonthsString(1);
+
+            // Then
+            result.Should().Be("1 month");
+        }
+
+        [Test]
+        public void ConvertNumberToMonthsString_should_return_months_for_more_than_one()
+        {
+            // When
+            var result = DisplayStringHelper.ConvertNumberToMonthsString(2);
+
+            // Then
+            result.Should().Be("2 months");
+        }
+
+        [Test]
+        public void GetDelegateNameString_returns_expected_name_with_no_first_name()
+        {
+            // When
+            var result = DisplayStringHelper.GetDelegateNameString(null, "LastName");
+
+            // Then
+            result.Should().Be("LastName");
+        }
+
+        [Test]
+        public void GetDelegateNameString_returns_expected_name_with_first_name()
+        {
+            // When
+            var result = DisplayStringHelper.GetDelegateNameString("FirstName", "LastName");
+
+            // Then
+            result.Should().Be("FirstName LastName");
+        }
+
+        [Test]
+        public void GetPluralitySuffix_returns_s_when_number_is_zero()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(0);
+
+            // Then
+            result.Should().Be("s");
+        }
+
+        [Test]
+        public void GetPluralitySuffix_returns_s_when_number_is_greater_than_1()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(2);
+
+            // Then
+            result.Should().Be("s");
+        }
+
+        
+        [Test]
+        public void GetPluralitySuffix_returns_empty_string_when_number_is_1()
+        {
+            // When
+            var result = DisplayStringHelper.GetPluralitySuffix(1);
+
+            // Then
+            result.Should().Be(string.Empty);
+        }
     }
 }

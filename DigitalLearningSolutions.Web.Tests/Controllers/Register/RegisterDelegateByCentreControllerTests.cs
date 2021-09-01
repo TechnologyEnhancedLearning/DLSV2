@@ -24,9 +24,9 @@
 
     public class RegisterDelegateByCentreControllerTests
     {
+        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
         private RegisterDelegateByCentreController controller = null!;
         private ICryptoService cryptoService = null!;
-        private CustomPromptHelper customPromptHelper = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserDataService userDataService = null!;
@@ -38,13 +38,13 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
-            customPromptHelper = A.Fake<CustomPromptHelper>();
+            centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
             cryptoService = A.Fake<ICryptoService>();
             registrationService = A.Fake<IRegistrationService>();
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
                     userService,
-                    customPromptHelper,
+                    centreCustomPromptHelper,
                     cryptoService,
                     userDataService,
                     registrationService
@@ -66,14 +66,14 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = "testUser"
             };
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
-                .Returns((null, new List<DelegateUser> { duplicateUser }));
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(false);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -91,14 +91,14 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = "testUser"
             };
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!))
-                .Returns((null, new List<DelegateUser> { duplicateUser }));
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(true);
 
             // When
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.GetUsersByEmailAddress(duplicateUser.EmailAddress!)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -142,6 +142,8 @@
                 Email = duplicateUser.EmailAddress,
                 Alias = duplicateAlias
             };
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(true);
             A.CallTo(() => userDataService.GetAllDelegateUsersByUsername(duplicateAlias))
                 .Returns(new List<DelegateUser> { duplicateUser });
 
@@ -168,8 +170,11 @@
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                Alias = alias
+                Alias = alias,
+                Centre = 1
             };
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .Returns(true);
 
             // When
             controller.PersonalInformation(model);

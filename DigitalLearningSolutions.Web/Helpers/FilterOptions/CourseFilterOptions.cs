@@ -19,6 +19,11 @@
             Group + FilteringHelper.Separator + nameof(CourseStatistics.Active) + FilteringHelper.Separator + "true",
             FilterStatus.Success
         );
+    }
+
+    public static class CourseVisibilityFilterOptions
+    {
+        private const string Group = "Visibility";
 
         public static readonly FilterOptionViewModel IsHiddenInLearningPortal = new FilterOptionViewModel(
             "Hidden in Learning Portal",
@@ -30,7 +35,7 @@
         public static readonly FilterOptionViewModel IsNotHiddenInLearningPortal = new FilterOptionViewModel(
             "Visible in Learning Portal",
             Group + FilteringHelper.Separator + nameof(CourseStatistics.HideInLearnerPortal) +
-            FilteringHelper.Separator + "true",
+            FilteringHelper.Separator + "false",
             FilterStatus.Success
         );
     }

@@ -21,5 +21,9 @@
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }
         public IEnumerable<CourseSectionViewModel> Sections { get; set; }
+
+        public bool CourseHasContent => Sections.Any(
+            s => s.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled) || s.PostLearningAssessment
+        );
     }
 }

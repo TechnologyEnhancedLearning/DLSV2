@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ControllerHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Web.Helpers;
@@ -31,14 +32,53 @@
             return controller;
         }
 
-        public static T WithMockHttpContext<T>(this T controller, HttpContext context) where T : Controller
+        public static T WithMockHttpContext<T>(
+            this T controller,
+            HttpRequest request,
+            string? cookieName = null,
+            string? cookieValue = null,
+            HttpResponse? response = null
+        ) where T : Controller
         {
+            var httpContext = A.Fake<HttpContext>();
+
+            var cookieCollection = cookieName == null || cookieValue == null
+                ? A.Fake<IRequestCookieCollection>()
+                : SetUpFakeRequestCookieCollection(cookieName, cookieValue);
+
+            A.CallTo(() => request.Cookies).Returns(cookieCollection);
+            A.CallTo(() => httpContext.Request).Returns(request);
+
+            if (response != null)
+            {
+                A.CallTo(() => httpContext.Response).Returns(response);
+            }
+
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = context
+                HttpContext = httpContext
             };
 
             return controller;
+        }
+
+        public static IRequestCookieCollection SetUpFakeRequestCookieCollection(
+            string cookieName,
+            string cookieValue
+        )
+        {
+            var cookieCollection = A.Fake<IRequestCookieCollection>();
+
+            var cookieList = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>(cookieName, cookieValue)
+                };
+
+            A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
+            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
+            A.CallTo(() => cookieCollection.ContainsKey(cookieName)).Returns(true);
+
+            return cookieCollection;
         }
 
         public static T WithMockUser<T>(

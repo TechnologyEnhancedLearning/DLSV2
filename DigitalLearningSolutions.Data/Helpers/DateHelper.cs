@@ -7,6 +7,7 @@
 
     public static class DateHelper
     {
+        public static string StandardDateFormat = "dd/MM/yyyy";
         public static DateTime ReferenceDate => new DateTime(1905, 1, 1);
 
         public static IEnumerable<DateTime> GetPeriodsBetweenDates(

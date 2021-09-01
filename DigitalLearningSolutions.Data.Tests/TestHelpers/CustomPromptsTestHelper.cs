@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
@@ -14,13 +13,13 @@
             return new CentreCustomPrompts(centreId, customPrompts);
         }
 
-        public static CourseCustomPrompts GetDefaultCourseCustomPrompts(
+        public static CourseAdminFields GetDefaultCourseAdminFields(
             List<CustomPrompt> customPrompts,
             int customisationId = 27920,
             int centreId = 101
         )
         {
-            return new CourseCustomPrompts(customisationId, centreId, customPrompts);
+            return new CourseAdminFields(customisationId, centreId, customPrompts);
         }
 
         public static CustomPrompt GetDefaultCustomPrompt(
@@ -98,7 +97,7 @@
             };
         }
 
-        public static CourseCustomPromptsResult GetDefaultCourseCustomPromptsResult(
+        public static CourseAdminFieldsResult GetDefaultCourseAdminFieldsResult(
             string? customField1Prompt = "System Access Granted",
             string? customField1Options = "Yes\r\nNo",
             bool customField1Mandatory = false,
@@ -111,7 +110,7 @@
             int courseCategoryId = 0
         )
         {
-            return new CourseCustomPromptsResult
+            return new CourseAdminFieldsResult
             {
                 CustomField1Prompt = customField1Prompt,
                 CustomField1Options = customField1Options,

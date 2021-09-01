@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Register
 {
     using System;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
 
     public class DelegateRegistrationModel : RegistrationModel
     {
@@ -39,6 +40,27 @@
             int jobGroup,
             string? passwordHash
         ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
+
+        public DelegateRegistrationModel(
+            DelegateTableRow row,
+            int centreId,
+            DateTime? welcomeEmailDate
+        ) : this(
+            row.FirstName!,
+            row.LastName!,
+            row.Email!,
+            centreId,
+            row.JobGroupId!.Value,
+            null,
+            row.Answer1,
+            row.Answer2,
+            row.Answer3,
+            row.Answer4,
+            row.Answer5,
+            row.Answer6,
+            row.AliasId,
+            welcomeEmailDate
+        ) { }
 
         public string? Answer1 { get; set; }
 

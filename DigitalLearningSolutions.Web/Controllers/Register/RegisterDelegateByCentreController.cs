@@ -27,8 +27,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     public class RegisterDelegateByCentreController : Controller
     {
         private const string CookieName = "DelegateRegistrationByCentreData";
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICryptoService cryptoService;
-        private readonly CustomPromptHelper customPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
-            CustomPromptHelper customPromptHelper,
+            CentreCustomPromptHelper centreCustomPromptHelper,
             ICryptoService cryptoService,
             IUserDataService userDataService,
             IRegistrationService registrationService
@@ -45,7 +45,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
-            this.customPromptHelper = customPromptHelper;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
@@ -114,7 +114,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre!.Value;
 
-            customPromptHelper.ValidateCustomPrompts(
+            centreCustomPromptHelper.ValidateCustomPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -248,7 +248,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void SetCentreDelegateRegistrationData(int centreId)
         {
-            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId);
+            var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, DateTime.Today);
             var id = centreDelegateRegistrationData.Id;
 
             Response.Cookies.Append(
@@ -270,10 +270,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            var duplicateUsers = userService.GetUsersByEmailAddress(model.Email).delegateUsers
-                .Where(u => u.CentreId == model.Centre);
-
-            if (duplicateUsers.Count() != 0)
+            if (!userService.IsDelegateEmailValidForCentre(model.Email, model.Centre!.Value))
             {
                 ModelState.AddModelError(
                     nameof(PersonalInformationViewModel.Email),
@@ -286,7 +283,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return;
             }
 
-            duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
+            var duplicateUsers = userDataService.GetAllDelegateUsersByUsername(model.Alias)
                 .Where(u => u.CentreId == model.Centre);
 
             if (duplicateUsers.Count() != 0)
@@ -303,7 +300,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             int centreId
         )
         {
-            return customPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -316,7 +313,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            return customPromptHelper.GetCustomFieldViewModelsForCentre(
+            return centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,

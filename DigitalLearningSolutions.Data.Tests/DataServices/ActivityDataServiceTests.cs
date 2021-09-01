@@ -79,8 +79,7 @@
                     jobGroupId,
                     courseCategoryId,
                     customisationId
-                )
-                .OrderBy(log => log.LogDate);
+                );
 
             // then
             result.Count().Should().Be(expectedCount);

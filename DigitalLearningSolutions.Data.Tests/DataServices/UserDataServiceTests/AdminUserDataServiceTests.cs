@@ -174,5 +174,24 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void UpdateAdminUserFailedLoginCount_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                userDataService.UpdateAdminUserFailedLoginCount(7, 3);
+                var updatedUser = userDataService.GetAdminUserById(7)!;
+
+                // Then
+                updatedUser.FailedLoginCount.Should().Be(3);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

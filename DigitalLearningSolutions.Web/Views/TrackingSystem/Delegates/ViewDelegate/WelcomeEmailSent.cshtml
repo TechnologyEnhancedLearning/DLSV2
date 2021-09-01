@@ -1,0 +1,26 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+@using Microsoft.Extensions.Configuration
+@model WelcomeEmailSentViewModel
+
+@{
+  ViewData["Title"] = "Welcome email sent";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+  <partial name="~/Views/TrackingSystem/Delegates/ViewDelegate/_BreadcrumbsToViewDelegatePage.cshtml" model="@Model.Id" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Welcome email sent</h1>
+    <p>A welcome message has been sent to @Model.Name (@Model.CandidateNumber), inviting them to set their password and confirm their registration.</p>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -18,13 +19,16 @@
 
     public class AdminFieldsControllerTests
     {
-        private readonly ICustomPromptsService customPromptsService = A.Fake<ICustomPromptsService>();
+        private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService =
+            A.Fake<ICourseAdminFieldsDataService>();
+
+        private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
         private AdminFieldsController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(customPromptsService)
+            controller = new AdminFieldsController(courseAdminFieldsService, courseAdminFieldsDataService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -34,7 +38,7 @@
         public void AdminFields_returns_NotFound_when_no_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(null);
 
             // When
@@ -50,8 +54,8 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseCustomPrompts(customPrompts));
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
             var result = controller.AdminFields(1);
@@ -68,7 +72,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,
@@ -81,7 +85,7 @@
 
             // Then
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,
@@ -99,7 +103,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
                     1,
                     1,
                     false,
@@ -165,7 +169,7 @@
             var result = controller.EditAdminField(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
@@ -188,6 +192,60 @@
                 AssertEditTempDataIsExpected(expectedViewModel);
                 result.Should().BeRedirectToActionResult().WithActionName("EditAdminField");
             }
+        }
+
+        [Test]
+        public void RemoveAdminField_removes_admin_field_with_no_user_answers()
+        {
+            // When
+            var result = controller.RemoveAdminField(100, 2);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+        }
+
+        [Test]
+        public void RemoveAdminField_returns_remove_view_if_admin_field_has_user_answers()
+        {
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
+        }
+
+        [Test]
+        public void RemoveAdminField_does_not_remove_admin_field_without_confirmation()
+        {
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            removeViewModel.Confirm = false;
+            var expectedErrorMessage = "You must confirm before deleting this field";
+
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<RemoveAdminFieldViewModel>();
+            controller.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo(expectedErrorMessage);
+        }
+
+        [Test]
+        public void RemoveAdminField_removes_admin_field_with_confirmation_and_redirects()
+        {
+            // Given
+            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            removeViewModel.Confirm = true;
+
+            // When
+            var result = controller.RemoveAdminField(100, 1, removeViewModel);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)

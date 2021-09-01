@@ -31,7 +31,7 @@
         }
 
         [Test]
-        public void Month_fields_should_display_plural_months_when_value_is_zero_months()
+        public void Month_fields_should_display_plural_months_for_auto_refresh_when_value_is_zero_months()
         {
             // Given
             var courseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
@@ -47,8 +47,8 @@
             using (new AssertionScope())
             {
                 viewModel.AutoRefreshMonths.Should().Be("0 months < expiry");
-                viewModel.CompleteWithinMonths.Should().Be("0 months");
-                viewModel.CompletionValidFor.Should().Be("0 months");
+                viewModel.CompleteWithinMonths.Should().BeNull();
+                viewModel.CompletionValidFor.Should().BeNull();
             }
         }
 

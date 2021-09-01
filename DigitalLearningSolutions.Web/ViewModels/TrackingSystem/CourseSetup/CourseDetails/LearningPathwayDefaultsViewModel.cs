@@ -1,14 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class LearningPathwayDefaultsViewModel
     {
         public LearningPathwayDefaultsViewModel(CourseDetails courseDetails)
         {
             CustomisationId = courseDetails.CustomisationId;
-            CompleteWithinMonths = SetMonthDisplayString(courseDetails.CompleteWithinMonths);
-            CompletionValidFor = SetMonthDisplayString(courseDetails.ValidityMonths);
+            CompleteWithinMonths = DisplayStringHelper.ConvertNumberToMonthsString(courseDetails.CompleteWithinMonths);
+            CompletionValidFor = DisplayStringHelper.ConvertNumberToMonthsString(courseDetails.ValidityMonths);
             Mandatory = courseDetails.Mandatory;
             AutoRefresh = courseDetails.AutoRefresh;
             RefreshToCustomisationId = courseDetails.RefreshToCustomisationId;
@@ -18,8 +19,8 @@
         }
 
         public int CustomisationId { get; set; }
-        public string CompleteWithinMonths { get; set; }
-        public string CompletionValidFor { get; set; }
+        public string? CompleteWithinMonths { get; set; }
+        public string? CompletionValidFor { get; set; }
         public bool Mandatory { get; set; }
         public bool AutoRefresh { get; set; }
         public int RefreshToCustomisationId { get; set; }

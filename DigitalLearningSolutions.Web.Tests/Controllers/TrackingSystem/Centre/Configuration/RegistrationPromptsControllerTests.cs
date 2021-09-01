@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
@@ -18,9 +17,7 @@
 
     public class RegistrationPromptsControllerTests
     {
-        private IRequestCookieCollection cookieCollection = null!;
-        private ICustomPromptsService customPromptsService = null!;
-        private HttpContext httpContext = null!;
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
@@ -29,30 +26,21 @@
         [SetUp]
         public void Setup()
         {
-            customPromptsService = A.Fake<ICustomPromptsService>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             userDataService = A.Fake<IUserDataService>();
 
-            registrationPromptsController = new RegistrationPromptsController(customPromptsService, userDataService)
+            registrationPromptsController = new RegistrationPromptsController(centreCustomPromptsService, userDataService)
                 .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockTempData();
 
-            httpContext = A.Fake<HttpContext>();
             httpRequest = A.Fake<HttpRequest>();
-            cookieCollection = A.Fake<IRequestCookieCollection>();
-
-            var cookieList = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("AddRegistrationPromptData", "AddRegistrationPromptData")
-            };
-            A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
-            A.CallTo(() => cookieCollection.ContainsKey("AddRegistrationPromptData")).Returns(true);
-            A.CallTo(() => httpRequest.Cookies).Returns(cookieCollection);
-            A.CallTo(() => httpContext.Request).Returns(httpRequest);
+            const string cookieName = "AddRegistrationPromptData";
+            const string cookieValue = "AddRegistrationPromptData";
 
             registrationPromptsControllerWithMockHttpContext =
-                new RegistrationPromptsController(customPromptsService, userDataService)
-                    .WithMockHttpContext(httpContext)
+                new RegistrationPromptsController(centreCustomPromptsService, userDataService)
+                    .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
         }
@@ -65,7 +53,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -78,7 +66,7 @@
 
             // Then
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -96,7 +84,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => customPromptsService.UpdateCustomPromptForCentre(
+                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -162,7 +150,7 @@
             var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
@@ -295,7 +283,7 @@
             var result = registrationPromptsController.AddRegistrationPromptConfigureAnswers(model, action);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions").WithActionName("Error");
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
@@ -308,7 +296,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => customPromptsService.AddCustomPromptToCentre(
+                () => centreCustomPromptsService.AddCustomPromptToCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -323,7 +311,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => customPromptsService.AddCustomPromptToCentre(
+                    () => centreCustomPromptsService.AddCustomPromptToCentre(
                         ControllerContextHelper.CentreId,
                         1,
                         true,
@@ -345,7 +333,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => customPromptsService.AddCustomPromptToCentre(
+                () => centreCustomPromptsService.AddCustomPromptToCentre(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -360,15 +348,14 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => customPromptsService.AddCustomPromptToCentre(
+                    () => centreCustomPromptsService.AddCustomPromptToCentre(
                         ControllerContextHelper.CentreId,
                         1,
                         true,
                         "Test\r\nAnswer"
                     )
                 ).MustHaveHappened();
-                result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
-                    .WithActionName("Error");
+                result.Should().BeStatusCodeResult().WithStatusCode(500);
             }
         }
 

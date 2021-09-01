@@ -1,0 +1,79 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.Extensions.Configuration
+@model RemoveAdminFieldViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Delete course admin field" : "Delete course admin field";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var confirmError = ViewData.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)]?.Errors?.Count > 0;
+  var confirmFormErrorClass = confirmError ? "nhsuk-form-group--error" : "";
+  var cancelLinkRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(RemoveAdminFieldViewModel.Confirm) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Delete course admin field</h1>
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
+    <div class="nhsuk-u-font-weight-bold">
+      Field:
+    </div>
+  </div>
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+    @Model.PromptName
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.AnswerCount == 1) {
+      <p class="nhsuk-body-m">An admin has responded to this field for @Model.AnswerCount delegate. Deleting the field will permanently delete their response.</p>
+    } else {
+      <p class="nhsuk-body-m">Admins have responded to this field for @Model.AnswerCount delegates. Deleting the field will permanently delete their responses.</p>
+    }
+
+    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveAdminField">
+      <div class="nhsuk-form-group @confirmFormErrorClass">
+        <fieldset class="nhsuk-fieldset" aria-describedby="confirm-error">
+          @if (confirmError) {
+            <span class="nhsuk-error-message" id="confirm-error">
+              <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)].Errors[0].ErrorMessage
+            </span>
+          }
+          <div class="nhsuk-checkboxes">
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
+                @if (Model.AnswerCount == 1) {
+                  @:I am sure that I wish to delete this field and @Model.AnswerCount admin response
+                } else {
+                  @:I am sure that I wish to delete this field and @Model.AnswerCount admin responses
+                }
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <input type="hidden" asp-for="PromptName" />
+      <input type="hidden" asp-for="AnswerCount" />
+      <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Delete field</button>
+    </form>
+
+    <vc:cancel-link asp-controller="AdminFields" asp-action="AdminFields" asp-all-route-data="@cancelLinkRouteData" />
+  </div>
+</div>

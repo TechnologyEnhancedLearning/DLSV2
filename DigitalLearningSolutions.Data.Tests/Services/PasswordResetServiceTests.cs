@@ -8,32 +8,29 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Auth;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
-    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class PasswordResetServiceTests
     {
-        private IPasswordResetDataService passwordResetDataService = null!;
+        private IClockService clockService = null!;
         private IEmailService emailService = null!;
-        private ILogger<PasswordResetService> logger = null!;
+        private IPasswordResetDataService passwordResetDataService = null!;
         private PasswordResetService passwordResetService = null!;
         private IUserService userService = null!;
-        private IClockService clockService = null!;
 
         [SetUp]
         public void SetUp()
         {
             userService = A.Fake<IUserService>();
-            logger = A.Fake<ILogger<PasswordResetService>>();
             emailService = A.Fake<IEmailService>();
             clockService = A.Fake<IClockService>();
             passwordResetDataService = A.Fake<IPasswordResetDataService>();
@@ -43,14 +40,15 @@
                 (
                     UserTestHelper.GetDefaultAdminUser(),
                     new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
-                ));
+                )
+            );
 
             passwordResetService = new PasswordResetService(
                 userService,
                 passwordResetDataService,
-                logger,
                 emailService,
-                clockService);
+                clockService
+            );
         }
 
         [Test]
@@ -61,7 +59,8 @@
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com"));
+                () => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com")
+            );
         }
 
         [Test]
@@ -88,10 +87,11 @@
                                     e.To[0] == emailAddress &&
                                     e.Cc.IsNullOrEmpty() &&
                                     e.Bcc.IsNullOrEmpty() &&
-                                    e.Subject == "Digital Learning Solutions Tracking System Password Reset"))
+                                    e.Subject == "Digital Learning Solutions Tracking System Password Reset"
+                            )
+                        )
                 )
                 .MustHaveHappened();
-            ;
         }
 
         [Test]
@@ -108,13 +108,16 @@
             A.CallTo(
                     () => passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
                         emailAddress,
-                        hash))
+                        hash
+                    )
+                )
                 .Returns(Task.FromResult(new[] { resetPasswordWithUserDetails }.ToList()));
 
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(125));
 
             // When
-            var hashIsValid = await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash);
+            var hashIsValid =
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
 
             // Then
             hashIsValid.Should().BeFalse();
@@ -139,14 +142,16 @@
             A.CallTo(
                     () => passwordResetDataService.FindMatchingResetPasswordEntitiesWithUserDetailsAsync(
                         emailAddress,
-                        resetHash))
+                        resetHash
+                    )
+                )
                 .Returns(Task.FromResult(resetPasswords));
 
             GivenCurrentTimeIs(createTime + TimeSpan.FromMinutes(2));
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
 
             // Then
             hashIsValid.Should().BeTrue();
@@ -171,6 +176,49 @@
                 .MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => passwordResetDataService.RemoveResetPasswordAsync(A<int>._))
                 .WhenArgumentsMatch(args => args.Get<int>(0) != 1 && args.Get<int>(0) != 4).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Trying_get_null_user_when_generating_welcome_email_should_throw_an_exception()
+        {
+            // Given
+            A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
+
+            // Then
+            Assert.Throws<UserAccountNotFoundException>(
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "example.com")
+            );
+        }
+
+        [Test]
+        public void Trying_to_send_password_reset_when_generating_welcome_email_sends_email()
+        {
+            // Given
+            var emailAddress = "recipient@example.com";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .Build();
+
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
+                .Returns((null, new List<DelegateUser>{ delegateUser }));
+
+            // When
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(
+                                e =>
+                                    e.To[0] == emailAddress &&
+                                    e.Cc.IsNullOrEmpty() &&
+                                    e.Bcc.IsNullOrEmpty() &&
+                                    e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
+                            )
+                        )
+                )
+                .MustHaveHappened();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)

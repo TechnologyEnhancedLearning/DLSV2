@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @model SearchableDelegateGroupViewModel
 
-<div class="searchable-element nhsuk-panel" id="@Model.Id-card">
+<div class="searchable-element nhsuk-panel word-break" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
@@ -42,7 +42,7 @@
           <dt class="nhsuk-summary-list__key">
             Delegates
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" name="delegate-count">
             @Model.DelegateCount
           </dd>
           <dd class="nhsuk-summary-list__actions" />
@@ -52,7 +52,7 @@
           <dt class="nhsuk-summary-list__key">
             Courses
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" name="courses-count">
             @Model.CourseCount
           </dd>
           <dd class="nhsuk-summary-list__actions" />
@@ -62,7 +62,7 @@
           <dt class="nhsuk-summary-list__key">
             Added by
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.AddedByFilter">
             @Model.AddedBy
           </dd>
           <dd class="nhsuk-summary-list__actions" />
@@ -72,7 +72,7 @@
           <dt class="nhsuk-summary-list__key">
             Linked field
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.LinkedFieldFilter">
             @Model.LinkedField
           </dd>
           <dd class="nhsuk-summary-list__actions" />
@@ -108,7 +108,12 @@
         View delegates
       </a>
 
-      <a class="nhsuk-button expander-card__button" role="button">
+      <a class="nhsuk-button expander-card__button"
+         role="button"
+         asp-controller="DelegateGroups"
+         asp-action="GroupCourses"
+         asp-route-groupId="@Model.Id"
+         asp-route-page="1">
         View courses
       </a>
 

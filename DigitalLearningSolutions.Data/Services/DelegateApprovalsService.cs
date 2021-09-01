@@ -24,16 +24,16 @@
 
     public class DelegateApprovalsService : IDelegateApprovalsService
     {
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
-        private readonly ICustomPromptsService customPromptsService;
         private readonly IEmailService emailService;
         private readonly ILogger<DelegateApprovalsService> logger;
         private readonly IUserDataService userDataService;
 
         public DelegateApprovalsService(
             IUserDataService userDataService,
-            ICustomPromptsService customPromptsService,
+            ICentreCustomPromptsService centreCustomPromptsService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             ILogger<DelegateApprovalsService> logger,
@@ -41,7 +41,7 @@
         )
         {
             this.userDataService = userDataService;
-            this.customPromptsService = customPromptsService;
+            this.centreCustomPromptsService = centreCustomPromptsService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.logger = logger;
@@ -56,7 +56,7 @@
         {
             var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
             var usersWithPrompts =
-                customPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
+                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
 
             return usersWithPrompts;
         }
@@ -153,7 +153,7 @@
             else
             {
                 var delegateRejectionEmail = GenerateDelegateRejectionEmail(
-                    delegateUser.FirstName,
+                    delegateUser.FullName,
                     delegateUser.CentreName,
                     delegateUser.EmailAddress,
                     FindCentreUrl
@@ -183,7 +183,7 @@
                             You can now log in to Digital Learning Solutions using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration, using the URL: {loginUrl} .
                             For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.
                             {(centreInformationUrl == null ? "" : $@"View centre contact information: {centreInformationUrl}")}",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                     <p>Your Digital Learning Solutions registration has been approved by your centre administrator.</p>
                                     <p>You can now <a href=""{loginUrl}"">log in to Digital Learning Solutions</a> using your e-mail address or your Delegate ID number <b>""{candidateNumber}""</b> and the password you chose during registration.</p>
                                     <p>For more assistance in accessing the materials, please contact your Digital Learning Solutions centre.</p>
@@ -212,7 +212,7 @@
                         -Your DLS centre chooses to manage delegate registration internally
                         -You have accidentally chosen the wrong centre during the registration process.
                         If you need access to the DLS platform, please use the Find Your Centre page to locate your local DLS centre and use the contact details provided there to ask for help with registration. The Find Your Centre page can be found at this URL: {findCentreUrl}",
-                HtmlBody = $@"<body style= 'font - family: Calibri; font - size: small;'>
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {delegateName},</p>
                                 <p>Your Digital Learning Solutions (DLS) registration at the centre {centreName} has been rejected by an administrator.</p>
                                 <p>There are several reasons that this may have happened including:</p>

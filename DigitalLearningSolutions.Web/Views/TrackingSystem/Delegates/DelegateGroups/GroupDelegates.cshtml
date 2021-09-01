@@ -33,8 +33,8 @@
       <div class="nhsuk-grid-column-two-thirds">
         <h1 id="page-heading" class="nhsuk-heading-xl">Group delegates</h1>
       </div>
-      <div class="nhsuk-grid-column-one-third all-delegates-button-group">
-        <a class="nhsuk-button all-delegates-button" role="button">
+      <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button heading-button" role="button">
           Add
         </a>
       </div>
@@ -43,24 +43,17 @@
     <form method="get">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-full">
-          @if (!Model.GroupDelegates.Any())
-          {
+          @if (!Model.GroupDelegates.Any()) {
             <p class="nhsuk-u-margin-top-4" role="alert">
               <b>No delegates found.</b>
             </p>
+          } else {
+            @foreach (var groupDelegate in Model.GroupDelegates) {
+              <partial name="_GroupDelegateCard" model="groupDelegate" />
+            }
           }
-          else
-          {
-            <div>
-              @foreach (var groupDelegate in Model.GroupDelegates)
-              {
-                <partial name="_GroupDelegateCard" model="groupDelegate" />
-              }
-            </div>
-          }
-          @if (Model.TotalPages > 1)
-          {
-            <partial name="SearchablePage/_Pagination" model="Model" />
+          @if (Model.TotalPages > 1) {
+            <partial name="PaginatedPage/_Pagination" model="Model" />
           }
         </div>
       </div>

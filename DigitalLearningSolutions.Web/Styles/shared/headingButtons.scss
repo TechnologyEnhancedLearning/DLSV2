@@ -1,7 +1,7 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
-@import "../../shared/breakpoints";
+@import "breakpoints";
 
-.all-delegates-button-group {
+.heading-button-group {
   text-align: right;
 
   @media (max-width: $xl-desktop) {
@@ -11,7 +11,7 @@
   }
 }
 
-.all-delegates-button {
+.heading-button {
   padding-top: nhsuk-spacing(2);
   padding-bottom: nhsuk-spacing(2);
 

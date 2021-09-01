@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
+    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -17,6 +18,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -170,8 +172,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataService, UserDataService>();
             services.AddScoped<ICryptoService, CryptoService>();
-            services.AddScoped<ICustomPromptsService, CustomPromptsService>();
-            services.AddScoped<ICustomPromptsDataService, CustomPromptsDataService>();
+            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
+            services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
+            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
+            services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
@@ -180,7 +184,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
-            services.AddScoped<CustomPromptHelper>();
+            services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
@@ -189,9 +193,13 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
+            services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<ISectionService, SectionService>();
+            services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
+            services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
+            services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             RegisterWebServiceFilters(services);
         }
 
@@ -205,7 +213,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<List<CentreUserDetails>>>();
             services.AddScoped<RedirectEmptySessionData<List<DelegateLoginDetails>>>();
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
+            services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
+            services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

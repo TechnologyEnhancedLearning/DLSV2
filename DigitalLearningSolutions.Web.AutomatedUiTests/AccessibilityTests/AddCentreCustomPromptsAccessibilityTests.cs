@@ -1,13 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 {
+    using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
     using Selenium.Axe;
     using Xunit;
 
-    public class AddCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase
+    public class AddCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase,
+        IClassFixture<AccessibilityTestsFixture<Startup>>
     {
-        public AddCentreCustomPromptsAccessibilityTests(SeleniumServerFactory<Startup> factory) : base(factory) { }
+        public AddCentreCustomPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void AddRegistrationPrompt_journey_has_no_accessibility_errors()

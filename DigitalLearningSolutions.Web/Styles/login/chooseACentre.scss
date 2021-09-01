@@ -1,8 +1,11 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
+.centre-role-tags {
+  display: flex;
+}
+
 .centre-role-tag {
-    text-align: center;
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .nhsuk-table__row {

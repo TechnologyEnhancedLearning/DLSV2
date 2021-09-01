@@ -3,13 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -20,16 +19,16 @@
     {
         private const string AdminFilterCookieName = "AdminFilter";
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
-        private readonly ICommonService commonService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly IUserDataService userDataService;
 
         public AdministratorController(
             IUserDataService userDataService,
-            ICommonService commonService
+            ICourseCategoriesDataService courseCategoriesDataService
         )
         {
             this.userDataService = userDataService;
-            this.commonService = commonService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
         }
 
         [Route("{page=1:int}")]
@@ -40,13 +39,13 @@
             int page = 1
         )
         {
-            // Query parameter should take priority over cookie value
-            // We use this method to check for the query parameter rather 
-            // than filterBy != null as filterBy is set to null to clear 
-            // the filter string when javascript is off.
-            if (!Request.Query.ContainsKey(nameof(filterBy)))
+            if (filterBy == null && filterValue == null)
             {
                 filterBy = Request.Cookies[AdminFilterCookieName];
+            }
+            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
+            {
+                filterBy = null;
             }
 
             filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
@@ -64,21 +63,7 @@
                 page
             );
 
-            if (filterBy != null)
-            {
-                Response.Cookies.Append(
-                    AdminFilterCookieName,
-                    filterBy,
-                    new CookieOptions
-                    {
-                        Expires = CookieExpiry
-                    }
-                );
-            }
-            else
-            {
-                Response.Cookies.Delete(AdminFilterCookieName);
-            }
+            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
 
             return View(model);
         }
@@ -104,7 +89,7 @@
             }
 
             var centreId = User.GetCentreId();
-            var categories = commonService.GetCategoryListForCentre(centreId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
 
             var model = new EditRolesViewModel(adminUser, centreId, categories);
@@ -129,9 +114,27 @@
             return RedirectToAction("Index");
         }
 
+        [Route("{adminId:int}/UnlockAccount")]
+        [HttpPost]
+        public IActionResult UnlockAccount(int adminId)
+        {
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
+            userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
+
+            return RedirectToAction("Index");
+        }
+
         private IEnumerable<string> GetCourseCategories(int centreId)
         {
-            var categories = commonService.GetCategoryListForCentre(centreId).Select(c => c.CategoryName);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
         }

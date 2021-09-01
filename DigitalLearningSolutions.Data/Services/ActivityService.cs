@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public interface IActivityService
     {

@@ -1,27 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public abstract class BaseSearchablePageViewModel
+    public abstract class BaseSearchablePageViewModel : BasePaginatedViewModel
     {
         public const string DefaultSortOption = "SearchableName";
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
-        public const int DefaultItemsPerPage = 10;
 
         public readonly string? FilterBy;
 
-        private readonly int itemsPerPage;
+        public readonly bool FilterEnabled;
 
         public readonly string? SearchString;
-
-        public int MatchingSearchResults;
-
-        public readonly bool FilterEnabled;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
@@ -31,18 +24,15 @@
             string sortDirection = Ascending,
             string? filterBy = null,
             int itemsPerPage = DefaultItemsPerPage
-        )
+        ) : base(page, itemsPerPage)
         {
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
             FilterBy = filterBy;
-            Page = page;
             FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
-            this.itemsPerPage = itemsPerPage;
         }
-
 
         public string SortDirection { get; set; }
 
@@ -54,33 +44,5 @@
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
-
-        public int Page { get; protected set; }
-
-        public int TotalPages { get; protected set; }
-
-        protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
-        {
-            if (items.Count > itemsPerPage)
-            {
-                items = items.Skip(OffsetFromPageNumber(Page)).Take(itemsPerPage).ToList();
-            }
-
-            return items;
-        }
-
-        protected void SetTotalPages()
-        {
-            TotalPages = (int)Math.Ceiling(MatchingSearchResults / (double)itemsPerPage);
-            if (Page < 1 || Page > TotalPages)
-            {
-                Page = 1;
-            }
-        }
-
-        private int OffsetFromPageNumber(int pageNumber)
-        {
-            return (pageNumber - 1) * itemsPerPage;
-        }
     }
 }

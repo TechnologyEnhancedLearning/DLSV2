@@ -35,5 +35,20 @@
             var number = Math.Round(byteCount / Math.Pow(1024, place), decimalPlaces);
             return (Math.Sign(byteCount) * number) + Units[place];
         }
+
+        public static string? ConvertNumberToMonthsString(int numberOfMonths)
+        {
+            return numberOfMonths == 0 ? null : $"{numberOfMonths} month{GetPluralitySuffix(numberOfMonths)}";
+        }
+
+        public static string GetDelegateNameString(string? firstName, string lastName)
+        {
+            return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
+        }
+
+        public static string GetPluralitySuffix(int number)
+        {
+            return number == 1 ? string.Empty : "s";
+        }
     }
 }
