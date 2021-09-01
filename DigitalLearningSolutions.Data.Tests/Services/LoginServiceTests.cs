@@ -267,34 +267,15 @@
 
         [Test]
         public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_alias()
+            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_email_with_single_admin_matched_twice()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null, aliasId: "Test");
-            var delegateUsers = new List<DelegateUser> { delegateUser };
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: "test@test.com");
+            var delegateUsers = new List<DelegateUser> { delegateUser, delegateUser };
             var associatedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(associatedAdminUser);
-            A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
-
-            // When
-            var returnedAdminUser = loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
-                delegateUsers,
-                "password"
-            );
-
-            // Then
-            Assert.AreEqual(associatedAdminUser, returnedAdminUser);
-        }
-
-        [Test]
-        public void
-            GetVerifiedAdminUserAssociatedWithDelegateUsers_Returns_verified_admin_account_associated_with_delegate_by_email_and_alias()
-        {
-            // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(aliasId: "Test");
-            var delegateUsers = new List<DelegateUser> { delegateUser };
-            var associatedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(associatedAdminUser);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(delegateUser.EmailAddress!)).Returns(associatedAdminUser);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(secondDelegateUser.EmailAddress!)).Returns(associatedAdminUser);
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
@@ -312,12 +293,13 @@
             GetVerifiedAdminUserAssociatedWithDelegateUsers_throws_exception_with_multiple_different_matching_admins()
         {
             // Given
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(aliasId: "Test");
-            var delegateUsers = new List<DelegateUser> { delegateUser };
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: "test@test.com");
+            var delegateUsers = new List<DelegateUser> { delegateUser, secondDelegateUser };
             var associatedAdminUser = UserTestHelper.GetDefaultAdminUser();
             var secondAssociatedAdminUser = UserTestHelper.GetDefaultAdminUser(id: 1);
             A.CallTo(() => userDataService.GetAdminUserByUsername(delegateUser.EmailAddress!)).Returns(associatedAdminUser);
-            A.CallTo(() => userDataService.GetAdminUserByUsername(delegateUser.AliasId!)).Returns(secondAssociatedAdminUser);
+            A.CallTo(() => userDataService.GetAdminUserByUsername(secondDelegateUser.EmailAddress!)).Returns(secondAssociatedAdminUser);
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // Then

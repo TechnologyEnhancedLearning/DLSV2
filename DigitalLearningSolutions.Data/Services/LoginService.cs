@@ -53,16 +53,10 @@
 
             foreach (var delegateUser in delegateUsers)
             {
-                var adminByEmail = GetVerifiedAdminUserByEmail(password, delegateUser);
-                if (adminByEmail != null)
+                var admin = GetVerifiedAdminUserByEmail(password, delegateUser);
+                if (admin != null)
                 {
-                    adminUsers.Add(adminByEmail);
-                }
-
-                var adminByAlias = GetVerifiedAdminUserByAlias(password, delegateUser);
-                if (adminByAlias != null)
-                {
-                    adminUsers.Add(adminByAlias);
+                    adminUsers.Add(admin);
                 }
             }
 
@@ -77,23 +71,6 @@
             }
 
             var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
-
-            var isSuitableAdmin = adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
-                                  cryptoService.VerifyHashedPassword(
-                                      adminUserAssociatedWithDelegate.Password,
-                                      password
-                                  );
-            return isSuitableAdmin ? adminUserAssociatedWithDelegate : null;
-        }
-
-        private AdminUser? GetVerifiedAdminUserByAlias(string password, DelegateUser delegateUser)
-        {
-            if (string.IsNullOrWhiteSpace(delegateUser.AliasId))
-            {
-                return null;
-            }
-
-            var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.AliasId);
 
             var isSuitableAdmin = adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
                                   cryptoService.VerifyHashedPassword(
