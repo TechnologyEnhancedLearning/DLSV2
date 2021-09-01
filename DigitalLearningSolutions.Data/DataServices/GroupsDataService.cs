@@ -159,17 +159,14 @@
         public int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId)
         {
             return connection.Query<int?>(
-                @"SELECT ProgressId
-                    FROM Progress
-                    WHERE ProgressID IN
-                          (SELECT ProgressID
-                            FROM Progress AS P
-                            INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                            WHERE p.Completed IS NULL
-                                AND p.EnrollmentMethodID  = 3
-                                AND GC.GroupID = @groupId
-                                AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL)",
+                @"SELECT ProgressID
+                    FROM Progress AS P
+                    INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                    WHERE p.Completed IS NULL
+                        AND p.EnrollmentMethodID = 3
+                        AND GC.GroupID = @groupId
+                        AND p.CandidateID = @delegateId
+                        AND P.RemovedDate IS NULL",
                 new { groupId, delegateId }
             ).FirstOrDefault();
         }
