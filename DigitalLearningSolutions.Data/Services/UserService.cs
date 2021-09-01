@@ -50,9 +50,7 @@ namespace DigitalLearningSolutions.Data.Services
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = userDataService.GetAdminUserByUsername(username);
-            var delegateUsername =
-                string.IsNullOrWhiteSpace(adminUser?.EmailAddress) ? username : adminUser.EmailAddress;
-            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(delegateUsername);
+            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
         }

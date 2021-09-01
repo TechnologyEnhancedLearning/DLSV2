@@ -104,24 +104,6 @@
         }
 
         [Test]
-        public void GetUsersByUsername_with_admin_id_fetches_associated_delegate_users()
-        {
-            // Given
-            var testAdmin = UserTestHelper.GetDefaultAdminUser(emailAddress: "TestAccountAssociation@email.com");
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._))
-                .Returns(testAdmin);
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser>());
-
-            // When
-            userService.GetUsersByUsername("Admin Id");
-
-            // Then
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername("TestAccountAssociation@email.com"))
-                .MustHaveHappened();
-        }
-
-        [Test]
         public void GetUsersWithActiveCentres_returns_users_with_active_centres()
         {
             // Given
