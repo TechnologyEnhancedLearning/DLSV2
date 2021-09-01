@@ -1,9 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
-@model ActivityFilterModel
-
-@{
-  var dateFormat = "dd/MM/yyyy";
-}
+@model ReportsFilterModel
 
 <div class="nhsuk-card">
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
@@ -16,7 +12,7 @@
           <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.CourseCategoryName)) {
+        @if (Model.ShowCourseCategories) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
               Course category
@@ -25,21 +21,19 @@
           </div>
         }
 
-        @if (!string.IsNullOrEmpty(Model.CustomisationName)) {
-          <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">
-              Course
-            </dt>
-            <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
-          </div>
-        }
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Course
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
+        </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key">
             Date range
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.StartDate.ToString(dateFormat) - @Model.EndDate.ToString(dateFormat)
+            @Model.DateRange
           </dd>
         </div>
 

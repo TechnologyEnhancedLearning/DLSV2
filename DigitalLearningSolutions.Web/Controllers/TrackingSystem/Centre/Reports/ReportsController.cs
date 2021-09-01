@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
@@ -19,35 +21,39 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly IUserDataService userDataService;
+        private readonly ICourseDataService courseDataService;
 
-        public ReportsController(IActivityService activityService)
+        public ReportsController(IActivityService activityService, IJobGroupsDataService jobGroupsDataService, IUserDataService userDataService)
         {
             this.activityService = activityService;
+            this.jobGroupsDataService = jobGroupsDataService;
+            this.userDataService = userDataService;
         }
 
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
 
             var filterData = new ActivityFilterData(
                 DateTime.Today.AddYears(-1),
                 DateTime.UtcNow,
                 null,
-                null,
+                adminUser.CategoryId,
                 null,
                 ReportInterval.Months
             );
-
             var activity = activityService.GetFilteredActivity(centreId, filterData);
-            var filterModel = new ActivityFilterModel
-            {
-                CourseCategoryName = "All categories",
-                CustomisationName = "Customisation",
-                JobGroupName = "Job group",
-                ReportIntervalName = nameof(ReportInterval.Months),
-                StartDate = DateTime.Now.AddYears(-1),
-                EndDate = DateTime.Now
-            };
+
+            var jobGroupName = filterData.JobGroupId.HasValue ? jobGroupsDataService.GetJobGroupName(filterData.JobGroupId.Value) : "All";
+            var categoryName = adminUser.CategoryName ?? "All";
+            var customisationName = filterData.CustomisationId.HasValue
+                ? courseDataService.GetCourseName(filterData.CustomisationId.Value)
+                : "All";
+            var filterModel = new ReportsFilterModel(filterData.StartDate, filterData.EndDate, jobGroupName!, categoryName, customisationName!, filterData.ReportInterval, adminUser.CategoryId == 0);
 
             var model = new ReportsViewModel(activity, filterModel);
             return View(model);

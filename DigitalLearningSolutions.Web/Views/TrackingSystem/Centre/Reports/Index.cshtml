@@ -10,10 +10,6 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var summaryText = string.IsNullOrEmpty(Model.ActivityFilterModel.CustomisationName) ?
-    Model.ActivityFilterModel.CourseCategoryName : Model.ActivityFilterModel.CustomisationName;
-  var summaryType = string.IsNullOrEmpty(Model.ActivityFilterModel.CustomisationName) ?
-    "courses" : "course";
 }
 
 @section NavMenuItems {
@@ -32,9 +28,9 @@
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
 
-    <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@summaryText</span> @summaryType</span>
+    <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
 
-    <partial name="_FilterDisplayCard.cshtml" model="@Model.ActivityFilterModel" />
+    <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
 
     <h2 class="nhsuk-heading-m">Usage stats</h2>
 
