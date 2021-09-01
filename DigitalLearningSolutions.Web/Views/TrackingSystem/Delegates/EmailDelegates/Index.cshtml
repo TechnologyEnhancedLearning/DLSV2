@@ -11,7 +11,7 @@
   ViewData["HeaderPathName"] = "Tracking System";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var exampleDate = DateTime.Today;
-  var selected = Model.SelectedDelegateIds.AsList();
+  var selectedDelegateIds = Model.SelectedDelegateIds.AsList();
 }
 
 @section NavMenuItems {
@@ -25,7 +25,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds), nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
-    <span class="nhsuk-body-l">Select delegates to send email to</span>
+    <span class="nhsuk-body-l">Select delegates to send email to.</span>
 
     @if (Model.Delegates == null || !Model.Delegates.Any()) {
       <p class="nhsuk-u-margin-top-4" role="alert">
@@ -38,7 +38,12 @@
             <div class="nhsuk-checkboxes">
               @foreach (var delegateModel in Model.Delegates) {
                 <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
-                  <input class="nhsuk-checkboxes__input" id="@delegateModel.Id-checkbox" type="checkbox" name="SelectedDelegateIds" value="@delegateModel.Id" @(selected != null && selected.Contains(delegateModel.Id) ? "checked" : string.Empty)>
+                  <input class="nhsuk-checkboxes__input"
+                         id="@delegateModel.Id-checkbox"
+                         type="checkbox"
+                         name="SelectedDelegateIds"
+                         value="@delegateModel.Id"
+                         @(selectedDelegateIds?.Contains(delegateModel.Id) == true ? "checked" : string.Empty) />
                   <label class="nhsuk-label nhsuk-checkboxes__label" for="@delegateModel.Id-checkbox">
                     @delegateModel.Name (@delegateModel.Email)
                   </label>
@@ -52,9 +57,9 @@
         </div>
         <vc:date-input id="welcome-email-date"
                        label="Deliver email on or after:"
-                       day-id="Day"
-                       month-id="Month"
-                       year-id="Year"
+                       day-id="@nameof(Model.Day)"
+                       month-id="@nameof(Model.Month)"
+                       year-id="@nameof(Model.Year)"
                        css-class="nhsuk-form-group"
                        hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
         <button class="nhsuk-button" type="submit">Send welcome emails</button>
