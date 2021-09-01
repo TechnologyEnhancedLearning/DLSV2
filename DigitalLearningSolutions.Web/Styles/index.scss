@@ -209,8 +209,8 @@ ul.no-bullets {
 }
 
 .hidden-submit {
-    display: none;
-    @include hidden-submit-ie-fix;
+  display: none;
+  @include hidden-submit-ie-fix;
 }
 
 .divider {
