@@ -2,71 +2,56 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class DateHelperTests
     {
         [Test]
-        public void GetMonthsAndYearsBetweenDates_returns_single_entry_for_dates_in_same_month()
+        [TestCase(ReportInterval.Days)]
+        [TestCase(ReportInterval.Weeks)]
+        [TestCase(ReportInterval.Months)]
+        [TestCase(ReportInterval.Quarters)]
+        [TestCase(ReportInterval.Years)]
+        public void GetPeriodsBetweenDates_returns_single_entry_for_dates_in_same_period(ReportInterval interval)
         {
             // when
             var startDate = DateTime.Parse("2014-01-01 00:00:00.000");
-            var endDate = DateTime.Parse("2014-01-31 23:59:59.999");
-            var result = DateHelper.GetMonthsAndYearsBetweenDates(startDate, endDate).ToList();
+            var endDate = DateTime.Parse("2014-01-01 23:59:59.999");
+            var result = DateHelper.GetPeriodsBetweenDates(startDate, endDate, interval).ToList();
 
             // then
             result.Count.Should().Be(1);
-            result[0].Year.Should().Be(2014);
-            result[0].Month.Should().Be(1);
         }
 
         [Test]
-        public void GetMonthsAndYearsBetweenDates_returns_loops_over_months_and_increments_years()
-        {
-            // when
-            var startDate = DateTime.Parse("2013-12-31 23:59:59.999");
-            var endDate = DateTime.Parse("2014-01-01 00:00:00.000");
-            var result = DateHelper.GetMonthsAndYearsBetweenDates(startDate, endDate).ToList();
-
-            // then
-            result.Count.Should().Be(2);
-            result[0].Year.Should().Be(2013);
-            result[0].Month.Should().Be(12);
-            result[1].Year.Should().Be(2014);
-            result[1].Month.Should().Be(1);
-        }
-
-        [Test]
-        public void GetMonthsAndYearsBetweenDates_increments_months_within_year()
-        {
-            // when
-            var startDate = DateTime.Parse("2014-01-31 23:59:59.999");
-            var endDate = DateTime.Parse("2014-02-01 00:00:00.000");
-            var result = DateHelper.GetMonthsAndYearsBetweenDates(startDate, endDate).ToList();
-
-            // then
-            result.Count.Should().Be(2);
-            result[0].Year.Should().Be(2014);
-            result[0].Month.Should().Be(1);
-            result[1].Year.Should().Be(2014);
-            result[1].Month.Should().Be(2);
-        }
-
-        [Test]
-        public void GetMonthsAndYearsBetweenDates_returns_13_months_across_two_years_for_one_year_difference()
+        [TestCase(ReportInterval.Days, "2014-01-03 23:59:59.999", "2014-01-01", "2014-01-03")]
+        [TestCase(ReportInterval.Weeks, "2014-01-16 23:59:59.999", "2013-12-29", "2014-01-12")]
+        [TestCase(ReportInterval.Months, "2014-03-31 23:59:59.999", "2014-01-01", "2014-03-01")]
+        [TestCase(ReportInterval.Quarters, "2014-9-30 23:59:59.999", "2014-01-01", "2014-07-01")]
+        [TestCase(ReportInterval.Years, "2016-12-31 23:59:59.999", "2014-01-01", "2016-01-01")]
+        public void GetPeriodsBetweenDates_returns_list_inclusive_of_endpoints(
+            ReportInterval interval,
+            string endDateFilter,
+            string expectedStartString,
+            string expectedEndString
+        )
         {
             // when
             var startDate = DateTime.Parse("2014-01-01 00:00:00.000");
-            var endDate = DateTime.Parse("2015-01-01 00:00:00.000");
-            var result = DateHelper.GetMonthsAndYearsBetweenDates(startDate, endDate).ToList();
+            var endDate = DateTime.Parse(endDateFilter);
+            var result = DateHelper.GetPeriodsBetweenDates(startDate, endDate, interval).ToList();
 
             // then
-            result.Count.Should().Be(13);
-            result.Select(m => m.Month).Should().BeEquivalentTo(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1 });
-            result.Take(12).Select(m => m.Year).Should().AllBeEquivalentTo(2014);
-            result[12].Year.Should().Be(2015);
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(3);
+                result.First().Should().Be(DateTime.Parse(expectedStartString));
+                result.Last().Should().Be(DateTime.Parse(expectedEndString));
+            }
         }
     }
 }

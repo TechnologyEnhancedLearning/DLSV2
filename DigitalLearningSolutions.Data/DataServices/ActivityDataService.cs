@@ -8,7 +8,14 @@
 
     public interface IActivityDataService
     {
-        IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, DateTime start, DateTime end);
+        IEnumerable<ActivityLog> GetFilteredActivity(
+            int centreId,
+            DateTime startDate,
+            DateTime endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId
+        );
     }
 
     public class ActivityDataService : IActivityDataService
@@ -20,20 +27,41 @@
             this.connection = connection;
         }
 
-        public IEnumerable<MonthOfActivity> GetActivityInRangeByMonth(int centreId, DateTime start, DateTime end)
+        public IEnumerable<ActivityLog> GetFilteredActivity(
+            int centreId,
+            DateTime startDate,
+            DateTime endDate,
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId
+        )
         {
-            return connection.Query<MonthOfActivity>(
+            return connection.Query<ActivityLog>(
                 @"SELECT
-                        LogYear AS Year,
-                        LogMonth AS Month,
-                        SUM(CONVERT(INT, Completed)) AS Completions,
-                        SUM(CONVERT(INT, Evaluated)) AS Evaluations,
-                        SUM(CONVERT(INT, Registered)) AS Registrations 
+                        LogDate,
+                        LogYear,
+                        LogQuarter,
+                        LogMonth,
+                        Registered,
+                        Completed,
+                        Evaluated
                     FROM tActivityLog
-                        WHERE (LogDate > @start AND LogDate < @end AND CentreID = @centreId)
-                    GROUP BY LogYear, LogMonth
-                    ORDER BY LogYear, LogMonth",
-                new { centreId, start, end }
+                        WHERE (LogDate >= @startDate
+                            AND LogDate <= @endDate
+                            AND CentreID = @centreId
+                            AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
+                            AND (@customisationId IS NULL OR CustomisationID = @customisationId)
+                            AND (@courseCategoryId IS NULL OR CourseCategoryId = @courseCategoryId)
+                            AND (Registered = 1 OR Completed = 1 OR Evaluated = 1))",
+                new
+                {
+                    centreId,
+                    startDate,
+                    endDate,
+                    jobGroupId,
+                    customisationId,
+                    courseCategoryId
+                }
             );
         }
     }

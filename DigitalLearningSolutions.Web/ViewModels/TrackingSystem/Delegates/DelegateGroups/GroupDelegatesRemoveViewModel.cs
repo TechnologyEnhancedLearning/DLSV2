@@ -7,11 +7,12 @@
     {
         public GroupDelegatesRemoveViewModel() { }
 
-        public GroupDelegatesRemoveViewModel(GroupDelegate delegateUser, string groupName, int groupId)
+        public GroupDelegatesRemoveViewModel(GroupDelegate delegateUser, string groupName, int groupId, int? progressId)
         {
             GroupId = groupId;
             GroupName = groupName;
             DelegateName = DisplayStringHelper.GetDelegateNameString(delegateUser.FirstName, delegateUser.LastName);
+            RemoveProgressEnabled = progressId.HasValue;
         }
 
         public int GroupId { get; set; }
@@ -23,5 +24,7 @@
         public bool ConfirmRemovalFromGroup { get; set; }
 
         public bool RemoveProgress { get; set; }
+
+        public bool RemoveProgressEnabled { get; set; }
     }
 }
