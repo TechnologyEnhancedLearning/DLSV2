@@ -1,23 +1,47 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
-    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class AllDelegatesViewModelFilterOptionsTests
     {
+        [Test]
+        public void GetAllDelegatesFilterViewModels_should_return_correct_job_group_filter()
+        {
+            // Given
+            var (jobGroups, expectedFilter) = GetSampleJobGroupsAndFilter();
+
+            // When
+            var result =
+                AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, new List<CustomPrompt>());
+
+            // Then
+            result.Should().ContainEquivalentOf(expectedFilter);
+        }
+
+        [Test]
+        public void GetAllDelegatesFilterViewModels_should_return_correct_custom_prompt_filters()
+        {
+            // Given
+            var (customPrompts, expectedFilters) = GetSampleCustomPromptsAndFilters();
+
+            // When
+            var result = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
+                new List<(int, string)>(),
+                customPrompts
+            );
+
+            // Then
+            expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
+        }
+
         private (IEnumerable<(int id, string name)> jobGroups, FilterViewModel filter) GetSampleJobGroupsAndFilter()
         {
             var jobGroups = new List<(int id, string name)> { (1, "J 1"), (2, "J 2") };
@@ -108,32 +132,6 @@
             };
 
             return (customPrompts, customPromptFilters);
-        }
-
-        [Test]
-        public void GetAllDelegatesFilterViewModels_should_return_correct_job_group_filter()
-        {
-            // Given
-            var (jobGroups, expectedFilter) = GetSampleJobGroupsAndFilter();
-            
-            // When
-            var result = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, new List<CustomPrompt>());
-
-            // Then
-            result.Should().ContainEquivalentOf(expectedFilter);
-        }
-
-        [Test]
-        public void GetAllDelegatesFilterViewModels_should_return_correct_custom_prompt_filters()
-        {
-            // Given
-            var (customPrompts, expectedFilters) = GetSampleCustomPromptsAndFilters();
-
-            // When
-            var result = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(new List<(int, string)>(), customPrompts);
-
-            // Then
-            expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
         }
     }
 }
