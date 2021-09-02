@@ -316,5 +316,27 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             totalAttempts.Should().Be(23);
             attemptsPassed.Should().Be(11);
         }
+
+        [Test]
+        public void GetCourseNameAndApplication_returns_course_name_and_application()
+        {
+            // When
+            var result = courseDataService.GetCourseNameAndApplication(7832);
+
+            // Then
+            result?.ApplicationName.Should().Be("Level 2 - Microsoft PowerPoint 2010");
+            result?.CourseName.Should().Be("PL Testing");
+        }
+
+        [Test]
+        public void GetCourseNameAndApplication_returns_null_for_nonexistent_course()
+        {
+
+            // When
+            var result = courseDataService.GetCourseNameAndApplication(-1);
+
+            // Then
+            result.Should().BeNull();
+        }
     }
 }

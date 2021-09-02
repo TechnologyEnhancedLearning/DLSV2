@@ -21,15 +21,24 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseDataService courseDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
-        private readonly ICourseDataService courseDataService;
 
-        public ReportsController(IActivityService activityService, IJobGroupsDataService jobGroupsDataService, IUserDataService userDataService)
+        public ReportsController(
+            IActivityService activityService,
+            IJobGroupsDataService jobGroupsDataService,
+            IUserDataService userDataService,
+            ICourseDataService courseDataService,
+            ICourseCategoriesDataService courseCategoriesDataService
+        )
         {
             this.activityService = activityService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
+            this.courseDataService = courseDataService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
         }
 
         public IActionResult Index()
@@ -38,41 +47,56 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
+            int? courseCategoryId = null;
+            var validatedCategoryId = adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId;
+
             var filterData = new ActivityFilterData(
-                DateTime.Today.AddYears(-1),
+                DateTime.UtcNow.Date.AddYears(-1),
                 DateTime.UtcNow,
                 null,
-                adminUser.CategoryId,
+                validatedCategoryId,
                 null,
                 ReportInterval.Months
             );
+
+            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
-            var jobGroupName = filterData.JobGroupId.HasValue ? jobGroupsDataService.GetJobGroupName(filterData.JobGroupId.Value) : "All";
-            var categoryName = adminUser.CategoryName ?? "All";
-            var customisationName = filterData.CustomisationId.HasValue
-                ? courseDataService.GetCourseName(filterData.CustomisationId.Value)
+            var jobGroupName = filterData.JobGroupId.HasValue
+                ? jobGroupsDataService.GetJobGroupName(filterData.JobGroupId.Value)
                 : "All";
-            var filterModel = new ReportsFilterModel(filterData.StartDate, filterData.EndDate, jobGroupName!, categoryName, customisationName!, filterData.ReportInterval, adminUser.CategoryId == 0);
+            jobGroupName ??= "All";
+
+            var categoryName = filterData.CourseCategoryId.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(filterData.CourseCategoryId.Value)
+                : "All";
+            categoryName ??= "All";
+
+            var courseNames = filterData.CustomisationId.HasValue
+                ? courseDataService.GetCourseNameAndApplication(filterData.CustomisationId.Value)
+                : null;
+            var courseNameString = courseNames?.CompositeName ?? "All";
+
+            var filterModel = new ReportsFilterModel(
+                filterData,
+                jobGroupName,
+                categoryName,
+                courseNameString,
+                adminUser.CategoryId == 0
+            );
 
             var model = new ReportsViewModel(activity, filterModel);
             return View(model);
         }
 
         [Route("Data")]
-        public IEnumerable<ActivityDataRowModel> GetRecentData()
+        public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
             var centreId = User.GetCentreId();
-            var filterData = new ActivityFilterData(
-                DateTime.UtcNow.Date.AddYears(-1),
-                DateTime.UtcNow,
-                null,
-                null,
-                null,
-                ReportInterval.Months
-            );
+            var filterData = Request.Cookies.ParseReportsFilterCookie();
 
-            var activity = activityService.GetFilteredActivity(centreId, filterData);
+            var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
                 p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
             );

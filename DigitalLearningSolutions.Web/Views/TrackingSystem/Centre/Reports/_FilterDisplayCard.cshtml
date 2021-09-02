@@ -12,7 +12,7 @@
           <partial name="_SummaryFieldValue" model="@Model.JobGroupName" />
         </div>
 
-        @if (Model.ShowCourseCategories) {
+        @if (Model.ShowCourseCategoryFilter) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
               Course category
@@ -25,7 +25,7 @@
           <dt class="nhsuk-summary-list__key">
             Course
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.CustomisationName" />
+          <partial name="_SummaryFieldValue" model="@Model.CourseName" />
         </div>
 
         <div class="nhsuk-summary-list__row details-list-with-button__row">

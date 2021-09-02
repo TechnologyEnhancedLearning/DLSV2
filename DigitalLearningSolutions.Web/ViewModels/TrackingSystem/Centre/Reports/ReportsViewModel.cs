@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public class ReportsViewModel
@@ -50,29 +51,27 @@
     public class ReportsFilterModel
     {
         public ReportsFilterModel(
-            DateTime startDate,
-            DateTime endDate,
+            ActivityFilterData filterData,
             string jobGroupName,
             string courseCategoryName,
-            string customisationName,
-            ReportInterval interval,
+            string courseNameString,
             bool userManagingAllCourses
         )
         {
             JobGroupName = jobGroupName;
             CourseCategoryName = courseCategoryName;
-            CustomisationName = customisationName;
-            ReportIntervalName = Enum.GetName(typeof(ReportInterval), interval)!;
+            CourseName = courseNameString;
+            ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             DateRange =
-                $"{startDate.ToString(DateHelper.StandardDateFormat)} - {endDate.ToString(DateHelper.StandardDateFormat)}";
-            ShowCourseCategories = userManagingAllCourses;
+                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate.ToString(DateHelper.StandardDateFormat)}";
+            ShowCourseCategoryFilter = userManagingAllCourses;
         }
 
         public string JobGroupName { get; set; }
         public string CourseCategoryName { get; set; }
-        public string CustomisationName { get; set; }
+        public string CourseName { get; set; }
         public string DateRange { get; set; }
         public string ReportIntervalName { get; set; }
-        public bool ShowCourseCategories { get; set; }
+        public bool ShowCourseCategoryFilter { get; set; }
     }
 }

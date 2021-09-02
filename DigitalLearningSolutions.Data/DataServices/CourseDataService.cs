@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
-        string GetCourseName(int customisationId);
+        CourseNameInfo? GetCourseNameAndApplication(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -300,22 +300,23 @@ namespace DigitalLearningSolutions.Data.DataServices
             ).FirstOrDefault();
         }
 
-        public string? GetCourseName(int customisationId)
+        public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
-            var name = connection.QueryFirstOrDefault<string?>(
-                @"SELECT CustomisationName
-                        FROM Customisations
-                        WHERE CustomisationID = @customisationId",
+            var names = connection.QueryFirstOrDefault<CourseNameInfo>(
+                @"SELECT cu.CustomisationName AS courseName, ap.ApplicationName AS applicationName
+                        FROM Customisations cu
+                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
+                        WHERE cu.CustomisationId = @customisationId",
                 new { customisationId }
             );
-            if (name == null)
+            if (names == null)
             {
                 logger.LogWarning(
                     $"No customisation found for customisation id {customisationId}"
                 );
             }
 
-            return name;
+            return names;
         }
     }
 }

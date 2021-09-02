@@ -33,5 +33,25 @@
             model.Rows.First().Period.Should().Be("February, 2002");
             model.Rows.Last().Period.Should().Be("January, 2001");
         }
+
+        [Test]
+        public void ReportsFilterModel_correctly_formats_date_range()
+        {
+            // given
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2001-01-01"),
+                DateTime.Parse("2002-02-02"),
+                null,
+                null,
+                null,
+                ReportInterval.Years
+                );
+
+            // when
+            var model = new ReportsFilterModel(filterData, "", "", "", false);
+
+            // then
+            model.DateRange.Should().Be("01/01/2001 - 02/02/2002");
+        }
     }
 }
