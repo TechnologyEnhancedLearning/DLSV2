@@ -64,25 +64,21 @@
             {
                 Error = BulkUploadResult.ErrorReason.InvalidJobGroupId;
             }
-
-            if (string.IsNullOrEmpty(LastName))
+            else if (string.IsNullOrEmpty(LastName))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidLastName;
             }
-
-            if (string.IsNullOrEmpty(FirstName))
+            else if (string.IsNullOrEmpty(FirstName))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidFirstName;
             }
-
-            if (string.IsNullOrEmpty(Email))
-            {
-                Error = BulkUploadResult.ErrorReason.InvalidEmail;
-            }
-
-            if (!Active.HasValue)
+            else if (!Active.HasValue)
             {
                 Error = BulkUploadResult.ErrorReason.InvalidActive;
+            }
+            else if (string.IsNullOrEmpty(Email))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidEmail;
             }
 
             return !Error.HasValue;
