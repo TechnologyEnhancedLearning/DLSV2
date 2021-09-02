@@ -50,6 +50,7 @@
         [Test]
         public void All_delegates_should_default_to_returning_the_first_ten_delegates()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -61,6 +62,7 @@
                 null
             );
 
+            // Then
             model.Delegates.Count().Should().Be(10);
             model.Delegates.FirstOrDefault(delegateUser => delegateUser.DelegateInfo.Name == "k Surname").Should()
                 .BeNull();
@@ -69,6 +71,7 @@
         [Test]
         public void All_delegates_should_correctly_return_the_second_page_of_delegates()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -80,6 +83,7 @@
                 null
             );
 
+            // Then
             model.Delegates.Count().Should().Be(5);
             model.Delegates.First().DelegateInfo.Name.Should().BeEquivalentTo("k Surname");
         }
@@ -87,6 +91,7 @@
         [Test]
         public void All_delegates_should_search_delegates_correctly()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -98,6 +103,7 @@
                 null
             );
 
+            // Then
             model.Delegates.Count().Should().Be(2);
             model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("b purple Surname");
             model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("d purple Surname");
@@ -106,6 +112,7 @@
         [Test]
         public void All_delegates_should_sort_delegates_correctly()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -117,6 +124,7 @@
                 null
             );
 
+            // Then
             model.Delegates.Count().Should().Be(10);
             model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("o Surname");
             model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("k Surname");
@@ -125,6 +133,7 @@
         [Test]
         public void All_delegates_should_filter_delegates_correctly()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -136,6 +145,7 @@
                 "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2"
             );
 
+            // Then
             model.Delegates.Count().Should().Be(2);
             model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("m Surname");
             model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("n Surname");
@@ -144,6 +154,7 @@
         [Test]
         public void All_delegates_should_filter_delegates_correctly_by_empty_values()
         {
+            // When
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
@@ -156,6 +167,7 @@
                 FilteringHelper.EmptyValue
             );
 
+            // Then
             model.Delegates.Count().Should().Be(6);
             model.Delegates.ToList()[0].DelegateInfo.Name.Should().Be("a Surname");
             model.Delegates.ToList()[1].DelegateInfo.Name.Should().Be("b purple Surname");
@@ -163,6 +175,33 @@
             model.Delegates.ToList()[3].DelegateInfo.Name.Should().Be("d purple Surname");
             model.Delegates.ToList()[4].DelegateInfo.Name.Should().Be("k Surname");
             model.Delegates.ToList()[5].DelegateInfo.Name.Should().Be("o Surname");
+        }
+
+        [Test]
+        public void All_delegates_filters_should_only_include_custom_prompts_with_options()
+        {
+            // Given
+            var customPrompts = new List<CustomPrompt>
+            {
+                new CustomPrompt(1, "free text", null, true),
+                new CustomPrompt(2, "with options", "A\r\nB", true)
+            };
+
+            // When
+            var model = new AllDelegatesViewModel(
+                delegateUsers,
+                new List<(int, string)>(),
+                customPrompts,
+                1,
+                null,
+                DelegateSortByOptions.RegistrationDate.PropertyName,
+                BaseSearchablePageViewModel.Ascending,
+                null
+            );
+
+            // Then
+            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CustomPrompt1");
+            model.Filters.Should().Contain(filter => filter.FilterProperty == "CustomPrompt2");
         }
     }
 }
