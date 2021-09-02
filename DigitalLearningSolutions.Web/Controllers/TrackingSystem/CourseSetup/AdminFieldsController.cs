@@ -338,7 +338,7 @@
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 model.CustomisationId,
                 courseAdminFields,
-                model.CustomPromptId,
+                model.CustomPromptId!.Value,
                 model.OptionsString
             ))
             {
@@ -346,7 +346,7 @@
                 return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
             }
 
-            return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
+            return new StatusCodeResult(500);
         }
 
         private IActionResult AddAdminFieldBulk(AddAdminFieldViewModel model)

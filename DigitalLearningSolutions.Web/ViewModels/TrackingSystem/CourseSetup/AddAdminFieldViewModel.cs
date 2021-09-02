@@ -30,6 +30,6 @@
         public int PromptNumber { get; set; }
 
         [Required(ErrorMessage = "Select a prompt name")]
-        public int CustomPromptId { get; set; }
+        public int? CustomPromptId { get; set; }
     }
 }
