@@ -1,8 +1,10 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -14,8 +16,8 @@
 
     public class EmailServiceTests
     {
-        private IEmailDataService emailDataService;
         private IConfigService configService;
+        private IEmailDataService emailDataService;
         private EmailService emailService;
         private ISmtpClient smtpClient;
 
@@ -273,33 +275,39 @@
         }
 
         [Test]
-        public void ScheduleEmail_schedules_email_correctly()
+        public void ScheduleEmails_schedules_emails_correctly()
         {
-            // When
-            var email = EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com");
+            // Given
+            var emails = new List<Email>
+            {
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to1@example.com"),
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to2@example.com"),
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to3@example.com")
+            };
             var deliveryDate = new DateTime(2200, 1, 1);
-            emailService.ScheduleEmail(email, "some process", deliveryDate);
+            const string addedByProcess = "some process";
+
+            // When
+            emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
 
             // Then
-            A.CallTo(
-                    () =>
-                        emailDataService.ScheduleEmail(email, A<string>._, "some process", false, deliveryDate)
-                )
+            A.CallTo(() => emailDataService.ScheduleEmails(emails, A<string>._, addedByProcess, false, deliveryDate))
                 .MustHaveHappened();
         }
 
         [Test]
-        public void ScheduleEmail_sets_urgent_true_if_same_day()
+        public void ScheduleEmails_sets_urgent_true_if_same_day()
         {
+            // Given
+            var emails = new List<Email> { EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com") };
+            var deliveryDate = DateTime.Today;
+            const string addedByProcess = "some process";
+
             // When
-            var email = EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com");
-            emailService.ScheduleEmail(email, "some process", DateTime.Today);
+            emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
 
             // Then
-            A.CallTo(
-                    () =>
-                        emailDataService.ScheduleEmail(email, A<string>._, "some process", true, DateTime.Today)
-                )
+            A.CallTo(() => emailDataService.ScheduleEmails(emails, A<string>._, addedByProcess, true, deliveryDate))
                 .MustHaveHappened();
         }
     }

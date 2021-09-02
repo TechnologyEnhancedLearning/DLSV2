@@ -32,7 +32,7 @@
             string addedByProcess
         );
 
-        public void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl);
+        void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl);
     }
 
     public class PasswordResetService : IPasswordResetService
