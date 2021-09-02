@@ -2,11 +2,8 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -50,7 +47,7 @@
         public IActionResult StartUpload()
         {
             TempData.Clear();
-            var model = new UploadDelegatesViewModel();
+            var model = new UploadDelegatesViewModel(DateTime.Today);
             return View("StartUpload", model);
         }
 

@@ -8,6 +8,15 @@
 
     public class UploadDelegatesViewModel : WelcomeEmailViewModel
     {
+        public UploadDelegatesViewModel() { }
+
+        public UploadDelegatesViewModel(DateTime welcomeEmailDate)
+        {
+            Day = welcomeEmailDate.Day;
+            Month = welcomeEmailDate.Month;
+            Year = welcomeEmailDate.Year;
+        }
+
         [Required(ErrorMessage = "Delegates update file is required.")]
         [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format.")]
         public IFormFile? DelegatesFile { get; set; }
