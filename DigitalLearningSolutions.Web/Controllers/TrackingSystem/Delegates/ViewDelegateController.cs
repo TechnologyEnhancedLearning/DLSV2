@@ -1,10 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -43,12 +42,10 @@
             }
 
             var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-            var delegateInfoViewModel = new DelegateInfoViewModel(delegateUser, customFields);
+            var delegateCourses = courseService.GetAllCoursesForDelegate(delegateId, centreId);
 
-            var courseInfoViewModels = courseService.GetAllCoursesForDelegate(delegateId, centreId)
-                .Select(x => new DelegateCourseInfoViewModel(x));
+            var model = new ViewDelegateViewModel(delegateUser, customFields, delegateCourses);
 
-            var model = new ViewDelegateViewModel(delegateInfoViewModel, courseInfoViewModels);
             return View(model);
         }
 
