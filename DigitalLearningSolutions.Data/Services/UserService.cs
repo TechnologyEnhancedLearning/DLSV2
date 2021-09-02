@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IUserService
     {
-        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
+        (List<AdminUser>, List<DelegateUser>) GetUsersByUsername(string username);
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
@@ -47,12 +47,12 @@ namespace DigitalLearningSolutions.Data.Services
             this.loginService = loginService;
         }
 
-        public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
+        public (List<AdminUser>, List<DelegateUser>) GetUsersByUsername(string username)
         {
-            var adminUser = userDataService.GetAdminUserByUsername(username);
+            var adminUsers = userDataService.GetAdminUsersByUsername(username);
             List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
-            return (adminUser, delegateUsers);
+            return (adminUsers, delegateUsers);
         }
 
         public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress)
@@ -114,21 +114,21 @@ namespace DigitalLearningSolutions.Data.Services
             CentreAnswersData? centreAnswersData = null
         )
         {
-            var (verifiedAdminUser, verifiedDelegateUsers) =
+            var (verifiedAdminUsers, verifiedDelegateUsers) =
                 GetVerifiedLinkedUsersAccounts(
                     accountDetailsData.AdminId,
                     accountDetailsData.DelegateId,
                     accountDetailsData.Password
                 );
 
-            if (verifiedAdminUser != null)
+            if (verifiedAdminUsers.Count != 0)
             {
                 userDataService.UpdateAdminUser(
                     accountDetailsData.FirstName,
                     accountDetailsData.Surname,
                     accountDetailsData.Email,
                     accountDetailsData.ProfileImage,
-                    verifiedAdminUser.Id
+                    verifiedAdminUsers.Single().Id
                 );
             }
 
@@ -184,16 +184,26 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (string.IsNullOrWhiteSpace(signedInEmailIfAny))
             {
+                var loggedInAdminUsers = loggedInAdminUser != null
+                    ? new List<AdminUser> { loggedInAdminUser }
+                    : new List<AdminUser>();
+
                 var loggedInDelegateUsers = loggedInDelegateUser != null
                     ? new List<DelegateUser> { loggedInDelegateUser }
                     : new List<DelegateUser>();
 
-                return loginService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
+                return loginService.VerifyUsers(password, loggedInAdminUsers, loggedInDelegateUsers);
             }
 
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
-            return loginService.VerifyUsers(password, adminUser, delegateUsers);
+            var adminUsers = adminUser != null
+                ? new List<AdminUser> { adminUser }
+                : new List<AdminUser>();
+
+            var temp = loginService.VerifyUsers(password, adminUsers, delegateUsers);
+
+            return temp;
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)

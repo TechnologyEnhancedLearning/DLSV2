@@ -55,16 +55,24 @@
                 return View("Index", model);
             }
 
-            var (adminUser, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
+            var (adminUsers, delegateUsers) = userService.GetUsersByUsername(model.Username!.Trim());
 
-            if (adminUser == null && delegateUsers.Count == 0)
+            if (adminUsers.Count == 0 && delegateUsers.Count == 0)
             {
                 ModelState.AddModelError("Username", "A user with this email address or user ID could not be found");
                 return View("Index", model);
             }
 
-            var (verifiedAdminUser, verifiedDelegateUsers) =
-                loginService.VerifyUsers(model.Password!, adminUser, delegateUsers);
+            var (verifiedAdminUsers, verifiedDelegateUsers) =
+                loginService.VerifyUsers(model.Password!, adminUsers, delegateUsers);
+
+            if (verifiedAdminUsers.Count > 1)
+            {
+                throw new Exception();
+            }
+
+            var verifiedAdminUser = verifiedAdminUsers.SingleOrDefault();
+            var adminUser = adminUsers.SingleOrDefault(au => au.Id == verifiedAdminUser?.Id) ?? adminUsers.FirstOrDefault();
 
             var adminAccountVerificationAttemptedAndFailed = adminUser != null && verifiedAdminUser == null;
             var adminAccountIsAlreadyLocked = adminUser?.IsLocked == true;
@@ -108,6 +116,13 @@
             if (verifiedAdminUser == null && !approvedDelegateUsers.Any())
             {
                 return View("AccountNotApproved");
+            }
+
+            if (verifiedDelegateUsers.Count == 0 && verifiedAdminUser!.EmailAddress != model.Username)
+            {
+                approvedDelegateUsers = approvedDelegateUsers.Concat(
+                    loginService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser!, model.Password!)
+                ).Distinct().ToList();
             }
 
             verifiedAdminUser ??=

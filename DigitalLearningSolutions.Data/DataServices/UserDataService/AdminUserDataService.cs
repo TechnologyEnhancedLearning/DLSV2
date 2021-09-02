@@ -51,9 +51,9 @@
             return user;
         }
 
-        public AdminUser? GetAdminUserByUsername(string username)
+        public List<AdminUser> GetAdminUsersByUsername(string username)
         {
-            var user = connection.Query<AdminUser>(
+            return connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
                         au.CentreID,
@@ -90,9 +90,7 @@
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
-            ).FirstOrDefault();
-
-            return user;
+            ).ToList();
         }
 
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)

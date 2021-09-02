@@ -7,16 +7,18 @@
 
     public interface ILoginService
     {
-        public UserAccountSet VerifyUsers(
+        UserAccountSet VerifyUsers(
             string password,
-            AdminUser? unverifiedAdminUser,
+            List<AdminUser> unverifiedAdminUsers,
             List<DelegateUser> unverifiedDelegateUsers
         );
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(
+        AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(
             List<DelegateUser> delegateUsers,
             string password
         );
+
+        List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser adminUser, string password);
     }
 
     public class LoginService : ILoginService
@@ -32,22 +34,24 @@
 
         public UserAccountSet VerifyUsers(
             string password,
-            AdminUser? unverifiedAdminUser,
+            List<AdminUser> unverifiedAdminUsers,
             List<DelegateUser> unverifiedDelegateUsers
         )
         {
-            var verifiedAdminUser =
-                cryptoService.VerifyHashedPassword(unverifiedAdminUser?.Password, password)
-                    ? unverifiedAdminUser
-                    : null;
+            var verifiedAdminUsers =
+                unverifiedAdminUsers.Where(au => cryptoService.VerifyHashedPassword(au.Password, password))
+                    .ToList();
             var verifiedDelegateUsers =
                 unverifiedDelegateUsers.Where(du => cryptoService.VerifyHashedPassword(du.Password, password))
                     .ToList();
 
-            return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
+            return new UserAccountSet(verifiedAdminUsers, verifiedDelegateUsers);
         }
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password)
+        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            List<DelegateUser> delegateUsers,
+            string password
+        )
         {
             var adminUsers = new List<AdminUser?>();
 
@@ -63,6 +67,19 @@
             return adminUsers.Distinct().SingleOrDefault();
         }
 
+        public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser adminUser, string password)
+        {
+            var delegatesAssociatedWithAdmin = userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!);
+
+            var suitableDelegates = delegatesAssociatedWithAdmin
+                .Where(du => du.Active)
+                .Where(du => du.Approved)
+                .Where(du => du.CentreId == adminUser.CentreId)
+                .Where(du => cryptoService.VerifyHashedPassword(du.Password, password));
+
+            return suitableDelegates.ToList();
+        }
+
         private AdminUser? GetVerifiedAdminUserByEmail(string password, DelegateUser delegateUser)
         {
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
@@ -70,7 +87,7 @@
                 return null;
             }
 
-            var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
+            var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
 
             var isSuitableAdmin = adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
                                   cryptoService.VerifyHashedPassword(

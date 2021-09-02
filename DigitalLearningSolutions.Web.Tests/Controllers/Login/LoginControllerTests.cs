@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -172,13 +173,13 @@
             // Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns(
-                    (UserTestHelper.GetDefaultAdminUser(),
+                    (new List<AdminUser>{UserTestHelper.GetDefaultAdminUser()},
                         new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() })
                 );
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(
                     new UserAccountSet(
-                        UserTestHelper.GetDefaultAdminUser(),
+                        new List<AdminUser> { UserTestHelper.GetDefaultAdminUser() },
                         new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() }
                     )
                 );
@@ -189,7 +190,7 @@
             // Then
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .MustHaveHappened();
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .MustHaveHappened();
         }
 
@@ -198,7 +199,7 @@
         {
             // Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((null, new List<DelegateUser>()));
+                .Returns((new List<AdminUser>(), new List<DelegateUser>()));
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -213,8 +214,8 @@
         {
             // Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((UserTestHelper.GetDefaultAdminUser(), new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((new List<AdminUser> { UserTestHelper.GetDefaultAdminUser() }, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
 
             // When
@@ -231,10 +232,10 @@
             // Given
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
                 .Returns(
-                    (UserTestHelper.GetDefaultAdminUser(),
+                    (new List<AdminUser> { UserTestHelper.GetDefaultAdminUser() },
                         new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() })
                 );
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(
                     new UserAccountSet(
                         null,
@@ -257,8 +258,8 @@
             var delegateUsers = new List<DelegateUser> { testDelegate };
             var associatedAdmin = UserTestHelper.GetDefaultAdminUser(emailAddress: "TestAccountAssociation@email.com");
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((null, new List<DelegateUser> { testDelegate }));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((new List<AdminUser>(), delegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { testDelegate }));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(associatedAdmin);
@@ -276,12 +277,13 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2") };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, expectedDelegateUsers));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, expectedDelegateUsers));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns(
                     new List<CentreUserDetails>
@@ -304,12 +306,13 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2") };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, new List<DelegateUser>()));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, new List<DelegateUser>()));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, new List<DelegateUser>()));
 
@@ -329,10 +332,11 @@
         {
             // Given
             var expectedAdmin = UserTestHelper.GetDefaultAdminUser(10);
+            var expectedAdmins = new List<AdminUser> { expectedAdmin };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdmin, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdmin, new List<DelegateUser>()));
+                .Returns((expectedAdmins, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdmins, new List<DelegateUser>()));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdmin, new List<DelegateUser>()));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
@@ -355,8 +359,8 @@
             // Given
             var expectedDelegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(approved: true) };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((null, expectedDelegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((new List<AdminUser>(), expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
@@ -375,6 +379,7 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
             {
                 UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true),
@@ -382,9 +387,9 @@
             };
             var expectedApprovedDelegateUsers = expectedDelegateUsers.Where(du => du.Approved).ToList();
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, expectedDelegateUsers));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, expectedDelegateUsers));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedApprovedDelegateUsers));
 
@@ -406,12 +411,13 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1");
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
                 { UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", approved: true) };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, expectedDelegateUsers));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, expectedDelegateUsers));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((expectedAdminUser, expectedDelegateUsers));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
@@ -436,15 +442,16 @@
                 UserTestHelper.GetDefaultDelegateUser(centreId: 2, centreName: "Centre 2", centreActive: true);
             var expectedAdminUser =
                 UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1", centreActive: false);
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
             {
                 UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", centreActive: false),
                 delegateUserAtActiveCentre
             };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, expectedDelegateUsers));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, expectedDelegateUsers));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, new List<DelegateUser> { delegateUserAtActiveCentre }));
 
@@ -468,14 +475,15 @@
             // Given
             var expectedAdminUser =
                 UserTestHelper.GetDefaultAdminUser(centreId: 1, centreName: "Centre 1", centreActive: false);
+            var expectedAdminUsers = new List<AdminUser> { expectedAdminUser };
             var expectedDelegateUsers = new List<DelegateUser>
             {
                 UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "Centre 1", centreActive: false)
             };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((expectedAdminUser, expectedDelegateUsers));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(expectedAdminUser, expectedDelegateUsers));
+                .Returns((expectedAdminUsers, expectedDelegateUsers));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(expectedAdminUsers, expectedDelegateUsers));
             A.CallTo(() => userService.GetUserCentres(expectedAdminUser, expectedDelegateUsers))
                 .Returns(new List<CentreUserDetails>());
 
@@ -492,8 +500,8 @@
             // Given
             var delegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(emailAddress: null) };
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((null, delegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+                .Returns((new List<AdminUser>(), delegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, delegates));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((null, delegates));
@@ -525,8 +533,9 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            var adminUsers = new List<AdminUser> {adminUser };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
 
             // When
@@ -542,8 +551,9 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            var adminUsers = new List<AdminUser> { adminUser };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
 
             // When
@@ -559,7 +569,8 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
+            var adminUsers = new List<AdminUser> { adminUser };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, new List<DelegateUser>()));
 
             // When
             var result = await controller.Index(LoginTestHelper.GetDefaultLoginViewModel());
@@ -575,10 +586,11 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            var adminUsers = new List<AdminUser> { adminUser };
             var expectedDelegate = UserTestHelper.GetDefaultDelegateUser(approved: true);
             var expectedDelegates = new List<DelegateUser> { expectedDelegate };
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
@@ -607,11 +619,12 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            var adminUsers = new List<AdminUser> { adminUser };
             var expectedDelegate = UserTestHelper.GetDefaultDelegateUser(approved: true);
             var expectedDelegates = new List<DelegateUser> { expectedDelegate };
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, expectedDelegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(adminUser, expectedDelegates));
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(adminUsers, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(null);
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
@@ -639,10 +652,11 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 6);
+            var adminUsers = new List<AdminUser> { adminUser };
             var expectedDelegate = UserTestHelper.GetDefaultDelegateUser(approved: true);
             var expectedDelegates = new List<DelegateUser> { expectedDelegate };
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((null, expectedDelegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, expectedDelegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, expectedDelegates));
             A.CallTo(() => loginService.GetVerifiedAdminUserAssociatedWithDelegateUsers(A<List<DelegateUser>>._, A<string>._))
                 .Returns(adminUser);
@@ -670,9 +684,10 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(failedLoginCount: 4);
-            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUser, new List<DelegateUser>()));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(adminUser, null));
+            var adminUsers = new List<AdminUser> { adminUser };
+            A.CallTo(() => userService.GetUsersByUsername(A<string>._)).Returns((adminUsers, new List<DelegateUser>()));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(adminUsers, null));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((adminUser, new List<DelegateUser>()));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))
@@ -692,12 +707,13 @@
         private void GivenSignInIsSuccessful()
         {
             var admin = UserTestHelper.GetDefaultAdminUser();
+            var admins = new List<AdminUser>{admin};
             var delegates = new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser() };
 
             A.CallTo(() => userService.GetUsersByUsername(A<string>._))
-                .Returns((admin, delegates));
-            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(admin, delegates));
+                .Returns((admins, delegates));
+            A.CallTo(() => loginService.VerifyUsers(A<string>._, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(admins, delegates));
             A.CallTo(() => userService.GetUsersWithActiveCentres(A<AdminUser>._, A<List<DelegateUser>>._))
                 .Returns((admin, delegates));
             A.CallTo(() => userService.GetUserCentres(A<AdminUser>._, A<List<DelegateUser>>._))

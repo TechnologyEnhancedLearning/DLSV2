@@ -8,7 +8,7 @@
     {
         AdminUser? GetAdminUserById(int id);
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
-        AdminUser? GetAdminUserByUsername(string username);
+        List<AdminUser> GetAdminUsersByUsername(string username);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         int GetNumberOfActiveAdminsAtCentre(int centreId);
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);

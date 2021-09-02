@@ -5,34 +5,33 @@
 
     public class UserAccountSet
     {
-        public readonly AdminUser? AdminAccount;
+        public readonly List<AdminUser> AdminAccounts;
         public readonly List<DelegateUser> DelegateAccounts;
 
         public UserAccountSet() : this(null, null) { }
 
-        public UserAccountSet(AdminUser? adminAccount, IEnumerable<DelegateUser?>? delegateAccounts)
+        public UserAccountSet(List<AdminUser>? adminAccounts, IEnumerable<DelegateUser?>? delegateAccounts)
         {
-            AdminAccount = adminAccount;
+            AdminAccounts = adminAccounts ?? new List<AdminUser>();
             DelegateAccounts = delegateAccounts?.Where(u => u != null).Select(u => u!).ToList() ??
                                new List<DelegateUser>();
         }
 
         public bool Any()
         {
-            return AdminAccount != null || DelegateAccounts.Any();
+            return AdminAccounts.Any() || DelegateAccounts.Any();
         }
 
         public List<UserReference> GetUserRefs()
         {
             var delegateRefs = DelegateAccounts.Select(user => user.ToUserReference());
-            return AdminAccount == null
-                ? delegateRefs.ToList()
-                : delegateRefs.Concat(new[] { AdminAccount.ToUserReference() }).ToList();
+            var adminRefs = AdminAccounts.Select(user => user.ToUserReference());
+            return delegateRefs.Concat(adminRefs).ToList();
         }
 
-        public void Deconstruct(out AdminUser? adminUser, out List<DelegateUser> delegateUsers)
+        public void Deconstruct(out List<AdminUser> adminUsers, out List<DelegateUser> delegateUsers)
         {
-            adminUser = AdminAccount;
+            adminUsers = AdminAccounts;
             delegateUsers = DelegateAccounts;
         }
     }
