@@ -19,11 +19,25 @@
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
+            CustomPromptFilters = GetCustomPromptFilters(promptsWithOptions);
+        }
 
+        public DelegateInfoViewModel DelegateInfo { get; set; }
+
+        public string JobGroupFilter => FilteringHelper.BuildFilterValueString(
+            nameof(DelegateUserCard.JobGroupId),
+            nameof(DelegateUserCard.JobGroupId),
+            DelegateInfo.JobGroupId.ToString()
+        );
+
+        public Dictionary<int, string> CustomPromptFilters { get; set; }
+
+        private Dictionary<int, string> GetCustomPromptFilters(IEnumerable<CustomPrompt> promptsWithOptions)
+        {
             var closedCustomPromptIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
             var closedCustomFields = DelegateInfo.CustomFields
                 .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId));
-            CustomPromptFilters = closedCustomFields
+            return closedCustomFields
                 .Select(
                     customField => new KeyValuePair<int, string>(
                         customField.CustomFieldId,
@@ -31,14 +45,6 @@
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
-
-        public DelegateInfoViewModel DelegateInfo { get; set; }
-
-        public string JobGroupFilter => nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
-                                        nameof(DelegateUserCard.JobGroupId) + FilteringHelper.Separator +
-                                        DelegateInfo.JobGroupId;
-
-        public Dictionary<int, string> CustomPromptFilters { get; set; }
 
         private string GetFilterValueForCustomField(CustomFieldViewModel customField)
         {

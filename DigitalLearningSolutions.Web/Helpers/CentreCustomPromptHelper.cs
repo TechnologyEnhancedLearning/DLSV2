@@ -72,8 +72,12 @@
         {
             var answers = new List<string?>
             {
-                delegateUser.Answer1, delegateUser.Answer2, delegateUser.Answer3, delegateUser.Answer4,
-                delegateUser.Answer5, delegateUser.Answer6
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
             };
 
             return customPrompts.Select(
