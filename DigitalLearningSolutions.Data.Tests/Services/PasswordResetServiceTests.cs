@@ -269,6 +269,33 @@
                 .MustHaveHappened();
         }
 
+        public void SendWelcomeEmailsToDelegates_schedules_emails_to_delegates()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            var delegateUsers = Builder<DelegateUser>.CreateListOfSize(3)
+                .All().With(user => user.EmailAddress = "recipient@example.com")
+                .Build();
+
+            // When
+            passwordResetService.SendWelcomeEmailsToDelegates(
+                delegateUsers,
+                deliveryDate,
+                "example.com"
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.ScheduleEmails(
+                            A<IEnumerable<Email>>.That.Matches(list => list.Count() == delegateUsers.Count()),
+                            "SendWelcomeEmail_Refactor",
+                            deliveryDate
+                        )
+                )
+                .MustHaveHappened();
+        }
+
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
             A.CallTo(() => clockService.UtcNow).Returns(validationTime);

@@ -32,7 +32,11 @@
             string addedByProcess
         );
 
-        void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl);
+        void SendWelcomeEmailsToDelegates(
+            IEnumerable<DelegateUser> delegateUsers,
+            DateTime deliveryDate,
+            string baseUrl
+        );
     }
 
     public class PasswordResetService : IPasswordResetService
@@ -144,19 +148,23 @@
             );
         }
 
-        public void SendWelcomeEmailsToDelegates(IEnumerable<DelegateUser> delegateUsers, DateTime emailDate, string baseUrl)
+        public void SendWelcomeEmailsToDelegates(
+            IEnumerable<DelegateUser> delegateUsers,
+            DateTime deliveryDate,
+            string baseUrl
+        )
         {
-            var emails = delegateUsers.Select(delegateUser => delegateUser.EmailAddress!).ToList();
-            
-            foreach (var email in emails)
-            {
-                GenerateAndScheduleDelegateWelcomeEmail(
-                    email,
-                    baseUrl,
-                    emailDate,
-                    "SendWelcomeEmail_Refactor"
-                );
-            }
+            const string addedByProcess = "SendWelcomeEmail_Refactor";
+            var emails = delegateUsers.Select(
+                delegateUser =>
+                    GenerateWelcomeEmail(
+                        delegateUser.EmailAddress!,
+                        GenerateResetPasswordHash(delegateUser),
+                        baseUrl,
+                        delegateUser
+                    )
+            );
+            emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
         }
 
         private string GenerateResetPasswordHash(User user)
