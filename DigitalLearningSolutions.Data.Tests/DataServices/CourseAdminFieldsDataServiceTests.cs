@@ -24,17 +24,20 @@
             // Given
             var expectedCourseAdminFieldsResult =
                 CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    "System Access Granted",
+                    "Test",
+                    false,
+                    "Priority Access",
                     null,
-                    "Yes\nNo\nNot sure",
                     false,
                     null,
-                    "Yes\nNo\nNot sure",
+                    null,
                     false,
-                    courseCategoryId: 2
+                    2
                 );
 
             // When
-            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0);
 
             // Then
             returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
