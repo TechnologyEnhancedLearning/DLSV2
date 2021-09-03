@@ -10,13 +10,13 @@
 
         public static readonly FilterOptionViewModel None = new FilterOptionViewModel(
             "None",
-            GroupName + FilteringHelper.Separator + nameof(Group.LinkedToField) + FilteringHelper.Separator + "0",
+            FilteringHelper.BuildFilterValueString(GroupName, nameof(Group.LinkedToField), "0"),
             FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel JobGroup = new FilterOptionViewModel(
             "Job group",
-            GroupName + FilteringHelper.Separator + nameof(Group.LinkedToField) + FilteringHelper.Separator + "4",
+            FilteringHelper.BuildFilterValueString(GroupName, nameof(Group.LinkedToField), "4"),
             FilterStatus.Default
         );
     }

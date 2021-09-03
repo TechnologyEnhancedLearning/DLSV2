@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using Microsoft.AspNetCore.Hosting;
+    using System.Collections.Generic;
 
     public class SelfAssessmentDescriptionViewModel
     {
@@ -12,7 +12,9 @@
         public readonly string? UserBookmark;
         public readonly bool UnprocessedUpdates;
         public readonly bool LinearNavigation;
-        public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment)
+        public readonly bool IsSupervised;
+        public List<SelfAssessmentSupervisor> Supervisors { get; set; }
+        public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment, List<SelfAssessmentSupervisor> supervisors)
         {
             Id = selfAssessment.Id;
             Name = selfAssessment.Name;
@@ -21,6 +23,8 @@
             UserBookmark = selfAssessment.UserBookmark;
             UnprocessedUpdates = selfAssessment.UnprocessedUpdates;
             LinearNavigation = selfAssessment.LinearNavigation;
+            IsSupervised = selfAssessment.IsSupervised;
+            Supervisors = supervisors;
         }
     }
 }

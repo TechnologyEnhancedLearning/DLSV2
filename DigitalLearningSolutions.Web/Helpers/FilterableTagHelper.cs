@@ -115,5 +115,26 @@
 
             return tags;
         }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
+            DelegateUserCard delegateUser
+        )
+        {
+            return new List<SearchableTagViewModel>
+            {
+                delegateUser.Active
+                    ? new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive)
+                    : new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
+                delegateUser.IsPasswordSet
+                    ? new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordSet)
+                    : new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
+                delegateUser.IsAdmin
+                    ? new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin)
+                    : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
+                new SearchableTagViewModel(
+                    DelegateRegistrationTypeFilterOptions.FromRegistrationType(delegateUser.RegistrationType)
+                )
+            };
+        }
     }
 }

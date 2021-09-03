@@ -4,64 +4,178 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class ActivityServiceTests
     {
         private IActivityDataService activityDataService = null!;
-        private IClockService clockService = null!;
         private IActivityService activityService = null!;
 
         [SetUp]
         public void SetUp()
         {
             activityDataService = A.Fake<IActivityDataService>();
-            clockService = A.Fake<IClockService>();
-            activityService = new ActivityService(activityDataService, clockService);
+            activityService = new ActivityService(activityDataService);
         }
 
         [Test]
-        public void GetRecentActivity_gets_recent_activity()
+        [TestCase(ReportInterval.Days, 732, "2014-6-22", "2016-6-22", "2015-12-22")]
+        [TestCase(ReportInterval.Months, 25, "2014-6-01", "2016-6-01", "2015-12-01")]
+        [TestCase(ReportInterval.Quarters, 9, "2014-4-01", "2016-4-01", "2015-10-01")]
+        [TestCase(ReportInterval.Years, 3, "2014-1-01", "2016-1-01", "2015-1-01")]
+        public void GetFilteredActivity_correctly_groups_activity(
+            ReportInterval interval,
+            int expectedSlotCount,
+            string expectedStartDate,
+            string expectedFinalDate,
+            string expectedLogDateForCompletion
+        )
         {
             // given
-            var expectedActivityResult = new List<MonthOfActivity>{new MonthOfActivity()};
-            A.CallTo(() => activityDataService.GetActivityInRangeByMonth(A<int>._, A<DateTime>._, A<DateTime>._))
+            var expectedActivityResult = new List<ActivityLog>
+            {
+                new ActivityLog
+                {
+                    Completed = true,
+                    Evaluated = false,
+                    Registered = false,
+                    LogDate = DateTime.Parse("2015-12-22"),
+                    LogYear = 2015,
+                    LogQuarter = 4,
+                    LogMonth = 12
+                }
+            };
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        A<int>._,
+                        A<DateTime>._,
+                        A<DateTime>._,
+                        A<int?>._,
+                        A<int?>._,
+                        A<int?>._
+                    )
+                )
                 .Returns(expectedActivityResult);
-            GivenCurrentTimeIs(DateTime.Parse("2015-12-22 06:52:09.080"));
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2014-6-22"),
+                DateTime.Parse("2016-6-22"),
+                null,
+                null,
+                null,
+                interval
+            );
 
             // when
-            var result = activityService.GetRecentActivity(101).ToList();
+            var result = activityService.GetFilteredActivity(101, filterData).ToList();
 
             // then
-            A.CallTo(() => activityDataService.GetActivityInRangeByMonth(A<int>._, A<DateTime>._, A<DateTime>._))
-                .MustHaveHappened(1, Times.Exactly);
-            result.First().Should().BeEquivalentTo(new MonthOfActivity
+            using (new AssertionScope())
             {
-                Year = 2014,
-                Month = 12,
-                Completions = 0,
-                Registrations = 0,
-                Evaluations = 0
-            });
-            result.Last().Should().BeEquivalentTo(new MonthOfActivity
-            {
-                Year = 2015,
-                Month = 12,
-                Completions = 0,
-                Registrations = 0,
-                Evaluations = 0
-            });
-            result.Count().Should().Be(13);
-            result.All(m => m.Completions == 0 && m.Evaluations == 0 && m.Registrations == 0).Should().BeTrue();
+                ValidatePeriodData(result.First(), expectedStartDate, interval, 0, 0, 0);
+                ValidatePeriodData(result.Last(), expectedFinalDate, interval, 0, 0, 0);
+                ValidatePeriodData(
+                    result.Single(p => p.Completions == 1),
+                    expectedLogDateForCompletion,
+                    interval,
+                    0,
+                    1,
+                    0
+                );
+
+                result.Count.Should().Be(expectedSlotCount);
+                result.All(p => p.Evaluations == 0 && p.Registrations == 0).Should().BeTrue();
+                result.All(p => p.DateInformation.Interval == interval).Should().BeTrue();
+            }
         }
 
-        private void GivenCurrentTimeIs(DateTime time)
+        [Test]
+        public void GetFilteredActivity_returns_empty_slots_with_no_activity()
         {
-            A.CallTo(() => clockService.UtcNow).Returns(time);
+            // given
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2115-6-22"),
+                DateTime.Parse("2116-9-22"),
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        A<int>._,
+                        A<DateTime>._,
+                        A<DateTime>._,
+                        A<int?>._,
+                        A<int?>._,
+                        A<int?>._
+                    )
+                )
+                .Returns(new List<ActivityLog>());
+
+            // when
+            var result = activityService.GetFilteredActivity(101, filterData).ToList();
+
+            // then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(16);
+                result.All(p => p.Completions == 0 && p.Evaluations == 0 && p.Registrations == 0).Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void GetFilteredActivity_requests_activity_with_correct_parameters()
+        {
+            // given
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2115-6-22"),
+                DateTime.Parse("2116-9-22"),
+                1,
+                2,
+                3,
+                ReportInterval.Months
+            );
+
+            // when
+            activityService.GetFilteredActivity(101, filterData);
+
+            // then
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        101,
+                        filterData.StartDate,
+                        filterData.EndDate,
+                        filterData.JobGroupId,
+                        filterData.CourseCategoryId,
+                        filterData.CustomisationId
+                    )
+                )
+                .MustHaveHappened(1, Times.Exactly);
+        }
+
+        private void ValidatePeriodData(
+            PeriodOfActivity periodData,
+            string expectedDate,
+            ReportInterval interval,
+            int expectedRegistrations,
+            int expectedCompletions,
+            int expectedEvaluations
+        )
+        {
+            periodData.Should().BeEquivalentTo(
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse(expectedDate), interval),
+                    expectedRegistrations,
+                    expectedCompletions,
+                    expectedEvaluations
+                )
+            );
         }
     }
 }

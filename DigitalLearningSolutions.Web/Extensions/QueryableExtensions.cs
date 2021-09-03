@@ -31,6 +31,11 @@
             return source.Where(ToEqualityLambda<T>(propertyName, propertyValue));
         }
 
+        public static IQueryable<T> WhereNullOrEmpty<T>(this IQueryable<T> source, string propertyName)
+        {
+            return source.Where(ToNullOrEmptyLambda<T>(propertyName));
+        }
+
         private static Expression<Func<T, object>> ToLambda<T>(string propertyName)
         {
             var parameter = Expression.Parameter(typeof(T));
@@ -45,6 +50,18 @@
             var parameter = Expression.Parameter(typeof(T));
             var property = Expression.Property(parameter, propertyName);
             var objectEquality = Expression.Equal(property, Expression.Constant(comparisonValue));
+
+            return Expression.Lambda<Func<T, bool>>(objectEquality, parameter);
+        }
+
+        private static Expression<Func<T, bool>> ToNullOrEmptyLambda<T>(string propertyName)
+        {
+            var parameter = Expression.Parameter(typeof(T));
+            var property = Expression.Property(parameter, propertyName);
+            var objectEquality = Expression.Or(
+                Expression.Equal(property, Expression.Constant(null)),
+                Expression.Equal(property, Expression.Constant(string.Empty))
+            );
 
             return Expression.Lambda<Func<T, bool>>(objectEquality, parameter);
         }

@@ -19,6 +19,8 @@
 
         void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
 
+        int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
+
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
     }
 
@@ -152,6 +154,21 @@
                                 AND P.RemovedDate IS NULL)",
                 new {groupId, delegateId, removedDate}
             );
+        }
+
+        public int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT ProgressID
+                    FROM Progress AS P
+                    INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                    WHERE p.Completed IS NULL
+                        AND p.EnrollmentMethodID = 3
+                        AND GC.GroupID = @groupId
+                        AND p.CandidateID = @delegateId
+                        AND P.RemovedDate IS NULL",
+                new { groupId, delegateId }
+            ).FirstOrDefault();
         }
 
         public void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId)

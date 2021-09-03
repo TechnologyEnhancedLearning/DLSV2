@@ -58,12 +58,7 @@
   </div>
   @if (question.IncludeComments)
   {
-    <div class="nhsuk-form-group">
-      <label class="nhsuk-label" for="tb-supportingComments-@question.Id">
-        Supporting comments:
-      </label>
-      <textarea class="nhsuk-input text-area-edit-90" placeholder="Optional" id="tb-supportingComments-@question.Id" asp-for="@question.SupportingComments" name="SupportingComments" type="text"></textarea>
-    </div>
+    <partial name="~/Views/LearningPortal/SelfAssessments/_CommentsInput.cshtml" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.MinValue } })" />
   }
 }
 

@@ -26,7 +26,7 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddRegistrationPromptConfigureAnswers">
       <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction">Add</button>
+        <button name="action" class="nhsuk-button" value="@RegistrationPromptsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
       </div>
 
       <input type="hidden" asp-for="OptionsString" />
