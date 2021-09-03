@@ -77,7 +77,7 @@
 
             foreach (var assessmentQuestion in assessmentQuestions)
             {
-                if (assessmentQuestion.Result != null)
+                if (assessmentQuestion.Result != null || assessmentQuestion.SupportingComments != null)
                 {
                     selfAssessmentService.SetResultForCompetency(
                                         competencyId,
@@ -85,7 +85,7 @@
                                         User.GetCandidateIdKnownNotNull(),
                                         assessmentQuestion.Id,
                                         assessmentQuestion.Result.Value,
-                                        null
+                                        assessmentQuestion.SupportingComments
                                     );
                 }
             }

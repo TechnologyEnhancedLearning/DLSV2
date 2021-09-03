@@ -16,7 +16,7 @@
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased);
-        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments);
+        void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result, string? supportingComments);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
@@ -46,6 +46,7 @@
                                  s.AssessmentQuestionID,
                                  s.ID AS ResultID,
                                  s.Result,
+                                 s.SupportingComments,
 								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
 								 sv.Requested,
 								 sv.Verified,
@@ -77,6 +78,7 @@
                                  s.AssessmentQuestionID,
                                  s.ID AS ResultID,
                                  s.Result,
+                                 s.SupportingComments,
 								 sv.ID AS SelfAssessmentResultSupervisorVerificationId,
 								 sv.Requested,
 								 sv.Verified,
@@ -118,8 +120,10 @@
                                                   AQ.MinValue,
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
+                                                  AQ.IncludeComments,
                                                   LAR.ResultId,
                                                   LAR.Result,
+                                                  LAR.SupportingComments,
 												  LAR.SelfAssessmentResultSupervisorVerificationId,
 												  LAR.Requested,
 												  LAR.Verified,
@@ -244,7 +248,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
             ).FirstOrDefault();
         }
 
-        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result, string? supportingComments)
+        public void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result, string? supportingComments)
         {
             var assessmentQuestion = connection.QueryFirstOrDefault<Models.SelfAssessments.AssessmentQuestion>(
                 @"SELECT ID, MinValue, MaxValue
@@ -262,16 +266,17 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
             }
             int minValue = assessmentQuestion.MinValue;
             int maxValue = assessmentQuestion.MaxValue;
-
-            if (result < minValue || result > maxValue)
+            if (result != null)
             {
-                logger.LogWarning(
-                    "Not saving self assessment result as result is invalid. " +
-                    $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
-                );
-                return;
+                if (result < minValue || result > maxValue)
+                {
+                    logger.LogWarning(
+                        "Not saving self assessment result as result is invalid. " +
+                        $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
+                    );
+                    return;
+                }
             }
-
             var numberOfAffectedRows = connection.Execute(
                 @"IF EXISTS (
                         SELECT * FROM CandidateAssessments AS CA
@@ -407,7 +412,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
             }
         }
 
-        private static string PrintResult(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int result)
+        private static string PrintResult(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result)
         {
             return $"Competency id: {competencyId}, self assessment id: {selfAssessmentId}, candidate id: {candidateId}, " +
                    $"assessment question id: {assessmentQuestionId}, result: {result}";
