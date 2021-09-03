@@ -37,4 +37,21 @@
             FilterStatus.Default
         );
     }
+
+    public static class CourseDelegateProgressRemovedFilterOptions
+    {
+        private const string Group = "ProgressRemoved";
+
+        public static readonly FilterOptionViewModel Removed = new FilterOptionViewModel(
+            "Removed",
+            Group + FilteringHelper.Separator + nameof(CourseDelegate.Removed) + FilteringHelper.Separator + "true",
+            FilterStatus.Warning
+        );
+
+        public static readonly FilterOptionViewModel NotRemoved = new FilterOptionViewModel(
+            "Not removed",
+            Group + FilteringHelper.Separator + nameof(CourseDelegate.Removed) + FilteringHelper.Separator + "false",
+            FilterStatus.Default
+        );
+    }
 }

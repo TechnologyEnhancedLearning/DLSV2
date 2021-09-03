@@ -1,5 +1,6 @@
 ﻿@import '../../shared/searchableElements/searchableElements';
 @import '../../shared/headingButtons';
+@import '../../shared/cardWithThreeButtons';
 
 .course-dropdown {
   @extend .input-with-submit-button;

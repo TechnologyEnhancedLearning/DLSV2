@@ -37,7 +37,10 @@
                 LastUpdated = new DateTime(2012, 07, 31, 10, 18, 39, 993),
                 Locked = false,
                 ProgressId = 18395,
-                RemovedDate = null
+                RemovedDate = null,
+                Completed = null,
+                AllAttempts = 0,
+                AttemptsPassed = 0
             };
 
             // When

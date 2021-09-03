@@ -17,7 +17,9 @@
             LastUpdated = courseDelegate.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
             Enrolled = courseDelegate.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
             CompleteBy = courseDelegate.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
+            Completed = courseDelegate.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
             RemovedDate = courseDelegate.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
+            PassRate = courseDelegate.PassRate;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
         }
 
@@ -30,6 +32,8 @@
         public string LastUpdated { get; set; }
         public string Enrolled { get; set; }
         public string? CompleteBy { get; set; }
+        public string? Completed { get; set; }
         public string? RemovedDate { get; set; }
+        public double PassRate { get; set; }
     }
 }

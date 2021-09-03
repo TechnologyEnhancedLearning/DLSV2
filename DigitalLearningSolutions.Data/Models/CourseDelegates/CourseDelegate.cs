@@ -16,9 +16,16 @@
         public DateTime Enrolled { get; set; }
         public DateTime? CompleteBy { get; set; }
         public DateTime? RemovedDate { get; set; }
+        public DateTime? Completed { get; set; }
+        public int AllAttempts { get; set; }
+        public int AttemptsPassed { get; set; }
 
         public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
 
         public string TitleName => FullName + (string.IsNullOrEmpty(EmailAddress) ? "" : $" ({EmailAddress})");
+
+        public bool Removed => RemovedDate.HasValue;
+
+        public double PassRate => AllAttempts == 0 ? 0 : Math.Round(100 * AttemptsPassed / (double)AllAttempts);
     }
 }

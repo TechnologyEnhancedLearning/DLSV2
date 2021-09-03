@@ -35,15 +35,20 @@
         )
         {
             var courses = courseDataService.GetCoursesAtCentreForCategoryId(centreId, categoryId).ToList();
+            var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);
+            var inactiveCoursesAlphabetical =
+                courses.Where(c => !c.Active).OrderBy(c => c.CourseName);
 
-            var currentCustomisationId = customisationId ?? courses.FirstOrDefault()?.CustomisationId;
+            var orderedCourses = activeCoursesAlphabetical.Concat(inactiveCoursesAlphabetical).ToList();
+
+            var currentCustomisationId = customisationId ?? orderedCourses.FirstOrDefault()?.CustomisationId;
 
             var courseDelegates = currentCustomisationId.HasValue
                 ? courseDelegatesDataService.GetDelegatesOnCourse(currentCustomisationId.Value, centreId)
                     .ToList()
                 : new List<CourseDelegate>();
 
-            return new CourseDelegatesData(currentCustomisationId, courses, courseDelegates);
+            return new CourseDelegatesData(currentCustomisationId, orderedCourses, courseDelegates);
         }
     }
 }

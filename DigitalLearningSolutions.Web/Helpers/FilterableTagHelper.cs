@@ -104,6 +104,15 @@
                 tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.NotLocked, true));
             }
 
+            if (courseDelegate.RemovedDate.HasValue)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.Removed));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
+            }
+
             return tags;
         }
     }

@@ -30,7 +30,7 @@
         }
 
         [Test]
-        public void GetCoursesAndCourseDelegatesForCentre_expected_values()
+        public void GetCoursesAndCourseDelegatesForCentre_populates_course_delegates_data()
         {
             // Given
             const int centreId = 2;

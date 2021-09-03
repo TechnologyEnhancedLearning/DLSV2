@@ -45,21 +45,35 @@
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
+            Completed date
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.Completed" />
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
             Removed date
           </dt>
           <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
         </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Pass rate
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.PassRate%
+          </dd>
+        </div>
       </dl>
 
-      <a class="nhsuk-button nhsuk-u-margin-bottom-1" role="button">
+      <a class="nhsuk-button expander-card__button" role="button">
         View progress
       </a>
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button">
-        View learning log
+      <a class="nhsuk-button delete-button expander-card__button" role="button">
+        Remove from course
       </a>
       @if (Model.Locked) {
-        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button">
-          Unlock account
+        <a class="nhsuk-button nhsuk-button--secondary expander-card__button" role="button">
+          Unlock progress
         </a>
       }
     </div>

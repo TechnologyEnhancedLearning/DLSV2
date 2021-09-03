@@ -13,6 +13,8 @@
             ? ApplicationName
             : ApplicationName + " - " + CustomisationName;
 
+        public string CourseNameWithInactiveFlag => !Active ? "Inactive - " + CourseName : CourseName;
+
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? CourseName;
