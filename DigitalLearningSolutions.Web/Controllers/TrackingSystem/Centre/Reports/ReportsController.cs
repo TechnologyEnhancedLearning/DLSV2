@@ -1,7 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -25,8 +28,19 @@
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            var model = new ReportsViewModel(monthsOfActivity);
+
+            var filterData = new ActivityFilterData(
+                DateTime.Today.AddYears(-1),
+                DateTime.UtcNow,
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
+
+            var activity = activityService.GetFilteredActivity(centreId, filterData);
+
+            var model = new ReportsViewModel(activity);
             return View(model);
         }
 
@@ -34,8 +48,19 @@
         public IEnumerable<ActivityDataRowModel> GetRecentData()
         {
             var centreId = User.GetCentreId();
-            var monthsOfActivity = activityService.GetRecentActivity(centreId);
-            return monthsOfActivity.Select(m => new ActivityDataRowModel(m, "MMM yyyy"));
+            var filterData = new ActivityFilterData(
+                DateTime.UtcNow.Date.AddYears(-1),
+                DateTime.UtcNow,
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
+
+            var activity = activityService.GetFilteredActivity(centreId, filterData);
+            return activity.Select(
+                p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
+            );
         }
     }
 }

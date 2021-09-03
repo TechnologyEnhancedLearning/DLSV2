@@ -1,45 +1,100 @@
-namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public interface IActivityService
     {
-        public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId);
+        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
     }
 
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
-        private readonly IClockService clockService;
 
-        public ActivityService(IActivityDataService activityDataService, IClockService clockService)
+        public ActivityService(IActivityDataService activityDataService)
         {
             this.activityDataService = activityDataService;
-            this.clockService = clockService;
         }
 
-        public IEnumerable<MonthOfActivity> GetRecentActivity(int centreId)
+        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
         {
-            var endTime = clockService.UtcNow;
-            var startTime = endTime.AddYears(-1);
+            var activityData = activityDataService
+                .GetFilteredActivity(
+                    centreId,
+                    filterData.StartDate,
+                    filterData.EndDate,
+                    filterData.JobGroupId,
+                    filterData.CourseCategoryId,
+                    filterData.CustomisationId
+                )
+                .OrderBy(x => x.LogDate);
 
-            var activityData = activityDataService.GetActivityInRangeByMonth(centreId, startTime, endTime).ToList();
+            var dataByPeriod = GroupActivityData(activityData, filterData.ReportInterval);
 
-            var monthSlots = DateHelper.GetMonthsAndYearsBetweenDates(startTime, endTime).ToList();
+            var dateSlots = DateHelper.GetPeriodsBetweenDates(
+                filterData.StartDate,
+                filterData.EndDate,
+                filterData.ReportInterval
+            );
 
-            return monthSlots.Select(
+            return dateSlots.Select(
                 slot =>
                 {
-                    var monthData =
-                        activityData.SingleOrDefault(data => data.Year == slot.Year && data.Month == slot.Month);
-                    return new MonthOfActivity(slot, monthData);
+                    var dateInformation = new DateInformation ( slot, filterData.ReportInterval );
+                    var periodData = dataByPeriod.SingleOrDefault(
+                        data => data.DateInformation.Date == slot.Date
+                    );
+                    return new PeriodOfActivity(dateInformation, periodData);
                 }
             );
+        }
+
+        private IEnumerable<PeriodOfActivity> GroupActivityData(
+            IEnumerable<ActivityLog> activityData,
+            ReportInterval interval
+        )
+        {
+            var referenceDate = DateHelper.ReferenceDate;
+
+            var groupedActivityLogs = interval switch
+            {
+                ReportInterval.Days => activityData.GroupBy(
+                    x => new DateTime(x.LogYear, x.LogMonth, x.LogDate.Day).Ticks
+                ),
+                ReportInterval.Weeks => activityData.GroupBy(
+                    activityLog => referenceDate.AddDays((activityLog.LogDate - referenceDate).Days / 7 * 7).Ticks
+                ),
+                ReportInterval.Months => activityData.GroupBy(x => new DateTime(x.LogYear, x.LogMonth, 1).Ticks),
+                ReportInterval.Quarters => activityData.GroupBy(
+                    x => new DateTime(x.LogYear, GetFirstMonthOfQuarter(x.LogQuarter), 1).Ticks
+                ),
+                _ => activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks)
+            };
+
+            return groupedActivityLogs.Select(
+                groupingOfLogs => new PeriodOfActivity(
+                    new DateInformation
+                    (
+                        new DateTime(groupingOfLogs.Key),
+                        interval
+                    ),
+                    groupingOfLogs.Count(activityLog => activityLog.Registered),
+                    groupingOfLogs.Count(activityLog => activityLog.Completed),
+                    groupingOfLogs.Count(activityLog => activityLog.Evaluated)
+                )
+            );
+        }
+
+        private static int GetFirstMonthOfQuarter(int quarter)
+        {
+            return quarter * 3 - 2;
         }
     }
 }

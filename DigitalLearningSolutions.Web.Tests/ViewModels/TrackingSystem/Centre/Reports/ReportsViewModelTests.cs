@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using FluentAssertions;
@@ -14,8 +16,14 @@
             // given
             var monthlyData = new[]
             {
-                new MonthOfActivity((1, 2001), null),
-                new MonthOfActivity((2, 2002), null)
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Months),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Months),
+                    null
+                )
             };
 
             // when

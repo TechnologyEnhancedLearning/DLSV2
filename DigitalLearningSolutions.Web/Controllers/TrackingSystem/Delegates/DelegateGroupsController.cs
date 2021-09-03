@@ -114,8 +114,10 @@
             {
                 return NotFound();
             }
+
+            var progressId = groupsDataService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
             
-            var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId);
+            var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
 
             return View(model);
         }

@@ -1,0 +1,95 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model ManageSupervisorsViewModel
+
+
+@{
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+}
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item">Supervisors</li>
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
+@if (Model.Supervisors.Any())
+{
+  <table class="nhsuk-table">
+    <caption class="nhsuk-table__caption">Activity supervisors</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Name / role
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var supervisor in Model.Supervisors)
+      {
+        <tr role="row" class="nhsuk-table__row">
+          <td class="nhsuk-table__cell">@supervisor.SupervisorName, @supervisor.RoleName@(supervisor.SupervisorAdminID == null ? ", Not confirmed" : "" )</td>
+          <td class="nhsuk-table__cell ">
+            @if (supervisor.AddedByDelegate)
+            {
+              <a asp-action="RemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
+            }
+            else if (supervisor.Confirmed == null)
+            {
+              <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Reject</a>
+            }
+            else
+            {
+              <a asp-action="RequestRemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Request removal <span class="nhsuk-u-visually-hidden">of supervisor</span></a>
+            }
+            @if (supervisor.SupervisorAdminID == null)
+            {
+              <a asp-action="SendSupervisorReminder" asp-route-supervisorDelegateId="@supervisor.ID">Send reminder</a>
+            }
+
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+}
+else
+{
+  <p class="nhsuk-lede-text">You have no supervisors for this activity.</p>
+}
+@if (Model.SuggestedSupervisors.Any())
+{
+  <h2>Quick add</h2>
+  <table class="nhsuk-table">
+    <caption class="nhsuk-table__caption">Supervisors for your other activities</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Name
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var supervisor in Model.SuggestedSupervisors)
+      {
+        <tr role="row" class="nhsuk-table__row">
+          <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
+          <td class="nhsuk-table__cell ">
+              <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+    </table>
+      }
+<a class="nhsuk-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartAddNewSupervisor">
+  Add new supervisor
+</a>
+

@@ -68,7 +68,7 @@
             const string cookieValue = "Status|Active|false";
 
             controller = new CourseSetupController(courseService, courseCategoryDataService, courseTopicsDataService)
-                .WithMockHttpContextWithCookie(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockTempData();
         }

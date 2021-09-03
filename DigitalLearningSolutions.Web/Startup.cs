@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -199,6 +199,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
+            services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             RegisterWebServiceFilters(services);
         }
