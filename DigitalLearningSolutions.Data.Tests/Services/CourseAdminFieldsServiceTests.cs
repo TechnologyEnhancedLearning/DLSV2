@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -33,15 +31,15 @@
         {
             // Given
             var expectedPrompt1 =
-                CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
-            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Access Permissions");
+                CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Test");
+            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Priority Access");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedCourseAdminFields = CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts);
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(27920, 101, 0))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.GetCustomPromptsForCourse(27920, 101, 0);
+            var result = courseAdminFieldsService.GetCustomPromptsForCourse(100, 101, 0);
 
             // Then
             result.Should().BeEquivalentTo(expectedCourseAdminFields);
@@ -56,21 +54,21 @@
             var expected1 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
                 1,
                 "System Access Granted",
-                "Yes\r\nNo",
+                "Test",
                 answer: answer1
             );
             var expected2 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
                 2,
-                "Access Permissions",
+                "Priority Access",
                 answer: answer2
             );
             var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(27920, 101, 0))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
             // When
-            var result = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 27920, 101);
+            var result = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 100, 101);
 
             // Then
             result.Should().BeEquivalentTo(expected);
@@ -94,36 +92,57 @@
         {
             // Given
             const string promptName = "Access Permissions";
-            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsAlphabeticalList()).Returns
+            A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).Returns
                 (new List<(int, string)> { (1, promptName) });
             // When
             var result = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
 
             // Then
-            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsAlphabeticalList()).MustHaveHappened();
+            A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).MustHaveHappened();
             result.Contains((1, promptName)).Should().BeTrue();
         }
 
         [Test]
-        public void AddCustomPromptToCourse_adds_prompt_at_lowest_possible_prompt_number()
+        public void GetNextPromptNumber_returns_lowest_possible_prompt_number()
         {
             // Given
-            var expectedCourseAdminFields =
-                CustomPromptsTestHelper.GetDefaultCourseAdminFields();
             A.CallTo
             (
-                () => courseAdminFieldsService.UpdateCustomPromptForCourse(100, A<int>._, null)
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, expectedCourseAdminFields,3, null);
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
+                100,
+                101,
+                0
+            );
+            var nextPromptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
+
+            // Then
+            nextPromptNumber.Should().Be(3);
+        }
+
+        [Test]
+        public void AddCustomPromptToCourse_adds_prompt_to_course()
+        {
+            // Given
+            A.CallTo
+            (
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
+            ).DoesNothing();
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+
+            // When
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 3, 3, null);
 
             // Then
             A.CallTo
             (
-                () => courseAdminFieldsService.UpdateCustomPromptForCourse(100, A<int>._, null)
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
@@ -131,48 +150,53 @@
         [Test]
         public void AddCustomPromptToCourse_does_not_add_prompt_if_course_has_all_prompts_defined()
         {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                    100,
-                    101,
-                    2
-                );
-                courseAdminFieldsService.AddCustomPromptToCourse(1, courseAdminFields, 3, "Adding a third prompt");
-
-                // When
-                var updatedCourseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                    100,
-                    101,
-                    2
-                );
-                var result = courseAdminFieldsService.AddCustomPromptToCourse(1, updatedCourseAdminFields, 3, "Adding a fourth prompt");
-
-                // Then
-                using (new AssertionScope())
-                {
-                    A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, A<int>._, "Adding a fourth prompt"))
-                        .MustNotHaveHappened();
-                    result.Should().BeFalse();
-                }
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-
             // Given
             A.CallTo
             (
-                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, null)
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
+                .Returns(
+                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                        "System Access Granted",
+                        "Test",
+                        false,
+                        "Priority Access",
+                        "",
+                        false,
+                        "Access Permissions"
+                    )
+                );
+
+            // When
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
+                100,
+                101,
+                0
+            );
+            var nextPromptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
+
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(
+                100,
+                nextPromptNumber,
+                3,
+                "Adding a fourth prompt"
+            );
 
             // Then
-
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(
+                            100,
+                            A<int>._,
+                            A<int>._,
+                            "Adding a fourth prompt"
+                        )
+                    )
+                    .MustNotHaveHappened();
+                result.Should().BeFalse();
+            }
         }
 
         [Test]

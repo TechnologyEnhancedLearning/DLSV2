@@ -15,7 +15,7 @@
 
         public static CourseAdminFields GetDefaultCourseAdminFields(
             List<CustomPrompt> customPrompts,
-            int customisationId = 27920,
+            int customisationId = 100,
             int centreId = 101
         )
         {
@@ -99,9 +99,9 @@
 
         public static CourseAdminFieldsResult GetDefaultCourseAdminFieldsResult(
             string? customField1Prompt = "System Access Granted",
-            string? customField1Options = "Yes\r\nNo",
+            string? customField1Options = "Test",
             bool customField1Mandatory = false,
-            string? customField2Prompt = "Access Permissions",
+            string? customField2Prompt = "Priority Access",
             string? customField2Options = "",
             bool customField2Mandatory = false,
             string? customField3Prompt = null,
@@ -125,10 +125,32 @@
             };
         }
 
-        public static CourseAdminFields GetDefaultCourseAdminFields()
+        public static CourseAdminFieldsResult GetDefaultCourseAdminFieldsResult2(
+            string? customField1Prompt = "System Access Granted",
+            string? customField1Options = "Test",
+            bool customField1Mandatory = false,
+            string? customField2Prompt = "Access Permissions",
+            string? customField2Options = "",
+            bool customField2Mandatory = false,
+            string? customField3Prompt = null,
+            string? customField3Options = "",
+            bool customField3Mandatory = false,
+            int courseCategoryId = 0
+        )
         {
-            var adminFields = new List<CustomPrompt>();
-            return new CourseAdminFields(100, 0, adminFields);
+            return new CourseAdminFieldsResult
+            {
+                CustomField1Prompt = customField1Prompt,
+                CustomField1Options = customField1Options,
+                CustomField1Mandatory = customField1Mandatory,
+                CustomField2Prompt = customField2Prompt,
+                CustomField2Options = customField2Options,
+                CustomField2Mandatory = customField2Mandatory,
+                CustomField3Prompt = customField3Prompt,
+                CustomField3Options = customField3Options,
+                CustomField3Mandatory = customField3Mandatory,
+                CourseCategoryId = courseCategoryId
+            };
         }
     }
 }

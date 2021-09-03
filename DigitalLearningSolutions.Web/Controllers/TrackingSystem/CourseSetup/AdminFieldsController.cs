@@ -335,9 +335,11 @@
                 categoryId.Value
             );
 
+            var promptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
+
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 model.CustomisationId,
-                courseAdminFields,
+                promptNumber,
                 model.CustomPromptId!.Value,
                 model.OptionsString
             ))
