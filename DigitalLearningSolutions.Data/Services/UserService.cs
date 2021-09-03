@@ -39,13 +39,13 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class UserService : IUserService
     {
-        private readonly ILoginService loginService;
+        private readonly IUserVerificationService userVerificationService;
         private readonly IUserDataService userDataService;
 
-        public UserService(IUserDataService userDataService, ILoginService loginService)
+        public UserService(IUserDataService userDataService, IUserVerificationService userVerificationService)
         {
             this.userDataService = userDataService;
-            this.loginService = loginService;
+            this.userVerificationService = userVerificationService;
         }
 
         public (List<AdminUser>, List<DelegateUser>) GetUsersByUsername(string username)
@@ -193,7 +193,7 @@ namespace DigitalLearningSolutions.Data.Services
                     ? new List<DelegateUser> { loggedInDelegateUser }
                     : new List<DelegateUser>();
 
-                return loginService.VerifyUsers(password, loggedInAdminUsers, loggedInDelegateUsers);
+                return userVerificationService.VerifyUsers(password, loggedInAdminUsers, loggedInDelegateUsers);
             }
 
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
@@ -202,7 +202,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ? new List<AdminUser> { adminUser }
                 : new List<AdminUser>();
 
-            var temp = loginService.VerifyUsers(password, adminUsers, delegateUsers);
+            var temp = userVerificationService.VerifyUsers(password, adminUsers, delegateUsers);
 
             return temp;
         }

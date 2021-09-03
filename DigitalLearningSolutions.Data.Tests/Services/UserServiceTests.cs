@@ -14,7 +14,7 @@
 
     public class UserServiceTests
     {
-        private ILoginService loginService = null!;
+        private IUserVerificationService userVerificationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
 
@@ -22,8 +22,8 @@
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
-            loginService = A.Fake<ILoginService>();
-            userService = new UserService(userDataService, loginService);
+            userVerificationService = A.Fake<IUserVerificationService>();
+            userService = new UserService(userDataService, userVerificationService);
         }
 
         [Test]
@@ -189,7 +189,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress!)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
                 .Returns(new List<DelegateUser>());
-            A.CallTo(() => loginService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(adminUsers, new List<DelegateUser>()));
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
@@ -222,7 +222,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress!))
                 .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => loginService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(new List<AdminUser>(), new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
@@ -260,7 +260,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(signedInEmail)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => loginService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(
                     new UserAccountSet(new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser })
                 );
@@ -301,7 +301,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(signedInEmail)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser>());
-            A.CallTo(() => loginService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
 
             // When
