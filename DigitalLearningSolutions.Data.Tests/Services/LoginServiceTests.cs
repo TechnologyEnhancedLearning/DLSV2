@@ -189,7 +189,9 @@
             A.CallTo(() => userService.GetUsersByUsername(Username))
                 .Returns((new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userVerificationService.VerifyUsers(Password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser }));
+                .Returns(
+                    new UserAccountSet(new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser })
+                );
 
             // Then
             var exception = Assert.Throws<Exception>(() => loginService.AttemptLogin(Username, Password));
@@ -276,6 +278,183 @@
                 result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
                 result.LogInAdmin.Should().Be(linkedAdminUser);
                 result.LogInDelegates.Single().Should().Be(delegateUser);
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_does_not_use_linked_admin_if_admin_is_locked_and_single_delegate_exists_and_returns_single_centre_login_result()
+        {
+            // Given
+            var linkedAdminUser = UserTestHelper.GetDefaultAdminUser(
+                emailAddress: "email@test.com",
+                failedLoginCount: 6
+            );
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userService.GetUsersByUsername(Username))
+                .Returns((new List<AdminUser>(), new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userVerificationService.VerifyUsers(Password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(new List<AdminUser>(), new List<DelegateUser> { delegateUser }));
+            A.CallTo(
+                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    delegateUser,
+                    Password
+                )
+            ).Returns(linkedAdminUser);
+            A.CallTo(
+                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+                    null,
+                    Password
+                )
+            ).Returns(new List<DelegateUser>());
+            A.CallTo(() => userService.GetUsersWithActiveCentres(null, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userService.GetUserCentres(null, A<List<DelegateUser>>._)).Returns(
+                new List<CentreUserDetails>
+                    { new CentreUserDetails(linkedAdminUser.CentreId, linkedAdminUser.CentreName, true) }
+            );
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
+                result.LogInAdmin.Should().BeNull();
+                result.LogInDelegates.Single().Should().Be(delegateUser);
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_does_not_increment_failed_count_for_locked_admin_if_delegate_exists_and_returns_single_centre_login_result()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: "email@test.com", failedLoginCount: 6);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userService.GetUsersByUsername(Username))
+                .Returns((new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userVerificationService.VerifyUsers(Password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new UserAccountSet(new List<AdminUser> { adminUser }, new List<DelegateUser> { delegateUser })
+                );
+            A.CallTo(
+                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    delegateUser,
+                    Password
+                )
+            ).Returns(null);
+            A.CallTo(
+                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+                    null,
+                    Password
+                )
+            ).Returns(new List<DelegateUser>());
+            A.CallTo(() => userService.GetUsersWithActiveCentres(null, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userService.GetUserCentres(null, A<List<DelegateUser>>._)).Returns(
+                new List<CentreUserDetails>
+                    { new CentreUserDetails(delegateUser.CentreId, delegateUser.CentreName, true) }
+            );
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userService.IncrementFailedLoginCount(adminUser)).MustNotHaveHappened();
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
+                result.LogInAdmin.Should().BeNull();
+                result.LogInDelegates.Single().Should().Be(delegateUser);
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_find_multiple_delegates_and_returns_choose_a_centre_login_result()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(2, 3);
+            var delegateUsers = new List<DelegateUser> { delegateUser, secondDelegateUser };
+            A.CallTo(() => userService.GetUsersByUsername(Username))
+                .Returns((new List<AdminUser>(), delegateUsers));
+            A.CallTo(() => userVerificationService.VerifyUsers(Password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(new List<AdminUser>(), delegateUsers));
+            A.CallTo(
+                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    delegateUser,
+                    Password
+                )
+            ).Returns(null);
+            A.CallTo(
+                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+                    null,
+                    Password
+                )
+            ).Returns(new List<DelegateUser>());
+            A.CallTo(() => userService.GetUsersWithActiveCentres(null, A<List<DelegateUser>>._))
+                .Returns((null, delegateUsers));
+            A.CallTo(() => userService.GetUserCentres(null, A<List<DelegateUser>>._)).Returns(
+                new List<CentreUserDetails>
+                {
+                    new CentreUserDetails(delegateUser.CentreId, delegateUser.CentreName),
+                    new CentreUserDetails(secondDelegateUser.CentreId, secondDelegateUser.CentreName)
+                }
+            );
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.ChooseACentre);
+                result.LogInAdmin.Should().Be(null);
+                result.LogInDelegates.Should().BeEquivalentTo(delegateUsers);
+            }
+        }
+
+        [Test]
+        public void
+            AttemptLogin_returns_inactive_centre_if_all_centres_are_inactive()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(2, 3);
+            var delegateUsers = new List<DelegateUser> { delegateUser, secondDelegateUser };
+            A.CallTo(() => userService.GetUsersByUsername(Username))
+                .Returns((new List<AdminUser>(), delegateUsers));
+            A.CallTo(() => userVerificationService.VerifyUsers(Password, A<List<AdminUser>>._, A<List<DelegateUser>>._))
+                .Returns(new UserAccountSet(new List<AdminUser>(), delegateUsers));
+            A.CallTo(
+                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                    delegateUser,
+                    Password
+                )
+            ).Returns(null);
+            A.CallTo(
+                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+                    null,
+                    Password
+                )
+            ).Returns(new List<DelegateUser>());
+            A.CallTo(() => userService.GetUsersWithActiveCentres(null, A<List<DelegateUser>>._))
+                .Returns((null, new List<DelegateUser>()));
+            A.CallTo(() => userService.GetUserCentres(null, A<List<DelegateUser>>._))
+                .Returns(new List<CentreUserDetails>());
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.InactiveCentre);
+                result.LogInAdmin.Should().Be(null);
+                result.LogInDelegates.Should().BeEmpty();
             }
         }
     }

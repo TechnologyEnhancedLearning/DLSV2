@@ -94,15 +94,11 @@
                 return new LoginResult(LoginAttemptResult.AccountNotApproved);
             }
 
-            var delegateWithEmail = approvedVerifiedDelegates.FirstOrDefault(du => du.EmailAddress != null);
-
-            var verifiedLinkedAdmin = verifiedAdminUser ??
-                                      userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
-                                          delegateWithEmail,
-                                          password
-                                      );
-            var verifiedLinkedDelegates =
-                userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+            var (verifiedLinkedAdmin, verifiedLinkedDelegates) = GetVerifiedLinkedAccounts(
+                password,
+                approvedVerifiedDelegates,
+                verifiedAdminUser
+            );
 
             var adminUserToLoginIfCentreActive = new[] { verifiedAdminUser, verifiedLinkedAdmin }
                 .Where(au => au != null).Distinct().SingleOrDefault();
@@ -120,27 +116,42 @@
             );
             var availableCentres = userService.GetUserCentres(adminUserToLogIn, delegateUsersToLogIn);
 
-            switch (availableCentres.Count)
+            return availableCentres.Count switch
             {
-                case 0:
-                    return new LoginResult(LoginAttemptResult.InactiveCentre);
-                case 1:
-                    return new LoginResult(
-                        LoginAttemptResult.LogIntoSingleCentre,
-                        adminUserToLogIn,
-                        delegateUsersToLogIn
-                    );
-                default:
-                    return new LoginResult(
-                        LoginAttemptResult.ChooseACentre,
-                        adminUserToLogIn,
-                        delegateUsersToLogIn,
-                        availableCentres
-                    );
-            }
+                0 => new LoginResult(LoginAttemptResult.InactiveCentre),
+                1 => new LoginResult(
+                    LoginAttemptResult.LogIntoSingleCentre,
+                    adminUserToLogIn,
+                    delegateUsersToLogIn
+                ),
+                _ => new LoginResult(
+                    LoginAttemptResult.ChooseACentre,
+                    adminUserToLogIn,
+                    delegateUsersToLogIn,
+                    availableCentres
+                )
+            };
         }
 
-        private bool EmailIsTheSameOnAllAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        private (AdminUser? verifiedLinkedAdmin, List<DelegateUser> verifiedLinkedDelegates) GetVerifiedLinkedAccounts(
+            string password,
+            List<DelegateUser> approvedVerifiedDelegates,
+            AdminUser? verifiedAdminUser
+        )
+        {
+            var delegateWithEmail = approvedVerifiedDelegates.FirstOrDefault(du => du.EmailAddress != null);
+
+            var verifiedLinkedAdmin = verifiedAdminUser ??
+                                      userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
+                                          delegateWithEmail,
+                                          password
+                                      );
+            var verifiedLinkedDelegates =
+                userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+            return (verifiedLinkedAdmin, verifiedLinkedDelegates);
+        }
+
+        private static bool EmailIsTheSameOnAllAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
             if (adminUser == null && delegateUsers.Count == 0)
             {
@@ -159,7 +170,7 @@
             return uniqueEmails.Count == 1;
         }
 
-        private bool NoAccounts(List<AdminUser> adminUsers, List<DelegateUser> delegateUsers)
+        private static bool NoAccounts(List<AdminUser> adminUsers, List<DelegateUser> delegateUsers)
         {
             return adminUsers.Count == 0 && delegateUsers.Count == 0;
         }
