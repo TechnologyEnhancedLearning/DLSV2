@@ -1069,8 +1069,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
             return connection.QueryFirstOrDefault<AssessmentQuestionDetail>(
                  $@"{AssessmentQuestionFields}{AssessmentQuestionDetailFields}
                     {AssessmentQuestionTables}
-                    WHERE AQ.ID = @assessmentQuestionId
-                     ORDER BY AQ.Ordering", new { adminId, assessmentQuestionId }
+                    WHERE AQ.ID = @assessmentQuestionId", new { adminId, assessmentQuestionId }
                 );
         }
         public LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level)
