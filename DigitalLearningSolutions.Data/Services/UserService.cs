@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
+    
 
     public interface IUserService
     {
