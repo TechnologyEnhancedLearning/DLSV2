@@ -38,7 +38,7 @@
             centreCustomPromptHelper = customPromptHelper;
         }
 
-        [NoStore]
+        [NoCaching]
         public IActionResult Index()
         {
             var userAdminId = User.GetAdminId();
@@ -56,7 +56,7 @@
             return View(model);
         }
 
-        [NoStore]
+        [NoCaching]
         [HttpGet]
         public IActionResult EditDetails()
         {
@@ -79,7 +79,7 @@
             return View(model);
         }
 
-        [NoStore]
+        [NoCaching]
         [HttpPost]
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {

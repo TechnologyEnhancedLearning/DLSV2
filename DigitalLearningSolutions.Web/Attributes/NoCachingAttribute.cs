@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class NoStoreAttribute : ActionFilterAttribute
+    public class NoCachingAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuted(ActionExecutedContext context)
         {

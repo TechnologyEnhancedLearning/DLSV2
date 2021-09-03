@@ -143,7 +143,7 @@
             return RedirectToAction("Summary");
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -154,7 +154,7 @@
             return View(model);
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)

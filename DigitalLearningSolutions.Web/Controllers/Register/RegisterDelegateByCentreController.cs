@@ -195,7 +195,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("Summary");
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -206,7 +206,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)

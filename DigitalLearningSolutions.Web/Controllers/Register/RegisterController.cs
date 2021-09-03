@@ -180,7 +180,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("Summary");
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -191,7 +191,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        [NoStore]
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationData>))]
         [HttpPost]
         public async Task<IActionResult> Summary(SummaryViewModel model)
