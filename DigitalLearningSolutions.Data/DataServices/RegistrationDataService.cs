@@ -49,7 +49,8 @@
             var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
-                commandType: CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure
+            );
 
             return candidateNumber;
         }
@@ -63,7 +64,7 @@
                 delegateRegistrationModel.Email,
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
-                Active = 1,
+                delegateRegistrationModel.Active,
                 Approved = 1,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
@@ -81,7 +82,8 @@
             var candidateNumber = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
-                commandType: CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure
+            );
 
             return candidateNumber;
         }
@@ -119,7 +121,7 @@
             );
 
             transaction.Complete();
-        
+
             return adminUserId;
         }
     }
