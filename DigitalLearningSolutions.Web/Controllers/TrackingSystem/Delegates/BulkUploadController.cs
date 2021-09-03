@@ -55,12 +55,12 @@
         [HttpPost]
         public IActionResult StartUpload(UploadDelegatesViewModel model)
         {
-            model.ClearDateIfNotSendEmail();
-
             if (!ModelState.IsValid)
             {
                 return View("StartUpload", model);
             }
+
+            model.ClearDateIfNotSendEmail();
 
             try
             {
