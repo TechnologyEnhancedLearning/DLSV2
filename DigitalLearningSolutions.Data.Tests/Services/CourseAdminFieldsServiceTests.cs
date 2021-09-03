@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -8,6 +10,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -84,6 +87,92 @@
 
             // Then
             A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, 1, null)).MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCoursePromptsAlphabeticalList_calls_data_service()
+        {
+            // Given
+            const string promptName = "Access Permissions";
+            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsAlphabeticalList()).Returns
+                (new List<(int, string)> { (1, promptName) });
+            // When
+            var result = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
+
+            // Then
+            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsAlphabeticalList()).MustHaveHappened();
+            result.Contains((1, promptName)).Should().BeTrue();
+        }
+
+        [Test]
+        public void AddCustomPromptToCourse_adds_prompt_at_lowest_possible_prompt_number()
+        {
+            // Given
+            var expectedCourseAdminFields =
+                CustomPromptsTestHelper.GetDefaultCourseAdminFields();
+            A.CallTo
+            (
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(100, A<int>._, null)
+            ).DoesNothing();
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+
+            // When
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, expectedCourseAdminFields,3, null);
+
+            // Then
+            A.CallTo
+            (
+                () => courseAdminFieldsService.UpdateCustomPromptForCourse(100, A<int>._, null)
+            ).MustHaveHappened();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void AddCustomPromptToCourse_does_not_add_prompt_if_course_has_all_prompts_defined()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
+                    100,
+                    101,
+                    2
+                );
+                courseAdminFieldsService.AddCustomPromptToCourse(1, courseAdminFields, 3, "Adding a third prompt");
+
+                // When
+                var updatedCourseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
+                    100,
+                    101,
+                    2
+                );
+                var result = courseAdminFieldsService.AddCustomPromptToCourse(1, updatedCourseAdminFields, 3, "Adding a fourth prompt");
+
+                // Then
+                using (new AssertionScope())
+                {
+                    A.CallTo(() => courseAdminFieldsDataService.UpdateCustomPromptForCourse(1, A<int>._, "Adding a fourth prompt"))
+                        .MustNotHaveHappened();
+                    result.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+
+            // Given
+            A.CallTo
+            (
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, null)
+            ).DoesNothing();
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2))
+                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+
+            // Then
+
         }
 
         [Test]

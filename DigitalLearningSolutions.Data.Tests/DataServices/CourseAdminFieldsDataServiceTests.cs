@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -77,6 +78,36 @@
 
             // Then
             result.Should().BeEquivalentTo("System Access Granted");
+        }
+
+        [Test]
+        public void UpdateCustomPromptForCourse_correctly_adds_custom_prompt()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string? options = "options";
+
+                // When
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
+                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2);
+                var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
+                    .Single(c => c.Item1 == 1)
+                    .Item2;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseCustomPrompts.CustomField3Prompt.Should().BeEquivalentTo(customPrompt);
+                    courseCustomPrompts.CustomField3Mandatory.Should().BeFalse();
+                    courseCustomPrompts.CustomField3Options.Should().BeEquivalentTo(options);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
 
         [Test]

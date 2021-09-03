@@ -124,5 +124,11 @@
                 CourseCategoryId = courseCategoryId
             };
         }
+
+        public static CourseAdminFields GetDefaultCourseAdminFields()
+        {
+            var adminFields = new List<CustomPrompt>();
+            return new CourseAdminFields(100, 0, adminFields);
+        }
     }
 }
