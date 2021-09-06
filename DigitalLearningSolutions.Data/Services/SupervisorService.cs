@@ -142,6 +142,10 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                     @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
                     );
                 }
+                if (supervisorAdminId != null)
+                {
+                    connection.Execute("@UPDATE AdminUsers SET Supervisor = 1 WHERE Admin ID = @supervisorAdminId AND Supervisor = 0");
+                }
                 var numberOfAffectedRows = connection.Execute(
          @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
                     VALUES (@supervisorAdminId, @delegateEmail, @delegateId, @supervisorEmail, @addedByDelegate)",

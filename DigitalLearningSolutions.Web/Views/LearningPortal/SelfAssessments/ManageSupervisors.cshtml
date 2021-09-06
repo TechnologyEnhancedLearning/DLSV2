@@ -41,10 +41,6 @@
             {
               <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Reject</a>
             }
-            else
-            {
-              <a asp-action="RequestRemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Request removal <span class="nhsuk-u-visually-hidden">of supervisor</span></a>
-            }
             @if (supervisor.SupervisorAdminID == null)
             {
               <a asp-action="SendSupervisorReminder" asp-route-supervisorDelegateId="@supervisor.ID">Send reminder</a>
