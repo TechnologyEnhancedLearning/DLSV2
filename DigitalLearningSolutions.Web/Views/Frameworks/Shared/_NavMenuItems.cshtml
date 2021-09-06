@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Models.Enums
 <li class="nhsuk-header__navigation-item @Html.IsSelected("Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="Index">
     Dashboard
@@ -23,3 +24,11 @@
     </svg>
   </a>
 </li>
+@if (User.Identity.IsAuthenticated) {
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-applicationType="@ApplicationType.Frameworks">
+      My account
+      <partial name="_NhsChevronRight" />
+    </a>
+  </li>
+}

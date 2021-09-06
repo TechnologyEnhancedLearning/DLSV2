@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Models.Enums
 <li class="nhsuk-header__navigation-item @Html.IsSelected("Current")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Current">
     Current activities
@@ -23,3 +24,11 @@
     </svg>
   </a>
 </li>
+@if (User.Identity.IsAuthenticated) {
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-applicationType="@ApplicationType.LearningPortal">
+      My account
+      <partial name="_NhsChevronRight" />
+    </a>
+  </li>
+}

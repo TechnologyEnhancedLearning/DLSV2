@@ -23,3 +23,11 @@
     </svg>
   </a>
 </li>
+@if (User.Identity.IsAuthenticated) {
+  <li class="nhsuk-header__navigation-item">
+    <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
+      My account
+      <partial name="_NhsChevronRight" />
+    </a>
+  </li>
+}
