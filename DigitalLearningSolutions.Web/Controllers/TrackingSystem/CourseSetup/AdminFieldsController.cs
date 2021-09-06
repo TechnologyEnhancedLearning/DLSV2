@@ -406,7 +406,7 @@
 
             if (saveToTempData)
             {
-                UpdateTempDataWithCoursePromptModelValues(model);
+                UpdateTempDataWithCoursePromptModelValues();
             }
 
             return View(model);
@@ -514,7 +514,7 @@
                 SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
         }
 
-        private void UpdateTempDataWithCoursePromptModelValues(AdminFieldAnswersViewModel model)
+        private void UpdateTempDataWithCoursePromptModelValues()
         {
             var data = TempData.Peek<AdminFieldAnswersViewModel>()!;
             TempData.Set(data);

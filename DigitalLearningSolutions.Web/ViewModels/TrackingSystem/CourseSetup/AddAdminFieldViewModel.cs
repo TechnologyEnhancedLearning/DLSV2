@@ -18,18 +18,19 @@
         public AddAdminFieldViewModel(
             int customisationId,
             int customPromptId,
-            int customPromptNumber
+            string? options,
+            string? answer = null
         )
         {
             CustomisationId = customisationId;
             CustomPromptId = customPromptId;
-            PromptNumber = customPromptNumber;
+            OptionsString = options;
             IncludeAnswersTableCaption = true;
+            Answer = answer;
         }
 
-        public int PromptNumber { get; set; }
-
         [Required(ErrorMessage = "Select a prompt name")]
+
         public int? CustomPromptId { get; set; }
     }
 }
