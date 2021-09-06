@@ -36,7 +36,7 @@
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         //DELETE DATA
-
+        bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
 
     }
     public class SupervisorService : ISupervisorService
@@ -453,6 +453,31 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 );
                 return false;
             }
+            return true;
+        }
+
+        public bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId)
+        {
+            var supervisorDelegateId = (int)connection.ExecuteScalar(
+                 @"SELECT SupervisorDelegateId
+                  FROM    CandidateAssessmentSupervisors
+                   WHERE (ID = @candidateAssessmentSupervisorId)",
+               new { candidateAssessmentSupervisorId });
+            var numberOfAffectedRows = connection.Execute(
+         @"DELETE CandidateAssessmentSupervisors 
+            WHERE ID = @candidateAssessmentSupervisorId",
+        new { candidateAssessmentSupervisorId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing Candidate Assessment Supervisor as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                );
+                return false;
+            }
+            connection.Execute(
+         @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
+            WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
+        new { candidateAssessmentSupervisorId });
             return true;
         }
     }
