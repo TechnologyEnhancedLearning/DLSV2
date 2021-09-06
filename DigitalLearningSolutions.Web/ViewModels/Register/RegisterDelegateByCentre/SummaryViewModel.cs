@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -17,7 +18,7 @@
             IsPasswordSet = data.IsPasswordSet;
             if (data.ShouldSendEmail)
             {
-                WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString("dd/MM/yyyy");
+                WelcomeEmailDate = data.WelcomeEmailDate!.Value.ToString(DateHelper.StandardDateFormat);
             }
         }
 

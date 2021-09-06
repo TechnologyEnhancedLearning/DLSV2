@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
 
     public class EmailDelegatesItemViewModel

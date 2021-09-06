@@ -33,34 +33,5 @@
             // Then
             courseStatistics.InProgressCount.Should().Be(42);
         }
-
-        [Test]
-        public void Course_name_should_be_application_name_if_customisation_name_is_null()
-        {
-            // When
-            var courseStatistics = new CourseStatistics
-            {
-                ApplicationName = "Test application",
-                CustomisationName = null,
-            };
-
-            // Then
-            courseStatistics.CourseName.Should().BeEquivalentTo("Test application");
-        }
-
-        [Test]
-        public void Course_name_should_include_customisation_name_if_it_is_not_null()
-        {
-            // When
-            var courseStatistics = new CourseStatistics
-            {
-                ApplicationName = "Test application",
-                CustomisationName = "customisation",
-            };
-
-            // Then
-            courseStatistics.CourseName.Should().BeEquivalentTo("Test application - customisation");
-        }
-
     }
 }

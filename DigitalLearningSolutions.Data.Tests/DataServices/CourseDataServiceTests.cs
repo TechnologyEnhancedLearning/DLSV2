@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -218,14 +219,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseStatisticsAtCentreForCategoryID_should_return_course_statistics_correctly()
+        public void GetCourseStatisticsAtCentreForAdminCategoryId_should_return_course_statistics_correctly()
         {
             // Given
             const int centreId = 101;
             const int categoryId = 0;
 
             // When
-            var result = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId).ToList();
+            var result = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new CourseStatistics
@@ -234,6 +235,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 101,
                 Active = false,
                 AllCentres = false,
+                ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
                 DelegateCount = 25,
@@ -251,7 +253,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseDetailsByIdAtCentreForCategoryId_should_return_course_details_correctly()
+        public void GetCourseDetailsForAdminCategoryId_should_return_course_details_correctly()
         {
             // Given
             const int customisationId = 100;
@@ -266,7 +268,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result =
-                courseDataService.GetCourseDetails(customisationId, centreId, categoryId)!;
+                courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
             result.CreatedDate = fixedCreationDateTime;
 
@@ -315,6 +317,31 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             totalAttempts.Should().Be(23);
             attemptsPassed.Should().Be(11);
+        }
+
+        [Test]
+        public void GetCoursesAtCentreForAdminCategoryId_returns_expected_values()
+        {
+            // Given
+            var expectedFirstCourse = new Course
+            {
+                CustomisationId = 1,
+                CentreId = 2,
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard",
+                Active = false
+            };
+
+            // When
+            var result = courseDataService.GetCoursesAtCentreForAdminCategoryId(2, 0).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(69);
+                result.First(c => c.CustomisationId == 1).Should().BeEquivalentTo(expectedFirstCourse);
+            }
         }
     }
 }
