@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
