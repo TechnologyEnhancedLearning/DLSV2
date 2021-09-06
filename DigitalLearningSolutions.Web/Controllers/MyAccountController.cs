@@ -8,12 +8,15 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
+    [Route("/{applicationType}/MyAccount", Order = 1)]
+    [Route("/MyAccount", Order = 2)]
     [Authorize]
     public class MyAccountController : Controller
     {
@@ -39,8 +42,13 @@
         }
 
         [NoCaching]
-        public IActionResult Index()
+        public IActionResult Index(ApplicationType? applicationType)
         {
+            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(applicationType))
+            {
+                return RedirectToAction("Index", new { applicationType = ApplicationType.LearningPortal });
+            }
+
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
@@ -52,12 +60,13 @@
                 );
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
+            ViewBag.ApplicationType = applicationType ?? ApplicationType.Main;
 
             return View(model);
         }
 
         [NoCaching]
-        [HttpGet]
+        [HttpGet("EditDetails")]
         public IActionResult EditDetails()
         {
             if (!User.Identity.IsAuthenticated)
@@ -80,7 +89,7 @@
         }
 
         [NoCaching]
-        [HttpPost]
+        [HttpPost("EditDetails")]
         public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
