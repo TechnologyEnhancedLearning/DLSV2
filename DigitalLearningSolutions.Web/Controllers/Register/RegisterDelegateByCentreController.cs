@@ -213,10 +213,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var candidateNumber =
-                registrationService.RegisterDelegateByCentre(
-                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data)
-                );
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var candidateNumber = registrationService.RegisterDelegateByCentre(
+                RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                baseUrl
+            );
 
             switch (candidateNumber)
             {

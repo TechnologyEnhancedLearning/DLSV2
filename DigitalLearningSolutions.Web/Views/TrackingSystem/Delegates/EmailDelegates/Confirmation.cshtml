@@ -1,0 +1,29 @@
+﻿@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
+@model int
+
+@{
+  ViewData["Title"] = "Welcome emails scheduled";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Delegate welcome emails cued for delivery</h1>
+    @if (Model == 1) {
+      <p>The selected delegate has been sent an enrolment email due for delivery on or after the date specified.</p>
+    } else if (Model == 2) {
+      <p>Both selected delegates have been sent an enrolment email due for delivery on or after the date specified.</p>
+    } else {
+      <p>All @Model selected delegates have been sent an enrolment email due for delivery on or after the date specified.</p>
+    }
+
+    <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
+  </div>
+</div>
