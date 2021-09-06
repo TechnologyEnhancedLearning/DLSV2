@@ -20,8 +20,8 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl" id="app-page-heading">New system notifications</h1>
 
-    <vc:action-link asp-controller="SystemNotifications"
-                    asp-action="SkipNotifications"
+    <vc:action-link asp-controller="Dashboard"
+                    asp-action="Index"
                     link-text="Show notifications later and take me to dashboard" />
 
     @if (Model.UnacknowledgedNotification == null) {
