@@ -325,7 +325,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             result?.ApplicationName.Should().Be("Level 2 - Microsoft PowerPoint 2010");
-            result?.CourseName.Should().Be("PL Testing");
+            result?.CustomisationName.Should().Be("PL Testing");
         }
 
         [Test]

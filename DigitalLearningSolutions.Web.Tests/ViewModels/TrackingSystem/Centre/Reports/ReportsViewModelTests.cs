@@ -45,7 +45,7 @@
                 null,
                 null,
                 ReportInterval.Years
-                );
+            );
 
             // when
             var model = new ReportsFilterModel(filterData, "", "", "", false);

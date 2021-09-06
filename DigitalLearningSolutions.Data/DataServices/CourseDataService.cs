@@ -303,7 +303,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
-                @"SELECT cu.CustomisationName AS courseName, ap.ApplicationName AS applicationName
+                @"SELECT cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
                         JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
                         WHERE cu.CustomisationId = @customisationId",

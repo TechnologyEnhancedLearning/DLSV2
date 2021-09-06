@@ -2,11 +2,11 @@
 {
     public class CourseNameInfo
     {
-        public string CourseName{ get; set; } = null!;
+        public string CustomisationName { get; set; } = null!;
         public string ApplicationName { get; set; } = null!;
 
-        public string CompositeName => string.IsNullOrWhiteSpace(CourseName)
+        public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName
-            : ApplicationName + " - " + CourseName;
+            : ApplicationName + " - " + CustomisationName;
     }
 }

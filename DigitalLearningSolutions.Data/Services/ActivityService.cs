@@ -7,20 +7,33 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Helpers;
 
     public interface IActivityService
     {
-        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
+        IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
+        string GetJobGroupNameForActivityFilter(int? jobGroupId);
+        string GetCourseCategoryNameForActivityFilter(int? courseCategoryName);
+        string GetCourseNameForActivityFilter(int? courseId);
     }
 
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseDataService courseDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
-        public ActivityService(IActivityDataService activityDataService)
+        public ActivityService(
+            IActivityDataService activityDataService,
+            IJobGroupsDataService jobGroupsDataService,
+            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseDataService courseDataService
+        )
         {
             this.activityDataService = activityDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.courseDataService = courseDataService;
         }
 
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
@@ -47,13 +60,43 @@
             return dateSlots.Select(
                 slot =>
                 {
-                    var dateInformation = new DateInformation ( slot, filterData.ReportInterval );
+                    var dateInformation = new DateInformation(slot, filterData.ReportInterval);
                     var periodData = dataByPeriod.SingleOrDefault(
                         data => data.DateInformation.Date == slot.Date
                     );
                     return new PeriodOfActivity(dateInformation, periodData);
                 }
             );
+        }
+
+        public string GetJobGroupNameForActivityFilter(int? jobGroupId)
+        {
+            var jobGroupNameString = jobGroupId.HasValue
+                ? jobGroupsDataService.GetJobGroupName(jobGroupId.Value)
+                : "All";
+            jobGroupNameString ??= "All";
+
+            return jobGroupNameString;
+        }
+
+        public string GetCourseCategoryNameForActivityFilter(int? courseCategoryName)
+        {
+            var courseCategoryNameString = courseCategoryName.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryName.Value)
+                : "All";
+            courseCategoryNameString ??= "All";
+
+            return courseCategoryNameString;
+        }
+
+        public string GetCourseNameForActivityFilter(int? courseId)
+        {
+            var courseNames = courseId.HasValue
+                ? courseDataService.GetCourseNameAndApplication(courseId.Value)
+                : null;
+            var courseNameString = courseNames?.CourseName ?? "All";
+
+            return courseNameString;
         }
 
         private IEnumerable<PeriodOfActivity> GroupActivityData(
@@ -80,8 +123,7 @@
 
             return groupedActivityLogs.Select(
                 groupingOfLogs => new PeriodOfActivity(
-                    new DateInformation
-                    (
+                    new DateInformation(
                         new DateTime(groupingOfLogs.Key),
                         interval
                     ),

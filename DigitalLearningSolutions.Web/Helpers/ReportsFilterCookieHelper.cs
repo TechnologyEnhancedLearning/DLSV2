@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
 
@@ -27,11 +28,18 @@
             );
         }
 
-        public static ActivityFilterData? ParseReportsFilterCookie(this IRequestCookieCollection cookies)
+        public static ActivityFilterData ParseReportsFilterCookie(this IRequestCookieCollection cookies, AdminUser user)
         {
             var cookie = cookies[CookieName];
 
-            return JsonConvert.DeserializeObject<ActivityFilterData>(cookie);
+            try
+            {
+                return JsonConvert.DeserializeObject<ActivityFilterData>(cookie);
+            }
+            catch
+            {
+                return ActivityFilterData.GetDefaultFilterData(user);
+            }
         }
     }
 }

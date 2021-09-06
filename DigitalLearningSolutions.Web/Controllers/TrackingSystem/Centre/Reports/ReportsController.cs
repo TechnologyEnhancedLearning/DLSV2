@@ -21,24 +21,15 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseDataService courseDataService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
-            IJobGroupsDataService jobGroupsDataService,
-            IUserDataService userDataService,
-            ICourseDataService courseDataService,
-            ICourseCategoriesDataService courseCategoriesDataService
+            IUserDataService userDataService
         )
         {
             this.activityService = activityService;
-            this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
-            this.courseDataService = courseDataService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
         }
 
         public IActionResult Index()
@@ -47,41 +38,20 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            int? courseCategoryId = null;
-            var validatedCategoryId = adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId;
-
-            var filterData = new ActivityFilterData(
-                DateTime.UtcNow.Date.AddYears(-1),
-                DateTime.UtcNow,
-                null,
-                validatedCategoryId,
-                null,
-                ReportInterval.Months
-            );
+            var filterData = ActivityFilterData.GetDefaultFilterData(adminUser);
 
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
-            var jobGroupName = filterData.JobGroupId.HasValue
-                ? jobGroupsDataService.GetJobGroupName(filterData.JobGroupId.Value)
-                : "All";
-            jobGroupName ??= "All";
-
-            var categoryName = filterData.CourseCategoryId.HasValue
-                ? courseCategoriesDataService.GetCourseCategoryName(filterData.CourseCategoryId.Value)
-                : "All";
-            categoryName ??= "All";
-
-            var courseNames = filterData.CustomisationId.HasValue
-                ? courseDataService.GetCourseNameAndApplication(filterData.CustomisationId.Value)
-                : null;
-            var courseNameString = courseNames?.CompositeName ?? "All";
+            var jobGroupNameString = activityService.GetJobGroupNameForActivityFilter(filterData.JobGroupId);
+            var categoryNameString = activityService.GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId);
+            var courseNameString = activityService.GetCourseNameForActivityFilter(filterData.CustomisationId);
 
             var filterModel = new ReportsFilterModel(
                 filterData,
-                jobGroupName,
-                categoryName,
+                jobGroupNameString,
+                categoryNameString,
                 courseNameString,
                 adminUser.CategoryId == 0
             );
@@ -94,7 +64,10 @@
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
             var centreId = User.GetCentreId();
-            var filterData = Request.Cookies.ParseReportsFilterCookie();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
