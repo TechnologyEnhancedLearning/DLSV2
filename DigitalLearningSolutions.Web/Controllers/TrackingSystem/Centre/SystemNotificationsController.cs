@@ -34,16 +34,13 @@
             var unacknowledgedNotifications =
                 systemNotificationsDataService.GetUnacknowledgedSystemNotifications(adminId).ToList();
 
-            if (unacknowledgedNotifications.Count == 0)
-            {
-                if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
-                {
-                    Response.Cookies.DeleteSkipSystemNotificationCookie();
-                }
-            }
-            else
+            if (unacknowledgedNotifications.Count > 0)
             {
                 Response.Cookies.SetSkipSystemNotificationCookie(adminId, clockService.UtcNow);
+            }
+            else if (Request.Cookies.HasSkippedNotificationsCookie(adminId))
+            {
+                Response.Cookies.DeleteSkipSystemNotificationCookie();
             }
 
             var model = new SystemNotificationsViewModel(unacknowledgedNotifications, page);
