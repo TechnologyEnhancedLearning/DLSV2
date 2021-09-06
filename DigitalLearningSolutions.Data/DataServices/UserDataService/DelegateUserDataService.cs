@@ -15,6 +15,7 @@
                 @"SELECT
                         cd.CandidateID AS Id,
                         cd.CandidateNumber,
+                        cd.AliasID,
                         ct.CentreName,
                         cd.CentreID,
                         cd.DateRegistered,
@@ -268,6 +269,7 @@
             var user = connection.Query<DelegateUser>(
                 @"SELECT
                         cd.CandidateID AS Id,
+                        cd.AliasID,
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
@@ -303,6 +305,7 @@
             var user = connection.Query<DelegateUser>(
                 @"SELECT
                         cd.CandidateID AS Id,
+                        cd.AliasID,
                         cd.CandidateNumber,
                         ct.CentreName,
                         cd.CentreID,
