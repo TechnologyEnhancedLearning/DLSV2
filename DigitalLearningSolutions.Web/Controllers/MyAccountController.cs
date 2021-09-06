@@ -15,7 +15,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Route("/{applicationType}/MyAccount", Order = 1)]
+    [Route("/{application}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [Authorize]
     public class MyAccountController : Controller
@@ -42,9 +42,9 @@
         }
 
         [NoCaching]
-        public IActionResult Index(ApplicationType? applicationType)
+        public IActionResult Index(ApplicationType? application)
         {
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(applicationType))
+            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
             {
                 return RedirectToAction("Index", new { applicationType = ApplicationType.LearningPortal });
             }
@@ -60,7 +60,7 @@
                 );
 
             var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
-            ViewBag.ApplicationType = applicationType ?? ApplicationType.Main;
+            ViewBag.ApplicationType = application ?? ApplicationType.Main;
 
             return View(model);
         }
