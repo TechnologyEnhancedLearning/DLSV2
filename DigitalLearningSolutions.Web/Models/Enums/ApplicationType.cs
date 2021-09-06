@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Models.Enums
+namespace DigitalLearningSolutions.Web.Models.Enums
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
@@ -6,21 +6,45 @@
 
     public class ApplicationType : Enumeration
     {
-        public static readonly ApplicationType TrackingSystem = new ApplicationType(0, nameof(TrackingSystem), "Tracking System");
+        public static readonly ApplicationType TrackingSystem = new ApplicationType(
+            0,
+            nameof(TrackingSystem),
+            "Tracking System",
+            "/TrackingSystem/Centre/Dashboard",
+            "Tracking System"
+        );
+
         public static readonly ApplicationType Frameworks = new ApplicationType(1, nameof(Frameworks), "Frameworks");
         public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "Main");
 
-        private ApplicationType(int id, string name, string applicationName) : base(id, name)
-        {
-            ApplicationName = applicationName;
-
-            HeaderPath = name.Equals("TrackingSystem")
-                ? $"{ConfigHelper.GetAppConfig()["AppRootPath"]}/TrackingSystem/Centre/Dashboard"
-                : null;
-        }
+        public static readonly ApplicationType LearningPortal = new ApplicationType(
+            3,
+            nameof(LearningPortal),
+            "Learning Portal",
+            "/LearningPortal/Current",
+            "My Current Activities"
+        );
 
         public readonly string ApplicationName;
         public readonly string? HeaderPath;
+        public readonly string? HeaderPathName;
+
+        private ApplicationType(
+            int id,
+            string name,
+            string applicationName,
+            string? headerPath = null,
+            string? headerPathName = null
+        ) : base(id, name)
+        {
+            ApplicationName = applicationName;
+
+            HeaderPath = headerPath != null
+                ? $"{ConfigHelper.GetAppConfig()["AppRootPath"]}{headerPath}"
+                : null;
+
+            HeaderPathName = headerPathName;
+        }
 
         public static implicit operator ApplicationType(string value)
         {
@@ -34,6 +58,9 @@
             }
         }
 
-        public static implicit operator string(ApplicationType applicationType) => applicationType.Name;
+        public static implicit operator string(ApplicationType applicationType)
+        {
+            return applicationType.Name;
+        }
     }
 }
