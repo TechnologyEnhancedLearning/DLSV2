@@ -219,14 +219,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseStatisticsAtCentreForCategoryID_should_return_course_statistics_correctly()
+        public void GetCourseStatisticsAtCentreForAdminCategoryId_should_return_course_statistics_correctly()
         {
             // Given
             const int centreId = 101;
             const int categoryId = 0;
 
             // When
-            var result = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId).ToList();
+            var result = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new CourseStatistics
@@ -253,7 +253,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseDetailsByIdAtCentreForCategoryId_should_return_course_details_correctly()
+        public void GetCourseDetailsForAdminCategoryId_should_return_course_details_correctly()
         {
             // Given
             const int customisationId = 100;
@@ -268,7 +268,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result =
-                courseDataService.GetCourseDetails(customisationId, centreId, categoryId)!;
+                courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
             result.CreatedDate = fixedCreationDateTime;
 
@@ -320,7 +320,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCoursesAtCentreForCategoryId_returns_expected_values()
+        public void GetCoursesAtCentreForAdminCategoryId_returns_expected_values()
         {
             // Given
             var expectedFirstCourse = new Course
@@ -334,7 +334,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             };
 
             // When
-            var result = courseDataService.GetCoursesAtCentreForCategoryId(2, 0).ToList();
+            var result = courseDataService.GetCoursesAtCentreForAdminCategoryId(2, 0).ToList();
 
             // Then
             using (new AssertionScope())

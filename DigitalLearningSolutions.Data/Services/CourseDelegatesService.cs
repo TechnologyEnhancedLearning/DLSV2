@@ -34,7 +34,7 @@
             int? customisationId
         )
         {
-            var courses = courseDataService.GetCoursesAtCentreForCategoryId(centreId, categoryId).ToList();
+            var courses = courseDataService.GetCoursesAtCentreForAdminCategoryId(centreId, categoryId).ToList();
             var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);
             var inactiveCoursesAlphabetical =
                 courses.Where(c => !c.Active).OrderBy(c => c.CourseName);
