@@ -1028,9 +1028,12 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                 return;
             }
             var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO CompetencyAssessmentQuestions (CompetencyId, AssessmentQuestionID)
-                      SELECT CompetencyID, @assessmentQuestionId
-                        FROM FrameworkCompetencies
+                @"INSERT INTO CompetencyAssessmentQuestions (CompetencyId, AssessmentQuestionID, Ordering)
+                      SELECT CompetencyID, @assessmentQuestionId, COALESCE
+                             ((SELECT        MAX(Ordering)
+                                 FROM            [CompetencyAssessmentQuestions]
+                                 WHERE        ([CompetencyId] = fc.CompetencyID)), 0)+1
+                        FROM FrameworkCompetencies AS fc
                         WHERE Id = @frameworkCompetencyId"
                     , new { frameworkCompetencyId, assessmentQuestionId });
             if (numberOfAffectedRows < 1)

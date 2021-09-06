@@ -166,7 +166,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
@@ -197,6 +196,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
+            services.AddScoped<IEmailDataService, EmailDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
@@ -217,6 +217,7 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<CentreCustomPromptHelper>();
+            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 

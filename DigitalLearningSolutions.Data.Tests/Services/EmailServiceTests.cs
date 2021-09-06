@@ -1,8 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Factories;
+    using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using MailKit.Net.Smtp;
@@ -14,12 +17,14 @@
     public class EmailServiceTests
     {
         private IConfigService configService;
+        private IEmailDataService emailDataService;
         private EmailService emailService;
         private ISmtpClient smtpClient;
 
         [SetUp]
         public void Setup()
         {
+            emailDataService = A.Fake<IEmailDataService>();
             configService = A.Fake<IConfigService>();
             var smtpClientFactory = A.Fake<ISmtpClientFactory>();
             smtpClient = A.Fake<ISmtpClient>();
@@ -32,7 +37,7 @@
             A.CallTo(() => configService.GetConfigValue(ConfigService.MailFromAddress)).Returns("test@example.com");
 
             var logger = A.Fake<ILogger<EmailService>>();
-            emailService = new EmailService(configService, smtpClientFactory, logger);
+            emailService = new EmailService(emailDataService, configService, smtpClientFactory, logger);
         }
 
         [TestCase(ConfigService.MailPort)]
@@ -266,6 +271,43 @@
                         null
                     )
                 )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ScheduleEmails_schedules_emails_correctly()
+        {
+            // Given
+            var emails = new List<Email>
+            {
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to1@example.com"),
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to2@example.com"),
+                EmailTestHelper.GetDefaultEmailToSingleRecipient("to3@example.com")
+            };
+            var deliveryDate = new DateTime(2200, 1, 1);
+            const string addedByProcess = "some process";
+
+            // When
+            emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
+
+            // Then
+            A.CallTo(() => emailDataService.ScheduleEmails(emails, A<string>._, addedByProcess, false, deliveryDate))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void ScheduleEmails_sets_urgent_true_if_same_day()
+        {
+            // Given
+            var emails = new List<Email> { EmailTestHelper.GetDefaultEmailToSingleRecipient("to@example.com") };
+            var deliveryDate = DateTime.Today;
+            const string addedByProcess = "some process";
+
+            // When
+            emailService.ScheduleEmails(emails, addedByProcess, deliveryDate);
+
+            // Then
+            A.CallTo(() => emailDataService.ScheduleEmails(emails, A<string>._, addedByProcess, true, deliveryDate))
                 .MustHaveHappened();
         }
     }
