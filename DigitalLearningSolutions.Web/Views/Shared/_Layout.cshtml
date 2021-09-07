@@ -5,6 +5,7 @@
 @{
   var application = (string)ViewData["Application"] ?? "";
   var shouldDisplayHelpMenuItem = application != "Tracking System";
+  var headerApplicationName = application == "Main" ? "" : application;
 }
 
 <!DOCTYPE html>
@@ -57,7 +58,7 @@
             <image src="https://assets.nhs.uk/images/nhs-logo.png" xlink:href=""></image>
           </svg>
 
-          <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(ViewData["Application"] ?? "")</span>
+          <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(headerApplicationName)</span>
         </a>
       </div>
 
