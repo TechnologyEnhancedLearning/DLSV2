@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -59,8 +59,7 @@
                     delegateUser
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
-            ViewBag.ApplicationType = application ?? ApplicationType.Main;
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, application);
 
             return View(model);
         }

@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
     public class MyAccountViewModel
@@ -11,7 +12,8 @@
         public MyAccountViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            CentreCustomPromptsWithAnswers? customPrompts)
+            CentreCustomPromptsWithAnswers? customPrompts,
+            ApplicationType? application)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
@@ -28,6 +30,8 @@
                         new CustomFieldViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory, cp.Answer))
                     .ToList();
             }
+
+            Application = application;
         }
 
         public string? Centre { get; set; }
@@ -45,5 +49,7 @@
         public string? JobGroup { get; set; }
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
+
+        public ApplicationType? Application { get; set; }
     }
 }

@@ -9,7 +9,7 @@
 
 @{
   ViewData["Title"] = "My Account";
-  var application = (ApplicationType)ViewBag.ApplicationType;
+  var application = Model.Application ?? ApplicationType.Main;
   ViewData["Application"] = application.ApplicationName;
   ViewData["HeaderPath"] = application.HeaderPath;
   ViewData["HeaderPathName"] = application.HeaderPathName;
