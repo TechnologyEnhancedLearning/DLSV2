@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -43,15 +41,13 @@
 
             var activity = activityService.GetFilteredActivity(centreId, filterData);
 
-            var jobGroupNameString = activityService.GetJobGroupNameForActivityFilter(filterData.JobGroupId);
-            var categoryNameString = activityService.GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId);
-            var courseNameString = activityService.GetCourseNameForActivityFilter(filterData.CustomisationId);
+            var (jobGroupName, courseCategoryName, courseName) = activityService.GetFilterNames(filterData);
 
             var filterModel = new ReportsFilterModel(
                 filterData,
-                jobGroupNameString,
-                categoryNameString,
-                courseNameString,
+                jobGroupName,
+                courseCategoryName,
+                courseName,
                 adminUser.CategoryId == 0
             );
 

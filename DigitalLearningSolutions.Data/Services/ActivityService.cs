@@ -11,9 +11,10 @@
     public interface IActivityService
     {
         IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
-        string GetJobGroupNameForActivityFilter(int? jobGroupId);
-        string GetCourseCategoryNameForActivityFilter(int? courseCategoryName);
-        string GetCourseNameForActivityFilter(int? courseId);
+
+        (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
+            ActivityFilterData filterData
+        );
     }
 
     public class ActivityService : IActivityService
@@ -69,34 +70,37 @@
             );
         }
 
-        public string GetJobGroupNameForActivityFilter(int? jobGroupId)
+        public (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
+            ActivityFilterData filterData
+        )
         {
-            var jobGroupNameString = jobGroupId.HasValue
+            return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
+                GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
+                GetCourseNameForActivityFilter(filterData.CustomisationId));
+        }
+
+        private string GetJobGroupNameForActivityFilter(int? jobGroupId)
+        {
+            var jobGroupName = jobGroupId.HasValue
                 ? jobGroupsDataService.GetJobGroupName(jobGroupId.Value)
                 : "All";
-            jobGroupNameString ??= "All";
-
-            return jobGroupNameString;
+            return jobGroupName ?? "All";
         }
 
-        public string GetCourseCategoryNameForActivityFilter(int? courseCategoryName)
+        private string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
         {
-            var courseCategoryNameString = courseCategoryName.HasValue
-                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryName.Value)
+            var courseCategoryName = courseCategoryId.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
                 : "All";
-            courseCategoryNameString ??= "All";
-
-            return courseCategoryNameString;
+            return courseCategoryName ?? "All";
         }
 
-        public string GetCourseNameForActivityFilter(int? courseId)
+        private string GetCourseNameForActivityFilter(int? courseId)
         {
             var courseNames = courseId.HasValue
                 ? courseDataService.GetCourseNameAndApplication(courseId.Value)
                 : null;
-            var courseNameString = courseNames?.CourseName ?? "All";
-
-            return courseNameString;
+            return courseNames?.CourseName ?? "All";
         }
 
         private IEnumerable<PeriodOfActivity> GroupActivityData(
