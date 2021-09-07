@@ -110,7 +110,11 @@ h1#page-heading {
 }
 
 .responsive-iframe-wrapper-padding {
-  padding-bottom: nhsuk-spacing(7);
+  padding-bottom: nhsuk-spacing(8);
+}
+
+.responsive-iframe-wrapper-extra-padding {
+  padding-bottom: nhsuk-spacing(8) * 2;
 }
 
 .nhsuk-heading-xl.heading-margin-2 {
