@@ -30,7 +30,7 @@
         public bool ApplyLpDefaultsToSelfEnrol { get; set; }
 
         public int InProgressCount => DelegateCount - CompletedCount;
-        
+
         public string? RefreshToCourseName
         {
             get

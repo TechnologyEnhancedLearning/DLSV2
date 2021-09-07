@@ -21,7 +21,15 @@
         public void SetUp()
         {
             activityDataService = A.Fake<IActivityDataService>();
-            activityService = new ActivityService(activityDataService);
+            var jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            var courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            var courseDataService = A.Fake<ICourseDataService>();
+            activityService = new ActivityService(
+                activityDataService,
+                jobGroupsDataService,
+                courseCategoriesDataService,
+                courseDataService
+            );
         }
 
         [Test]

@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class ActivityFilterData
     {
@@ -28,5 +29,19 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
+
+        public static ActivityFilterData GetDefaultFilterData(AdminUser user)
+        {
+            var categoryIdFilter = user.CategoryId == 0 ? (int?)null : user.CategoryId;
+
+            return new ActivityFilterData(
+                DateTime.UtcNow.Date.AddYears(-1),
+                DateTime.UtcNow,
+                null,
+                categoryIdFilter,
+                null,
+                ReportInterval.Months
+            );
+        }
     }
 }
