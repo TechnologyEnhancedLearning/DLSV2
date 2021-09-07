@@ -1,9 +1,18 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@model ApplicationType?
+@{
   ViewData["Title"] = "Password Changed Successfully";
+  var application = Model ?? ApplicationType.Main;
+  ViewData["Application"] = application.ApplicationName;
+  ViewData["HeaderPath"] = application.HeaderPath;
+  ViewData["HeaderPathName"] = application.HeaderPathName;
+  var aspAllRouteData = new Dictionary<string, string?> {
+    { "application", Model }
+  };
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <partial name="_AutoNavMenuItems" model="application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -11,6 +20,6 @@
     <h1 class="nhsuk-heading-xl">Change password</h1>
     <div class="nhsuk-body-m">Your password was successfully changed.</div>
 
-    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" />
+    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" asp-all-route-data="@aspAllRouteData" />
   </div>
 </div>

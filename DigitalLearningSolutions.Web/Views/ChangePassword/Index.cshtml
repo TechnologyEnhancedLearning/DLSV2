@@ -1,15 +1,21 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model ChangePasswordViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
+  var application = Model.Application ?? ApplicationType.Main;
+  ViewData["Application"] = application.ApplicationName;
+  ViewData["HeaderPath"] = application.HeaderPath;
+  ViewData["HeaderPathName"] = application.HeaderPathName;
+  var aspAllRouteData = new Dictionary<string, string?> {
+    { "application", Model.Application }
+  };
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <partial name="_AutoNavMenuItems" model="application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -23,7 +29,7 @@
       Use the form below to change the password for delegate and admin accounts associated with your email address.
     </p>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-application="@Model.Application">
       <vc:text-input asp-for="@nameof(Model.CurrentPassword)"
                      label="Current password"
                      populate-with-current-value="false"
@@ -54,6 +60,6 @@
       <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 
-    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@null" />
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@aspAllRouteData" />
   </div>
 </div>
