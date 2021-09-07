@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Data.Services
             bool refactoredTrackingSystemEnabled
         );
 
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
+        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
         void RegisterCentreManager(RegistrationModel registrationModel);
     }
@@ -28,11 +28,13 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IPasswordDataService passwordDataService;
+        private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
             IPasswordDataService passwordDataService,
+            IPasswordResetService passwordResetService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             IConfiguration config
@@ -40,6 +42,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             this.registrationDataService = registrationDataService;
             this.passwordDataService = passwordDataService;
+            this.passwordResetService = passwordResetService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.config = config;
@@ -83,7 +86,20 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
+        public void RegisterCentreManager(RegistrationModel registrationModel)
+        {
+            using var transaction = new TransactionScope();
+
+            CreateDelegateAccountForAdmin(registrationModel);
+
+            registrationDataService.RegisterCentreManagerAdmin(registrationModel);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
+        }
+
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
             var candidateNumber = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
@@ -98,21 +114,17 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRegistrationModel.PasswordHash
                 );
             }
+            else if (delegateRegistrationModel.NotifyDate.HasValue)
+            {
+                passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    delegateRegistrationModel.Email,
+                    baseUrl,
+                    delegateRegistrationModel.NotifyDate.Value,
+                    "RegisterDelegateByCentre_Refactor"
+                );
+            }
 
             return candidateNumber;
-        }
-
-        public void RegisterCentreManager(RegistrationModel registrationModel)
-        {
-            using var transaction = new TransactionScope();
-
-            CreateDelegateAccountForAdmin(registrationModel);
-
-            registrationDataService.RegisterCentreManagerAdmin(registrationModel);
-
-            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-            transaction.Complete();
         }
 
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)

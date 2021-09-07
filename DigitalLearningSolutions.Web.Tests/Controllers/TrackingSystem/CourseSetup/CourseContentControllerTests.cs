@@ -30,7 +30,7 @@
         public void Index_returns_NotFound_when_no_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetails(A<int>._, A<int>._, A<int>._)).Returns(null);
+            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._)).Returns(null);
 
             // When
             var result = controller.Index(1);
@@ -43,7 +43,7 @@
         public void Index_returns_Index_page_when_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetails(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionsAndTutorialsForCustomisation(A<int>._, A<int>._))
                 .Returns(new List<Section>());

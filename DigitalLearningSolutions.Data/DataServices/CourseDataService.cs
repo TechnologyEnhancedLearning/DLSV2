@@ -17,10 +17,12 @@ namespace DigitalLearningSolutions.Data.DataServices
         void RemoveCurrentCourse(int progressId, int candidateId);
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
-        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
-        CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId);
+        CourseNameInfo? GetCourseNameAndApplication(int customisationId);
+        CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -171,7 +173,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForCategoryId(int centreId, int categoryId)
+        // Admins have a non-nullable category ID where 0 = all. This is why we have the
+        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId)
         {
             return connection.Query<CourseStatistics>(
                 @$"SELECT
@@ -179,6 +183,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.CentreID,
                         cu.Active,
                         cu.AllCentres,
+                        ap.ApplicationId,
                         ap.ApplicationName,
                         cu.CustomisationName,
                         {DelegateCountQuery},
@@ -252,7 +257,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public CourseDetails? GetCourseDetails(int customisationId, int centreId, int categoryId)
+        // Admins have a non-nullable category ID where 0 = all. This is why we have the
+        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
+        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
         {
             return connection.Query<CourseDetails>(
                 @$"SELECT
@@ -297,6 +304,45 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
+        }
+
+        public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
+        {
+            var names = connection.QueryFirstOrDefault<CourseNameInfo>(
+                @"SELECT cu.CustomisationName, ap.ApplicationName
+                        FROM Customisations cu
+                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
+                        WHERE cu.CustomisationId = @customisationId",
+                new { customisationId }
+            );
+            if (names == null)
+            {
+                logger.LogWarning(
+                    $"No customisation found for customisation id {customisationId}"
+                );
+            }
+
+            return names;
+        }
+
+        // Admins have a non-nullable category ID where 0 = all. This is why we have the
+        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
+        public IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        a.ApplicationName,
+                        c.CustomisationName,
+                        c.Active
+                    FROM Customisations AS c
+                    JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                    WHERE (CentreID = @centreId OR CentreID = 0)
+	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
+                new { centreId, categoryId }
+            );
         }
     }
 }

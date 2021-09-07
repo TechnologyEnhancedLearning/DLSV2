@@ -555,7 +555,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
 
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
         {return connection.Query<SelfAssessmentSupervisor>(
-               @"SELECT sd.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+               @"SELECT sd.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
@@ -567,7 +567,7 @@ WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = 
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID LEFT OUTER JOIN
@@ -579,20 +579,20 @@ WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAsses
         public IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SelfAssessmentSupervisor>(
-                  @"SELECT 0 AS ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, au.Forename + ' ' + au.Surname AS SupervisorName, 'Supervisor' AS RoleName
+                  @"SELECT 0 AS ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname AS SupervisorName, 'Supervisor' AS RoleName
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID
 WHERE (sd.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
 EXCEPT
-SELECT 0 AS ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, au.Forename + ' ' + au.Surname AS SupervisorName, 'Supervisor' AS RoleName
+SELECT 0 AS ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname AS SupervisorName, 'Supervisor' AS RoleName
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID
 WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, au.Forename + ' ' + au.Surname", new { selfAssessmentId, candidateId }
+GROUP BY sd.ID, SupervisorAdminID, SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname", new { selfAssessmentId, candidateId }
                   );
         }
     }

@@ -28,10 +28,14 @@
   <div class="nhsuk-grid-column-three-quarters">
     <h1 id="page-heading" class="nhsuk-heading-xl">Centre reports</h1>
 
+    <span class="nhsuk-body-l">View reports for <span class="nhsuk-u-font-weight-bold">@Model.ReportsFilterModel.CourseCategoryName</span> courses.</span>
+
+    <partial name="_FilterDisplayCard.cshtml" model="@Model.ReportsFilterModel" />
+
     <h2 class="nhsuk-heading-m">Usage stats</h2>
 
     <div class="js-only-block">
-      <partial name="_ActivityGraph.cshtml"/>
+      <partial name="_ActivityGraph.cshtml" />
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 

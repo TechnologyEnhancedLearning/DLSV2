@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -194,6 +195,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return RedirectToAction("Summary");
         }
 
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -204,16 +206,18 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<DelegateRegistrationByCentreData>))]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
-            var candidateNumber =
-                registrationService.RegisterDelegateByCentre(
-                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data)
-                );
+            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var candidateNumber = registrationService.RegisterDelegateByCentre(
+                RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                baseUrl
+            );
 
             switch (candidateNumber)
             {

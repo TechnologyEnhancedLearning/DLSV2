@@ -28,7 +28,7 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetails(customisationId, centreId, categoryId.Value);
+            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId.Value);
 
             if (courseDetails == null)
             {

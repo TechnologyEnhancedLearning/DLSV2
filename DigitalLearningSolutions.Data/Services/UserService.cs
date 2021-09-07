@@ -12,6 +12,8 @@ namespace DigitalLearningSolutions.Data.Services
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
+        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
+
         (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
@@ -35,6 +37,8 @@ namespace DigitalLearningSolutions.Data.Services
         void ResetFailedLoginCount(AdminUser adminUser);
 
         void IncrementFailedLoginCount(AdminUser adminUser);
+
+        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
     }
 
     public class UserService : IUserService
@@ -81,6 +85,11 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return (adminUser, delegateUser);
+        }
+
+        public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
+        {
+            return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
@@ -231,6 +240,14 @@ namespace DigitalLearningSolutions.Data.Services
         public void IncrementFailedLoginCount(AdminUser adminUser)
         {
             userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, adminUser.FailedLoginCount + 1);
+        }
+
+        public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId)
+        {
+            return userDataService.GetDelegateUserCardsByCentreId(centreId).Where(
+                user => user.Approved && !user.SelfReg && string.IsNullOrEmpty(user.Password) &&
+                        !string.IsNullOrEmpty(user.EmailAddress)
+            );
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

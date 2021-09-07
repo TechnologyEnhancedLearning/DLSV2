@@ -14,7 +14,7 @@
                 : null;
             IsMandatory = groupCourse.IsMandatory ? "Mandatory" : "Not mandatory";
             IsAssessed = groupCourse.IsAssessed ? "Assessed" : "Not assessed";
-            AddedToGroup = groupCourse.AddedToGroup.ToString("dd/MM/yyyy");
+            AddedToGroup = groupCourse.AddedToGroup.ToString(DateHelper.StandardDateFormat);
             CompleteWithin = DisplayStringHelper.ConvertNumberToMonthsString(groupCourse.CompleteWithinMonths);
             ValidFor = DisplayStringHelper.ConvertNumberToMonthsString(groupCourse.ValidityMonths);
         }
