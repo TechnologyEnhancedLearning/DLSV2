@@ -24,7 +24,7 @@
         }
 
         [HttpGet]
-        public IActionResult Index(ApplicationType? application)
+        public IActionResult Index(ApplicationType? application = null)
         {
             if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
             {
@@ -36,7 +36,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ChangePasswordViewModel model, ApplicationType? application)
+        public async Task<IActionResult> Index(ChangePasswordViewModel model, ApplicationType? application = null)
         {
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();

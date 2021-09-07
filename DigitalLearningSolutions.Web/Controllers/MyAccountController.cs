@@ -42,7 +42,7 @@
         }
 
         [NoCaching]
-        public IActionResult Index(ApplicationType? application)
+        public IActionResult Index(ApplicationType? application = null)
         {
             if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
             {
@@ -66,7 +66,7 @@
 
         [NoCaching]
         [HttpGet("EditDetails")]
-        public IActionResult EditDetails(ApplicationType? application)
+        public IActionResult EditDetails(ApplicationType? application = null)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -94,7 +94,7 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(EditDetailsViewModel model, string action, ApplicationType? application)
+        public IActionResult EditDetails(EditDetailsViewModel model, string action, ApplicationType? application = null)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
             ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(model);
