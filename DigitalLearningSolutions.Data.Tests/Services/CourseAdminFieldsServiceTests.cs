@@ -102,31 +102,8 @@
             result.Contains((1, promptName)).Should().BeTrue();
         }
 
-        /*[Test]
-        public void GetNextPromptNumber_returns_lowest_possible_prompt_number()
-        {
-            // Given
-            A.CallTo
-            (
-                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
-            ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
-
-            // When
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                100,
-                101,
-                0
-            );
-            var nextPromptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
-
-            // Then
-            nextPromptNumber.Should().Be(3);
-        }*/
-
         [Test]
-        public void AddCustomPromptToCourse_adds_prompt_to_course()
+        public void AddCustomPromptToCourse_adds_prompt_to_course_at_next_prompt_number()
         {
             // Given
             A.CallTo
@@ -137,12 +114,12 @@
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 2, 0, 3, null);
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 101, 0, 3, null);
 
             // Then
             A.CallTo
             (
-                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
+                () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 3, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
