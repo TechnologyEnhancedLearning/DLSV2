@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
     }
@@ -303,6 +304,25 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
+        }
+
+        public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
+        {
+            var names = connection.QueryFirstOrDefault<CourseNameInfo>(
+                @"SELECT cu.CustomisationName, ap.ApplicationName
+                        FROM Customisations cu
+                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
+                        WHERE cu.CustomisationId = @customisationId",
+                new { customisationId }
+            );
+            if (names == null)
+            {
+                logger.LogWarning(
+                    $"No customisation found for customisation id {customisationId}"
+                );
+            }
+
+            return names;
         }
 
         // Admins have a non-nullable category ID where 0 = all. This is why we have the
