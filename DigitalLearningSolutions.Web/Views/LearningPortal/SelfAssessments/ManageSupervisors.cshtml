@@ -39,7 +39,7 @@
             }
             else if (supervisor.Confirmed == null)
             {
-              <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Reject</a>
+              <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Reject</a>
             }
             @if (supervisor.SupervisorAdminID == null)
             {

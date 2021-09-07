@@ -374,5 +374,17 @@
             frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, selfAssessmentId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+        public IActionResult ConfirmSupervisor(int supervisorDelegateId, int selfAssessmentId)
+        {
+            supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
+            frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId);
+            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
+        }
+        public IActionResult RejectSupervisor(int supervisorDelegateId, int selfAssessmentId)
+        {
+            supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
+            frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId);
+            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
+        }
     }
 }
