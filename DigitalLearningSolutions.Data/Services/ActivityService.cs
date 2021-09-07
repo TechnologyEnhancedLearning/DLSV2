@@ -15,6 +15,10 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
             ActivityFilterData filterData
         );
+
+        (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> categories,
+            IEnumerable<(int id, string name)>
+            courses) GetFilterOptions(int centreId, int? courseCategoryId);
     }
 
     public class ActivityService : IActivityService
@@ -77,6 +81,21 @@
             return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
+        }
+
+        public (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> categories,
+            IEnumerable<(int id, string name)> courses) GetFilterOptions(int centreId, int? courseCategoryId)
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var courseCategories = courseCategoriesDataService
+                .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
+            var courses = courseDataService
+                .GetCoursesAtCentreForCategoryId(centreId, courseCategoryId)
+                .OrderBy(c => c.CourseName)
+                .Select(c => (c.CustomisationId, c.CourseName));
+
+            return (jobGroups, courseCategories, courses);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)

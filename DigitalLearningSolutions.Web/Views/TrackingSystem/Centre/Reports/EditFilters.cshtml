@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Data.Helpers
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @using Microsoft.Extensions.Configuration
 @model EditFiltersViewModel
@@ -45,12 +45,12 @@
 
             <div class="nhsuk-radios nhsuk-radios--conditional">
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="course-filter-type-1" name="course-filter-type" type="radio" value="course" aria-controls="course-filter-type-1" aria-expanded="false">
+                <input class="nhsuk-radios__input" id="course-filter-type-1" name="course-filter-type" type="radio" value="course" aria-controls="conditional-course-filter-type-1" aria-expanded="false">
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
                   Course
                 </label>
               </div>
-              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-2">
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-course-filter-type-1">
 
                 <vc:select-list asp-for="CustomisationId"
                                 label="Choose a course"
@@ -64,12 +64,12 @@
               </div>
 
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="course-filter-type-2" name="course-filter-type" type="radio" value="course category" aria-controls="course-filter-type-2" aria-expanded="false">
+                <input class="nhsuk-radios__input" id="course-filter-type-2" name="course-filter-type" type="radio" value="course category" aria-controls="conditional-course-filter-type-2" aria-expanded="false">
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
                   Course category
                 </label>
               </div>
-              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-1">
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-course-filter-type-2">
                 <vc:select-list asp-for="CourseCategoryId"
                                 label="Choose course category from the list below"
                                 value="@Model.CourseCategoryId.ToString()"

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
@@ -19,23 +20,16 @@
     {
         private readonly IActivityService activityService;
         private readonly IActivityDataService activityDataService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseDataService courseDataService;
-        private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
             IActivityDataService activityDataService,
-            IJobGroupsDataService jobGroupsDataService,
-            IUserDataService userDataService,
-            ICourseDataService courseDataService,
-            ICourseCategoriesDataService courseCategoriesDataService
+            IUserDataService userDataService
         )
         {
             this.activityService = activityService;
             this.activityDataService = activityDataService;
-            this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
         }
 
@@ -88,15 +82,11 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = Request.Cookies.ParseReportsFilterCookie();
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var courseCategories = courseCategoriesDataService
-                .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
-            var courses = courseDataService
-                .GetCoursesAtCentreForCategoryId(centreId, filterData.CourseCategoryId)
-                .OrderBy(c => c.CompositeName)
-                .Select(c => (c.CustomisationId, c.CompositeName));
+            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+
+
+            var (jobGroups, courseCategories, courses) =
+                activityService.GetFilterOptions(centreId, filterData.CourseCategoryId);
 
             var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
 
