@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,18 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.logger = logger;
         }
 
-        public IActionResult Index()
+        [Route("/{application}/NotificationPreferences")]
+        [Route("/NotificationPreferences", Order = 1)]
+        public IActionResult Index(ApplicationType? application)
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Login");
+            }
+
+            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
+            {
+                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
             }
 
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
@@ -39,16 +47,22 @@ namespace DigitalLearningSolutions.Web.Controllers
             var delegateNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications);
+            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application);
 
             return View(model);
         }
 
         [Authorize]
         [HttpGet]
-        [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult UpdateNotificationPreferences(UserType? userType)
+        [Route("/{application}/NotificationPreferences/Edit/{userType}")]
+        [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
+        public IActionResult UpdateNotificationPreferences(UserType? userType, ApplicationType? application)
         {
+            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
+            {
+                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
+            }
+
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
@@ -61,15 +75,20 @@ namespace DigitalLearningSolutions.Web.Controllers
                     userReference.Id
                 );
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!);
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application);
 
             return View(model);
         }
 
         [Authorize]
         [HttpPost]
-        [Route("/NotificationPreferences/Edit/{userType}")]
-        public IActionResult SaveNotificationPreferences(UserType? userType, IEnumerable<int> notificationIds)
+        [Route("/{application}/NotificationPreferences/Edit/{userType}")]
+        [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
+        public IActionResult SaveNotificationPreferences(
+            UserType? userType,
+            IEnumerable<int> notificationIds,
+            ApplicationType? application
+        )
         {
             var userReference = GetUserReference(userType);
             if (userReference == null)
@@ -83,7 +102,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 notificationIds
             );
 
-            return RedirectToAction("Index", "NotificationPreferences");
+            return RedirectToAction("Index", "NotificationPreferences", new { application });
         }
 
         private UserReference? GetUserReference(UserType? userType)

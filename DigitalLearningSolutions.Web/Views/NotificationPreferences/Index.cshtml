@@ -1,24 +1,22 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-
 @model NotificationPreferencesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/notificationPreferences.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Notification Preferences";
+  var application = Model.Application ?? ApplicationType.Main;
+  ViewData["Application"] = application.ApplicationName;
+  ViewData["HeaderPath"] = application.HeaderPath;
+  ViewData["HeaderPathName"] = application.HeaderPathName;
+  var aspAllRouteData = new Dictionary<string, string?> {
+    { "application", Model.Application }
+  };
 }
 
-@if (User.IsDelegateOnlyAccount())
-{
-  ViewData["Application"] = "Learning Portal";
-  @section NavMenuItems {
-    <partial name="../LearningPortal/Shared/_NavMenuItems" />
-  }
-} else {
-  @section NavMenuItems {
-    <partial name="_NavMenuItems" />
-  }
+@section NavMenuItems {
+  <partial name="_AutoNavMenuItems" model="application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -26,17 +24,15 @@
     <h1 class="nhsuk-heading-xl">Notification preferences</h1>
 
     <div class="nhsuk-u-margin-bottom-7">
-      @if (Model.AdminNotifications.Notifications.Any())
-      {
+      @if (Model.AdminNotifications.Notifications.Any()) {
         <partial name="_UserNotificationPreferences" model="Model.AdminNotifications" />
       }
 
-      @if (Model.DelegateNotifications.Notifications.Any())
-      {
+      @if (Model.DelegateNotifications.Notifications.Any()) {
         <partial name="_UserNotificationPreferences" model="Model.DelegateNotifications" />
       }
     </div>
 
-    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" />
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" asp-all-route-data="@aspAllRouteData" />
   </div>
 </div>

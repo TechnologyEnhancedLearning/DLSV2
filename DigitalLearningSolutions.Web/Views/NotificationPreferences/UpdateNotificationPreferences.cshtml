@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model UpdateNotificationPreferencesViewModel
 
@@ -6,24 +6,28 @@
 
 @{
   ViewData["Title"] = "Update Notification Preferences";
+  var application = Model.Application ?? ApplicationType.Main;
+  ViewData["Application"] = application.ApplicationName;
+  ViewData["HeaderPath"] = application.HeaderPath;
+  ViewData["HeaderPathName"] = application.HeaderPathName;
+  var aspAllRouteData = new Dictionary<string, string?> {
+    { "application", Model.Application }
+  };
 }
 
-@if (User.IsDelegateOnlyAccount()) {
-  ViewData["Application"] = "Learning Portal";
-  @section NavMenuItems {
-    <partial name="../LearningPortal/Shared/_NavMenuItems" />
-  }
-} else {
-  @section NavMenuItems {
-    <partial name="_NavMenuItems" />
-  }
+@section NavMenuItems {
+  <partial name="_AutoNavMenuItems" model="application" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Update notification preferences</h1>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-controller="NotificationPreferences" asp-action="SaveNotificationPreferences" asp-route-userType="@Model.UserType">
+    <form class="nhsuk-u-margin-bottom-3" method="post"
+          asp-controller="NotificationPreferences"
+          asp-action="SaveNotificationPreferences"
+          asp-route-userType="@Model.UserType"
+          asp-route-application="@Model.Application">
       <div class="nhsuk-form-group">
         <div class="nhsuk-fieldset" aria-describedby="notification-hint">
           <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
@@ -52,6 +56,6 @@
       </div>
     </form>
 
-    <vc:cancel-link asp-controller="NotificationPreferences" asp-action="Index" />
+    <vc:cancel-link asp-controller="NotificationPreferences" asp-action="Index" asp-all-route-data="@aspAllRouteData" />
   </div>
 </div>
