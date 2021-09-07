@@ -14,6 +14,7 @@
         [EmailAddress(ErrorMessage = "Enter a supervisor email address in the correct format, like name@example.com")]
         [NoWhitespace("Supervisor email address must not contain any whitespace characters")]
         public string SupervisorEmail { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Please choose a supervisor role")]
         public int SelfAssessmentSupervisorRoleId { get; set; }
         public IEnumerable<SelfAssessmentSupervisorRole>? SelfAssessmentSupervisorRoles { get; set; }
     }

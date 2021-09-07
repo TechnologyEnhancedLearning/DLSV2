@@ -324,7 +324,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                 return;
             }
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(selfAssessmentID,(int)supervisorDelegate.ID);
-            string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} role request - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
             if (supervisorDelegate.SupervisorAdminID == null)
@@ -344,6 +344,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                               To supervise this activity, please visit {dlsUrlBuilder.Uri.ToString()} (sign in using your existing DLS credentials).";
                 builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p>You have been identified by <a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> as their {delegateSelfAssessment.SupervisorRoleTitle} for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p>You are already registered as a delegate at the supervisor's DLS centre. <a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to supervise this activity (sign in using your existing DLS credentials).</p>/body>";
             }
+            supervisorService.UpdateNotificationSent(supervisorDelegateId);
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
