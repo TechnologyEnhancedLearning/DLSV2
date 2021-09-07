@@ -8,6 +8,7 @@
 
     public class FilteringHelperTests
     {
+        private const string FilterByAlphaBravoCharlie = "Group|Name|Alpha╡Group|Name|Bravo╡Group|Name|Charlie";
         private static readonly SortableItem ItemA1 = new SortableItem("a", 1);
         private static readonly SortableItem ItemA3 = new SortableItem("a", 3);
         private static readonly SortableItem ItemB2 = new SortableItem("b", 2);
@@ -93,14 +94,17 @@
             result.Should().Be("Test");
         }
 
-        [Test]
-        public void AddNewFilterToFilterBy_doesnt_append_with_new_filter_already_in_filterBy()
+        [TestCase("Test", "Test")]
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Alpha")]
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Bravo")]
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Charlie")]
+        public void AddNewFilterToFilterBy_doesnt_append_with_new_filter_already_in_filterBy(string filterBy, string newFilterValue)
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy("Test", "Test");
+            var result = FilteringHelper.AddNewFilterToFilterBy(filterBy, newFilterValue);
 
             // Then
-            result.Should().Be("Test");
+            result.Should().Be(filterBy);
         }
 
         [Test]
@@ -121,6 +125,24 @@
 
             // Then
             result.Should().Be("Test╡Filter");
+        }
+
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|A")]
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|B")]
+        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|C")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Alpha")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Bravo")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Charlie")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|A")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|B")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|C")]
+        public void AddNewFilterToFilterBy_appends_new_filter_even_if_substring(string filterBy, string newFilterValue)
+        {
+            // When
+            var result = FilteringHelper.AddNewFilterToFilterBy(filterBy, newFilterValue);
+
+            // Then
+            result.Should().Be($"{filterBy}╡{newFilterValue}");
         }
     }
 }
