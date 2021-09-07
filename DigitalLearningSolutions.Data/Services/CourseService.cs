@@ -25,13 +25,13 @@
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
         {
-            var allCourses = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId);
+            var allCourses = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId);
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId)
         {
-            var allCourses = courseDataService.GetCourseStatisticsAtCentreForCategoryId(centreId, categoryId);
+            var allCourses = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId);
             return allCourses.Where(c => c.CentreId == centreId);
         }
 

@@ -2,6 +2,8 @@ namespace DigitalLearningSolutions.Data.Enums
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
 
@@ -98,5 +100,32 @@ namespace DigitalLearningSolutions.Data.Enums
         }
 
         public int CompareTo(object other) => Id.CompareTo(((Enumeration)other).Id);
+    }
+
+    public class EnumerationTypeConverter<T> : TypeConverter where T : Enumeration
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return value is string casted
+                ? Enumeration.FromName<T>(casted)
+                : base.ConvertFrom(context, culture, value);
+        }
+
+        public override object ConvertTo(
+            ITypeDescriptorContext context,
+            CultureInfo culture,
+            object value,
+            Type destinationType
+        )
+        {
+            return destinationType == typeof(string) && value is Enumeration casted
+                ? casted.Name
+                : base.ConvertTo(context, culture, value, destinationType);
+        }
     }
 }

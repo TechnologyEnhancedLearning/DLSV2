@@ -117,7 +117,11 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, hash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                    emailAddress,
+                    hash,
+                    ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                );
 
             // Then
             hashIsValid.Should().BeFalse();
@@ -151,7 +155,11 @@
 
             // When
             var hashIsValid =
-                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(emailAddress, resetHash, ResetPasswordHelpers.ResetPasswordHashExpiryTime);
+                await passwordResetService.EmailAndResetPasswordHashAreValidAsync(
+                    emailAddress,
+                    resetHash,
+                    ResetPasswordHelpers.ResetPasswordHashExpiryTime
+                );
 
             // Then
             hashIsValid.Should().BeTrue();
@@ -199,8 +207,8 @@
                 .With(user => user.EmailAddress = emailAddress)
                 .Build();
 
-            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
-                .Returns((null, new List<DelegateUser>{ delegateUser }));
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
 
             // When
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
@@ -216,6 +224,73 @@
                                     e.Bcc.IsNullOrEmpty() &&
                                     e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
                             )
+                        )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            var emailAddress = "recipient@example.com";
+            var addedByProcess = "some process";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .Build();
+
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
+
+            // When
+            passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                emailAddress,
+                "example.com",
+                deliveryDate,
+                addedByProcess
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.ScheduleEmail(
+                            A<Email>.That.Matches(
+                                e =>
+                                    e.To[0] == emailAddress &&
+                                    e.Cc.IsNullOrEmpty() &&
+                                    e.Bcc.IsNullOrEmpty() &&
+                                    e.Subject == "Welcome to Digital Learning Solutions - Verify your Registration"
+                            ),
+                            addedByProcess,
+                            deliveryDate
+                        )
+                )
+                .MustHaveHappened();
+        }
+
+        public void SendWelcomeEmailsToDelegates_schedules_emails_to_delegates()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            var delegateUsers = Builder<DelegateUser>.CreateListOfSize(3)
+                .All().With(user => user.EmailAddress = "recipient@example.com")
+                .Build();
+
+            // When
+            passwordResetService.SendWelcomeEmailsToDelegates(
+                delegateUsers,
+                deliveryDate,
+                "example.com"
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        emailService.ScheduleEmails(
+                            A<IEnumerable<Email>>.That.Matches(list => list.Count() == delegateUsers.Count()),
+                            "SendWelcomeEmail_Refactor",
+                            deliveryDate
                         )
                 )
                 .MustHaveHappened();
