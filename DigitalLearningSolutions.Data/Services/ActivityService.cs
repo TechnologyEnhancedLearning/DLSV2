@@ -91,7 +91,7 @@
                 .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
             var courses = courseDataService
-                .GetCoursesAtCentreForCategoryId(centreId, courseCategoryId)
+                .GetCentrallyManagedAndCentreCourses(centreId, courseCategoryId)
                 .OrderBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseName));
 

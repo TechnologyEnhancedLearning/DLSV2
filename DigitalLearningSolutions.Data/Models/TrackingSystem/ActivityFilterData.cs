@@ -8,7 +8,7 @@
     {
         public ActivityFilterData(
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId,
@@ -36,7 +36,7 @@
 
             return new ActivityFilterData(
                 DateTime.UtcNow.Date.AddYears(-1),
-                DateTime.UtcNow,
+                null,
                 null,
                 categoryIdFilter,
                 null,
