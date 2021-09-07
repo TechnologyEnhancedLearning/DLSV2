@@ -64,7 +64,7 @@
             // When
             var resultString = NewlineSeparatedStringListHelper.RemoveEmptyOptions(ItemListWithWhitespaceItems);
 
-            //Then
+            // Then
             resultString.Should().BeEquivalentTo(ItemList);
         }
     }

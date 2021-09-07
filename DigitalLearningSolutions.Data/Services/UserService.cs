@@ -202,9 +202,7 @@ namespace DigitalLearningSolutions.Data.Services
                 ? new List<AdminUser> { adminUser }
                 : new List<AdminUser>();
 
-            var temp = userVerificationService.VerifyUsers(password, adminUsers, delegateUsers);
-
-            return temp;
+            return userVerificationService.VerifyUsers(password, adminUsers, delegateUsers);
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)

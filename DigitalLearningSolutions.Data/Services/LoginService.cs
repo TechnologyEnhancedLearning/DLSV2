@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -40,24 +40,24 @@
 
             var verifiedAdminUser = verifiedAdminUsers.SingleOrDefault();
 
-            if (!EmailIsTheSameOnAllAccounts(verifiedAdminUser, verifiedDelegateUsers))
+            if (MultipleEmailsUsedAcrossAccounts(verifiedAdminUser, verifiedDelegateUsers))
             {
-                throw new Exception("Not all accounts have the same email");
+                throw new LoginWithMultipleEmailsException("Not all accounts have the same email");
             }
 
             var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUsers.Any() && verifiedAdminUser == null;
-            var doWeKnowWhichAdminAccountToRecordFailureAgainst = unverifiedAdminUsers.Count == 1;
+            var adminAccountToRecordFailureAgainstIsKnown = unverifiedAdminUsers.Count == 1;
 
-            var adminAccountIsAlreadyLocked = doWeKnowWhichAdminAccountToRecordFailureAgainst &&
+            var adminAccountIsAlreadyLocked = adminAccountToRecordFailureAgainstIsKnown &&
                                               unverifiedAdminUsers.Single().IsLocked;
-            var adminAccountHasJustBecomeLocked = doWeKnowWhichAdminAccountToRecordFailureAgainst &&
+            var adminAccountHasJustBecomeLocked = adminAccountToRecordFailureAgainstIsKnown &&
                                                   unverifiedAdminUsers.Single().FailedLoginCount == 4 &&
                                                   adminAccountVerificationAttemptedAndFailed;
 
             var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
             var shouldIncreaseFailedLoginCount =
-                doWeKnowWhichAdminAccountToRecordFailureAgainst && adminAccountVerificationAttemptedAndFailed &&
+                adminAccountToRecordFailureAgainstIsKnown && adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
 
             if (shouldIncreaseFailedLoginCount)
@@ -139,11 +139,9 @@
             AdminUser? verifiedAdminUser
         )
         {
-            var delegateWithEmail = approvedVerifiedDelegates.FirstOrDefault(du => du.EmailAddress != null);
-
             var verifiedLinkedAdmin = verifiedAdminUser ??
-                                      userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUser(
-                                          delegateWithEmail,
+                                      userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                                          approvedVerifiedDelegates,
                                           password
                                       );
             var verifiedLinkedDelegates =
@@ -151,23 +149,18 @@
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
         }
 
-        private static bool EmailIsTheSameOnAllAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            if (adminUser == null && delegateUsers.Count == 0)
-            {
-                return true;
-            }
-
-            var adminEmail = adminUser?.EmailAddress;
-            var delegateEmails = delegateUsers.Where(du => du.EmailAddress != null).Select(du => du.EmailAddress)
+            var delegateEmails = delegateUsers.Select(du => du.EmailAddress)
                 .ToList();
-            if (adminEmail != null)
+
+            if (adminUser != null)
             {
-                delegateEmails.Add(adminEmail);
+                delegateEmails.Add(adminUser.EmailAddress);
             }
 
             var uniqueEmails = delegateEmails.Distinct().ToList();
-            return uniqueEmails.Count == 1;
+            return uniqueEmails.Count > 1;
         }
 
         private static bool NoAccounts(List<AdminUser> adminUsers, List<DelegateUser> delegateUsers)

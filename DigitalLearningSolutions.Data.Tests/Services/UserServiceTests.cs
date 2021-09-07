@@ -31,18 +31,18 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetAdminUsersByUsername(A<string>._))
                 .Returns(new List<AdminUser> { expectedAdminUser });
             A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser> { expectedDelegateUsers });
+                .Returns(new List<DelegateUser> { expectedDelegateUser });
 
-            //When
-            var (returnedAdminUser, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
+            // When
+            var (returnedAdminUsers, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
 
             // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUsers);
+            returnedAdminUsers.FirstOrDefault().Should().BeEquivalentTo(expectedAdminUser);
+            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
@@ -54,7 +54,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, 2);
 
             // Then
@@ -69,7 +69,7 @@
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, null);
 
             // Then
@@ -84,7 +84,7 @@
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
 
             // Then
