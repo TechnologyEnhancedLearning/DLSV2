@@ -42,7 +42,7 @@
                   select-list-options="@ViewBag.CoursePromptNameOptions" />
 
   <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction">Add</button>
+    <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
   </div>
 
   <input type="hidden" asp-for="OptionsString" />
