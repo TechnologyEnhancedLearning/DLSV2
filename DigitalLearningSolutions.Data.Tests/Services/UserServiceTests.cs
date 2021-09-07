@@ -543,5 +543,37 @@
             // Then
             A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount)).MustHaveHappened();
         }
+
+        [Test]
+        public void GetDelegateUserCardsForWelcomeEmail_returns_correctly_filtered_list_of_delegates()
+        {
+            // Given
+            var testDelegates = new List<DelegateUserCard>
+            {
+                new DelegateUserCard
+                    { AliasId = "include", Approved = true, SelfReg = false, Password = null, EmailAddress = "email" },
+                new DelegateUserCard
+                    { AliasId = "include", Approved = true, SelfReg = false, Password = "", EmailAddress = "email" },
+                new DelegateUserCard
+                    { AliasId = "skip", Approved = false, SelfReg = false, Password = null, EmailAddress = "email" },
+                new DelegateUserCard
+                    { AliasId = "skip", Approved = true, SelfReg = true, Password = null, EmailAddress = "email" },
+                new DelegateUserCard
+                    { AliasId = "skip", Approved = true, SelfReg = false, Password = "pw", EmailAddress = "email" },
+                new DelegateUserCard
+                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = "" },
+                new DelegateUserCard
+                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null }
+            };
+            A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(101)).Returns(testDelegates);
+
+            // When
+            var result = userService.GetDelegateUserCardsForWelcomeEmail(101).ToList();
+
+            // Then
+            result.Should().HaveCount(2);
+            result[0].AliasId.Should().Be("include");
+            result[1].AliasId.Should().Be("include");
+        }
     }
 }

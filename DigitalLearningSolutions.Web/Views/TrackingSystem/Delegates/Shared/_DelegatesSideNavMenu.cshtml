@@ -19,8 +19,9 @@
     link-text="Delegate groups"
     is-current-page="Model == DelegatePage.DelegateGroups" />
 
-  <vc:side-menu-link-with-href
-    href="@Configuration["CurrentSystemBaseUrl"]/tracking/coursedelegates"
+  <vc:side-menu-link
+    asp-action="Index"
+    asp-controller="CourseDelegates"
     link-text="Course delegates"
     is-current-page="Model == DelegatePage.CourseDelegates" />
 

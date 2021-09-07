@@ -31,7 +31,7 @@
   {
 <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
   <tr role="row" class="nhsuk-table__row first-row">
-    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+    <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
       <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
     </td>
     <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />

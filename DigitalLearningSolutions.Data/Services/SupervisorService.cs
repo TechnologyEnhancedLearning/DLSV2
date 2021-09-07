@@ -25,17 +25,19 @@
         RoleProfile GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
         SelfAssessmentSupervisorRole GetSupervisorRoleById(int id);
+        DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
+        void UpdateNotificationSent(int supervisorDelegateId);
         //INSERT DATA
-        int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId);
+        int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
+        int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         //DELETE DATA
-
-
+        bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -102,11 +104,12 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                 $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
                     WHERE (sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)
-                    ORDER BY c.LastName, COALESCE(c.FirstName, sd.DelegateEmail)", new {adminId}
+                    ORDER BY c.LastName, COALESCE(c.FirstName, sd.DelegateEmail)", new { adminId }
                 );
         }
-        public int AddSuperviseDelegate(int supervisorAdminId, string delegateEmail, string supervisorEmail, int centreId)
+        public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId)
         {
+            var addedByDelegate = (delegateId != null);
             if (delegateEmail.Length == 0 | supervisorEmail.Length == 0)
             {
                 logger.LogWarning(
@@ -118,30 +121,35 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    SupervisorDelegates
-                  WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
-               new { supervisorAdminId, delegateEmail });
+                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS ID",
+               new { supervisorEmail, delegateEmail });
             if (existingId > 0)
             {
                 var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail) AND (Removed IS NOT NULL)", new { supervisorAdminId, delegateEmail });
-                if (numberOfAffectedRows > 0)
-                {
-                    return existingId;
-                }
-                else
-                {
-                    return -2;
-                }
+                return existingId;
             }
             else
             {
-                var delegateId = (int?)connection.ExecuteScalar(
-                    @"SELECT CandidateID FROM Candidates WHERE EmailAddress = @delegateEmail AND Active = 1 AND CentreID = @centreId", new { delegateEmail, centreId }
+                if (delegateId == null)
+                {
+                    delegateId = (int?)connection.ExecuteScalar(
+                                       @"SELECT CandidateID FROM Candidates WHERE EmailAddress = @delegateEmail AND Active = 1 AND CentreID = @centreId", new { delegateEmail, centreId }
+                                       );
+                }
+                if (supervisorAdminId == null)
+                {
+                    supervisorAdminId = (int?)connection.ExecuteScalar(
+                    @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
                     );
-
+                }
+                if (supervisorAdminId != null)
+                {
+                    connection.Execute("@UPDATE AdminUsers SET Supervisor = 1 WHERE Admin ID = @supervisorAdminId AND Supervisor = 0");
+                }
                 var numberOfAffectedRows = connection.Execute(
-         @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail)
-                    VALUES (@supervisorAdminId, @delegateEmail, @delegateId, @supervisorEmail)",
-        new { supervisorAdminId, delegateEmail, delegateId, supervisorEmail });
+         @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
+                    VALUES (@supervisorAdminId, @delegateEmail, @delegateId, @supervisorEmail, @addedByDelegate)",
+        new { supervisorAdminId, delegateEmail, delegateId, supervisorEmail, addedByDelegate });
                 if (numberOfAffectedRows < 1)
                 {
                     logger.LogWarning(
@@ -153,8 +161,8 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                  @"SELECT COALESCE
                  ((SELECT ID
                   FROM    SupervisorDelegates
-                  WHERE (SupervisorAdminID = @supervisorAdminId) AND (DelegateEmail = @delegateEmail)), 0) AS AdminID",
-               new { supervisorAdminId, delegateEmail });
+                  WHERE (SupervisorEmail = @supervisorEmail) AND (DelegateEmail = @delegateEmail)), 0) AS AdminID",
+               new { supervisorEmail, delegateEmail });
                 return existingId;
             }
         }
@@ -220,6 +228,23 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                  WHERE (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId)", new { supervisorDelegateId }
                 );
         }
+        public DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId)
+        {
+            return connection.Query<DelegateSelfAssessment>(
+               @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
+                 (SELECT COUNT(*) AS Expr1
+                 FROM    CandidateAssessmentSupervisorVerifications AS casv
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 (SELECT COUNT(*) AS Expr1
+                    FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
+                    WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
+                FROM CandidateAssessmentSupervisors AS cas INNER JOIN
+                         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID 
+                 LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                WHERE  (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId) AND (sa.ID = @selfAssessmentId)", new { selfAssessmentId, supervisorDelegateId }
+               ).FirstOrDefault();
+        }
         public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
         {
             return connection.Query<DelegateSelfAssessment>(
@@ -280,9 +305,9 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                          CandidateAssessmentSupervisors AS cas ON SelfAssessmentResultSupervisorVerifications.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
                          SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID
                     WHERE SelfAssessmentResultSupervisorVerifications.ID = @selfAssessmentResultSupervisorVerificationId AND sd.SupervisorAdminID = @adminId  AND (Comments <> @comments OR SignedOff <> @signedOff)",
-                new {selfAssessmentResultSupervisorVerificationId, comments, signedOff, adminId}
+                new { selfAssessmentResultSupervisorVerificationId, comments, signedOff, adminId }
                 );
-            if(numberOfAffectedRows > 0)
+            if (numberOfAffectedRows > 0)
             {
                 return true;
             }
@@ -344,7 +369,7 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         public IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
-               $@"SELECT ID, SelfAssessmentID, RoleName, SelfAssessmentReview, ResultsReview
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
                   WHERE (SelfAssessmentID = @selfAssessmentId)
                   ORDER BY RoleName", new { selfAssessmentId }
@@ -394,23 +419,27 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                     );
                     return -1;
                 }
-                existingId = (int)connection.ExecuteScalar(
+                existingId = InsertCandidateAssessmentSupervisor(delegateId, supervisorDelegateId, selfAssessmentId, selfAssessmentSupervisorRoleId);
+                return existingId;
+            }
+        }
+        public int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId)
+        {
+            int candidateAssessmentId = (int)connection.ExecuteScalar(
                  @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                    WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS CandidateAssessmentID",
                new { selfAssessmentId, delegateId });
-                if (existingId > 0)
-                {
-                    numberOfAffectedRows = connection.Execute(
-                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                            VALUES (@existingId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { existingId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
-                        );
-                }
-                return existingId;
+            if (candidateAssessmentId > 0)
+            {
+                int numberOfAffectedRows = connection.Execute(
+                    @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
+                            VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)", new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                    );
             }
+            return candidateAssessmentId;
         }
-
         public bool RemoveCandidateAssessment(int candidateAssessmentId)
         {
             var numberOfAffectedRows = connection.Execute(
@@ -425,6 +454,39 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 return false;
             }
             return true;
+        }
+
+        public bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId)
+        {
+            var supervisorDelegateId = (int)connection.ExecuteScalar(
+                 @"SELECT SupervisorDelegateId
+                  FROM    CandidateAssessmentSupervisors
+                   WHERE (ID = @candidateAssessmentSupervisorId)",
+               new { candidateAssessmentSupervisorId });
+            var numberOfAffectedRows = connection.Execute(
+         @"DELETE CandidateAssessmentSupervisors 
+            WHERE ID = @candidateAssessmentSupervisorId",
+        new { candidateAssessmentSupervisorId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing Candidate Assessment Supervisor as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                );
+                return false;
+            }
+            connection.Execute(
+         @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
+            WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
+        new { supervisorDelegateId });
+            return true;
+        }
+
+        public void UpdateNotificationSent(int supervisorDelegateId)
+        {
+            connection.Execute(
+        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+            WHERE ID = @supervisorDelegateId",
+       new { supervisorDelegateId });
         }
     }
 }

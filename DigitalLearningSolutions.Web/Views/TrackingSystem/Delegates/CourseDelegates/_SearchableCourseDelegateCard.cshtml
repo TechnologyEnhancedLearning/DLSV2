@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@model SearchableCourseDelegateViewModel
+
+<div class="searchable-element nhsuk-panel" id="@Model.DelegateId-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.DelegateId-name" name="name">
+        @Model.TitleName
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Delegate ID
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CandidateNumber
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Last updated
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.LastUpdated
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Enrolled
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Enrolled
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Complete by
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Completed date
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.Completed" />
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Removed date
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Pass rate
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.PassRate%
+          </dd>
+        </div>
+      </dl>
+
+      <a class="nhsuk-button expander-card__button" role="button">
+        View progress
+      </a>
+      @if (Model.Locked) {
+        <a class="nhsuk-button nhsuk-button--secondary expander-card__button" role="button">
+          Unlock progress
+        </a>
+      }
+      <a class="nhsuk-button delete-button expander-card__button" role="button">
+        Remove from course
+      </a>
+    </div>
+  </details>
+</div>

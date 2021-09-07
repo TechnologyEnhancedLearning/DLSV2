@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
@@ -142,6 +143,7 @@
             return RedirectToAction("Summary");
         }
 
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
         [HttpGet]
         public IActionResult Summary()
@@ -152,6 +154,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [ServiceFilter(typeof(RedirectEmptySessionData<RegistrationData>))]
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)

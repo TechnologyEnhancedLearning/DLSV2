@@ -83,7 +83,7 @@
         }
         private void AddSupervisorDelegateAndReturnId(int adminId, string delegateEmail, string supervisorEmail, int centreId)
         {
-            var supervisorDelegateId = supervisorService.AddSuperviseDelegate(adminId, delegateEmail, supervisorEmail, centreId);
+            var supervisorDelegateId = supervisorService.AddSuperviseDelegate(adminId, null, delegateEmail, supervisorEmail, centreId);
             if (supervisorDelegateId > 0)
             {
                 frameworkNotificationService.SendSupervisorDelegateInvite(supervisorDelegateId);
