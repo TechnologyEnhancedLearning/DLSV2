@@ -58,9 +58,9 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             }
         }
 
-        public static implicit operator string(ApplicationType applicationType)
+        public static implicit operator string?(ApplicationType? applicationType)
         {
-            return applicationType.Name;
+            return applicationType?.Name;
         }
     }
 }

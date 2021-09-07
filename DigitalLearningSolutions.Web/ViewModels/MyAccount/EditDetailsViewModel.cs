@@ -3,9 +3,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Http;
 
     public class EditDetailsViewModel
@@ -15,7 +15,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public EditDetailsViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            List<(int id, string name)> jobGroups)
+            List<(int id, string name)> jobGroups,
+            ApplicationType? application
+        )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
@@ -32,6 +34,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer4 = delegateUser?.Answer4;
             Answer5 = delegateUser?.Answer5;
             Answer6 = delegateUser?.Answer6;
+
+            Application = application;
         }
 
         [Required(ErrorMessage = "Enter your first name")]
@@ -54,7 +58,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public byte[]? ProfileImage { get; set; }
 
-        [AllowedExtensions(new []{".png",".tiff",".jpg",".jpeg",".bmp",".gif"})]
+        [AllowedExtensions(new[] { ".png", ".tiff", ".jpg", ".jpeg", ".bmp", ".gif" })]
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
@@ -72,5 +76,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
+
+        public ApplicationType? Application { get; set; }
     }
 }

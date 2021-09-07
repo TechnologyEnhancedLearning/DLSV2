@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model EditDetailsViewModel
@@ -8,18 +8,17 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
+  var application = Model.Application ?? ApplicationType.Main;
+  ViewData["Application"] = application.ApplicationName;
+  ViewData["HeaderPath"] = application.HeaderPath;
+  ViewData["HeaderPathName"] = application.HeaderPathName;
+  var aspAllRouteData = new Dictionary<string, string?>() {
+    { "application", Model.Application }
+  };
 }
 
-@if (User.IsDelegateOnlyAccount()) {
-  ViewData["Application"] = "Learning Portal";
-
-  @section NavMenuItems {
-    <partial name="../LearningPortal/Shared/_NavMenuItems" />
-  }
-} else {
-  @section NavMenuItems {
-    <partial name="_NavMenuItems" />
-  }
+@section NavMenuItems {
+  <partial name="_AutoNavMenuItems" model="application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -32,7 +31,7 @@
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" enctype="multipart/form-data">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-application="@Model.Application" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>
@@ -147,6 +146,6 @@
 </form>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" />
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@aspAllRouteData" />
   </div>
 </div>

@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -46,7 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         {
             if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
             {
-                return RedirectToAction("Index", new { applicationType = ApplicationType.LearningPortal });
+                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
             }
 
             var userAdminId = User.GetAdminId();
@@ -66,11 +66,16 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         [NoCaching]
         [HttpGet("EditDetails")]
-        public IActionResult EditDetails()
+        public IActionResult EditDetails(ApplicationType? application)
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Login");
+            }
+
+            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
+            {
+                return RedirectToAction("EditDetails", new { application = ApplicationType.LearningPortal });
             }
 
             var userAdminId = User.GetAdminId();
@@ -82,17 +87,18 @@ namespace DigitalLearningSolutions.Web.Controllers
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
 
-            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups);
+            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application);
 
             return View(model);
         }
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(EditDetailsViewModel model, string action)
+        public IActionResult EditDetails(EditDetailsViewModel model, string action, ApplicationType? application)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
             ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(model);
+            model.Application = application;
             return action switch
             {
                 "save" => EditDetailsPostSave(model),
@@ -147,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { application = model.Application });
         }
 
         private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)

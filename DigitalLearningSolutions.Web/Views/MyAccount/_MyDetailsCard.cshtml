@@ -56,7 +56,7 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" role="button">
+      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-application="@Model.Application" role="button">
         Edit details
       </a>
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ChangePassword" asp-action="Index" role="button">
