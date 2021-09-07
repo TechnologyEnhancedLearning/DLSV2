@@ -31,13 +31,13 @@
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
+        void UpdateNotificationSent(int supervisorDelegateId);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
-
     }
     public class SupervisorService : ISupervisorService
     {
@@ -477,8 +477,16 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             connection.Execute(
          @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
             WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
-        new { candidateAssessmentSupervisorId });
+        new { supervisorDelegateId });
             return true;
+        }
+
+        public void UpdateNotificationSent(int supervisorDelegateId)
+        {
+            connection.Execute(
+        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+            WHERE ID = @supervisorDelegateId",
+       new { supervisorDelegateId });
         }
     }
 }

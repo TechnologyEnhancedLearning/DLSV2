@@ -369,5 +369,10 @@
             supervisorService.RemoveCandidateAssessmentSupervisor(candidateAssessmentSupervisorId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+        public IActionResult SendSupervisorReminder(int selfAssessmentId, int supervisorDelegateId)
+        {
+            frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, selfAssessmentId);
+            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
+        }
     }
 }

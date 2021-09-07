@@ -43,10 +43,13 @@
             }
             @if (supervisor.SupervisorAdminID == null)
             {
-              <a asp-action="SendSupervisorReminder" asp-route-supervisorDelegateId="@supervisor.ID">Send reminder</a>
-            }
+              @if (supervisor.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+              {
+                <a asp-action="SendSupervisorReminder" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Send reminder</a>
+                }
+              }
 
-          </td>
+            </td>
         </tr>
       }
     </tbody>
