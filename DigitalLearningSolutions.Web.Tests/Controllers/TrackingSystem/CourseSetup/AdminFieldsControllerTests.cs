@@ -222,21 +222,16 @@
         public void AddAdminField_save_calls_service_and_redirects_to_index()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1, 1, "Test");
+            var model = new AddAdminFieldViewModel(100, 1, "Test");
             const string action = "save";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
 
             A.CallTo(
-                () => courseAdminFieldsService.GetNextPromptNumber(
-                    A<CourseAdminFields>._
-                )
-            ).Returns(1);
-
-            A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
-                    1,
-                    1,
+                    100,
+                    101,
+                    0,
                     1,
                     "Test"
                 )
@@ -249,15 +244,10 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => courseAdminFieldsService.GetNextPromptNumber(
-                        A<CourseAdminFields>._
-                    )
-                ).MustHaveHappened();
-
-                A.CallTo(
                     () => courseAdminFieldsService.AddCustomPromptToCourse(
-                        1,
-                        1,
+                        100,
+                        101,
+                        0,
                         1,
                         "Test"
                     )
@@ -271,42 +261,32 @@
         public void AddAdminField_calls_service_and_redirects_to_error_on_failure()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1, 1, "Test");
+            var model = new AddAdminFieldViewModel(100, 1, "Test");
             const string action = "save";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
 
             A.CallTo(
-                () => courseAdminFieldsService.GetNextPromptNumber(
-                    A<CourseAdminFields>._
-                )
-            ).Returns(1);
-
-            A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
-                    1,
-                    1,
+                    100,
+                    101,
+                    0,
                     1,
                     "Test"
                 )
             ).Returns(false);
 
             // When
-            var result = controller.AddAdminField(1, model, action);
+            var result = controller.AddAdminField(100, model, action);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => courseAdminFieldsService.GetNextPromptNumber(
-                        A<CourseAdminFields>._
-                    )
-                ).MustHaveHappened();
-
-                A.CallTo(
                     () => courseAdminFieldsService.AddCustomPromptToCourse(
-                        1,
-                        1,
+                        100,
+                        101,
+                        0,
                         1,
                         "Test"
                     )

@@ -329,17 +329,11 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                model.CustomisationId,
-                centreId,
-                categoryId.Value
-            );
-
-            var promptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
 
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 model.CustomisationId,
-                promptNumber,
+                centreId,
+                categoryId.Value,
                 model.CustomPromptId!.Value,
                 model.OptionsString
             ))

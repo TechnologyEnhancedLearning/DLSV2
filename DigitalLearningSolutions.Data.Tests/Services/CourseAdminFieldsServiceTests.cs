@@ -102,7 +102,7 @@
             result.Contains((1, promptName)).Should().BeTrue();
         }
 
-        [Test]
+        /*[Test]
         public void GetNextPromptNumber_returns_lowest_possible_prompt_number()
         {
             // Given
@@ -123,7 +123,7 @@
 
             // Then
             nextPromptNumber.Should().Be(3);
-        }
+        }*/
 
         [Test]
         public void AddCustomPromptToCourse_adds_prompt_to_course()
@@ -137,7 +137,7 @@
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 3, 3, null);
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 2, 0, 3, null);
 
             // Then
             A.CallTo
@@ -169,16 +169,10 @@
                 );
 
             // When
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                100,
-                101,
-                0
-            );
-            var nextPromptNumber = courseAdminFieldsService.GetNextPromptNumber(courseAdminFields);
-
             var result = courseAdminFieldsService.AddCustomPromptToCourse(
                 100,
-                nextPromptNumber,
+                101,
+                0,
                 3,
                 "Adding a fourth prompt"
             );

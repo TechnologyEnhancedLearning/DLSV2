@@ -26,12 +26,11 @@
 
         public bool AddCustomPromptToCourse(
             int customisationId,
-            int? promptNumber,
+            int centreId,
+            int categoryId,
             int promptId,
             string? options
         );
-
-        public int? GetNextPromptNumber(CourseAdminFields? courseAdminFields);
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
@@ -90,11 +89,20 @@
 
         public bool AddCustomPromptToCourse(
             int customisationId,
-            int? promptNumber,
+            int centreId,
+            int categoryId,
             int promptId,
             string? options
         )
         {
+            var courseAdminFields = GetCustomPromptsForCourse(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            var promptNumber = GetNextPromptNumber(courseAdminFields);
+
             if (promptNumber != null)
             {
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(
@@ -110,17 +118,6 @@
                 $"Admin field not added to customisation {customisationId}. The course already had 3 admin fields"
             );
             return false;
-        }
-
-        public int? GetNextPromptNumber(CourseAdminFields? courseAdminFields)
-        {
-            var existingPromptNumbers = courseAdminFields.AdminFields
-                .Select(c => c.CustomPromptNumber);
-
-            var promptNumbers = new List<int> { 1, 2, 3 };
-            var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
-            var nextPromptNumber = unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
-            return nextPromptNumber;
         }
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)
@@ -146,6 +143,17 @@
         public string GetPromptName(int customisationId, int promptNumber)
         {
             return courseAdminFieldsDataService.GetPromptName(customisationId, promptNumber);
+        }
+
+        private static int? GetNextPromptNumber(CourseAdminFields? courseAdminFields)
+        {
+            var existingPromptNumbers = courseAdminFields.AdminFields
+                .Select(c => c.CustomPromptNumber);
+
+            var promptNumbers = new List<int> { 1, 2, 3 };
+            var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
+            var nextPromptNumber = unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
+            return nextPromptNumber;
         }
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
