@@ -1,0 +1,123 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@using Microsoft.Extensions.Configuration
+@model EditFiltersViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit report filters";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var reportIntervalValue = (int)Model.ReportInterval;
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroupId), nameof(Model.CourseCategoryId), nameof(Model.CustomisationId), nameof(Model.StartDay), nameof(Model.StartMonth), nameof(Model.StartYear), nameof(Model.EndDay), nameof(Model.EndMonth), nameof(Model.EndYear), nameof(Model.ReportInterval) })" />
+    }
+    <h1 id="page-heading" class="nhsuk-heading-xl">Edit report filters</h1>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditFilters">
+
+      <vc:select-list asp-for="JobGroupId"
+                      label="Choose job group filter"
+                      value="@Model.JobGroupId.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="All"
+                      select-list-options="@Model.JobGroupOptions" />
+
+      @if (Model.CanFilterCourseCategories) {
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+            <div class="nhsuk-hint" id="contact-hint">
+              Choose whether to filter based on course or course category
+            </div>
+
+            <div class="nhsuk-radios nhsuk-radios--conditional">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="course-filter-type-1" name="course-filter-type" type="radio" value="course" aria-controls="course-filter-type-1" aria-expanded="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
+                  Course
+                </label>
+              </div>
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-2">
+
+                <vc:select-list asp-for="CustomisationId"
+                                label="Choose a course"
+                                value="@Model.CustomisationId.ToString()"
+                                hint-text=""
+                                deselectable="false"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option="All"
+                                select-list-options="@Model.CustomisationOptions" />
+
+              </div>
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="course-filter-type-2" name="course-filter-type" type="radio" value="course category" aria-controls="course-filter-type-2" aria-expanded="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
+                  Course category
+                </label>
+              </div>
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-1">
+                <vc:select-list asp-for="CourseCategoryId"
+                                label="Choose course category from the list below"
+                                value="@Model.CourseCategoryId.ToString()"
+                                hint-text=""
+                                deselectable="false"
+                                css-class="nhsuk-u-width-one-half"
+                                default-option="All"
+                                select-list-options="@Model.CourseCategoryOptions" />
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      } else {
+        <vc:select-list asp-for="CustomisationId"
+                        label="Choose a course filter"
+                        value="@Model.CustomisationId.ToString()"
+                        hint-text=""
+                        deselectable="false"
+                        css-class="nhsuk-u-width-one-half"
+                        default-option="All"
+                        select-list-options="@Model.CustomisationOptions" />
+      }
+
+      <vc:date-range-input id="date-range"
+                           label="Reporting date range"
+                           start-day-id="StartDay"
+                           start-month-id="StartMonth"
+                           start-year-id="StartYear"
+                           end-day-id="EndDay"
+                           end-month-id="EndMonth"
+                           end-year-id="EndYear"
+                           end-date-checkbox-id="NoEndDate"
+                           end-date-checkbox-label="No end date"
+                           css-class="date-range-css"
+                           hint-text="The reporting in your centre starts on @Model.DataStart.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
+                           end-date-checkbox-hint-text="Check this box to include all data between the start date and now."/>
+
+      <vc:select-list asp-for="ReportInterval"
+                      label="Report by"
+                      value="@reportIntervalValue.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option=""
+                      select-list-options="@Model.ReportIntervalOptions" />
+
+      <button class="nhsuk-button" type="submit" value="save">Apply filters</button>
+      <vc:cancel-link asp-controller="Reports" asp-action="Index" />
+    </form>
+  </div>
+</div>

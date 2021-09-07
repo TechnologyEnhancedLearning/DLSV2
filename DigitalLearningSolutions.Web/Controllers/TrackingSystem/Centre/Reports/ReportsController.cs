@@ -18,14 +18,24 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
+        private readonly IActivityDataService activityDataService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseDataService courseDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
-            IUserDataService userDataService
+            IActivityDataService activityDataService,
+            IJobGroupsDataService jobGroupsDataService,
+            IUserDataService userDataService,
+            ICourseDataService courseDataService,
+            ICourseCategoriesDataService courseCategoriesDataService
         )
         {
             this.activityService = activityService;
+            this.activityDataService = activityDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
             this.userDataService = userDataService;
         }
 
@@ -70,11 +80,35 @@
             );
         }
 
-        // [HttpGet]
-        // [Route("EditFilters")]
-        // public IActionResult EditFilters()
-        // {
-        //     return View();
-        // }
+        [HttpGet]
+        [Route("EditFilters")]
+        public IActionResult EditFilters()
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var filterData = Request.Cookies.ParseReportsFilterCookie();
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var courseCategories = courseCategoriesDataService
+                .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
+            var courses = courseDataService
+                .GetCoursesAtCentreForCategoryId(centreId, filterData.CourseCategoryId)
+                .OrderBy(c => c.CompositeName)
+                .Select(c => (c.CustomisationId, c.CompositeName));
+
+            var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
+
+            var model = new EditFiltersViewModel(
+                filterData,
+                adminUser.CategoryId,
+                jobGroups,
+                courseCategories,
+                courses,
+                dataStartDate
+            );
+            return View(model);
+        }
     }
 }

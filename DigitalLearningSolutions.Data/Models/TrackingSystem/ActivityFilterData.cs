@@ -27,7 +27,7 @@
         public int? CourseCategoryId { get; set; }
         public int? CustomisationId { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
 
         public static ActivityFilterData GetDefaultFilterData(AdminUser user)

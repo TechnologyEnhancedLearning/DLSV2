@@ -333,7 +333,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [Test]
         public void GetCourseNameAndApplication_returns_null_for_nonexistent_course()
         {
-
             // When
             var result = courseDataService.GetCourseNameAndApplication(-1);
 
@@ -364,6 +363,28 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 result.Should().HaveCount(69);
                 result.First(c => c.CustomisationId == 1).Should().BeEquivalentTo(expectedFirstCourse);
             }
+        }
+
+        [Test]
+        public void GetCoursesAtCentreForCategoryID_should_return_courses_correctly()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetCoursesAtCentreForCategoryId(centreId, categoryId).ToList();
+
+            // Then
+            var expectedFirstCourse = new CourseNameInfo
+            {
+                CustomisationId = 100,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                CustomisationName = "Standard"
+            };
+
+            result.Should().HaveCount(260);
+            result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
     }
 }

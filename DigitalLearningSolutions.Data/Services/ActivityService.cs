@@ -54,7 +54,7 @@
 
             var dateSlots = DateHelper.GetPeriodsBetweenDates(
                 filterData.StartDate,
-                filterData.EndDate,
+                filterData.EndDate ?? DateTime.UtcNow,
                 filterData.ReportInterval
             );
 

@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
+        IEnumerable<CourseNameInfo> GetCoursesAtCentreForCategoryId(int centreId, int? categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -309,7 +310,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
-                @"SELECT cu.CustomisationName, ap.ApplicationName
+                @"SELECT cu.CustomisationId, cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
                         JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
                         WHERE cu.CustomisationId = @customisationId",
@@ -341,6 +342,24 @@ namespace DigitalLearningSolutions.Data.DataServices
                     JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                     WHERE (CentreID = @centreId OR CentreID = 0)
 	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<CourseNameInfo> GetCoursesAtCentreForCategoryId(int centreId, int? categoryId)
+        {
+            return connection.Query<CourseNameInfo>(
+                @"SELECT
+                        cu.CustomisationId,
+                        cu.CustomisationName,
+                        ap.ApplicationName
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
+                        AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
+                        AND ca.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }
