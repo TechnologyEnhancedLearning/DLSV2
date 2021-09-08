@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model BaseSearchablePageViewModel
 
-<form method="get" role="search">
+<form class="sort-form" method="get" role="search">
   <input type="hidden" name="searchString" value="@Model.SearchString" />
   @if (Model.FilterEnabled) {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
