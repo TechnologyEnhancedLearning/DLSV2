@@ -5,7 +5,7 @@
 
     public class EmailDelegatesItemViewModel
     {
-        public EmailDelegatesItemViewModel(DelegateUserCard delegateUser)
+        public EmailDelegatesItemViewModel(DelegateUserCard delegateUser, bool preChecked = false)
         {
             Id = delegateUser.Id;
             Name = delegateUser.SearchableName;
@@ -14,11 +14,14 @@
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
+
+            PreChecked = preChecked;
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Email { get; set; }
         public string? RegistrationDate { get; set; }
+        public bool PreChecked { get; set; }
     }
 }

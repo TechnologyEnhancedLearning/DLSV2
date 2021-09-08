@@ -21,7 +21,12 @@
 
         public void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers)
         {
-            Delegates = delegateUsers.Select(delegateUser => new EmailDelegatesItemViewModel(delegateUser));
+            Delegates = delegateUsers.Select(delegateUser =>
+                {
+                    var preChecked = SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
+                    return new EmailDelegatesItemViewModel(delegateUser, preChecked);
+                }
+            );
         }
 
         public IEnumerable<EmailDelegatesItemViewModel>? Delegates { get; set; }
