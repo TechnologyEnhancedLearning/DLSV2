@@ -8,8 +8,18 @@
 
     public class UploadDelegatesViewModel : WelcomeEmailViewModel
     {
-        [Required(ErrorMessage = "Delegates update file is required.")]
-        [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format.")]
+        public UploadDelegatesViewModel() { }
+
+        public UploadDelegatesViewModel(DateTime welcomeEmailDate)
+        {
+            Day = welcomeEmailDate.Day;
+            Month = welcomeEmailDate.Month;
+            Year = welcomeEmailDate.Year;
+        }
+
+        [Required(ErrorMessage = "Delegates update file is required")]
+        [AllowedExtensions(new[] { ".xlsx" }, "Delegates update file must be in xlsx format")]
+        [MaxFileSize(5*1000*1000, "Maximum allowed file size is 5000KB")]
         public IFormFile? DelegatesFile { get; set; }
 
         public DateTime? GetWelcomeEmailDate()
