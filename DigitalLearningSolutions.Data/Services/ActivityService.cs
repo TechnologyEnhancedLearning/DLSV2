@@ -83,7 +83,8 @@
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
 
-        public (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> categories,
+        public (IEnumerable<(int id, string name)> jobGroups,
+            IEnumerable<(int id, string name)> categories,
             IEnumerable<(int id, string name)> courses) GetFilterOptions(int centreId, int? courseCategoryId)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();

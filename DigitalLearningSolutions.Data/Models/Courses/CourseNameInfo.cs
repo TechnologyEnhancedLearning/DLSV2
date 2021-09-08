@@ -2,7 +2,6 @@
 {
     public class CourseNameInfo : BaseSearchableItem
     {
-        public int CustomisationId { get; set; }
         public string CustomisationName { get; set; } = null!;
         public string ApplicationName { get; set; } = null!;
 

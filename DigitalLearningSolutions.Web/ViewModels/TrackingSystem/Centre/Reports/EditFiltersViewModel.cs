@@ -37,10 +37,9 @@
             JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(jobGroupOptions, JobGroupId);
             CourseCategoryOptions = SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
             CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
-            var reportIntervals =
-                ((int[])Enum.GetValues(typeof(ReportInterval))).Select(
-                    i => (i, Enum.GetName(typeof(ReportInterval), i))
-                );
+            var reportIntervals = Enum.GetValues(typeof(ReportInterval))
+                .Cast<int>()
+                .Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
             ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
         }
 

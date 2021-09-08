@@ -31,7 +31,7 @@
             bool hasEndDayError,
             bool hasEndMonthError,
             bool hasEndYearError,
-            CheckboxesItemViewModel endDateCheckboxViewModel,
+            CheckboxesItemViewModel? endDateCheckboxViewModel,
             bool hasCheckboxError,
             string? errorMessage,
             string? cssClass = null,

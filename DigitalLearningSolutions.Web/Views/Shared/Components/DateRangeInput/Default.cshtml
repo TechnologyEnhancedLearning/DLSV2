@@ -33,7 +33,7 @@
     }
 
     @if (Model.EndDateCheckbox != null) {
-      <div class="nhsuk-checkboxes">
+      <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
         <div class="nhsuk-checkboxes__item">
           <input class="nhsuk-checkboxes__input"
                  type="checkbox"
@@ -41,6 +41,8 @@
                  name="@Model.EndDateCheckbox.Name"
                  aria-describedby="@Model.EndDateCheckbox.Id-item-hint"
                  value="true"
+                 aria-controls="conditional-end-date-1"
+                 aria-expanded="false"
                  @(Model.EndDateCheckbox.Value ? "checked" : string.Empty) />
           <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.EndDateCheckbox.Id">
             @Model.EndDateCheckbox.Label
@@ -95,11 +97,11 @@
         </div>
       </div>
 
-      <div class="flex-container">
+      <div class="flex-container nhsuk-checkboxes__conditional--hidden" id="conditional-end-date-1">
         <div class="nhsuk-hint conjunction nhsuk-u-margin-bottom-4 nhsuk-u-margin-right-4">to</div>
       </div>
 
-      <div class="nhsuk-date-input">
+      <div class="nhsuk-date-input nhsuk-checkboxes__conditional--hidden" id="conditional-end-date-2">
         <div class="nhsuk-date-input__item">
           <div class="nhsuk-form-group">
             <label class="nhsuk-label" for="@Model.EndDayId">Day</label>
