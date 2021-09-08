@@ -21,11 +21,17 @@ export class SearchSortFilterAndPaginate {
   private page: number;
 
   private readonly filterEnabled: boolean;
+  private readonly searchEnabled: boolean;
+  private readonly sortEnabled: boolean;
+  private readonly paginationEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string, filterEnabled = false, filterCookieName = '') {
+  constructor(route: string, filterEnabled = false, filterCookieName = '', searchEnabled = true, sortEnabled = true, paginationEnabled = true) {
     this.page = 1;
     this.filterEnabled = filterEnabled;
+    this.searchEnabled = searchEnabled;
+    this.sortEnabled = sortEnabled;
+    this.paginationEnabled = paginationEnabled;
 
     SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
       if (searchableData === undefined) {
@@ -35,13 +41,18 @@ export class SearchSortFilterAndPaginate {
       if (filterEnabled) {
         setUpFilter(() => this.onFilterUpdated(searchableData), filterCookieName);
       }
-
-      setUpSearch(() => this.onSearchUpdated(searchableData));
-      setUpSort(() => this.searchSortAndPaginate(searchableData));
-      setUpPagination(
-        () => this.onNextPagePressed(searchableData),
-        () => this.onPreviousPagePressed(searchableData),
-      );
+      if (searchEnabled) {
+        setUpSearch(() => this.onSearchUpdated(searchableData));
+      }
+      if (sortEnabled) {
+        setUpSort(() => this.searchSortAndPaginate(searchableData));
+      }
+      if (paginationEnabled) {
+        setUpPagination(
+          () => this.onNextPagePressed(searchableData),
+          () => this.onPreviousPagePressed(searchableData),
+        );
+      }
       this.searchSortAndPaginate(searchableData);
     });
   }
@@ -67,11 +78,15 @@ export class SearchSortFilterAndPaginate {
   }
 
   private searchSortAndPaginate(searchableData: ISearchableData): void {
-    const searchedElements = search(searchableData.searchableElements);
+    const searchedElements = this.searchEnabled
+      ? search(searchableData.searchableElements)
+      : searchableData.searchableElements;
     const filteredElements = this.filterEnabled
       ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
       : searchedElements;
-    const sortedElements = sortSearchableElements(filteredElements);
+    const sortedElements = this.sortEnabled
+      ? sortSearchableElements(filteredElements)
+      : filteredElements;
 
     if (this.shouldDisplayResultCount()) {
       SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
@@ -80,7 +95,9 @@ export class SearchSortFilterAndPaginate {
     }
 
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
-    const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
+    const paginatedElements = this.paginationEnabled
+      ? paginateResults(sortedElements, this.page, totalPages)
+      : sortedElements;
     SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
 
@@ -147,7 +164,7 @@ export class SearchSortFilterAndPaginate {
 
   private shouldDisplayResultCount(): boolean {
     const filterString = this.filterEnabled ? getFilterByValue() : false;
-    const searchString = getQuery();
+    const searchString = this.searchEnabled ? getQuery() : false;
     return !!(filterString || searchString);
   }
 
