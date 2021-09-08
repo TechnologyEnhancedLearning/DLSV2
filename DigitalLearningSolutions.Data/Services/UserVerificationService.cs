@@ -15,6 +15,10 @@
 
         List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
 
+        /// <summary>
+        /// Gets a single verified admin associated with a set of delegate users.
+        /// This method should only be called with a set of delegate users with the same email address.
+        /// </summary>
         AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password);
     }
 
