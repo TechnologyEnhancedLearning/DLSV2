@@ -80,6 +80,18 @@
             return View("Confirmation", selectedUsers.Count);
         }
 
+        [Route("AllEmailDelegateItems")]
+        public IActionResult AllEmailDelegateItems()
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+            var delegateUsers = GetDelegateUserCards();
+
+            var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);
+
+            return View(model);
+        }
+
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()
         {
             var centreId = User.GetCentreId();

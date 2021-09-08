@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 @using Microsoft.Extensions.Configuration
 @model EmailDelegatesViewModel
@@ -27,6 +27,8 @@
 
     <span class="nhsuk-body-l">Filter and select delegates to send emails to.</span>
 
+    <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
+
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
         <partial name="SearchablePage/_Filters" model="Model" />
@@ -48,7 +50,7 @@
       <form method="post">
         <div class="nhsuk-form-group nhsuk-u-margin-top-4">
           <fieldset class="nhsuk-fieldset">
-            <div class="nhsuk-checkboxes">
+            <div id="searchable-elements" class="nhsuk-checkboxes">
               @foreach (var delegateModel in Model.Delegates) {
                 <partial name="_SearchableDelegateCheckbox" model="delegateModel" />
               }
@@ -69,3 +71,7 @@
     <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/emailDelegates.js")" asp-append-version="true"></script>
+}

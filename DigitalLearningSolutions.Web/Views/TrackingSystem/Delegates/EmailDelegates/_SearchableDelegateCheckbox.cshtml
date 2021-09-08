@@ -1,17 +1,21 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 @model EmailDelegatesItemViewModel
 
-<div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
+<div class="searchable-element nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
   <input class="nhsuk-checkboxes__input"
          id="@Model.Id-checkbox"
          type="checkbox"
          name="SelectedDelegateIds"
          value="@Model.Id"
          @(Model.PreChecked ? "checked" : string.Empty) />
-  <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id-checkbox">
+  <label class="nhsuk-label nhsuk-checkboxes__label searchable-element-title" for="@Model.Id-checkbox">
     @Model.Name (@Model.Email)
   </label>
   <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-hint">
     Registered on @Model.RegistrationDate
   </div>
+  <div hidden data-filter-value="@Model.JobGroupFilter"></div>
+  @foreach ((_, string filterValue) in Model.CustomPromptFilters) {
+    <div hidden data-filter-value="@filterValue"></div>
+  }
 </div>
