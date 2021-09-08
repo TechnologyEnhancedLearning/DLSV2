@@ -95,10 +95,11 @@
         }
 
         [TestCase("Test", "Test")]
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Alpha")]
         [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Bravo")]
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Charlie")]
-        public void AddNewFilterToFilterBy_doesnt_append_with_new_filter_already_in_filterBy(string filterBy, string newFilterValue)
+        public void AddNewFilterToFilterBy_doesnt_append_with_new_filter_already_in_filterBy(
+            string filterBy,
+            string newFilterValue
+        )
         {
             // When
             var result = FilteringHelper.AddNewFilterToFilterBy(filterBy, newFilterValue);
@@ -128,14 +129,8 @@
         }
 
         [TestCase(FilterByAlphaBravoCharlie, "Group|Name|A")]
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|B")]
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|C")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Alpha")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Bravo")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Charlie")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|A")]
         [TestCase(FilterByAlphaBravoCharlie, "p|Name|B")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|C")]
+        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Charlie")]
         public void AddNewFilterToFilterBy_appends_new_filter_even_if_substring(string filterBy, string newFilterValue)
         {
             // When
