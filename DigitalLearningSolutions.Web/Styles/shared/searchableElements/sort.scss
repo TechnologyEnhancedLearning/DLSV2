@@ -7,33 +7,40 @@
 
 .sort-by-dropdown {
   @extend .left-dropdown;
+
+  @include mq($from: tablet) {
+    width: 66.666666%;
+  }
 }
 
 .sort-direction-dropdown {
   @extend .input-with-no-js-submit-button;
-
   width: 63%;
 
-  @include mq($until: desktop) {
-    .js-enabled & {
-      width: 70%;
-    }
-  }
-
-  @include mq($from: $xl-desktop) {
-    width: 74%;
+  @include mq($from: tablet) {
+    width: 66.666666%;
   }
 }
 
 .sort-direction-dropdown-container {
   @include mq($from: desktop) {
-    width: calc(59% - 12px);
+    width: calc(60% - 12px);
     float: left;
   }
 }
 
 .sort-submit {
   @extend .right-submit-button;
+  background-color: $button-dark-blue;
+
+  @include mq($from: desktop) {
+    width: calc(33.33333% - 4px);
+
+    .search-sort-flex-container & {
+      min-width: unset;
+      width: calc(33.33333% - 4px);
+    }
+  }
 }
 
 .sort-row {

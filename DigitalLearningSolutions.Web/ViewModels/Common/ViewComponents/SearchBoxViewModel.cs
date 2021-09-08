@@ -7,17 +7,14 @@
         
         public readonly BaseSearchablePageViewModel SearchablePageViewModel;
         public readonly string Label;
-        public readonly string? Class;
 
         public SearchBoxViewModel(
             BaseSearchablePageViewModel searchablePageViewModel,
-            string label,
-            string? cssClass
+            string label
         )
         {
             SearchablePageViewModel = searchablePageViewModel;
             Label = label;
-            Class = cssClass;
         }
     }
 }

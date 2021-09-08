@@ -8,11 +8,10 @@
     {
         public IViewComponentResult Invoke(
             BaseSearchablePageViewModel searchablePageViewModel,
-            string label,
-            string? cssClass
+            string label
         )
         {
-            return View(new SearchBoxViewModel(searchablePageViewModel, label, cssClass));
+            return View(new SearchBoxViewModel(searchablePageViewModel, label));
         }
     }
 }

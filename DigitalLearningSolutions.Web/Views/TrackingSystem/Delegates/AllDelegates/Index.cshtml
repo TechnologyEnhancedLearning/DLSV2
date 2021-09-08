@@ -45,19 +45,11 @@
       </div>
     </div>
 
-    <div class="nhsuk-grid-row">
-      <vc:search-box label="Search delegates"
-                     searchable-page-view-model="@Model"
-                     css-class="nhsuk-grid-column-full" />
-    </div>
-
-    <div class="nhsuk-grid-row">
-      <partial name="SearchablePage/_Sort" model="@Model" />
-    </div>
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndSort" model="Model"/>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        <partial name="SearchablePage/_Filters" model="Model" />
+        <partial name="SearchablePage/_Filters" model="Model"/>
       </div>
     </div>
 

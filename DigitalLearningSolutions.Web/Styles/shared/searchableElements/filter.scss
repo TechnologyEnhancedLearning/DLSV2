@@ -3,20 +3,22 @@
 
 .filter-dropdown {
   @extend .input-with-submit-button;
+  width: 80%;
 
-  width: 63%;
-
-  @include mq($from: $xl-desktop) {
+  @include mq($from: desktop) {
     .js-enabled & {
-      width: 74%;
+      width: 66.666666%;
     }
-
-    width: 80%;
   }
 }
 
 .filter-dropdown-selector {
-  @extend .left-dropdown
+  @extend .left-dropdown;
+
+  @include mq($from: tablet) {
+    height: 40px;
+    width: 80%;
+  }
 }
 
 .filter-dropdown-container {
@@ -26,7 +28,7 @@
 
   @include mq($from: desktop) {
     .js-enabled & {
-      width: calc(59% - 12px);
+      width: calc(60% - 12px);
       float: left;
     }
   }
@@ -38,10 +40,19 @@
   &__dropdown {
     @extend .right-submit-button;
     background-color: $button-dark-blue;
+
+    @include mq($from: desktop) {
+      width: calc(20% - 4px);
+
+      .js-enabled & {
+        width: calc(33.33333% - 4px);
+      }
+    }
   }
 
   &__clear {
     @extend .right-submit-button;
+    width: calc(20% - 4px);
     border-radius: 4px;
     background-color: $color_nhsuk-red;
   }
@@ -62,7 +73,7 @@
 }
 
 .clear-filter-button-container {
-  width: 18%;
+  width: 20%;
   float: left;
 }
 

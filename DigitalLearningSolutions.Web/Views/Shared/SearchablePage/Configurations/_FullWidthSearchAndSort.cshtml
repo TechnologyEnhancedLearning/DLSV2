@@ -1,0 +1,13 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model BaseSearchablePageViewModel
+
+<div class="nhsuk-grid-row search-sort-flex-container">
+  <div class="nhsuk-grid-column-one-half search-box-flex-container">
+    <vc:search-box label="Search delegates"
+                   searchable-page-view-model="Model" />
+  </div>
+
+  <div class="nhsuk-grid-column-one-half sort-box-flex-container">
+    <partial name="SearchablePage/_Sort" model="Model" />
+  </div>
+</div>
